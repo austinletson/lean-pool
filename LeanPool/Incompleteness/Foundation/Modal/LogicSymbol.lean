@@ -215,9 +215,7 @@ lemma prebox_subset_mono (h : s ⊆ t) : □''⁻¹s ⊆  □''⁻¹t := by
 
 
 lemma subset_premulitibox_iff_multibox_subset (h : s ⊆ □''⁻¹^[n]t) :  □''^[n]s ⊆ t := by
-  intro φ hp;
-  obtain ⟨_, _, rfl⟩ := multibox_subset_mono h hp;
-  assumption;
+  grind
 
 lemma subset_prebox_iff_box_subset (h : s ⊆ □''⁻¹t) : □''s ⊆ t := by
   simpa using subset_premulitibox_iff_multibox_subset (n := 1) h
@@ -230,20 +228,12 @@ lemma subset_box_iff_prebox_subset (h : s ⊆ □''t) : □''⁻¹s ⊆ t := by
   simpa using subset_multibox_iff_premulitibox_subset (n := 1) h
 
 lemma forall_multibox_of_subset_multibox (h : s ⊆ □''^[n]t) : ∀ φ ∈ s, ∃ ψ ∈ t, φ = □^[n]ψ := by
-  intro φ hp;
-  obtain ⟨ψ, _, rfl⟩ := h hp;
-  use ψ;
+  grind
 lemma forall_box_of_subset_box (h : s ⊆ □''t) : ∀ φ ∈ s, ∃ ψ ∈ t, φ = □ψ := by
   simpa using forall_multibox_of_subset_multibox (n := 1) h
 
 lemma eq_premultibox_multibox_of_subset_premultibox (h : s ⊆ □''^[n]t) : □''^[n]□''⁻¹^[n]s = s := by
-  apply Set.eq_of_subset_of_subset;
-  · intro φ hp;
-    obtain ⟨_, _, rfl⟩ := hp;
-    simp_all [Set.premultibox];
-  · intro φ hp;
-    obtain ⟨ψ, _, rfl⟩ := forall_multibox_of_subset_multibox h φ hp;
-    simp_all [Set.premultibox];
+  grind
 lemma eq_prebox_box_of_subset_prebox (h : s ⊆ □''t) : □''□''⁻¹s = s := by
   simpa using eq_premultibox_multibox_of_subset_premultibox (n := 1) h
 
@@ -277,9 +267,7 @@ lemma predia_subset_mono (h : s ⊆ t) : ◇''⁻¹s ⊆ ◇''⁻¹t := by
 @[simp 1100] lemma iff_mem_multidia : ◇^[n]φ ∈ ◇''^[n]s ↔ φ ∈ s := by simp;
 
 lemma subset_premultidia_iff_multidia_subset (h : s ⊆ ◇''⁻¹^[n]t) :  ◇''^[n]s ⊆ t := by
-  intro φ hp;
-  obtain ⟨_, _, rfl⟩ := multidia_subset_mono h hp;
-  assumption;
+  grind
 
 lemma subset_predia_iff_dia_subset (h : s ⊆ ◇''⁻¹t) : ◇''s ⊆ t := by
   simpa using subset_premultidia_iff_multidia_subset (n := 1) h
@@ -293,20 +281,12 @@ lemma subset_dia_iff_predia_subset (h : s ⊆ ◇''t) : ◇''⁻¹s ⊆ t := by
   simpa using subset_multidia_iff_premultidia_subset (n := 1) h
 
 lemma forall_multidia_of_subset_multidia (h : s ⊆ ◇''^[n]t) : ∀ φ ∈ s, ∃ ψ ∈ t, φ = ◇^[n]ψ := by
-  intro φ hp;
-  obtain ⟨ψ, _, rfl⟩ := h hp;
-  use ψ;
+  grind
 lemma forall_dia_of_subset_dia (h : s ⊆ ◇''t) : ∀ φ ∈ s, ∃ ψ ∈ t, φ = ◇ψ := by
   simpa using forall_multidia_of_subset_multidia (n := 1) h
 
 lemma eq_premultidia_multidia_of_subset_premultidia (h : s ⊆ ◇''^[n]t) : ◇''^[n]◇''⁻¹^[n]s = s := by
-  apply Set.eq_of_subset_of_subset;
-  · intro φ hp;
-    obtain ⟨_, _, rfl⟩ := hp;
-    simp_all [Set.premultidia];
-  · intro φ hp;
-    obtain ⟨ψ, _, rfl⟩ := forall_multidia_of_subset_multidia h φ hp;
-    simp_all [Set.premultidia];
+  grind
 lemma eq_predia_dia_of_subset_predia (h : s ⊆ ◇''t) : ◇''◇''⁻¹s = s := by
   simpa using eq_premultidia_multidia_of_subset_premultidia (n := 1) h
 
@@ -485,9 +465,7 @@ variable {l : List F} {s : Set F} {φ : F}
 
 lemma forall_multibox_of_subset_multibox [Box F] (h : ∀ φ ∈ l, φ ∈ □''^[n]s) :
     ∀ φ ∈ l, ∃ ψ ∈ s, φ = □^[n]ψ := by
-  intro φ hp;
-  obtain ⟨ψ, _, rfl⟩ := h φ hp;
-  use ψ;
+  grind
 
 lemma forall_box_of_subset_box [Box F] (h : ∀ φ ∈ l, φ ∈ □''s) : ∀ φ ∈ l, ∃ ψ ∈ s, φ = □ψ := by
   simpa using forall_multibox_of_subset_multibox (n := 1) h
@@ -495,9 +473,7 @@ lemma forall_box_of_subset_box [Box F] (h : ∀ φ ∈ l, φ ∈ □''s) : ∀ �
 
 lemma forall_multidia_of_subset_multidia [Dia F] (h : ∀ φ ∈ l, φ ∈ ◇''^[n]s) :
     ∀ φ ∈ l, ∃ ψ ∈ s, φ = ◇^[n]ψ := by
-  intro φ hp;
-  obtain ⟨ψ, _, rfl⟩ := h φ hp;
-  use ψ;
+  grind
 
 lemma forall_dia_of_subset_dia [Dia F] (h : ∀ φ ∈ l, φ ∈ ◇''s) : ∀ φ ∈ l, ∃ ψ ∈ s, φ = ◇ψ := by
   simpa using forall_multidia_of_subset_multidia (n := 1) h

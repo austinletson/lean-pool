@@ -75,13 +75,7 @@ theorem five_n_le_two_pow (N : Nat) (hN : 6 ≤ N) : 5 * N ≤ 2 ^ N := by
   induction N with
   | zero => omega
   | succ n ih =>
-    by_cases h : 6 ≤ n
-    · have h5 : 5 ≤ 2 ^ n :=
-        le_trans (by norm_num : 5 ≤ 2 ^ 3) (Nat.pow_le_pow_right (by omega) (by omega))
-      have h2 : 2 ^ (n + 1) = 2 ^ n + 2 ^ n := by rw [Nat.pow_succ, Nat.mul_comm]; ring
-      have ihn := ih h
-      omega
-    · interval_cases n <;> simp_all
+    grind
 
 /-- The gate count `s = 2^N / (5N)` is positive for `N ≥ 6`. -/
 theorem s_pos (N : Nat) (hN : 6 ≤ N) : 0 < 2 ^ N / (5 * N) :=
@@ -95,13 +89,7 @@ theorem n_plus_s_lt (N : Nat) (hN : 6 ≤ N) :
     rwa [Nat.le_div_iff_mul_le (by omega : 0 < 5), Nat.mul_comm]
   have hS5 : 2 ^ N / (5 * N) ≤ 2 ^ N / 5 :=
     Nat.div_le_div_left (by omega : 5 ≤ 5 * N) (by omega : 0 < 5)
-  have h4 : 2 * (2 ^ N / 5) < 2 ^ N := by
-    have hle := Nat.mul_div_le_mul_div_assoc 2 (2 ^ N) 5
-    have hlt : 2 * 2 ^ N / 5 < 2 ^ N := by
-      rw [Nat.div_lt_iff_lt_mul (by omega : 0 < 5)]
-      linarith
-    omega
-  omega
+  grind
 
 /-- The exponent `(2N+3) * s` is less than `2^N`, which ensures the
     power-of-two bound in the main arithmetic inequality. -/

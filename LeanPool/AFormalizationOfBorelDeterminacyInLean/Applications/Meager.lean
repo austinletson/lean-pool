@@ -190,8 +190,7 @@ lemma isMeagre_iff_eq_countable_union_isNowhereDense {s : Set X} :
       Set.sUnion_image]
     use fun s h ↦ (h1 s h).inter_left, h2.image _
     exact subset_antisymm (by simpa [← Set.iUnion₂_inter, ← Set.sUnion_eq_biUnion]) (by simp)
-  · rintro ⟨S, h1, h2, rfl⟩
-    exact ⟨S, h1, h2, subset_rfl⟩
+  · grind
 lemma IsMeagre.eq_countable_union_isNowhereDense (h : IsMeagre A) :
   ∃ f : ℕ → {t : Set X | IsNowhereDense t}, A = ⋃ n, f n := by
   rw [isMeagre_iff_eq_countable_union_isNowhereDense] at h
@@ -301,8 +300,7 @@ private lemma forces_disjoint_iUnion_left {I} (U : I → tX.Opens)
         specialize hd (i := i) (j := j)
         simp [Function.onFun, - TopologicalSpace.Opens.coe_disjoint] at hd
         by_cases i = j <;> tauto_set
-      rw [heq]
-      exact (V i n).prop)
+      grind)
 end residual.dom
 open residual.dom in
 /-- a Baire category analogue of outer measure -/

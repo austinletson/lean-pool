@@ -487,9 +487,7 @@ private lemma diagMat_comm_of_const (a : Fin n → ℕ) (ha : ∀ i, 0 < a i)
       (a 0 : ℚ) • (1 : Matrix (Fin n) (Fin n) ℚ) := by
     ext i j
     simp only [Matrix.diagonal_apply, Matrix.smul_apply, Matrix.one_apply, smul_eq_mul]
-    split_ifs with h
-    · subst h; simp [h_const]
-    · simp
+    grind
   rw [h_diag, smul_mul_assoc, mul_smul_comm, one_mul, mul_one]
 
 /-- For `n = 2`, scalar case: `deg(T(c, c)) = 1`. -/
@@ -526,9 +524,7 @@ theorem HeckeCoset_deg_T_diag_two_scalar (a : Fin 2 → ℕ) (ha : ∀ i, 0 < a 
   have h_smul_diag : ConjAct.toConjAct (diagMat 2 a) • H = H := by
     ext x; simp only [Subgroup.mem_pointwise_smul_iff_inv_smul_mem, ConjAct.smul_def,
       map_inv, ConjAct.ofConjAct_toConjAct, inv_inv]
-    constructor
-    · intro hx; rwa [h_diag_conj] at hx
-    · intro hx; rwa [h_diag_conj]
+    grind
   rw [h_smul_diag]
   exact conjAct_smul_eq_of_mem H (H.mul_mem hh₁ hh₂)
 

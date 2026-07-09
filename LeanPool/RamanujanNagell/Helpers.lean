@@ -122,9 +122,7 @@ private lemma norm_factor_dichotomy {m n : ℤ} (hm : 0 ≤ m) (hn : 0 ≤ n) (h
   have hm_pos : 0 < m := by rcases hm.lt_or_eq with h | h; exacts [h, by simp [← h] at hmn]
   have hn_pos : 0 < n := by rcases hn.lt_or_eq with h | h; exacts [h, by simp [← h] at hmn]
   have hm_le : m ≤ 2 := by nlinarith
-  interval_cases m
-  · left; rfl
-  · right; linarith
+  grind
 
 private lemma isUnit_of_norm_one {a : R} (h : QuadraticAlgebra.norm a = 1) : IsUnit a := by
   apply QuadraticAlgebra.isUnit_iff_norm_isUnit.mpr
@@ -169,10 +167,7 @@ private lemma N_mul_rem_eq (a b q : R) :
     ((QuadraticAlgebra.norm b : ℤ) : R) * (a - b * q) =
       b * (a * star b - ((QuadraticAlgebra.norm b : ℤ) : R) * q) := by
   have hbs := b_mul_star_eq_norm b
-  calc ((QuadraticAlgebra.norm b : ℤ) : R) * (a - b * q)
-      = (b * star b) * (a - b * q) := by rw [← hbs]
-    _ = b * (a * star b - (b * star b) * q) := by ring
-    _ = b * (a * star b - ((QuadraticAlgebra.norm b : ℤ) : R) * q) := by rw [hbs]
+  grind
 
 private lemma N_mul_norm_rem_eq (a b q : R) (hb : b ≠ 0) :
     QuadraticAlgebra.norm b * QuadraticAlgebra.norm (a - b * q) =

@@ -91,8 +91,7 @@ private theorem explicitPkappaNorm_pos_of_ne_zero
   rw [explicitPkappaNorm]
   apply Real.sqrt_pos.mpr
   have hexists : ∃ α, F α ≠ 0 := by
-    by_contra hnone
-    exact hF (by ext α; exact not_not.mp (not_exists.mp hnone α))
+    grind
   rcases hexists with ⟨α, halpha⟩
   have halpha_mem : α ∈ F.support := F.mem_support_iff.mpr halpha
   have hterm_pos : 0 < ‖F α‖ ^ 2 := sq_pos_of_ne_zero (by simpa using halpha)
@@ -107,8 +106,7 @@ private theorem explicitPkappaNorm_normalized
   have hnorm_inv : ‖((explicitPkappaNorm F : ℂ)⁻¹)‖ = (explicitPkappaNorm F)⁻¹ := by
     rw [norm_inv]
     simp [Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (le_of_lt hpos)]
-  rw [hnorm_inv]
-  field_simp [ne_of_gt hpos]
+  grind
 
 private theorem explicitModulusDefect_smul_of_nonneg
     {d : ℕ} (hd : 0 < d) (κ : Fin d -> ℕ) (a : ℝ) (ha : 0 ≤ a)
@@ -153,8 +151,7 @@ private theorem modulusDefect_sq_eq_integral_rev
         explicitEvalPkappa κ Q z = evalPkappa κ Q z := by
       simp [explicitEvalPkappa, explicitPhi, explicitPhi1D, explicitComplexHermite,
         evalPkappa, Phi, phi1D, complexHermite]
-    rw [hF, hQ]
-    ring
+    grind
   · exact MeasureTheory.integral_nonneg fun z => sq_nonneg _
 
 private theorem phase_stability_coefficients_of_ne_zero
@@ -206,8 +203,7 @@ private theorem phase_stability_coefficients_of_ne_zero
   have hscaled' :
       a * explicitPkappaNorm (phase • Q - F) ≤
         a * (C_F * modulusDefect κ F Q) := by
-    rw [show a * (C_F * modulusDefect κ F Q) = C_F * (a * modulusDefect κ F Q) by ring]
-    exact hscaled
+    grind
   exact (mul_le_mul_iff_of_pos_left ha_pos).mp hscaled'
 
 theorem stablePhaseRetrievalCoefficients
@@ -607,8 +603,7 @@ private theorem explicitPhaseOptimized_bound_of_l2_closure
       have hdecomp :
           (fun z => P z - θ * Q z) =
             fun z => (P z - θ * Qn n z) + θ * (Qn n z - Q z) := by
-        funext z
-        ring
+        grind
       rw [hdecomp]
       have htri :=
         MeasureTheory.lpNorm_add_le
@@ -666,8 +661,7 @@ private theorem explicitPhaseOptimized_bound_of_l2_closure
       have hdecomp :
           (fun z => ‖P z‖ - ‖Qn n z‖) =
             fun z => (‖P z‖ - ‖Q z‖) + (‖Q z‖ - ‖Qn n z‖) := by
-        funext z
-        ring
+        grind
       rw [hdecomp]
       have htri :=
         MeasureTheory.lpNorm_add_le
@@ -748,9 +742,7 @@ private theorem explicitPhaseOptimized_bound_of_l2_closure
           Filter.atTop (nhds (C_P * (Real.sqrt M + 0) + 0)) :=
       ((tendsto_const_nhds.add hδ_tendsto).const_mul C_P).add hδ_tendsto
     have hpow := hinner.pow 2
-    convert hpow using 1
-    ring_nf
-    rw [Real.sq_sqrt hM_nonneg]
+    grind
   have hconst :
       Filter.Tendsto (fun _ : ℕ => explicitPhaseOptimizedDistanceSq P Q)
         Filter.atTop (nhds (explicitPhaseOptimizedDistanceSq P Q)) :=
@@ -813,9 +805,7 @@ theorem stablePhaseRetrievalExplicitLpClosure_exists
   rcases explicitPhaseOptimizedDistanceSq_attained P (Q : (Fin d -> ℂ) -> ℂ)
       hP_mem hQ_mem with
     ⟨θ, hθ, hθ_eq⟩
-  refine ⟨θ, hθ, ?_⟩
-  rw [hθ_eq]
-  exact hbound Q hQ
+  grind
 
 private theorem explicitHermiteLpPolys_eq_ae
     {d : ℕ} (κ : Fin d -> ℕ) :

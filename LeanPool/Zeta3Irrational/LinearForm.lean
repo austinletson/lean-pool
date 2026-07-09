@@ -49,17 +49,7 @@ lemma J_rr_linear (r : ℕ) :
 
 lemma Icc_diff_Icc {r s : ℕ} (_ : r > s) (_ : ¬s = 0) :
     Finset.Icc 1 r \ Finset.Icc 1 s = Finset.Icc (s + 1) r := by
-  ext x
-  constructor
-  · intro hx
-    simp_all only [gt_iff_lt, Finset.mem_sdiff, Finset.mem_Icc, not_and, not_le, and_true]
-    exact LT.lt.nat_succ_le (hx.2 hx.1.1)
-  · intro hx
-    simp_all only [gt_iff_lt, Finset.mem_Icc, Finset.mem_sdiff, and_true, not_and, not_le]
-    constructor
-    · linarith
-    · intro
-      linarith
+  grind
 
 lemma one_div_sum_eq {r s : ℕ} (h : r > s) :
     ∑ m ∈ Finset.Icc 1 r, (1 / m ^ 2 : ℝ) - ∑ m ∈ Finset.Icc 1 s, (1 / m ^ 2 : ℝ) =
@@ -91,9 +81,7 @@ lemma J_rs_linear {r s : ℕ} (h : r > s) : ∃ a : ℤ, J r s = a / (d (Finset.
     · norm_cast
       rw [d_sq']
       apply dvd_d_of_mem
-      simp_all only [gt_iff_lt, Finset.mem_Icc, Finset.mem_image, zero_le, ne_eq,
-        OfNat.ofNat_ne_zero, not_false_eq_true, pow_left_inj₀, exists_eq_right]
-      omega
+      grind
     · simp_all only [gt_iff_lt, Finset.mem_Icc, Int.cast_pow, Int.cast_add, Int.cast_natCast,
       ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, pow_eq_zero_iff]
       rw [← Nat.cast_add]
@@ -102,9 +90,7 @@ lemma J_rs_linear {r s : ℕ} (h : r > s) : ∃ a : ℤ, J r s = a / (d (Finset.
     rw [← Nat.cast_sub (by linarith)]
     norm_cast
     apply dvd_d_of_mem
-    simp_all only [gt_iff_lt, Finset.mem_Icc, tsub_le_iff_right, le_add_iff_nonneg_right, zero_le,
-      and_true]
-    linarith
+    grind
   · simp_all only [gt_iff_lt, Finset.mem_Icc, Int.cast_sub, Int.cast_natCast]
     rw [← Nat.cast_sub (by linarith)]
     norm_cast; linarith
@@ -195,18 +181,14 @@ lemma linear_int_aux : ∃ a b : ℕ → ℕ → ℤ, ∀ r s : ℕ, J r s =
     simp only [p, q]
     simp_all only [gt_iff_lt, one_div, ite_true, Int.cast_zero, zero_mul, dite_true,
       zero_add]
-    rw [(J_rs_linear h).choose_spec] at ha
-    rw [show x.max y = x by exact max_eq_left_iff.2 (LT.lt.le h)]
-    simp_all
+    grind
   else if h1 : x < y then
     rcases J_rs_linear h1 with ⟨a, ha⟩
     simp only [p, q]
     obtain h2 := J_symm x y
     simp_all only [gt_iff_lt, one_div, ite_true, ite_self, Int.cast_zero, zero_mul, dite_true,
       zero_add, dite_false]
-    rw [(J_rs_linear h1).choose_spec] at ha
-    simp only [not_lt] at h
-    simp_all
+    grind
   else
     have h : x = y := by linarith
     rcases J_rr_linear y with ⟨a, ha⟩
@@ -214,7 +196,6 @@ lemma linear_int_aux : ∃ a b : ℕ → ℕ → ℤ, ∀ r s : ℕ, J r s =
     simp_all only [gt_iff_lt, lt_self_iff_false, not_false_eq_true, ite_false,
       Int.cast_ofNat, not_isEmpty_of_nonempty, tsum_empty, mul_zero, zero_sub, sub_right_inj,
       dite_false, Int.cast_neg, max_self]
-    rw [(J_rr_linear y).choose_spec, ← Mathlib.Tactic.RingNF.add_neg, ← neg_div] at ha
-    simp_all
+    grind
 
 end LeanPool.Zeta3Irrational

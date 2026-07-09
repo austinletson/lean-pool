@@ -154,8 +154,7 @@ theorem bounded_iff_finite_bounded (X : Set V.Element) :
       set S : Set V.Element := Set.range (fun i : Fin n => g i.1 i.2) with hSdef
       have hSfin : S.Finite := Set.finite_range _
       have hSsub : S ⊆ X := by
-        rintro _ ⟨i, rfl⟩
-        exact hgX i.1 i.2
+        grind
       obtain ⟨y, hy⟩ := hfin S hSsub hSfin
       have hseqy : ∀ i, i < n → y.mem (seq i) := by
         intro i hi

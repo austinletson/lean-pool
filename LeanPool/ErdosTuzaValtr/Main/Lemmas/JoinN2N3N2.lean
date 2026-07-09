@@ -40,17 +40,13 @@ theorem Config.join_n2_n3_n2_ff (S : Finset α) (_cap4_free : ¬C.HasNCap 4 S) {
   have a_in_S : a ∈ S := Px_in_S a (by simp)
   have b_in_S : b ∈ S := xQy_in_S b (by simp)
   have hbQy : C.NCup (n + 2) (b :: Q') := by
-    have := hxQy.tail
-    rwa [List.tail_cons] at this
+    grind
   have hR : C.NCup (n + 1) R := by
     have := hyR.tail
     rwa [List.tail_cons] at this
   rcases hR.dropLast_append_last with ⟨R', z, eq_R, hR'⟩
   have hxQy_last : y ∈ (x :: b :: Q').getLast? := by
-    rw [← eq_Q]
-    rw [List.getLast?_cons_of_ne_nil (by simp), List.getLast?_append_of_ne_nil _ (by simp),
-      List.getLast?_singleton]
-    rfl
+    grind
   have xy_laced : C.HasLaced (n + 3) S x y := by
     have hy : C.NCup 1 [y] := by simp
     refine ⟨n + 2, 1, _, _, _, hPx, hxQy, hy, ⟨Px_in_S, xQy_in_S, ?_⟩, by omega, ?_, ?_,
@@ -63,9 +59,7 @@ theorem Config.join_n2_n3_n2_ff (S : Finset α) (_cap4_free : ¬C.HasNCap 4 S) {
     have hxyR : C.NCup (n + 3) (x::y::R) := hyR.extend_left sxy x_in_S x_lt_y yR_in_S (by simp)
     have hz : C.NCup 1 [z] := by simp
     have hxyz_last : z ∈ (x :: y :: R).getLast? := by
-      rw [eq_R, List.getLast?_cons_of_ne_nil (by simp), List.getLast?_cons_of_ne_nil (by simp),
-        List.getLast?_append_of_ne_nil _ (by simp), List.getLast?_singleton]
-      rfl
+      grind
     have hxyR_in : (x :: y :: R).In S := by
       rw [List.cons_in]; exact ⟨x_in_S, yR_in_S⟩
     refine ⟨n + 2, 1, _, _, _, hPx, hxyR, hz, ⟨Px_in_S, hxyR_in, ?_⟩, by omega, ?_, ?_,
@@ -82,9 +76,7 @@ theorem Config.join_n2_n3_n2_ff (S : Finset α) (_cap4_free : ¬C.HasNCap 4 S) {
   have y_lt_z : y < z := by
     have hyR' : C.NCup (n + 2) (y :: (R' ++ [z])) := by rw [← eq_R]; exact hyR
     apply hyR'.head_lt_getLast y z (by simp)
-    rw [List.getLast?_cons_of_ne_nil (by simp), List.getLast?_append_of_ne_nil _ (by simp),
-      List.getLast?_singleton]
-    rfl
+    grind
   have a_lt_b : a < b := LT.lt.trans a_lt_x x_lt_b
   by_cases sab : label.Slope a b
   swap
@@ -95,9 +87,7 @@ theorem Config.join_n2_n3_n2_ff (S : Finset α) (_cap4_free : ¬C.HasNCap 4 S) {
     have ha : C.NCup 1 [a] := by simp
     have ay_laced : C.HasLaced (n + 3) S a y := by
       have haQy_last : y ∈ (a :: b :: Q').getLast? := by
-        rw [List.getLast?_cons_cons, ← eq_Q, List.getLast?_append_of_ne_nil _ (by simp),
-          List.getLast?_singleton]
-        rfl
+        grind
       have haQy_in : (a :: b :: Q').In S := fun w hw =>
         (List.mem_cons.mp hw).elim (fun h => h ▸ a_in_S) (fun h => hbQy_in w h)
       refine ⟨1, n + 2, _, _, _, ha, haQy, hyR, ⟨?_, haQy_in, yR_in_S⟩, by omega, ?_, ?_,
@@ -110,8 +100,7 @@ theorem Config.join_n2_n3_n2_ff (S : Finset α) (_cap4_free : ¬C.HasNCap 4 S) {
   -- case label.Slope a b
   have b_lt_y : b < y := by
     apply hbQy.head_lt_getLast b y (by simp)
-    rw [← eq_Q, List.getLast?_append_of_ne_nil _ (by simp), List.getLast?_singleton]
-    rfl
+    grind
   have hPa_in : (P' ++ [a]).In S := fun w hw =>
     Px_in_S w (List.mem_append_left _ hw)
   have hPb : C.NCup (n + 2) (P' ++ [a] ++ [b]) :=
@@ -128,9 +117,7 @@ theorem Config.join_n2_n3_n2_ff (S : Finset α) (_cap4_free : ¬C.HasNCap 4 S) {
       have hbyR_in : (b :: y :: R).In S := fun w hw =>
         (List.mem_cons.mp hw).elim (fun h => h ▸ b_in_S) (fun h => yR_in_S w h)
       have hbyR_last : z ∈ (b :: y :: R).getLast? := by
-        rw [eq_R, List.getLast?_cons_of_ne_nil (by simp), List.getLast?_cons_of_ne_nil (by simp),
-          List.getLast?_append_of_ne_nil _ (by simp), List.getLast?_singleton]
-        rfl
+        grind
       refine ⟨n + 2, 1, _, _, _, hPb, hbyR, hz, ⟨hPb_in, hbyR_in, ?_⟩, by omega, hPb_last, ?_,
         hbyR_last, ?_⟩
       · rw [List.cons_in]
@@ -163,8 +150,7 @@ theorem Config.join_n2_n3_n2_ff (S : Finset α) (_cap4_free : ¬C.HasNCap 4 S) {
     have w_lt_x : w < x := by
       rw [eq_P_] at hPx
       apply hPx.head_lt_getLast w x (by simp)
-      rw [show w :: P_ ++ [x] = (w :: P_) ++ [x] by rfl, List.getLast?_concat]
-      rfl
+      grind
     exact ⟨w, x, y, z, ⟨w_lt_x, le_of_lt x_lt_y, y_lt_z⟩, wy_laced, xz_laced⟩
 
 theorem Config.join_n2_n3_n2_tt (S : Finset α) (cap4_free : ¬C.HasNCap 4 S) {n : ℕ} (x y : α)

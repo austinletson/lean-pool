@@ -130,8 +130,7 @@ private theorem exists_perm_subseq_range_image_of_monotone_finset
   have hL_succ (n : ℕ) : L (n + 1) = L n ++ block n := by
     simp [L]
   have hL_prefix_succ (n : ℕ) : L n <+: L (n + 1) := by
-    rw [hL_succ n]
-    exact (L n).prefix_append (block n)
+    grind
   have hL_prefix : ∀ {n m : ℕ}, n ≤ m → L n <+: L m := by
     intro n m hnm
     induction hnm with
@@ -171,13 +170,11 @@ private theorem exists_perm_subseq_range_image_of_monotone_finset
         exact Nat.succ_le_of_lt (lt_of_le_of_lt ih hcard_lt)
   let σFun : ℕ → ℕ := fun i =>
     (L (i + 1)).get ⟨i, by
-      rw [hL_length (i + 1)]
-      exact (Nat.lt_succ_self i).trans_le (hA_card_ge (i + 1))⟩
+      grind⟩
   have hσFun_eq_get (n i : ℕ) (hi : i < (L n).length) :
       σFun i = (L n).get ⟨i, hi⟩ := by
     have hiσ : i < (L (i + 1)).length := by
-      rw [hL_length (i + 1)]
-      exact (Nat.lt_succ_self i).trans_le (hA_card_ge (i + 1))
+      grind
     unfold σFun
     rcases le_total (i + 1) n with hin | hni
     · exact List.IsPrefix.getElem (hL_prefix hin) hiσ
@@ -186,13 +183,9 @@ private theorem exists_perm_subseq_range_image_of_monotone_finset
     intro i j hij
     let n := max (i + 1) (j + 1)
     have hiL : i < (L n).length := by
-      rw [hL_length]
-      exact (Nat.lt_succ_self i).trans_le
-        ((Nat.le_max_left (i + 1) (j + 1)).trans (hA_card_ge n))
+      grind
     have hjL : j < (L n).length := by
-      rw [hL_length]
-      exact (Nat.lt_succ_self j).trans_le
-        ((Nat.le_max_right (i + 1) (j + 1)).trans (hA_card_ge n))
+      grind
     have hget :
         (L n).get ⟨i, hiL⟩ = (L n).get ⟨j, hjL⟩ := by
       rw [← hσFun_eq_get n i hiL, ← hσFun_eq_get n j hjL, hij]
@@ -203,8 +196,7 @@ private theorem exists_perm_subseq_range_image_of_monotone_finset
     have hxL : x ∈ L n := by
       simpa [← hL_toFinset n, List.mem_toFinset] using hxA
     obtain ⟨i, hix⟩ := List.mem_iff_get.mp hxL
-    refine ⟨i, ?_⟩
-    rw [hσFun_eq_get n i i.2, hix]
+    grind
   let σ : Equiv.Perm ℕ := Equiv.ofBijective σFun ⟨hσFun_inj, hσFun_surj⟩
   refine ⟨σ, ?_⟩
   intro n
@@ -216,10 +208,7 @@ private theorem exists_perm_subseq_range_image_of_monotone_finset
     have hiL : i < (L n).length := by
       simpa [hL_length n] using hi
     have hxL : x ∈ L n := by
-      rw [← hix]
-      change σFun i ∈ L n
-      rw [hσFun_eq_get n i hiL]
-      exact List.get_mem _ _
+      grind
     simpa [← hL_toFinset n, List.mem_toFinset] using hxL
   · intro hxA
     have hxL : x ∈ L n := by
@@ -228,8 +217,7 @@ private theorem exists_perm_subseq_range_image_of_monotone_finset
     rw [Finset.mem_image]
     refine ⟨i, ?_, ?_⟩
     · simpa [hL_length n] using i.2
-    · change σFun i = x
-      rw [hσFun_eq_get n i i.2, hix]
+    · grind
 
 omit [CompleteSpace E] in
 /--
@@ -276,15 +264,13 @@ private theorem hasSum_of_forall_tendsto_sum_nat_rearranged
     rw [hA_succ n]
     exact hbad_sub _ (by simp)
   have hA_strict (n : ℕ) : A n ⊂ A (n + 1) := by
-    rw [Finset.ssubset_iff_of_subset (hA_step n)]
-    exact ⟨(A n).sup id + 1, hA_fresh_mem n, hA_fresh_not n⟩
+    grind
   have hA_cover : ∀ m : ℕ, ∃ n : ℕ, m ∈ A n := by
     intro m
     exact ⟨m + 1, hA_range m (by simp)⟩
   have hA_bad (n : ℕ) :
       ε ≤ dist (∑ m ∈ A (n + 1), f m) a := by
-    rw [hA_succ n]
-    exact hbad_dist ((A n ∪ Finset.range (n + 1)) ∪ {(A n).sup id + 1})
+    grind
   obtain ⟨σ, hAσ⟩ :=
     exists_perm_subseq_range_image_of_monotone_finset A hA_zero hA_mono hA_strict hA_cover
   have hA_card_ge : ∀ n : ℕ, n ≤ (A n).card := by
@@ -534,8 +520,7 @@ theorem coeff_basis_ne (b : UnconditionalSchauderBasisAbstractIndex 𝕜 Index E
   have hcoeff :=
     congrFun (b.unique_coeff (b.basis j) (fun k : Index => if k = j then (1 : 𝕜) else 0)
       hsingle) i
-  have hij : i ≠ j := fun h => hji h.symm
-  simpa [hij] using hcoeff.symm
+  grind
 
 /-!
 ### Enumerating an abstract basis
@@ -848,8 +833,7 @@ private lemma signed_sum_eq_two_projection_sub_sum
                 simp [hit])).symm
       _ = ∑ i ∈ t, ((2 : 𝕜) * a i) • x i := by
             refine Finset.sum_congr rfl ?_
-            intro i hi
-            simp [hi]
+            grind
       _ = (2 : 𝕜) • (∑ i ∈ t, a i • x i) := by
             rw [Finset.smul_sum]
             change (∑ i ∈ t, ((2 : 𝕜) * a i) • x i)
@@ -864,9 +848,7 @@ private lemma signed_sum_eq_two_projection_sub_sum
   · rw [projectionSigns_of_mem (𝕜 := 𝕜) t hit]
     simp only [one_mul]
     rw [← sub_smul]
-    congr 1
-    simp [hit]
-    ring
+    grind
   · rw [projectionSigns_of_not_mem (𝕜 := 𝕜) t hit]
     simp [hit, neg_smul]
 
@@ -913,10 +895,7 @@ private lemma finite_projection_bound_of_sign_bound
       _ ≤ ‖((2 : 𝕜)⁻¹)‖ * (‖z‖ + ‖y‖) := by
             exact mul_le_mul_of_nonneg_left (norm_add_le z y) (norm_nonneg _)
   have hzy : ‖z‖ + ‖y‖ ≤ (C + 1) * ‖y‖ := by
-    calc
-      ‖z‖ + ‖y‖ ≤ C * ‖y‖ + ‖y‖ := by
-        exact add_le_add hz_bound le_rfl
-      _ = (C + 1) * ‖y‖ := by ring
+    grind
   have hmain : ‖p‖ ≤ (‖((2 : 𝕜)⁻¹)‖ * (C + 1)) * ‖y‖ := by
     calc
       ‖p‖ ≤ ‖((2 : 𝕜)⁻¹)‖ * (‖z‖ + ‖y‖) := hnorm
@@ -974,9 +953,7 @@ private lemma linearIndependent_of_finiteProjectionBound
   have hsingleton :
       ‖∑ j ∈ ({i} : Finset Index), a j • x j‖ ≤ K * ‖∑ j ∈ s, a j • x j‖ :=
     h_proj s ({i} : Finset Index) (by
-      intro j hj
-      have hji : j = i := by simpa using hj
-      simpa [hji] using hi) a
+      grind) a
   have hsingleton_zero : ∑ j ∈ ({i} : Finset Index), a j • x j = 0 := by
     have hnorm_le_zero : ‖∑ j ∈ ({i} : Finset Index), a j • x j‖ ≤ 0 := by
       simpa [hsum] using hsingleton
@@ -1043,9 +1020,7 @@ private lemma exists_coordMaps_of_finiteProjectionBound
       exact mul_nonneg (div_nonneg hK_nonneg (norm_nonneg _)) (norm_nonneg _)
     · have hnmem : n ∈ c.support := Finsupp.mem_support_iff.mpr hcn
       have hsingleton_subset : ({n} : Finset Index) ⊆ c.support := by
-        intro j hj
-        have hji : j = n := by simpa using hj
-        simpa [hji] using hnmem
+        grind
       have hproj_single :
           ‖∑ j ∈ ({n} : Finset Index), c j • x j‖
             ≤ K * ‖∑ j ∈ c.support, c j • x j‖ :=
@@ -1083,9 +1058,7 @@ private lemma exists_coordMaps_of_finiteProjectionBound
     exact LinearMap.extendOfNorm_eq h_dense (h_norm n) y
   let ftrunc : Index → 𝕜 := fun i => if i ∈ r then a i else 0
   have hftrunc : ∀ i, ftrunc i ≠ 0 → i ∈ r := by
-      intro i hi
-      by_contra hir
-      simp [ftrunc, hir] at hi
+      grind
   let l : Index →₀ 𝕜 := Finsupp.onFinset r ftrunc hftrunc
   have hl_apply_n : l n = if n ∈ r then a n else 0 := by
     by_cases hnmem : n ∈ r <;> simp [l, ftrunc, hnmem]
@@ -1174,16 +1147,9 @@ private lemma coordMaps_tendsto_finite_partial_sums_of_finiteProjectionBound
     calc
       P s (z : E)
           = ∑ n ∈ s, (if n ∈ c.support then c n else 0) • x n := by
-            refine Finset.sum_congr rfl ?_
-            intro n _hn
-            rw [hcoord n]
+            grind
       _ = ∑ n ∈ s, c n • x n := by
-            refine Finset.sum_congr rfl ?_
-            intro n hn
-            by_cases hnc : n ∈ c.support
-            · simp [hnc]
-            · have hcn : c n = 0 := by simpa [Finsupp.mem_support_iff] using hnc
-              simp [hnc, hcn]
+            grind
       _ = ∑ n ∈ c.support, c n • x n := by
             exact (Finset.sum_subset hzs (by
               intro n _hns hnc
@@ -1210,27 +1176,20 @@ private lemma coordMaps_tendsto_finite_partial_sums_of_finiteProjectionBound
       calc
         P s (z : E)
             = ∑ n ∈ s, (if n ∈ c.support then c n else 0) • x n := by
-              refine Finset.sum_congr rfl ?_
-              intro n _hn
-              rw [hcoord n]
+              grind
         _ = ∑ n ∈ s ∩ c.support, (if n ∈ c.support then c n else 0) • x n := by
               exact (Finset.sum_subset (Finset.inter_subset_left) (by
                 intro n _hns hninter
                 have hnc : n ∉ c.support := by
-                  intro hnc
-                  exact hninter (Finset.mem_inter.mpr ⟨_hns, hnc⟩)
+                  grind
                 simp [hnc])).symm
         _ = ∑ n ∈ s ∩ c.support, c n • x n := by
-              refine Finset.sum_congr rfl ?_
-              intro n hn
-              have hnc : n ∈ c.support := (Finset.mem_inter.mp hn).2
-              simp [hnc]
+              grind
     have hproj_bound :
         ‖∑ n ∈ s ∩ c.support, c n • x n‖
           ≤ K * ‖∑ n ∈ c.support, c n • x n‖ :=
       h_proj c.support (s ∩ c.support) (Finset.inter_subset_right) (fun n => c n)
-    simpa [hP_eq, hzsum]
-      using hproj_bound
+    grind
   have hP_bound :
       ∀ (s : Finset Index) (y : E), ‖P s y‖ ≤ K * ‖y‖ := by
     intro s y
@@ -1255,8 +1214,7 @@ private lemma coordMaps_tendsto_finite_partial_sums_of_finiteProjectionBound
     simp [P, map_sub, sub_smul, Finset.sum_sub_distrib]
   have hdecomp :
       P s y - y = P s (y - (z : E)) + ((z : E) - y) := by
-    rw [hP_sub, hPz]
-    abel
+    grind
   have hynorm_lt : ‖y - (z : E)‖ < δ := by
     simpa [dist_eq_norm, e] using hzdist
   calc
@@ -1269,8 +1227,7 @@ private lemma coordMaps_tendsto_finite_partial_sums_of_finiteProjectionBound
           ring
     _ < (K + 1) * δ := mul_lt_mul_of_pos_left hynorm_lt hK1_pos
     _ = ε := by
-          dsimp [δ]
-          field_simp [hK1_pos.ne']
+          grind
 
 omit [CharZero 𝕜] [CompleteSpace E] in
 /-- The extended coordinate maps reconstruct every vector unconditionally. -/

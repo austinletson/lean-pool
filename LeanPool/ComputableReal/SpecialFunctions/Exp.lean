@@ -78,12 +78,7 @@ lemma List_foldr_eq_finset_sum (x : ℚ) (n : ℕ) :
     simp only [List.range_succ, List.foldr_append, List.foldr_cons, List.foldr_nil, ih,
       Finset.range_add_one, Finset.mem_range, lt_self_iff_false, not_false_eq_true,
       Finset.sum_insert, Nat.factorial_succ, Nat.cast_mul, Nat.cast_add, Nat.cast_one]
-    rw [add_mul, one_mul, add_div, pow_succ]
-    suffices x * v / (↑n + 1) * x ^ n / ↑n.factorial = v * (x ^ n * x) / ((↑n + 1) * ↑n.factorial)
-      by
-      rw [this]
-      ring
-    field_simp
+    grind
 
 theorem expLb₀_pos {x : ℚ} (n : ℕ) (hx : 0 ≤ x) : 0 < expLb₀ x n := by
   rw [expLb₀, List_foldr_eq_finset_sum, Finset.range_add_one']
@@ -297,11 +292,8 @@ theorem expUb_lb_err (x : ℚ) (n : ℕ) :
   rcases lt_or_ge x 0 with hx | hx
   · have hlu := expUb_sub_expLb_of_neg n hx
     replace hlu := hlu.trans (le_mul_of_one_le_left (a := Real.exp ↑(-x)) ?_ ?_)
-    · simp only [abs_of_neg hx]
-      constructor <;> linarith
-    · rw [sub_nonneg, Real.one_le_exp_iff]
-      have : 0 < -x := by linarith
-      positivity
+    · grind
+    · grind
     · simp [hx.le]
   · have hlu := expUb_sub_expLb_of_nonneg n hx
     simp only [abs_of_nonneg hx]
@@ -314,15 +306,13 @@ private lemma err_antitone_n (x : ℝ) :
   apply Antitone.add_const
   conv_rhs =>
     equals ((Real.exp) ∘ (fun n ↦ (2 * |x| / n.factorial))) =>
-      ext x
-      rfl
+      grind
   refine Monotone.comp_antitone Real.exp_monotone ?_
   simp_rw [div_eq_mul_inv]
   apply Antitone.const_mul ?_ (by positivity)
   conv_rhs =>
     equals ((fun (x : ℕ) ↦ (↑x)⁻¹) ∘ (fun n ↦ n.factorial)) =>
-      ext x
-      rfl
+      grind
   intro x y h
   field_simp
   apply one_div_le_one_div_of_le
@@ -337,8 +327,7 @@ private lemma inverr_monotone_x (ε : ℝ) (hε : 0 < ε) :
     exact fun x_1 a => a
   · conv_lhs =>
       equals ((·⁻¹) ∘ Real.log ∘ (1 + ε / Real.exp ·)) =>
-        ext x
-        rfl
+        grind
     suffices AntitoneOn (1 + ε / Real.exp ·) (Set.Ici 0) by
       intro x (hx : 0 ≤ x) y (hy : 0 ≤ y) hxy
       specialize this hx hy hxy
@@ -353,8 +342,7 @@ private lemma inverr_monotone_x (ε : ℝ) (hε : 0 < ε) :
     apply AntitoneOn.const_add
     intro x (hx : 0 ≤ x) y (hy : 0 ≤ y) hxy
     refine div_le_div₀ hε.le le_rfl (Real.exp_pos _) (Real.exp_le_exp.mpr hxy)
-  · intro x (h : 0 ≤ x)
-    positivity
+  · grind
   · intros
     rw [inv_nonneg, Real.log_nonneg_iff]
     · rw [le_add_iff_nonneg_right]; positivity
@@ -389,10 +377,7 @@ private lemma exists_n_bound_err (a b : ℝ) {ε : ℝ} (hε : 0 < ε) :
       · rw [Rat.cast_abs]
         exact inverr_monotone_x ε hε (abs_nonneg (y : ℝ)) (show 0 ≤ |a| ⊔ |b| by positivity)
           (abs_le_max_abs_abs hy₁ hy₂)
-      · apply le_of_eq
-        apply MonotoneOn.map_max (inverr_monotone_x ε hε)
-        · exact abs_nonneg a
-        · exact abs_nonneg b
+      · grind
     · unfold v₃
       trans ↑⌈v₁ ⊔ v₂⌉
       · exact Int.le_ceil (v₁ ⊔ v₂)

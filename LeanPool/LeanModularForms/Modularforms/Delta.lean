@@ -78,8 +78,7 @@ lemma Discriminant_T_invariant : (Δ ∣[(12 : ℤ)] ModularGroup.T) = Δ := by
   apply tprod_congr
   intro b
   have := exp_periodo z (b+1)
-  simp only [Nat.cast_add, Nat.cast_one] at this
-  rw [this]
+  grind
 
 
 /-This is the hard one. -/
@@ -90,8 +89,7 @@ lemma Discriminant_S_invariant : (Δ ∣[(12 : ℤ)] ModularGroup.S) = Δ := by
   simp only [comp_apply, Pi.smul_apply, Pi.mul_apply, smul_eq_mul,
     Int.reduceNeg, zpow_neg] at *
   have hi : -1/(z.1 : ℂ) = (-(z : ℂ))⁻¹ := by
-    rw [neg_div, ← neg_inv]
-    simp
+    grind
   rw [hi] at he
   rw [he, mul_pow, mul_pow, inv_pow, csqrt_I]
   simp only [inv_one, one_mul]
@@ -158,9 +156,7 @@ lemma atImInfy_pnat_mono (S : Set ℍ) (hS : S ∈ atImInfty) (B : ℝ) : ∃ A 
         exact one_le
       exact ⟨le_trans hs2.1 ((le_mul_iff_one_le_left s.2).mpr hn),
         le_trans hs2.2 ((le_mul_iff_one_le_left s.2).mpr hn)⟩
-    refine ⟨?_, K⟩
-    simp only [sup_le_iff] at K
-    apply hA _ K.1
+    grind
   · simp only [ inter_mem_iff, hS2, true_and]
     apply I_in_atImInfty
 
@@ -192,8 +188,7 @@ theorem log_one_neg_cexp_tendto_zero (k : ℕ) :
   have : (fun x : ℍ ↦ Complex.log ((1 - cexp (2 * ↑π * Complex.I * (↑k + 1) * ↑x)) ^ 24)) =
       (Complex.log) ∘ ((fun x => x ^ 24) ∘ (fun x : ℍ ↦ ((1 - cexp (2 * π * Complex.I *
       (k + 1) * x))))) := by
-    ext x
-    simp
+    grind
   rw [this]
   apply Tendsto.comp (y := 𝓝 1)
   · nth_rw 1 [← Complex.log_one]
@@ -363,13 +358,7 @@ lemma Delta_isTheta_rexp : Delta =Θ[atImInfty] (fun τ => Real.exp (-2 * π * �
     mul_im, zero_mul, add_zero, Complex.I_im, mul_one, sub_self, coe_re, coe_im, zero_sub]
   have hm : 0 ≤ 2 * rexp (-(2 * π * z.im)) := by positivity
   have h4 := mul_le_mul_of_nonneg_left hA3 hm
-  conv at h4 =>
-    enter [1]
-    rw [mul_comm, ← mul_assoc]
-    simp
-  simp only [gt_iff_lt, one_div, Nat.ofNat_pos, mul_nonneg_iff_of_pos_left, ge_iff_le] at *
-  rw [← mul_assoc]
-  exact h4
+  grind
 
 lemma CuspForm_apply (k : ℤ) (f : CuspForm (CongruenceSubgroup.Gamma 1) k) (z : ℍ) :
   f.toFun z = f z := by rfl

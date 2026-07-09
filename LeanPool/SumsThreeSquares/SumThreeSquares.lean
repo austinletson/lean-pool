@@ -198,8 +198,7 @@ lemma exists_odd_sq_mod_prime_of_jacobi_eq_one (m q : ℕ) (hq_prime : Nat.Prime
   · refine ⟨b₀ + q, ?_, ?_⟩ <;>
       simp_all +decide [Int.ModEq, ← even_iff_two_dvd, parity_simps]
     · simp +decide [← hb₀, ← ZMod.intCast_eq_intCast_iff']
-    · norm_num [Int.add_emod, Int.even_iff.mp hb₀_odd,
-        show (q : ℤ) % 2 = 1 from mod_cast hq_prime.eq_two_or_odd.resolve_left (by aesop_cat)]
+    · grind
 
 lemma jacobi_neg_m_q (m : ℕ) (q : ℕ) (hm_mod : m % 8 = 3) (hq_mod : q % 4 = 1)
     (h_jacobi : ∀ p, p ∣ m → Nat.Prime p → jacobiSym (-2 * q) p = 1) :
@@ -288,8 +287,7 @@ lemma exists_t (m : ℕ) (q : ℕ) (hm_sq : Squarefree m) (hm_mod : m % 8 = 3)
             obtain ⟨left, right⟩ := hp
             obtain ⟨left_1, right⟩ := right
             apply Odd.of_dvd_nat _ left_1
-            rw [Nat.odd_iff]
-            omega
+            grind
           · rw [Nat.coprime_primes] <;>
             simp_all only [Int.reduceNeg, neg_mul, Nat.mem_primeFactors, ne_eq, Int.natAbs_natCast]
             obtain ⟨left, right⟩ := hp
@@ -470,15 +468,7 @@ lemma quad_form_decomposition (m q : ℕ) (b h x y : ℤ) (hq : 0 < q)
   have hb2 : (b : ℝ) ^ 2 = 4 * q * h - m := by
     have h1 : (b : ℤ) ^ 2 = 4 * q * h - m := by linarith [hbqm]
     exact_mod_cast h1
-  have hb2' : (b : ℝ) ^ 2 + m = 4 * q * h := by linarith [hb2]
-  field_simp [hsqrt_2q_pos]
-  rw [show (Real.sqrt 2 : ℝ) ^ 2 = 2 by
-      nlinarith [Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 2)],
-    show (Real.sqrt q : ℝ) ^ 2 = q by
-      nlinarith [Real.sq_sqrt (by positivity : (0 : ℝ) ≤ (q : ℝ))],
-    hsqrt_m_sq]
-  ring_nf
-  nlinarith [sq_nonneg (x : ℝ), sq_nonneg (y : ℝ), hb2', hb2]
+  grind
 
 
 private lemma exists_lattice_xyz_lt_two_m (m q : ℕ) (t b : ℤ) (hm : 0 < m) (hq : 0 < q) :
@@ -560,11 +550,7 @@ private lemma exists_lattice_xyz_lt_two_m (m q : ℕ) (t b : ℤ) (hm : 0 < m) (
           ((linearMapMEuclidean m q t b) x).ofLp i := fun _ => rfl
       simp only [heq]
       rw [h_expand.1, h_expand.2.1, h_expand.2.2]
-      ring_nf
-      norm_num [ne_of_gt, hq, hm]
-      ring_nf
-      norm_num [hq.ne', hm.ne']
-      ring
+      grind
     · simp +zetaDelta only [LinearMap.coe_comp,
         ContinuousLinearEquiv.toLinearEquiv_symm, LinearEquiv.coe_coe,
         ContinuousLinearEquiv.coe_symm_toLinearEquiv,
@@ -632,23 +618,15 @@ private lemma xyz_zero_of_sum_sq_eq_zero (m q : ℕ) (t b x y z : ℤ)
     nlinarith [hS0sq]
   have hx0R : (x : ℝ) = 0 := by
     have hcoef : (Real.sqrt 2 * Real.sqrt q : ℝ) ≠ 0 := by positivity
-    have hlin : (Real.sqrt 2 * Real.sqrt q : ℝ) * x = 0 := by
-      simpa [hy0R] using hS0
-    exact (mul_eq_zero.mp hlin).resolve_left hcoef
+    grind
   have hx0 : x = 0 := by exact_mod_cast hx0R
   have hR0sq : (2 * ↑t * ↑q * ↑x + ↑t * ↑b * ↑y + ↑m * ↑z : ℝ) ^ 2 = 0 := by
-    nlinarith [
-      sq_nonneg
-        (Real.sqrt 2 * Real.sqrt q * x +
-          (b : ℝ) / (Real.sqrt 2 * Real.sqrt q) * y),
-      sq_nonneg (Real.sqrt m / (Real.sqrt 2 * Real.sqrt q) * y), hsum0]
+    grind
   have hR0 : (2 * ↑t * ↑q * ↑x + ↑t * ↑b * ↑y + ↑m * ↑z : ℝ) = 0 := by
     nlinarith [hR0sq]
   have hz0R : (z : ℝ) = 0 := by
     have hmne : (m : ℝ) ≠ 0 := by exact_mod_cast (Nat.ne_of_gt hm)
-    have hlin : (m : ℝ) * z = 0 := by
-      simpa [hx0R, hy0R] using hR0
-    exact (mul_eq_zero.mp hlin).resolve_left hmne
+    grind
   have hz0 : z = 0 := by exact_mod_cast hz0R
   exact ⟨hx0, hy0, hz0⟩
 
@@ -700,11 +678,7 @@ lemma exists_Rv_from_Minkowski (m q : ℕ) (t b h : ℤ) (hm : 0 < m) (hq : 0 < 
       have hm_pos' : (0 : ℤ) < m := by exact_mod_cast hm
       nlinarith [hk, h_cases, hm_pos']
     have hk_zero_or_one : k = 0 ∨ k = 1 := by omega
-    rcases hk_zero_or_one with rfl | rfl
-    · left
-      nlinarith [hk]
-    · right
-      nlinarith [hk]
+    grind
   rcases h_cases with h_case1 | h_case2
   · -- If $R^2 + 2v = 0$, then `x = y = z = 0`.
     have h_contra : x = 0 ∧ y = 0 ∧ z = 0 := by
@@ -810,9 +784,7 @@ lemma jacobi_neg_d_of_odd_padicVal (p : ℕ) (a d b' : ℤ)
           rw [hfactor, padicValInt.mul (mul_ne_zero hpp hpp) hsum_ne,
             padicValInt.mul hpp hpp]
           ring
-        rw [hval, Nat.even_iff] at hodd
-        rw [Nat.even_iff]
-        omega
+        grind
       -- The new pair is strictly smaller.
       have hab : ((p : ℤ) * a').natAbs = p * a'.natAbs := by
         rw [Int.natAbs_mul, Int.natAbs_natCast]
@@ -821,9 +793,7 @@ lemma jacobi_neg_d_of_odd_padicVal (p : ℕ) (a d b' : ℤ)
       have hlt : a'.natAbs + k.natAbs < n := by
         rw [← hn, hab, hkb, ← Nat.left_distrib]
         rcases Nat.eq_zero_or_pos (a'.natAbs + k.natAbs) with hz | hpos
-        · obtain ⟨ha0, hk0⟩ := Nat.add_eq_zero_iff.mp hz
-          rw [Int.natAbs_eq_zero] at ha0 hk0
-          exact absurd (by rw [ha0, hk0]; ring) hsum_ne
+        · grind
         · exact lt_mul_of_one_lt_left hpos hp.one_lt
       exact ih _ hlt a' k rfl hodd'
     · exact jacobi_neg_d_of_dvd_sq_add p a d b' hp hp_odd hp_dvd hp_not_dvd_d h_div_b'
@@ -882,8 +852,7 @@ lemma p_mod4_eq1_of_dvd_v_not_dvd_m (p : ℕ) (q : ℤ) (b h x y v R m : ℤ)
   have h_jacobi_neg_1 : jacobiSym (-1) p = 1 := by
     have h_mul : jacobiSym (-m) p = jacobiSym (-1) p * jacobiSym m p := by
       simpa [neg_mul] using (jacobiSym.mul_left (-1) m p)
-    rw [h_mul, h_jacobi_m] at h_jacobi_neg_m
-    simpa using h_jacobi_neg_m
+    grind
   rw [jacobiSym.at_neg_one] at h_jacobi_neg_1
   · rw [ZMod.χ₄_nat_mod_four] at h_jacobi_neg_1
     have := Nat.mod_lt p zero_lt_four
@@ -906,8 +875,7 @@ lemma p_mod4_of_dvd_v_dvd_m (p : ℕ) (q : ℕ) (b h x y : ℤ) (R v : ℤ) (m :
   have hp_2qx_by : (p : ℤ) ∣ (2 * q * x + b * y) := by
     have hp_2qx_by : (p : ℤ) ∣ ((2 * q * x + b * y) ^ 2 + m * y ^ 2) := by
       have heq : (2 * q * x + b * y) ^ 2 + (m : ℤ) * y ^ 2 = 4 * q * v := by
-        rw [hv]
-        linear_combination hbqm * y ^ 2
+        grind
       rw [heq]
       exact hpv.mul_left (4 * q)
     haveI := Fact.mk hp
@@ -1018,10 +986,6 @@ theorem blueprint_case_mod8_eq3 (m : ℕ) (hm_sq : Squarefree m) (hm_pos : 0 < m
   obtain ⟨a, b, c, habc⟩ := habc
   refine ⟨a.natAbs, b.natAbs, c.natAbs, ?_⟩
   apply Int.ofNat.inj
-  calc
-    ((a.natAbs ^ 2 + b.natAbs ^ 2 + c.natAbs ^ 2 : ℕ) : ℤ)
-        = a ^ 2 + b ^ 2 + c ^ 2 := by
-          norm_num [Int.natCast_natAbs, sq_abs]
-    _ = (m : ℤ) := by simpa using habc.symm
+  grind
 
 end LeanPool.SumsThreeSquares

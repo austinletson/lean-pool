@@ -332,8 +332,7 @@ theorem countable_avoidance
     intro n
     induction n with
     | zero => exact Nat.zero_le _
-    | succ k ih => have := hq_inc k
-                   omega
+    | succ k ih => grind
   have hu_diff : ∀ n, u_seq (n + 1) - u_seq n ∈ 𝔪 ^ q_seq n :=
     fun n => Ideal.mul_le_left
       (buildSeqDiff I hC_prime hC_ne_max exists_avoid P_of r_of hP_mem n)
@@ -363,8 +362,7 @@ theorem countable_avoidance
         rw [this]
         exact (𝔪 ^ a).add_mem
           (Ideal.pow_le_pow_right (by
-                                     have := hq_ge k
-                                     omega) (hu_diff k))
+                                     grind) (hu_diff k))
           (ih hak)
       · have : a = k + 1 := by omega
         subst this
@@ -401,13 +399,7 @@ theorem countable_avoidance
       induction b with
       | zero => simp [show a = 0 from by omega]
       | succ k ih =>
-        by_cases hak : a ≤ k
-        · exact le_trans (ih hak) (by
-                                     have := hq_inc k
-                                     omega)
-        · exact le_of_eq (show q_seq a = q_seq (k + 1) by
-                            congr 1
-                            omega)
+        grind
     have hu_cauchy_q : ∀ a b, a ≤ b → u_seq b - u_seq a ∈ 𝔪 ^ q_seq a := by
       intro a b hab
       induction b with
@@ -423,9 +415,7 @@ theorem countable_avoidance
           exact (𝔪 ^ q_seq a).add_mem
             (Ideal.pow_le_pow_right (hq_mono a k hak) (hu_diff k))
             (ih hak)
-        · have hak1 : a = k + 1 := by omega
-          subst hak1
-          simp [(𝔪 ^ q_seq (k + 1)).zero_mem]
+        · grind
     have hL_diff_q : L - u_seq (n + 1) ∈ 𝔪 ^ q_seq (n + 1) := by
       have : L - u_seq (n + 1) =
         (L - u_seq (q_seq (n + 1))) + (u_seq (q_seq (n + 1)) - u_seq (n + 1)) := by ring
@@ -434,14 +424,10 @@ theorem countable_avoidance
         (hL_diff (q_seq (n + 1)))
         (hu_cauchy_q (n + 1) (q_seq (n + 1)) (hq_ge (n + 1)))
     -- Apply separation
-    have := hu_sep n (L - u_seq (n + 1)) hL_diff_q
-    rwa [show u_seq (n + 1) + (L - u_seq (n + 1)) = L from by ring] at this
+    grind
   exact ⟨L, hL_mem, fun P hP r hr => by
     obtain ⟨n, hn⟩ := henum ⟨(P, r), Set.mem_prod.mpr ⟨hP, hr⟩⟩
-    have hPn : P_of n = P := congr_arg (·.val.1) hn
-    have hrn : r_of n = r := congr_arg (·.val.2) hn
-    rw [← hPn, ← hrn]
-    exact hL_avoids n⟩
+    grind⟩
 
 /-!
 ## Uncountable Avoidance (Heitmann Lemma 3)
@@ -494,16 +480,14 @@ lemma ideal_avoidance_of_card_lt_aux [IsNoetherianRing T] :
       exact Ideal.span_le.mpr fun x hx => by
         rw [Finset.mem_coe] at hx
         by_cases hxg : x = g
-        · subst hxg
-          exact hgP
+        · grind
         · exact hJP (Ideal.subset_span
             (Finset.mem_coe.mpr (Finset.mem_erase.mpr ⟨hxg, hx⟩)))
     have hS_card : Cardinal.mk S_bad < Cardinal.mk (IsLocalRing.ResidueField T) :=
       lt_of_le_of_lt (Cardinal.mk_le_mk_of_subset Set.inter_subset_left) hC_card
     obtain ⟨s_elem, hs_mem, hs_avoid⟩ := ih J S_bad
       (fun P ⟨hPC, _⟩ => hC_prime P hPC) hS_card hJ_notI
-      ⟨s.erase g, rfl, by rw [Finset.card_erase_of_mem hg]
-                          omega⟩
+      ⟨s.erase g, rfl, by grind⟩
     have hs_in_I : s_elem ∈ I := hJ_le_I hs_mem
     -- Line argument: for each P ∈ C, at most one residue class of a puts g + a*s_elem ∈ P
     let forbidden : ↑C → IsLocalRing.ResidueField T :=
@@ -587,8 +571,7 @@ theorem uncountable_avoidance [IsNoetherianRing T]
         Set.mem_biUnion hP htP
       rw [Ideal.subset_union_prime_finite hfin (⊥ : Ideal T) ⊥
         (fun P hP _ _ => hC_prime P hP)] at hsub
-      obtain ⟨P, hP, hle⟩ := hsub
-      exact hI P hP hle
+      grind
     · -- Infinite C: line argument
       obtain ⟨P₀, hP₀⟩ := hCne
       obtain ⟨v, hv_mem, hv_not⟩ := Set.not_subset.mp (hI P₀ hP₀)
@@ -611,8 +594,7 @@ theorem uncountable_avoidance [IsNoetherianRing T]
               exact Set.mem_biUnion (Set.mem_inter hPC hvP) htP
             rw [Ideal.subset_union_prime_finite hCv_fin (⊥ : Ideal T) ⊥
               (fun P hP _ _ => hC_prime P (Set.mem_of_mem_inter_left hP))] at hsub
-            obtain ⟨P, hP, hle⟩ := hsub
-            exact hI P (Set.mem_of_mem_inter_left hP) hle
+            grind
           let π := Ideal.Quotient.mk (IsLocalRing.maximalIdeal T)
           let g : ↑C → IsLocalRing.ResidueField T := fun ⟨P, _⟩ =>
             if h : ∃ a : T, v + a * w' ∈ (P : Ideal T) then π h.choose else 0

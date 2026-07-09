@@ -29,10 +29,7 @@ theorem sup_equiv_of_equivs (ha : a ≈ c) (hb : b ≈ c) : a ⊔ b ≈ c := by
   replace hi₁ := hi₁ j (Nat.max_le.mp hj).1
   replace hi₂ := hi₂ j (Nat.max_le.mp hj).2
   dsimp at hi₁ hi₂ ⊢
-  rw [max_def]
-  rw [abs_ite_le] at hi₁ hi₂ ⊢
-  split_ifs at hi₁ hi₂ ⊢
-  all_goals linarith
+  grind
 
 theorem equiv_sup_of_equivs (ha : c ≈ a) (hb : c ≈ b) : c ≈ a ⊔ b :=
   Setoid.symm (sup_equiv_of_equivs (Setoid.symm ha) (Setoid.symm hb))
@@ -48,10 +45,7 @@ theorem inf_equiv_of_equivs (ha : a ≈ c) (hb : b ≈ c) : a ⊓ b ≈ c := by
   replace hi₁ := hi₁ j (Nat.max_le.mp hj).1
   replace hi₂ := hi₂ j (Nat.max_le.mp hj).2
   dsimp at hi₁ hi₂ ⊢
-  rw [min_def]
-  rw [abs_ite_le] at hi₁ hi₂ ⊢
-  split_ifs at hi₁ hi₂ ⊢
-  all_goals linarith
+  grind
 
 /-- Dropping the first n terms of a Cauchy sequence to get a new sequence. -/
 def drop (a : CauSeq α abs) (n : ℕ) : CauSeq α abs :=

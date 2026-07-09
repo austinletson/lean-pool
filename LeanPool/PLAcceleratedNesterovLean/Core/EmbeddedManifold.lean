@@ -614,8 +614,7 @@ private lemma compact_graph_nearest {d : ℕ}
         _ < 3 * r + δ / 2 := by
             have h1 : ‖(u : E d)‖ = dist u 0 := (dist_zero_right _).symm
             have h2 : ‖(φ u : E d)‖ = dist (φ u) 0 := (dist_zero_right _).symm
-            rw [h1, h2]
-            exact add_lt_add_of_le_of_lt hu_norm hφ_bound
+            grind
         _ < δ := by linarith only [h3r_lt_δ2, hφ_bound, hu_norm]
     exact (hchart (graphMap u) h_in_ball).mpr ⟨u, rfl⟩
   have hm_in_K : m ∈ K := by
@@ -648,8 +647,7 @@ private lemma compact_graph_nearest {d : ℕ}
           ⟨u_q', Metric.mem_closedBall.mpr huq'_dist, huq'_graph.symm⟩
         rw [← hp₀_infK]
         exact Metric.infDist_le_dist_of_mem hq_K
-      · push Not at hq
-        linarith only [hq, hp₀_dist_bound]
+      · grind
     · exact Metric.infDist_le_dist_of_mem hp₀_S
   have hp₀_near_m : dist p₀ m < 2 * r := by
     calc dist p₀ m ≤ dist p₀ x + dist x m := dist_triangle _ _ _
@@ -745,10 +743,7 @@ private theorem local_tubular_of_graph_chart
     intro q ⟨hq_S, hq_dist⟩
     have hq_near_m : dist q m < 2 * r := by
       have hxq : dist x q < r := by
-        calc dist x q ≤ dist x m := by
-                rw [hq_dist]
-                exact Metric.infDist_le_dist_of_mem hm
-          _ < r := hxm
+        grind
       calc dist q m ≤ dist q x + dist x m := dist_triangle _ _ _
         _ = dist x q + dist x m := by rw [dist_comm]
         _ < r + r := add_lt_add hxq hxm
@@ -760,8 +755,7 @@ private theorem local_tubular_of_graph_chart
         (ε_cont := ε_cont) (r := r) (δ := δ) hφC2 hF_zero
         hε_ift_explicit hε_cont hchart
         h3r_lt_δ h3r_lt_εi h3r_lt_εc hxm hq_S hq_near_m hq_dist hq_in_chart
-    rw [hu₀_graph, h_impl_u₀.symm.trans h_impl_uq]
-    exact huq_graph
+    grind
 
 /-- A C² smooth embedded submanifold has local balls on which the nearest point
     in the embedded range exists and is unique. -/
@@ -851,10 +845,7 @@ private theorem local_tubular_of_smooth_embedding
     intro q ⟨hq_S, hq_dist⟩
     have hq_near_m : dist q m < 2 * r := by
       have hxq : dist x q < r := by
-        calc dist x q ≤ dist x m := by
-                rw [hq_dist]
-                exact Metric.infDist_le_dist_of_mem hm
-          _ < r := hxm
+        grind
       calc dist q m ≤ dist q x + dist x m := dist_triangle _ _ _
         _ = dist x q + dist x m := by rw [dist_comm]
         _ < r + r := add_lt_add hxq hxm
@@ -866,8 +857,7 @@ private theorem local_tubular_of_smooth_embedding
         (ε_cont := ε_cont) (r := r) (δ := δ) hφC2 hF_zero
         hε_ift_explicit hε_cont hchart
         h3r_lt_δ h3r_lt_εi h3r_lt_εc hxm hq_S hq_near_m hq_dist hq_in_chart
-    rw [hu₀_graph, h_impl_u₀.symm.trans h_impl_uq]
-    exact huq_graph
+    grind
 
 /-- Given local unique-projection balls around every point of `S`, construct a
     general tubular sub-neighborhood. -/

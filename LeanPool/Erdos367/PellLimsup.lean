@@ -305,11 +305,9 @@ lemma euler_two_mod (p : ℕ) (hp : p.Prime) (hp5 : p % 8 = 5) :
   -- Use Legendre symbol to get $(2/p) = -1$.
   have h_legendre : (jacobiSym 2 p) = -1 := by
     have hp_odd : Odd p := hp.odd_of_ne_two <| by
-      rintro rfl
-      norm_num at hp5
+      grind
     rw [jacobiSym.at_two hp_odd, ZMod.χ₈_nat_eq_if_mod_eight]
-    have hp2 : p % 2 = 1 := Nat.odd_iff.mp hp_odd
-    simp [hp2, hp5]
+    grind
   -- By Euler's criterion, we have $2^{p/2} \equiv jacobiSym 2 p \pmod p$.
   have h_euler : 2 ^ (p / 2) ≡ jacobiSym 2 p [ZMOD p] := by
     haveI := Fact.mk hp; simp +decide [ ← ZMod.intCast_eq_intCast_iff, jacobiSym ] ;
@@ -426,17 +424,14 @@ lemma pell_boost (p : ℕ) (hp : p.Prime) (hp5 : p % 8 = 5) :
       (p : ℤ) ^ 2 ∣ ((⟨1, 1⟩ : ℤ√2) ^ (2 * L)).re + 1 ∧
         (p : ℤ) ^ 2 ∣ ((⟨1, 1⟩ : ℤ√2) ^ (2 * L)).im := by
     convert hensel_lift p hp ( by
-      rintro rfl
-      norm_num at hp5 ) ( ⟨ 1, 1 ⟩ ^ ( p + 1 ) ) _ _ using 1;
+      grind ) ( ⟨ 1, 1 ⟩ ^ ( p + 1 ) ) _ _ using 1;
     · rw [← pow_mul, show 2 * L = (p + 1) * p by
         nlinarith [Nat.div_mul_cancel
           (show 2 ∣ p + 1 from Nat.dvd_of_mod_eq_zero (by omega))]]
     · rw [← pow_mul, show 2 * L = (p + 1) * p by
         nlinarith [Nat.div_mul_cancel
           (show 2 ∣ p + 1 from even_iff_two_dvd.mp (by
-            simpa [parity_simps] using hp.eq_two_or_odd'.resolve_left (by
-              rintro rfl
-              norm_num at hp5)))]]
+            grind))]]
     · exact eps_succ_mod p hp hp5 |>.1;
     · exact eps_succ_mod p hp hp5 |>.2;
   -- By alpha_pow, α^L = ⟨pellX L, 2*pellY L⟩.
@@ -472,8 +467,7 @@ lemma pell_sq_plus_one_div (L : ℕ) (m : ℤ) (_hm : 0 < m)
           | succ j ih₂ =>
             simp only [Nat.mul_succ, pellX_succ, pellY_succ]
             constructor <;> [rw [ih₂.2]; rw [ih₂.2]] <;> nlinarith [pell_identity j]
-        simp only [Nat.mul_succ, pellX_succ, pellY_succ]
-        rw [h_ind j |>.2]; nlinarith [pell_identity j]
+        grind
     rw [mul_comm, h_double]
   rw [show (L + 1) / 2 * 2 = L + 1 by omega] at h_double
   -- Now: 4*(pellX((L+1)/2)² + 1) = 2*(pellX(L+1) + 3) = 6*(pellX L + 1) + 16*pellY L
@@ -684,9 +678,7 @@ lemma finset_coprime_sq_dvd (S : Finset ℕ) (m : ℕ)
                   (hS x (Finset.mem_insert_of_mem hx))).mp hpx_dvd
                 simpa [hpx] using hx
       · exact hdvd p (Finset.mem_insert_self p S)
-      · exact ih
-          (fun q hq => hS q (Finset.mem_insert_of_mem hq))
-          (fun q hq => hdvd q (Finset.mem_insert_of_mem hq))
+      · grind
 
 /-
 Upper bound: `pellN j < 11 ^ (2 * j)` for `j ≥ 1`.
@@ -711,8 +703,7 @@ lemma prod_Mp_odd (S : Finset ℕ) (hS : ∀ p ∈ S, p % 8 = 5) :
   rw [Finset.prod_nat_mod, Finset.prod_eq_one] <;> norm_num
   intro p hp
   rw [← Nat.mod_add_div p 8, hS p hp]
-  norm_num [Nat.add_mod, Nat.mul_mod]
-  omega
+  grind
 
 /-
 Product of `(p+1)/2 * p` is positive when `S` is nonempty and elements are primes ≡ 5 mod 8.
@@ -796,9 +787,7 @@ lemma erdos367_key (j₀ : ℕ) :
         intro p hp
         have hp5 := (hS p hp).2
         have hp5le : 5 ≤ p := by
-          rcases Nat.lt_or_ge p 5 with h | h
-          · interval_cases p <;> omega
-          · exact h
+          grind
         have h1 : 3 ≤ (p + 1) / 2 := by omega
         calc 2 ≤ 3 * 5 := by norm_num
           _ ≤ (p + 1) / 2 * p := Nat.mul_le_mul h1 hp5le
@@ -806,16 +795,12 @@ lemma erdos367_key (j₀ : ℕ) :
         calc 2 ^ S.card = ∏ _p ∈ S, 2 := by rw [Finset.prod_const]
           _ ≤ L := Finset.prod_le_prod' hfac
       have hcard_le : S.card ≤ 2 ^ S.card := Nat.lt_two_pow_self.le
-      have hj0_le_L : 2 * j₀ ≤ L := le_trans hS_card_j (le_trans hcard_le h2card)
-      omega
+      grind
     -- Show L is odd and L > 0.
     have hL_odd : L % 2 = 1 := by
       exact prod_Mp_odd S fun p hp => hS p hp |>.2
     have hL_pos : 0 < L := by
-      exact Finset.prod_pos fun p hp =>
-        mul_pos
-          (Nat.div_pos (by linarith [Nat.Prime.two_le (hS p hp |>.1)]) zero_lt_two)
-          (Nat.Prime.pos (hS p hp |>.1))
+      grind
     have hj_pos : 0 < j := by
       exact Nat.div_pos ( by linarith ) zero_lt_two
     have h_prod_sq_dvd : S.prod (fun p => p ^ 2) ∣ powerfulPart (pellN j + 2) := by
@@ -835,12 +820,10 @@ lemma erdos367_key (j₀ : ℕ) :
           intro p hp
           nlinarith only [show (p : ℝ) ≥ 5 by
             exact_mod_cast le_of_not_gt fun h => by
-              have := hS p hp
-              interval_cases p <;> trivial]
+              grind]
         have h_lower_nonneg :
             ∀ p ∈ S, 0 ≤ (5 / 3 : ℝ) * (((p : ℝ) + 1) / 2 * p) := by
-          intro p hp
-          positivity
+          grind
         have h_lower_le_sq :
             (∏ p ∈ S, (5 / 3 : ℝ) * (((p : ℝ) + 1) / 2 * p)) ≤
               ∏ p ∈ S, (p : ℝ) ^ 2 :=

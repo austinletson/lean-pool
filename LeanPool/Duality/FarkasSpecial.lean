@@ -122,8 +122,7 @@ lemma Multiset.sum_eq_EF_bot_iff (s : Multiset F∞) : s.sum = (⊥ : F∞) ↔ 
       rw [Multiset.sum_cons] at hs
       match a with
       | ⊥ =>
-        left
-        rfl
+        grind
       | ⊤ =>
         match hm : m.sum with
         | ⊥ =>
@@ -158,8 +157,7 @@ lemma Multiset.sum_eq_EF_bot_iff (s : Multiset F∞) : s.sum = (⊥ : F∞) ↔ 
           exact EF.coe_neq_bot _ hs
   · induction s using Multiset.induction with
     | empty =>
-      exfalso
-      exact Multiset.notMem_zero ⊥ hs
+      grind
     | cons a m ih =>
       rw [Multiset.sum_cons]
       rw [Multiset.mem_cons] at hs
@@ -171,8 +169,7 @@ lemma Multiset.sum_eq_EF_top {s : Multiset F∞} (htop : ⊤ ∈ s) (hbot : ⊥ 
     s.sum = (⊤ : F∞) := by
   induction s using Multiset.induction with
   | empty =>
-    exfalso
-    exact Multiset.notMem_zero ⊤ htop
+    grind
   | cons a m ih =>
     rw [Multiset.sum_cons]
     rw [Multiset.mem_cons] at htop
@@ -266,8 +263,7 @@ lemma no_bot_has_top_dotWeig_pos {v : I → F∞} (hv : ∀ a, v a ≠ ⊥) {i :
   · rw [Multiset.mem_map]
     use i
     constructor
-    · rw [Finset.mem_val]
-      apply Finset.mem_univ
+    · grind
     · rw [hvi]
       exact EF.pos_smul_top hwi
   · intro contr
@@ -393,8 +389,7 @@ private lemma extendedFarkas.bwd_solution {A : Matrix I J F∞} {b : I → F∞}
       · erw [←Finset.sum_coe_sort_eq_attach]
         rw [Finset.sum_toE]
         apply Finset.subtype_univ_sum_eq_subtype_univ_sum
-        · ext
-          simp
+        · grind
         · intro j hj _
           rw [mul_comm]
           simp only [extendedFarkas.A', Matrix.of_apply]
@@ -465,12 +460,7 @@ private lemma extendedFarkas.fwd_witness {A : Matrix I J F∞} {b : I → F∞}
       have btop : ∃ j : J, A i j = ⊤ := by
         use j
         simpa using contr
-      refine hAi ⟨i, ?_, btop⟩
-      push Not at i_not_I'
-      apply i_not_I'
-      intro bi_eq_top
-      apply hAb
-      use i
+      grind
     intro j'
     have inequality : ∑ i : I, y i • (-Aᵀ) j'.val i ≤ 0 := ineqalities j'
     rw [Finset.univ_sum_of_zero_when_not
@@ -485,18 +475,13 @@ private lemma extendedFarkas.fwd_witness {A : Matrix I J F∞} {b : I → F∞}
         split <;> rename_i hAij
         · rewrite [hAij, mul_comm]
           rfl
-        · exfalso
-          apply i'.property.right
-          exact hAij
-        · exfalso
-          apply j'.property
-          exact hAij
+        · grind
+        · grind
       · simp [EF.coe_zero]
     · intro i hi
       rw [h0 i hi]
       apply EF.zero_smul_nonbot
-      apply hnb
-      exact hi
+      grind
   · unfold dotWeig at sharpine
     rw [Finset.univ_sum_of_zero_when_not
       (fun i : I => b i ≠ ⊤ ∧ ∀ (j : J), A i j ≠ ⊥)] at sharpine
@@ -507,19 +492,13 @@ private lemma extendedFarkas.fwd_witness {A : Matrix I J F∞} {b : I → F∞}
         split <;> rename_i hbi
         · rewrite [hbi, mul_comm]
           rfl
-        · exfalso
-          apply hbot
-          use i'
-          exact hbi
-        · exfalso
-          apply i'.property.left
-          exact hbi
+        · grind
+        · grind
       · simp [EF.coe_zero]
     · intro i hi
       rw [h0 i hi]
       apply EF.zero_smul_nonbot
-      intro contr
-      exact hbot ⟨i, contr⟩
+      grind
 
 private lemma extendedFarkas.bwd_witness {A : Matrix I J F∞} {b : I → F∞}
     (hbot : ¬ ∃ i : I, b i = ⊥)
@@ -545,8 +524,7 @@ private lemma extendedFarkas.bwd_witness {A : Matrix I J F∞} {b : I → F∞}
         · simp only [Matrix.mulVec, dotProduct, Matrix.neg_apply, Matrix.transpose_apply]
           rw [Finset.sum_toE]
           apply Finset.subtype_univ_sum_eq_subtype_univ_sum
-          · ext
-            simp
+          · grind
           · intro i hi hif
             rw [mul_comm]
             simp only [extendedFarkas.A', Matrix.of_apply]
@@ -574,8 +552,7 @@ private lemma extendedFarkas.bwd_witness {A : Matrix I J F∞} {b : I → F∞}
       · erw [←Finset.sum_coe_sort_eq_attach]
         rw [Finset.sum_toE]
         apply Finset.subtype_univ_sum_eq_subtype_univ_sum
-        · ext
-          simp
+        · grind
         · intro i hi _
           rw [mul_comm]
           simp only [extendedFarkas.b']
@@ -617,10 +594,7 @@ theorem extendedFarkas
         · rw [has_bot_dotWeig_nneg hi]
           exact EF.bot_lt_zero
     else
-      push Not at hi'
-      exfalso
-      apply hbA
-      exact ⟨i, hi', hi⟩
+      grind
   else
     convert inequalityFarkas_neg (extendedFarkas.A' A b) (extendedFarkas.b' (A := A) hbot)
     · constructor

@@ -203,8 +203,7 @@ theorem AlgEquiv.PiMat_finTwo_same
       (MatProdAlgEquivPiMat _).symm.trans
       (f'.trans (MatProdAlgEquivPiMat _)) = f :=
     by ext1; simp [f']
-    rw [this] at hf'
-    exact hf'
+    grind
   · right
     obtain ⟨U, hg₁⟩ := Matrix.aut_mat_inner' g₁
     obtain ⟨V, hg₂⟩ := Matrix.aut_mat_inner' g₂
@@ -436,14 +435,10 @@ theorem Finset.sum_nat_eq_one_iff_exists_unique_eq_one
                 Finset.sum_eq_add_sum_sdiff_singleton_of_mem this, add_assoc]
         _ ≥ 1 + 1
           + ∑ i ∈ (Finset.univ \ {y₁}) \ {y₂}, f i := by
-              apply LE.le.ge
-              linarith
+              grind
         _ ≥ 2 := by norm_num
       linarith
-  obtain ⟨i, ⟨hi, hii⟩⟩ := this
-  simp_rw [le_antisymm_iff]
-  use i
-  simpa only [this1, true_and, hi] using hii
+  grind
 
 theorem QuantumGraph.Real.dimOfPiMatSubmodule_eq_zero_iff_eq_zero
   {ι : Type*} {p : ι → Type*} [Fintype ι] [DecidableEq ι]

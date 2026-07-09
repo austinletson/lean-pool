@@ -76,8 +76,7 @@ else
 lemma continuous_ReflTransReparamAux : Continuous ReflTransReparamAux := by
   refine continuous_if_le ?_ ?_ (Continuous.continuousOn ?_) (Continuous.continuousOn ?_) ?_ <;>
   [continuity; continuity; continuity; continuity; skip]
-  intros x hx
-  norm_num [hx]
+  grind
 
 lemma reflTransReparamAux_mem_I (t : I) : ReflTransReparamAux t ∈ I := by
   unfold ReflTransReparamAux
@@ -99,12 +98,7 @@ lemma directed_ReflTransReparamAux : DirectedMap.Directed
   unfold ReflTransReparamAux
   simp only [one_div, ContinuousMap.coe_mk, Subtype.mk_le_mk]
   have hxy' : (x : ℝ) ≤ (y : ℝ) := hxy
-  split_ifs with h₁ h₂
-  · linarith
-  · have := lt_of_not_ge h₂
-    linarith
-  · linarith
-  · linarith
+  grind
 
 /-- The auxiliary reparametrization map `I → I` used to show that `(refl _).trans p` is
 dihomotopic to `p`, packaged as a directed map. -/

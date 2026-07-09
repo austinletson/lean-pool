@@ -64,8 +64,7 @@ private def adjoin_surjectivity_proof
       rw [mem_iUnion] at hP
       obtain ⟨r, hP'⟩ := hP
       rw [mem_iUnion] at hP'
-      obtain ⟨hr_ne, hP_assoc⟩ := hP'
-      exact ⟨r, hr_ne, hP_assoc⟩
+      grind
     have hC_prime : ∀ P ∈ C, P.IsPrime := by
       intro P hP
       obtain ⟨r, _, hP_assoc⟩ := hC_mem P hP
@@ -94,10 +93,7 @@ private def adjoin_surjectivity_proof
       · rw [mem_singleton_iff.mp hP]
         exact Ideal.isPrime_bot
     have hC'_ne_max : ∀ P ∈ C', P ≠ IsLocalRing.maximalIdeal T := by
-      intro P hP hPM
-      rcases hP with hP | hP
-      · exact hC_ne_max P hP hPM
-      · exact hM_ne_bot ((mem_singleton_iff.mp hP) ▸ hPM.symm)
+      grind
     have hM2_not_le' : ∀ P ∈ C', ¬(IsLocalRing.maximalIdeal T ^ 2 ≤ P) := by
       intro P hP hle
       rcases hP with hP | hP

@@ -179,8 +179,7 @@ theorem fullControllability_hasBarrenPlateau :
   · intro n
     have hdimeq : ((fullHermBasis (2 ^ n)).dim : ℝ) = (2 : ℝ) ^ n * (2 : ℝ) ^ n := by
       change ((2 ^ n * 2 ^ n : ℕ) : ℝ) = _
-      push_cast
-      ring
+      grind
     rw [hdimeq]
     nlinarith [one_le_pow₀ (show (1 : ℝ) ≤ 2 by norm_num) (n := n),
       pow_nonneg (show (0 : ℝ) ≤ 2 by norm_num) n]

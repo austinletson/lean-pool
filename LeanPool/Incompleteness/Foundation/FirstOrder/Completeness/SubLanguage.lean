@@ -210,9 +210,7 @@ protected lemma rel
     {k} (injr : Function.Injective (Φ.rel : L₁.Rel k → L₂.Rel k))
     (r₁ : L₁.Rel k) (v : Fin k → M) :
     (s₁.extendStructure Φ).rel (Φ.rel r₁) v ↔ s₁.rel r₁ v := by
-  change (∃ r₁' : L₁.Rel k, Φ.rel r₁' = Φ.rel r₁ ∧ s₁.rel r₁' v) ↔ s₁.rel r₁ v
-  refine ⟨by intros h; rcases h with ⟨r₁', e, h⟩; rcases injr e; exact h,
-    by intros h; refine ⟨r₁, rfl, h⟩⟩
+  grind
 
 lemma val_lMap
     (Φ : L₁ →ᵥ L₂)
@@ -248,8 +246,7 @@ lemma eval_lMap
       exact extendStructure.rel s₁ Φ (injr _) r (fun i => Semiterm.val s₁ e ε (v i))
     | hnrel r v =>
       simp only [Semiformula.lMap_nrel, eval_nrel, val_lMap s₁ Φ injf e ε]
-      simpa[not_iff_not] using
-        extendStructure.rel s₁ Φ (injr _) r (fun i => Semiterm.val s₁ e ε (v i))
+      grind
     | hand _ _ ihφ ihψ =>
       simp only [LogicalConnective.HomClass.map_and, LogicalConnective.Prop.and_eq, ihφ, ihψ]
     | hor _ _ ihφ ihψ =>

@@ -93,8 +93,7 @@ lemma logDeriv_one_sub_exp_comp (r : ℂ) (g : ℂ → ℂ) (hg : Differentiable
     fun z => -r * ((deriv g) z) * cexp (g z) / (1 - r * cexp (g (z))) := by
   ext y
   rw  [logDeriv_comp, logDeriv_one_sub_exp]
-  · simp only [neg_mul]
-    ring
+  · grind
   · simp only [differentiableAt_const, differentiableAt_exp, DifferentiableAt.fun_mul,
       DifferentiableAt.fun_sub]
   · exact hg y
@@ -125,8 +124,7 @@ lemma logDeriv_q_expo_summable (r : ℂ) (hr : ‖r‖ < 1) : Summable fun n : �
       ge_iff_le] at *
     rw [div_eq_mul_inv, mul_comm]
     gcongr
-    apply le_trans this.le
-    norm_cast
+    grind
 
 lemma func_div (a b c d : ℂ → ℂ) (x : ℂ) (hb : b x ≠ 0) (hd : d x ≠ 0) :
      (a / b) x = (c /d) x ↔ (a * d) x = (b * c) x := by

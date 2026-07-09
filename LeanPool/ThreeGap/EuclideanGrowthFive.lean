@@ -90,8 +90,7 @@ theorem euclidean_growth_five (α : Fin 2 → ℝ) (q : ℕ → ℤ) (p : ℕ �
   have hwne : ∀ i : Fin 6, w i ≠ 0 := by
     intro i hi
     have h0 : ‖w i‖ = 0 := by rw [hi, norm_zero]
-    rw [hnorm_w i] at h0
-    linarith [hpos (N + i.val)]
+    grind
   -- index bounds under the doubling failure
   have hlb : ∀ i : Fin 6, q N ≤ q (N + i.val) := fun i => hmono.monotone (by omega)
   have hub : ∀ i : Fin 6, q (N + i.val) < 2 * q N := by
@@ -120,8 +119,7 @@ theorem euclidean_growth_five (α : Fin 2 → ℝ) (q : ℕ → ℤ) (p : ℕ �
         have := hmono.injective h; exact Fin.ext (by omega))
     have habs_pos : 0 < |m| := abs_pos.mpr hmne
     have habs_lt : |m| < q N := by
-      rw [hm, abs_sub_lt_iff]
-      constructor <;> [linarith [hub i, hlb j]; linarith [hub j, hlb i]]
+      grind
     have hdN_abs : deltaN (euclNorm 2) α (q N) < deltaN (euclNorm 2) α |m| :=
       hbest N |m| habs_pos habs_lt
     have hsym : deltaN (euclNorm 2) α |m| = deltaN (euclNorm 2) α m := by
@@ -131,16 +129,13 @@ theorem euclidean_growth_five (α : Fin 2 → ℝ) (q : ℕ → ℤ) (p : ℕ �
     have hle : deltaN (euclNorm 2) α m
         ≤ euclNorm 2 (rem α m (p (N + i.val) - p (N + j.val))) :=
       deltaN_le (euclNorm 2) euclNorm_nonneg α m _
-    rw [hsym] at hdN_abs
-    linarith [hdN_abs, hle]
+    grind
   -- at least one of the two vectors is strictly shorter than `δₙ`
   have hstrict : ‖w i‖ < deltaN (euclNorm 2) α (q N) ∨ ‖w j‖ < deltaN (euclNorm 2) α (q N) := by
     rcases Nat.eq_zero_or_pos i.val with hi0 | hipos
     · right
       have hj1 : 1 ≤ j.val := by
-        rcases Nat.eq_zero_or_pos j.val with hj0 | hjpos
-        · exact absurd (Fin.ext (by omega) : i = j) hij
-        · exact hjpos
+        grind
       rw [hnorm_w]
       exact lt_of_le_of_lt (hdec (N + 1) (N + j.val) (by omega)) (hdecstrict N)
     · left

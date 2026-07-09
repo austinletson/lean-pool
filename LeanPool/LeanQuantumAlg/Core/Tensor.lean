@@ -223,18 +223,7 @@ theorem tensor_ket (x : Fin (2 ^ m)) (y : Fin (2 ^ n)) :
     (ket x).tensor (ket y) = ket (prodEquiv (x, y)) := by
   ext i
   rw [tensor_apply, ket_apply, ket_apply, ket_apply]
-  by_cases h : i = prodEquiv (x, y)
-  · rw [if_pos h, if_pos (by rw [h, Equiv.symm_apply_apply]),
-      if_pos (by rw [h, Equiv.symm_apply_apply]), one_mul]
-  · have h' : ¬((prodEquiv.symm i).1 = x ∧ (prodEquiv.symm i).2 = y) := by
-      rintro ⟨h1, h2⟩
-      exact h (by
-        rw [← Equiv.apply_symm_apply (prodEquiv (m := m) (n := n)) i]
-        exact congrArg prodEquiv (Prod.ext h1 h2))
-    rw [if_neg h]
-    rcases not_and_or.mp h' with h1 | h2
-    · rw [if_neg h1, zero_mul]
-    · rw [if_neg h2, mul_zero]
+  grind
 
 theorem norm_tensor (ψ : PureState m) (φ : PureState n) :
     ‖ψ.tensor φ‖ = ‖ψ‖ * ‖φ‖ := by

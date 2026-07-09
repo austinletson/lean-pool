@@ -54,9 +54,7 @@ lemma centralizer_inclusionLeft :
     rw [← sub_eq_zero, ← Finset.sum_sub_distrib] at eq
     simp_rw [← sub_tmul] at eq
     have := IsCentralSimple.TensorProduct.sum_tmul_basis_right_eq_zero' (h := eq)
-    specialize this i hi
-    rw [sub_eq_zero] at this
-    exact this
+    grind
   · rintro _ ⟨x, rfl⟩ _ ⟨y, rfl⟩
     induction x using TensorProduct.induction_on with
     | zero => simp
@@ -91,9 +89,7 @@ lemma centralizer_inclusionRight :
     rw [← sub_eq_zero, ← Finset.sum_sub_distrib] at eq
     simp_rw [← tmul_sub] at eq
     have := IsCentralSimple.TensorProduct.sum_tmul_basis_left_eq_zero' (h := eq)
-    specialize this i hi
-    rw [sub_eq_zero] at this
-    exact this
+    grind
   · rintro _ ⟨x, rfl⟩ _ ⟨y, rfl⟩
     induction x using TensorProduct.induction_on with
     | zero => simp
@@ -240,9 +236,7 @@ lemma centralizer_mulLeft_le_of_isCentralSimple :
         rw [← sub_eq_zero, ← Finset.sum_sub_distrib] at eq
         simp_rw [← TensorProduct.sub_tmul] at eq
         replace eq := IsCentralSimple.TensorProduct.sum_tmul_basis_right_eq_zero' (h := eq)
-        specialize eq i hi
-        rw [sub_eq_zero] at eq
-        exact eq
+        grind
       rw [Algebra.IsCentral.center_eq_bot, Algebra.mem_bot] at this
       obtain ⟨x, hx⟩ := this
       dsimp only
@@ -600,9 +594,7 @@ lemma Subalgebra.conj_centralizer (B : Subalgebra F A) {x : Aˣ} :
   · rintro ⟨b, hb, rfl⟩
     rintro _ a ha rfl
     simp only [mul_assoc, Units.inv_mul_cancel_left, Units.mul_right_inj]
-    simp only [← mul_assoc, Units.mul_left_inj]
-    apply hb
-    exact ha
+    grind
 
 omit [FiniteDimensional F A] [Algebra.IsCentral F A] [IsSimpleRing A] in
 lemma Subalgebra.conj_centralizer' (B : Subalgebra F A) {x : Aˣ} :

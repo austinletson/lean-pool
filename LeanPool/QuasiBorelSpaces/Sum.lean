@@ -139,8 +139,7 @@ lemma isHom_map
 @[fun_prop, simp]
 lemma isHom_isLeft : IsHom (Sum.isLeft : A ⊕ B → Bool) := by
   have : (Sum.isLeft : A ⊕ B → Bool) = Sum.elim (fun _ ↦ true) (fun _ ↦ false) := by
-    ext x
-    cases x <;> rfl
+    grind
   rw [this]
   fun_prop
 

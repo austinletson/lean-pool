@@ -190,8 +190,7 @@ lemma mem_hessianKer_of_zero_quad (f : E → ℝ) (x₀ v : E)
     have hsymm := hessian_symmetric f x₀ hf w v
     simp only [map_add, add_apply, map_smul,
       smul_apply, smul_eq_mul]
-    rw [hsymm, hzero]
-    ring
+    grind
   set a := hessian f x₀ v w with ha_def
   set b := hessian f x₀ w w with hb_def
   set den := a ^ 2 + b ^ 2 + 1 with hden_def

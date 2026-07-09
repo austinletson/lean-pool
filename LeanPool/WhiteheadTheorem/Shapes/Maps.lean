@@ -76,17 +76,7 @@ lemma set_neq_zero_eq_compl_range_i₀ (X : TopCat.{u}) :
     {⟨_, t⟩ : TopCat.of (X × I) | t ≠ 0} = (Set.range (Cyl.i₀ X))ᶜ := by
   rw [(by rfl: (Set.range (Cyl.i₀ X))ᶜ = {z | z ∉ Set.range (Cyl.i₀ X)})]
   simp only [ne_eq, hom_ofHom, ContinuousMap.coe_mk, Set.mem_range, not_exists]
-  apply Set.eq_of_subset_of_subset
-  · intro z hz x heq
-    subst heq
-    simp only [Set.mem_setOf_eq, not_true_eq_false] at hz
-  · intro z hz
-    simp only [Set.mem_setOf_eq] at hz ⊢
-    obtain ⟨fst, snd⟩ := z
-    obtain ⟨val, property⟩ := snd
-    simp only [Prod.mk.injEq, not_and, forall_eq] at hz ⊢
-    intro a
-    simp_all only [not_true_eq_false]
+  grind
 
 /-- `i₁ToComplRangeI₀` -/
 def i₁ToComplRangeI₀ (X : TopCat.{u}) :
@@ -119,23 +109,12 @@ lemma isClosedEmbedding_i₁ToComplRangeI₀ (X : TopCat.{u}) :
         {X : Type u} [TopologicalSpace X] {A : Set X} {B : Set A}
         (hB : IsClosed (Subtype.val '' B)) : IsClosed B := by
       apply isClosed_induced_iff.mpr
-      use Subtype.val '' B
-      simp_all only [Subtype.val_injective, Set.preimage_image_eq, and_self]
+      grind
     change IsClosed ((Cyl.i₁ToComplRangeI₀ X) '' s)
     have : Subtype.val '' ((Cyl.i₁ToComplRangeI₀ X) '' s) = s ×ˢ {1} := by
       unfold Cyl.i₁ToComplRangeI₀ Cyl.i₁
       simp only [hom_ofHom, ContinuousMap.coe_mk]
-      ext x : 1
-      simp_all only [Set.mem_image, exists_exists_and_eq_and, Set.mem_prod, Set.mem_singleton_iff]
-      obtain ⟨fst, snd⟩ := x
-      obtain ⟨val, property⟩ := snd
-      simp_all only [Prod.mk.injEq, existsAndEq, true_and, and_congr_right_iff]
-      intro a
-      apply Iff.intro
-      · intro a_1
-        simp_all only
-      · intro a_1
-        simp_all only
+      grind
     have : IsClosed (Subtype.val '' ((Cyl.i₁ToComplRangeI₀ X) '' s)) := by
       rw [this]
       exact IsClosed.prod hs isClosed_singleton
@@ -148,16 +127,10 @@ noncomputable instance decidableInRangeI₀ :
     constructor
     · intro hz
       simp_all only [hom_ofHom, ContinuousMap.coe_mk, Set.mem_range]
-      obtain ⟨fst, snd⟩ := z
-      obtain ⟨val, property⟩ := snd
-      obtain ⟨w, h⟩ := hz
-      simp_all only [Prod.mk.injEq]
+      grind
     · intro hz
       simp_all only [hom_ofHom, ContinuousMap.coe_mk, Set.mem_range]
-      apply Exists.intro
-      · ext : 1
-        · rfl
-        · ext : 1; simp_all only [Set.Icc.coe_zero]
+      grind
   rw [this]
   infer_instance
 

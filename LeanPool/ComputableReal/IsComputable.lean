@@ -190,29 +190,17 @@ theorem Real_mk_of_TendstoLocallyUniformly' (fImpl : ℕ → ℚ → ℚ) (f : �
   replace hnd_sub : ∀ (r : ℚ), nl < r ∧ r < nu → ↑r ∈ i₂_nhd := fun r a => hnd_sub a
   replace hi₃ : ∀ (b : ℕ), i₃ ≤ b → ∀ (y : ℚ), nl < y ∧ y < nu → |f ↑y - ↑(fImpl b y)| < (ε / 2) :=
     by
-    peel hi₃
-    exact fun h ↦ this (hnd_sub _ h)
+    grind
   set ε_nhd := min (nu - (.mk ⟨x,hx⟩)) ((.mk ⟨x,hx⟩) - nl) with hε_nhd
   obtain ⟨i₄, hi₄⟩ := cauchy_real_mk ⟨x,hx⟩ (ε_nhd / 2) (by
-    rw [hε_nhd, gt_iff_lt, ← min_div_div_right (zero_le_two), lt_inf_iff]
-    constructor <;> linarith)
+    grind)
   have hεn₁ : ε_nhd ≤ _ := inf_le_left
   have hεn₂ : ε_nhd ≤ _ := inf_le_right
   set i := max i₁ (max i₃ i₄) with hi
   use i
   intro j hj
   simp only [hi, ge_iff_le, sup_le_iff] at hj
-  specialize hδ₁ _ (hi₁ j (by linarith))
-  specialize hi₄ j (by linarith)
-  specialize hi₃ j (by linarith) (x j) (by
-    constructor
-    · linarith [sub_le_of_abs_sub_le_left hi₄.le]
-    · linarith [sub_le_of_abs_sub_le_right hi₄.le]
-  )
-  calc |↑(fImpl j (x j)) - f (Real.mk ⟨x, hx⟩)| =
-    |(↑(fImpl j (x j)) - f ↑(x j)) + (f ↑(x j) - f (Real.mk ⟨x, hx⟩))| := by congr; ring_nf
-    _ ≤ |(↑(fImpl j (x j)) - f ↑(x j))| + |(f ↑(x j) - f (Real.mk ⟨x, hx⟩))| := abs_add_le _ _
-    _ < ε := by rw [abs_sub_comm]; linarith
+  grind
 
 open scoped QInterval
 

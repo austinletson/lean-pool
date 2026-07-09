@@ -118,8 +118,7 @@ lemma linindep_one_xsq (x : Dˣ) (hxx : ¬x.1 ^ 2 ∈ Subalgebra.center ℝ D) :
     rw [hs, zero_smul, zero_add] at hst1
     simp only [smul_eq_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, pow_eq_zero_iff,
       Units.ne_zero, or_false] at hst1
-    apply hst2 at hs
-    exact hs hst1
+    grind
   else
     if ht : t = 0 then
       rw [ht, zero_smul, add_zero, smul_eq_zero] at hst1
@@ -129,8 +128,7 @@ lemma linindep_one_xsq (x : Dˣ) (hxx : ¬x.1 ^ 2 ∈ Subalgebra.center ℝ D) :
       rw [add_eq_zero_iff_eq_neg, ← neg_smul] at hst1
       apply_fun ((-t)⁻¹ • ·) at hst1
       rw [← smul_assoc, ← smul_assoc, smul_eq_mul,
-        smul_eq_mul, inv_mul_cancel₀ (by simp_all only [ne_eq, not_true_eq_false, false_implies,
-          mul_neg, neg_smul, neg_eq_zero, not_false_eq_true]), one_smul] at hst1
+        smul_eq_mul, inv_mul_cancel₀ (by grind), one_smul] at hst1
       have : x.1^2 ∈ Subalgebra.center ℝ D := by
         rw [Subalgebra.mem_center_iff]
         intro d
@@ -320,23 +318,16 @@ lemma real_sq_in_R_or_V (x : D) :
     left
     simp only [V_def, not_exists, not_and] at h''
     have : r ≥ 0 := by
-      specialize h'' r
-      by_contra!
-      exact h'' this (id (Eq.symm hr))
+      grind
     have eq1 : (x - algebraMap ℝ D (Real.sqrt r)) * ( x + algebraMap ℝ D (Real.sqrt r)) = 0 := by
       simp only [mul_add, sub_mul]
       rw [← pow_two, ← hr, ← map_mul,
         show algebraMap ℝ D √r * x = x * algebraMap ℝ D √r from Algebra.commutes' _ _]
-      simp only [sub_add_sub_cancel, ← map_sub, map_eq_zero]
-      rw [sub_eq_zero, ← pow_two]
-      symm
-      apply Real.sq_sqrt
-      positivity
+      grind
     simp only [mul_eq_zero] at eq1
     rcases eq1 with eq1|eq1
     · use Real.sqrt r
-      rw [sub_eq_zero] at eq1
-      rw [eq1]
+      grind
     · use - Real.sqrt r
       rwa [map_neg, eq_comm, eq_neg_iff_add_eq_zero]
 
@@ -389,8 +380,7 @@ lemma r_pos (x : Dˣ) (hx : ∀ z, x.1⁻¹ * f k e z * x.1 = k.val z)
     have := eq2.trans hr2
     simp only [← map_neg] at this
     exact FaithfulSMul.algebraMap_injective _ _ this|>.symm
-  rw [← this]
-  simp only [Left.neg_pos_iff, hr1]
+  grind
 
 lemma j_mul_j (x : Dˣ) (hx : ∀ z, x.1⁻¹ * f k e z * x = k.val z)
     (hDD : Module.finrank ℝ D = 4) :
@@ -492,9 +482,7 @@ lemma j_mul_i_eq_neg_i_mul_j (x : Dˣ) (hx : ∀ z, x.1⁻¹ * f k e z * x = k.v
       neg_neg]; rfl
   rw [jinv, iinv] at this
   simp only [mul_neg, neg_mul, neg_neg, one_mul] at this
-  apply_fun fun x ↦ -x at this
-  simp only [neg_neg] at this
-  exact this.symm
+  grind
 
 open Quaternion
 
@@ -618,13 +606,11 @@ lemma linindepijk (x : Dˣ) (hx : ∀ z, x.1⁻¹ * f k e z * x = k.val z)
     apply_fun Real.sqrt at h2
     if ha1 : a < 0 then
     have e1: 0 < a^2 := sq_pos_of_ne_zero h
-    have e2: a^2 < 0 := by rw [haa]; simp
-    linarith
+    grind
     else
     simp only [not_lt] at ha1
     rw [Real.sqrt_sq ha1, Real.sqrt_eq_zero_of_nonpos (by linarith)] at h2
-    rw [h2, pow_two, mul_zero] at haa
-    norm_num at haa
+    grind
   simp only [mul_zero, zero_sub, zero_smul, zero_add] at h2 heq
   obtain rfl : b = 0 := by
     have heq' := heq
@@ -658,10 +644,7 @@ lemma linindepijk (x : Dˣ) (hx : ∀ z, x.1⁻¹ * f k e z * x = k.val z)
     rw [e.apply_symm_apply] at heq
     simp only [AlgEquiv.commutes, Complex.coe_algebraMap] at heq
     change ⟨0, 1⟩ = (⟨c, 0⟩ : ℂ) at heq
-    rw [Complex.ext_iff] at heq
-    obtain ⟨hc, _⟩ := heq
-    simp only at hc
-    exact hc.symm
+    grind
   simp_all
 
 /-- The constructed `ℝ`-basis of a four-dimensional central real division algebra. -/

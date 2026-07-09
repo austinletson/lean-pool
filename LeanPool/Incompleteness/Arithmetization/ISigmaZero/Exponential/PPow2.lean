@@ -93,8 +93,7 @@ lemma of_sqrt (hm : SPPow2 m) {i : V} (pi : Pow2 i) (him : i ≤ m) (hsqi : (√
 
 @[simp] lemma two : SPPow2 (2 : V) :=
   ⟨by simp[LenBit.one], by simp, by
-    intro i hi pi
-    rcases le_two_iff_eq_zero_or_one_or_two.mp hi with (rfl | rfl | rfl) <;> simp⟩
+    grind⟩
 
 @[simp] lemma not_zero : ¬SPPow2 (0 : V) := by rintro ⟨_, h, _⟩; simp at h
 
@@ -136,15 +135,9 @@ lemma last_uniq (hm : SPPow2 m) {i j : V} (pi : Pow2 i) (pj : Pow2 j) (hi : LenB
     (hsqi : m < i ^ 2) (hsqj : m < j ^ 2) : i = j := by
   by_contra ne
   wlog hij : i < j
-  · exact this hm pj pi hj hi hsqj hsqi (Ne.symm ne) (lt_of_le_of_ne (by simpa using hij) (Ne.symm
-    ne))
+  · grind
   have : i ^ 2 ≤ m := le_trans  (hm.sq_le_of_lt pi pj hi hj hij) hj.le
-  have ltsqi : 2 < i ^ 2 :=
-    lt_of_le_of_ne (one_lt_iff_two_le.mp <| by simpa using hm.one_lt hi) (by simp)
-  have : LenBit (i ^ 2) m ↔ LenBit i m := by simpa using hm.lenbit_iff this pi.sq ltsqi
-  have : LenBit (i ^ 2) m := this.mpr hi
-  have : ¬m < i ^ 2 := not_lt.mpr this.le
-  contradiction
+  grind
 
 end SPPow2
 

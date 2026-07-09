@@ -369,8 +369,7 @@ theorem _root_.LinearMap.invertibleIff_inner_map_self_pos
     rw [mul_apply, hSv, map_zero] at hS
     apply hv
     apply_fun T
-    · rw [map_zero]
-      exact hS
+    · grind
     · exact h.1
   · intro h
     by_contra hbij
@@ -463,9 +462,7 @@ theorem _root_.LinearMap.IsPositive'.sum {𝕜 E : Type _} [RCLike 𝕜]
   | succ d hd =>
     simp_rw [Fin.sum_univ_castSucc]
     apply LinearMap.IsPositive'.add
-    · apply hd
-      intro i
-      exact hT _
+    · grind
     · exact hT _
 
 theorem _root_.LinearMap.IsPositive'.smulNonneg {𝕜 E : Type _} [RCLike 𝕜]

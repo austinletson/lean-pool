@@ -135,8 +135,7 @@ def limConeBodyLifts (S : (LvlStratHom.system p).obj ⟨limConePt hF⟩)
               (F.map (homOfLE (ineq_rec n k)).op).str)) S =
           ((LvlStratHom.system p).map (limConeStr hF (n ⊔ k))) S
         rw [limConeStr_nat hF (ineq_rec n k)]
-      rw [hmap]
-      exact ih.2
+      grind
     ⟨coveringLiftBodySystem (mapIneqRec n k) ih.1 S' yc',
     coveringLiftBodySystem_spec1 (mapIneqRec n k) ih.1 S' yc'⟩
 lemma limCone_body_is_lift (S : (LvlStratHom.system p).obj ⟨limConePt hF⟩)
@@ -374,8 +373,7 @@ def limConeπ n : limConePt hF ⟶ F.obj (Opposite.op n) where
       consistent_cast (by simp) (by
         have hn : n ⊔ 0 = n := by simp
         rw [hn]
-        simp [LvlStratHom.systemToObj, LvlStratHom.systemOfObj]
-        rfl) y yc
+        grind) y yc
     use limConeBodySystem hF S _ yc'
     exact ⟨limCone_body_consistent hF S _ yc', limConeBodySystem_lift hF S _ yc'⟩
 /-- Auxiliary declaration for the Borel determinacy formalization. -/

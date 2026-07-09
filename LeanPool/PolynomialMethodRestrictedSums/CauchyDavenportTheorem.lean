@@ -81,11 +81,7 @@ lemma cauchy_davenport_small_sum (A B S : Finset (ZMod p)) (hp : p.Prime)
   have h_deg : m + h_poly.totalDegree = ∑ i, cs i := by -- m∑cideg(h)
     simp only [h_poly, m, cs, MvPolynomial.totalDegree_one, Fin.sum_univ_two,
       Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one, add_zero]
-    rw [show 2 = 1 + 1 by rfl]
-    rw [Nat.sub_add_eq]-- x - (y + z) = x - y - z
-    have h_A_neg_zero : 1 ≤ A.card := Finset.one_le_card.mpr hA
-    have h_B_neg_zero : 1 ≤ B.card := Finset.one_le_card.mpr hB
-    rw [Nat.add_comm, Nat.add_sub_assoc h_A_neg_zero, add_comm,← Nat.add_sub_assoc h_B_neg_zero]
+    grind
   have h_coeff_ne_zero : coeff (equivFunOnFinite.symm cs) ((∑ i : Fin 2, X i) ^ m * h_poly) ≠ 0 :=
       by
     simp only [h_poly, mul_one, Fin.sum_univ_two]
@@ -106,9 +102,7 @@ lemma cauchy_davenport_small_sum (A B S : Finset (ZMod p)) (hp : p.Prime)
         · exact hp
         · dsimp [m, cs]; aesop --  cs 0 ≤ m
         · --  m < p
-          dsimp [m]
-          have h2 : 0 < p := hp.pos
-          omega
+          grind
       · simp only [X, monomial_pow, monomial_mul]
         rw [coeff_monomial]
         rw [if_pos]
@@ -138,9 +132,7 @@ lemma cauchy_davenport_small_sum (A B S : Finset (ZMod p)) (hp : p.Prime)
       apply h_notin
       rw [Finset.mem_range]
       dsimp [m, cs]
-      have hA_pos : 1 ≤ A.card := Finset.one_le_card.mpr hA
-      have hB_pos : 1 ≤ B.card := Finset.one_le_card.mpr hB
-      omega
+      grind
   have h_ANR := ANR_polynomial_method h_poly As cs h_card m h_deg h_coeff_ne_zero
   let S_ANR :=
       (Fintype.piFinset As).filter (fun f => h_poly.eval f ≠ 0) |>.image (fun f => ∑ i, f i)
@@ -149,8 +141,7 @@ lemma cauchy_davenport_small_sum (A B S : Finset (ZMod p)) (hp : p.Prime)
     rw [hS]
     dsimp [S_ANR, sumset]
     have h_eval_ne_zero : ∀ f ∈ Fintype.piFinset As, h_poly.eval f ≠ 0 := by
-      intro f _
-      simp [h_poly]
+      grind
     ext z
     simp only [Finset.mem_image, Finset.mem_product]
     constructor
@@ -184,11 +175,7 @@ lemma cauchy_davenport_small_sum (A B S : Finset (ZMod p)) (hp : p.Prime)
           exact hf1
       · --  2:  (f 0) + (f 1) = z
         rw [sum_fin_two] --  ∑ f i = f 0 + f 1
-  rw [h_set_eq]
-  dsimp [m] at h_card_ge
-  have hA_ge_1 : 1 ≤ A.card := Finset.one_le_card.mpr hA
-  have hB_ge_1 : 1 ≤ B.card := Finset.one_le_card.mpr hB
-  omega
+  grind
 
 
 -- 4.  ( Case 2 )
@@ -216,15 +203,12 @@ theorem cauchy_davenport (A B S : Finset (ZMod p)) (hp : p.Prime)
       obtain ⟨B', hB'_sub, hB'_card⟩ := Finset.exists_subset_card_eq h_target_le_B
       have hB'_ne : B'.Nonempty := by rw [←Finset.card_pos, hB'_card]; exact h_target_pos
       have h_sum_exact : A.card + B'.card = p + 1 := by
-        rw [hB'_card]
-        dsimp [target]
-        omega
+        grind
       have h_new_sum_le : A.card + B'.card ≤ p + 1 := le_of_eq h_sum_exact
       have h_lower_bound : (sumset A B').card ≥ p := by
         have step1 :=
             cauchy_davenport_small_sum A B' (sumset A B') Fact.out hA hB'_ne h_new_sum_le rfl
-        rw [h_sum_exact] at step1
-        simpa using step1
+        grind
       have h_subset_sum : sumset A B' ⊆ sumset A B := Finset.add_subset_add_left hB'_sub
       apply Nat.le_trans h_lower_bound
       rw [hS]

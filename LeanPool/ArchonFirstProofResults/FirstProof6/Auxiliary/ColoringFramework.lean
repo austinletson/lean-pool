@@ -71,8 +71,7 @@ lemma largest_color_class_bound
   -- LHS = |T| * r, RHS = r * |T|, contradiction
   rw [← Finset.sum_mul] at hlt
   rw [Finset.sum_const_nat (fun _ _ => rfl), Finset.card_univ, Fintype.card_fin] at hlt
-  rw [hsum, Nat.mul_comm] at hlt
-  exact lt_irrefl _ hlt
+  grind
 
 /-! ### The inductive coloring step -/
 
@@ -115,8 +114,7 @@ lemma coloring_step_exists
     push Not at hall
     have hsub : Finset.univ ⊆ pc.colored := fun x _ => hall x
     have := Finset.card_le_card hsub
-    rw [Finset.card_univ] at this
-    omega
+    grind
   obtain ⟨v₀, hv₀⟩ := h_exists_uncolored
   -- === Step 2: r > 0 (needed for Fin r) ===
   have hr_pos : 0 < r := by
@@ -140,9 +138,7 @@ lemma coloring_step_exists
     set colored' := pc.colored ∪ {v₀} with hcolored'_def
     refine ⟨⟨colored', color'⟩, ?_, ?_, ?_⟩
     · -- Card: |colored'| = t + 1
-      rw [hcolored'_def, Finset.card_union_of_disjoint
-        (Finset.disjoint_singleton_right.mpr hv₀)]
-      simp [hcard]
+      grind
     · -- Subset: pc.colored ⊆ colored'
       exact Finset.subset_union_left
     · -- Barrier: for all γ, (u_t' • I - ∑ ...).PosSemidef
@@ -150,25 +146,14 @@ lemma coloring_step_exists
       -- Helper lemma: filter characterization
       -- For w ∈ pc.colored: color'(w) = pc.color(w) (since w ≠ v₀)
       have hcolor'_old : ∀ w ∈ pc.colored, color' w = pc.color w := by
-        intro w hw
-        simp [hcolor'_def, show w ≠ v₀ from fun h => hv₀ (h ▸ hw)]
+        grind
       have hcolor'_v₀ : color' v₀ = γ₀ := by simp [hcolor'_def]
       by_cases hγ : γ = γ₀
       · -- Case γ = γ₀: the sum gains A v₀ γ₀
         -- Filter for colored' at color γ₀ = (old filter for γ₀) ∪ {v₀}
         have h_filter_eq : colored'.filter (fun v => color' v = γ₀) =
             (pc.colored.filter (fun v => pc.color v = γ₀)) ∪ {v₀} := by
-          ext w; simp only [Finset.mem_filter, Finset.mem_union, Finset.mem_singleton,
-            hcolored'_def]
-          constructor
-          · intro ⟨hw_mem, hw_col⟩
-            rcases hw_mem with hw_old | hw_new
-            · exact Or.inl ⟨hw_old, (hcolor'_old w hw_old) ▸ hw_col⟩
-            · exact Or.inr hw_new
-          · intro hw
-            rcases hw with ⟨hw_old, hw_col⟩ | hw_eq
-            · exact ⟨Or.inl hw_old, (hcolor'_old _ hw_old) ▸ hw_col⟩
-            · exact ⟨Or.inr hw_eq, show color' w = γ₀ from hw_eq ▸ hcolor'_v₀⟩
+          grind
         rw [hγ, h_filter_eq,
             Finset.sum_union (Finset.disjoint_singleton_right.mpr
               (fun hmem => hv₀ (Finset.mem_of_mem_filter _ hmem))),
@@ -177,15 +162,7 @@ lemma coloring_step_exists
       · -- Case γ ≠ γ₀: v₀ not in filter, sum unchanged
         have h_filter_eq : colored'.filter (fun v => color' v = γ) =
             pc.colored.filter (fun v => pc.color v = γ) := by
-          ext w; simp only [Finset.mem_filter, Finset.mem_union, Finset.mem_singleton,
-            hcolored'_def]
-          constructor
-          · intro ⟨hw_mem, hw_col⟩
-            rcases hw_mem with hw_old | hw_new
-            · exact ⟨hw_old, (hcolor'_old w hw_old) ▸ hw_col⟩
-            · exfalso; rw [hw_new, hcolor'_v₀] at hw_col; exact hγ hw_col.symm
-          · intro ⟨hw_old, hw_col⟩
-            exact ⟨Or.inl hw_old, (hcolor'_old _ hw_old) ▸ hw_col⟩
+          grind
         rw [h_filter_eq]
         -- u_t' • I - sum = (u_t • I - sum) + (u_t' - u_t) • I
         -- PSD + PSD = PSD
@@ -271,10 +248,7 @@ lemma coloring_iterate
     obtain ⟨pc', hcard', _, hbarrier'⟩ :=
       coloring_step_exists ε hε hε1 n hn r hr_def A hA_psd t ht_lt pc_t hcard_t ht_V
         (ε / 2 + (t : ℝ) * (ε / (n : ℝ))) rfl hA_small hbarrier_t
-    refine ⟨pc', hcard', ?_⟩
-    -- The barrier at step t+1 matches u_{t+1}
-    convert hbarrier' using 2
-    push_cast; ring_nf
+    grind
 
 /-- **Parameter bound (Step 3)**: The final barrier parameter u_k = eps/2 + k*(eps/n)
     satisfies u_k <= 3*eps/4 < eps when k = n/4 and n >= 4.

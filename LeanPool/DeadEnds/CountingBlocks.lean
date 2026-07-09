@@ -51,9 +51,7 @@ lemma abs_sub_lt_of_mem_completeBlock (M k x y : ℕ) (_hM : 0 < M)
     |(y : ℤ) - (x : ℤ)| < (M : ℤ) := by
   obtain ⟨hx1, hx2⟩ := Finset.mem_Icc.mp hx
   obtain ⟨hy1, hy2⟩ := Finset.mem_Icc.mp hy
-  rw [show (k + 1) * M = k * M + M from by ring] at hx2 hy2
-  rw [abs_sub_lt_iff]
-  omega
+  grind
 
 /-- The function N ↦ N % M is injective on the complete block.
     Two numbers in [kM+1, (k+1)M] with the same residue mod M must be equal,
@@ -266,9 +264,7 @@ lemma partialBlock_subset_Ico (M X : ℕ) (hM : 0 < M) :
 lemma partialBlock_injOn_mod (M X : ℕ) :
     Set.InjOn (fun x => x % M) ↑(partialBlock M X) := by
   rcases eq_or_lt_of_le (Nat.zero_le M) with rfl | hM
-  · intro x _ y _ hxy
-    simp only [Nat.mod_zero] at hxy
-    exact hxy
+  · intro x grind
   · exact (Nat.mod_injOn_Ico (X / M * M) M).mono (partialBlock_subset_Ico M X hM)
 
 lemma partialBlock_validMapsTo (b : ℕ) (T : Finset ℕ) (S : Finset Nat.Primes) (X : ℕ) :
@@ -323,8 +319,7 @@ lemma mem_completeBlock_of_div_lt (M X n : ℕ) (hM : 0 < M) (hn_pos : 1 ≤ n) 
     omega
   have h₂ : n ≤ ((n - 1) / M + 1) * M := by
     have h : n - 1 < (n - 1) / M * M + M := Nat.lt_div_mul_add hM
-    rw [Nat.succ_mul]
-    omega
+    grind
   omega
 
 lemma mem_partialBlock_of_div_eq (M X n : ℕ) (_hM : 0 < M) (hn_pos : 1 ≤ n) (hn_le : n ≤ X)
@@ -332,8 +327,7 @@ lemma mem_partialBlock_of_div_eq (M X n : ℕ) (_hM : 0 < M) (hn_pos : 1 ≤ n) 
   simp only [partialBlock, Finset.mem_Icc]
   refine ⟨?_, hn_le⟩
   have h₁ := Nat.div_mul_le_self (n - 1) M
-  have h₂ : X / M * M = (n - 1) / M * M := by rw [hk]
-  omega
+  grind
 
 lemma div_sub_one_le_div (M X n : ℕ) (hn_pos : 1 ≤ n) (hn_le : n ≤ X) :
     (n - 1) / M ≤ X / M :=

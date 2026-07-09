@@ -138,8 +138,7 @@ lemma _root_.ProbabilityTheory.IsUniform.measure_preimage_of_nmem
     (h : IsUniform H X μ) {s : S} (hs : s ∉ H) :
     μ (X ⁻¹' {s}) = 0 := by
   apply le_antisymm ((measure_mono _).trans h.measure_preimage_compl.le) (zero_le)
-  apply preimage_mono
-  simpa using hs
+  grind
 
 /-- Another "unit test" for the definition of uniform distribution. -/
 lemma _root_.ProbabilityTheory.IsUniform.measureReal_preimage_of_nmem
@@ -163,8 +162,7 @@ lemma _root_.ProbabilityTheory.IsUniform.measure_preimage_of_mem
       have : X ⁻¹' H = ⋃ x ∈ H, X ⁻¹' ({x} : Set S) := by simp
       rw [this, measure_biUnion_finset]
       · intro y _hy z _hz hyz
-        apply Disjoint.preimage
-        simp [hyz]
+        grind
       · intro y _hy
         exact hX .of_discrete
     _ = ∑ _x ∈ H, μ (X ⁻¹' {s}) :=

@@ -239,8 +239,7 @@ theorem neg_ofSets_const (s : Set G) [Small s] :
     -!{fun _ ↦ s} = !{fun _ ↦ -s} := by
   rw [ofSets_eq_ofSets_cases, ofSets_eq_ofSets_cases]
   simp only [Player.cases, neg_ofSets, ofSets_inj']
-  funext p
-  cases p <;> rfl
+  grind
 
 instance : NegZeroClass G where
   neg_zero := by simp only [zero_def, neg_ofSets_const, Set.neg_empty]
@@ -293,10 +292,7 @@ theorem not_isEnd_exists_move {g : G} {p : Player}
     (h1 : ¬IsEnd p g) :
     ∃ gp, gp ∈ moves p g := by
   unfold IsEnd at h1
-  by_contra h4
-  simp only [not_exists] at h4
-  absurd h1
-  exact Set.subset_eq_empty h4 rfl
+  grind
 
 @[simp]
 theorem not_mem_moves_of_isEnd {p : Player} {g gp : G} (h1 : IsEnd p g) : gp ∉ moves p g := by
@@ -389,8 +385,7 @@ theorem isOption_not_mem {p : Player} {g g' : G}
   simp only [isOption_iff_mem_moves] at h_isOption
   obtain ⟨q, h_q⟩ := h_isOption
   by_cases h_pq : p = q
-  · subst h_pq
-    exact absurd h_q h_mem
+  · grind
   · simp only [Player.ne_iff_eq_neg] at h_pq
     subst h_pq
     rwa [neg_neg]
@@ -504,8 +499,7 @@ theorem leftMoves_intCast_zero_lt {a : ℤ} (h1 : 0 < a)
 theorem leftMoves_intCast_zero_le_succ {a : ℤ} (h1 : 0 ≤ a)
     : ((a : ℤ) : G) ∈ moves .left (((a + 1) : ℤ) : G) := by
   have := leftMoves_intCast_zero_lt (G := G) (Int.le_iff_lt_add_one.mp h1)
-  simp only [Int.add_sub_cancel] at this
-  exact this
+  grind
 
 theorem leftMoves_intCast_le_zero_of_empty {k : ℤ} (h1 : 0 ≤ k) (h2 : moves .left (k : G) = ∅)
     : k = 0 := by
@@ -712,8 +706,7 @@ theorem eq_add_one_of_mem_rightMoves_intCast {n : ℤ} {x : G} (hx : x ∈ moves
   calc
     -x = ((-n - 1 : ℤ) : G) := eq_sub_one_of_mem_leftMoves_intCast this
     _ = ((-(n + 1) : ℤ) : G) := by
-      congr
-      omega
+      grind
     _ = -((n + 1 : ℤ) : G) := by rw [Form.intCast_neg]
 
 /--

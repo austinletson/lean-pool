@@ -76,9 +76,7 @@ theorem matVec_smul_apply {m n : Nat}
   calc
     (∑ j : Fin n, A i j * (a * x j))
         = ∑ j : Fin n, a * (A i j * x j) := by
-            apply Finset.sum_congr rfl
-            intro j _
-            ring
+            grind
     _ = a * ∑ j : Fin n, A i j * x j := by
             exact finset_sum_smul_simple a (fun j : Fin n => A i j * x j)
 
@@ -90,9 +88,7 @@ theorem tMatVec_smul_apply {m n : Nat}
   calc
     (∑ i : Fin m, A i j * (a * y i))
         = ∑ i : Fin m, a * (A i j * y i) := by
-            apply Finset.sum_congr rfl
-            intro i _
-            ring
+            grind
     _ = a * ∑ i : Fin m, A i j * y i := by
             exact finset_sum_smul_simple a (fun i : Fin m => A i j * y i)
 
@@ -103,9 +99,7 @@ theorem dot_smul_right {n : Nat} (u v : Vec n) (a : ℝ) :
   calc
     (∑ i : Fin n, u i * (a * v i))
         = ∑ i : Fin n, a * (u i * v i) := by
-            apply Finset.sum_congr rfl
-            intro i _
-            ring
+            grind
     _ = a * ∑ i : Fin n, u i * v i := by
             exact finset_sum_smul_simple a (fun i : Fin n => u i * v i)
 
@@ -363,16 +357,12 @@ theorem HLPNullDirection_from_full_nullspace {m n : Nat}
       (∑ j : Fin n, D.dx j * D.ds j)
           = ∑ j : Fin n, D.dx j *
               (-(tMatVec P.A D.dy j) + P.c j * D.dtau - cbar P j * D.dtheta) := by
-              apply Finset.sum_congr rfl
-              intro j _
-              rw [hds j]
+              grind
       _ = ∑ j : Fin n,
               (-(D.dx j * tMatVec P.A D.dy j)
                 + D.dtau * (D.dx j * P.c j)
                 - D.dtheta * (D.dx j * cbar P j)) := by
-              apply Finset.sum_congr rfl
-              intro j _
-              ring
+              grind
       _ = - (∑ j : Fin n, D.dx j * tMatVec P.A D.dy j)
             + D.dtau * (∑ j : Fin n, D.dx j * P.c j)
             - D.dtheta * (∑ j : Fin n, D.dx j * cbar P j) := by
@@ -393,18 +383,14 @@ theorem HLPNullDirection_from_full_nullspace {m n : Nat}
               rw [dot_tMatVec_eq_dot_matVec]
       _ = dot D.dy (fun i => P.b i * D.dtau - bbar P i * D.dtheta) := by
               unfold dot
-              apply Finset.sum_congr rfl
-              intro i _
-              rw [hprimal i]
+              grind
       _ = D.dtau * dot P.b D.dy - D.dtheta * dot (bbar P) D.dy := by
               unfold dot
               calc
                 (∑ i : Fin m, D.dy i * (P.b i * D.dtau - bbar P i * D.dtheta))
                     = ∑ i : Fin m,
                         (D.dtau * (P.b i * D.dy i) - D.dtheta * (bbar P i * D.dy i)) := by
-                        apply Finset.sum_congr rfl
-                        intro i _
-                        ring
+                        grind
                 _ = D.dtau * (∑ i : Fin m, P.b i * D.dy i)
                     - D.dtheta * (∑ i : Fin m, bbar P i * D.dy i) := by
                         rw [Finset.sum_sub_distrib]
@@ -413,26 +399,13 @@ theorem HLPNullDirection_from_full_nullspace {m n : Nat}
   have hnorm' : dot (bbar P) D.dy - dot D.dx (cbar P) + zbar P * D.dtau = 0 := by
     have hcbar_comm : dot D.dx (cbar P) = dot (cbar P) D.dx := by
       unfold dot
-      apply Finset.sum_congr rfl
-      intro i _
-      ring
-    rw [hcbar_comm]
-    exact hnorm
+      grind
+    grind
   have hc_comm : dot D.dx P.c = dot P.c D.dx := by
     unfold dot
-    apply Finset.sum_congr rfl
-    intro i _
-    ring
+    grind
   unfold HLPFullDirection.toHSDirection hdot
-  change dot D.dx D.ds + D.dtau * D.dkappa = 0
-  calc
-    dot D.dx D.ds + D.dtau * D.dkappa
-        = D.dtheta * (dot (bbar P) D.dy - dot D.dx (cbar P) + zbar P * D.dtau) := by
-            rw [hdot_ds, hdk, hmat, hc_comm]
-            ring
-    _ = 0 := by
-            rw [hnorm']
-            ring
+  grind
 
 
 
@@ -472,8 +445,7 @@ theorem HLPHomogeneous.dkappa_eq_neg_ratio_dtau {m n : Nat}
   rcases hw with ⟨_hx, htau, _hs, _hkappa⟩
   have htau_ne : w.tau ≠ 0 := ne_of_gt htau
   have h := hD.scalar_complementarity_block
-  field_simp [htau_ne] at h ⊢
-  linarith
+  grind
 
 /-- The complementarity block and the eliminated dual slack give
 `dx = Θ r`, the usual first step in forming the Schur complement. -/
@@ -487,9 +459,7 @@ theorem HLPHomogeneous.dx_eq_theta_mul_schurResidual {m n : Nat}
   have hds := HLPHomogeneous.ds_eq_neg_schurResidual P w D hD j
   have hcomp := hD.complementarity_block j
   unfold HLPThetaDiag
-  rw [hds] at hcomp
-  field_simp [hs_ne]
-  linarith
+  grind
 
 /-- Schur-complement complementarity identity.
 
@@ -526,28 +496,12 @@ theorem HLPHomogeneous.schur_complementarity_identity {m n : Nat}
           = ∑ j : Fin n,
               (HLPThetaDiag w j * HLPSchurResidual P D j)
                 * (-(HLPSchurResidual P D j)) := by
-              apply Finset.sum_congr rfl
-              intro j _
-              rw [hdx j, hds j]
+              grind
       _ = ∑ j : Fin n, -(HLPThetaDiag w j * (HLPSchurResidual P D j) ^ 2) := by
-              apply Finset.sum_congr rfl
-              intro j _
-              ring
+              grind
       _ = - (∑ j : Fin n, HLPThetaDiag w j * (HLPSchurResidual P D j) ^ 2) := by
               rw [Finset.sum_neg_distrib]
-  have hdtau_dkappa :
-      D.dtau * D.dkappa = - (w.kappa / w.tau) * D.dtau ^ 2 := by
-    rw [hdk]
-    ring
-  calc
-    (∑ j : Fin n, HLPThetaDiag w j * (HLPSchurResidual P D j) ^ 2)
-        + (w.kappa / w.tau) * D.dtau ^ 2
-        = -(dot D.dx D.ds + D.dtau * D.dkappa) := by
-            rw [hdot_ds, hdtau_dkappa]
-            ring
-    _ = 0 := by
-            rw [hcross_reduced]
-            ring
+  grind
 
 /-- A finite-dimensional positivity lemma for the reduced complementarity form.
 
@@ -566,8 +520,7 @@ theorem finite_sum_pos_sq_plus_pos_sq_eq_zero {n : Nat}
     exact mul_nonneg (le_of_lt (htheta j)) (sq_nonneg (r j))
   have hsum_nonneg : 0 ≤ ∑ j : Fin n, theta j * (r j) ^ 2 := by
     apply Finset.sum_nonneg
-    intro j _hj
-    exact hsummand_nonneg j
+    grind
   have htail_nonneg : 0 ≤ eta * t ^ 2 := by
     exact mul_nonneg (le_of_lt heta) (sq_nonneg t)
   have hsum_zero : (∑ j : Fin n, theta j * (r j) ^ 2) = 0 := by
@@ -578,16 +531,9 @@ theorem finite_sum_pos_sq_plus_pos_sq_eq_zero {n : Nat}
   · intro j
     have hzero_all :=
       (Finset.sum_eq_zero_iff_of_nonneg (by
-        intro i _hi
-        exact hsummand_nonneg i)).mp hsum_zero
-    have hprod_zero : theta j * (r j) ^ 2 = 0 := by
-      exact hzero_all j (Finset.mem_univ j)
-    have hsquare_zero : (r j) ^ 2 = 0 := by
-      exact (mul_eq_zero.mp hprod_zero).resolve_left (ne_of_gt (htheta j))
-    exact sq_eq_zero_iff.mp hsquare_zero
-  · have ht_square_zero : t ^ 2 = 0 := by
-      exact (mul_eq_zero.mp htail_zero).resolve_left (ne_of_gt heta)
-    exact sq_eq_zero_iff.mp ht_square_zero
+        grind)).mp hsum_zero
+    grind
+  · grind
 
 /-- The reduced complementarity identity forces the Schur residual and `dτ` to be
 zero. -/
@@ -625,8 +571,7 @@ theorem HLPHomogeneous.dx_dkappa_ds_zero_from_schur_core {m n : Nat}
   · rcases hw with ⟨_hx, htau, _hs, _hkappa⟩
     have htau_ne : w.tau ≠ 0 := ne_of_gt htau
     have h := hD.scalar_complementarity_block
-    rw [hdtau, mul_zero, add_zero] at h
-    exact (mul_eq_zero.mp h).resolve_left htau_ne
+    grind
 
 /-- Final algebra after the Schur core has vanished: the definitions of `bbar`, `cbar`,
 and `zbar` imply `dθ = 0`; then full row rank gives `dy = 0`. -/
@@ -650,32 +595,24 @@ theorem HLPHomogeneous.dtheta_dy_zero_from_schur_core {m n : Nat}
   have hdx_c : dot P.c D.dx = 0 := by
     unfold dot
     apply Finset.sum_eq_zero
-    intro j _
-    rw [hdx j]
-    ring
+    grind
   have hdx_cbar : dot (cbar P) D.dx = 0 := by
     unfold dot
     apply Finset.sum_eq_zero
-    intro j _
-    rw [hdx j]
-    ring
+    grind
   have hgap : dot P.b D.dy + zbar P * D.dtheta = 0 := by
     have h := hD.gap_block
-    rw [hdx_c, hdkappa] at h
-    linarith
+    grind
   have hnormalizing : dot (bbar P) D.dy = 0 := by
     have h := hD.normalizing_block
-    rw [hdx_cbar, hdtau] at h
-    linarith
+    grind
   have hbbar_expand :
       dot (bbar P) D.dy = dot P.b D.dy - dot (matVec P.A (ones : Vec n)) D.dy := by
     unfold dot bbar
     calc
       (∑ i : Fin m, (P.b i - matVec P.A (ones : Vec n) i) * D.dy i)
           = ∑ i : Fin m, (P.b i * D.dy i - matVec P.A (ones : Vec n) i * D.dy i) := by
-              apply Finset.sum_congr rfl
-              intro i _
-              ring
+              grind
       _ = (∑ i : Fin m, P.b i * D.dy i)
           - (∑ i : Fin m, matVec P.A (ones : Vec n) i * D.dy i) := by
               rw [Finset.sum_sub_distrib]
@@ -685,9 +622,7 @@ theorem HLPHomogeneous.dtheta_dy_zero_from_schur_core {m n : Nat}
       dot (matVec P.A (ones : Vec n)) D.dy
         = dot D.dy (matVec P.A (ones : Vec n)) := by
     unfold dot
-    apply Finset.sum_congr rfl
-    intro i _
-    ring
+    grind
   have hAe_eq_At :
       dot (matVec P.A (ones : Vec n)) D.dy
         = dot (ones : Vec n) (tMatVec P.A D.dy) := by
@@ -700,8 +635,7 @@ theorem HLPHomogeneous.dtheta_dy_zero_from_schur_core {m n : Nat}
     intro j
     have h := hr j
     unfold HLPSchurResidual at h
-    rw [hdtau] at h
-    linarith
+    grind
   have hdual_sum :
       dot (ones : Vec n) (tMatVec P.A D.dy)
         + dot (ones : Vec n) (cbar P) * D.dtheta = 0 := by
@@ -709,8 +643,7 @@ theorem HLPHomogeneous.dtheta_dy_zero_from_schur_core {m n : Nat}
     have hsum :
         (∑ j : Fin n, (tMatVec P.A D.dy j + cbar P j * D.dtheta)) = 0 := by
       apply Finset.sum_eq_zero
-      intro j _
-      exact hr_reduced j
+      grind
     calc
       (∑ j : Fin n, 1 * tMatVec P.A D.dy j)
           + (∑ j : Fin n, 1 * cbar P j) * D.dtheta
@@ -722,42 +655,25 @@ theorem HLPHomogeneous.dtheta_dy_zero_from_schur_core {m n : Nat}
       _ = 0 := hsum
   have hdual_b :
       dot P.b D.dy + dot (ones : Vec n) (cbar P) * D.dtheta = 0 := by
-    rw [hb_eq_At]
-    exact hdual_sum
+    grind
   have hcoef_mul :
       (zbar P - dot (ones : Vec n) (cbar P)) * D.dtheta = 0 := by
-    have hsub : zbar P * D.dtheta - dot (ones : Vec n) (cbar P) * D.dtheta = 0 := by
-      linarith
-    calc
-      (zbar P - dot (ones : Vec n) (cbar P)) * D.dtheta
-          = zbar P * D.dtheta - dot (ones : Vec n) (cbar P) * D.dtheta := by
-              ring
-      _ = 0 := hsub
+    grind
   have hcoef : zbar P - dot (ones : Vec n) (cbar P) = (n : ℝ) + 1 := by
     unfold zbar cbar dot ones
     simp [Finset.sum_sub_distrib]
     ring
   have hcoef_pos : 0 < zbar P - dot (ones : Vec n) (cbar P) := by
-    rw [hcoef]
-    positivity
+    grind
   have hdtheta : D.dtheta = 0 := by
     exact (mul_eq_zero.mp hcoef_mul).resolve_left (ne_of_gt hcoef_pos)
   have hAt_zero : ∀ j : Fin n, tMatVec P.A D.dy j = 0 := by
-    intro j
-    have h := hr_reduced j
-    rw [hdtheta] at h
-    linarith
+    grind
   have hrow_comb : ∀ j : Fin n, ∑ i : Fin m, D.dy i * P.A i j = 0 := by
     intro j
     have h := hAt_zero j
     unfold tMatVec at h
-    calc
-      (∑ i : Fin m, D.dy i * P.A i j)
-          = ∑ i : Fin m, P.A i j * D.dy i := by
-              apply Finset.sum_congr rfl
-              intro i _
-              ring
-      _ = 0 := h
+    grind
   exact ⟨hdtheta, std.full_row_rank D.dy hrow_comb⟩
 
 /-- Kernel triviality of the full HLP Newton block operator.
@@ -831,8 +747,7 @@ theorem HLP_newton_block_system_solvable_from_kernel_trivial {m n : Nat}
     intro u v huv
     have hsub : L (u - v) = 0 := by
       simpa [map_sub] using congrArg (fun y => y - L v) huv
-    have hzero := hker_op (u - v) hsub
-    exact sub_eq_zero.mp hzero
+    grind
   have hsurj : Function.Surjective L :=
     finiteDimensional_surjective_of_injective_self L hinj
   rcases hsurj (HLPNewtonBlockRhs w γ m) with ⟨u, hu⟩
@@ -905,16 +820,11 @@ theorem aggregate_eq_from_component_eq {n : Nat}
         ∑ i, (w.x i * d.ds i + w.s i * d.dx i) := by
     unfold dot
     rw [Finset.sum_add_distrib]
-    congr 1
-    apply Finset.sum_congr rfl
-    intro i _
-    ring
+    grind
   have hrightVec :
       (∑ i, (w.x i * d.ds i + w.s i * d.dx i)) =
         ∑ i, (γ * mu w - w.x i * w.s i) := by
-    apply Finset.sum_congr rfl
-    intro i _
-    exact hcomp i
+    grind
   have hsum_const :
       (∑ _i : Fin n, γ * mu w) = (n : ℝ) * (γ * mu w) := by
     rw [Finset.sum_const]
@@ -924,8 +834,7 @@ theorem aggregate_eq_from_component_eq {n : Nat}
     rfl
   have hmu : hdim n * mu w = gap w := by
     unfold mu hdim
-    have hpos : (0 : ℝ) < (n : ℝ) + 1 := by positivity
-    field_simp [ne_of_gt hpos]
+    grind
   calc
     hdot w.x w.tau d.ds d.dkappa + hdot d.dx d.dtau w.s w.kappa
         = (dot w.x d.ds + dot d.dx w.s)
@@ -948,8 +857,7 @@ theorem aggregate_eq_from_component_eq {n : Nat}
             unfold gap hdot hdim
             ring
     _ = -(1 - γ) * gap w := by
-            rw [hmu]
-            ring
+            grind
 
 /-- The skew-symmetry consequence is derived from the bundled HLP nullspace
 relation.  This is the separated-variable version of Theorem 5(ii) in YTM. -/
@@ -1066,9 +974,7 @@ theorem sum_mul_add_smul {n : Nat}
   calc
     (∑ i, u i * (v i + α * dv i))
         = ∑ i, (u i * v i + α * (u i * dv i)) := by
-            apply Finset.sum_congr rfl
-            intro i _
-            ring
+            grind
     _ = (∑ i, u i * v i) + ∑ i, α * (u i * dv i) := by
             rw [Finset.sum_add_distrib]
     _ = (∑ i, u i * v i) + α * (∑ i, u i * dv i) := by
@@ -1083,9 +989,7 @@ theorem dot_add_smul {n : Nat} (u v dv : Vec n) (α : ℝ) :
 theorem dot_comm {n : Nat} (u v : Vec n) :
     dot u v = dot v u := by
   unfold dot
-  apply Finset.sum_congr rfl
-  intro i _
-  ring
+  grind
 
 /-- Linearity of the first argument of `dot` for the update `u + α du`. -/
 theorem dot_add_smul_left {n : Nat} (u du v : Vec n) (α : ℝ) :

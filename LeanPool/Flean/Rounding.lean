@@ -176,8 +176,7 @@ lemma round_down_of_pos (q : ℚ) (h : 0 < q) :
 lemma roundf_of_pos' (r : IntRounder) (q : ℚ) (h : 0 < q) :
   (roundf r q : FloatRep C).s = false := by
   simp only [roundf, FloatRep.normalize]
-  rw [decide_eq_false (not_lt_of_gt h)]
-  split <;> simp
+  grind
 
 lemma round_down_of_pos' (q : ℚ) (h : 0 < q) :
   (roundDown q : FloatRep C).s = false := roundf_of_pos' round0 q h
@@ -222,8 +221,7 @@ lemma le_roundf_of_le (r : IntRounder) [rh : ValidRounder r] (q1 q2 : ℚ) (q1_n
     apply floatrep_le_pos_coe_q
     · dsimp
       convert roundf_almost_valid (C := C) r q1 (ne_of_gt q1h)
-      simp
-      linarith
+      grind
     rw [floatrep_pos_equiv]
     constructor
     · dsimp
@@ -237,9 +235,7 @@ lemma le_roundf_of_le (r : IntRounder) [rh : ValidRounder r] (q1 q2 : ℚ) (q1_n
     gcongr
   · intro q1 q1h q2 q2h r rh h
     simp_rw [floatrepLe, roundf_of_neg' r q1 q1h, roundf_of_pos' r q2 q2h]
-  · intro q1 q1h q2 q2h r rh h
-    exfalso
-    linarith
+  · grind
   · intro q1 q1h q2 q2h ih r rh h
     replace ih := ih (r.neg) (by linarith) (rh := (neg_valid_rounder r).mpr rh)
     rw [roundf_neg r (q := q1) (by linarith), roundf_neg r (q := q2) (by linarith)] at ih
@@ -363,8 +359,7 @@ theorem q_le_floatrep_ceil {q : ℚ} (h : q ≠ 0) :
   rw [mul_div_cancel_right₀ _ (ne_of_lt c_pos).symm] at this
   field_simp at this
   field_simp
-  rw [add_sub_cancel] at this -- why is this necessary?
-  exact this
+  grind
 
 theorem floatrep_floor_le_q {q : ℚ} (q_nezero : q ≠ 0) :
   (⌊(|q| * (2 ^ Int.log 2 |q|)⁻¹ - 1) * ↑C.prec⌋.natAbs / ↑C.prec + 1) * 2 ^ Int.log 2 |q|
@@ -439,11 +434,7 @@ lemma roundf_up_minus_down {q : ℚ} (q_nezero : q ≠ 0) :
       rw [neg_sub_neg, abs_neg] at this
       exact this
     · exact neg_ne_zero.mpr q_nezero
-    rw [lt_neg]
-    simp only [not_lt] at h
-    apply lt_of_le_of_ne
-    · exact h
-    exact q_nezero
+    grind
   rw [roundf, roundf, coe_normalize _ (roundf_almost_valid roundup q q_nezero)]
   rw [coe_normalize _ (roundf_almost_valid rounddown q q_nezero)]
   rw [coeQ, coeQ]
@@ -457,9 +448,7 @@ lemma roundf_up_minus_down {q : ℚ} (q_nezero : q ≠ 0) :
   rw [Nat.cast_natAbs, abs_of_nonneg, add_comm]
   · rw [Nat.cast_natAbs]
     nth_rw 5 [abs_of_nonneg]
-    · convert this using 1
-      · rfl
-      ring
+    · grind
     · apply Int.floor_nonneg.mpr
       apply mantissa_nonneg C q q_nezero
   · apply Int.ceil_nonneg
@@ -480,24 +469,14 @@ lemma round_max_e (r : IntRounder) [rh : ValidRounder r] {q : ℚ} (q_nezero : q
   rw [<-this] at h
   wlog h' : 0 < q generalizing q r
   · have negq : 0 < -q := by
-      rw [lt_neg]
-      apply lt_of_le_of_ne
-      · exact le_of_not_gt h'
-      exact q_nezero
+      grind
     replace this := this r.neg (rh := rh.neg) (q := -q)
       (neg_ne_zero.mpr q_nezero) (by simpa) negq
     rw [roundf_neg (h := q_nezero), FloatRep.neg] at this
     exact this
   rw [abs_of_pos h'] at h
   have q'pos : 0 < q' := by
-    rw [this]
-    apply mul_pos
-    · apply sub_pos.mpr
-      rw [div_lt_iff₀ (by exact_mod_cast C.prec_pos)]
-      norm_cast
-      have := C.prec_pos
-      omega
-    positivity
+    grind
   apply le_roundf_of_le (C := C) r q q' q_nezero (ne_of_gt q'pos) at h
   have h : |coeQ (roundf (C := C) r q)| ≤ |coeQ (roundf (C := C) r q')| := by
     rw [abs_of_pos, abs_of_pos]
@@ -542,9 +521,7 @@ lemma roundf_eq_up_down (r : IntRounder) [rh : ValidRounder r] {q : ℚ} (q_neze
   set x := (|q| * (2 ^ exp)⁻¹ - 1) * C.prec with x_def
   have := round_eq_or' (r := r) (b := q < 0)
       (q := x) (h := mantissa_nonneg C _ q_nezero)
-  rcases this with this | this
-  · simp [this]
-  simp [this]
+  grind
 
 lemma roundf_close (r : IntRounder) [rh : ValidRounder r] {q : ℚ} (q_nezero : q ≠ 0) :
   |q - coeQ (roundf (C := C) r q)| ≤ 2^(Int.log 2 |q|) / C.prec := by
@@ -566,14 +543,8 @@ lemma roundf_near_close {q : ℚ} (q_nezero : q ≠ 0) :
   · have negq : -q ≠ 0 := neg_ne_zero.mpr q_nezero
     replace this := this negq ?_
     · rw [<-roundnearest_neg, roundf_neg (h := q_nezero), coe_q_of_neg] at this
-      rw [abs_neg] at this
-      rw [neg_sub_neg, abs_sub_comm] at this
-      exact this
-    simp only [not_lt] at h
-    apply lt_of_le_of_ne
-    · rw [le_neg]
-      exact h
-    exact negq.symm
+      grind
+    grind
   rw [roundf, coe_normalize _ (roundf_almost_valid roundnearest q q_nezero)]
   set e := Int.log 2 |q| with e_def
   set x := (|q| * (2^e)⁻¹ - 1) with x_def
@@ -602,8 +573,7 @@ lemma roundf_near_close {q : ℚ} (q_nezero : q ≠ 0) :
         apply mul_le_mul_of_nonneg_right
         · apply div_le_div_of_nonneg_right
           · exact this
-          apply le_of_lt
-          exact_mod_cast C.prec_pos
+          grind
         positivity
       _ = 2^(e - 1) / C.prec := by
         rw [zpow_sub₀ (by norm_num)]

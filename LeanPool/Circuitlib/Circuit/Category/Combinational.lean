@@ -169,8 +169,7 @@ lemma tensorHom_eq_right
   have hf := tensorHom_eq a f
   simp only [htake, hdrop, Vector.get, Vector.append,
     Fin.val_cast, Fin.val_castAdd, Fin.val_natAdd] at hf ⊢
-  rw [Array.getElem_append_right (by omega)]
-  congr 1; omega
+  grind
 
 lemma tensorHom_get
     {X₁ Y₁ X₂ Y₂ : CombinationalCircuitCategory V G}

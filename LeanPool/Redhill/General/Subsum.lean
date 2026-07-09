@@ -92,10 +92,7 @@ lemma b₃_lower_bound : 12 * Y F * X F h ^ 4 ≤ ((X F h - Y F : ℤ) ^ 5).natA
 
 lemma b₄_lower_bound : 12 * Y F * X F h ^ 4 ≤ (-(X F h + Y F : ℤ) ^ 5).natAbs := by
   apply (b₃_lower_bound hh).trans
-  rw [← cast_sub (by grind [Y_lt_X]), ← cast_add]
-  simp_rw [Int.natAbs_neg, Int.natAbs_pow, Int.natAbs_natCast]
-  gcongr
-  lia
+  grind
 
 lemma X4_le_natAbs_b4 {b₁ b₂ b₃ b₄ : SignType} (hl : b₄ < b₃) :
     X F h ^ 4 ≤ (b₁ * (X F h ^ 2 + 10 * Y F ^ 3 : ℤ) ^ 2 + b₂ * ((10 * Y F - 1) * X F h ^ 4) +
@@ -120,8 +117,7 @@ lemma X4_le_natAbs_b4 {b₁ b₂ b₃ b₄ : SignType} (hl : b₄ < b₃) :
             rw [← cast_sub (by grind [Y_lt_X])]
             exact Int.zero_le_ofNat _
           have n₂ : 0 ≤ (X F h + Y F : ℤ) ^ 5 := by
-            rw [← cast_add]
-            exact Int.zero_le_ofNat _
+            grind
           rw [Int.natAbs_add_of_nonneg n₁ n₂]
           grind [b₃_lower_bound hh]
     _ ≤ (b₃ * (X F h - Y F : ℤ) ^ 5 + b₄ * -(X F h + Y F) ^ 5).natAbs -
@@ -136,8 +132,7 @@ lemma X4_le_natAbs_b4 {b₁ b₂ b₃ b₄ : SignType} (hl : b₄ < b₃) :
         apply Nat.mul_le_mul_right
         cases b₂ <;> simp
     _ ≤ _ := by
-      rw [add_assoc (_ + _), add_comm (_ + _)]
-      exact Int.sub_le_add_natAbs
+      grind
 
 omit hh in
 lemma b₃_lower_bound_2 :
@@ -175,13 +170,11 @@ lemma X4_le_natAbs_b3 {b₁ b₂ b₃ : SignType} (hl : b₃ < b₂) :
           have n₁ : 0 ≤ (10 * Y F - 1 : ℕ) * (X F h ^ 4 : ℤ) := by
             exact_mod_cast Nat.zero_le _
           have n₂ : 0 ≤ -(-2 * Y F * (5 * X F h ^ 4 + 10 * X F h ^ 2 * Y F ^ 2 + Y F ^ 4) : ℤ) := by
-            simp_rw [neg_mul, neg_neg]
-            exact_mod_cast Nat.zero_le _
+            grind
           rw [Int.natAbs_add_of_nonneg n₁ n₂]
           grind [b₃_lower_bound_2]
     _ ≤ _ := by
-      rw [add_rotate ((b₁ : ℤ) * _)]
-      exact Int.sub_le_add_natAbs
+      grind
 
 lemma X_le_natAbs_redEmb1 {b₁ b₂ b₃ b₄ : SignType} (hb : b₁ ≠ b₂ ∨ b₂ ≠ b₃ ∨ b₃ ≠ b₄) :
     X F h ≤ (b₁ * (X F h ^ 2 + 10 * Y F ^ 3 : ℤ) ^ 2 + b₂ * ((10 * Y F - 1) * X F h ^ 4) +
@@ -346,7 +339,6 @@ lemma maxAbs_tup : ∀ᶠ h in Filter.atTop, maxAbs (tup n F h) = (X F h + Y F) 
       · exact Nat.le_add_right ..
     · rw [tup_natAdd_four, Int.natAbs_pow, ← cast_sub (by grind [Y_lt_X]), Int.natAbs_natCast]
       exact Nat.pow_le_pow_left (by lia) _
-    · rw [tup_natAdd_five, Int.natAbs_neg]
-      norm_cast
+    · grind
 
 end GeneralCase

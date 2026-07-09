@@ -867,8 +867,7 @@ def _root_.LieAlgebra.Dim3.Family.equivToSemidirect :
       LieHom.toLinearMap_comp, LinearMap.coe_comp, LieHom.coe_toLinearMap, LieHom.coe_smulRight,
       Function.comp_apply, Abelian.DerivationCoeFun']
     ext
-    · simp only
-      rw [mul_comm, sub_self]
+    · grind
     · funext i
       fin_cases i
       · change (x 0 * y 2 - x 2 * y 0) * α =
@@ -977,11 +976,7 @@ theorem _root_.LieAlgebra.Dim3.Family.commutator_is_span_e₂e₃ (hα : α ≠ 
     exact ⟨_, _, cl⟩
   · rw [span_le]
     trans {x | ∃ (y z: Family K α β), ⁅y, z⁆ = x}
-    · intro e Be
-      simp_all only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_setOf_eq]
-      cases Be with
-      | inl h => subst h; exact ⟨_, _, e₂_bracket⟩
-      | inr h => subst h; exact ⟨_, _, e₃_bracket⟩
+    · grind
     · apply subset_span (R:=K) (M:=Family K α β) (s := {x | ∃ y z, ⁅y, z⁆ = x})
 
 /-- TODO. -/
@@ -1077,26 +1072,7 @@ noncomputable def _root_.LieAlgebra.Dim3.Family.commutatorBasis (α β : K) (hα
   have B_setrange_eq : Set.range (B α β) = {e₂, e₃} := by
     simp_all only [ne_eq, Matrix.range_cons,
       Matrix.range_empty, Set.union_empty, Set.union_singleton, B]
-    simp_all only [derivedSeriesOfIdeal_succ, derivedSeriesOfIdeal_zero, e₁, e₂β, e₃, e₂, e₁α]
-    ext x : 1
-    simp_all only [Set.mem_insert_iff, Set.mem_singleton_iff]
-    apply Iff.intro
-    · intro a
-      cases a with
-      | inl h =>
-        subst h
-        simp_all only [or_true]
-      | inr h_1 =>
-        subst h_1
-        simp_all only [true_or]
-    · intro a
-      cases a with
-      | inl h =>
-        subst h
-        simp_all only [or_true]
-      | inr h_1 =>
-        subst h_1
-        simp_all only [true_or]
+    grind
   let B_is_li_comm := linearIndependent_from_ambient (K := K) (commutator K (Family K α β)) ![e₂,
     e₃] B_is_li_ambient (B_setrange (hα := hα))
   have : Set.range (Set.mapIntoSubtype (↑(↑(commutator K (Family K α β)))) (B α β) (B_setrange
@@ -1111,22 +1087,10 @@ noncomputable def _root_.LieAlgebra.Dim3.Family.commutatorBasis (α β : K) (hα
       rcases j_in with hy | hy
       · have := Set.map_into_subtype_apply (↑(commutator K (Family K α β))) (B α β)
           (B_setrange (hα:=hα)) 0
-        rw [hy] at this
-        unfold B at this
-        simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
-        left
-        apply Subtype.ext
-        simp only [Matrix.cons_val_zero] at this
-        exact this
+        grind
       · have := Set.map_into_subtype_apply (↑(commutator K (Family K α β))) (B α β)
           (B_setrange (hα:=hα)) 1
-        rw [hy] at this
-        unfold B at this
-        simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
-        right
-        apply Subtype.ext
-        simp only [Matrix.cons_val_one, Matrix.cons_val_fin_one] at this
-        exact this
+        grind
     · intro e
       simp_all only [Set.mem_insert_iff, Set.mem_singleton_iff, e₁, e₂β, e₁α]
       rcases e with (e0 | e1)

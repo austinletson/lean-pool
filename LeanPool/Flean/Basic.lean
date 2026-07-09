@@ -69,8 +69,7 @@ def toFloat [R : Rounding] (q : ℚ) : Flean.Float C :=
       · refine ⟨?_, by linarith [h', C.emin_lt_emax]⟩
         have := round_min_e (r := roundFunction R) (C := C) q_nonneg
         rw [<-roundRep] at this
-        rw [sem_def] at this
-        linarith
+        grind
       have := round_valid_m (C := C) q q_nonneg
       rw [sem_def] at this
       exact this
@@ -119,19 +118,11 @@ lemma is_zero_iff_subnormal_to_q (sm : SubnormRep C) (h : sm.m < C.prec) :
   · intro h'
     simp only [Flean.Float.IsZero, Bool.false_eq_true]
     rcases sm with ⟨s, m⟩
-    split
-    · simp at *
-    simp only [C.prec_pos, Flean.Float.subnormal.injEq, SubnormRep.mk.injEq, imp_false,
-      not_and, forall_const, forall_eq'] at *
-    contradiction
+    grind
   intro h'
   rcases sm with ⟨s, m⟩
   simp only [Flean.Float.IsZero] at h'
-  split at h'
-  next s m h_again sm_def =>
-    rw [Flean.Float.subnormal.injEq] at sm_def
-    rw [sm_def]
-  simp at h'
+  grind
 
 lemma subnormal_range (f : SubnormRep C) (vm : f.m < C.prec) (ne_zero : f.nonzero) :
   Int.log 2 |subnormalToQ f| < C.emin := by
@@ -259,10 +250,7 @@ lemma to_float_to_rat [R : Rounding] (f : Flean.Float C) (finite : f.IsFinite)
     contradiction
   else
     if h_eq_pres : sm.2 = C.prec then
-      rw [<-snormal_eq] at h_eq_pres
-      simp only [mzero, this, h_eq_pres, ↓reduceDIte, reduceCtorEq]
-      rw [snormal_eq] at h_eq_pres
-      linarith
+      grind
     else
       rw [<-snormal_eq] at h_eq_pres
       simp only [mzero, this, h_eq_pres, ↓reduceDIte, Flean.Float.subnormal.injEq]
@@ -415,12 +403,7 @@ lemma float_le_float_of [R : Rounding] (q1 q2 : ℚ)
       apply subnormal_round_le_of_le (C := C) (r := roundFunction R) q1 q2 h
     · rw [h2]
       have : q2 > 0 := by
-        contrapose! h'
-        rw [abs_of_nonpos h'] at q2_large
-        rw [abs_of_nonpos (le_trans h h')] at q1_small
-        apply le_antisymm h
-        have := le_trans q1_small q2_large
-        linarith
+        grind
       apply le_trans (b := 2^C.emin)
       · rw [<-subnormal_to_q_emin, <-roundsub_emin]
         apply subnormal_round_le_of_le (C := C) (r := roundFunction R) q1 (2^C.emin)
@@ -434,19 +417,14 @@ lemma float_le_float_of [R : Rounding] (q1 q2 : ℚ)
   rcases splitIsFinite (h := h2) with ⟨q2_small, h2⟩ | ⟨q2_large, h2⟩
   · rw [h2]
     have : q1 < 0 := by
-      contrapose! h'
-      rw [abs_of_nonneg h'] at q1_large
-      apply le_antisymm h
-      apply le_trans _ q1_large
-      exact (abs_le.mp q2_small).2
+      grind
     apply le_trans (b := -2^C.emin)
     · rw [<-coe_q_neg_emin, <-roundrep_neg_emin]
       apply le_roundf_of_le
       · exact ne_of_lt this
       · rw [<-neg_ne_zero, neg_neg]
         positivity
-      rw [abs_of_neg this] at q1_large
-      exact le_neg_of_le_neg q1_large
+      grind
     rw [<-subnormal_to_q_neg_emin, <-roundsub_neg_emin]
     apply subnormal_round_le_of_le (C := C) (r := roundFunction R)
     exact (abs_le.mp q2_small).1
@@ -523,12 +501,8 @@ lemma float_up_minus_down (q : ℚ) (h : (toFloatDown (C := C) q).IsFinite)
     unfold roundsub
     simp only [roundFunction]
     apply subnormal_up_minus_down (C := C)
-  · exfalso
-    apply q_is_boundary
-    apply le_antisymm q_small q_large'
-  · exfalso
-    apply q_is_boundary
-    apply le_antisymm q_small' q_large
+  · grind
+  · grind
   rw [h, h']
   apply le_max_of_le_right
   apply roundf_up_minus_down

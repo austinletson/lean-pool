@@ -58,8 +58,7 @@ private theorem sInf_mem_of_forall_mem {IsAmbient : G → Prop} {S : Set (Set.Ii
   rw [Set.Iic.coe_sInf, Pi.inf_apply]
   refine ⟨hAmbient, ?_⟩
   simp only [sInf_apply, iInf_Prop_eq]
-  rintro ⟨_, A, hAS, hA⟩
-  exact hA ▸ hS A hAS
+  grind
 
 omit [Form G] in
 private theorem mem_of_sInf_mem {IsAmbient : G → Prop} {S : Set (Set.Iic IsAmbient)}

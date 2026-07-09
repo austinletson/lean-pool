@@ -274,8 +274,7 @@ theorem empiricalMeasureError_eq_empiricalError (X : Type u) [MeasurableSpace X]
     by_cases hd : h (xs i) = c (xs i)
     · simp [hd]
     · simp [hd, ENNReal.toReal_one]
-  rw [hsum_eq]
-  ring
+  grind
 
 end EmpiricalMeasureError
 
@@ -326,9 +325,7 @@ structure IsFaithfulLoss {Y : Type v} [DecidableEq Y] (loss : LossFunction Y) : 
 theorem zeroOneLoss_faithful : IsFaithfulLoss (zeroOneLoss Bool) := by
   refine ⟨fun y => by simp [zeroOneLoss], fun y₁ y₂ h => ?_⟩
   unfold zeroOneLoss at h
-  split_ifs at h with heq
-  · exact heq
-  · simp at h
+  grind
 
 /-- EmpiricalError with a faithful loss is zero iff consistent. -/
 theorem empError_zero_iff_consistent {X : Type u} {Y : Type v} [DecidableEq Y]
@@ -401,17 +398,14 @@ theorem erm_consistent_realizable (X : Type u) [MeasurableSpace X] [DecidableEq 
   -- Step 3: c is a minimizer, so the ∃-condition in ermLearn holds
   have hexists : ∃ h₀ ∈ H, ∀ h' ∈ H,
       EmpiricalError X Bool h₀ S' loss ≤ EmpiricalError X Bool h' S' loss := by
-    refine ⟨c, hreal hcC, fun h' _ => ?_⟩
-    rw [hc_emp_zero]
-    exact hEmp_nonneg h'
+    grind
   -- Step 4: Unfold ermLearn, the if branch fires
   unfold ermLearn
   rw [dif_pos hexists]
   -- Step 5: The chosen minimizer h₀ has EmpError(h₀) ≤ EmpError(c) = 0
   obtain ⟨hch_mem, hch_min⟩ := hexists.choose_spec
   have hch_le : EmpiricalError X Bool hexists.choose S' loss ≤ 0 := by
-    have := hch_min c (hreal hcC)
-    rwa [hc_emp_zero] at this
+    grind
   -- Step 6: EmpError(h₀) = 0 (since 0 ≤ EmpError ≤ 0)
   have hch_zero : EmpiricalError X Bool hexists.choose S' loss = 0 :=
     le_antisymm hch_le (hEmp_nonneg _)
@@ -477,8 +471,7 @@ theorem empiricalError_bounded_diff {X : Type u} [MeasurableSpace X]
   have key : ∀ i : Fin m, i ≠ j →
     zeroOneLoss Bool (h (xs i)) (c (xs i)) -
     zeroOneLoss Bool (h (Function.update xs j x' i)) (c (Function.update xs j x' i)) = 0 := by
-    intro i hij
-    simp [Function.update_of_ne hij]
+    grind
   rw [Finset.sum_eq_single j
     (fun i _ hij => key i hij)
     (fun habs => absurd (Finset.mem_univ j) habs)]
@@ -523,8 +516,7 @@ theorem consistent_tail_bound {X : Type u} [MeasurableSpace X]
       ≤ ENNReal.ofReal ((1 - ε) ^ m) := by
   have hset : { xs : Fin m → X | ∀ i, h (xs i) = c (xs i) } =
       Set.pi Set.univ (fun _ : Fin m => { x : X | h x = c x }) := by
-    ext xs
-    simp [Set.mem_pi]
+    grind
   rw [hset, MeasureTheory.Measure.pi_pi]
   have hcompl : { x : X | h x = c x } = { x : X | h x ≠ c x }ᶜ := by
     ext x; simp
@@ -627,8 +619,7 @@ theorem vcdim_finite_imp_growth_bounded (X : Type u)
   have h_toSub_inj : Function.Injective toSub := by
     intro f g hfg; funext x
     have := Finset.ext_iff.mp hfg x
-    simp only [toSub, Finset.mem_filter, Finset.mem_univ, true_and] at this
-    cases hf : f x <;> cases hg : g x <;> simp_all
+    grind
   set 𝒜 := RS_fs.image toSub
   have h1 : RS_fs.card = 𝒜.card :=
     (Finset.card_image_of_injective _ h_toSub_inj).symm
@@ -854,10 +845,7 @@ theorem uc_imp_pac (X : Type u) [MeasurableSpace X]
     have hexists : ∃ h₁ ∈ C, ∀ i : Fin m, h₁ ((fun i => (xs i, c (xs i))) i).1 =
         ((fun i => (xs i, c (xs i))) i).2 := ⟨c, hcC, fun i => rfl⟩
     unfold IsConsistentWith
-    intro i
-    change learnFn S (S i).1 = (S i).2
-    simp only [learnFn, hS_def, dif_pos hexists]
-    exact (hexists.choose_spec).2 i
+    grind
   -- Bridge from consistency to TrueError ≤ ENNReal.ofReal ε
   -- First get UC bound for h₀
   have hxs_h₀ := hxs h₀ hh₀C
@@ -1072,8 +1060,7 @@ theorem exists_many_disagreements {α : Type*} [Fintype α]
   have hn_pos : 1 ≤ n := by omega
   have hpow : 2 ^ n = 2 * 2 ^ (n - 1) := by
     have : n = n - 1 + 1 := by omega
-    conv_lhs => rw [this]
-    ring
+    grind
   rw [hpow] at hsum_le
   -- hsum_le: n * 2^(n-1) ≤ 2 * 2^(n-1) * (n/4)
   have hpow_pos : 0 < 2 ^ (n - 1) := Nat.pos_of_ne_zero (by positivity)
@@ -1115,10 +1102,8 @@ theorem agreement_count_markov {α : Type*} [Fintype α] [DecidableEq α]
     have hadd : ∑ f : α → Bool, (n - disagree_count f) +
         ∑ f : α → Bool, disagree_count f = ∑ _f : α → Bool, n := by
       rw [← Finset.sum_add_distrib]
-      apply Finset.sum_congr rfl; intro f _
-      exact Nat.sub_add_cancel (hdc_le_n f)
-    rw [htotal, hsum_disagree] at hadd
-    nlinarith [hpow]
+      grind
+    grind
   -- Step 3: S = #{f : disagree ≤ n/4}
   set S := (Finset.univ.filter fun f : α → Bool =>
     disagree_count f ≤ n / 4).card with hS_def
@@ -1129,9 +1114,7 @@ theorem agreement_count_markov {α : Type*} [Fintype α] [DecidableEq α]
             (n - disagree_count f) := by
           rw [hS_def]
           apply Finset.card_nsmul_le_sum
-          intro f hf
-          simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hf
-          omega
+          grind
       _ ≤ ∑ f : α → Bool, (n - disagree_count f) :=
           Finset.sum_le_univ_sum_of_nonneg (fun _ => Nat.zero_le _)
       _ = n * 2 ^ (n - 1) := hsum_agree
@@ -1174,9 +1157,7 @@ private lemma per_sample_labeling_bound {α : Type*} [Fintype α] [DecidableEq �
   have hflip_invol : ∀ f : α → Bool, flip (flip f) = f := by
     intro f; ext t; simp only [flip]; split_ifs <;> simp
   have hflip_seen : ∀ (f : α → Bool) (i : Fin m), flip f (xs i) = f (xs i) := by
-    intro f i; simp only [flip]
-    have : xs i ∈ seen := Finset.mem_image_of_mem _ (Finset.mem_univ i)
-    simp [this]
+    grind
   have hflip_output : ∀ f : α → Bool, output (flip f) = output f :=
     fun f => houtput (flip f) f (hflip_seen f)
   -- Key: for each pair (f, flip f), at most one is good.
@@ -1204,28 +1185,12 @@ private lemma per_sample_labeling_bound {α : Type*} [Fintype α] [DecidableEq �
             ≤ ((Finset.univ.filter fun t => f t ≠ output f t) ∪
                (Finset.univ.filter fun t => flip f t ≠ output f t)).card := by
               apply Finset.card_le_card
-              intro t ht
-              simp only [Finset.mem_sdiff, Finset.mem_univ, true_and] at ht
-              simp only [Finset.mem_union, Finset.mem_filter, Finset.mem_univ, true_and]
-              -- t ∉ seen, so flip f t = !f t
-              by_cases hft : f t ≠ output f t
-              · left; exact hft
-              · right
-                push Not at hft
-                change (if t ∈ seen then f t else !f t) ≠ output f t
-                simp only [ht, ↓reduceIte]
-                -- !f(t) ≠ output(f)(t) since f(t) = output(f)(t) (from hft)
-                rw [← hft]
-                exact Bool.not_ne_self (f t)
+              grind
           _ ≤ (Finset.univ.filter fun t => f t ≠ output f t).card +
               (Finset.univ.filter fun t => flip f t ≠ output f t).card :=
             Finset.card_union_le _ _
       have hseen_le : seen.card ≤ m := le_trans Finset.card_image_le (by simp)
-      have hsdiff := Finset.card_sdiff_add_card_inter Finset.univ seen
-      have hinter_le : (Finset.univ ∩ seen).card ≤ m :=
-        le_trans (Finset.card_le_card Finset.inter_subset_right) hseen_le
-      rw [Finset.card_univ] at hsdiff
-      linarith
+      grind
     omega
   -- Inject good set into pairs: for each good f, flip(f) is not good
   set S := Finset.univ.filter fun f : α → Bool =>
@@ -1284,8 +1249,7 @@ lemma nfl_counting_core {X : Type u} {C : ConceptClass X Bool} {T : Finset X}
     have hbound := per_sample_labeling_bound m (by rwa [hd_card]) xs
       (fun f t => (L.learn (fun i => ((↑(xs i) : X), f (xs i)))) (↑t))
         (fun f f' hff' => by
-          ext t
-          congr 1; funext i; exact Prod.ext rfl (hff' i))
+          grind)
     rwa [hd_card] at hbound
   -- Step 2: By contradiction + pigeonhole to find f₀.
   -- The goal is ∃ f₀ c₀, c₀ ∈ C ∧ c₀|_T = f₀ ∧ 2 * count ≤ card.
@@ -1322,9 +1286,7 @@ lemma nfl_counting_core {X : Type u} {C : ConceptClass X Bool} {T : Finset X}
             L.learn (fun i => ((↑(xs i) : X), (hrealize f).choose (↑(xs i)))) (↑t)) =
         (Finset.univ.filter fun t : ↥T =>
           f t ≠ (L.learn (fun i => ((↑(xs i) : X), f (xs i)))) (↑t)) := by
-      apply Finset.filter_congr; intro t _
-      rw [hcf t, show (fun i => ((↑(xs i) : X), (hrealize f).choose (↑(xs i)))) =
-        (fun i => ((↑(xs i) : X), f (xs i))) from funext (fun i => by rw [hcf])]
+      grind
     rw [hinner]
   -- Step 3: Sum contradiction.
   -- Define good_count(f) = |{xs : error(f,xs)*4 ≤ d}|
@@ -1477,8 +1439,7 @@ theorem nfl_core (X : Type u) [MeasurableSpace X] [Fintype X]
     refine ⟨c1, ?_⟩; rw [hc1_train]
     -- Error set ⊇ unseen. For unseen x: c1(x) = !h0(x) ≠ h0(x).
     have herr_sup : (Set.range xs)ᶜ ⊆ {x : X | h0 x ≠ c1 x} := by
-      intro x hx; simp only [Set.mem_compl_iff] at hx
-      simp only [Set.mem_setOf_eq, c1, if_neg hx]; cases h0 x <;> simp
+      grind
     -- D(error) >= D(unseen) by monotonicity
     apply lt_of_lt_of_le _ (MeasureTheory.measure_mono herr_sup)
     -- D(unseen) = 1 - D(seen). D(seen) <= m/n <= 1 / 2. So D(unseen) >= 1 / 2 > 1 / 8.
@@ -1862,23 +1823,19 @@ theorem compress_injective_on_labelings {X : Type u} {n : ℕ}
   -- Realizability hypotheses match the correct field's guard
   have hf_real' : ∃ c ∈ C, ∀ i : Fin n,
       c ((fun i => (pts i, f i)) i).1 = ((fun i => (pts i, f i)) i).2 := by
-    obtain ⟨c, hcC, hc⟩ := hf_real
-    exact ⟨c, hcC, fun i => by simp [hc i]⟩
+    grind
   have hg_real' : ∃ c ∈ C, ∀ i : Fin n,
       c ((fun i => (pts i, g i)) i).1 = ((fun i => (pts i, g i)) i).2 := by
-    obtain ⟨c, hcC, hc⟩ := hg_real
-    exact ⟨c, hcC, fun i => by simp [hc i]⟩
+    grind
   have hf := cs.correct (fun i => (pts i, f i)) hf_real' i
   have hg := cs.correct (fun i => (pts i, g i)) hg_real' i
-  simp only at hf hg
-  rw [← hf, congr_fun h_recon (pts i), hg]
+  grind
 
 /-- k + 1 ≤ 2^k for all k. Used in the counting step of compression_imp_vcdim_finite. -/
 private lemma succ_le_two_pow (k : ℕ) : k + 1 ≤ 2 ^ k := by
   induction k with
   | zero => simp
-  | succ k ih => calc k + 1 + 1 ≤ 2 ^ k + 2 ^ k := by omega
-                   _ = 2 ^ (k + 1) := by ring
+  | succ k ih => grind
 
 /-- Shattering is monotone: subsets of shattered sets are shattered. -/
 private lemma shatters_subset {X : Type u} {C : ConceptClass X Bool}
@@ -1983,10 +1940,7 @@ theorem compression_imp_vcdim_finite (X : Type u)
     -- Convert f : Fin n → Bool to a labeling of T via eqv
     let f' : ↥T → Bool := fun ⟨x, hx⟩ => f (T.equivFin ⟨x, hx⟩)
     obtain ⟨c, hcC, hcf'⟩ := hT_shatt f'
-    refine ⟨c, hcC, fun i => ?_⟩
-    have := hcf' (eqv i)
-    simp only [f', pts] at this ⊢
-    rwa [show T.equivFin (eqv i) = i from T.equivFin.apply_symm_apply i] at this
+    grind
   -- compress ∘ mkSample is injective (core pigeonhole step)
   -- Shatters gives C-realizability for each labeling, firing correctness
   have h_inj : Function.Injective (cs.compress ∘ mkSample) := by
@@ -2006,14 +1960,7 @@ theorem compression_imp_vcdim_finite (X : Type u)
       have hsub := cs.compress_sub (mkSample f)
       have hp_set : (p : X × Bool) ∈ (↑(cs.compress (mkSample f)) : Set (X × Bool)) :=
         Finset.mem_coe.mpr hp
-      have hp_range : p ∈ Set.range (mkSample f) := hsub hp_set
-      obtain ⟨i, hi⟩ := hp_range
-      simp only [mkSample] at hi
-      rw [Finset.mem_product]
-      constructor
-      · have : p.1 = pts i := (congr_arg Prod.fst hi).symm
-        rw [this]; exact (eqv i).2
-      · exact Finset.mem_univ _
+      grind
     · have := cs.compress_small (mkSample f); omega
   -- Source cardinality: 2^n
   have h_source_card : (Finset.univ : Finset (Fin n → Bool)).card = 2 ^ n := by
@@ -2218,8 +2165,7 @@ theorem pac_lower_bound_member (X : Type u) [MeasurableSpace X] [MeasurableSingl
             D { x | L.learn (fun i => (xs i, c (xs i))) x ≠ c x }
               ≤ ENNReal.ofReal ε }
           < ENNReal.ofReal (1 - δ) by
-    obtain ⟨D, hDprob, c, hcC, hfail⟩ := this
-    exact not_le.mpr hfail (hL D hDprob c hcC)
+    grind
   classical
   set d' := T.card with hd'_def
   have hd'_eq_d : d' = d := hTcard

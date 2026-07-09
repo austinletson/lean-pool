@@ -137,10 +137,7 @@ private lemma phi_iff (C : V) (t : V) :
       exact ⟨k, by simp, f, by simp, v, by simp, hkf, hk, hv, rfl⟩
   mpr := by
     unfold Phi
-    rintro (⟨z, _, rfl⟩ | ⟨x, _, rfl⟩ | ⟨k, _, f, _, v, _, hkf, hk, hv, rfl⟩)
-    · left; exact ⟨z, rfl⟩
-    · right; left; exact ⟨x, rfl⟩
-    · right; right; exact ⟨k, f, v, hkf, hk, hv, rfl⟩
+    grind
 
 /-- Imported declaration from the Incompleteness formalization. -/
 def blueprint (pL : LDef) : Fixpoint.Blueprint 0 where
@@ -437,12 +434,7 @@ private lemma phi_iff (param : Fin arity → V) (C pr : V) :
       · rcases hk; apply len_repeatVec_of_nth_le (fun i hi ↦ le_of_lt <| lt_of_mem_rng <| hw i hi)
   · rintro ⟨t, _, y, _, rfl, ht, H⟩
     refine ⟨by simpa using ht, ?_⟩
-    rcases H with (⟨z, _, rfl, rfl⟩ | ⟨x, _, rfl, rfl⟩ | ⟨k, _, f, _, v, _, w, _, ⟨hk, hw⟩, rfl,
-      rfl⟩)
-    · left; exact ⟨z, rfl⟩
-    · right; left; exact ⟨x, rfl⟩
-    · right; right
-      exact ⟨k, f, v, w, ⟨hk, fun i hi ↦ hw i hi⟩, rfl⟩
+    grind
 
 /-- TODO: move -/
 @[simp] lemma cons_app_9
@@ -521,12 +513,7 @@ def construction (c : Construction V L β) : Fixpoint.Construction V β.blueprin
           LogicalConnective.Prop.or_eq] using c.phi_iff _ _ _⟩
   monotone := by
     unfold Phi
-    rintro C C' hC v pr ⟨ht, H⟩
-    refine ⟨ht, ?_⟩
-    rcases H with (⟨z, rfl⟩ | ⟨x, rfl⟩ | ⟨k, f, v, w, ⟨hk, hw⟩, rfl⟩)
-    · left; exact ⟨z, rfl⟩
-    · right; left; exact ⟨x, rfl⟩
-    · right; right; exact ⟨k, f, v, w, ⟨hk, fun i hi ↦ hC (hw i hi)⟩, rfl⟩
+    grind
 
 instance : c.construction.Finite where
   finite {C param pr h} := by
@@ -602,8 +589,7 @@ lemma graph_func_inv {k f v y} :
   intro H
   rcases Graph.case_iff.mp H with ⟨_, (⟨_, h, _⟩ | ⟨_, h, rfl⟩ | ⟨k, f, v, w, hw, h, rfl⟩)⟩ <;>
     first
-    | (simp only [qqFunc_inj] at h; rcases h with ⟨rfl, rfl, rfl⟩
-       exact ⟨w, hw, by rfl⟩)
+    | (simp only [qqFunc_inj] at h; grind)
     | simp_all [qqBvar, qqFvar, qqFunc]
 
 variable {c} (param n)
@@ -696,8 +682,7 @@ lemma graph_existsUnique_vec {k w : V} (hw : L.IsUTermVec k w) :
   intro w'' ⟨hkw'', hw''⟩
   refine nth_ext (by simp [hw'k, ←hkw'']) (by
     intro i hi;
-    exact c.graph_unique param (hw'' i (by simpa [hkw''] using hi)) (hw' i (by simpa [hkw''] using
-      hi)))
+    exact c.graph_unique param (hw'' i (by simpa [hkw''] using hi)) (hw' i (by grind)))
 
 variable (c param)
 

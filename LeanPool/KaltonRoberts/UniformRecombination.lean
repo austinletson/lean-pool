@@ -83,14 +83,12 @@ theorem exists_uniform_labeling_types
     convert hf.2 ( eB j ) using 1;
     rw [ Finset.card_filter, Finset.card_filter ];
     refine Finset.sum_bij (fun i _ => eA i) ?_ ?_ ?_ ?_
-    · intro i hi
-      exact Finset.mem_univ _
+    · grind
     · intro a₁ _ a₂ _ h
       exact eA.injective h
     · intro b hb
       exact ⟨eA.symm b, Finset.mem_univ _, by simp⟩
-    · intro i hi
-      simp [eB.symm_apply_eq]
+    · grind
 
 /-! ## Cofinality of admissible multiples -/
 

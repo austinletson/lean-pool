@@ -79,8 +79,7 @@ theorem ABW.toNBW.lang_sub {S Q} {A : ABW S Q} {w : Nat → S} :
   · grind
 
 lemma lemma1 {α : Type} {a b c : Set α} {h : Disjoint a b} : a = (a ∪ (b ∩ c)) \ b := by
-  rw [Set.union_sdiff_distrib, Disjoint.sdiff_eq_right h.symm, ← Set.sdiff_inter_right_comm]
-  simp
+  grind
 
 /-- The set of states occupying level `i` of the run DAG `G`. -/
 def level {S Q} {A : ABW S Q} {w : Nat → S} {G : RunDAG A w} (i : Nat) : Set Q :=
@@ -299,7 +298,6 @@ theorem ABW.toNBW.lang_sup {S Q} {A : ABW S Q} [Finite Q] {w : Nat → S} :
     fin i := Subtype.finite
     nonempty i := by
       simp
-      specialize W_nonempty (n + i) (by omega)
       grind
   }
   obtain ⟨⟨bad_path_f, bad_path_path⟩⟩ := S'.ex_path
@@ -311,9 +309,7 @@ theorem ABW.toNBW.lang_sup {S Q} {A : ABW S Q} [Finite Q] {w : Nat → S} :
   simp only [S'] at bad_path_f
   specialize W_not_F (n + j)
   rw [←Set.disjoint_iff_inter_eq_empty] at W_not_F
-  rw [Set.disjoint_left] at W_not_F
-  specialize W_not_F (bad_path_f j).prop
-  contradiction
+  grind
 
 theorem ABW.toNBW.lang_eq {S Q} (A : ABW S Q) [Finite Q] : A.language = (ABW.toNBW A).language := by
   funext; apply propext

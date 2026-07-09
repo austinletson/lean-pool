@@ -289,8 +289,7 @@ theorem segment_integral_eq_sub_of_hasDerivAt {f G : ℂ → ℂ} {S : Set ℂ}
     hcont (fun t ht => hG _ (h_mem t ht))
   rw [show a + (b - a) = b from by ring] at key
   rw [smul_eq_mul] at key
-  erw [intervalIntegral.integral_mul_const]; rw [mul_comm]
-  exact key
+  erw [intervalIntegral.integral_mul_const]; grind
 
 /-- Contour additivity: for a holomorphic function on a convex open set,
 the segment integral from `a` to `b` equals the sum of segment integrals
@@ -873,9 +872,7 @@ private theorem D_eq_three_terms (r : ℝ) (G : ℂ → ℂ)
   have hv1 : (-1 : ℂ) + I * (1 : ℝ) = -1 + I := by push_cast; ring
   rw [hv1] at htv
   have hhoriz := horizontal_eq_primitive_sub r G hG
-  have hcomm : (-1 : ℂ) + ↑δ * I = -1 + I * ↑δ := by ring
-  rw [hcomm]
-  linear_combination hsd + htd - hsv - htv - hhoriz
+  grind
 
 /-- A bounded continuous integrand on `[0,1]` has its head integral
 `integral_0^delta` tending to zero as `delta -> 0+`. -/
@@ -895,10 +892,7 @@ private theorem head_integral_tendsto_zero {f : ℝ → ℂ}
   calc ‖∫ t in (0 : ℝ)..δ, f t‖
       ≤ (C + 1) * |δ - 0| := by
         apply intervalIntegral.norm_integral_le_of_norm_le_const
-        intro t ht; rcases Set.mem_uIoc.mp ht with ⟨h1, h2⟩ | ⟨h1, h2⟩
-        · exact (hC t ⟨by linarith, by linarith [lt_of_lt_of_le hball (min_le_right _ _)]⟩).trans
-            (by linarith)
-        · linarith
+        grind
     _ < (C + 1) * (ε / (C + 1)) := by
         rw [sub_zero, abs_of_pos hδ_pos]
         exact mul_lt_mul_of_pos_left

@@ -168,12 +168,8 @@ lemma no_inf_chain_from_prover (g : ℕ → GamePos)
       case succ n ih =>
         apply Relation.ReflTransGen.tail ih
         refine ⟨g (2 * n + 1), g_rel (2 * n), ?_⟩
-        have := g_rel (2 * n + 1)
-        have this := by simpa [Function.swap] using this
         grind)
-    unfold f
-    simp only [g0_def] at this
-    exact this
+    grind
   let sequents : (n : ℕ) → List Sequent := Nat.rec [] (fun n ih => f n :: ih)
   have seq_prop : ∀ n, sequents n ++ Γs = (g (2 * n)).2.1 := by
     intro n
@@ -207,10 +203,7 @@ lemma no_inf_chain_from_prover (g : ℕ → GamePos)
     induction m
     case zero => simp only [Nat.not_lt_zero] at n_m
     case succ m ih =>
-      rcases Nat.lt_succ_iff_lt_or_eq.1 n_m with lt | eq
-      · simp_all [sequents]
-      · subst eq
-        simp only [sequents, List.mem_cons, true_or]
+      grind
   have inf : Infinite {Δ // Δ ∈ Γ.FL.powerset} := by
     apply Infinite.of_injective (fun n ↦ ⟨f n, f_prop n⟩)
     intro n1 n2 hyp
@@ -227,12 +220,7 @@ lemma no_inf_chain_from_prover (g : ℕ → GamePos)
       · rw [g2k21_def] at this
         cases this
         case builder not_in =>
-          apply not_in
-          have h : f n2 = Γ := by unfold f; simp [g2k2_def]
-          have := seq_prop n2
-          have hyp := by simpa using hyp
-          have this := by simpa [g2k2_def] using this
-          simp [← this, ← h, ← hyp, in_seq]
+          grind
     · exact eq
     · exfalso
       have in_seq := seq_prop2 _ _ gt
@@ -246,12 +234,7 @@ lemma no_inf_chain_from_prover (g : ℕ → GamePos)
       · rw [g2k21_def] at this
         cases this
         case builder not_in =>
-          apply not_in
-          have h : f n1 = Γ := by unfold f; simp [g2k2_def]
-          have := seq_prop n1
-          have hyp := by simpa using hyp
-          have this := by simpa [g2k2_def] using this
-          simp [← this, ← h, hyp, in_seq]
+          grind
   apply inf.not_finite
   apply Set.finite_coe_iff.1
   apply Finset.finite_toSet
@@ -324,10 +307,8 @@ lemma move_iff_in_moves {g g' : coalgebraGame.Pos} : Move g g' ↔ g' ∈ coalge
     case prover R Rs Γ Γs R_mem =>
       exact (Finset.mem_map).mpr ⟨R, R_mem, rfl⟩
     case builder R Rs Γ Γs Γ_mem Γ_not_mem =>
-      exact (Finset.mem_filterMap _).mpr
-        ⟨Γ, Γ_mem, by simp only [Γ_not_mem, ↓reduceIte]⟩
-  · intro in_moves
-    exact @coalgebraGame.move_rel g g' in_moves
+      grind
+  · grind
 
 /-- We will always start the game from a sequent `Γ` and no history. -/
 abbrev startPos (Γ : Sequent) : GamePos := ⟨Sum.inl Γ, [], []⟩

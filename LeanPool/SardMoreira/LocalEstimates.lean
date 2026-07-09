@@ -244,9 +244,7 @@ theorem sub_isLittleO_norm_rpow_add_one_of_fderiv_of_density_point [FiniteDimens
     · rintro rfl
       simpa [sub_eq_zero, hya] using hz_norm.symm
   grw [norm_sub_le_norm_sub_add_norm_sub _ (f z), hyz, hza, Real.norm_of_nonneg (by positivity)]
-  apply le_of_eq
-  field_simp
-  ring
+  grind
 
 theorem isLittleO_norm_rpow_add_one_of_fderiv_of_density_point_of_apply_eq_zero
    [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] {f : E → F} {a : E} {r : ℝ}

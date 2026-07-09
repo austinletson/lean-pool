@@ -104,12 +104,7 @@ lemma gaussian_normalization_maxwellian
   intro v
   rw [← hf_int]
   unfold equilibriumMaxwellian
-  have hc₀_ne : c₀ ≠ 0 := ne_of_lt hc₀
-  rw [show 2 * Real.pi * (-1 / (2 * c₀)) = Real.pi / (-c₀) from by field_simp]
-  have h_rpow_ne : (Real.pi / (-c₀)) ^ ((3 : ℝ) / 2) ≠ 0 :=
-    ne_of_gt (Real.rpow_pos_of_pos (div_pos Real.pi_pos (neg_pos.mpr hc₀)) _)
-  rw [mul_div_assoc, div_self h_rpow_ne, mul_one]
-  congr 1; field_simp
+  grind
 
 
 /-- Gaussian first moment: ∫ vᵢ exp(a+b·v+c|v|²) = (-bᵢ/(2c)) · ∫ exp(a+b·v+c|v|²).

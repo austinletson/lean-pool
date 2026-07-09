@@ -73,14 +73,11 @@ namespace TreeUnravelling
 
 @[simp 1100]
 lemma not_nil {c : (F.TreeUnravelling r).World} : c.1 ≠ [] := by
-  have := c.2.1;
-  by_contra;
-  simp_all;
+  grind
 
 lemma rel_length {x y : (F.TreeUnravelling r).World} (h : x ≺ y) : x.1.length < y.1.length := by
   obtain ⟨z, hz⟩ := h;
-  rw [←hz];
-  simp;
+  grind
 
 lemma irreflexive : Std.Irrefl (F.TreeUnravelling r).Rel := by
   constructor
@@ -100,18 +97,9 @@ def PMorphism (F : Frame) (r : F) : F.TreeUnravelling r →ₚ F where
   forth {cx cy} h := by
     obtain ⟨z, hz⟩ := h;
     have hchain : (cx.1 ++ [z]).IsChain F.Rel := by
-      rw [hz]
-      exact cy.2.2
+      grind
     have h := (List.isChain_append.mp hchain).2.2
-    have hx : cx.1.getLast (by aesop) ∈ cx.1.getLast? :=
-      List.getLast?_eq_getLast_of_ne_nil (by simp)
-    have hy : z ∈ ([z] : List F.World).head? := by simp
-    have hlast? : cy.1.getLast? = some z := by
-      rw [←hz]
-      simp
-    have hcy := List.getLast?_eq_getLast_of_ne_nil (l := cy.1) (by aesop)
-    have hlast : cy.1.getLast (by aesop) = z := by simpa [hcy] using hlast?
-    simpa [hlast] using h (cx.1.getLast (by aesop)) hx z hy
+    grind
   back {cx y} h := by
     simp_all only [Set.mem_setOf_eq];
     use ⟨cx.1 ++ [y], ?_⟩;
@@ -119,9 +107,7 @@ def PMorphism (F : Frame) (r : F) : F.TreeUnravelling r →ₚ F where
       · simp;
       · use y;
     · constructor;
-      · obtain ⟨i, hi⟩ := cx.2.1;
-        use (i ++ [y]);
-        simp_rw [←List.append_assoc, hi];
+      · grind
       · apply List.IsChain.append;
         · exact cx.2.2;
         · simp;
@@ -142,9 +128,7 @@ namespace Frame
 namespace TransitiveTreeUnravelling
 
 lemma not_nil {c : (F.TransitiveTreeUnravelling r).World} : c.1 ≠ [] := by
-  by_contra;
-  have := c.2.1;
-  simp_all;
+  grind
 
 lemma rel_length {x y : (F.TransitiveTreeUnravelling r).World} (Rxy : x ≺ y) :
     x.1.length < y.1.length := by
@@ -171,18 +155,10 @@ lemma rel_def {x y : (F.TransitiveTreeUnravelling r).World} :
     induction Rxy with
     | single Rxy =>
       obtain ⟨z, hz⟩ := Rxy;
-      rw [←hz];
-      constructor;
-      · simp;
-      · use [z];
+      grind
     | tail _ h ih =>
       obtain ⟨w, hw⟩ := h;
-      obtain ⟨_, ⟨zs, hzs⟩⟩ := ih;
-      rw [←hw, ←hzs];
-      constructor;
-      · simp;
-      · use zs ++ [w];
-        simp [List.append_assoc];
+      grind
   · replace ⟨xs, ⟨ws, hw⟩, hx₂⟩ := x;
     replace ⟨ys, ⟨vs, hv⟩, hy₂⟩ := y;
     subst hw hv;
@@ -203,8 +179,7 @@ lemma rel_def {x y : (F.TransitiveTreeUnravelling r).World} :
       · exact hy₂;
       · rw [←hzs]; simp only [List.length_cons, List.length_append, List.length_nil, zero_add,
           add_lt_add_iff_right, add_lt_add_iff_left, lt_add_iff_pos_left];
-        by_contra hC;
-        simp_all;
+        grind
       · simp_all;
 
 lemma rooted : (F.TransitiveTreeUnravelling r).isRooted ⟨[r], by tauto⟩ := by

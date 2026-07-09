@@ -59,9 +59,7 @@ theorem embed_flipBit_nonfree (free : Finset (Fin n)) (base x : Fin n → Bool)
     embed free base (flipBit x i) = embed free base x := by
   funext j
   simp only [embed, flipBit]
-  by_cases hj : j ∈ free
-  · simp [hj, Function.update_of_ne (ne_of_mem_of_not_mem hj hi)]
-  · simp [hj]
+  grind
 
 /-- Embedding the indicator of `T ⊆ S ⊆ free` with `base = false` recovers
 the original indicator of `T`. -/

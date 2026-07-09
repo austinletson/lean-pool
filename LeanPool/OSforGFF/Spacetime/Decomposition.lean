@@ -127,10 +127,7 @@ lemma spacetime_norm_sq_decompose (k : SpaceTime) :
     -- Manually expand the Fin 3 sum
     have hUniv : (Finset.univ : Finset (Fin (STDimension - 1))) =
         {⟨0, by decide⟩, ⟨1, by decide⟩, ⟨2, by decide⟩} := rfl
-    rw [hUniv, Finset.sum_insert (by decide : (⟨0, _⟩ : Fin (STDimension - 1)) ∉ _),
-        Finset.sum_insert (by decide : (⟨1, _⟩ : Fin (STDimension - 1)) ∉ _),
-        Finset.sum_singleton, h0, h1, h2]
-    ring
+    grind
   rw [hST, hSp]; ring
 
 /-- For a product-type integrand f(k₀) × g(k_sp), the integral decomposes as a product. -/

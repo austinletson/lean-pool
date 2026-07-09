@@ -101,9 +101,7 @@ theorem mul_sardMoreiraBound {n k p : ℕ} (hk : k ≠ 0) (hpn : p ≤ n) (α : 
     ((k : ℝ) + α) * (p : ℝ) + ((n : ℝ) - (p : ℝ))
   rw [Nat.cast_sub hpn]
   have hkpos : (0 : ℝ) < k := by exact_mod_cast Nat.pos_of_ne_zero hk
-  have hα : 0 ≤ (α : ℝ) := α.2.1
-  have hden : (k : ℝ) + (α : ℝ) ≠ 0 := by nlinarith
-  field_simp [hden]
+  grind
 
 theorem monotone_sardMoreiraBound (n : ℕ) {k : ℕ} (hk : k ≠ 0) (α : I) :
     Monotone (sardMoreiraBound n k α) := by
@@ -121,8 +119,7 @@ theorem monotone_sardMoreiraBound (n : ℕ) {k : ℕ} (hk : k ≠ 0) (α : I) :
       have hkone : (1 : ℝ) ≤ k := by exact_mod_cast Nat.one_le_iff_ne_zero.mpr hk
       nlinarith
     field_simp [ne_of_gt hden]
-    norm_num [Nat.cast_add, Nat.cast_one]
-    nlinarith
+    grind
   · have hnp : n ≤ p := Nat.le_of_not_gt hpn
     rw [Nat.sub_eq_zero_of_le hnp, Nat.sub_eq_zero_of_le (hnp.trans (Nat.le_succ p))]
     norm_num
@@ -717,8 +714,7 @@ theorem hausdorffMeasure_sardMoreiraBound_image_null_of_finrank_le
   have h_union : f '' s = ⋃ p' ≤ p, f '' {x ∈ s | dim (fderiv ℝ f x).range = p'} := by
     ext y
     simp only [Set.mem_image, Set.mem_iUnion, Set.mem_setOf_eq, exists_prop]
-    exact ⟨fun ⟨x, hx, hx'⟩ ↦ ⟨_, hs x hx, x, ⟨hx, rfl⟩, hx'⟩,
-      fun ⟨i, hi, x, hx, hx'⟩ ↦ ⟨x, hx.1, hx'⟩⟩
+    grind
   simp only [h_union, measure_iUnion_null_iff]
   intro p' hp'
   rw [← nonpos_iff_eq_zero, ← h_apply p' hp']

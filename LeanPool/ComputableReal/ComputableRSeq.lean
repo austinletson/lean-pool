@@ -172,9 +172,7 @@ private theorem val_uniq' {x : ℝ} {lb ub : CauSeq ℚ abs} (hlb : ∀ n, lb n 
         have hl₁ := hlb j
         have hu₂ := hub j
         rify at hi hl₁ hu₂ hε₁
-        rw [abs_ite_le] at hi ⊢
-        split_ifs at hi ⊢
-        <;> linarith⟩)).2
+        grind⟩)).2
 
 /-- If a real number x is bounded below and above by a sequence, it must be the value of that
 sequence. -/
@@ -700,8 +698,7 @@ def ubInv (x : ComputableℝSeq) (hnz : x.val ≠ 0) : CauSeq ℚ abs :=
             have h₁ := H _ le_rfl
             have h₁ := H _ hj
             by
-              simp only [(by linarith : ¬x.lb i ≤ 0),(by linarith : ¬x.lb j ≤ 0), ite_false]
-              exact Hδ (H j hj).1.1 iK (H' j hj)
+              grind
               ⟩⟩
 
 /-- When applied to a `dropTilSigned`, `lbInv` is a correct lower bound on x⁻¹. -/
@@ -870,11 +867,9 @@ theorem val_inv (x : ComputableℝSeq) : x⁻¹.val = x.val⁻¹ := by
   · rw [h, inv_zero, inv_def, inv]
     split
     next h =>
-      let _ := (x.sign_pos_iff.1 h).ne'
-      contradiction
+      grind
     next h =>
-      let _ := (x.sign_neg_iff.1 h).ne
-      contradiction
+      grind
     next h => exact val_zero
   · rwa [inv_eq_safeInv, val_safeInv]
 
@@ -896,17 +891,11 @@ theorem mul_comm (x y : ComputableℝSeq) : x * y = y * x := by
   · repeat rw [_root_.mul_comm (lb x)]
     repeat rw [_root_.mul_comm (ub x)]
     dsimp
-    rw [inf_assoc, inf_assoc]
-    congr 1
-    rw [← inf_assoc, ← inf_assoc]
-    nth_rw 2 [inf_comm]
+    grind
   · repeat rw [_root_.mul_comm (lb x)]
     repeat rw [_root_.mul_comm (ub x)]
     dsimp
-    rw [sup_assoc, sup_assoc]
-    congr 1
-    rw [← sup_assoc, ← sup_assoc]
-    nth_rw 2 [sup_comm]
+    grind
 
 
 theorem neg_mul (x y : ComputableℝSeq) : -x * y = -(x * y) := by
@@ -915,16 +904,12 @@ theorem neg_mul (x y : ComputableℝSeq) : -x * y = -(x * y) := by
     simp only [lb_neg, ub_neg, CauSeq.coe_inf, CauSeq.coe_mul, CauSeq.coe_neg,
       Pi.inf_apply, Pi.neg_apply, Pi.mul_apply, CauSeq.neg_apply, CauSeq.coe_sup, Pi.sup_apply,
         neg_sup]
-    nth_rewrite 2 [inf_comm]
-    nth_rewrite 3 [inf_comm]
-    ring_nf
+    grind
   · rw [ub_neg, lb_mul, ub_mul]
     simp only [lb_neg, ub_neg, CauSeq.coe_inf, CauSeq.coe_mul, CauSeq.coe_neg,
       Pi.inf_apply, Pi.neg_apply, Pi.mul_apply, CauSeq.neg_apply, CauSeq.coe_sup, Pi.sup_apply,
       neg_inf]
-    nth_rewrite 2 [sup_comm]
-    nth_rewrite 3 [sup_comm]
-    ring_nf
+    grind
 
 theorem mul_neg (x y : ComputableℝSeq) : x * -y = -(x * y) := by
   rw [mul_comm, neg_mul, mul_comm]

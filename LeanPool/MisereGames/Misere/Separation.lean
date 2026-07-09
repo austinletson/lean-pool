@@ -132,8 +132,7 @@ theorem misereGE_iff_not_separating {A : G → Prop} {g h : G} :
         refine ⟨x, hx, ?_, ?_⟩
         · intro h_win
           have h_out := miserePlayerOutcome_eq_iff_winsGoingFirst.mpr h_win
-          rw [hg] at h_out
-          cases h_out
+          grind
         · exact miserePlayerOutcome_eq_iff_winsGoingFirst.mp hh
     | inr h_right =>
         absurd h2
@@ -144,8 +143,7 @@ theorem misereGE_iff_not_separating {A : G → Prop} {g h : G} :
         · exact miserePlayerOutcome_eq_iff_winsGoingFirst.mp hg
         · intro h_win
           have h_out := miserePlayerOutcome_eq_iff_winsGoingFirst.mpr h_win
-          rw [hh] at h_out
-          cases h_out
+          grind
 
 /--
 Negation of `misereGE_iff_not_separating`.
@@ -362,8 +360,7 @@ lemma downlinkOptions_nonempty
     | inr hh =>
         obtain ⟨hp, hhp⟩ := not_isEnd_exists_move hh
         exact ⟨z ⟨hp, hhp⟩, by
-          simp only [downlinkOptions, Set.mem_union, Set.mem_range]
-          exact Or.inl (Or.inl ⟨⟨hp, hhp⟩, rfl⟩)⟩
+          grind⟩
 
 /--
 $\def\form<#1>[#2]{\left\{#1 \mid #2\right\}}$

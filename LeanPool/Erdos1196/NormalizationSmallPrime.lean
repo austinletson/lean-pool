@@ -191,9 +191,7 @@ lemma sum_range_smallPrimeTail_le_two_inv_log {x q N : ℕ} (hx : 3 ≤ x) (hq :
   · have hhead :
         smallPrimeTailTerm q M ≤ 1 / Real.log (x : ℝ) := by
       have hMpos : 0 < M := by
-        rcases Nat.eq_zero_or_pos M with hM0 | hM0
-        · rw [hM0, Nat.mul_zero] at hxq; omega
-        · exact hM0
+        grind
       have hlogMq_ge_one : 1 ≤ Real.log ((M : ℝ) * q) := by
         rw [← Real.log_exp 1]
         exact Real.log_le_log (Real.exp_pos 1) <|
@@ -274,11 +272,7 @@ private lemma sum_range_smallPrimeRow_le {x q N Y : ℕ} (hx : 3 ≤ x) :
             coeff * smallPrimeTailTerm q m
           else 0) = 0 := by
             refine Finset.sum_eq_zero ?_
-            intro m hm
-            have hcond :
-                ¬ (0 < q ∧ 0 < m ∧ q * m < N ∧ q < Y ∧ x ⌈/⌉ q ≤ m) := by
-                  grind only [Nat.succ_le_iff]
-            simp [hcond]
+            grind
     simp [coeff, hzero, hq]
 
 /--
@@ -318,8 +312,7 @@ lemma summable_normalizationSmallPrimePart_and_tsum_le {x Y : ℕ} (hx : 3 ≤ x
               rw [← Finset.sum_filter]
       _ ≤ ∑ q ∈ Finset.Ico 1 Y, coeff q * (2 / Real.log (x : ℝ)) := by
               refine Finset.sum_le_sum_of_subset_of_nonneg ?_ ?_
-              · intro q hq
-                exact Finset.mem_Ico.mpr (Finset.mem_filter.mp hq).2
+              · grind
               · intro q hqIco hqnot
                 exact mul_nonneg (hcoeff_nonneg q) (by positivity)
       _ = (2 * ∑ q ∈ Finset.Ico 1 Y, coeff q) / Real.log (x : ℝ) := by

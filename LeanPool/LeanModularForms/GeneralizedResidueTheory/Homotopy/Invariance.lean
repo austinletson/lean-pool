@@ -82,10 +82,7 @@ private lemma homotopy_integrand_continuousOn_t
     hε_avoid t' ⟨by linarith [ht'.1], by linarith [ht'.2]⟩
   have ht_in : t ∈ Ioo (t - ε') (t + ε') := ⟨by linarith, by linarith⟩
   have h_sub_ab : Ioo (t - ε') (t + ε') ⊆ Ioo a b := by
-    intro x hx
-    have h1 := (min_le_right (ε / 2) _).trans (min_le_left (t - a) (b - t))
-    have h2 := (min_le_right (ε / 2) _).trans (min_le_right (t - a) (b - t))
-    exact ⟨by linarith [hx.1], by linarith [hx.2]⟩
+    grind
   apply ContinuousWithinAt.mono _ (Set.sdiff_subset_sdiff_right (Finset.coe_subset.mpr
     (Finset.subset_union_left (s₂ := {a, b}))))
   exact ContinuousWithinAt.mul
@@ -119,10 +116,7 @@ private lemma homotopy_integrand_continuousWithinAt_s
     hε_avoid t' ⟨by linarith [ht'.1], by linarith [ht'.2]⟩
   have ht_in : t ∈ Ioo (t - ε') (t + ε') := ⟨by linarith, by linarith⟩
   have h_sub_ab : Ioo (t - ε') (t + ε') ⊆ Ioo a b := by
-    intro x hx
-    have h1 := (min_le_right (ε / 2) _).trans (min_le_left (t - a) (b - t))
-    have h2 := (min_le_right (ε / 2) _).trans (min_le_right (t - a) (b - t))
-    exact ⟨by linarith [hx.1], by linarith [hx.2]⟩
+    grind
   exact ContinuousWithinAt.mul
     ((hH_cont.comp (continuous_const.prodMk continuous_id)).continuousAt.sub
       continuousAt_const |>.inv₀
@@ -249,17 +243,11 @@ private theorem continuous_integer_valued_constant
             Complex.norm_intCast, ← Int.cast_abs] at h1
           have h2 : |m - n| < 1 := by exact_mod_cast h1
           have h3 : m - n = 0 := Int.abs_lt_one_iff.mp h2
-          have h4 : m = n := sub_eq_zero.mp h3
-          exact_mod_cast h4
+          grind
       rw [heq]
       exact hf_cont.restrict.isOpen_preimage _ Metric.isOpen_ball
     · convert isOpen_empty
-      ext ⟨x, hx⟩
-      simp only [g, mem_preimage, mem_singleton_iff,
-        mem_empty_iff_false, iff_false]
-      intro heq
-      obtain ⟨n, hn⟩ := hf_int x hx
-      exact hy ⟨n, heq.symm.trans hn⟩
+      grind
   have h0 : (⟨0, left_mem_Icc.mpr (by norm_num : (0 : ℝ) ≤ 1)⟩ :
       Icc (0 : ℝ) 1) ∈ (Set.univ : Set (Icc (0 : ℝ) 1)) := trivial
   have h1 : (⟨1, right_mem_Icc.mpr (by norm_num : (0 : ℝ) ≤ 1)⟩ :
@@ -293,8 +281,7 @@ private theorem generalizedWindingNumber'_eq_of_eq_on
         deriv f t = deriv g t := heq_deriv
     rw [ae_restrict_iff' measurableSet_Ioc] at h_ae
     filter_upwards [h_ae] with t ht ht_mem
-    simp only [ht ht_mem,
-      heq_val t (Ioc_subset_Icc_self ht_mem)]
+    grind
   rw [h_fun_eq]
 
 /-- Winding number is invariant under piecewise C¹ homotopy. -/
@@ -316,8 +303,7 @@ theorem windingNumber_eq_of_piecewise_homotopic
     apply windingNumber_integer_of_piecewise_closed_avoiding (fun t => H (t, s)) a b z₀ P hab
     · exact hH_closed s hs
     · exact hH_cont.comp (continuous_id.prodMk continuous_const) |>.continuousOn
-    · intro t ht h_not_P
-      exact hH_diff t ht h_not_P s hs
+    · grind
     · intro p₁ p₂ hp₁p₂ hpiece h_sub
       convert (hH_deriv_cont p₁ p₂ hp₁p₂ hpiece h_sub).comp
         (continuous_id.prodMk continuous_const).continuousOn
@@ -395,9 +381,7 @@ private lemma smooth_winding_integral_continuousOn
     exact ContinuousAt.mul
       ((hγ_cont.comp (continuous_const.prodMk continuous_id)).sub continuous_const
         |>.continuousAt |>.inv₀ (by
-        simp only [ne_eq, sub_eq_zero]
-        rw [Set.uIoc_of_le hab.le] at ht
-        exact hγ_avoid t (Ioc_subset_Icc_self ht) s₁ hs₁))
+        grind))
       (hγ_deriv_cont.comp (continuous_const.prodMk continuous_id) |>.continuousAt)
 
 private theorem windingNumber_continuous_in_param

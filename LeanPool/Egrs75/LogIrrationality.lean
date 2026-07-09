@@ -99,8 +99,7 @@ theorem irrational_log_div_log {p q : ℕ} (hp : p.Prime) (hq : q.Prime)
   intro a b hb heq
   -- heq : log p / log q = a / b.  Cross-multiply: b * log p = a * log q.
   have hcross : (b : ℝ) * Real.log p = (a : ℝ) * Real.log q := by
-    field_simp at heq
-    linarith [heq]
+    grind
   -- log p / log q > 0 and = a/b ⟹ a, b same sign. Normalise to positive naturals.
   have hpos : 0 < Real.log p / Real.log q := div_pos hlp hlq
   rw [heq] at hpos

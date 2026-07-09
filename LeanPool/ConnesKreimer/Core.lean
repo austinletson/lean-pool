@@ -464,10 +464,7 @@ mutual
       simp only [coprodTree_node, List.map_cons, List.sum_cons, List.map_map, Function.comp_def,
         εmon_nil, εmon_cons, zero_smul, one_smul]
       rw [List.sum_eq_zero (l := (coprodForest F).map _) ?_, add_zero]
-      intro x hx
-      simp only [List.mem_map] at hx
-      obtain ⟨a, _, rfl⟩ := hx
-      rfl
+      grind
   theorem _root_.CK.collapseR_forest {M : Type*} [AddCommMonoid M] [Module k M]
       (f : Forest) (g : Forest → M) :
       ((coprodForest f).map (fun pr => εmon k pr.2 • g pr.1)).sum = g f := by
@@ -697,9 +694,7 @@ decreasing_by
   have hcons := size_consForest _ pr.val hmem.1
   have hr : pr.val.2 ≠ [] := by simpa [List.isEmpty_iff] using hmem.2
   have hpos := sizeF_pos hr
-  have hlt : sizeF pr.val.1 < sizeF pr.val.1 + sizeF pr.val.2 := by omega
-  rw [hcons] at hlt
-  exact hlt
+  grind
 
 /-! ### Antipode as a linear map + the left convolution axiom (`S ⋆ id = η∘ε`). -/
 
@@ -868,9 +863,7 @@ decreasing_by
   have hcons := size_consForest _ pr.val hmem.1
   have hp : pr.val.1 ≠ [] := by simpa [List.isEmpty_iff] using hmem.2
   have hpos := sizeF_pos hp
-  have hlt : sizeF pr.val.2 < sizeF pr.val.1 + sizeF pr.val.2 := by omega
-  rw [hcons] at hlt
-  exact hlt
+  grind
 
 theorem _root_.CK.antipodeF'_cons (t : RTree) (ts : Forest) :
     antipodeF' k (t :: ts)
@@ -968,19 +961,7 @@ theorem _root_.CK.antipode_eq_antipode' : antipode k = antipode' k := by
     apply WithConv.ext
     rw [LinearMap.convMul_def]
     exact rightAntipode'_eq k
-  have key : WithConv.toConv (antipode k) = WithConv.toConv (antipode' k) := by
-    calc WithConv.toConv (antipode k)
-        = WithConv.toConv (antipode k) * 1 := (mul_one _).symm
-      _ = WithConv.toConv (antipode k)
-            * (WithConv.toConv (LinearMap.id (R := k) (M := H k)) *
-                WithConv.toConv (antipode' k)) := by
-            rw [hIS']
-      _ = (WithConv.toConv (antipode k) * WithConv.toConv (LinearMap.id (R := k) (M := H k)))
-            * WithConv.toConv (antipode' k) := (mul_assoc _ _ _).symm
-      _ = 1 * WithConv.toConv (antipode' k) := by rw [hSI]
-      _ = WithConv.toConv (antipode' k) := one_mul _
-  have := congrArg WithConv.ofConv key
-  simpa using this
+  grind
 
 noncomputable instance : HopfAlgebraStruct k (H k) where
   antipode := antipode k
@@ -1151,8 +1132,7 @@ theorem _root_.CK.Jc_pow_ofConv_sf_eq_zero :
     · subst hp
       rw [Jc_ofConv_sf, sf_nil, εmon_nil, one_smul, sub_self, zero_mul]
     · have hpos : 0 < sizeF p := sizeF_pos hp
-      have hr : sizeF r < m := by simp only at hcons ⊢; omega
-      rw [ih r hr, mul_zero]
+      grind
 
 /-! ### The Adams eigenvalue on primitives: `Ψₙ(x) = n·x` for primitive `x`.
 
@@ -1208,8 +1188,7 @@ theorem _root_.CK.adams_primitive (n : ℕ) {x : H k} (hx : IsPrimitive k x) :
     rw [adams_succ_apply, hx, map_add, TensorProduct.map_tmul, TensorProduct.map_tmul,
         LinearMap.id_apply, LinearMap.id_apply, adams_unit, map_add, LinearMap.mul'_apply,
         LinearMap.mul'_apply, mul_one, one_mul, ih]
-    conv_rhs => rw [succ_nsmul]
-    exact add_comm _ _
+    grind
 
 /-! ### The first Eulerian idempotent `e⁽¹⁾ = log_⋆(id)` as a linear map.
 
@@ -1286,9 +1265,7 @@ theorem _root_.CK.IsPrimitive.counit_zero {x : H k} (hx : IsPrimitive k x) : ε 
   rw [hx, map_add, LinearMap.rTensor_tmul, LinearMap.rTensor_tmul,
       show ε k (1 : H k) = 1 by rw [← sf_nil, ε_sf, εmon_nil]] at hc
   have ha : (ε k x) ⊗ₜ[k] (1 : H k) = 0 := by
-    have h2 : (ε k x) ⊗ₜ[k] (1 : H k) + (1 : k) ⊗ₜ[k] x = 0 + (1 : k) ⊗ₜ[k] x := by
-      rw [zero_add]; exact hc
-    exact add_right_cancel h2
+    grind
   have h1 : ε k x • (1 : H k) = 0 := by
     have := congrArg (TensorProduct.lid k (H k)) ha; simpa using this
   have h2 := congrArg (ε k) h1
@@ -1672,8 +1649,7 @@ noncomputable def _root_.CK.SalgHom : H k →ₐ[k] Hab k :=
       have hmul : antipode k (a * b) = antipode k b * antipode k a :=
         HopfAlgebra.antipode_mul_antidistrib (R := k) a b
       simp only [LinearMap.comp_apply, AlgHom.toLinearMap_apply]
-      rw [hmul, map_mul]
-      exact mul_comm _ _)
+      grind)
 
 omit [Algebra ℚ k] in
 /-- `π ∘ S` respects the commutator relation (`H_ab` is commutative). -/
@@ -1970,14 +1946,12 @@ theorem _root_.CK.alternating_choose_weighted (j : ℕ) :
       have hc : (((n + 1).choose (i + 1) : ℤ)) * ((i + 1 : ℕ) : ℤ)
           = (n + 1 : ℤ) * (n.choose i) := by
         exact_mod_cast (Nat.add_one_mul_choose_eq n i).symm
-      rw [show n + 1 - (i + 1) = n - i from by omega, mul_assoc, hc]
-      ring
+      grind
     rw [Finset.sum_congr rfl hinner, ← Finset.mul_sum]
     have hsum : ∑ i ∈ Finset.range (n + 1), ((-1 : ℤ) ^ (n - i) * (n.choose i))
         = (0 : ℤ) ^ n := by
       have hap := add_pow (1 : ℤ) (-1) n
-      simp only [one_pow, one_mul, show (1 : ℤ) + (-1) = 0 from by ring] at hap
-      rw [hap]
+      grind
     simp only [Nat.cast_zero, mul_zero, add_zero, Nat.sub_zero, hsum]
     rcases n with _ | m
     · simp
@@ -2167,8 +2141,7 @@ theorem _root_.CK.PR_coeff (N m : ℕ) (hm : m ≤ N) :
       = PowerSeries.coeff m (PowerSeries.log k) := by
   rw [Polynomial.finsetSum_coeff, Finset.sum_eq_single m]
   · simp [Polynomial.coeff_C_mul, Polynomial.coeff_X_pow]
-  · intro b _ hbm
-    simp [Polynomial.coeff_C_mul, Polynomial.coeff_X_pow, Ne.symm hbm]
+  · grind
   · intro hm'; exact absurd (Finset.mem_range.2 (Nat.lt_succ_of_le hm)) hm'
 
 /-- **(★) — the eigen-transport identity** on a per-degree-nilpotent `w`: applying `Ψᵖ`
@@ -2263,8 +2236,7 @@ theorem _root_.CK.star_identity (p N : ℕ) (w : Hab k)
     change (((p : k) • (1 : WithConv (Hab k →ₗ[k] Hab k))) *
             Polynomial.eval₂ (smulOne k) (JcAb k) PR).ofConv w = _
     rw [smul_mul_assoc, one_mul, WithConv.ofConv_smul, LinearMap.smul_apply]
-  rw [hevD, hevPL, hevPR, sub_eq_zero] at hD0
-  exact hD0
+  grind
 
 /-- `π(e⁽¹⁾ y)` as a truncated convolution-log sum on `H_ab`, for any degree bound
     `M ≥ deg(y)`. -/

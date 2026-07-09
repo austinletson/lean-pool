@@ -215,8 +215,7 @@ lemma nzd_element_in_span_prime
     have hmem : (a : T) ∈ ⋃ p ∈ associatedPrimes T (T ⧸ Ideal.span {(q : T)}),
         (p : Set T) := by
       rw [biUnion_associatedPrimes_eq_compl_regular]
-      simp only [Set.mem_compl_iff] at h_not_reg ⊢
-      exact h_not_reg
+      grind
     rw [Set.mem_iUnion₂] at hmem
     obtain ⟨P, hP, ha_P⟩ := hmem
     exact ha_not_in_P P hP ha_P

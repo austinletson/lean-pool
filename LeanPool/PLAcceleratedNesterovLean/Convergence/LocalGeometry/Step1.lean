@@ -43,12 +43,8 @@ theorem continuous_lower_bound_neighborhood {X : Type*} [TopologicalSpace X]
     (hg : Continuous g) (c : ℝ) (hc : ∀ x ∈ K, c ≤ g x) (δ : ℝ) (hδ : 0 < δ) :
     ∃ V : Set X, IsOpen V ∧ K ⊆ V ∧ ∀ x ∈ V, c - δ ≤ g x := by
   refine ⟨g ⁻¹' Set.Ioi (c - δ), isOpen_Ioi.preimage hg, ?_, ?_⟩
-  · intro x hx
-    simp only [Set.mem_preimage, Set.mem_Ioi]
-    linarith [hc x hx]
-  · intro x hx
-    simp only [Set.mem_preimage, Set.mem_Ioi] at hx
-    linarith
+  · grind
+  · grind
 
 /-- PSD at minimizers: if m is a global minimizer of a function f that is C² at m,
     then D²f(m) ≥ 0. -/
@@ -119,8 +115,7 @@ theorem hessian_psd_at_minimizer {d : ℕ}
   -- t ↦ (fderiv ℝ f (ψ t)) ξ at t = 0, and that value is 0 at t = 0.
   -- So the derivative of deriv φ at 0 is negative, making deriv φ negative for small t > 0.
   suffices h : ∃ t : ℝ, 0 < t ∧ φ t < φ 0 by
-    obtain ⟨t, ht_pos, ht_lt⟩ := h
-    linarith [hφ_min t]
+    grind
   -- Step A: The function G(x) = (fderiv ℝ f x) ξ is C¹ at m
   set G : E d → ℝ := fun x => (fderiv ℝ f x) ξ with hG_def
   have hG_C1_at : ContDiffAt ℝ 1 G m :=

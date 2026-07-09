@@ -113,8 +113,7 @@ theorem OrtIdem_imply_MatUnits {n : ℕ} (hn : 0 < n)
     (comp1 : ∀ i, row_es i * col_es i = diag_es ⟨0, hn⟩)
     (comp2 : ∀ i, col_es i * row_es i = diag_es i) : HasMatrixUnits R n := by
   refine ⟨fun i j => (col_es i) * (row_es j), ?_, ?_⟩
-  · simp_rw [comp2]
-    exact sum_eq_one
+  · grind
   · intro i j k l
     split_ifs with h
     · rw [h]
@@ -125,11 +124,7 @@ theorem OrtIdem_imply_MatUnits {n : ℕ} (hn : 0 < n)
             rw [hr]; noncomm_ring
           _ = diag_es i * r * diag_es ⟨0, hn⟩ := by rw [idem ⟨0, hn⟩]
           _ = col_es i := by rw [hr]
-      calc
-        (col_es i * row_es k) * (col_es k * row_es l) =
-            col_es i * (row_es k * col_es k) * row_es l := by noncomm_ring
-        _ = col_es i * diag_es ⟨0, hn⟩ * row_es l := by rw [comp1 k]
-        _ = col_es i * row_es l := by rw [col_mul_diag]
+      grind
     · obtain ⟨r, hr⟩ := row_in j
       obtain ⟨s, hs⟩ := col_in k
       calc
@@ -148,17 +143,13 @@ lemma eRf_nonzero (h : IsPrimeRing R) (e f : R) (he : e ≠ 0) (hf : f ≠ 0) :
     ext x
     constructor
     · intro ⟨r, hr⟩
-      specialize ha r
-      exact Set.mem_of_eq_of_mem hr ha
+      grind
     · intro hx
       rw [Set.mem_singleton_iff] at hx
       refine ⟨0, ?_⟩
-      rw [hx]
-      noncomm_ring
+      grind
   apply prime_ring_equiv.1 h at eRf_zero
-  cases eRf_zero with
-  | inl h => exact he h
-  | inr h => exact hf h
+  grind
 
 -- multiplication with e and f preserves bothMul e f
 lemma both_mul_e_f (idem_e : IsIdempotentElem e) (idem_f : IsIdempotentElem f) :
@@ -201,8 +192,7 @@ lemma both_mul_mul :
     ∀ (x y : R), x ∈ bothMul e f → y ∈ bothMul f e → x * y ∈ bothMul e e := by
   intro x y ⟨a, ha⟩ ⟨b, hb⟩
   use (a * f * f * b)
-  rw [ha, hb]
-  noncomm_ring
+  grind
 
 /-- Witnesses for the "nice idempotents" property: elements `u ∈ eRf`, `v ∈ fRe`
 with `u * v = e` and `v * u = f`. -/
@@ -263,11 +253,7 @@ theorem lemma_2_19 (h : IsPrimeRing R) (e f : R)
       noncomm_ring
     have h4 : e * a * f * b * (e * e) * c * e = e * a * f * b * e * c * e := by
       rw [IsIdempotentElem.eq idem_e]
-    calc e * a * f * (f * (b * e * c) * e)
-        = e * a * f * b * e * c * e := by rw [h1, h2]
-      _ = (e * a * f * b * e) * (e * c * e) := by rw [h3, h4]
-      _ = x * y := by rw [x_val_eq, y_val_eq]
-      _ = e := hxy
+    grind
   refine ⟨u, v, ?_, hv_mem, uv_calc, ?_⟩
   · exact ⟨a, rfl⟩
   · have hu : u ∈ bothMul e f := ⟨a, rfl⟩
@@ -276,9 +262,7 @@ theorem lemma_2_19 (h : IsPrimeRing R) (e f : R)
     have ve_eq_v : v * e = v := (both_mul_e_f idem_f idem_e v hv).2
     have uv_eq_e : u * v = e := uv_calc
     have vuv_eq_v : v * u * v = v := by
-      calc _ = v * (u * v) := by noncomm_ring
-        _ = v * e := by rw [uv_eq_e]
-        _ = v := ve_eq_v
+      grind
     by_contra h_neq
     push Not at h_neq
     have h_nonzero : v * u - f ≠ 0 := sub_ne_zero_of_ne h_neq
@@ -415,8 +399,7 @@ theorem prime_and_artinian_esists_idem_corner_div [Nontrivial R]
     by_contra I_sq_zero
     specialize h I_sq_zero
     let I_neq_zero := hI.1
-    have I_eq_zero : I = ⊥ := by aesop
-    contradiction
+    grind
   obtain ⟨e, _he_mem, henz, he_idem, _hspan, hdiv⟩ :=
     minimal_ideal_I_sq_nonzero_exists_idem_and_div I hI I_sq_nonzero
   exact ⟨e, henz, he_idem, hdiv⟩
@@ -461,9 +444,7 @@ def ringIsoToCornerIso (R' : Type*) [Ring R'] (φ : R ≃+* R') (e : R)
       have hx : x = e * x * e := by
         apply (corner_ring_set_mem idem_e).mp
         exact Subtype.coe_prop x
-      have hx' : φ x = φ (e * x * e) := congrArg (⇑φ) hx
-      rw [RingEquiv.map_mul, RingEquiv.map_mul] at hx'
-      exact hx'⟩,
+      grind⟩,
     invFun := fun y => ⟨φ.symm y.val, by
       have h : y = φ e * y * φ e := by
         apply (corner_ring_set_mem ?idem_e).mp

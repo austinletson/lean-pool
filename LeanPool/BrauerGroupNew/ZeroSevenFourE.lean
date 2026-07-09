@@ -297,8 +297,7 @@ private lemma matrixModuleVectorDecomp {n : ℕ} [NeZero n]
   · simp [Matrix.mulVec, dotProduct, Matrix.single, Pi.single]
   · intro j _ hj
     simp [Matrix.mulVec, dotProduct, Matrix.single, Pi.single, hj]
-  · intro ht
-    simp at ht
+  · grind
 
 omit [IsSimpleRing A] [FiniteDimensional k A] in
 private lemma matrixModuleEnd_apply {n : ℕ} [NeZero n]
@@ -309,8 +308,7 @@ private lemma matrixModuleEnd_apply {n : ℕ} [NeZero n]
   let c : D := f e₀ 0
   have hfe₀ (j : Fin n) : f e₀ j = Pi.single (M := fun _ : Fin n => D) (0 : Fin n) c j := by
     by_cases h : j = 0
-    · subst h
-      simp [c]
+    · grind
     · have hzero : (Matrix.single (0 : Fin n) j (1 : D) :
           Matrix (Fin n) (Fin n) D) • e₀ = 0 := by
         ext t
@@ -345,8 +343,7 @@ private lemma matrixModuleEnd_apply {n : ℕ} [NeZero n]
       · simp [Matrix.mulVec, dotProduct, Matrix.single, Pi.single]
       · intro j _ hj
         simp [Matrix.mulVec, dotProduct, Matrix.single, Pi.single, hj]
-      · intro hi
-        simp at hi
+      · grind
     _ = v i * f (Pi.single (M := fun _ : Fin n => D) (0 : Fin n) (1 : D)) 0 := rfl
 
 omit [IsSimpleRing A] [FiniteDimensional k A] in

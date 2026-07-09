@@ -231,8 +231,7 @@ theorem exists_proper_of_ne_bot {x : V₀.Element} (hx : x ≠ V₀.bot) :
   by_contra hc
   refine hx (le_antisymm (fun W hW => ?_) (V₀.bot_le x))
   rw [NeighborhoodSystem.mem_bot]
-  by_contra hWne
-  exact hc ⟨W, hW, hWne⟩
+  grind
 
 theorem eq_bot_of_no_proper {x : V₀.Element} (hx : ∀ X, x.mem X → X = V₀.master) :
     x = V₀.bot :=
@@ -378,21 +377,13 @@ theorem sstepFun_cons (p : Set α × Set β) (L : List (Set α × Set β)) :
     (sstepFun (p :: L) : Set (StrictMap V₀ V₁)) = sstep p.1 p.2 ∩ sstepFun L := by
   ext f
   simp only [mem_sstepFun, List.mem_cons, Set.mem_inter_iff, mem_sstep]
-  constructor
-  · intro h; exact ⟨h p (Or.inl rfl), fun q hq => h q (Or.inr hq)⟩
-  · rintro ⟨hp, hrest⟩ q (rfl | hq)
-    · exact hp
-    · exact hrest q hq
+  grind
 
 theorem sstepFun_append (L L' : List (Set α × Set β)) :
     (sstepFun (L ++ L') : Set (StrictMap V₀ V₁)) = sstepFun L ∩ sstepFun L' := by
   ext f
   simp only [mem_sstepFun, List.mem_append, Set.mem_inter_iff]
-  constructor
-  · intro h; exact ⟨fun p hp => h p (Or.inl hp), fun p hp => h p (Or.inr hp)⟩
-  · rintro ⟨hL, hL'⟩ p (hp | hp)
-    · exact hL p hp
-    · exact hL' p hp
+  grind
 
 theorem sstepFun_singleton (X : Set α) (Y : Set β) :
     (sstepFun [(X, Y)] : Set (StrictMap V₀ V₁)) = sstep X Y := by
@@ -431,10 +422,7 @@ def strictFun (V₀ : NeighborhoodSystem α) (V₁ : NeighborhoodSystem β) :
   inter_mem := by
     rintro W W' Z ⟨⟨L, hL, rfl⟩, _⟩ ⟨⟨L', hL', rfl⟩, _⟩ ⟨_, hZne⟩ hZsub
     refine ⟨⟨L ++ L', ?_, (sstepFun_append _ _).symm⟩, hZne.mono hZsub⟩
-    intro p hp
-    rcases List.mem_append.mp hp with h | h
-    · exact hL p h
-    · exact hL' p h
+    grind
   sub_master := fun _ => Set.subset_univ _
 
 @[simp] theorem strictFun_master : (strictFun V₀ V₁).master = Set.univ := rfl
@@ -458,10 +446,7 @@ theorem strictFun_mem_inter {W W' : Set (StrictMap V₀ V₁)}
   obtain ⟨⟨L, hL, rfl⟩, _⟩ := hW
   obtain ⟨⟨L', hL', rfl⟩, _⟩ := hW'
   refine ⟨⟨L ++ L', ?_, (sstepFun_append _ _).symm⟩, hne⟩
-  intro p hp
-  rcases List.mem_append.mp hp with h | h
-  · exact hL p h
-  · exact hL' p h
+  grind
 
 theorem sstepFun_up_closed {L : List (Set α × Set β)} {f f' : StrictMap V₀ V₁}
     (hf : f ∈ sstepFun L) (hff' : f ≤ f') : f' ∈ sstepFun L := by
@@ -493,10 +478,7 @@ theorem mem_sstepFun_iff (φ : (strictFun V₀ V₁).Element) {L : List (Set α 
       have hne : (sstep p.1 p.2 ∩ sstepFun L).Nonempty := (φ.sub hmem).2
       have htail : φ.mem (sstepFun L) :=
         φ.up_mem hmem ⟨⟨L, hLtail, rfl⟩, hne.mono Set.inter_subset_right⟩ Set.inter_subset_right
-      intro q hq
-      rcases List.mem_cons.mp hq with rfl | hq
-      · exact hstep
-      · exact (ih hLtail).mp htail q hq
+      grind
     · intro hall
       have hstep : φ.mem (sstep p.1 p.2) := hall p (List.mem_cons.mpr (Or.inl rfl))
       have htail : φ.mem (sstepFun L) :=
@@ -694,10 +676,7 @@ theorem rel_sstepFun_iff (h : ApproximableMap V₀ (strictFun V₁ V₂)) {X : S
       have htail : h.rel X (sstepFun L) :=
         h.mono hmem subset_rfl Set.inter_subset_right hX
           ⟨⟨L, hLtail, rfl⟩, hne.mono Set.inter_subset_right⟩
-      intro q hq
-      rcases List.mem_cons.mp hq with rfl | hq
-      · exact hstep
-      · exact (ih hLtail).mp htail q hq
+      grind
     · intro hall
       have hstep : h.rel X (sstep p.1 p.2) := hall p (List.mem_cons.mpr (Or.inl rfl))
       have htail : h.rel X (sstepFun L) :=
@@ -922,8 +901,7 @@ def smashCurryEquiv (V₀ : NeighborhoodSystem α) (V₁ : NeighborhoodSystem β
         exact hu.2
       have h2 := hcurry _ _ h1
       have hu' : (smashUncurryMap (smashCurryMap g')).1.rel W Z := ⟨g.1.rel_dom hrel, h2⟩
-      rw [smashUncurry_curry] at hu'
-      exact hu'
+      grind
     · intro hg X N hrel
       obtain ⟨hX, hN, hmem⟩ := hrel
       refine ⟨hX, hN, ?_⟩

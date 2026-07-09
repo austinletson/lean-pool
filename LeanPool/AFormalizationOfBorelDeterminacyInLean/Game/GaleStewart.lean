@@ -53,8 +53,7 @@ lemma defensive_equals_pre {G : Game A} {p : Player} (hP : IsPruned G.tree)
     apply h; rw [existsWinning_iff_quasi]
     let f (a : A) (h : [a] ∈ G.tree) := (existsWinning_iff_quasi.mp (hc a h)).choose
     use ⟨sew (fun a h ↦ (f a h).1), sew_isQuasi _ (fun a h ↦ (f a h).2)⟩
-    apply sew_isWinning (f := fun a h ↦ (f a h).1); intro a ha
-    exact (existsWinning_iff_quasi.mp (hc a ha)).choose_spec
+    apply sew_isWinning (f := fun a h ↦ (f a h).1); grind
   · rintro rfl _; simpa [WinningPosition, ExistsWinning] using h
 
 lemma isClosed_image_payoff {G : Game A} :

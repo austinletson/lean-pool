@@ -112,8 +112,7 @@ lemma cf_norm_le_one
 /-- `1 - Re(z) ≤ 2` when `‖z‖ ≤ 1`. -/
 lemma one_sub_re_le_two_of_norm_le (z : ℂ) (hz : ‖z‖ ≤ 1) : 1 - z.re ≤ 2 := by
   have h1 : |z.re| ≤ ‖z‖ := abs_re_le_norm z
-  have h2 : -1 ≤ z.re := by linarith [abs_le.mp (h1.trans hz)]
-  linarith
+  grind
 
 omit [TopologicalSpace E] [IsTopologicalAddGroup E] [ContinuousSMul ℝ E] in
 /-- Quadratic bound outside a seminorm ball: if `q(x) ≥ δ > 0` and `‖Φ(x)‖ ≤ 1`,
@@ -138,8 +137,7 @@ lemma one_sub_re_nonneg
     (Φ : E → ℂ) (h_norm_le : ∀ x : E, ‖Φ x‖ ≤ 1) (x : E) :
     0 ≤ 1 - (Φ x).re := by
   have h1 : |Complex.re (Φ x)| ≤ ‖Φ x‖ := abs_re_le_norm _
-  have h2 : (Φ x).re ≤ 1 := by linarith [abs_le.mp (h1.trans (h_norm_le x))]
-  linarith
+  grind
 
 omit [IsTopologicalAddGroup E] [ContinuousSMul ℝ E] in
 /-- From `Continuous Φ`, `Φ 0 = 1`, and `WithSeminorms p`: extract a finite set
@@ -303,8 +301,7 @@ lemma linear_combination_ae
       (fun ω' => exp (I * ↑(∑ i : Fin (k + 1), s' i * ω' (x' i)))) from by
       funext ω'; congr 2; exact_mod_cast (h_sum_ω ω').symm]
   have := ae_eq_zero_of_charfun_eq_one hX_meas hX_cf
-  filter_upwards [this] with ω hω
-  linarith [show X ω = 0 from hω]
+  grind
 
 
 /-! ## Pushforward CF for finite evaluation maps -/
@@ -468,8 +465,7 @@ lemma concentrationBadSet_eq_iUnion (d : ℕ → E) (p : Seminorm ℝ E) (C : �
     exact Finset.mem_range.mpr (by
       have : i ≤ c.support.sup id := Finset.le_sup (f := id) hi
       omega)
-  · rintro ⟨_, c, _, hc⟩
-    exact ⟨c, hc⟩
+  · grind
 
 omit [TopologicalSpace E] [IsTopologicalAddGroup E] [ContinuousSMul ℝ E] in
 /-- If `ν(B_N) ≤ δ` for all N, then `ν(full bad set) ≤ δ`.
@@ -1116,21 +1112,12 @@ private lemma kernel_concentration_bound
     rw [eventually_countable_forall]
     intro c
     by_cases hc : c.support ⊆ Finset.range N
-    · filter_upwards [h_lin_ae c hc] with ω hω _
-      exact hω
+    · grind
     · filter_upwards with ω hc'
       exact absurd hc' hc
   have h_sub : bad_set ⊆ z_bad ∪ {ω | ¬∀ c : ℕ →₀ ℚ, c.support ⊆ Finset.range N →
       ω (x_c c) = ω (z c) + ∑ j, α_map c j * ω (e j)} := by
-    intro ω hω
-    by_cases h_all : ∀ c : ℕ →₀ ℚ, c.support ⊆ Finset.range N →
-        ω (x_c c) = ω (z c) + ∑ j, α_map c j * ω (e j)
-    · left
-      obtain ⟨c, hc_supp, hc_bad⟩ := hω
-      refine ⟨c, hc_supp, ?_⟩
-      rw [h_all c hc_supp] at hc_bad
-      intro hz; apply hc_bad; linarith
-    · right; exact h_all
+    grind
   have h_null : ν {ω | ¬∀ c : ℕ →₀ ℚ, c.support ⊆ Finset.range N →
       ω (x_c c) = ω (z c) + ∑ j, α_map c j * ω (e j)} = 0 :=
     ae_iff.mp h_lin_all
@@ -1188,8 +1175,7 @@ private lemma kernel_concentration_bound
       · rintro ⟨c, hsupp, hne⟩
         obtain ⟨i, rfl⟩ := hf_surj c
         exact ⟨i + 1, ⟨i, Nat.lt_succ_iff.mpr le_rfl⟩, hsupp, hne⟩
-      · rintro ⟨M, ⟨i, _⟩, hsupp, hne⟩
-        exact ⟨f i, hsupp, hne⟩
+      · grind
     -- Each S M has measure ≤ ofReal ε_q
     have h_S_bound : ∀ M, ν (S M) ≤ ENNReal.ofReal ε_q := by
       intro M
@@ -1199,16 +1185,13 @@ private lemma kernel_concentration_bound
       -- S M = {∃ i ∈ good, ω(z(f i)) ≠ 0}
       have h_S_eq : S M = {ω | ∃ i ∈ good, ω (z (f i)) ≠ 0} := by
         ext ω
-        simp only [S, good, Set.mem_setOf_eq, Finset.mem_filter, Finset.mem_univ,
-          true_and]
+        grind
       rw [h_S_eq]
       -- Now apply h_finite_bound with the filtered list
       let n := good.card
       let c_list : Fin n → ℕ →₀ ℚ := fun j => f (good.equivFin.symm j)
       have h_c_supp : ∀ j, (c_list j).support ⊆ Finset.range N := by
-        intro j
-        simpa only [good, Finset.mem_filter, Finset.mem_univ, true_and]
-          using (good.equivFin.symm j).2
+        grind
       -- {∃ i ∈ good, ω(z(f i)) ≠ 0} = {∃ j : Fin n, ω(z(c_list j)) ≠ 0}
       have h_set_eq : {ω : E → ℝ | ∃ i ∈ good, ω (z (f i)) ≠ 0} =
           {ω | ∃ j : Fin n, ω (z (c_list j)) ≠ 0} := by
@@ -1217,9 +1200,7 @@ private lemma kernel_concentration_bound
         constructor
         · rintro ⟨i, hi, hne⟩
           exact ⟨good.equivFin ⟨i, hi⟩, by rwa [Equiv.symm_apply_apply]⟩
-        · rintro ⟨j, hne⟩
-          exact ⟨good.equivFin.symm j, (good.equivFin.symm j).2,
-            by rwa [show f (good.equivFin.symm j) = c_list j from rfl]⟩
+        · grind
       rw [h_set_eq]
       exact h_finite_bound n c_list h_c_supp
     rw [h_union]
@@ -1275,10 +1256,7 @@ private lemma gaussian_charFun_quad_average_bound
           from by ext x; ring]
         rw [integral_add (hg_int.const_mul ε_q) (hgqf_int.const_mul K),
           integral_const_mul, integral_const_mul, mul_add]
-        congr 1
-        · rw [mul_comm C⁻¹ (ε_q * C), mul_assoc, mul_inv_cancel₀ (ne_of_gt hC_pos),
-            mul_one]
-        · ring
+        grind
     _ ≤ ε_q + K * (σ ^ 2 * C_HS) := by
         have h_gq := gaussian_quadForm_integral_le (V := V) σ hσ S hS_pos C_HS hC_HS
           h_trace
@@ -1496,8 +1474,7 @@ private lemma tail_bound_uniform
     · apply Real.sqrt_pos_of_pos; positivity
   have h_bound_σ : ε_q + K * σ₀ ^ 2 * C_HS < δ := by
     simp only [σ₀]; split_ifs with h
-    · have : K * 1 ^ 2 * C_HS = K * C_HS := by ring
-      rw [this, h, add_zero]; exact hε_q_lt_δ
+    · grind
     · have hKC_pos : 0 < K * C_HS :=
         lt_of_le_of_ne (mul_nonneg hK hC_HS) (Ne.symm h)
       have hσ_sq : Real.sqrt (gap / (2 * (K * C_HS))) ^ 2 = gap / (2 * (K * C_HS)) :=
@@ -1505,10 +1482,7 @@ private lemma tail_bound_uniform
       calc ε_q + K * Real.sqrt (gap / (2 * (K * C_HS))) ^ 2 * C_HS
           = ε_q + K * C_HS * (gap / (2 * (K * C_HS))) := by rw [hσ_sq]; ring
         _ = ε_q + gap / 2 := by
-            congr 1
-            rw [show K * C_HS * (gap / (2 * (K * C_HS))) =
-              gap * (K * C_HS) / (2 * (K * C_HS)) from by ring]
-            rw [mul_div_mul_right gap 2 (ne_of_gt hKC_pos)]
+            grind
         _ < δ := by simp only [gap]; linarith
   set bound_σ := ε_q + K * σ₀ ^ 2 * C_HS
   have h_bound_σ_pos : 0 < bound_σ := by positivity
@@ -1596,8 +1570,7 @@ private lemma tail_bound_uniform
   have h_denom_pos : 0 < 1 - Real.exp (-(σ₀ ^ 2 * R ^ 2 / 2)) := by
     linarith [h_exp_bound, h_dt_lt_one]
   have h_denom_bound : bound_σ / δ ≤ 1 - Real.exp (-(σ₀ ^ 2 * R ^ 2 / 2)) := by
-    have : 1 - denom_target = bound_σ / δ := by simp only [denom_target]; ring
-    linarith [h_exp_bound]
+    grind
   calc (ν {ω | R ^ 2 < T ω}).toReal
       ≤ bound_σ / (1 - Real.exp (-(σ₀ ^ 2 * R ^ 2 / 2))) := by
         rw [le_div_iff₀ h_denom_pos, mul_comm]; exact h_cheb_σ₀

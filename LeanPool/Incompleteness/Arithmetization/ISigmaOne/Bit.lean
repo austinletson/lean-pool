@@ -95,8 +95,7 @@ section «lp_section_1»
     exact ⟨by
       rintro ⟨x, hx, hxv⟩
       exact ⟨x, lt_of_mem hx, hx, hxv⟩, by
-      rintro ⟨x, _, hx, hvx⟩
-      exact ⟨x, hx, hvx⟩⟩
+      grind⟩
 
 end «lp_section_1»
 
@@ -351,10 +350,7 @@ instance : LawfulSingleton V V where
     have h2 := lenbit_sub_pow2_iff_of_lenbit (exp_pow2 i) (exp_pow2 j) h
     rw [exp_inj.ne_iff] at h2; exact h2
   · simp only [bitRemove, h, ↓reduceIte]
-    constructor
-    · intro hi
-      exact ⟨by rintro rfl; exact h hi, hi⟩
-    · exact And.right
+    grind
 
 @[simp 1100] lemma not_mem_bitRemove_self (i a : V) : i ∉ bitRemove i a := by simp
 
@@ -621,9 +617,7 @@ lemma lt_of_lt_log {a b : V} (pos : 0 < b) (h : ∀ i ∈ a, i < log b) : a < b 
 lemma insert_remove {i a : V} (h : i ∈ a) : insert i (bitRemove i a) = a := mem_ext <| by
   intro j
   simp only [mem_bitInsert_iff, mem_bitRemove_iff]
-  constructor
-  · rintro (rfl | ⟨_, hj⟩) <;> assumption
-  · intro hj; simp [hj, eq_or_ne j i]
+  grind
 
 section «lp_section_6»
 
@@ -649,16 +643,13 @@ private lemma finset_comprehension_aux (Γ : Polarity) {P : V → Prop} (hP : Γ
     simpa using least_number_h Γ.alt m this hs
   rcases this with ⟨t, ht, t_minimal⟩
   have t_le_s : t ≤ s := not_lt.mp (by
-    intro lt
-    rcases t_minimal s lt with ⟨i, hin, hi, his⟩
-    exact his (hs i hin hi))
+    grind)
   have : ∀ i < a, i ∈ t → P i := by
     intro i _ hit
     by_contra Hi
     have : ∃ j < a, P j ∧ (j ∈ t → j = i) := by
       simpa [not_imp_not] using t_minimal (bitRemove i t) (bitRemove_lt_of_mem hit)
-    rcases this with ⟨j, hjn, Hj, hm⟩
-    rcases hm (ht j hjn Hj); contradiction
+    grind
   exact ⟨t, lt_of_le_of_lt t_le_s hsn, fun i hi ↦ ⟨this i hi, ht i hi⟩⟩
 
 theorem finset_comprehension {Γ} {P : V → Prop} (hP : Γ-[m]-Predicate P) (a : V) :

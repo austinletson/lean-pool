@@ -189,12 +189,9 @@ theorem exists_omega0_seq_succ_prop (opos : 0 < o) {P : Ordinal → Ordinal → 
     rw [succ_eq n, f_succ_eq n]
   use f
   refine ⟨?_, ?_, ?_⟩
-  · intro n
-    rw [f_succ n]
-    exact (Classical.choose_spec (hP (f n))).2
+  · grind
   · have aux : ∀ i, f i < f (succ i) := fun i ↦ by
-      rw [f_succ i]
-      exact (Classical.choose_spec (hP (f i))).1
+      grind
     exact strictMono_of_succ_lt_omega0 f aux
   · have hf0 : f ⟨0, omega0_pos⟩ = succ r :=
       @boundedLimitRec'_zero ω isSuccLimit_omega0 ((fun _ ↦ Iio o)) (succ r) H₂ H₃
@@ -293,11 +290,7 @@ theorem inter {Ϟ : Ordinal.{u}} (hCof : ℵ₀ < Ϟ.cof) {C D : Set Ordinal}
     (hC : IsClub C Ϟ) (hD : IsClub D Ϟ) : IsClub (C ∩ D) Ϟ := by
   rw [← sInter_pair C D]
   refine IsClub.sInter hCof ?_ ⟨C, mem_insert C _⟩ ?_
-  · intro E hE
-    rcases hE with hE | hE
-    · exact hE ▸ hC
-    · rcases hE with rfl
-      exact hD
+  · grind
   · by_cases h : C = D
     · subst h
       simp only [pair_eq_singleton, mk_singleton]

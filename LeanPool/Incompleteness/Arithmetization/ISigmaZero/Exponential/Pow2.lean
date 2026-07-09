@@ -43,10 +43,7 @@ lemma _root_.LO.Arith.Pow2.dvd {a : V} (h : Pow2 a) {r} (hr : r ≤ a) :
   h.2 r hr
 
 @[simp] lemma pow2_one : Pow2 (1 : V) := ⟨by simp, by
-  intro r hr hhr hd
-  rcases show r = 0 ∨ r = 1 from le_one_iff_eq_zero_or_one.mp hr with (rfl | rfl)
-  · simp
-  · simp at hhr⟩
+  grind⟩
 
 @[simp] lemma not_pow2_zero : ¬Pow2 (0 : V) := by intro h; have := h.pos; simp at this
 
@@ -304,8 +301,7 @@ lemma lt_iff_two_mul_le {a b : V} (ha : Pow2 a) (hb : Pow2 b) : a < b ↔ 2 * a 
 
 lemma sq_or_dsq {a : V} (pa : Pow2 a) : ∃ b, a = b ^ 2 ∨ a = 2 * b ^ 2 := by
   suffices ∃ b ≤ a, a = b ^ 2 ∨ a = 2 * b ^ 2 by
-    rcases this with ⟨b, _, h⟩
-    exact ⟨b, h⟩
+    grind
   induction a using order_induction_sigma0
   · definability
   case ind a IH =>
@@ -406,16 +402,14 @@ lemma lenbit_mul_add {i j a r : V} (pi : Pow2 i) (pj : Pow2 j) (hr : r < j) :
       pj.mul_add_lt_of_mul_lt_of_pos (by simp[pi,
         pj]) (Arith.mul_lt_mul b i j hb pj.pos) hr (lt_of_lt_of_le hr <| le_mul_of_pos_left <|
             pi.pos)
-    exact (lenbit_iff_add_mul (by simp [pi, pj])).mpr ⟨a, b * j + r, this, by simp [add_mul,
-      add_assoc, mul_assoc]⟩
+    exact (lenbit_iff_add_mul (by simp [pi, pj])).mpr ⟨a, b * j + r, this, by grind⟩
   · simp only [h, iff_false]
     rcases (not_lenbit_iff_add_mul pi).mp h with ⟨a, b, hb, rfl⟩
     have : b * j + r < i * j :=
       pj.mul_add_lt_of_mul_lt_of_pos (by simp[pi,
         pj]) (Arith.mul_lt_mul b i j hb pj.pos) hr (lt_of_lt_of_le hr <| le_mul_of_pos_left <|
             pi.pos)
-    exact (not_lenbit_iff_add_mul (by simp [pi, pj])).mpr ⟨a, b * j + r, this, by simp [add_mul,
-      add_assoc, mul_assoc]⟩
+    exact (not_lenbit_iff_add_mul (by simp [pi, pj])).mpr ⟨a, b * j + r, this, by grind⟩
 
 lemma lenbit_add_pow2_iff_of_not_lenbit {a i j : V} (pi : Pow2 i) (pj : Pow2 j) (h : ¬LenBit j a) :
     LenBit i (a + j) ↔ i = j ∨ LenBit i a := by
@@ -445,14 +439,7 @@ lemma lenbit_sub_pow2_iff_of_lenbit {a i j : V} (pi : Pow2 i) (pj : Pow2 j) (h :
   have : a = a' + j := by simp [←ha', sub_add_self_of_le h.le]
   rcases this with rfl
   have : LenBit i (a' + j) ↔ i = j ∨ LenBit i a' := lenbit_add_pow2_iff_of_not_lenbit pi pj h'
-  rw [this]
-  simp only [and_or_left, ne_eq]
-  constructor
-  · intro hi
-    exact Or.inr ⟨by rintro rfl; exact h' hi, hi⟩
-  · rintro (⟨hij, hij'⟩ | ⟨_, hi⟩)
-    · contradiction
-    · exact hi
+  grind
 
 end «lp_section_3»
 

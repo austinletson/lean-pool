@@ -65,8 +65,7 @@ lemma aeval_sumDeriv_eq_sum_Icc
       = ∑ i ∈ Finset.Icc m T.natDegree, aeval a ((derivative^[i]) T) := by
   simp only [sumDeriv, map_sum]
   refine (Finset.sum_subset ?_ ?_).symm
-  · intro i hi
-    exact Finset.mem_range.mpr (Nat.lt_succ_of_le (Finset.mem_Icc.mp hi).2)
+  · grind
   · intro i hi hnot
     have hi_lt_root : i < rootMultiplicity a (T.map (algebraMap ℤ ℂ)) :=
       lt_of_not_ge fun him =>

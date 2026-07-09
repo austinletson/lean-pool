@@ -81,19 +81,14 @@ lemma timeShift_spatial (s : ℝ) (u : SpaceTime) (i : Fin STDimension) (hi : i.
 lemma timeShift_add (s t : ℝ) (u : SpaceTime) :
     timeShift (s + t) u = timeShift s (timeShift t u) := by
   simp only [timeShift]
-  congr 1
-  funext i
-  split_ifs with h
-  · ring
-  · rfl
+  grind
 
 /-- Time shift by zero is identity -/
 @[simp]
 lemma timeShift_zero (u : SpaceTime) : timeShift 0 u = u := by
   simp only [timeShift]
   congr 1
-  funext i
-  split_ifs <;> ring
+  grind
 
 /-- Time shifts commute: T_s ∘ T_t = T_t ∘ T_s -/
 lemma timeShift_comm (s t : ℝ) (u : SpaceTime) :
@@ -504,10 +499,7 @@ theorem schwartz_timeTranslation_lipschitz_seminorm
       peetre_weight_bound x y k
     -- x + y = z, so (1 + ‖x + y‖)^k = (1 + ‖z‖)^k
     -- z = x + y, so ‖x + y‖ = ‖z‖
-    calc ‖x‖ ^ k ≤ (1 + ‖x‖) ^ k := h1
-      _ ≤ (1 + ‖x + y‖) ^ k * (1 + ‖y‖) ^ k := h2
-      _ = (1 + ‖z‖) ^ k * (1 + ‖y‖) ^ k := by simp only [z]
-      _ = (1 + ‖y‖) ^ k * (1 + ‖z‖) ^ k := mul_comm _ _
+    grind
   -- Apply MVT: Define g(t) = iteratedFDeriv ℝ n f (x + t • y) for t ∈ [0,1]
   -- Then g(1) - g(0) = iteratedFDeriv at z minus iteratedFDeriv at x
   let g : ℝ → (SpaceTime [×n]→L[ℝ] ℝ) := fun t => iteratedFDeriv ℝ n f (x + t • y)
@@ -686,8 +678,7 @@ theorem schwartz_timeTranslation_lipschitz_seminorm
                   (f := fun t _ => ‖iteratedFDeriv ℝ (n + 1) f (x + t • y)‖) h_bdd h_sSup_le
             rw [h_biSup_eq, Real.mul_iSup_of_nonneg hxk_nonneg]
             apply ciSup_le
-            intro ⟨t, ht⟩
-            exact h_pointwise t ht
+            grind
   -- Step 4: Use h_weighted_bound directly
   calc ‖x‖ ^ k * ‖g 1 - g 0‖
     _ ≤ |h| * RHS := h_weighted_bound

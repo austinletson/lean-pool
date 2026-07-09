@@ -37,9 +37,7 @@ theorem gapVal_eq_nnDistC (c : ℤ → ℝ) (hsymm : ∀ t : ℤ, c (-t) = c t) 
     {q : ℕ} (hq : q ≤ N) : gapVal (fun n => c (n : ℤ)) N q = nnDistC c N q := by
   have hIcc : (Finset.Icc 1 (max q (N - q))).Nonempty := by
     refine ⟨1, Finset.mem_Icc.mpr ⟨le_refl 1, ?_⟩⟩
-    rcases Nat.eq_zero_or_pos q with h | h
-    · exact le_trans (by omega : 1 ≤ N - q) (le_max_right _ _)
-    · exact le_trans h (le_max_left _ _)
+    grind
   have hEr : ((Finset.range (N + 1)).erase q).Nonempty := by
     rw [← Finset.card_pos, Finset.card_erase_of_mem (Finset.mem_range.mpr (by omega)),
       Finset.card_range]
@@ -61,8 +59,7 @@ theorem gapVal_eq_nnDistC (c : ℤ → ℝ) (hsymm : ∀ t : ℤ, c (-t) = c t) 
       have htmem : j - q ∈ Finset.Icc 1 (max q (N - q)) :=
         Finset.mem_Icc.mpr ⟨by omega, le_trans (by omega : j - q ≤ N - q) (le_max_right _ _)⟩
       have hval : c ((j - q : ℕ) : ℤ) = c ((q : ℤ) - (j : ℤ)) := by
-        rw [Nat.cast_sub (by omega : q ≤ j),
-          show (j : ℤ) - (q : ℤ) = -((q : ℤ) - (j : ℤ)) by ring, hsymm]
+        grind
       calc (Finset.Icc 1 (max q (N - q))).inf' hIcc (fun n => c (n : ℤ))
           ≤ c ((j - q : ℕ) : ℤ) := Finset.inf'_le _ htmem
         _ = c ((q : ℤ) - (j : ℤ)) := hval
@@ -78,9 +75,7 @@ theorem gapVal_eq_nnDistC (c : ℤ → ℝ) (hsymm : ∀ t : ℤ, c (-t) = c t) 
           ≤ c ((q : ℤ) - ((q - t : ℕ) : ℤ)) := Finset.inf'_le _ hjmem
         _ = c ((t : ℕ) : ℤ) := hval
     · have htNq : t ≤ N - q := by
-        rcases le_total q (N - q) with hle | hle
-        · rwa [max_eq_right hle] at ht2
-        · rw [max_eq_left hle] at ht2; omega
+        grind
       have hjmem : q + t ∈ (Finset.range (N + 1)).erase q :=
         Finset.mem_erase.mpr ⟨by omega, Finset.mem_range.mpr (by omega)⟩
       have hval : c ((q : ℤ) - ((q + t : ℕ) : ℤ)) = c ((t : ℕ) : ℤ) := by

@@ -70,11 +70,7 @@ lemma not_linearIndependent_pair_iff (x y : L) (hy : y ≠ 0) : ¬LinearIndepend
       simp only [zero_smul] at a
       symm at a
       rw [smul_eq_zero] at a
-      rcases a with u1 | u2
-      · rw [sub_eq_zero] at ns
-        rw [sub_eq_zero] at u1
-        exact b ns u1.symm
-      · contradiction
+      grind
     rw [← sub_eq_zero] at this
     rw [← Ne.eq_def] at this
     have : x = ( (s-s')⁻¹ •  (t' - t) )• y := by
@@ -246,8 +242,7 @@ theorem Submodule.compl_span_singleton_of_codim_one
     ∃ x : L, IsCompl p (Submodule.span K {x}) := by
   have : FiniteDimensional K L := Module.finite_of_finrank_eq_succ h
   have : Module.finrank K p < Module.finrank K L := by
-    apply Nat.lt_of_succ_le
-    rw [h]
+    grind
   obtain ⟨x, hx⟩ := Submodule.exists_of_finrank_lt p this
   use x
   specialize hx 1 one_ne_zero
@@ -381,8 +376,7 @@ theorem LinearEquiv.toSpanSingleton_symm_apply' {x : L} (h : x ≠ 0) (y : Submo
     ((LinearEquiv.toSpanSingleton K L h).symm y) • x = y := by
   obtain ⟨a, hy⟩ := Submodule.mem_span_singleton.mp y.2
   have : y = ⟨a • x, mem_span_singleton.mpr ⟨a, rfl⟩⟩ := by
-    ext
-    rw [← hy]
+    grind
   rw [this, LinearEquiv.toSpanSingleton_symm_apply K L h]
 
 end linalg
@@ -566,9 +560,7 @@ theorem LieIdeal.finrank_toSubmodule {I : LieIdeal K L} :
 lemma binary_predicate_3_choose_2 {P : Fin 3 → Fin 3 → Prop} (h₀₁ : P 0 1) (h₀₂ : P 0 2)
     (h₁₂ : P 1 2) :
     ∀ i j : Fin 3, i < j → P i j := by
-  intros i j
-  fin_cases i, j <;> intro ij <;> dsimp! at ij <;> try omega
-  assumption'
+  grind
 
 -- `LieRing.ofAssociativeRing` is a local instance in Mathlib (a `def`, not a global instance), so
 -- we re-enable it locally to view the commutative ring `K` as a Lie ring over itself.
@@ -611,8 +603,7 @@ theorem codim_commutator_ge_one_of_solvable {n : ℕ} (dimn : Module.finrank K L
    apply Submodule.finrank_lt_finrank_of_lt
    assumption
   rw [← finrank_top K L] at dimn
-  rw [dimn] at t
-  exact Nat.le_of_lt_succ t
+  grind
 
 /-- A finite-dimensional Lie algebra has commutator dimension at most one if for a basis,
   all Lie brackets are multiples of the same element. -/
@@ -804,8 +795,7 @@ theorem LieAlgebra.abelian_iff_dim_comm_zero [FiniteDimensional K L] :
 theorem LieAlgebra.abelian_iff_lie_basis_eq_zero {n : ℕ} (B : Basis (Fin n) K L) :
     IsLieAbelian L ↔ ∀ i j : Fin n, (i < j → ⁅B i, B j⁆ = 0) := by
   constructor
-  · intro ⟨h⟩ _ _ _
-    apply h
+  · intro ⟨h⟩ grind
   · intro h
     have h' : ∀ i j : Fin n, ⁅B i, B j⁆ = 0 := by
       intro i j

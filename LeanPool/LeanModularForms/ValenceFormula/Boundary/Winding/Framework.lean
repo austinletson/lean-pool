@@ -119,8 +119,7 @@ private theorem pv_convert {γ : ℝ → ℂ} {a b : ℝ} {s : ℂ} {L : ℂ}
       (nhdsWithin 0 (Ioi 0)) (nhds L) := by
   have hd : ∀ t, deriv (fun t => γ t - s) t = deriv γ t :=
     fun t => deriv_sub_const (f := γ) _
-  convert h using 1
-  ext ε; congr 1; ext t; simp only [sub_zero, gt_iff_lt, hd]
+  grind
 
 /-- Master theorem: compute `generalizedWindingNumber'` from single-crossing data.
 

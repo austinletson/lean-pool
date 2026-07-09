@@ -59,11 +59,7 @@ theorem close_up_aux_factor_dvd_a
           (span (↑(insert a rest) : Set R.carrier)) := by
   classical
   have hq'_dvd_all : ∀ x ∈ insert a rest, q' ∣ x := by
-    intro x hx
-    rw [Finset.mem_insert] at hx
-    rcases hx with rfl | hx'
-    · exact hq'a
-    · exact hq'_dvd x hx'
+    grind
   have h_sl : span (↑(insert a rest) : Set R.carrier) ≤ span {q'} :=
     Ideal.span_le.mpr fun x hx =>
       Ideal.mem_span_singleton.mpr (hq'_dvd_all x (Finset.mem_coe.mp hx))
@@ -75,8 +71,7 @@ theorem close_up_aux_factor_dvd_a
   let div_q_a : R.carrier → R.carrier :=
     fun x => if h : q' ∣ x then Classical.choose h else x
   have hdiv_a : ∀ x ∈ insert a rest, x = q' * div_q_a x := by
-    intro x hx
-    simpa only [div_q_a, dif_pos (hq'_dvd_all x hx)] using Classical.choose_spec (hq'_dvd_all x hx)
+    grind
   let t_q' := (insert a rest).image div_q_a
   have h_ie : span (↑(insert a rest) : Set R.carrier) =
       span {q'} * span (↑t_q' : Set R.carrier) :=
@@ -113,11 +108,9 @@ theorem close_up_aux_factor_dvd_a
         rw [hdiv_a a (Finset.mem_insert_self a rest), ha'_zero, mul_zero]
       have ht_q'_bound : t_q'.card ≤ n'' + 1 + 1 + 1 :=
         Finset.card_image_le.trans
-          (by rw [Finset.card_insert_of_notMem ha_rest]
-              omega)
+          (by grind)
       have : (t_q'.erase (div_q_a a)).card ≤ n'' + 1 + 1 := by
-        rw [Finset.card_erase_of_mem ha'_mem]
-        omega
+        grind
       have hspan_eq : span (↑t_q' : Set R.carrier) =
           span (↑(t_q'.erase (div_q_a a)) : Set R.carrier) := by
         apply le_antisymm
@@ -130,10 +123,7 @@ theorem close_up_aux_factor_dvd_a
           · exact Ideal.subset_span
               (Finset.mem_coe.mpr (Finset.mem_erase.mpr ⟨hne, Finset.mem_coe.mp hx⟩))
         · exact Ideal.span_mono (Finset.coe_subset.mpr (Finset.erase_subset _ _))
-      rw [hspan_eq] at hc_n'_mem
-      obtain ⟨S, hA, hl, hm⟩ := ih R hR_card _ this c_n' hc_n'_mem
-      exact ⟨S, hA, hl,
-        Ideal.map_mono (Ideal.span_mono (Finset.coe_subset.mpr (Finset.erase_subset _ _))) hm⟩
+      grind
     · by_cases ha'_unit : IsUnit (div_q_a a)
       · refine ⟨R, ⟨le_refl _, fun r hr => hr, le_max_right _ _⟩, le_refl _, ?_⟩
         have h_id : Subring.inclusion (le_refl R.carrier) = RingHom.id R.carrier :=
@@ -148,30 +138,13 @@ theorem close_up_aux_factor_dvd_a
           ⟨ha'_zero, ⟨q', hq'.not_unit,
             (hdiv_a a (Finset.mem_insert_self a rest)).trans (mul_comm q' (div_q_a a))⟩⟩
         have ht_card_eq : t_q'.card = n'' + 1 + 1 + 1 := by
-          push Not at ht_card
-          have hins_card : (insert a rest).card =
-              n'' + 1 + 1 + 1 := by
-            rw [Finset.card_insert_of_notMem ha_rest]
-            have : rest.card = n'' + 1 + 1 := by
-              have h_le : t_q'.card ≤ (insert a rest).card :=
-                Finset.card_image_le
-              rw [Finset.card_insert_of_notMem ha_rest] at h_le
-              omega
-            omega
-          have h1 : t_q'.card ≤ n'' + 1 + 1 + 1 :=
-            Finset.card_image_le.trans
-              (by rw [hins_card])
-          omega
+          grind
         have ht_gcd : gcdComplexity t_q' ≤ m := le_trans (by
           change gcdComplexity t_q' ≤ gcdComplexity s
           apply le_trans _ hgcd_rest
           have hinj_qa : Set.InjOn div_q_a ↑(insert a rest) :=
             fun x hx y hy hxy => by
-              have hx_eq := hdiv_a x (Finset.mem_coe.mp hx)
-              have hy_eq := hdiv_a y (Finset.mem_coe.mp hy)
-              calc x = q' * div_q_a x := hx_eq
-                _ = q' * div_q_a y := by rw [hxy]
-                _ = y := hy_eq.symm
+              grind
           exact gcdComplexity_div_le q' hq' (insert a rest)
             hq'_dvd_all div_q_a hdiv_a hinj_qa) hs_gcd
         exact ih_a (div_q_a a) hdvd t_q' ht_gcd ht_card_eq ha'_mem c_n' hc_n'_mem
@@ -229,8 +202,7 @@ theorem close_up_aux_factor_dvd_c
   let div_q_b : R.carrier → R.carrier :=
     fun x => if h : q' ∣ x then Classical.choose h else x
   have hdiv_b : ∀ x ∈ rest, x = q' * div_q_b x := by
-    intro x hx
-    simpa only [div_q_b, dif_pos (hq'_dvd x hx)] using Classical.choose_spec (hq'_dvd x hx)
+    grind
   let rest' := rest.image div_q_b
   have h_ie_b : span (↑rest : Set R.carrier) =
       span {q'} * span (↑rest' : Set R.carrier) :=
@@ -281,8 +253,7 @@ theorem close_up_aux_factor_dvd_c
     have h := h_at_b
     rw [ht'_b] at h
     have h' : (q' : T) * ((a : T) * t'_b) = (q' : T) * ((c_n' : T) - w_b) := by
-      rw [← h]
-      ring
+      grind
     exact eq_add_of_sub_eq (mul_left_cancel₀ hq'_ne h').symm
   have hw_b_span : w_b ∈ Ideal.map R.carrier.subtype (span (↑rest' : Set R.carrier)) := by
     have hv' := hv_b
@@ -303,18 +274,12 @@ theorem close_up_aux_factor_dvd_c
     · exact Ideal.map_mono
         (Ideal.span_mono (Finset.coe_subset.mpr (Finset.subset_insert a rest'))) hw_b_span
   by_cases ha_rest' : a ∈ rest'
-  · have h_eq : insert a rest' = rest' := Finset.insert_eq_of_mem ha_rest'
-    rw [h_eq] at hc_n'_mem ⊢
-    exact ih R hR_card rest' (Finset.card_image_le.trans (by omega)) c_n' hc_n'_mem
+  · grind
   · by_cases hrest'_card : rest'.card ≤ n'' + 1
-    · have h_ins_card : (insert a rest').card ≤ n'' + 1 + 1 := by
-        rw [Finset.card_insert_of_notMem ha_rest']
-        omega
-      exact ih R hR_card (insert a rest') h_ins_card c_n' hc_n'_mem
+    · grind
     · push Not at hrest'_card
       have hrest'_card_eq : rest'.card = n'' + 1 + 1 := by
-        have h_le : rest'.card ≤ n'' + 1 + 1 := Finset.card_image_le.trans hrest_card
-        omega
+        grind
       have hb_rest' : div_q_b b ∈ rest' := Finset.mem_image.mpr ⟨b, hb_rest, rfl⟩
       by_cases hdb_zero : div_q_b b = 0
       · have hspan_eq_b : span (↑rest' : Set R.carrier) =
@@ -331,11 +296,9 @@ theorem close_up_aux_factor_dvd_c
                 (Finset.mem_coe.mpr (Finset.mem_erase.mpr ⟨hne, Finset.mem_coe.mp hx⟩))
           · exact Ideal.span_mono (Finset.coe_subset.mpr (Finset.erase_subset _ _))
         have h_erase_card : (rest'.erase (div_q_b b)).card ≤ n'' + 1 := by
-          rw [Finset.card_erase_of_mem hb_rest', hrest'_card_eq]
-          omega
+          grind
         have h_ins_card2 : (insert a (rest'.erase (div_q_b b))).card ≤ n'' + 1 + 1 := by
-          rw [Finset.card_insert_of_notMem (fun h => ha_rest' ((Finset.erase_subset _ _) h))]
-          omega
+          grind
         have hc_n'_mem2 : (c_n' : T) ∈ Ideal.map R.carrier.subtype
             (span (↑(insert a (rest'.erase (div_q_b b))) : Set R.carrier)) := by
           have hspan_le : span (↑(insert a rest') : Set R.carrier) ≤
@@ -384,14 +347,9 @@ theorem close_up_aux_factor_dvd_c
             apply Nat.add_le_add_left
             have hinj_qb : Set.InjOn div_q_b ↑rest :=
               fun x hx y hy hxy => by
-                have hx_eq := hdiv_b x (Finset.mem_coe.mp hx)
-                have hy_eq := hdiv_b y (Finset.mem_coe.mp hy)
-                calc x = q' * div_q_b x := hx_eq
-                  _ = q' * div_q_b y := by rw [hxy]
-                  _ = y := hy_eq.symm
+                grind
             exact gcdComplexity_div_le q' hq' rest hq'_dvd div_q_b hdiv_b hinj_qb
-          exact ih_b (div_q_b b) hdvd_b rest' hrest'_card_eq.le ha_rest' hb_rest' hgcd_rest'
-            c_n' hc_n'_mem
+          grind
 
 
 end

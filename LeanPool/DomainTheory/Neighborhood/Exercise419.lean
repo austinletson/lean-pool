@@ -193,8 +193,7 @@ def liftC (V : NeighborhoodSystem β) (coneVal singVal : Str → V.Element)
       rcases hX' with ⟨τ, rfl⟩ | ⟨τ, rfl⟩
       · exact absurd hX'X (not_cone_subset_singleton τ σ)
       · have hτσ : τ = σ := by
-          have := Set.singleton_subset_iff.mp hX'X
-          rwa [Set.mem_singleton_iff] at this
+          grind
         subst hτσ
         exact Or.inr ⟨τ, rfl, (singVal τ).up_mem hY hY' hYY'⟩
 
@@ -228,10 +227,7 @@ theorem liftC_strElem (V : NeighborhoodSystem β) (coneVal singVal : Str → V.E
         apply singleton_subset_cone.mp
         rw [← hXcone]; exact hsub
       exact hsing hpre Y hY
-    · have hσσ' : σ = σ' := by
-        have := Set.singleton_subset_iff.mp (hXsing ▸ hsub)
-        rwa [Set.mem_singleton_iff] at this
-      subst hσσ'; exact hY
+    · grind
   · intro hY
     exact ⟨{σ}, ⟨memC_singleton σ, subset_rfl⟩, Or.inr ⟨σ, rfl, hY⟩⟩
 

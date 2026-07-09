@@ -61,15 +61,10 @@ private lemma cpv_crossing_null
     ext t
     simp only [Set.mem_setOf_eq, Set.mem_iUnion,
       Finset.mem_coe]
-    constructor
-    · intro ⟨hin, hmem⟩
-      exact ⟨γ.toFun t, hmem, hin, rfl⟩
-    · intro ⟨s, hs, hin, heq⟩
-      exact ⟨hin, heq ▸ hs⟩
+    grind
   rw [h_eq, MeasureTheory.measure_biUnion_null_iff
     (Set.Finite.countable (Finset.finite_toSet S0))]
-  intro s hs
-  exact h_single_null s hs
+  grind
 
 private lemma finset_min_sep (S0 : Finset ℂ)
     (hS0_nonempty : S0.Nonempty) :
@@ -79,10 +74,7 @@ private lemma finset_min_sep (S0 : Finset ℂ)
   · use 1, one_pos
     intro s hs s' hs' hne
     obtain ⟨s₀, hs₀⟩ := Finset.card_eq_one.mp h_card_one
-    subst hs₀
-    simp only [Finset.mem_singleton] at hs hs'
-    rw [hs, hs'] at hne
-    exact (hne rfl).elim
+    grind
   · have h_pos : ∀ s ∈ S0, ∀ s' ∈ S0,
         s ≠ s' → (0 : ℝ) < ‖s' - s‖ :=
       fun _ _ _ _ hne =>
@@ -112,8 +104,7 @@ private lemma finset_min_sep (S0 : Finset ℂ)
     simp only [Finset.mem_filter, Finset.mem_product]
       at hab_mem
     refine ⟨δ, ?_, ?_⟩
-    · rw [← hab_eq]
-      exact h_pos a hab_mem.1.1 b hab_mem.1.2 hab_mem.2
+    · grind
     · intro s hs s' hs' hne
       exact hδ_min ‖s' - s‖
         (Finset.mem_image.mpr ⟨(s, s'),
@@ -149,8 +140,7 @@ private lemma cpv_cauchy_of_sum_and_regular (S0 : Finset ℂ) (f : ℂ → ℂ)
             (residueSimplePole f s.val / (γ.toFun t - s.val)) * deriv γ.toFun t
           else 0) (𝓝[>] 0) (𝓝 L) := by
     apply tendsto_finsetSum
-    intro ⟨s, hs⟩ _
-    exact hL_fn s hs
+    grind
   let M := fun ε => ∫ t in γ.a..γ.b,
     cauchyPrincipalValueIntegrandOn S0 f γ.toFun ε t
   let S' := fun ε => ∑ s ∈ S0.attach,
@@ -192,11 +182,7 @@ lemma cauchyPrincipalValueOn_singular_sum (S0 : Finset ℂ) (f : ℂ → ℂ)
       deriv γ.toFun t
     apply Filter.Tendsto.congr' _ tendsto_const_nhds
     rw [Filter.EventuallyEq]
-    filter_upwards [self_mem_nhdsWithin] with ε _
-    apply intervalIntegral.integral_congr
-    intro t _
-    simp only [Finset.notMem_empty, false_and,
-      exists_false, ↓reduceIte]
+    filter_upwards [self_mem_nhdsWithin] with ε grind
   · have hS0_nonempty : S0.Nonempty :=
       Finset.nonempty_iff_ne_empty.mpr hS0_empty
     unfold CauchyPrincipalValueExistsOn
@@ -231,8 +217,7 @@ private lemma holomorphic_closed_integral_zero (U : Set ℂ) (hU : IsOpen U)
   have h_deriv' :
       ∀ t ∈ Ioo γ.a γ.b \ (↑γ.partition ∩ Ioo γ.a γ.b),
         HasDerivAt (F ∘ γ.toFun) (g (γ.toFun t) * deriv γ.toFun t) t := by
-    intro t ⟨ht, hp⟩
-    exact h_deriv t ht (fun h => hp ⟨h, ht⟩)
+    grind
   have h_int :
       IntervalIntegrable (fun t => g (γ.toFun t) * deriv γ.toFun t)
         MeasureTheory.volume γ.a γ.b := by
@@ -444,11 +429,7 @@ theorem generalizedResidueTheorem'
   have hS0_discrete' :
       ∀ s ∈ S0, ∀ s' ∈ S0,
         s ≠ s' → 0 < ‖s' - s‖ := by
-    intro s hs s' hs' hne
-    obtain ⟨ε, hε_pos, hε_sep⟩ :=
-      hS_discrete s (hS0_subset s hs)
-    exact lt_of_lt_of_le hε_pos
-      (hε_sep s' (hS0_subset s' hs') (Ne.symm hne))
+    grind
   have h_decomp :=
     simple_poles_decomposition U hU S0 hS0_in_U f
       hf hSimplePoles hf_ext
@@ -459,8 +440,7 @@ theorem generalizedResidueTheorem'
       ContinuousOn g
         (γ.toFun '' Icc γ.a γ.b) := by
     apply hg_diff.continuousOn.mono
-    intro z ⟨t, ht, htz⟩
-    rw [← htz]; exact hγ_in_U t ht
+    grind
   constructor
   · by_cases h_avoids :
         ∀ s ∈ S0, ∀ t ∈ Icc γ.a γ.b,
@@ -500,8 +480,7 @@ lemma CauchyPrincipalValueExists'.const_mul
         then f (γ t) * deriv γ t else 0) := by
     intro ε
     erw [← intervalIntegral.integral_const_mul]
-    congr 1; ext t
-    split_ifs <;> ring
+    grind
   exact (hL.const_mul c).congr (fun ε => (h_eq ε).symm)
 
 /-! ### General residue and the higher-order theorem -/
@@ -564,9 +543,7 @@ private lemma residueAt_eq_of_simple_pole_decomp (f : ℂ → ℂ) (z₀ c : ℂ
     have h_in : dist z z₀ < rf := by rw [Metric.mem_sphere.mp hz]; exact hr_lt_rf
     have h_mem : z ∈ Metric.ball z₀ rf ∩ {z₀}ᶜ :=
       ⟨Metric.mem_ball.mpr h_in, Set.mem_compl_singleton_iff.mpr h_ne⟩
-    have := hrf_eq h_mem
-    simp only [Set.mem_setOf_eq] at this
-    rw [this, div_eq_mul_inv]
+    grind
   have h_g_cont : ContinuousOn g (Metric.closedBall z₀ r) :=
     hg_ball.continuousOn.mono (Metric.closedBall_subset_ball hr_lt_rg)
   have h_ci_g : CircleIntegrable g z₀ r :=

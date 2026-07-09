@@ -40,10 +40,7 @@ lemma finiteRange_of_finset {Ω G : Type*} (f : Ω → G) (A : Finset G) (h : �
     FiniteRange f := by
   constructor
   apply Set.Finite.subset (Finset.finite_toSet A)
-  intro y hy
-  simp only [Set.mem_range] at hy
-  rcases hy with ⟨ω, rfl⟩
-  exact h ω
+  grind
 
 lemma FiniteRange.range {Ω G : Type*} (X : Ω → G) [hX : FiniteRange X] :
     Set.range X = FiniteRange.toFinset X := by simp [FiniteRange.toFinset]

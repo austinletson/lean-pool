@@ -58,9 +58,7 @@ theorem eulerian_of_n_succ_n (n k : ℕ) (h : n > 0) (hp : k ≥ n) : eulerian n
               false_or]
             constructor
             · exact eulerian_of_zero_k k (by omega)
-            · by_cases d : 1 - k = 0
-              · exact Or.inl d
-              · exact Or.inr <| eulerian_of_zero_k (k - 1) (by omega)
+            · grind
           · simp [ih k (by omega) (by omega), ih (k - 1) (by omega) (by omega)]
         · omega
 
@@ -94,16 +92,13 @@ theorem worpitzky_step (x n k : ℕ) (hk : k ≤ n) :
     x * (x + k).choose n =
       (k + 1) * (x + k).choose (n + 1) + (n - k) * (x + k + 1).choose (n + 1) := by
   rcases Nat.lt_or_ge (x + k) n with hxk | hxk
-  · rw [Nat.choose_eq_zero_of_lt hxk, Nat.choose_eq_zero_of_lt (by omega),
-      Nat.choose_eq_zero_of_lt (by omega), mul_zero, mul_zero, mul_zero, add_zero]
+  · grind
   · symm
     calc (k + 1) * (x + k).choose (n + 1) + (n - k) * (x + k + 1).choose (n + 1)
         = (k + 1 + (n - k)) * (x + k).choose (n + 1) + (n - k) * (x + k).choose n := by
-          rw [Nat.choose_succ_succ']
-          ring
+          grind
       _ = (x + k).choose (n + 1) * (n + 1) + (n - k) * (x + k).choose n := by
-          rw [show k + 1 + (n - k) = n + 1 by omega]
-          ring
+          grind
       _ = (x + k - n + (n - k)) * (x + k).choose n := by
           rw [Nat.choose_succ_right_eq]
           ring

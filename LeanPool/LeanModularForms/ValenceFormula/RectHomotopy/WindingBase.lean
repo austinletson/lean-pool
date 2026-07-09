@@ -99,9 +99,7 @@ private lemma avoids_chord_rho'_to_i (p : ℂ)
     have h_1mu : 1 - u = 2 * ((1 - s) * p.re) := by linarith
     have h_u : u = 1 - 2 * ((1 - s) * p.re) := by linarith
     have heq_im' : (1 - s) * (p.im + p.re * (2 - Real.sqrt 3)) + s * refY₀ = 1 := by
-      have : (1 - u) * (Real.sqrt 3 / 2) + u =
-        1 - (1 - s) * p.re * (2 - Real.sqrt 3) := by rw [h_1mu, h_u]; ring
-      linarith
+      grind
     have hp_im_bound : p.im > Real.sqrt (1 - p.re ^ 2) := by
       have h1 : 0 ≤ 1 - p.re ^ 2 := by nlinarith [abs_lt.mp hp_re]
       rw [show p.im = Real.sqrt (p.im ^ 2) from (Real.sqrt_sq (le_of_lt hp_im_pos)).symm]
@@ -120,9 +118,7 @@ private lemma avoids_chord_rho'_to_i (p : ℂ)
       mul_nonpos_of_nonneg_of_nonpos h1s_nn (le_of_lt hp_re_neg)
     have h_both_zero : (1 - s) * p.re = 0 ∧ (1 - u) / 2 = 0 := by constructor <;> linarith
     have hs_eq : s = 1 := by
-      rcases mul_eq_zero.mp h_both_zero.1 with h | h
-      · linarith
-      · exfalso; linarith
+      grind
     rw [hs_eq] at heq_im
     simp only [sub_self, zero_mul, zero_add, one_mul] at heq_im
     rw [hfd_im] at heq_im
@@ -169,25 +165,13 @@ private lemma avoids_chord_i_to_rho (p : ℂ)
     ring
   rcases le_or_gt p.re 0 with hp_re_np | hp_re_pos
   · rcases eq_or_lt_of_le hp_re_np with hp_re_zero | hp_re_neg
-    · rw [hfd_re] at heq_re
-      rw [hp_re_zero, mul_zero] at heq_re
-      have hv_eq : v = 0 := by linarith
-      rw [hfd_im, hv_eq] at heq_im
-      simp only [zero_mul, sub_zero] at heq_im
-      have hp_im_gt1 : p.im > 1 := by
-        have : p.im ^ 2 > 1 := by nlinarith [hp_re_zero]
-        nlinarith [sq_nonneg (p.im - 1)]
-      have : (1 - s) * p.im + s * refY₀ > 1 :=
-        convex_combo_gt_one' s p.im refY₀ hs0 hs1 ref_Y₀_gt_one hp_im_gt1
-      linarith
+    · grind
     · rw [hfd_re] at heq_re
       have hv_eq : v = -2 * ((1 - s) * p.re) := by linarith
       have hv_eq' : v = 2 * (1 - s) * (-p.re) := by linarith
       rw [hfd_im] at heq_im
       have heq_im' : (1 - s) * (p.im + (-p.re) * (2 - Real.sqrt 3)) + s * refY₀ = 1 := by
-        have : v * (1 - Real.sqrt 3 / 2) = (1 - s) * (-p.re) * (2 - Real.sqrt 3) := by
-          rw [hv_eq']; ring
-        linarith
+        grind
       have hp_abs_re : |p.re| = -p.re := abs_of_neg hp_re_neg
       have hp_re_nn' : 0 ≤ -p.re := by linarith
       have hp_re_le' : -p.re ≤ 1/2 := by rw [← hp_abs_re]; linarith
@@ -198,24 +182,14 @@ private lemma avoids_chord_i_to_rho (p : ℂ)
       have h_neg_re_sq : (-p.re) ^ 2 = p.re ^ 2 := by ring
       have h_combo : p.im + (-p.re) * (2 - Real.sqrt 3) > 1 := by
         have h_ge := sqrt_one_minus_sq_plus_linear_ge_one (-p.re) hp_re_nn' hp_re_le'
-        rw [h_neg_re_sq] at h_ge
-        linarith
+        grind
       have h_lhs_gt : (1 - s) * (p.im + (-p.re) * (2 - Real.sqrt 3)) + s * refY₀ > 1 :=
         convex_combo_gt_one' s (p.im + (-p.re) * (2 - Real.sqrt 3)) refY₀
           hs0 hs1 ref_Y₀_gt_one h_combo
       linarith
   · rw [hfd_re] at heq_re
     have h_rhs_nn : (1 - s) * p.re ≥ 0 := by positivity
-    have h_lhs_le : -v / 2 ≤ 0 := by linarith
-    have h_both_zero : (1 - s) * p.re = 0 ∧ v = 0 := by constructor <;> linarith
-    have hs_eq : s = 1 := by
-      rcases mul_eq_zero.mp h_both_zero.1 with h | h
-      · linarith
-      · exfalso; linarith
-    rw [hs_eq] at heq_im; simp only [sub_self, zero_mul, zero_add, one_mul] at heq_im
-    rw [hfd_im, show v = 0 from h_both_zero.2] at heq_im
-    simp only [zero_mul, sub_zero] at heq_im
-    linarith [ref_Y₀_gt_one]
+    grind
 
 /-- The straight line from any valid interior point p to refP₀ = I*Y₀
     avoids all points on the fdPolygon boundary. -/
@@ -256,10 +230,7 @@ lemma fdPolygon_avoids_line_to_ref (p : ℂ) (hp_norm : ‖p‖ > 1)
     rw [hfd_re] at heq_re
     have h1 : |(1 - s) * p.re| ≤ |p.re| := by
       rw [abs_mul, abs_of_nonneg h1s_nn]; exact mul_le_of_le_one_left (abs_nonneg _) (by linarith)
-    have h2 : |(1 - s) * p.re| < 1/2 := lt_of_le_of_lt h1 hp_re
-    have h3 : (1 - s) * p.re = 1/2 := by linarith
-    have h4 : |(1 - s) * p.re| = 1/2 := by rw [h3]; norm_num
-    linarith
+    grind
   · push Not at ht1
     by_cases ht2 : t ≤ 2
     · exact (avoids_chord_rho'_to_i p hp_re hp_im_pos hp_sq s hs0 hs1 h1s_nn t
@@ -278,10 +249,7 @@ lemma fdPolygon_avoids_line_to_ref (p : ℂ) (hp_norm : ‖p‖ > 1)
           have h1 : |(1 - s) * p.re| ≤ |p.re| := by
             rw [abs_mul, abs_of_nonneg h1s_nn]
             exact mul_le_of_le_one_left (abs_nonneg _) (by linarith)
-          have h2 : |(1 - s) * p.re| < 1/2 := lt_of_le_of_lt h1 hp_re
-          have h3 : (1 - s) * p.re = -1/2 := by linarith
-          have h4 : |(1 - s) * p.re| = 1/2 := by rw [h3]; norm_num
-          linarith
+          grind
         · push Not at ht4
           have hfd_im : (fdPolygon t).im = HHeight := by
             simp only [fdPolygon, not_le.mpr ht1, not_le.mpr ht2, not_le.mpr ht3,
@@ -296,9 +264,7 @@ lemma fdPolygon_avoids_line_to_ref (p : ℂ) (hp_norm : ‖p‖ > 1)
           · have : (1 - s) * p.im < (1 - s) * HHeight := by
               apply mul_lt_mul_of_pos_left hp_im; linarith
             have : s * refY₀ < s * HHeight := by apply mul_lt_mul_of_pos_left ref_Y₀_lt_H; linarith
-            have : (1 - s) * p.im + s * refY₀ < (1 - s) * HHeight + s * HHeight := by linarith
-            have : (1 - s) * HHeight + s * HHeight = HHeight := by ring
-            linarith
+            grind
 
 /-- rc(t) - refP₀ lies in slitPlane for t ∈ [0, 5] with t ≠ tL refP₀.
 Note: `CurveAvoidance.curve_sub_in_slitPlane` does not apply here because its `hpos`

@@ -24,13 +24,9 @@ lemma tsum_primes_gt_le_tsum_compl (f : Nat.Primes → ℝ) (hf : ∀ p, 0 ≤ f
     ∑' (p : {q : Nat.Primes // q ∉ s}), f p := by
   apply Summable.tsum_le_tsum_of_inj
     (fun x => ⟨x.val, gt_sup_imp_not_mem s x.val x.property⟩)
-  · intro ⟨a, ha⟩ ⟨b, hb⟩ h
-    simp only [Subtype.mk.injEq] at h
-    exact Subtype.ext h
-  · intro c _
-    exact hf c.val
-  · intro i
-    rfl
+  · intro ⟨a, ha⟩ grind
+  · grind
+  · grind
   · exact hsum.subtype _
   · exact hsum.subtype _
 
@@ -57,8 +53,7 @@ lemma prime_tail_sum_small (ε : ℝ) (hε : 0 < ε) :
   have h1 : ∑' (p : {q : Nat.Primes // (q : ℕ) > s.sup (·.val)}), f p ≤
             ∑' (p : {q : Nat.Primes // q ∉ s}), f p :=
     tsum_primes_gt_le_tsum_compl f hfnn primes_summable_one_div_sq s
-  simp only [hf] at h1 hs
-  exact lt_of_le_of_lt h1 hs
+  grind
 
 lemma prime_count_le_sqrt (M : ℕ) :
     (M.sqrt.primesBelow).card ≤ Nat.sqrt M := by
@@ -93,18 +88,14 @@ lemma sqrt_div_X_small (ε : ℝ) (hε : 0 < ε) :
       _ = ε := by field_simp
   calc (Nat.sqrt X : ℝ) / X ≤ Real.sqrt (X : ℝ) / X := by gcongr
     _ = 1 / Real.sqrt (X : ℝ) := by
-        have hsqrtpos : Real.sqrt (X : ℝ) > 0 := Real.sqrt_pos.mpr hXpos
-        field_simp
-        nlinarith [Real.sq_sqrt (le_of_lt hXpos)]
+        grind
     _ < ε := h8
 
 lemma card_multiples_Icc (q : ℕ) (X : ℕ) :
     ((Finset.Icc 1 X).filter fun N => q ^ 2 ∣ N).card ≤ X / q ^ 2 := by
   have h_subset : ((Finset.Icc 1 X).filter fun N => q ^ 2 ∣ N) ⊆ (Finset.range (X + 1)).filter (
       fun k => k ≠ 0 ∧ q ^ 2 ∣ k) := by
-    intro N hN
-    simp only [Finset.mem_filter, Finset.mem_Icc, Finset.mem_range] at hN ⊢
-    exact ⟨by omega, by omega, hN.2⟩
+    grind
   simpa [Nat.card_multiples' X (q ^ 2)] using Finset.card_le_card h_subset
 
 /-- The number of N ∈ (0, X] satisfying N ≡ v (mod r) is at most X / r + 1.
@@ -124,14 +115,10 @@ lemma floor_diff_bound_rat (X v r : ℕ) (hr : 0 < r) :
     have h₆ : (⌊a⌋ : ℚ) - (⌊b⌋ : ℚ) - 1 < a - b := by linarith
     have h₇ : ((⌊a⌋ : ℤ) - ⌊b⌋ - 1 : ℤ) ≤ ⌊(a - b : ℚ)⌋ := by
       apply Int.le_floor.mpr
-      push_cast
-      linarith [h₆]
+      grind
     linarith
   have h := floor_sub_floor_le (((X : ℚ) - v) / r) ((-(v : ℚ)) / r)
-  have hr' : (r : ℚ) ≠ 0 := Nat.cast_ne_zero.mpr (Nat.pos_iff_ne_zero.mp hr)
-  have heq : ((X : ℚ) - v) / r - (-(v : ℚ)) / r = (X : ℚ) / r := by field_simp; ring
-  rw [heq] at h
-  exact h
+  grind
 
 lemma card_modEq_Icc_bound (v r X : ℕ) (hr : 0 < r) :
     ((Finset.Ioc 0 X).filter fun N => N ≡ v [MOD r]).card ≤ X / r + 1 := by
@@ -139,18 +126,7 @@ lemma card_modEq_Icc_bound (v r X : ℕ) (hr : 0 < r) :
   simp only [Nat.cast_zero, zero_sub] at h
   have hbd := floor_diff_bound_rat X v r hr
   have hfloor : ⌊(X : ℚ) / r⌋ = (X / r : ℕ) := Rat.floor_natCast_div_natCast X r
-  rw [hfloor] at hbd
-  have hmax : max (⌊((X : ℚ) - v) / r⌋ - ⌊(-(v : ℚ)) / r⌋) 0 ≤ (X / r : ℤ) + 1 := by
-    apply max_le hbd
-    have : (0 : ℤ) ≤ (X / r : ℕ) := Nat.cast_nonneg _
-    omega
-  have hcard : ((Finset.Ioc 0 X).filter fun N => N ≡ v [MOD r]).card =
-      (max (⌊((X : ℚ) - v) / r⌋ - ⌊(-(v : ℚ)) / r⌋) 0).toNat := by
-    have := congrArg Int.toNat h
-    simp only [Int.toNat_natCast] at this
-    exact this
-  rw [hcard]
-  omega
+  grind
 
 lemma gcd_psq_b_eq_one (p : ℕ) (hp : Nat.Prime p) (b : ℕ) (hb : 2 ≤ b) (hbp : b < p) :
     (p ^ 2).gcd b = 1 :=
@@ -233,13 +209,7 @@ lemma card_union_shifted_bound (b : ℕ) (hb : 2 ≤ b) (T : Finset ℕ) (_hT : 
       T.card * (X / (q : ℕ) ^ 2 + 1) := by
   have h_eq : (Finset.Icc 1 X).filter (fun N => ∃ d ∈ T, (q : ℕ) ^ 2 ∣ b * N + d) =
       T.biUnion (fun d => (Finset.Icc 1 X).filter (fun N => (q : ℕ) ^ 2 ∣ b * N + d)) := by
-    ext N
-    simp only [Finset.mem_filter, Finset.mem_biUnion]
-    constructor
-    · rintro ⟨hN, d, hd, hdiv⟩
-      exact ⟨d, hd, hN, hdiv⟩
-    · rintro ⟨d, hd, hN, hdiv⟩
-      exact ⟨hN, d, hd, hdiv⟩
+    grind
   rw [h_eq]
   apply Finset.card_biUnion_le_card_mul
   intro d _
@@ -247,8 +217,7 @@ lemma card_union_shifted_bound (b : ℕ) (hb : 2 ≤ b) (T : Finset ℕ) (_hT : 
 
 lemma combined_bound_aux (T : Finset ℕ) (X q_sq : ℕ) :
     X / q_sq + T.card * (X / q_sq + 1) ≤ (T.card + 1) * (X / q_sq + 1) := by
-  rw [add_mul, one_mul]
-  omega
+  grind
 
 lemma single_prime_violation_bound (b : ℕ) (hb : 2 ≤ b) (T : Finset ℕ) (hT : T ⊆ Finset.range b)
     (q : Nat.Primes) (hq : (q : ℕ) > b) (X : ℕ) :

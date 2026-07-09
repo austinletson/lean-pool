@@ -140,9 +140,7 @@ theorem LinearMap.real_starAlgEquiv_conj_iff
     ext x
     have hx := LinearMap.congr_fun h (φ x)
     simpa using φ.injective hx
-  · intro h
-    ext x
-    simp [h]
+  · grind
 
 /-- Star-conjugation as a ring equivalence of linear endomorphisms. -/
 def LinearMap.realRingEquiv {R E : Type _} [Semiring R] [AddCommMonoid E]

@@ -471,14 +471,7 @@ private def transfinite_construction_proof
             (IH hγ_ex.choose hγ_lt).1))
   have hprevF_card : ∀ (α : κ.ToType) (IH : ∀ β, β < α → RD β),
       Cardinal.mk (prevF α IH).carrier < Cardinal.mk T := by
-    intro α IH
-    simp only [prevF]
-    split_ifs with hmin hlim hgood
-    · exact hS₀_card
-    · exact (mk_union_nsub α IH (not_isMin_iff.mp hmin) hgood
-        (fun β hβ => (IH β hβ).2.2.2.2.2.2.2)).2.1
-    · exact hS₀_card
-    · exact (IH _ _).2.2.2.1
+    grind
   have hprevF_cb : ∀ (α : κ.ToType) (IH : ∀ β, β < α → RD β),
       Cardinal.mk (prevF α IH).carrier ≤
         max Cardinal.aleph0 (Cardinal.mk {γ : κ.ToType // γ ≤ α}) := by

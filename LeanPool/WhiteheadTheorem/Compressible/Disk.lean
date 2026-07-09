@@ -137,9 +137,7 @@ lemma exists_relGenLoop_homotopicWith_isMapOfPairs
   replace Hfj := (ContinuousMap.Homotopy.refl fj).comp Hfj.some
   simp only [ContinuousMap.comp_id, ContinuousMap.comp_const] at Hfj
   let a₀ : A := ⟨fj y₀, by
-    change f y₀ ∈ A
-    apply hf
-    exact Cube.boundaryJar_subset_boundary _ y₀.property ⟩
+    grind ⟩
   use a₀
   let fb' : C(∂𝕀 (n + 1), A) := fb.comp ⟨ULift.down.{u}, continuous_uliftDown⟩
   let Hfj' : C((⊔𝕀 (n + 1)) × I, A) := Hfj.toContinuousMap.argSwap.comp <|
@@ -231,8 +229,7 @@ lemma exists_relGenLoop_homotopicWith_isMapOfPairs
         simp only [ContinuousMap.comp_apply, ContinuousMap.coe_mk, cubeBoundaryIncl,
           Function.comp_apply, Prod.map_apply, id_eq, H1'] at this
         change _ = H2 ({ down := y }, t) at this
-        rw [← this]
-        exact Subtype.coe_prop (H1 ({ down := ⟨y, hy⟩ }, t)) }
+        grind }
 
 lemma homotopicWith_isMapOfPairs_of_relGenLoop_homotopic
     {X : Type u} [TopologicalSpace X] {A : Set X}
@@ -349,12 +346,7 @@ noncomputable def _root_.TopCat.Cyl.stretchToWall :
       · have := mem_closedBall_iff_norm.mp hx
         simp_all only [Metric.mem_closedBall, dist_zero_right, sub_zero]
       · exact t.property.left
-    · by_cases hxt : 2 * ‖x‖ ≥ 2 - t
-      · simp only [hxt, sup_of_le_left]
-        linarith only [t1, hxt]
-      · replace hxt := le_of_not_ge hxt
-        simp only [hxt, sup_of_le_right, ge_iff_le]
-        linarith only [t1]
+    · grind
   · simp only [ContinuousMap.coe_mk, Metric.mem_closedBall, dist_zero_right, β]
     by_cases hxt : 2 * ‖x‖ ≥ 2 - t
     · simp only [hxt, sup_of_le_left]
@@ -370,10 +362,7 @@ noncomputable def _root_.TopCat.Cyl.stretchToWall :
       have : ‖(2 : ℝ) / (2 - t)‖ = (2 : ℝ) / (2 - t) := by
         apply Real.norm_of_nonneg
         exact div_nonneg (by norm_num : (0 : ℝ) ≤ 2) (by linarith only [t.property.right])
-      rw [this]
-      simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, div_mul_div_cancel₀']
-      apply div_self
-      linarith only [t.property.right]
+      grind
   · simp only [ContinuousMap.coe_mk, β]
     apply Continuous.prodMk
     · apply Continuous.subtype_mk
@@ -389,10 +378,7 @@ noncomputable def _root_.TopCat.Cyl.stretchToWall :
           · fun_prop
           · fun_prop
         · intro ⟨t, ⟨x, hx⟩⟩
-          dsimp only
-          have t1 : 0 < ((2 : ℝ) - t.val) := by linarith only [t.property.right]
-          apply ne_of_gt
-          exact lt_sup_of_lt_right t1
+          grind
       · fun_prop
 
 lemma _root_.TopCat.Cyl.stretchToWall_eq_zero_of_norm_eq_one
@@ -434,8 +420,7 @@ theorem homotopicRel_boundary_of_homotopicWith_isMapOfPairs
       have xmem : ‖x‖⁻¹ • x ∈ Metric.sphere 0 1 := by
         apply Metric.mem_sphere.mpr
         rw [dist_eq_norm, sub_zero, norm_smul, norm_inv, norm_norm]
-        apply inv_mul_cancel₀
-        linarith only [hx1]
+        grind
       have : diskBoundaryIncl.{u} (n + 1) ⟨‖x‖⁻¹ • x, xmem⟩ = ⟨⟨‖x‖⁻¹ • x, pf2⟩⟩ := rfl
       rw [← this]
       have := H.prop' ⟨2 - 2 * ‖x‖, pf1⟩ ⟨⟨‖x‖⁻¹ • x, xmem⟩⟩
@@ -446,8 +431,7 @@ theorem homotopicRel_boundary_of_homotopicWith_isMapOfPairs
       simp only [hx1, sup_of_le_right, div_one, (by norm_num : (2 : ℝ) - 1 = 1)]
       change H (1, _) ∈ A
       rw [H.apply_one]
-      apply gA
-      simp_all only [Set.mem_range, exists_apply_eq_apply]
+      grind
   · exact Nonempty.intro <|
       { toContinuousMap := H'
         map_zero_left := fun ⟨x, hx⟩ ↦ by

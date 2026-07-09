@@ -155,14 +155,7 @@ lemma WCWF_of_validate_Grz (h : F ⊧ Axioms.Grz (.atom 0)) : WCWF F := by
       use f (2 * j + 1);
       refine ⟨?_, ?_, f ((2 * j) + 2), ?_, ?_⟩;
       · apply hf _ |>.2;
-      · intro i;
-        rcases (lt_trichotomy i j) with (hij | rfl | hij);
-        · apply H;
-          omega;
-        · apply H;
-          omega;
-        · apply @H _ _ ?_ |>.symm;
-          omega;
+      · grind
       · apply hf _ |>.2;
       · use (j + 1);
         rfl;
@@ -184,11 +177,7 @@ lemma WCWF_of_validate_Grz (h : F ⊧ Axioms.Grz (.atom 0)) : WCWF F := by
             induction hxy with
             | refl => exact (hf x).2;
             | step _ ih => exact F_trans.trans _ _ _ ih (hf _).2;
-          by_cases h : j + 1 = k;
-          · subst_vars
-            exact F_refl.refl (f (j + 1));
-          · have : j + 1 < k := by omega;
-            exact H this;
+          grind
       intro x hx hbox
       by_cases hxj : x = f j
       · subst x

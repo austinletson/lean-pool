@@ -122,8 +122,7 @@ private theorem abc_subcall
         rw [mul_comm _ (radical _)]; rw [Polynomial.hMul_radical_divRadical (a * b * c)]
       _ = a.natDegree + b.natDegree + c.natDegree := by
         rw [Polynomial.natDegree_mul hab hc, Polynomial.natDegree_mul ha hb]
-  rw [t3] at t4
-  exact Nat.lt_of_add_lt_add_left t4
+  grind
 
 omit [DecidableEq k] in
 private theorem rot3_add {a b c : k[X]} : a + b + c = b + c + a := by ring
@@ -225,8 +224,7 @@ theorem abc'_char0 [CharZero k]
   have hab : IsCoprime a' b' := by
     rw [← gcd_isUnit_iff]
     apply isUnit_gcd_of_eq_mul_gcd eq_a' eq_b'
-    apply gcd_ne_zero_of_right
-    assumption
+    grind
   rw [eq_a', mul_ne_zero_iff] at ha
   rcases ha with ⟨hd, ha'⟩
   rw [eq_b', mul_ne_zero_iff] at hb
@@ -234,16 +232,11 @@ theorem abc'_char0 [CharZero k]
   set d := gcd a b with def_d
   set c' := -(a' + b') with def_c'
   have eq_c' : c = d * c' := by
-    rw [def_c', mul_neg, eq_neg_iff_add_eq_zero,
-        mul_add, add_comm c _, ← eq_a', ← eq_b']
-    exact hsum
+    grind
   have hc' : c' ≠ 0 := by
     rw [eq_c', mul_ne_zero_iff] at hc; exact hc.right
   have hsum' : a' + b' + c' = 0 := by
-    rw [eq_a', eq_b', eq_c', ← mul_add, ← mul_add, mul_eq_zero] at hsum
-    rcases hsum with dz | goal
-    · exact absurd dz hd
-    · exact goal
+    grind
   have hbc := rot3_isCoprime hsum' hab
   have hca := rot3_isCoprime (by rw [← rot3_add]; exact hsum') hbc
   rcases LeanPolyABC.Polynomial.abc_char0 ha' hb' hc' hab hsum' with heq | hineq

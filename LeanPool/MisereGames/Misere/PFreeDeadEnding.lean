@@ -501,9 +501,7 @@ private theorem misereEQ_intCast_pred_of_options {g : GameForm.{u}} (n : ℤ) (h
   have hle : ((n - 1 : ℤ) : GameForm) ≥m PFreeDeadEnding g := by
     apply Form.Hereditary.misereGE_of_maintenance_proviso PFreeDeadEnding
     · intro hr hhr
-      rw [hRM, Set.mem_singleton_iff] at hhr
-      obtain ⟨gr, hgr, hgex⟩ := h_exists_n
-      exact Or.inl ⟨gr, hgr, by rw [hhr]; exact hgex⟩
+      grind
     · intro gl hgl; rw [hLg] at hgl; exact absurd hgl (Set.notMem_empty _)
     · intro hcontra
       rw [GameForm.isEndLike_iff_isEnd, isEnd_def, hRM] at hcontra
@@ -634,10 +632,7 @@ theorem _root_.MisereGames.PFreeDeadEnding.rightSeparating_of_leftSeparating {g 
       rcases h_a_mem with ⟨r, rfl⟩ | rfl
       · exact HasInt.has_neg_int (A := PFreeDeadEnding) _
       · exact HasInt.has_int (A := PFreeDeadEnding) (-1)
-    · intro a h_a_mem
-      rw [Set.mem_singleton_iff] at h_a_mem
-      subst h_a_mem
-      exact h_x_pf
+    · grind
     · exact ⟨_, h_conj_one_mem⟩
     · rw [h_L_def]
       have := Short.finite_moves' .right h_h
@@ -669,8 +664,7 @@ theorem _root_.MisereGames.PFreeDeadEnding.rightSeparating_of_leftSeparating {g 
           rw [misereOutcome_L_iff_winsGoingFirst] at this
           exact this.right
       · rw [rightMoves_ofSets, Set.mem_singleton_iff] at h_r_mem
-        subst h_r_mem
-        exact h_wins_left
+        grind
 
 instance : Separating IsShort PFreeDeadEnding where
   separating_pair_of_not_misereGE h_g h_h h_not_ge := by

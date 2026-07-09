@@ -121,8 +121,7 @@ theorem ClosedCurvesHomotopicAvoiding.toPiecewise
     PiecewiseCurvesHomotopicAvoiding γ₀ γ₁ a b z₀ ∅ := by
   obtain ⟨H, hcont, hH0, hH1, hclosed, havoid, hdiff, hderiv_cont⟩ := h
   refine ⟨H, hcont, hH0, hH1, hclosed, havoid, ?_, ?_, ?_⟩
-  · intro t ht _ht_not_in_empty s hs
-    exact hdiff t ht s hs
+  · grind
   · intro p₁ p₂ _hp _hvac _hI
     exact hderiv_cont.continuousOn.mono (Set.subset_univ _)
   · have hK : IsCompact (Set.Icc a b ×ˢ Set.Icc (0 : ℝ) 1) :=
@@ -171,8 +170,7 @@ lemma exists_ball_avoiding_finset {P : Finset ℝ} {t : ℝ} (ht : t ∉ P) :
       rw [Finset.lt_inf'_iff]; exact fun p hp => abs_pos.mpr (sub_ne_zero.mpr (h_ne p hp))
     exact ⟨d / 2, by linarith, fun x hx hxP => by
       have : d ≤ |x - t| := Finset.inf'_le (fun p => |p - t|) hxP
-      have : |x - t| < d := by rw [abs_lt]; constructor <;> linarith [hx.1, hx.2]
-      linarith⟩
+      grind⟩
 
 private lemma bound_away_from_z₀
     (γ : ℝ → ℂ) (a b : ℝ) (z₀ : ℂ) (hab : a < b)
@@ -195,19 +193,10 @@ private lemma exists_partition_free_subinterval
       Ioo p₁ p₂ ⊆ Ioo a b ∧ t ∈ Ioo p₁ p₂ := by
   obtain ⟨ε, hε, hε_avoid⟩ := exists_ball_avoiding_finset ht_notP
   refine ⟨max a (t - ε / 2), min b (t + ε / 2), ?_, ?_, ?_, ?_⟩
-  · simp only [lt_min_iff, max_lt_iff]
-    exact ⟨⟨lt_trans ht.1 ht.2, by linarith [ht.2, hε]⟩,
-           ⟨by linarith [ht.1, hε], by linarith⟩⟩
-  · intro s hs
-    apply hε_avoid s
-    simp only [mem_Ioo] at hs
-    exact ⟨by linarith [le_max_right a (t - ε / 2), hs.1],
-           by linarith [min_le_right b (t + ε / 2), hs.2]⟩
-  · intro x hx
-    simp only [mem_Ioo] at hx ⊢
-    exact ⟨lt_of_le_of_lt (le_max_left a _) hx.1, lt_of_lt_of_le hx.2 (min_le_left b _)⟩
-  · simp only [mem_Ioo, lt_min_iff, max_lt_iff]
-    exact ⟨⟨ht.1, by linarith [hε]⟩, ⟨ht.2, by linarith [hε]⟩⟩
+  · grind
+  · grind
+  · grind
+  · grind
 
 private lemma logDeriv_integrand_bound
     {γ : ℝ → ℂ} {a b : ℝ} {z₀ : ℂ} {M δ : ℝ}
@@ -566,9 +555,7 @@ private lemma gFunc_constant_smooth
       have hG_hasDerivAt : HasDerivAt G 0 t := by
         refine (((hγ_diff t ht').hasDerivAt.sub_const z₀).mul
           (hF_hasDerivAt t ht').neg.cexp).congr_deriv ?_
-        have hne := sub_ne_zero.mpr (hγ_avoid t (Ioo_subset_Icc_self ht'))
-        field_simp
-        ring
+        grind
       exact hG_hasDerivAt.hasDerivWithinAt
   exact constant_of_has_deriv_right_zero hG_cont hG_deriv_right
 
@@ -621,11 +608,9 @@ private theorem integral_closed_curve_eq_two_pi_int
       (∫ t in a..b, deriv γ t / (γ t - z₀)) = 1 := by
     rw [exp_integral_eq_endpoint_ratio γ a b z₀ hab
       hγ_cont hγ_diff hγ_avoid hγ'_cont, hγ_closed]
-    exact div_self (sub_ne_zero.mpr
-      (hγ_avoid b (right_mem_Icc.mpr (le_of_lt hab))))
+    grind
   rw [Complex.exp_eq_one_iff] at hexp
-  obtain ⟨n, hn⟩ := hexp
-  exact ⟨n, by rw [hn]; ring⟩
+  grind
 
 /-- The winding number of a smooth closed curve avoiding z₀
 is an integer. -/

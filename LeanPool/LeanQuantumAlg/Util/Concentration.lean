@@ -90,13 +90,7 @@ theorem ExpConcentratedProb.tendsto_zero {Ω : ℕ → Type*} [∀ n, Measurable
     have hinv : Filter.Tendsto (fun n => (b ^ n)⁻¹) Filter.atTop (nhds 0) :=
       tendsto_inv_atTop_zero.comp (tendsto_pow_atTop_atTop_of_one_lt hb)
     have hmul := hinv.const_mul (C / δ ^ 2)
-    rw [mul_zero] at hmul
-    have hfun : (fun n => C / (b ^ n * δ ^ 2)) = (fun n => (C / δ ^ 2) * (b ^ n)⁻¹) := by
-      funext n
-      have hbn : (b : ℝ) ^ n ≠ 0 := (pow_pos (lt_trans one_pos hb) n).ne'
-      have hδ2 : (δ : ℝ) ^ 2 ≠ 0 := (pow_pos hδ 2).ne'
-      field_simp
-    rw [hfun]; exact hmul
+    grind
   have hcr : Filter.Tendsto (fun n => ENNReal.ofReal (C / (b ^ n * δ ^ 2)))
       Filter.atTop (nhds 0) := by
     have := (ENNReal.continuous_ofReal.tendsto 0).comp hreal

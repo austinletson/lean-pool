@@ -45,18 +45,14 @@ lemma finite_coeffs [Finite n] [Finite m] (g : Matrix n m R) :
 lemma transpose_coeffs (g : Matrix n m R) : g.transpose.coeffs = g.coeffs := by
   ext a
   simp only [coeffs, transpose_apply]
-  constructor <;>
-  · rintro ⟨i, -, j, -, hij⟩
-    simp only [Set.mem_image2, Set.mem_univ, true_and]
-    use j, i
+  grind
 
 lemma coeffs_reindex (g : Matrix n m R) (e : n ≃ n') (f : m ≃ m') :
     (reindex e f g).coeffs = g.coeffs := by
   ext a
   simp only [coeffs, reindex_apply, submatrix_apply, Set.mem_image2, Set.mem_univ, true_and]
   constructor
-  · rintro ⟨i, j, hij⟩
-    use e.symm i, f.symm j
+  · grind
   · intro ⟨i, j, hij⟩
     use e i, f j
     simpa
@@ -157,8 +153,7 @@ lemma coeffs_sup_le {g : Matrix n m R} {a : Γ₀}
   apply Finset.sup'_le
   intro b hb
   simp only [coeffs, Set.Finite.mem_toFinset, Set.mem_image2, Set.mem_univ, true_and] at hb
-  obtain ⟨i, j, rfl⟩ := hb
-  exact h i j
+  grind
 
 lemma coeffs_sup_exists_repr (g : Matrix n m R) :
     ∃ p : n × m, v (g p.1 p.2) = g.coeffsSup v := by
@@ -213,16 +208,13 @@ lemma mul_swap_coeffs (g : Matrix m m R) (i j : m) :
     by_cases hjl : k = j
     · subst hjl
       simp only [mul_swap_apply_right] at hlk
-      simp only [Set.mem_image2, Set.mem_univ, true_and]
-      use l, i
+      grind
     · by_cases hik : k = i
       · subst hik
         simp only [mul_swap_apply_left] at hlk
-        simp only [Set.mem_image2, Set.mem_univ, true_and]
-        use l, j
+        grind
       · rw [mul_swap_of_ne hik hjl] at hlk
-        simp only [Set.mem_image2, Set.mem_univ, true_and]
-        use l, k
+        grind
   · rintro ⟨l, -, k, -, hlk⟩
     by_cases hjl : k = j
     · subst hjl
@@ -396,8 +388,7 @@ lemma _root_.Matrix.GL.conj_diagonal_apply {ι : Type*} [Fintype ι]
   simp only [MulAut.conj_apply, Units.val_mul, Matrix.GL.val_diagonal, Matrix.coe_units_inv]
   rw [Matrix.inv_diagonal, Matrix.mul_diagonal, Matrix.diagonal_mul, heq]
   have hdj : (fun j ↦ (d j).inv) j = (((d j)⁻¹ : Rˣ) : R) := Units.inv_eq_val_inv (d j)
-  rw [hdj]
-  ring
+  grind
 
 lemma _root_.Matrix.GL.isMulCentral_diagonal {R : Type*} [CommRing R]
     {ι : Type*} [Fintype ι] [DecidableEq ι] (a : Rˣ) :
@@ -418,8 +409,7 @@ lemma apply_ne_zero_of_isDiag [Nontrivial R] (g : GL n R) (h : g.val.IsDiag)
   apply Matrix.det_eq_zero_of_column_eq_zero j
   intro i
   by_cases hij : i = j
-  · subst hij
-    exact hzero
+  · grind
   · exact h hij
 
 lemma coe_mul_inv (g : GL n R) : g.val * g.val⁻¹ = 1 := by
@@ -524,8 +514,7 @@ open Pointwise in
 lemma diagonal_smul (f : ι → Kˣ) (M : Submodule R (ι → K)) (hf : ∀ i j, f i = f j) (i : ι) :
     GL.diagonal f • M = f i • M := by
   have : f = fun _ ↦ f i := by
-    ext : 1
-    apply hf
+    grind
   rw [this, SetLike.ext'_iff]
   ext x
   simp [mem_smul, Set.mem_smul_set, Units.smul_def]

@@ -208,8 +208,7 @@ lemma integral_exp_neg_mul_Ioi_eq_inv (a : ℝ) (ha : 0 < a) :
   have h := integral_exp_mul_Ioi hna 0
   simp only [mul_zero, Real.exp_zero] at h
   -- h : ∫ x in Set.Ioi 0, rexp (-a * x) = -1 / -a = 1 / a
-  rw [h]
-  field_simp
+  grind
 
 /-- The Schwinger representation: ∫₀^∞ exp(-t(k² + m²)) dt = 1/(k² + m²).
     This is valid when k² + m² > 0.
@@ -243,8 +242,7 @@ lemma heatKernelPositionSpace_4D (t : ℝ) (ht : 0 < t) (r : ℝ) :
   have hpos : 0 < 4 * Real.pi * t := by positivity
   have h1 : (4 * Real.pi * t) ^ (-(4 : ℝ) / 2) = 1 / (16 * Real.pi^2 * t^2) := by
     rw [show -(4 : ℝ) / 2 = -2 by norm_num, Real.rpow_neg hpos.le, Real.rpow_two]
-    field_simp
-    ring
+    grind
   rw [h1]
 
 /-- The heat kernel is nonnegative. -/
@@ -297,16 +295,7 @@ lemma heatKernelPositionSpace_bounded (r : ℝ) (hr : 0 < r) :
       rw [h1]
       -- (4πs)^(-2) = 1/(4πs)² = 1/(16π²s²) = u²/(16π²)
       rw [Real.rpow_neg (le_of_lt h_4pis_pos), Real.rpow_two]
-      have h2 : (4 * Real.pi * s)^2 = 16 * Real.pi^2 * s^2 := by ring
-      rw [h2]
-      -- s = u⁻¹, so s² = u⁻², and 1/(16π²s²) = u²/(16π²)
-      have h3 : (16 * Real.pi^2 * s^2)⁻¹ = (16 * Real.pi^2)⁻¹ * u^2 := by
-        rw [hs_eq]; field_simp
-      rw [h3]
-      -- Now simplify the exponential: -r²/(4s) = -r²u/4
-      have h4 : -r^2 / (4 * s) = -(r^2 / 4) * u := by
-        rw [hs_eq]; field_simp
-      rw [h4]
+      grind
     rw [h_kernel_eq]
     -- Apply the bound u² * exp(-cu) ≤ (2/c)² where c = r²/4
     have hc : r^2 / 4 > 0 := by positivity
@@ -442,8 +431,7 @@ theorem covarianceSchwingerRep_eq_besselFormula (m r : ℝ) (hm : 0 < m) (hr : 0
         (1 / t^2) * Real.exp (-m^2 * t - r^2 / (4 * t))
     rw [show -m^2 * t - r^2 / (4 * t) = -t * m^2 + -r^2 / (4 * t) from by ring, Real.exp_add]
     ring
-  rw [h_eq, h_integral]
-  ring
+  grind
 
 /-- The free covariance in position space via Bessel function representation.
     C(x,y) = (m / (4π² |x-y|)) · K₁(m |x-y|)
@@ -513,9 +501,7 @@ lemma integrableOn_exp_neg_mul_sq_Ioi (m : ℝ) (hm : 0 < m) :
     IntegrableOn (fun t => Real.exp (-t * m^2)) (Set.Ioi 0) := by
   have h : -m^2 < 0 := neg_neg_of_pos (sq_pos_of_pos hm)
   have := integrableOn_exp_mul_Ioi h 0
-  convert this using 2
-  congr 1
-  ring
+  grind
 
 /-- Integrability of exp(-tm²) * C on (0, ∞) for m > 0 and any constant C. -/
 lemma integrableOn_exp_neg_mul_sq_const_Ioi (m : ℝ) (hm : 0 < m) (C : ℝ) :
@@ -605,23 +591,14 @@ lemma gaussianFT_eq_heatKernel_times_norm (s : ℝ) (hs : 0 < s) (z : SpaceTime)
   have h_rhs : (↑a : ℂ) * ↑b = (↑(a * b) : ℂ) := (Complex.ofReal_mul a b).symm
   -- Step 3: Show the real parts are equal
   have h_real : (π / s) ^ 2 * Real.exp (-‖z‖ ^ 2 / (4 * s)) = a * b := by
-    simp only [ha_def, hb_def]
-    have hπ2_ne : (π : ℝ)^2 ≠ 0 := pow_ne_zero 2 hπ_ne
-    have hs2_ne : s^2 ≠ 0 := pow_ne_zero 2 hs_ne
-    have h_16 : (2 * π) ^ 4 = 16 * π^4 := by ring
-    rw [h_16]
-    field_simp
+    grind
   -- Combine: LHS = ↑(real) = ↑(a*b) = ↑a * ↑b = RHS
   -- Note: the exponent is (2:ℂ) after rewriting h_exp_four_two
   -- Convert cpow to npow: x^(2:ℂ) = x^(2:ℕ) for x ∈ ℂ
   have h_pow_eq : (↑π / ↑s : ℂ) ^ (2 : ℂ) = (↑π / ↑s : ℂ) ^ (2 : ℕ) := by
     rw [← Complex.cpow_natCast]
     norm_cast
-  rw [h_pow_eq]
-  calc (↑π / ↑s : ℂ) ^ (2 : ℕ) * ↑(Real.exp (-‖z‖ ^ 2 / (4 * s)))
-      = ↑((π / s) ^ 2 * Real.exp (-‖z‖ ^ 2 / (4 * s))) := h_lhs
-    _ = ↑(a * b) := by rw [h_real]
-    _ = ↑a * ↑b := h_rhs.symm
+  grind
 
 /-- **THEOREM**: The integrand for fubini_schwinger_fourier is integrable on SpaceTime × (0,∞).
     This justifies using Tonelli's theorem.
@@ -798,8 +775,7 @@ theorem fubini_schwinger_integrand (α : ℝ) (hα : 0 < α) (m : ℝ) (hm : 0 <
   have h_set_to_full_lhs : (∫ k : SpaceTime, ∫ t in Set.Ioi 0, f (k, t)) =
       ∫ k : SpaceTime, ∫ t : ℝ, f (k, t) := by
     apply integral_congr_ae; filter_upwards with k
-    rw [MeasureTheory.setIntegral_eq_integral_of_forall_compl_eq_zero]; intro t ht
-    simp only [Set.mem_Ioi, not_lt] at ht; simp only [hf_def, not_lt.mpr ht, ↓reduceIte]
+    rw [MeasureTheory.setIntegral_eq_integral_of_forall_compl_eq_zero]; grind
   have h_set_to_full_rhs : (∫ t in Set.Ioi 0, ∫ k : SpaceTime, f (k, t)) =
       ∫ t : ℝ, ∫ k : SpaceTime, f (k, t) := by
     rw [MeasureTheory.setIntegral_eq_integral_of_forall_compl_eq_zero]; intro t ht
@@ -977,9 +953,7 @@ theorem fubini_schwinger_fourier (α : ℝ) (hα : 0 < α) (m : ℝ) (hm : 0 < m
       (∫ k : SpaceTime, ↑(Real.exp (-α * ‖k‖^2) * (∫ t in Set.Ioi 0,
         schwingerIntegrand t m k) / normalisation) *
         Complex.exp (-Complex.I * ⟪k, x - y⟫_ℝ)).re := by
-    congr 2
-    ext k
-    rw [h_schwinger k]
+    grind
   rw [h_lhs_step1]
   -- Step 2: Combine exponents and prepare for Fubini
   -- exp(-α‖k‖²) * ∫_t schwinger = ∫_t exp(-α‖k‖²) * schwinger = ∫_t exp(-(α+t)‖k‖²) * exp(-tm²)
@@ -1051,16 +1025,7 @@ theorem fubini_schwinger_fourier (α : ℝ) (hα : 0 < α) (m : ℝ) (hm : 0 < m
   -- Now both sides have form: LHS * (1/norm) = (1/norm) * RHS
   -- Suffices to show LHS = RHS, then multiply by 1/norm
   have h_norm_factor : ∀ a b : ℝ, a * (1 / normalisation) = (1 / normalisation) * b ↔ a = b := by
-    intro a b
-    constructor
-    · intro h
-      have h1 : a * (1 / normalisation) * normalisation = (1 / normalisation) * b * normalisation
-        := by
-        rw [h]
-      field_simp at h1
-      linarith
-    · intro h
-      rw [h, mul_comm]
+    grind
   rw [h_norm_factor]
   -- Goal: Re[∫_k (∫_t F(k,t)) * phase(k)] = ∫_t exp(-tm²) * Re[∫_k exp(-(α+t)‖k‖²) * phase(k)]
   --
@@ -1684,8 +1649,7 @@ lemma freeCovarianceKernel_integrable (m : ℝ) (hm : 0 < m) :
     intro r hr
     simp only [h_dim, f, Set.mem_Ioi] at hr ⊢
     simp only [ne_of_gt hr, ↓reduceIte, smul_eq_mul]
-    have hr_ne : r ≠ 0 := ne_of_gt hr
-    field_simp
+    grind
   rw [integrableOn_congr_fun h_intgd measurableSet_Ioi]
   exact (radial_besselK1_integrable m hm).const_mul (m / (4 * Real.pi^2))
 
@@ -1848,8 +1812,7 @@ lemma freeCovariance_exponential_bound (m : ℝ) (hm : 0 < m) (u v : SpaceTime)
           apply mul_le_mul_of_nonneg_right hm_over_r_le
           positivity
     _ = m^2 * (Real.sinh 1 + 2) / (4 * Real.pi^2) * Real.exp (-m * r) := by
-          congr 1
-          ring_nf
+          grind
 
 /-! ### Fact versions of decay bounds
 
@@ -1908,8 +1871,7 @@ lemma freeCovarianceKernel_continuousOn (m : ℝ) (hm : 0 < m) :
     simp only [Set.mem_setOf_eq] at hz
     unfold freeCovarianceKernel freeCovariance freeCovarianceBessel
     simp only [zero_sub, norm_neg]
-    have h_norm_ne : ‖z‖ ≠ 0 := norm_ne_zero_iff.mpr hz
-    simp only [h_norm_ne, ↓reduceIte]
+    grind
   apply ContinuousOn.congr _ h_eq
   exact hg_cont.comp h_norm_cont h_norm_pos
 

@@ -93,8 +93,7 @@ lemma yield_length_le_two_pow_height : p.yield.length ≤ 2 ^ (p.height - 1) := 
       rw [Nat.sub_one_add_one]
       have : 0 < max t₁.height t₂.height := lt_sup_of_lt_left t₁.height_pos
       omega
-    nth_rewrite 3 [ht'']
-    rw [Nat.two_pow_succ]
+    grind
 
 lemma yield_length_pos : p.yield.length > 0 := by
   induction p with
@@ -145,8 +144,7 @@ lemma strict_subtree_decomposition {n : g.NT} {p₁ : parseTree n} {p₂ : parse
     simp_rw [yield, huv]
     refine ⟨u, v ++ q₂.yield, by simp, ?_, ?_⟩
     · have h := q₂.yield_length_pos
-      repeat rw [List.length_append]
-      omega
+      grind
     · apply (Produces.input_output hrn).trans_derives
       simp only [ChomskyNormalFormRule.output]
       rw [← List.singleton_append, List.map_append, ← List.append_assoc]
@@ -156,8 +154,7 @@ lemma strict_subtree_decomposition {n : g.NT} {p₁ : parseTree n} {p₂ : parse
     simp_rw [yield, huv]
     refine ⟨q₁.yield ++ u, v, by simp, ?_, ?_⟩
     · have := q₁.yield_length_pos
-      repeat rw [List.length_append]
-      omega
+      grind
     · apply (Produces.input_output hrn).trans_derives
       simp only [ChomskyNormalFormRule.output]
       rw [← List.singleton_append, List.map_append, List.append_assoc, List.append_assoc]

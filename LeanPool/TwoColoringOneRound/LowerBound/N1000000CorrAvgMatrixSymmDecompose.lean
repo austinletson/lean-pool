@@ -72,11 +72,9 @@ theorem dirMask_swap_eq_maskAt_invDir {u v : V} (d : DirIdx) (h : dirMask u v = 
   · let iNat : Nat := t / 3
     let jNat : Nat := t % 3
     have hi : iNat < 3 := by
-      have : t < 3 * 3 := by simpa using ht
-      simpa [iNat] using (Nat.div_lt_of_lt_mul this)
+      grind
     have hj : jNat < 3 := by
-      have : 0 < 3 := by decide
-      simpa [jNat] using Nat.mod_lt t this
+      grind
     let i : Fin 3 := ⟨iNat, hi⟩
     let j : Fin 3 := ⟨jNat, hj⟩
     have htDecomp : i.1 * 3 + j.1 = t := by
@@ -268,8 +266,7 @@ private theorem ASymm_varOrbit_entry_one_of_orbit {u v : V} {d0 : DirIdx} {i0 : 
         exact hFix this
       have hA1 : A (varOrbit i0) u v = 1 := by simp [A, this]
       have hA2 : A (invDir (varOrbit i0)) u v = 0 := by simp [A, hNeInv]
-      rw [hA1, hA2]
-      simp
+      grind
   · have : dirMask v u = maskAt (invDir (varOrbit i0)) := by
       simpa [h0] using hd0
     by_cases hFix : N1000000Witness.tTr[(varOrbit i0).1]! = (varOrbit i0).1
@@ -291,8 +288,7 @@ private theorem ASymm_varOrbit_entry_one_of_orbit {u v : V} {d0 : DirIdx} {i0 : 
         exact hFix hEqDir
       have hA2 : A (invDir (varOrbit i0)) u v = 1 := by simp [A, this]
       have hA1 : A (varOrbit i0) u v = 0 := by simp [A, hNeVar]
-      rw [hA1, hA2]
-      simp
+      grind
 
 -- Final symmetric decomposition into the reduced variables `xFromColoring`.
 theorem corrAvgMatrix_eq_A_id_add_sum_var (f : Coloring n) :
@@ -380,15 +376,12 @@ theorem corrAvgMatrix_eq_A_id_add_sum_var (f : Coloring n) :
       simp [Matrix.smul_apply, hASymmZero]
     have hCoeff : coeff (f := f) d0 = (1 : Q) := by simpa [hId] using coeff_idDirIdx_eq_one (f := f)
     have hLHS1 : corrAvgMatrix (f := f) u v = (1 : Q) := by
-      calc
-        corrAvgMatrix (f := f) u v = coeff (f := f) d0 := hLHS
-        _ = (1 : Q) := by simpa [hId] using hCoeff
+      grind
     have hRHS1 :
         (A idDirIdx + ∑ i : Var, (xFromColoring f i) • ASymm (varOrbit i)) u v = (1 : Q) := by
       -- Avoid unfolding `A` (which would reintroduce a `dirMask` equality goal).
       rw [Matrix.add_apply]
-      rw [hAid, hSum0]
-      simp
+      grind
     exact hLHS1.trans hRHS1.symm
   · -- Off-diagonal: use the unique variable orbit for `d0`.
     rcases varOfDirIdx_spec (d := d0) (hd := hId) with ⟨i0, hi0, hOrb⟩
@@ -406,12 +399,7 @@ theorem corrAvgMatrix_eq_A_id_add_sum_var (f : Coloring n) :
         intro i hiNe
         have hNotSome : varOfDirIdx d0 ≠ some i := by
           -- `varOfDirIdx d0 = some i0`.
-          have hSome : varOfDirIdx d0 = some i0 := hi0
-          intro hEq
-          have : i = i0 := by
-            -- Both equalities describe the same `Option` value.
-            exact Option.some.inj (hEq.symm.trans hSome)
-          exact hiNe this
+          grind
         -- If `d0` is not in the orbit of `i`, then both `A (varOrbit i)` and `A (invDir ...)`
         -- vanish.
         have hNot : ¬(d0 = varOrbit i ∨ d0 = invDir (varOrbit i)) := by
@@ -451,11 +439,8 @@ theorem corrAvgMatrix_eq_A_id_add_sum_var (f : Coloring n) :
         refine
           Finset.sum_eq_single i0
             (f := fun i => (xFromColoring f i) * (ASymm (varOrbit i) u v)) ?_ ?_
-        · intro i _ hiNe
-          have h0 : ASymm (varOrbit i) u v = 0 := hI0 i hiNe
-          simp [h0]
-        · intro hNotMem
-          exact False.elim (hNotMem (Finset.mem_univ i0))
+        · grind
+        · grind
       -- Convert to the matrix sum.
       calc
         (∑ i : Var, (xFromColoring f i) • ASymm (varOrbit i)) u v
@@ -482,15 +467,12 @@ theorem corrAvgMatrix_eq_A_id_add_sum_var (f : Coloring n) :
         simpa [this] using (coeff_varOrbit_eq_xFromColoring (f := f) (i := i0))
     -- Finish.
     have hLHS' : corrAvgMatrix (f := f) u v = xFromColoring f i0 := by
-      calc
-        corrAvgMatrix (f := f) u v = coeff (f := f) d0 := hLHS
-        _ = xFromColoring f i0 := hCoeff
+      grind
     have hRHS :
         (A idDirIdx + ∑ i : Var, (xFromColoring f i) • ASymm (varOrbit i)) u v =
           xFromColoring f i0 := by
       rw [Matrix.add_apply]
-      rw [hAid0, hSum]
-      simp
+      grind
     exact hLHS'.trans hRHS.symm
 
 end N1000000CorrAvgMatrixSymmDecompose

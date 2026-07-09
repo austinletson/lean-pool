@@ -165,11 +165,7 @@ theorem three_width_le_splitA_of_core_bound {A K : ℝ} {n : ℕ}
     annulusWidth_real_le_core_add_one hcore_nonneg
   have hreal :
       (3 : ℝ) * (annulusWidth A K n : ℝ) ≤ (splitA K n : ℝ) := by
-    have hmul :
-        (3 : ℝ) * (annulusWidth A K n : ℝ) ≤
-          3 * (annulusWidthCore A K n + 1) :=
-      mul_le_mul_of_nonneg_left hwidth_le (by norm_num : (0 : ℝ) ≤ 3)
-    exact hmul.trans hcore
+    grind
   exact_mod_cast hreal
 
 theorem annulusWidth_real_le_core_add_one_of_A_nonneg {A K : ℝ} {n : ℕ}
@@ -239,8 +235,7 @@ theorem recursiveCostBound_step {K : ℝ} {n0 n : ℕ}
     recursiveCostBound K n0 n =
       recursiveCostBound K n0 (splitM K n) * costMultiplier K n := by
   rw [recursiveCostBound.eq_1]
-  have hnot : ¬ n < n0 := by omega
-  simp [hnot, hsmall]
+  grind
 
 theorem recursiveCostBound_base_cost {K : ℝ} {n0 : ℕ} :
     ∀ n : ℕ, n < n0 → 2 ^ n * minPile n ≤ recursiveCostBound K n0 n := by
@@ -316,8 +311,7 @@ theorem splitA_add_splitM_of_four_mul_le {K : ℝ} {n : ℕ}
     (hquarter : 4 * splitM K n ≤ n) :
     splitA K n + splitM K n = n := by
   unfold splitA
-  have hmle : splitM K n ≤ n := by omega
-  exact Nat.sub_add_cancel hmle
+  grind
 
 /-- Real form of the identity `a = n-m` under the split condition. -/
 theorem splitA_real_eq_sub_of_four_mul_le {K : ℝ} {n : ℕ}
@@ -336,10 +330,8 @@ theorem three_quarters_le_splitA_of_four_mul_le {K : ℝ} {n : ℕ}
   have hm : (splitM K n : ℝ) ≤ (n : ℝ) / 4 := by
     have hreal : ((4 * splitM K n : ℕ) : ℝ) ≤ (n : ℝ) := by
       exact_mod_cast hquarter
-    norm_num at hreal
-    linarith
-  rw [hsplit]
-  linarith
+    grind
+  grind
 
 /-- A weaker but integer-valued form useful for monotonicity of natural powers:
 under `4m≤n`, the large factor has dimension at least `n/2`. -/
@@ -353,8 +345,7 @@ theorem splitM_lt_of_four_mul_le {K : ℝ} {n0 n : ℕ}
     (hn0_pos : 0 < n0) (hn : n0 ≤ n)
     (hquarter : 4 * splitM K n ≤ n) :
     splitM K n < n := by
-  have hn_pos : 0 < n := lt_of_lt_of_le hn0_pos hn
-  omega
+  grind
 
 /-- Real-valued sufficient condition for the split estimate.  This is the
 form produced by asymptotic bounds for `ceil(K sqrt(n log n))`. -/
@@ -362,8 +353,7 @@ theorem four_mul_splitM_le_of_real_le_quarter {K : ℝ} {n : ℕ}
     (hreal : (splitM K n : ℝ) ≤ (n : ℝ) / 4) :
     4 * splitM K n ≤ n := by
   have hreal' : ((4 * splitM K n : ℕ) : ℝ) ≤ (n : ℝ) := by
-    norm_num
-    linarith
+    grind
   exact_mod_cast hreal'
 
 /-- To prove the real split estimate, it is enough to bound the expression
@@ -443,13 +433,8 @@ theorem splitM_div_five_real_lower_bound {K : ℝ} {n : ℕ} :
       Nat.lt_mul_div_succ (splitM K n) (by decide : 0 < 5)
     have hreal : (splitM K n : ℝ) < (5 * (splitM K n / 5 + 1) : ℕ) := by
       exact_mod_cast hnat
-    norm_num at hreal
-    linarith
-  have hdiv :
-      K * Real.sqrt ((n : ℝ) * Real.log (n : ℝ)) / 5 ≤
-        (splitM K n : ℝ) / 5 :=
-    div_le_div_of_nonneg_right hcore (by norm_num : (0 : ℝ) ≤ 5)
-  linarith
+    grind
+  grind
 
 theorem splitA_real_le_n {K : ℝ} {n : ℕ} :
     (splitA K n : ℝ) ≤ (n : ℝ) := by
@@ -609,11 +594,7 @@ theorem three_annulusWidthCore_add_one_le_splitA_of_coarse
   have hcore :=
     annulusWidthCore_le_sqrt_three_n_log
       (A := A) (K := K) (n := n) hA hn
-  have hleft :
-      3 * (annulusWidthCore A K n + 1) ≤
-        3 * (A * Real.sqrt (3 * (n : ℝ) * Real.log (n : ℝ)) + 1) := by
-    nlinarith
-  exact hleft.trans (hcoarse.trans ha_lower)
+  grind
 
 /-- The coarse square budget for `core≥9` propagates from a lower bound on
 `a` and `log(2n^2)≥log n`. -/
@@ -660,8 +641,7 @@ theorem chernoff_core_sq_of_A_sq_ge
     dsimp [L]
     exact Real.log_natCast_nonneg n
   have ha_nonneg : 0 ≤ a := by
-    dsimp [a]
-    positivity
+    grind
   have ha_three' : 3 ≤ a := by
     simpa [a] using ha_three
   have hcoeff : 12 * (a + 1) ≤ 16 * a := by
@@ -677,13 +657,7 @@ theorem chernoff_core_sq_of_A_sq_ge
   have hcore :=
     annulusWidthCore_sq_ge_splitA_log
       (A := A) (K := K) (n := n) hn
-  calc
-    12 * ((splitA K n : ℝ) + 1) * Real.log (n : ℝ)
-        = 12 * (a + 1) * L := by rfl
-    _ ≤ 16 * a * L := hleft
-    _ ≤ A ^ 2 * (a * L) := hmid
-    _ = A ^ 2 * ((splitA K n : ℝ) * Real.log (n : ℝ)) := by rfl
-    _ ≤ (annulusWidthCore A K n) ^ 2 := hcore
+  grind
 
 theorem recursiveCostBound_step_cost {K : ℝ} {n0 : ℕ}
     (hn0_pos : 0 < n0)
@@ -753,11 +727,7 @@ theorem sampleCountForDemand_fiberCost {A K : ℝ} {n t : ℕ}
   have hreal :
       (sampleCountForDemand A K n t * 2 ^ rOut A K n : ℝ) ≤
         (t * costMultiplier K n : ℝ) := by
-    have hlt :
-        (sampleCountForDemand A K n t : ℝ) * S <
-          (t * costMultiplier K n : ℝ) :=
-      lt_of_lt_of_le hleft_lt (hmid.trans hright)
-    exact le_of_lt (by simpa [S] using hlt)
+    grind
   exact_mod_cast hreal
 
 /-- The concrete sample count gives the required mean surplus once the annulus
@@ -783,8 +753,7 @@ theorem sampleCountForDemand_mean_of_annulusMean_lower {A K : ℝ} {n t : ℕ}
     dsimp [delta]
     exact loss_nonneg n
   have hdelta_le : delta ≤ 2 := by
-    dsimp [delta]
-    exact hloss
+    grind
   have hSpos : 0 < S := by
     dsimp [S]
     positivity
@@ -813,14 +782,7 @@ theorem sampleCountForDemand_mean_of_annulusMean_lower {A K : ℝ} {n t : ℕ}
       norm_num
     have hxlower_eq :
         x * lower = (1 + delta / 2) * (1 - delta / 8) * (t : ℝ) := by
-      calc
-        x * lower = (((1 + delta / 2) * (t : ℝ) * pow43) / S) *
-            ((1 - delta / 8) * S * pow34) := by rfl
-        _ = ((1 + delta / 2) * (1 - delta / 8) * (t : ℝ)) *
-            (pow43 * pow34) := by
-              field_simp [hSpos.ne']
-        _ = (1 + delta / 2) * (1 - delta / 8) * (t : ℝ) := by
-              simp [hpow_prod]
+      grind
     rw [hxlower_eq]
     change (t : ℝ) + delta * (t : ℝ) / 4 ≤
       (1 + delta / 2) * (1 - delta / 8) * (t : ℝ)
@@ -855,19 +817,7 @@ theorem stack_threshold_for_all_demands_of_minPile {A K : ℝ} {n : ℕ}
     exact_mod_cast ht
   have hmono : coeff * (minPile (splitM K n) : ℝ) ≤ coeff * (t : ℝ) :=
     mul_le_mul_of_nonneg_left ht_real hcoeff_nonneg
-  have hmin' :
-      (2 ^ rOut A K n : ℝ) ≤ coeff * (minPile (splitM K n) : ℝ) := by
-    calc
-      (2 ^ rOut A K n : ℝ)
-          ≤ (loss n / 2) * (minPile (splitM K n) : ℝ) *
-              (((4 : ℝ) / 3) ^ splitA K n) := hmin
-      _ = coeff * (minPile (splitM K n) : ℝ) := by
-          ring
-  calc
-    (2 ^ rOut A K n : ℝ) ≤ coeff * (minPile (splitM K n) : ℝ) := hmin'
-    _ ≤ coeff * (t : ℝ) := hmono
-    _ = (loss n / 2) * (t : ℝ) * (((4 : ℝ) / 3) ^ splitA K n) := by
-      simp [coeff, mul_comm, mul_assoc]
+  grind
 
 /-- Multiplication-form sufficient condition for the stack-size threshold.
 Since `loss n = n^{-2}`, this says the product
@@ -893,8 +843,7 @@ theorem stack_threshold_minPile_of_mul_le {A K : ℝ} {n : ℕ}
     _ = (loss n / 2) * (minPile (splitM K n) : ℝ) *
         (((4 : ℝ) / 3) ^ splitA K n) := by
           unfold loss
-          field_simp [hn_sq_pos.ne']
-          ring
+          grind
 
 /-- Logarithmic sufficient condition for the multiplication-form stack
 threshold.  This rewrites
@@ -943,8 +892,7 @@ theorem stack_mul_le_of_log_budget {A K : ℝ} {n : ℕ}
     rw [Real.log_pow, Real.log_pow]
     ring_nf
   have hlogLR : Real.log L ≤ Real.log R := by
-    rw [hlogL, hlogR]
-    exact hlog
+    grind
   exact (Real.log_le_log_iff hL_pos hR_pos).mp hlogLR
 
 /-- Logarithmic sufficient condition for the multiplication-form Bernstein
@@ -1003,8 +951,7 @@ theorem bernstein_width_mul_le_of_log_budget {A K : ℝ} {n : ℕ}
     rw [Real.log_pow]
     ring_nf
   have hlogLR : Real.log L ≤ Real.log R := by
-    rw [hlogL, hlogR]
-    simpa [C] using hlog
+    grind
   exact (Real.log_le_log_iff hL_pos hR_pos).mp hlogLR
 
 /-- The Bernstein-width log budget can be proved using the real width core
@@ -1028,8 +975,7 @@ theorem bernstein_width_log_budget_of_core_budget {A K : ℝ} {n : ℕ}
   have hwidth2 :
       ((2 * annulusWidth A K n : ℕ) : ℝ) ≤
         2 * (annulusWidthCore A K n + 1) := by
-    norm_num
-    linarith
+    grind
   have hwidthLog :
       ((2 * annulusWidth A K n : ℕ) : ℝ) * Real.log 2 ≤
         (2 * (annulusWidthCore A K n + 1)) * Real.log 2 :=
@@ -1214,8 +1160,7 @@ theorem one_twentieth_le_stackMargin : (1 : ℝ) / 20 ≤ stackMargin := by
     have h :=
       Real.one_sub_inv_le_log_of_pos
         (by norm_num : (0 : ℝ) < (32 : ℝ) / 27)
-    norm_num at h ⊢
-    exact h
+    grind
   have htriple : 3 * stackMargin = Real.log ((32 : ℝ) / 27) := by
     rw [stackMargin]
     rw [show (32 : ℝ) / 27 = ((4 : ℝ) / 3) ^ 3 / 2 by norm_num]
@@ -1283,22 +1228,7 @@ theorem stack_core_log_budget_of_linear_margin {A K : ℝ} {n : ℕ}
           (splitA K n : ℝ) / 3 * Real.log 2 := by
     have hcore_log2 := mul_le_mul_of_nonneg_right hcore hlog2_nonneg
     nlinarith
-  calc
-    Real.log 2 + 2 * Real.log (n : ℝ) +
-        (((splitA K n / 3 : ℕ) : ℝ) + annulusWidthCore A K n + 1) *
-          Real.log 2
-        ≤ Real.log 2 + 2 * Real.log (n : ℝ) +
-          ((splitA K n : ℝ) / 3 +
-              A * Real.sqrt (3 * (n : ℝ) * Real.log (n : ℝ)) + 1) *
-            Real.log 2 := by
-          linarith
-    _ = (Real.log 2 + 2 * Real.log (n : ℝ) +
-          (A * Real.sqrt (3 * (n : ℝ) * Real.log (n : ℝ)) + 1) *
-            Real.log 2) +
-          (splitA K n : ℝ) / 3 * Real.log 2 := by ring
-    _ ≤ ((splitM K n / 5 : ℕ) : ℝ) * Real.log 2 +
-          (splitA K n : ℝ) * Real.log ((4 : ℝ) / 3) := by
-      nlinarith [hcoarse, hrhs]
+  grind
 
 theorem sqrt_three_n_log_eq (n : ℕ) :
     Real.sqrt (3 * (n : ℝ) * Real.log (n : ℝ)) =
@@ -1325,8 +1255,7 @@ theorem width_coarse_of_sqrt_margin {A K : ℝ} {n : ℕ}
         (K * Real.sqrt ((n : ℝ) * Real.log (n : ℝ)) / 5 - 1) *
           Real.log 2 := by
   rw [sqrt_three_n_log_eq n]
-  ring_nf at hmargin ⊢
-  linarith
+  grind
 
 /-- Coefficient form of the corrected stack-margin estimate. -/
 theorem stack_margin_of_sqrt_margin {A K : ℝ} {n : ℕ}
@@ -1344,8 +1273,7 @@ theorem stack_margin_of_sqrt_margin {A K : ℝ} {n : ℕ}
         ((3 : ℝ) * (n : ℝ) / 4) *
           (Real.log ((4 : ℝ) / 3) - Real.log 2 / 3) := by
   rw [sqrt_three_n_log_eq n]
-  ring_nf at hmargin ⊢
-  linarith
+  grind
 
 /-- A simple constant-domination sufficient condition for the width sqrt
 margin.  The stronger but convenient assumption `15A√3≤K` leaves a positive
@@ -1402,8 +1330,7 @@ theorem stack_sqrt_margin_of_linear_budget {A K : ℝ} {n : ℕ}
 /-- A small numerical bound used to simplify logarithmic width budgets. -/
 theorem log_two_le_one : Real.log 2 ≤ 1 := by
   have h := Real.log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 2)
-  norm_num at h
-  exact h
+  grind
 
 /-- Since `log 2≤1`, the factor `log 2` inside
 `log((n+1)log 2)` can be discarded. -/
@@ -1457,13 +1384,7 @@ theorem width_log_budget_of_simplified_log_budget {K : ℝ} {n : ℕ}
         Real.log 2 + Real.log (n : ℝ) :=
     log_succ_mul_log_two_le_log_succ.trans
       (log_succ_le_log_two_add_log (n := n) hn)
-  have hcoarse :
-      Real.log 128 + 3 * Real.log 2 +
-          Real.log ((((n + 1 : ℕ) : ℝ) * Real.log 2)) +
-          4 * Real.log (n : ℝ) ≤
-        Real.log 128 + 4 * Real.log 2 + 5 * Real.log (n : ℝ) := by
-    linarith
-  exact hcoarse.trans hbudget
+  grind
 
 /-- Split form of the residual stack budget: one inequality pays for
 `2 log n`, and the other pays for the constant `3 log 2`. -/
@@ -1520,9 +1441,7 @@ theorem split_log_budget_of_quadratic_threshold {K : ℝ} {n : ℕ}
     Real.log_natCast_le_rpow_div n (by norm_num : (0 : ℝ) < 1 / 2)
   have hlog_sqrt : Real.log (n : ℝ) ≤ 2 * Real.sqrt (n : ℝ) := by
     rw [← Real.sqrt_eq_rpow] at hlog_half
-    calc
-      Real.log (n : ℝ) ≤ Real.sqrt (n : ℝ) / (1 / 2) := hlog_half
-      _ = 2 * Real.sqrt (n : ℝ) := by ring
+    grind
   have hlog_mul :
       K ^ 2 * Real.log (n : ℝ) ≤
         K ^ 2 * (2 * Real.sqrt (n : ℝ)) :=
@@ -1532,10 +1451,7 @@ theorem split_log_budget_of_quadratic_threshold {K : ℝ} {n : ℕ}
     have hmul :=
       mul_le_mul_of_nonneg_right hsqrt_threshold (Real.sqrt_nonneg (n : ℝ))
     simpa [Real.mul_self_sqrt hn_nonneg, mul_assoc] using hmul
-  have hmain :
-      K ^ 2 * (2 * Real.sqrt (n : ℝ)) ≤ (n : ℝ) / 64 := by
-    nlinarith
-  exact hlog_mul.trans hmain
+  grind
 
 /-- Explicit threshold for the stack log-linear budget. -/
 theorem stack_log_linear_budget_of_quadratic_threshold {n : ℕ}
@@ -1558,9 +1474,7 @@ theorem stack_log_linear_budget_of_quadratic_threshold {n : ℕ}
     Real.log_natCast_le_rpow_div n (by norm_num : (0 : ℝ) < 1 / 2)
   have hlog_sqrt : Real.log (n : ℝ) ≤ 2 * Real.sqrt (n : ℝ) := by
     rw [← Real.sqrt_eq_rpow] at hlog_half
-    calc
-      Real.log (n : ℝ) ≤ Real.sqrt (n : ℝ) / (1 / 2) := hlog_half
-      _ = 2 * Real.sqrt (n : ℝ) := by ring
+    grind
   have hlog_part :
       16 * Real.log (n : ℝ) ≤ 32 * Real.sqrt (n : ℝ) := by
     nlinarith
@@ -1568,19 +1482,12 @@ theorem stack_log_linear_budget_of_quadratic_threshold {n : ℕ}
       32 ≤ stackMargin ^ 2 * Real.sqrt (n : ℝ) := by
     have hmul :=
       mul_le_mul_of_nonneg_left hsqrt_threshold (sq_nonneg stackMargin)
-    field_simp [hc_sq_pos.ne'] at hmul
-    exact hmul
+    grind
   have hmain :
       32 * Real.sqrt (n : ℝ) ≤ (n : ℝ) * stackMargin ^ 2 := by
     have hmul :=
       mul_le_mul_of_nonneg_right h32_le (Real.sqrt_nonneg (n : ℝ))
-    calc
-      32 * Real.sqrt (n : ℝ)
-          ≤ (stackMargin ^ 2 * Real.sqrt (n : ℝ)) *
-              Real.sqrt (n : ℝ) := hmul
-      _ = (n : ℝ) * stackMargin ^ 2 := by
-            rw [mul_assoc, ← pow_two, Real.sq_sqrt hn_nonneg]
-            ring
+    grind
   exact hlog_part.trans (by simpa [stackMargin] using hmain)
 
 /-- A convenient way to pay the simplified width budget: use half of the
@@ -1694,26 +1601,7 @@ theorem stack_linear_budget_of_sqrt_and_const_bounds {n : ℕ}
       ((3 : ℝ) * (n : ℝ) / 4) *
         (Real.log ((4 : ℝ) / 3) - Real.log 2 / 3) := by
   have hlog_sqrt := log_le_sqrt_n_log (n := n) hn
-  have hlog_part :
-      2 * Real.log (n : ℝ) ≤
-        ((n : ℝ) / 2) *
-          (Real.log ((4 : ℝ) / 3) - Real.log 2 / 3) := by
-    have hlog_le_sqrt_scaled :
-        2 * Real.log (n : ℝ) ≤
-          2 * Real.sqrt ((n : ℝ) * Real.log (n : ℝ)) :=
-      mul_le_mul_of_nonneg_left hlog_sqrt (by norm_num : (0 : ℝ) ≤ 2)
-    have hsqrt_scaled_le_margin :
-        2 * Real.sqrt ((n : ℝ) * Real.log (n : ℝ)) ≤
-          ((n : ℝ) / 2) *
-            (Real.log ((4 : ℝ) / 3) - Real.log 2 / 3) := by
-      nlinarith
-    exact hlog_le_sqrt_scaled.trans hsqrt_scaled_le_margin
-  have hconst_part :
-      3 * Real.log 2 ≤
-        ((n : ℝ) / 4) *
-          (Real.log ((4 : ℝ) / 3) - Real.log 2 / 3) := by
-    nlinarith
-  exact stack_linear_budget_of_split_bounds hlog_part hconst_part
+  grind
 
 /-- If the stack constant budget holds at the cutoff, then it holds for every
 larger dimension because the linear margin is nonnegative. -/
@@ -1761,23 +1649,13 @@ theorem stack_sqrt_budget_of_log_linear_margin_sq {n : ℕ}
       mul_le_mul_of_nonneg_left
         hbase
         (by positivity : 0 ≤ (n : ℝ) / 16)
-    have hscaled' :
-        (n : ℝ) * Real.log (n : ℝ) ≤
-          (n : ℝ) ^ 2 * c ^ 2 * (1 / 16) := by
-      ring_nf at hmul ⊢
-      exact hmul
-    convert hscaled' using 1
-    ring
+    grind
   have hsqrt :
       Real.sqrt ((n : ℝ) * Real.log (n : ℝ)) ≤
         (n : ℝ) * c / 4 := by
     rw [Real.sqrt_le_iff]
     exact ⟨hy_nonneg, hscaled⟩
-  calc
-    4 * Real.sqrt ((n : ℝ) * Real.log (n : ℝ))
-        ≤ 4 * ((n : ℝ) * c / 4) :=
-          mul_le_mul_of_nonneg_left hsqrt (by norm_num : (0 : ℝ) ≤ 4)
-    _ = (n : ℝ) * c := by ring
+  grind
 
 /-- Simplified Bernstein/union-bound logarithmic condition.  If the sampled
 mean is at most `2t`, then the more legible lower bound
@@ -1826,19 +1704,8 @@ theorem log_condition_of_mean_upper {A K : ℝ} {n t : ℕ}
       (demandGapForDemand n t) ^ 2 / (8 * B * (t : ℝ)) =
         (loss n) ^ 2 * (t : ℝ) / (128 * B) := by
     dsimp [demandGapForDemand]
-    field_simp [hB_pos.ne', ht_pos_real.ne']
-    ring
-  calc
-    ((splitA K n + 1 : ℕ) : ℝ) * Real.log 2
-        ≤ (loss n) ^ 2 * (t : ℝ) / (128 * B) := by
-          simpa [B] using hsimple
-    _ = (demandGapForDemand n t) ^ 2 / (8 * B * (t : ℝ)) := hfrac_eq.symm
-    _ ≤ (demandGapForDemand n t) ^ 2 / (4 * B * mu) := hfrac_mono
-    _ = (demandGapForDemand n t) ^ 2 /
-        (4 * (2 ^ (rOut A K n - rIn A K n) : ℝ) *
-          ((sampleCountForDemand A K n t : ℝ) *
-            (annulusMean (splitA K n) (rIn A K n) (rOut A K n) : ℝ))) := by
-          rfl
+    grind
+  grind
 
 /-- The sampled annulus mean is at most `2t` once the annulus mean is bounded
 by the full weighted mean and the sample-count ceiling is paid for by the
@@ -1865,8 +1732,7 @@ theorem sampleCountForDemand_mean_upper_of_annulusMean_upper
     dsimp [delta]
     exact loss_nonneg n
   have hdelta_le : delta ≤ 1 := by
-    dsimp [delta]
-    exact hloss
+    grind
   have hSpos : 0 < S := by
     dsimp [S]
     positivity
@@ -1894,12 +1760,7 @@ theorem sampleCountForDemand_mean_upper_of_annulusMean_upper
     calc
       x * mu ≤ x * (S * pow34) := hmul
       _ = (1 + delta / 2) * (t : ℝ) := by
-        dsimp [x]
-        field_simp [hSpos.ne']
-        calc
-          (t : ℝ) * pow43 * pow34 = (t : ℝ) * (pow43 * pow34) := by ring
-          _ = (t : ℝ) * 1 := by rw [hpow_prod]
-          _ = (t : ℝ) := by ring
+        grind
   have hmu_slack : mu ≤ delta / 2 * (t : ℝ) := by
     have hstack' : S ≤ delta / 2 * (t : ℝ) * pow43 := by
       simpa [delta, S, pow43] using hstack
@@ -1911,11 +1772,7 @@ theorem sampleCountForDemand_mean_upper_of_annulusMean_upper
       mu ≤ S * pow34 := hmu_upper
       _ ≤ (delta / 2 * (t : ℝ) * pow43) * pow34 := hmul
       _ = delta / 2 * (t : ℝ) := by
-        calc
-          delta / 2 * (t : ℝ) * pow43 * pow34 =
-              delta / 2 * (t : ℝ) * (pow43 * pow34) := by ring
-          _ = delta / 2 * (t : ℝ) * 1 := by rw [hpow_prod]
-          _ = delta / 2 * (t : ℝ) := by ring
+        grind
   calc
     (sampleCountForDemand A K n t : ℝ) * mu ≤ (x + 1) * mu := hmain_le
     _ = x * mu + mu := by ring
@@ -1946,22 +1803,7 @@ theorem logSimple_for_all_demands_of_minPile {A K : ℝ} {n : ℕ}
     exact_mod_cast ht
   have hmono : coeff * (minPile (splitM K n) : ℝ) ≤ coeff * (t : ℝ) :=
     mul_le_mul_of_nonneg_left ht_real hcoeff_nonneg
-  have hmin' :
-      ((splitA K n + 1 : ℕ) : ℝ) * Real.log 2 ≤
-        coeff * (minPile (splitM K n) : ℝ) := by
-    calc
-      ((splitA K n + 1 : ℕ) : ℝ) * Real.log 2
-          ≤ (loss n) ^ 2 * (minPile (splitM K n) : ℝ) /
-              (128 * (2 ^ (rOut A K n - rIn A K n) : ℝ)) := hmin
-      _ = coeff * (minPile (splitM K n) : ℝ) := by
-          ring
-  calc
-    ((splitA K n + 1 : ℕ) : ℝ) * Real.log 2
-        ≤ coeff * (minPile (splitM K n) : ℝ) := hmin'
-    _ ≤ coeff * (t : ℝ) := hmono
-    _ = (loss n) ^ 2 * (t : ℝ) /
-          (128 * (2 ^ (rOut A K n - rIn A K n) : ℝ)) := by
-          ring
+  grind
 
 /-- It is enough to prove the minimum-demand Bernstein threshold with
 `2^(2w)`, where `w` is the annulus half-width, since
@@ -2048,10 +1890,7 @@ theorem costMultiplier_le_one_add_two_loss {K : ℝ} {n : ℕ}
   have hceil_lt :
       (costMultiplier K n : ℝ) < (1 + loss n) * powTerm + 1 := by
     simpa [costMultiplier, powTerm] using Nat.ceil_lt_add_one htarget_nonneg
-  have hmid : (1 + loss n) * powTerm + 1 ≤ (1 + 2 * loss n) * powTerm := by
-    have hslack' : 1 ≤ loss n * powTerm := by simpa [powTerm] using hslack
-    nlinarith
-  exact le_of_lt (lt_of_lt_of_le hceil_lt hmid)
+  grind
 
 /-- Transparent sufficient condition for the ceiling slack: since
 `loss n = n^{-2}`, it is enough that `(4/3)^a` dominate `n^2`. -/
@@ -2101,8 +1940,7 @@ theorem sq_le_four_thirds_pow_half_of_ge (n : ℕ) (hn : 58 ≤ n) :
             mul_le_mul_of_nonneg_left ih (by norm_num)
           _ = ((4 : ℝ) / 3) ^ ((n + 2) / 2) := by
             have hdiv : (n + 2) / 2 = n / 2 + 1 := by omega
-            rw [hdiv, pow_succ]
-            ring
+            grind
       · have hcases : n = 56 ∨ n = 57 := by omega
         rcases hcases with rfl | rfl <;> norm_num
 
@@ -2150,11 +1988,7 @@ theorem tail_budget_of_six_log {n : ℕ} {E : ℝ}
     rw [show (16 : ℝ) = 2 ^ 4 by norm_num]
     rw [Real.log_pow]
     norm_num
-  calc
-    Real.log 16 + 2 * Real.log (n : ℝ) =
-        4 * Real.log 2 + 2 * Real.log (n : ℝ) := by rw [hlog16]
-    _ ≤ 6 * Real.log (n : ℝ) := by linarith
-    _ ≤ E := hE
+  grind
 
 /-- Normalized recurrence for the recursively defined integer cost bound after
 absorbing the multiplier ceiling into a doubled loss term. -/
@@ -2194,8 +2028,7 @@ theorem normalizedCost_recursiveCostBound_step_of_ceiling
     _ = (1 + 2 * loss n) *
           ((recursiveCostBound K n0 (splitM K n) : ℝ) /
             (((4 : ℝ) / 3) ^ splitM K n)) := by
-          rw [hpow_split]
-          field_simp [pow_ne_zero _ hbase_pos.ne']
+          grind
 
 /-- Raw-cost form of the normalized recurrence step.  This is the algebraic
 translation of
@@ -2221,8 +2054,7 @@ theorem normalizedCost_step_of_cost_le {K : ℝ} {costBound : ℕ → ℕ} {n : 
           (costBound (splitM K n) : ℝ)) / (((4 : ℝ) / 3) ^ n) := hdiv
     _ = (1 + loss n) * ((costBound (splitM K n) : ℝ) /
           (((4 : ℝ) / 3) ^ splitM K n)) := by
-          rw [hpow_split]
-          field_simp [pow_ne_zero _ hbase_pos.ne']
+          grind
 
 /-- The concrete parameter theorem.  The hypotheses are the remaining
 numerical estimates for the paper's chosen schedule.  Everything after those
@@ -2880,10 +2712,7 @@ theorem hasRealUpperBound_of_recursiveCostBound_simplifiedBernstein_finiteBase
       have hmu_pos :
           0 < (sampleCountForDemand A K n t : ℝ) *
             (annulusMean (splitA K n) (rIn A K n) (rOut A K n) : ℝ) := by
-        have ht_real_pos : 0 < (t : ℝ) := by exact_mod_cast ht_pos
-        have hlhs_pos : 0 < (t : ℝ) + demandGapForDemand n t :=
-          add_pos_of_pos_of_nonneg ht_real_pos hgap_pos.le
-        exact lt_of_lt_of_le hlhs_pos hmean_lower
+        grind
       exact log_condition_of_mean_upper
         (A := A) (K := K) (n := n) (t := t)
         ht_pos hmu_pos (hmeanUpper n hn t ht) (hlogSimple n hn t ht))
@@ -3254,9 +3083,7 @@ theorem hasRealUpperBound_of_recursiveCostBound_chernoffTailBudgets_widthBound_f
     (K := K) (A := A) (n0 := n0)
     hn0_pos hquarter hlamLeft hlamRight
     (fun n hn => by
-      have hl := hleft n hn
-      have hr := hright n hn
-      linarith)
+      grind)
     hlogWidth
     hstackMin
     hceilSlack
@@ -3498,22 +3325,14 @@ theorem exp_le_one_add_self_add_quadratic_of_le_one {x : ℝ}
         (2 / 9) * x ^ 2 := by
     norm_num
     nlinarith
-  calc
-    Real.exp x
-        ≤ (∑ m ∈ Finset.range 3, x ^ m / (m.factorial : ℝ)) +
-            x ^ 3 * ((3 : ℝ) + 1) /
-              ((Nat.factorial 3 : ℝ) * (3 : ℝ)) := h
-    _ ≤ 1 + x + x ^ 2 / 2 + (2 / 9) * x ^ 2 := by
-          linarith
-    _ = 1 + x + (13 / 18) * x ^ 2 := by ring
+  grind
 
 /-- The matching bound for `exp(-x)` on `[0,1]`. -/
 theorem exp_neg_le_one_sub_self_add_quadratic_of_le_one {x : ℝ}
     (hx0 : 0 ≤ x) (hx1 : x ≤ 1) :
     Real.exp (-x) ≤ 1 - x + (13 / 18) * x ^ 2 := by
   have habs : |(-x)| ≤ 1 := by
-    rw [abs_neg, abs_of_nonneg hx0]
-    exact hx1
+    grind
   have h :=
     Real.exp_bound (x := -x) (n := 3) habs (by norm_num)
   have hupper := (abs_sub_le_iff.mp h).1
@@ -3532,15 +3351,7 @@ theorem exp_neg_le_one_sub_self_add_quadratic_of_le_one {x : ℝ}
     rw [abs_neg, abs_of_nonneg hx0]
     norm_num
     nlinarith
-  calc
-    Real.exp (-x)
-        ≤ (∑ m ∈ Finset.range 3, (-x) ^ m / (m.factorial : ℝ)) +
-            |(-x)| ^ 3 * ((3 : ℝ) + 1) /
-              ((Nat.factorial 3 : ℝ) * (3 : ℝ)) := by
-          linarith
-    _ ≤ 1 - x + x ^ 2 / 2 + (2 / 9) * x ^ 2 := by
-          linarith
-    _ = 1 - x + (13 / 18) * x ^ 2 := by ring
+  grind
 
 /-- Left Bernoulli log-moment bound used by the annulus Chernoff estimate. -/
 theorem bernoulli_third_left_log_le_quadratic {lam : ℝ}
@@ -3555,15 +3366,7 @@ theorem bernoulli_third_left_log_le_quadratic {lam : ℝ}
     Real.log_le_sub_one_of_pos hb_pos
   have hexp :=
     exp_neg_le_one_sub_self_add_quadratic_of_le_one hlam0 hlam1
-  have hb :
-      b - 1 ≤ -lam / 3 + (13 / 54) * lam ^ 2 := by
-    have hmul :
-        ((1 : ℝ) / 3) * Real.exp (-lam) ≤
-          ((1 : ℝ) / 3) * (1 - lam + (13 / 18) * lam ^ 2) :=
-      mul_le_mul_of_nonneg_left hexp (by norm_num : (0 : ℝ) ≤ (1 : ℝ) / 3)
-    dsimp [b] at hmul ⊢
-    linarith
-  exact hlog.trans hb
+  grind
 
 /-- Right Bernoulli log-moment bound used by the annulus Chernoff estimate. -/
 theorem bernoulli_third_right_log_le_quadratic {lam : ℝ}
@@ -3578,15 +3381,7 @@ theorem bernoulli_third_right_log_le_quadratic {lam : ℝ}
     Real.log_le_sub_one_of_pos hb_pos
   have hexp :=
     exp_le_one_add_self_add_quadratic_of_le_one hlam0 hlam1
-  have hb :
-      b - 1 ≤ lam / 3 + (13 / 54) * lam ^ 2 := by
-    have hmul :
-        ((1 : ℝ) / 3) * Real.exp lam ≤
-          ((1 : ℝ) / 3) * (1 + lam + (13 / 18) * lam ^ 2) :=
-      mul_le_mul_of_nonneg_left hexp (by norm_num : (0 : ℝ) ≤ (1 : ℝ) / 3)
-    dsimp [b] at hmul ⊢
-    linarith
-  exact hlog.trans hb
+  grind
 
 /-- A canonical nonnegative Chernoff parameter of order `width/a`.  The
 constant is deliberately exposed in the definition; future analytic estimates
@@ -3663,20 +3458,7 @@ theorem left_standard_chernoff_log_le_of_width_exponent
     field_simp [hden_pos.ne']
     ring_nf
     nlinarith [sq_nonneg w, mul_nonneg ha_nonneg (sq_nonneg w)]
-  have htail : -((5 / 6) * (w ^ 2 / (a + 1))) ≤ -E := by
-    simpa [a, w] using neg_le_neg hE
-  calc
-    annulusChernoffLambda A K n * (rIn A K n : ℝ) +
-        (splitA K n : ℝ) *
-          Real.log (((1 : ℝ) / 3) *
-              Real.exp (-(annulusChernoffLambda A K n)) +
-            ((2 : ℝ) / 3))
-        ≤ lam * (a / 3 - w) +
-            a * (-lam / 3 + (13 / 54) * lam ^ 2) := by
-          dsimp [lam, a]
-          linarith
-    _ ≤ -((5 / 6) * (w ^ 2 / (a + 1))) := hquad
-    _ ≤ -E := htail
+  grind
 
 /-- Right-tail standard-lambda log estimate for the annulus window.  The
 assumption `9≤w` absorbs the one-unit floor slack in `rOut`. -/
@@ -3742,20 +3524,7 @@ theorem right_standard_chernoff_log_le_of_width_exponent
     field_simp [hden_pos.ne']
     ring_nf
     nlinarith [h_a_part, h_const_part]
-  have htail : -((1 / 2) * (w ^ 2 / (a + 1))) ≤ -E := by
-    simpa [a, w] using neg_le_neg hE
-  calc
-    -(annulusChernoffLambda A K n * (rOut A K n : ℝ)) +
-        (splitA K n : ℝ) *
-          Real.log (((1 : ℝ) / 3) *
-              Real.exp (annulusChernoffLambda A K n) +
-            ((2 : ℝ) / 3))
-        ≤ -(lam * (a / 3 + w - 1)) +
-            a * (lam / 3 + (13 / 54) * lam ^ 2) := by
-          dsimp [lam, a]
-          linarith
-    _ ≤ -((1 / 2) * (w ^ 2 / (a + 1))) := hquad
-    _ ≤ -E := htail
+  grind
 
 /-- Algebraic form of the Chernoff exponent target with `E_n=6 log n`. -/
 theorem chernoff_six_log_of_width_sq {A K : ℝ} {n : ℕ}
@@ -4106,14 +3875,12 @@ theorem hasRealUpperBound_of_coreSplit_Knonneg_standardLambda_tailExponent_finit
       have hbudget :=
         sixteen_exp_neg_le_loss_of_log_budget
           (lt_of_lt_of_le hn0_pos hn) (htailBudget n hn)
-      have hmul := mul_le_mul_of_nonneg_left (hleftExp n hn) (by norm_num : (0 : ℝ) ≤ 16)
-      exact hmul.trans hbudget)
+      grind)
     (fun n hn => by
       have hbudget :=
         sixteen_exp_neg_le_loss_of_log_budget
           (lt_of_lt_of_le hn0_pos hn) (htailBudget n hn)
-      have hmul := mul_le_mul_of_nonneg_left (hrightExp n hn) (by norm_num : (0 : ℝ) ≤ 16)
-      exact hmul.trans hbudget)
+      grind)
     hlogWidthMul
     hstackMul
 
@@ -5288,8 +5055,7 @@ theorem hasRealUpperBound_of_Kdom_deterministicCutoffs_chernoffSixLog_finiteBase
     hKlarge
     hsplitThreshold
     (fun n hn => by
-      have h := hthreeWidth n hn
-      omega)
+      grind)
     hwidthNine
     (fun n hn =>
       annulusChernoffLambda_le_one_of_three_width_le_splitA
@@ -5748,8 +5514,7 @@ theorem explicit_coreNineCutoff_of_splitThreshold {n0 : ℕ}
     81 ≤ (4 : ℝ) ^ 2 * (((3 : ℝ) * (n0 : ℝ) / 4) *
       Real.log (n0 : ℝ)) := by
   have hn12 : (12 : ℝ) ≤ (n0 : ℝ) := by
-    have hbig : (12 : ℝ) ≤ (128 * (217 : ℝ) ^ 2) ^ 2 := by norm_num
-    exact hbig.trans hsplitThreshold
+    grind
   have hn2 : (2 : ℝ) ≤ (n0 : ℝ) := by linarith
   have hlog2Lower : (3 : ℝ) / 5 ≤ Real.log 2 := by
     have h := Real.log_two_gt_d9
@@ -5768,8 +5533,7 @@ theorem explicit_widthConstCutoff_of_splitThreshold {n0 : ℕ}
       ((217 : ℝ) / 30 * Real.log 2) *
         Real.sqrt ((n0 : ℝ) * Real.log (n0 : ℝ)) := by
   have hn15 : (15 : ℝ) ≤ (n0 : ℝ) := by
-    have hbig : (15 : ℝ) ≤ (128 * (217 : ℝ) ^ 2) ^ 2 := by norm_num
-    exact hbig.trans hsplitThreshold
+    grind
   have hn2 : (2 : ℝ) ≤ (n0 : ℝ) := by linarith
   have hlog2Lower : (3 : ℝ) / 5 ≤ Real.log 2 := by
     have h := Real.log_two_gt_d9
@@ -5788,9 +5552,7 @@ theorem explicit_widthConstCutoff_of_splitThreshold {n0 : ℕ}
     have hsq :
         (3 : ℝ) ^ 2 ≤
           (Real.sqrt ((n0 : ℝ) * Real.log (n0 : ℝ))) ^ 2 := by
-      rw [Real.sq_sqrt harg_nonneg]
-      norm_num
-      exact hargLower
+      grind
     exact (sq_le_sq₀ (by norm_num : (0 : ℝ) ≤ 3)
       (Real.sqrt_nonneg _)).mp hsq
   have hlog2Sharp : (6931471803 : ℝ) / 10000000000 ≤ Real.log 2 := by
@@ -5820,11 +5582,7 @@ theorem explicit_widthConstCutoff_of_splitThreshold {n0 : ℕ}
     rw [hlog128]
     have hlog2le1 := log_two_le_one
     nlinarith
-  calc
-    Real.log 128 + 4 * Real.log 2 ≤ 11 := hlhs
-    _ ≤ 15 := by norm_num
-    _ ≤ ((217 : ℝ) / 30 * Real.log 2) *
-          Real.sqrt ((n0 : ℝ) * Real.log (n0 : ℝ)) := hrhsLower
+  grind
 
 /-- The stack logarithmic cutoff follows from the explicit split cutoff. -/
 theorem explicit_stackLogThreshold_of_splitThreshold {n0 : ℕ}
@@ -5842,10 +5600,7 @@ theorem explicit_stackLogThreshold_of_splitThreshold {n0 : ℕ}
   have hsqLe :
       (32 / stackMargin ^ 2) ^ 2 ≤ (12800 : ℝ) ^ 2 :=
     (sq_le_sq₀ hcoef_nonneg (by norm_num : (0 : ℝ) ≤ 12800)).mpr hcoefLe
-  have hbig :
-      (12800 : ℝ) ^ 2 ≤ (128 * (217 : ℝ) ^ 2) ^ 2 := by
-    norm_num
-  exact hsqLe.trans (hbig.trans hsplitThreshold)
+  grind
 
 /-- The stack constant cutoff follows from the explicit split cutoff. -/
 theorem explicit_stackConstCutoff_of_splitThreshold {n0 : ℕ}
@@ -5853,8 +5608,7 @@ theorem explicit_stackConstCutoff_of_splitThreshold {n0 : ℕ}
     12 * Real.log 2 ≤
       (n0 : ℝ) * (Real.log ((4 : ℝ) / 3) - Real.log 2 / 3) := by
   have hn240 : (240 : ℝ) ≤ (n0 : ℝ) := by
-    have hbig : (240 : ℝ) ≤ (128 * (217 : ℝ) ^ 2) ^ 2 := by norm_num
-    exact hbig.trans hsplitThreshold
+    grind
   have hleft : 12 * Real.log 2 ≤ (12 : ℝ) := by
     have hlog2le1 := log_two_le_one
     nlinarith

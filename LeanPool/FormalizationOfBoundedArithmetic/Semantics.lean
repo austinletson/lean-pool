@@ -358,15 +358,13 @@ by
       rename_i x
     )
   · cases x
-    · simp only [Sum.elim_inl, Nat.add_zero, Nat.succ_eq_add_one, Nat.reduceAdd, Fin.castAdd_zero,
-      Fin.cast_refl, Function.comp_id, Function.comp_apply, Sum.map_inl, id_eq]
+    · grind
     · simp only [Sum.elim_inr, Nat.add_zero, Nat.succ_eq_add_one, Nat.reduceAdd,
       Fin.castAdd_zero, Fin.cast_refl, Function.comp_id, Function.comp_apply, Sum.map_inr]
       simp only [Fin.snoc, Nat.reduceAdd, Fin.val_eq_zero, lt_self_iff_false,
         ↓reduceDIte, Fin.reduceLast, cast_eq]
   · cases x;
-    · simp only [Sum.elim_inl, Nat.add_zero, Nat.succ_eq_add_one, Nat.reduceAdd,
-        Fin.castAdd_zero, Fin.cast_refl, Function.comp_id, Function.comp_apply, Sum.map_inl, id_eq]
+    · grind
     · simp only [Sum.elim_inr, Nat.add_zero, Nat.succ_eq_add_one, Nat.reduceAdd,
       Fin.castAdd_zero, Fin.cast_refl, Function.comp_id, Function.comp_apply, Sum.map_inr, Fin.snoc,
       Fin.val_eq_zero, lt_self_iff_false, ↓reduceDIte, Fin.reduceLast, cast_eq]
@@ -473,9 +471,7 @@ by
       cases y with
       | inl y => simp
       | inr y => exact Fin.elim0 y
-    refine ⟨x, ?_, hphi⟩
-    simpa only [peano.instLEOfStructure, Sum.elim_inl, Sum.elim_inr, Term.realize_relabel,
-      Sum.elim_map, henv] using hxle
+    grind
   · intro h
     rcases h with ⟨x, hxle, hphi⟩
     have henv :
@@ -486,9 +482,7 @@ by
       cases y with
       | inl y => simp
       | inr y => exact Fin.elim0 y
-    refine ⟨x, ⟨?_, hphi⟩⟩
-    simpa only [peano.instLEOfStructure, Sum.elim_inl, Sum.elim_inr, Term.realize_relabel,
-      Sum.elim_map, henv] using hxle
+    grind
 
 namespace realize_iBdAll'
 

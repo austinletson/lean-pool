@@ -395,8 +395,7 @@ lemma parallel_curl_free_affine (g : (Fin 3 → ℝ) → (Fin 3 → ℝ))
         exact this.differentiable one_ne_zero
       intro v w; exact is_const_of_fderiv_eq_zero h_diff_c h_const_c v w
     use c 0
-    intro v w
-    rw [hc, h_const_c v 0]
+    grind
   -- Step 3: FTC to get g(v) = g(0) + c₀ v
   obtain ⟨c₀, hc₀⟩ := h_const_deriv
   have h_ftc : ∀ v : Fin 3 → ℝ, g v = g 0 + ∫ t in (0 : ℝ)..1, (fderiv ℝ g (t • v)) v := fun v => by

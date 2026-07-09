@@ -41,16 +41,14 @@ lemma six_pow_two_pow_mod_29_mem : (6 ^ 2 ^ k : ℤ) % 29 ∈ [6, 7, 20, 23] := 
   | zero => simp
   | succ k ih =>
     rw [pow_succ, pow_mul, sq, Int.mul_emod]
-    simp only [List.mem_cons, List.not_mem_nil, or_false] at ih
-    obtain ih | ih | ih | ih := ih <;> simp [ih]
+    grind
 
 lemma six_pow_two_pow_mod_31_mem : (6 ^ 2 ^ k : ℤ) % 31 ∈ [5, 6, 25] := by
   induction k with
   | zero => simp
   | succ k ih =>
     rw [pow_succ, pow_mul, sq, Int.mul_emod]
-    simp only [List.mem_cons, List.not_mem_nil, or_false] at ih
-    obtain ih | ih | ih := ih <;> simp [ih]
+    grind
 
 open IsCoprime in
 lemma isCoprime_29 :
@@ -62,8 +60,7 @@ lemma isCoprime_29 :
     p29.coprime_iff_not_dvd, Int.dvd_iff_emod_eq_zero]
   rw [← Int.emod_add_emod, ← Int.emod_sub_emod]
   have := six_pow_two_pow_mod_29_mem k
-  simp only [List.mem_cons, List.not_mem_nil, or_false] at this
-  obtain h | h | h | h := this <;> simp [h]
+  grind
 
 open IsCoprime in
 lemma isCoprime_31 :
@@ -75,8 +72,7 @@ lemma isCoprime_31 :
     p31.coprime_iff_not_dvd, Int.dvd_iff_emod_eq_zero]
   rw [← Int.emod_add_emod, ← Int.emod_sub_emod]
   have := six_pow_two_pow_mod_31_mem k
-  simp only [List.mem_cons, List.not_mem_nil, or_false] at this
-  obtain h | h | h := this <;> simp [h]
+  grind
 
 open IsCoprime in
 lemma pairwiseCoprime_tup : PairwiseCoprime (tup k) := by
@@ -180,8 +176,7 @@ lemma sum_tupReduced2_lt_tupReduced2_three (hk : 10 ≤ k) :
     ∑ i ∈ {0, 3}ᶜ, (tupReduced2 k i).natAbs < (tupReduced2 k 3).natAbs := by
   apply (sum_tupReduced2_lt_tupReduced2_zero _ hk).trans_le
   simp_rw [tupReduced2, neg_mul, Int.natAbs_neg, ← Nat.cast_le (α := ℤ)]
-  iterate 2 rw [Int.natAbs_of_nonneg (by positivity)]
-  lia
+  grind
 
 lemma tupReduce_tupReduced2 {c₂ : 2 = 4 - ({0, 3} : Finset (Fin 4)).card} :
     tupReduce (tupReduced2 k) {0, 3} c₂ = ![-31, 29, 2] := by
@@ -256,8 +251,7 @@ lemma log_radical_tup_le : log (radical (∏ i, tup k i) : ℤ) ≤ 2 * 2 ^ k * 
   push_cast
   have : 0 < (6 : ℤ) ^ (2 * 2 ^ k) - 1 := six_pow_pos (by positivity)
   apply (Int.le_of_dvd (by positivity) (radical_tup_dvd k)).trans
-  gcongr
-  lia
+  grind
 
 lemma maxAbs_tup : maxAbs (tup k) = (6 ^ 2 ^ k + 1) ^ 3 := by
   simp_rw [maxAbs_eq_foldr, List.ofFn_succ, List.ofFn_zero, Fin.reduceSucc, List.foldr_cons,
@@ -280,8 +274,7 @@ lemma maxAbs_tup : maxAbs (tup k) = (6 ^ 2 ^ k + 1) ^ 3 := by
       · exact Nat.one_le_two_pow
     _ ≤ _ := by
       rw [pow_mul']
-      gcongr
-      exact Nat.le_add_right ..
+      grind
 
 lemma le_tupleQuality :
     .ofReal ((3 * 2 ^ k * log 6) / (2 * 2 ^ k * log 6 + log 5394)) ≤ tupleQuality (tup k) := by

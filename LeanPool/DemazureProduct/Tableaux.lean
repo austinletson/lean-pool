@@ -74,9 +74,7 @@ lemma A_subset (L : Link) : L.A ⊆ L.S.I := by
 lemma mem_A_of_mem_inv_not_mem_B (L : Link) {p : ℤ × ℤ}
   (hpτ : p ∈ L.S.I) (hpB : p ∉ L.B) : p ∈ L.A := by
   rw [← L.union_eq] at hpτ
-  rcases hpτ with (hpA | hpB')
-  · exact hpA
-  · exact (hpB hpB').elim
+  grind
 
 theorem ext {L₁ L₂ : Link}
     (hA : L₁.A = L₂.A) (hB : L₁.B = L₂.B)
@@ -90,15 +88,10 @@ theorem ext {L₁ L₂ : Link}
           simpa [hs1, hs2] using (by
             rw [← L₁.union_eq, ← L₂.union_eq, hA, hB] : L₁.S.I = L₂.S.I)
         have hAsp : S1 = S2 := AspSet.ext hI
-        rw [tfas.mk.injEq]
-        simpa using hAsp
+        grind
   cases L₁
   cases L₂
-  cases hA
-  cases hB
-  cases hχa
-  cases hχb
-  simpa
+  grind
 
 lemma B_AspSet_prop (L : Link) :
   AspSet_prop L.B where
@@ -127,20 +120,14 @@ lemma B_AspSet_prop (L : Link) :
         · exact le_refl u
         · exact le_of_lt v_lt_w
       have := L.sep ⟨u, v⟩ huv' ⟨u, w⟩ huw this
-      have : v = w := by
-        simpa
-      rw [this] at v_lt_w
-      exact lt_irrefl w v_lt_w
+      grind
     · have hvw' : ⟨v, w⟩ ∈ L.A := L.mem_A_of_mem_inv_not_mem_B h_vw hvw
       have : ⟨v, w⟩ ≼ ⟨u, w⟩ := by
         constructor
         · exact le_of_lt u_lt_v
         · exact le_refl w
       have := L.sep ⟨v, w⟩ hvw' ⟨u, w⟩ huw this
-      have : v = u := by
-        simpa
-      rw [this] at u_lt_v
-      exact lt_irrefl u u_lt_v
+      grind
   finiteOutdegree := by
     intro u
     exact (L.S.finiteOutdegree u).subset (by
@@ -365,8 +352,7 @@ lemma rev_A_eq_inv_inv_of_Link_of_dprod {α β : AspPerm} (dprod : α ⋆ β = �
     rcases h with ⟨⟨u', v'⟩, hu'v', hEq⟩
     have hα : ⟨τ v', τ u'⟩ ∈ invSet α⁻¹.func := (τ.sr_crit α u' v').mp hu'v'
     simp only [AspPerm.revMap, Prod.mk.injEq] at hEq
-    rcases hEq with ⟨hv, hu⟩
-    simpa [hv, hu] using hα
+    grind
   · intro huv
     have hsr : ⟨τ⁻¹ v, τ⁻¹ u⟩ ∈ τ.sr α '' invSet α := by
       apply (τ.sr_crit α (τ⁻¹ v) (τ⁻¹ u)).mpr
@@ -553,8 +539,7 @@ lemma LSet_boxUnion (A : HeckeFactorization τ) :
       have τ_eq : α ⋆ β = τ := by
         rw [← dprodA, ← DProd_cons]
       have h_R : α ≤R τ := by
-        rw [← dprodA]
-        exact Submodular.ler_of_dprod α β
+        grind
       have h_χ : τ.χ = α.χ + β.χ := by
         rw [← dprodA]
         exact (AspPerm.chi_star α β)
@@ -758,17 +743,7 @@ lemma HF_of_PChain_of_HF (A : HeckeFactorization τ) :
       have hα₀ : (linkOfDprod h_321a τ_eq).α = α := by
         simpa [e, x, linkEquivDprod] using
           congrArg Prod.fst (congrArg Subtype.val (e.right_inv x))
-      have hα : Lnk.α = α := by
-        rw [hLink]
-        exact hα₀
-      calc
-        Lnk.α :: lPermOfChain (lSetOfLPerm T)
-            (LSet_isChain h_321a ⟨α :: T, dprodA⟩).2 htfasT
-          = α :: lPermOfChain (lSetOfLPerm T)
-              (LSet_isChain h_321a ⟨α :: T, dprodA⟩).2 htfasT := by
-                simpa using congrArg (fun γ => γ :: lPermOfChain (lSetOfLPerm T)
-                  (LSet_isChain h_321a ⟨α :: T, dprodA⟩).2 htfasT) hα
-        _ = α :: T := by simp only [hTail]
+      grind
 
 /-- Hecke factorizations of a 321-avoiding ASP permutation are equivalent to
 chains of box sets with shifts. -/
@@ -835,9 +810,7 @@ def labelChainOfTableau (T : SetValuedTableau τ n) : LabelChain τ n := by
     · rcases hp with ⟨hpτ, hip⟩
       rcases hq with ⟨hqτ, hjq⟩
       have hneq : (⟨p, hpτ⟩ : ↥(invSet τ)) ≠ ⟨q, hqτ⟩ := by
-        intro h
-        apply hEq
-        exact congrArg Subtype.val h
+        grind
       exfalso
       exact (not_le_of_gt hij) (T.2.weak hip hjq hpq hneq)
 
@@ -855,10 +828,7 @@ noncomputable def tableauOfLabelChain (C : LabelChain τ n) :
     have hqC : q.1 ∈ C.1 j := by simpa using hj
     by_cases hlt : i < j
     · have hpq_eq : p.1 = q.1 := C.2.sep hlt p.1 hpC q.1 hqC hpq
-      exfalso
-      apply hneq
-      apply Subtype.ext
-      exact hpq_eq
+      grind
     · exact le_of_not_gt hlt
 
 lemma mem_labelChainOfTableau_iff (T : SetValuedTableau τ n)
@@ -866,10 +836,7 @@ lemma mem_labelChainOfTableau_iff (T : SetValuedTableau τ n)
     p.1 ∈ (labelChainOfTableau T).1 i ↔ i ∈ T.1 p := by
   constructor
   · rintro ⟨hp, hi⟩
-    have hp_eq : (⟨p.1, hp⟩ : ↥(invSet τ)) = p := by
-      apply Subtype.ext
-      rfl
-    simpa [hp_eq] using hi
+    grind
   · intro hi
     exact ⟨p.2, hi⟩
 
@@ -967,8 +934,7 @@ lemma mem_boxUnion_iff_exists_index {L : List (Set (ℤ × ℤ) × ℤ)} {p : �
   · rintro ⟨x, hx, hp⟩
     rcases List.mem_iff_getElem.mp hx with ⟨i, h, rfl⟩
     exact ⟨i, h, hp⟩
-  · rintro ⟨i, h, hp⟩
-    exact ⟨L[i]'h, List.getElem_mem h, hp⟩
+  · grind
 
 lemma isChain_of_sep_ofFn (A : Fin n → Set (ℤ × ℤ)) (χs : Fin n → ℤ)
     (hsep : ∀ {i j : Fin n}, i < j → ∀ p ∈ A i, ∀ q ∈ A j, p ≼ q → p = q) :
@@ -987,19 +953,16 @@ lemma isChain_of_sep_ofFn (A : Fin n → Set (ℤ × ℤ)) (χs : Fin n → ℤ)
       constructor
       · intro p hp q hq hpq
         rcases (mem_boxUnion_iff_exists_mem.mp hq) with ⟨x, hx, hqx⟩
-        rcases List.mem_ofFn.mp hx with ⟨i, rfl⟩
-        exact hsep (by simp) p hp q hqx hpq
+        grind
       · apply ih
-        intro i j hij p hp q hq hpq
-        exact hsep (by simpa using hij) p hp q hq hpq
+        grind
 
 lemma eq_of_isChain_getElem {L : List (Set (ℤ × ℤ) × ℤ)} (hChain : isChain L) :
     ∀ {i j : ℕ} (hi : i < L.length) (hj : j < L.length), i < j →
       ∀ p ∈ (L[i]'hi).1, ∀ q ∈ (L[j]'hj).1, p ≼ q → p = q := by
   induction L with
   | nil =>
-      intro i j hi
-      simp at hi
+      grind
   | cons head tail ih =>
       intro i j hi hj hij p hp q hq hpq
       rcases hChain with ⟨hLink, hTail⟩
@@ -1013,13 +976,7 @@ lemma eq_of_isChain_getElem {L : List (Set (ℤ × ℤ) × ℤ)} (hChain : isCha
                 exact ⟨j, Nat.succ_lt_succ_iff.mp hj, hq⟩
               exact hLink p hp q hq' hpq
       | succ i =>
-          cases j with
-          | zero => omega
-          | succ j =>
-              exact ih hTail
-                (Nat.succ_lt_succ_iff.mp hi)
-                (Nat.succ_lt_succ_iff.mp hj)
-                (by omega) p hp q hq hpq
+          grind
 
 /-- Convert a label chain with prescribed shifts to a shifted chain. -/
 noncomputable def pChainOfLabelChain (χs : Fin n → ℤ)
@@ -1095,10 +1052,7 @@ noncomputable def labelChainEquivFixedChiPChain (χs : Fin n → ℤ)
     apply Subtype.ext
     apply Subtype.ext
     apply List.ext_getElem
-    · calc
-        (fixedChiPChainOfLabelChain χs hχs (labelChainOfFixedChiPChain C)).1.val.length = n := by
-          simp only [fixedChiPChainOfLabelChain, pChainOfLabelChain, List.length_ofFn]
-        _ = C.1.val.length := C.2.1.symm
+    · grind
     · intro i hi1 hi2
       have hχi : (C.1.val[i]'hi2).2 = χs ⟨i, by simpa [C.2.1] using hi2⟩ := by
         have h := congrArg (fun l => l[i]?) C.2.2

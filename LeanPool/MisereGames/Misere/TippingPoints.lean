@@ -124,8 +124,7 @@ private theorem exists_add_nat_N_of_not_R {g : GameForm} (h0 : IsShort g) (h1 :
     exact h1 (by simpa [r, h3, Nat.cast_zero, add_zero] using hrR)
   let n : ℕ := r - 1
   have hnsucc : n + 1 = r := by
-    dsimp [n]
-    omega
+    grind
   have hnlt : n < r := by
     omega
   have hnotR_n : MisereOutcome (g + n) ≠ .R := by
@@ -217,9 +216,7 @@ theorem _root_.MisereGames.RTippingPoint_iff {g : GameForm} (h1 : IsShort g) (n 
   rw [Nat.find_eq_iff]
   constructor <;> intro ⟨h2, h3⟩ <;> apply And.intro h2 <;> intro x h4
   · exact Nat.le_of_not_lt fun h5 ↦ h3 x h5 h4
-  · intro h5
-    have h6 := h3 x h5
-    omega
+  · grind
 
 /-- The least nonnegative negative shift at which a short game has outcome `L`. -/
 noncomputable def _root_.MisereGames.LTippingPoint {g : GameForm} (h1 : IsShort g) : ℕ :=
@@ -232,9 +229,7 @@ theorem _root_.MisereGames.LTippingPoint_iff {g : GameForm} (h1 : IsShort g) (n 
   rw [Nat.find_eq_iff]
   constructor <;> intro ⟨h2, h3⟩ <;> apply And.intro h2 <;> intro x h4
   · exact Nat.le_of_not_lt fun h5 ↦ h3 x h5 h4
-  · intro h5
-    have h6 := h3 x h5
-    omega
+  · grind
 
 theorem _root_.MisereGames.LTippingPoint_spec {g : GameForm} (h1 : IsShort g) :
     MisereOutcome (g + (-(LTippingPoint h1 : GameForm))) = .L :=

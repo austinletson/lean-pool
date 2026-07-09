@@ -80,13 +80,7 @@ lemma neg_subnormal_round (r : IntRounder) {q : ℚ} (h : q ≠ 0) :
     decide_eq_decide]
   have not_to_ge : 0 < q ↔ 0 ≤ q := by
     exact Iff.symm (Ne.le_iff_lt (id (Ne.symm h)))
-  have lt_to_lt : 0 < q ↔ ¬(q < 0) := by
-    rw [not_to_ge]
-    exact Iff.symm not_lt
-  refine ⟨not_to_ge, ?_⟩
-  simp_rw [lt_to_lt]
-  rw [decide_not]
-  simp
+  grind
 
 /-- Round a rational down to a subnormal representation. -/
 def subnormalRoundDown (q : ℚ) : SubnormRep C :=
@@ -113,8 +107,7 @@ lemma subnormal_round_coe (r : IntRounder) [rh : ValidRounder r]
   · exact this
   nth_rw 4 [show m = r false m by symm; apply ValidRounder.leftInverse]
   congr
-  · apply decide_eq_false
-    exact not_lt_of_ge this
+  · grind
   have hprec : (C.prec : ℚ) ≠ 0 := by
     norm_cast; linarith [C.prec_pos]
   rw [abs_of_nonneg (by positivity), mul_assoc, mul_assoc, <-mul_assoc (2 ^ _),
@@ -149,9 +142,7 @@ lemma subnormal_round_le_of_le (r : IntRounder) [rh : ValidRounder r] (q1 q2 : �
     rw [subnormalToQ, subnormalToQ, subnormalRound]
     simp only [CharP.cast_eq_zero, zero_div, mul_zero, zero_mul]
     have : decide (q1 < 0) = true := by
-      apply decide_eq_true
-      apply lt_of_le_of_ne ?_ h1
-      exact h2 ▸ h
+      grind
     rw [this]
     simp only [↓reduceIte, neg_mul, one_mul, Left.neg_nonpos_iff, ge_iff_le]
     positivity
@@ -172,14 +163,11 @@ lemma subnormal_round_le_of_le (r : IntRounder) [rh : ValidRounder r] (q1 q2 : �
     rw [decide_eq_true (by linarith), decide_eq_false (by linarith)]
     simp only [↓reduceIte, zpow_neg, neg_mul, one_mul, Bool.false_eq_true]
     have : ∀a b, (0 : ℚ) ≤ a → 0 ≤ b → -a ≤ b := by
-      intros a b ha hb
-      linarith
+      grind
     apply this
     · positivity
     positivity
-  · intro q1 q1pos q2 q2neg r rh h
-    exfalso
-    linarith
+  · grind
   · intro q1 q1neg q2 q2neg ih r rh h
     have : -q1 ≤ -q2 := by linarith
     replace ih := ih (r.neg) (rh := rh.neg) this
@@ -295,11 +283,9 @@ lemma le_roundupsub (q : ℚ) :
     apply Int.le_floor.mpr
     apply mul_nonneg ?_ ?_
     · apply mul_nonneg
-      · apply le_neg.mpr
-        exact le_of_lt h
+      · grind
       positivity
-    apply le_of_lt
-    exact_mod_cast C.prec_pos
+    grind
   rw [roundup]
   simp only [h, decide_false, Bool.false_eq_true, ↓reduceIte, zpow_neg, one_mul, ge_iff_le]
   replace h := le_of_not_gt h
@@ -341,11 +327,7 @@ lemma subnormal_up_minus_down (q : ℚ) :
   qify at this
   apply h.monotone at this
   -- This is especially brittle
-  simp at this
-  field_simp at this
-  field_simp
-  rw [add_comm] at this
-  exact this
+  grind
 
 lemma subnormal_round_neg (r : IntRounder) {q : ℚ} (h : q ≠ 0) :
   subnormalRound r.neg (-q) = (subnormalRound (C := C) r q).neg := by
@@ -362,9 +344,7 @@ lemma subnormal_round_eq_up_down (r : IntRounder) [rh : ValidRounder r] (q : ℚ
   set x := |q| * 2^(-C.emin) * C.prec
   have := round_eq_or' (r := r) (b := q < 0)
       (q := x) (h := by positivity)
-  rcases this with this | this
-  · simp [this]
-  simp [this]
+  grind
 
 lemma subnormal_round_close (r : IntRounder) [rh : ValidRounder r] (q : ℚ) :
   |q - subnormalToQ (subnormalRound (C := C) r q)| ≤ 2^C.emin / C.prec := by
@@ -391,13 +371,11 @@ lemma subnormal_near_close (q : ℚ) :
     positivity
   wlog h' : 0 < q generalizing q
   · have negq : 0 < -q := by
-      apply lt_of_le_of_ne (by linarith)
-      exact (neg_ne_zero.mpr h).symm
+      grind
     replace this := this (q := -q) (by linarith) negq
     rw [<-roundnearest_neg] at this
     rw [subnormal_round_neg (h := h), subnormal_to_q_neg] at this
-    rw [neg_sub_neg, abs_sub_comm] at this
-    exact this
+    grind
   rw [subnormalRound, roundnearest_apply]
   have : ¬(q < 0) := by linarith
   simp only [this, decide_false, ge_iff_le, subnormalToQ, Bool.false_eq_true, ↓reduceIte, one_mul]

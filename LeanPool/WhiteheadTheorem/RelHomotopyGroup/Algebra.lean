@@ -72,10 +72,8 @@ lemma isExactAt_of_ker_supset_im_of_ker_subset_im
     (hsub : ∀ y, (g y = default) → ∃ x, f x = y) :
     IsExactAt f g := by
   apply Set.eq_of_subset_of_subset
-  · intro y hy
-    exact Set.mem_range.mpr <| hsub y <| Set.mem_preimage.mp hy
-  · intro y hy
-    exact Set.mem_preimage.mpr <| Set.mem_singleton_iff.mpr <| hsup y <| Set.mem_range.mp hy
+  · grind
+  · grind
 
 /-!
 Given an exact sequence
@@ -100,8 +98,7 @@ private lemma im_B_eq_zero (a : A → B) (b : B → C) (a_surj : Function.Surjec
   constructor
   · rintro ⟨x, rfl⟩
     have hx : x ∈ b ⁻¹' ({default} : Set C) := by
-      rw [exb]
-      exact Set.mem_univ x
+      grind
     simpa using hx
   · intro hy
     rw [Set.mem_singleton_iff] at hy
@@ -120,12 +117,7 @@ private lemma ker_c_eq_C (c : C → D) (d : D → E) (d_inj : Function.Injective
     apply @d_inj x default
     rw [hx]
     exact Eq.symm IsPointedMap.map_default
-  have : {default} = Set.range c := this.symm.trans exd
-  apply Set.eq_univ_of_forall
-  intro x
-  have hx : c x ∈ Set.range c := ⟨x, rfl⟩
-  rw [← this] at hx
-  exact hx
+  grind
 
 /-- `C = {0}` if there is an exact sequence `A --a-> B --b-> C --c-> D --d-> E`
 of five pointed sets such that `a` is surjective and `d` is injective. -/

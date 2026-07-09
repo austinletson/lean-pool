@@ -80,8 +80,7 @@ theorem deltaN_euclNorm_attained (α : Fin n → ℝ) (q : ℤ) :
     intro p
     by_cases hp : p ∈ S
     · exact hp₁min p (hSfin.mem_toFinset.mpr hp)
-    · simp only [hS, Set.mem_setOf_eq, not_le] at hp
-      linarith [hp₁V, hp]
+    · grind
   refine ⟨p₁, le_antisymm ?_ (deltaN_le (euclNorm n) euclNorm_nonneg α q p₁)⟩
   exact le_ciInf hall
 

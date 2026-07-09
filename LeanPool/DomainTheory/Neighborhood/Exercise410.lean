@@ -85,8 +85,7 @@ def embed (a : V.Element) (g : (relSystem a).Element) : V.Element where
     have hsub : Wx ∩ Wy ⊆ X ∩ Y := Set.inter_subset_inter hWxX hWyY
     refine ⟨V.inter_mem hVX hVY (a.sub haWxy) hsub, Wx ∩ Wy, haWxy, hgWxy, hsub⟩
   up_mem := by
-    rintro X Y ⟨hVX, W, haW, hgW, hWX⟩ hVY hXY
-    exact ⟨hVY, W, haW, hgW, subset_trans hWX hXY⟩
+    grind
 
 /-- The `Dₐ`-filter obtained from an element `x ⊑ a` by restriction (same
 membership). -/
@@ -229,13 +228,7 @@ theorem relMap_unique_fixed (f : ApproximableMap V V)
   have h1 : restrict f.fixElement (embed f.fixElement g) (embed_le f.fixElement g) = g :=
     restrict_embed f.fixElement g
   -- both restricts agree because their underlying elements agree.
-  have h2 : restrict f.fixElement (embed f.fixElement g) (embed_le f.fixElement g)
-      = restrict f.fixElement f.fixElement (le_refl _) := by
-    apply Element.ext
-    intro X
-    change (embed f.fixElement g).mem X ↔ f.fixElement.mem X
-    rw [heq]
-  rw [← h1, h2]
+  grind
 
 end ApproximableMap
 

@@ -260,8 +260,7 @@ theorem until_induction : (p ∧ □ (p ∧ ¬ q → ◯ p)) |-tla- ((□ (p ∧
     have ⟨n', _, hq, hmin⟩ := Nat.find_min (p := fun n_ => q (exec.drop n_ e)) _ h'
     right; exists n'
     suffices hthis : q (exec.drop n' e) ∧ ∀ (j : Nat), j ≤ n' → p (exec.drop j e) by
-      rcases hthis with ⟨h1, h2⟩
-      apply And.intro (And.intro (by apply h2 n' (by simp)) h1) (fun j hlt => h2 _ (by omega))
+      grind
     apply And.intro hq; intro j hlt
     induction j with
     | zero => exact hp
@@ -334,9 +333,7 @@ theorem eventually_always_and_distrib : (◇ □ (p ∧ q)) =tla= (◇ □ p ∧
   tlaUnfoldSimp; intro e n1 h1 n2 h2; exists (n1 + n2)
   intro k
   specialize h1 (n2 + k); specialize h2 (n1 + k)
-  have hq1 : n1 + (n2 + k) = n1 + n2 + k := by omega
-  have hq2 : n2 + (n1 + k) = n1 + n2 + k := by omega
-  rw [hq1] at h1; rw [hq2] at h2; aesop
+  grind
 
 @[tladual]
 theorem always_eventually_or_distrib : (□ ◇ (p ∨ q)) =tla= (□ ◇ p ∨ □ ◇ q) := by

@@ -30,8 +30,7 @@ private lemma seg2_deriv_eq (s t : ℝ) (ht1 : 1 < t) (ht2 : t < 2) :
         (1 - s) • arc_point + s • chord_point) := by
     filter_upwards [eventually_gt_nhds ht1, eventually_lt_nhds ht2] with t' ht1' ht2'
     simp only [fdBoundaryToPolygonHomotopy]
-    simp only [not_le.mpr ht1', le_of_lt ht2', ite_false, ite_true]
-    congr 2; ring_nf
+    grind
   rw [heq.deriv_eq]
   have h_inner : HasDerivAt (fun t' : ℝ =>
       (Real.pi : ℂ) / 3 + ((t' : ℂ) - 1) * ((Real.pi : ℂ) / 6)) ((Real.pi : ℂ) / 6) t := by
@@ -76,9 +75,7 @@ private lemma seg3_deriv_eq (s t : ℝ) (ht2 : 2 < t) (ht3 : t < 3) :
         (1 - s) • arc_point + s • chord_point) := by
     filter_upwards [eventually_gt_nhds ht2, eventually_lt_nhds ht3] with t' ht2' ht3'
     simp only [fdBoundaryToPolygonHomotopy]
-    simp only [not_le.mpr (lt_trans (by norm_num : (1 : ℝ) < 2) ht2'), not_le.mpr ht2',
-      le_of_lt ht3', ite_false, ite_true]
-    congr 2; ring_nf
+    grind
   rw [heq.deriv_eq]
   have h_inner : HasDerivAt (fun t' : ℝ =>
       (Real.pi : ℂ) / 2 + ((t' : ℂ) - 2) * ((Real.pi : ℂ) / 6)) ((Real.pi : ℂ) / 6) t := by

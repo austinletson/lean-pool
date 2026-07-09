@@ -118,19 +118,10 @@ theorem auxVarOfState_step (P : E d →L[ℝ] E d) (μ' η ρ : ℝ) (π : E d �
     rw [smul_sub, smul_smul, smul_smul, smul_smul, smul_smul]]
   -- Coefficient check: ρ + √μ'·ρ·√η = 1-a
   have hpv_coeff : ρ + Real.sqrt μ' * ρ * Real.sqrt η = 1 - a := by
-    have : Real.sqrt μ' * ρ * Real.sqrt η = ρ * a := by
-      have := h_sqrt_prod; nlinarith
-    linarith [h_rho_id]
+    grind
   -- Coefficient check: ρ·√η + √μ'·(1+ρ)·η = √η
   have hpg_coeff : ρ * Real.sqrt η + Real.sqrt μ' * (1 + ρ) * η = Real.sqrt η := by
-    have hcoeff : ρ + (1 + ρ) * a = 1 := by nlinarith [h_rho_id]
-    have h_prod : Real.sqrt μ' * (1 + ρ) * η = (1 + ρ) * a * Real.sqrt η := by
-      conv_lhs => rw [show η = Real.sqrt η * Real.sqrt η from hsq.symm]
-      rw [show Real.sqrt μ' * (1 + ρ) * (Real.sqrt η * Real.sqrt η) =
-          (1 + ρ) * (Real.sqrt μ' * Real.sqrt η) * Real.sqrt η from by ring,
-        h_sqrt_prod]
-    rw [h_prod, show ρ * Real.sqrt η + (1 + ρ) * a * Real.sqrt η =
-        (ρ + (1 + ρ) * a) * Real.sqrt η from by ring, hcoeff, one_mul]
+    grind
   -- Collect pv and pg coefficients
   rw [show ρ • pv - (ρ * Real.sqrt η) • pg +
       (Real.sqrt μ' • en + ((Real.sqrt μ' * ρ * Real.sqrt η) • pv -

@@ -155,9 +155,7 @@ lemma tsum_log_deriv_eta_q' (z : ℂ) :
   ∑' (i : ℕ), logDeriv (fun x ↦ 1 - etaQ i x) z =
    (2 * ↑π * Complex.I) * ∑' n : ℕ, (n + 1) * (-etaQ n z) / (1  - etaQ n z) := by
   rw [tsum_log_deriv_eta_q z, ← tsum_mul_left]
-  congr 1
-  ext i
-  ring
+  grind
 
 lemma logDeriv_q' (n : ℝ) (z : ℂ) : logDeriv (𝕢 n) z = 2 * ↑π * Complex.I / n := by
   have : (𝕢 n) = (fun z ↦ cexp (z)) ∘ (fun z => (2 * ↑π * Complex.I / n) * z)  := by
@@ -216,10 +214,7 @@ lemma eta_logDeriv' (z : ℍ) : logDeriv dedekindEtaFun' z = (π * Complex.I / 1
       apply ((summable_nat_add_iff 1).mpr ((logDeriv_q_expo_summable (𝕢₁ z)
         (by simpa [Periodic.qParam] using exp_upperHalfPlane_lt_one z)).mul_left
           (-2 * π * Complex.I))).congr
-      intro b
-      have := one_add_eta_q_ne_zero b z
-      simp only [ne_eq, neg_mul, Nat.cast_add, Nat.cast_one, mul_neg] at *
-      field_simp
+      grind
     · exact hasProdLocallyUniformlyOn_eta.multipliableLocallyUniformlyOn
   · simp [ne_eq, exp_ne_zero, not_false_eq_true, Periodic.qParam]
   · fun_prop
@@ -272,8 +267,7 @@ lemma eta_logDeriv_eql' (z : ℍ) : (logDeriv (η ∘ (fun z : ℂ => -1/z))) z 
       ModularGroup.denom_S, Int.reduceNeg, zpow_neg] at *
     have h00 :  (UpperHalfPlane.mk (-z : ℂ)⁻¹ z.im_inv_neg_coe_pos) = (⟨-1 / z,
       by simpa using pnat_div_upper 1 z⟩ : ℍ) := by
-      simp
-      ring_nf
+      grind
     rw [h00] at E
     rw [← mul_assoc, mul_comm, ← mul_assoc, E, add_mul, add_comm]
     congr 1
@@ -281,9 +275,7 @@ lemma eta_logDeriv_eql' (z : ℍ) : (logDeriv (η ∘ (fun z : ℂ => -1/z))) z 
       have hI : Complex.I ≠ 0 := I_ne_zero
       have hpi : (π : ℂ) ≠ 0 := by
         simpa only [ne_eq, ofReal_eq_zero] using Real.pi_ne_zero
-      simp at hzne ⊢
-      field_simp
-      ring
+      grind
     · rw [mul_comm]
   · simp only [csqrt, one_div, ne_eq, Complex.exp_ne_zero, not_false_eq_true]
   · apply dedekindEtaFun'_ne_zero z
@@ -296,8 +288,7 @@ lemma eta_logDeriv_eql' (z : ℍ) : (logDeriv (η ∘ (fun z : ℂ => -1/z))) z 
       rw [@mem_slitPlane_iff]
       right
       have hz := z.2
-      simp only [coe_im] at hz
-      exact Ne.symm (ne_of_lt hz)
+      grind
   · apply eta_DifferentiableAt_UpperHalfPlane' z
 
 lemma eta_logderivs' : {z : ℂ | 0 < z.im}.EqOn (logDeriv (η ∘ (fun z : ℂ => -1/z)))
@@ -325,12 +316,7 @@ lemma eta_logderivs_const' : ∃ z : ℂ, z ≠ 0 ∧ {z : ℂ | 0 < z.im}.EqOn 
     · intro y hy
       simp only [mem_setOf_eq]
       have := UpperHalfPlane.im_inv_neg_coe_pos (⟨y, hy⟩ : ℍ)
-      conv =>
-        enter [2,1]
-        rw [neg_div, div_eq_mul_inv]
-        simp
-      simp only [inv_neg, neg_im, inv_im, Left.neg_pos_iff] at *
-      exact this
+      grind
   · apply DifferentiableOn.mul
     · simp only [DifferentiableOn, mem_setOf_eq]
       intro x hx
@@ -368,8 +354,4 @@ lemma eta_equality' : {z : ℂ | 0 < z.im}.EqOn ((η ∘ (fun z : ℂ => -1/z)))
   have he : η Complex.I ≠ 0 := by
     convert dedekindEtaFun'_ne_zero UpperHalfPlane.I
     exact UpperHalfPlane.coe_I.symm
-  have hcd := (mul_eq_right₀ he).mp (_root_.id (Eq.symm h3))
-  rw [mul_eq_one_iff_inv_eq₀ hz] at hcd
-  rw [@inv_eq_iff_eq_inv] at hcd
-  rw [hcd] at h2
-  exact h2
+  grind

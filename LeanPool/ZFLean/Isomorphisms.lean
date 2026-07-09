@@ -187,13 +187,7 @@ theorem isIso_of_prod {A B C D : ZFSet} (h : A ≅ᶻ C) (h' : B ≅ᶻ D) : A.p
         exact ⟨ha, hb⟩
       · simp only [mem_sep, mem_prod, pair_inj, exists_eq_right_right', existsAndEq, and_true,
         exists_eq_left', F]
-        and_intros
-        · exact ha
-        · exact hb
-        · exact hc
-        · exact hd
-        · exact ac_f₁
-        · exact bd_f₂
+        grind
   · and_intros
     · intro z hz
       rw [mem_sep] at hz
@@ -217,11 +211,7 @@ theorem isIso_of_prod {A B C D : ZFSet} (h : A ≅ᶻ C) (h' : B ≅ᶻ D) : A.p
         obtain ⟨c', hc', d', hd', rfl⟩ := hy.1.2 |> mem_prod.mp
         simp only [mem_prod, pair_inj, exists_eq_right_right', existsAndEq, and_true,
           exists_eq_left'] at hy
-        congr
-        · apply c_unq
-          exact hy.2.1
-        · apply d_unq
-          exact hy.2.2
+        grind
 theorem inv_Image_of_bijective {f A B : ZFSet} {hf : A.IsFunc B f}
   (bij : f.IsBijective) {X : ZFSet} (hX : X ⊆ A) :
     f⁻¹[(f[X])] = X := by
@@ -248,11 +238,7 @@ theorem Image_inv_of_bijective {f A B : ZFSet} {hf : A.IsFunc B f}
   have gbij : g.IsBijective hg := inv_bijective_of_bijective bij
   have ginv_eq : g⁻¹ = f := by rw [inv_involutive]
   have := inv_Image_of_bijective gbij hX
-  dsimp [g] at this
-  conv at this =>
-    enter [1,1]
-    rw [inv_involutive]
-  exact this
+  grind
 theorem IsInjective_of_left_inverse {A B : ZFSet} {f : ZFSet}
   (hf : A.IsFunc B f) {g : ZFSet} (hg : B.IsFunc A g) (left_inv : g ∘ᶻ f = 𝟙A) :
     IsInjective f := by
@@ -287,8 +273,7 @@ theorem IsSurjective_of_right_inverse {A B : ZFSet} {f : ZFSet}
     exact pair_self_mem_Id yB
   simp only [fcomp, composition, mem_sep, mem_prod, pair_inj, exists_eq_right_right', and_self,
     existsAndEq, and_true, exists_eq_left'] at y_y
-  obtain ⟨yB, x, xA, gyx, fxy⟩ := y_y
-  use x, xA
+  grind
 theorem isIso_of_two_sided_inverse {A B : ZFSet} {f : ZFSet}
   {hf : A.IsFunc B f} {g : ZFSet} {hg : B.IsFunc A g}
   (left_inv : g ∘ᶻ f = 𝟙A) (right_inv : f ∘ᶻ g = 𝟙B) :
@@ -488,9 +473,7 @@ theorem isIso_of_funs {A B C D : ZFSet} (h : A ≅ᶻ C) (h' : B ≅ᶻ D) : A.f
             set d' := Classical.choose cdf
             rw [composition_inv_self_of_bijective Gbij, pair_mem_Id_iff d'D] at cd_G
             rwa [←cd_G]
-        · intro c hc
-          rw [dite_cond_eq_true (eq_true hc)]
-          apply fapply_mem_range
+        · grind
     · rintro g' ⟨hg', g'f_ξ⟩
       rw [lambda_spec] at g'f_ξ
       obtain ⟨-,-,f_eq⟩ := g'f_ξ
@@ -551,9 +534,7 @@ theorem isIso_of_funs {A B C D : ZFSet} (h : A ≅ᶻ C) (h' : B ≅ᶻ D) : A.f
         rw [composition_self_inv_of_bijective Gbij, pair_mem_Id_iff g'B] at bb'
         rw [←b_def, ←b_eq, ←bb']
         rfl
-      · intro _ h
-        rw [dite_cond_eq_true (eq_true h)]
-        apply fapply_mem_range
+      · grind
   · and_intros
     · exact lambda_subset
     · intro f hf
@@ -652,8 +633,7 @@ theorem isIso_powerset_char_pred {A : ZFSet} : A.powerset ≅ᶻ A.funs 𝔹 := 
               and_intros
               · exact ha
               · rw [ZFBool.mem_𝔹_iff]
-                right
-                rfl
+                grind
               · rwa [π₁_pair, π₂_pair, iff_true_right rfl]
             · intro b hb
               rw [mem_sep, pair_mem_prod, π₁_pair, π₂_pair] at hb
@@ -665,8 +645,7 @@ theorem isIso_powerset_char_pred {A : ZFSet} : A.powerset ≅ᶻ A.funs 𝔹 := 
               and_intros
               · exact ha
               · rw [ZFBool.mem_𝔹_iff]
-                left
-                rfl
+                grind
               · rwa [π₁_pair, π₂_pair, iff_false_right zftrue_ne_zffalse.symm]
             · intro b hb
               rw [mem_sep, pair_mem_prod, π₁_pair, π₂_pair, ←not_iff_not] at hb
@@ -680,8 +659,7 @@ theorem isIso_powerset_char_pred {A : ZFSet} : A.powerset ≅ᶻ A.funs 𝔹 := 
           constructor
           · intro hz
             exact ⟨hX hz, ⟨hX hz, ZFBool.zftrue_mem_𝔹⟩, hz⟩
-          · rintro ⟨_, _, hz⟩
-            exact hz
+          · grind
   · and_intros
     · intro z hz
       rw [mem_lambda] at hz
@@ -779,8 +757,7 @@ theorem currify_of_uncurrify {A B C : ZFSet} (f : ZFSet)
               (by
                 intro _ h
                 rw [pair_eta h, pair_mem_prod] at h
-                rw [dite_cond_eq_true (eq_true h)]
-                apply fapply_mem_range)
+                grind)
               (by rw [pair_mem_prod]; exact ⟨hx, hy⟩),
             dite_cond_eq_true (eq_true (by simp only [π₁_pair, π₂_pair, hx, hy, and_self]))]
           simp only [π₁_pair, π₂_pair]
@@ -791,15 +768,11 @@ theorem currify_of_uncurrify {A B C : ZFSet} (f : ZFSet)
           · funext x
             simp only [π₁_pair, mem_sep]
           · apply proof_irrel_heq
-      · intro _ h
-        rw [dite_cond_eq_true (eq_true h)]
-        apply fapply_mem_range
+      · grind
     · intro _ hx
       rw [dite_cond_eq_true (eq_true hx)]
       apply mem_funs_of_lambda
-      intro _ hx
-      rw [dite_cond_eq_true (eq_true hx)]
-      apply fapply_mem_range
+      grind
 theorem uncurrify_of_currify {A B C : ZFSet} (g : ZFSet)
     (hg : (A.prod B).IsFunc C g := by zfun) :
   uncurrify (currify g) = g := by
@@ -819,14 +792,11 @@ theorem uncurrify_of_currify {A B C : ZFSet} (g : ZFSet)
                 intro _ h
                 rw [dite_cond_eq_true (eq_true h)]
                 apply mem_funs_of_lambda
-                intro _ hx
-                rw [dite_cond_eq_true (eq_true hx)]
-                apply fapply_mem_range
+                grind
               ) ha,
             dite_cond_eq_true (eq_true ha)]
         rw [←fapply_eq_Image_singleton (lambda_isFunc (fun h ↦ by
-              rw [dite_cond_eq_true (eq_true h)]
-              apply fapply_mem_range)) hb,
+              grind)) hb,
           fapply_lambda (fun h ↦ by rw [dite_cond_eq_true (eq_true h)]; apply fapply_mem_range) hb,
           dite_cond_eq_true (eq_true hb)]
     · intro _ h

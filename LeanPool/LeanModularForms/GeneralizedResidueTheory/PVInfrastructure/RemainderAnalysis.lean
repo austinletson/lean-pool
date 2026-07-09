@@ -287,7 +287,6 @@ lemma remainder_bounded_of_C2
         div_le_div₀ (le_trans (norm_nonneg _) h_numer_bound) h_numer_bound
           h_d_pos h_denom_lower
     _ = 2 * K / ‖L‖ := by
-        field_simp [ne_of_gt h_sq_pos,
-          ne_of_gt hL_norm_pos]
+        grind
 
 end

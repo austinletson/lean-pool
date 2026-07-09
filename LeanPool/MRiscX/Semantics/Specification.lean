@@ -402,8 +402,7 @@ theorem specification_JumpGt_false (P : Assertion) (pc reg1 reg2 : UInt64) (s : 
         unfold MState.runOneStep  MState.jif' MState.jump
         rw [h_terminated, ← h_pc]
         simp [h_curr]
-        simp only [h_cond_false]
-        simp
+        grind
       · zeroLtNeZero
   case right =>
     simp only [Bool.not_eq_true, ne_eq, Set.mem_setOf_eq, Decidable.not_not]

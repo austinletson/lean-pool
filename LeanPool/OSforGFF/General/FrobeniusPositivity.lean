@@ -63,10 +63,7 @@ lemma congr_transpose_mul_mul_ne_zero
   have hcalc : U * (U.transpose * G * U) * U.transpose
       = (U * U.transpose) * G * (U * U.transpose) := by
     simp [Matrix.mul_assoc]
-  have hG_eq : G = U * (U.transpose * G * U) * U.transpose := by
-    simpa [hU_right, Matrix.one_mul, Matrix.mul_one] using hcalc.symm
-  have : G = 0 := by simpa [hH, Matrix.mul_zero, Matrix.zero_mul] using hG_eq
-  exact hG_ne_zero this
+  grind
 
 /-- Cauchy–Schwarz for the semi-inner product induced by a PSD real matrix.
 For all vectors x,y: (xᵀ H y)^2 ≤ (xᵀ H x) (yᵀ H y).
@@ -121,8 +118,7 @@ lemma psd_offdiag_zero_of_diag_zero
   have hy : (Pi.single j (1 : ℝ)) ⬝ᵥ H.mulVec (Pi.single j 1) = H j j := by simp
   have hxy : (Pi.single i (1 : ℝ)) ⬝ᵥ H.mulVec (Pi.single j 1) = H i j := by simp
   -- Substitute and use hii, hjj
-  have : (H i j)^2 ≤ (H i i) * (H j j) := by simpa [hx, hy, hxy]
-    using hcs
+  have : (H i j)^2 ≤ (H i i) * (H j j) := by grind
   -- Right side is 0, left is square ≥ 0, hence equality and H i j = 0 over ℝ
   have : (H i j)^2 ≤ 0 := by simpa [hii, hjj]
   have hsq_nonneg : 0 ≤ (H i j)^2 := by have := sq_nonneg (H i j); simpa using this
@@ -213,10 +209,7 @@ lemma frobenius_pos_of_psd_posdef
     rw [hG_symm, hB_decomp]
     rw [← Matrix.mul_assoc, ← Matrix.mul_assoc]
     rw [Matrix.trace_mul_comm]
-    rw [Matrix.mul_assoc]
-    rw [← Matrix.mul_assoc]
-    rw [Matrix.mul_assoc]
-    simp [H, Matrix.mul_assoc]
+    grind
   -- Expand trace(H * diagonal d) as ∑ i d i * H i i
   have htrace_sum : Matrix.trace (H * Matrix.diagonal d) = ∑ i, d i * H i i := by
     classical
@@ -236,8 +229,4 @@ lemma frobenius_pos_of_psd_posdef
       exact mul_nonneg (le_of_lt (hd_pos i)) (hdiag_nonneg i)
     exact add_pos_of_pos_of_nonneg h_pos h_nonneg
   -- Transport back to the original Frobenius sum
-  have htrace_pos : 0 < Matrix.trace (H * Matrix.diagonal d) := by
-    simpa [htrace_sum] using hsum_pos
-  have htrace_pos' : 0 < Matrix.trace (G.transpose * B) := by
-    simpa [htrace_cycle] using htrace_pos
-  simpa [hfrob_trace] using htrace_pos'
+  grind

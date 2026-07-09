@@ -72,12 +72,7 @@ theorem coercivity_core_bound
     have h1 : 0 ≤ (s * D - a * U) ^ 2 := sq_nonneg _
     have h2 : 0 ≤ (s * D - a * T) ^ 2 := sq_nonneg _
     have h3 : 0 ≤ (a * U - a * T) ^ 2 := sq_nonneg _
-    have e1 : (s * D - a * U) ^ 2 = s^2*D^2 - 2*s*D*a*U + a^2*U^2 := by ring
-    have e2 : (s * D - a * T) ^ 2 = s^2*D^2 - 2*s*D*a*T + a^2*T^2 := by ring
-    have e3 : (a * U - a * T) ^ 2 = a^2*U^2 - 2*a^2*U*T + a^2*T^2 := by ring
-    have lhs : (s * D + a * U + a * T) ^ 2 =
-      s^2*D^2 + a^2*U^2 + a^2*T^2 + 2*s*D*a*U + 2*s*D*a*T + 2*a^2*U*T := by ring
-    rw [lhs]; linarith [e1 ▸ h1, e2 ▸ h2, e3 ▸ h3]
+    grind
   -- a²X² ≤ X² from (1-a²)X² ≥ 0
   have ha2U : a ^ 2 * U ^ 2 ≤ U ^ 2 := by
     have : 0 ≤ (1 - a ^ 2) * U ^ 2 :=
@@ -91,17 +86,13 @@ theorem coercivity_core_bound
     linarith
   -- Core: (1-a)²μ'E² ≤ 18Ln
   have he_mult : (1 - a) ^ 2 * (μ' * E ^ 2) ≤ 18 * Ln := by
-    have h1 : ((1 - a) * B) ^ 2 ≤ 3 * (s ^ 2 * D ^ 2 + U ^ 2 + T ^ 2) := by
-      linarith [hBr_sq, hRHS, ha2U, ha2T]
-    rw [hs_sq] at h1
-    linarith [hLHS]
+    grind
   -- A² ≤ 2(U²+μ'E²)
   have hperp_sq : A ^ 2 ≤ 2 * (U ^ 2 + μ' * E ^ 2) := by
     have h1 : A ≤ U + B := hA_ub
     have h1sq : A ^ 2 ≤ (U + B) ^ 2 := sq_le_sq' (by linarith [hA_nn]) h1
     have h2 := dist_bound_from_v_e U B hU_nn hB_nn
-    have h3 : B ^ 2 = μ' * E ^ 2 := by rw [hB_def, show μ' = s ^ 2 from hs_sq.symm]; ring
-    linarith
+    grind
   -- (1-a)²·A² ≤ 40Ln
   have hA_mult : (1 - a) ^ 2 * A ^ 2 ≤ 40 * Ln := by
     -- (1-a)²A² ≤ A² ≤ 2(U²+μ'E²) ≤ 2(2Ln + 18Ln/(1-a)²)

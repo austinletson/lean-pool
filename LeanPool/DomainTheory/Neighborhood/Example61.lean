@@ -109,18 +109,14 @@ theorem embPair_inter (P Q P' Q' : Set (List Bool × α)) :
     embPair P Q ∩ embPair P' Q' = embPair (P ∩ P') (Q ∩ Q') := by
   ext ⟨p, a⟩
   simp only [Set.mem_inter_iff, mem_embPair]
-  rcases p with _ | ⟨b, ps⟩
-  · simp
-  · cases b <;> simp [List.cons.injEq]
+  grind
 
 theorem embZero_inter_embPair (X : Set α) (P Q : Set (List Bool × α)) :
     embZero X ∩ embPair P Q = ∅ := by
   ext ⟨p, a⟩
   simp only [Set.mem_inter_iff, mem_embZero, mem_embPair, Set.mem_empty_iff_false, iff_false,
     not_and, not_or]
-  rintro ⟨rfl, -⟩
-  exact ⟨by rintro ⟨p', hp', -⟩; exact absurd hp' (by simp), by
-    rintro ⟨q', hq', -⟩; exact absurd hq' (by simp)⟩
+  grind
 
 /-! ### Subset / injectivity. -/
 

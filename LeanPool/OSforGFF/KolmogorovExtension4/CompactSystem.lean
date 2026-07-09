@@ -226,11 +226,7 @@ theorem nonempty_iInter_projCylinder_inter_piCylinderSet (hs : ∀ n, s n ∈ cl
       refine ⟨fun j ↦ y ⟨j, subset_allProj hs _ j.2⟩, hy', ?_⟩
       simp_rw [z, if_pos hi_le]
     · rw [mem_piCylinderSet] at hx
-      specialize hx i
-      obtain ⟨x', hx'_mem, hx'_eq⟩ := hx
-      refine ⟨x', hx'_mem, ?_⟩
-      simp_rw [z, if_neg hi_le]
-      exact hx'_eq
+      grind
 
 theorem nonempty_iInter_projCylinder (hs : ∀ n, s n ∈ closedCompactCylinders α)
     (hs_nonempty : ∀ i, (s i).Nonempty)

@@ -51,8 +51,7 @@ lemma rec_eq {α : Sort*} (a : α) (f₁ f₂ : ℕ → α → α) (n : ℕ) (H 
   induction n with
   | zero => simp
   | succ n ih =>
-    have : (n.rec a f₁ : α) = n.rec a f₂ := ih (fun m hm a => H m (Nat.lt_succ_of_lt hm) a)
-    simpa [this] using H n (Nat.lt_add_one n) (n.rec a f₂)
+    grind
 
 lemma least_number (P : ℕ → Prop) (hP : ∃ x, P x) : ∃ x, P x ∧ ∀ z < x, ¬P z := by
   classical
@@ -543,9 +542,7 @@ lemma lt_upper (l : List ℕ) {n} (h : n ∈ l) : n < l.upper := by
   | nil => simp at h
   | cons m ns ih =>
     suffices n < m + 1 ∨ n < ns.upper by simpa
-    rcases show n = m ∨ n ∈ ns by simpa using h with (rfl | h)
-    · exact Or.inl (Nat.lt_succ_self _)
-    · exact Or.inr (ih h)
+    grind
 
 section «lp_section_5»
 
@@ -601,10 +598,7 @@ end «lp_section_6»
 
 lemma ofFn_get_eq_map_cast {n} (g : α → β) (as : List α) {h} :
     ofFn (fun i => g (as.get (i.cast h)) : Fin n → β) = as.map g := by
-  ext i b; simp
-  by_cases hi : i < n
-  · simp [hi, List.getElem?_eq_getElem (h ▸ hi)]
-  · simp [hi, List.getElem?_eq_none (le_of_not_gt <| h ▸ hi)]
+  ext i b; grind
 
 variable {m : Type _ → Type _} {α : Type _} {β : Type _} [Monad m]
 
@@ -649,8 +643,7 @@ lemma remove_subset (a) (l : List α) :
 lemma remove_subset_remove (a) {l₁ l₂ : List α} (h : l₁ ⊆ l₂) :
     l₁.remove a ⊆ l₂.remove a := by
   simp only [subset_def, mem_remove_iff, ne_eq, and_imp]
-  intros
-  simpa [*] using h (by assumption)
+  grind
 
 lemma remove_cons_subset_cons_remove (a b) (l : List α) :
     (a :: l).remove b ⊆ a :: l.remove b := by
@@ -662,8 +655,7 @@ lemma remove_map_substet_map_remove [DecidableEq β] (f : α → β) (l : List �
     (l.map f).remove (f a) ⊆ (l.remove a).map f := by
   simp only [subset_def, mem_remove_iff, mem_map, ne_eq, and_imp, forall_exists_index,
     forall_apply_eq_imp_iff₂]
-  intro b hb neb;
-  exact ⟨b, ⟨hb, by rintro rfl; exact neb rfl⟩, rfl⟩
+  grind
 
 end «lp_section_7»
 
@@ -676,9 +668,7 @@ lemma induction_with_singleton
   intro as;
   induction as with
   | nil => exact hnil;
-  | cons a as ih => cases as with
-    | nil => exact hsingle a;
-    | cons b bs => exact hcons a (b :: bs) (by simp) ih;
+  | cons a as ih => grind
 
 
 
@@ -799,12 +789,10 @@ lemma subset_mem_chain_of_finite (c : Set (Set α)) (hc : Set.Nonempty c) (hchai
         have : ∃ t ∈ c, s ⊆ t := ih (subset_trans (Set.subset_insert a s) h)
         rcases this with ⟨t, htc, ht⟩
         have : ∃ u ∈ c, a ∈ u := by
-          have : (∃ t ∈ c, a ∈ t) ∧ s ⊆ ⋃₀ c := by simpa [Set.insert_subset_iff] using h
-          exact this.1
+          grind
         rcases this with ⟨u, huc, hu⟩
         have : ∃ z ∈ c, t ⊆ z ∧ u ⊆ z := IsChain.directedOn hchain t htc u huc
-        rcases this with ⟨z, hzc, htz, huz⟩
-        exact ⟨z, hzc, Set.insert_subset (huz hu) (Set.Subset.trans ht htz)⟩)
+        grind)
 
 end Set
 

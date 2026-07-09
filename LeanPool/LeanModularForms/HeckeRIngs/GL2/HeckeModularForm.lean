@@ -233,8 +233,7 @@ private lemma heckeSlash_fiber_sum [DecidableEq (HeckeCoset (GLPair 2))] (k : �
     intro q; rw [← Nat.card_eq_finsetCard]; apply Nat.card_congr
     exact {
       toFun := fun ⟨p, hp⟩ => ⟨p, by
-        simp only [S, Finset.mem_filter, Finset.mem_univ, true_and] at hp
-        rw [← hp.2]; exact h_coset_eq p hp.1⟩
+        grind⟩
       invFun := fun ⟨p, hp_rc⟩ => ⟨p, by
         simp only [S, Finset.mem_filter, Finset.mem_univ, true_and]
         have hmap := mulMap_eq_of_rightCoset D₁ D₂ D p q hp_rc

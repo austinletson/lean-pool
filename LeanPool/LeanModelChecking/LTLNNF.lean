@@ -51,17 +51,7 @@ def NNF.language {AP} (f : NNF AP) (w : Nat → Letter AP) : Prop :=
 
 lemma not_exists_until_iff_forall {P Q : Nat → Prop} :
     (¬ ∃ i, Q i ∧ ∀ k < i, P k) ↔ ∀ i, ¬ Q i ∨ ∃ k < i, ¬ P k := by
-  classical
-  constructor
-  · intro h i
-    rcases Classical.em (Q i) with hQi | hQi
-    · obtain ⟨k, hk⟩ := Classical.not_forall.mp fun hPi => h ⟨i, hQi, hPi⟩
-      exact Or.inr ⟨k, Classical.not_imp.mp hk⟩
-    · exact Or.inl hQi
-  · rintro h ⟨i, hQi, hPi⟩
-    rcases h i with hneg | ⟨k, hk, hk'⟩
-    · exact hneg hQi
-    · exact hk' (hPi k hk)
+  grind
 
 namespace LTL
 
@@ -110,13 +100,11 @@ lemma toNNFCore_sound {AP} (f : LTL AP) :
       have hf : ∀ k,
           ¬ LTL.language f (fun j => w (j + k)) ↔
             NNF.language (toNNFNeg f) (fun j => w (j + k)) := by
-        intro k
-        simpa using ihf.2 (fun j => w (j + k))
+        grind
       have hg : ∀ k,
           ¬ LTL.language g (fun j => w (j + k)) ↔
             NNF.language (toNNFNeg g) (fun j => w (j + k)) := by
-        intro k
-        simpa using ihg.2 (fun j => w (j + k))
+        grind
       have hlogic :=
         not_exists_until_iff_forall
           (P := fun k => LTL.language f (fun j => w (j + k)))

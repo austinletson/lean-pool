@@ -105,10 +105,7 @@ theorem dias_da_silva_hamidoune (A : Finset (ZMod p)) (s : ℕ)
   by_cases hs : s = 0
   · subst hs
     suffices h : (distinctSumSet A 0).Nonempty by
-      rw [ge_iff_le]
-      calc min p (0 * #A - 0 ^ 2 + 1)
-          ≤ 1 := by omega
-        _ ≤ _ := Finset.one_le_card.mpr h
+      grind
     exact ⟨ 0, Finset.mem_image.mpr ⟨ ∅, by aesop ⟩ ⟩
   · -- Apply Theorem 3.2 with k = s - 1 and A_i = A for all i.
     have h_theorem : ∀ (A : Finset (ZMod p)) (k : ℕ) (hk : k + 1 ≤ A.card),
@@ -121,12 +118,7 @@ theorem dias_da_silva_hamidoune (A : Finset (ZMod p)) (s : ℕ)
         | zero => unfold compressedSizes; aesop
         | succ i ih =>
           unfold compressedSizes
-          simp_all only [Order.add_one_le_iff, Fin.val_castSucc, Fin.val_succ]
-          split
-          next i_1 heq => simp_all only [Fin.zero_eta, Fin.succ_ne_zero]
-          next i_1 i_2 hi heq =>
-            simp_all only [Nat.succ_eq_add_one]
-            rcases i with ⟨ _ | i, hi ⟩ <;> simp_all +decide [ Nat.sub_sub ]
+          grind
       -- Apply Theorem 3.2 with the given parameters.
       have h_apply_theorem :
           (restrictedSumSet k (fun _ => A)).card ≥ min p ((∑ i : Fin (k + 1),

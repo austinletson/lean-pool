@@ -33,8 +33,7 @@ theorem delta_card (n : ℕ) (S : Finset α) : (C.delta n S).card ≤ n := by
     apply Finset.card_le_card_of_injOn (C.beta S)
     · intro a ha
       rw [Finset.mem_coe, delta, Finset.mem_filter] at ha
-      rw [Finset.mem_coe, Finset.mem_range]
-      exact ha.2.1
+      grind
     · intro x hx y hy hxy
       rw [Finset.mem_coe, delta, Finset.mem_filter] at hx hy
       rcases hx with ⟨_, _, x_min⟩
@@ -57,27 +56,21 @@ theorem not_mem_delta {n : ℕ} {S : Finset α} {p' : α} (h : p' ∈ S \ C.delt
   set row := S.filter fun q => C.beta S q = C.beta S p' with def_row
   have row_nonempty : row.Nonempty := by
     refine ⟨p', ?_⟩
-    rw [def_row, Finset.mem_filter]
-    exact ⟨p'_in_S, rfl⟩
+    grind
   have row_in_S : row ⊆ S := Finset.filter_subset _ _
   set p := row.min' row_nonempty with def_p
   have p_in_row : p ∈ row := Finset.min'_mem _ row_nonempty
   have bp_eq_bp' : C.beta S p = C.beta S p' := by
-    rw [def_row, Finset.mem_filter] at p_in_row
-    exact p_in_row.right
+    grind
   have p'_in_row : p' ∈ row := by
-    rw [def_row, Finset.mem_filter]
-    exact ⟨p'_in_S, rfl⟩
+    grind
   refine ⟨p, ?_, bp_eq_bp', ?_⟩
   · rw [delta, Finset.mem_filter, bp_eq_bp', ← def_row]
     refine ⟨row_in_S p_in_row, bp_n, ?_⟩
     rw [def_p]; exact Finset.coe_min' _
   · rw [← Finset.coe_min' row_nonempty] at h
     suffices p_le_p' : p ≤ p' by
-      rw [le_iff_lt_or_eq] at p_le_p'
-      rcases p_le_p' with p_lt_p' | p_eq_p'
-      · assumption
-      · exfalso; apply h; rw [← def_p, p_eq_p']
+      grind
     rw [def_p]; exact Finset.min'_le _ _ p'_in_row
 
 theorem find_join {n : ℕ} {S : Finset α} (l : C.Label S) (cup_free : ¬C.HasNCup (n + 4) S)
@@ -147,8 +140,7 @@ theorem laced_extension {n : ℕ} {S D : Finset α} (l : C.Label S) (cup_free : 
       rw [eq_p]
       -- Take the head o' of cp'
       have cp'_nnil : cp' ≠ [] := by
-        rintro rfl
-        exact absurd cp'_last (Option.not_mem_none p')
+        grind
       rcases List.takeHead cp'_nnil with ⟨o', cp'', eq_cp'⟩
       have o'_head : o' ∈ cp'.head? := by rw [eq_cp', List.head?_cons]; rfl
       have o'_le_p' : o' ≤ p' := cp'_cup.head_le_getLast o' p' o'_head cp'_last
@@ -165,8 +157,7 @@ theorem laced_extension {n : ℕ} {S D : Finset α} (l : C.Label S) (cup_free : 
       have soo' : ¬l.Slope o o' := by
         intro soo'
         have inc := slope_tt_inc_beta soo' o_in_S o'_in_S o_lt_o'
-        rw [eq_o] at inc
-        exact absurd inc (lt_irrefl _)
+        grind
       -- extend cp' to left with o
       have cp'_in_S := List.in_superset Finset.sdiff_subset cp'_in_SD
       have ocp'_cup : C.NCup (a + 1) (o::cp') :=

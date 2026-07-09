@@ -68,9 +68,7 @@ theorem wireValD_eq_of_unreferenced
   · -- Primary input
     conv_lhs => rw [wireValD]
     conv_rhs => rw [wireValD]
-    simp only [hw_lt, dite_true]
-    exact (Function.update_of_ne (show (⟨w.val, hw_lt⟩ : Fin N) ≠ a from
-      fun h => hw (congrArg Fin.val h)) b x).symm
+    grind
   · -- Gate wire
     have hi : w.val - N < s := by omega
     obtain ⟨hw1, hw2⟩ := hno ⟨w.val - N, hi⟩
@@ -231,10 +229,7 @@ theorem evalD_restrictD {N s : Nat} (d : CircDesc (N + 1) s)
     evalD hs (restrictD d a b) x = evalD hs d (insertAt x a b) := by
   simp only [evalD]
   rw [wireValD_restrictD]
-  have ha := a.isLt
-  have : ¬(N + s - 1 < a.val) := by omega
-  simp only [this, ite_false]
-  congr 1; ext; simp; omega
+  grind
 
 /-! ## Gate Elimination -/
 
@@ -524,9 +519,7 @@ private theorem wireValD_eq_sole_unreferenced {N s : Nat}
   by_cases hw_lt : w.val < N
   · conv_lhs => rw [wireValD]
     conv_rhs => rw [wireValD]
-    simp only [hw_lt, dite_true]
-    exact (Function.update_of_ne (show (⟨w.val, hw_lt⟩ : Fin N) ≠ a from
-      fun h => hw1 (congrArg Fin.val h)) b x).symm
+    grind
   · have hi : w.val - N < s := by omega
     have hi_ne : (⟨w.val - N, hi⟩ : Fin s) ≠ g := by
       intro h; apply hw2; have := congrArg Fin.val h; simp at this; omega
@@ -542,16 +535,7 @@ private theorem wireValD_eq_sole_unreferenced {N s : Nat}
       fun _ => wireValD_eq_sole_unreferenced d a b g honly hunref x _ ho2 hu2
     conv_lhs => rw [wireValD]
     conv_rhs => rw [wireValD]
-    simp only [hw_lt, dite_false]
-    split <;> {
-      congr 1
-      · congr 1; split
-        · exact hrec1 ‹_›
-        · rfl
-      · congr 1; split
-        · exact hrec2 ‹_›
-        · rfl
-    }
+    grind
 termination_by w.val
 
 /-- Variant: only requires no *back*-references to `g` (forward refs evaluate to false). -/
@@ -567,9 +551,7 @@ private theorem wireValD_eq_sole_no_back_ref {N s : Nat}
   by_cases hw_lt : w.val < N
   · conv_lhs => rw [wireValD]
     conv_rhs => rw [wireValD]
-    simp only [hw_lt, dite_true]
-    exact (Function.update_of_ne (show (⟨w.val, hw_lt⟩ : Fin N) ≠ a from
-      fun h => hw1 (congrArg Fin.val h)) b x).symm
+    grind
   · have hi : w.val - N < s := by omega
     have hi_ne : (⟨w.val - N, hi⟩ : Fin s) ≠ g := by
       intro h; apply hw2; have := congrArg Fin.val h; simp at this; omega
@@ -588,16 +570,7 @@ private theorem wireValD_eq_sole_no_back_ref {N s : Nat}
       intro heq; exact absurd heq (hunref ⟨w.val - N, hi⟩ (show w.val - N > g.val by omega)).2
     conv_lhs => rw [wireValD]
     conv_rhs => rw [wireValD]
-    simp only [hw_lt, dite_false]
-    split <;> {
-      congr 1
-      · congr 1; split
-        · exact hrec1 ‹_›
-        · rfl
-      · congr 1; split
-        · exact hrec2 ‹_›
-        · rfl
-    }
+    grind
 termination_by w.val
 
 /-- Unfold `wireValD` one step at gate wire `N + g.val`, exposing the gate's
@@ -630,8 +603,7 @@ private theorem gateConstW1 {N s : Nat} (d : CircDesc N s) (gg : Fin s) (a : Fin
   rw [wireValD_at_gate]
   have ha_lt : (d gg).2.1.1.val < N + gg.val := by have := a.isLt; omega
   have hval : wireValD d y ⟨(d gg).2.1.1.val, (d gg).2.1.1.isLt⟩ = y a := by
-    rw [wireValD]; simp only [show (d gg).2.1.1.val < N from by have := a.isLt; omega, dite_true]
-    congr 1; exact Fin.ext hw
+    rw [wireValD]; grind
   simp only [ha_lt, ite_true, hval, hya]
   cases (d gg).2.2.1 <;> cases (d gg).1 <;> simp
 
@@ -644,8 +616,7 @@ private theorem gateConstW2 {N s : Nat} (d : CircDesc N s) (gg : Fin s) (a : Fin
   rw [wireValD_at_gate]
   have ha_lt : (d gg).2.1.2.val < N + gg.val := by have := a.isLt; omega
   have hval : wireValD d y ⟨(d gg).2.1.2.val, (d gg).2.1.2.isLt⟩ = y a := by
-    rw [wireValD]; simp only [show (d gg).2.1.2.val < N from by have := a.isLt; omega, dite_true]
-    congr 1; exact Fin.ext hw
+    rw [wireValD]; grind
   simp only [ha_lt, ite_true, hval, hya]
   cases (d gg).2.2.2 <;> cases (d gg).1 <;> simp
 
@@ -722,8 +693,7 @@ private theorem xor_needs_three_gates {N s : Nat} (hN : 2 ≤ N) (hs : 0 < s) (h
             simp only [Finset.mem_image, Finset.mem_univ, true_and] at hx
             obtain ⟨a, _, rfl⟩ := hx
             obtain ⟨g, hg⟩ := hess a
-            exact Finset.mem_biUnion.mpr ⟨g, Finset.mem_univ _, by
-              rcases hg with h | h <;> simp [Finset.mem_insert, Finset.mem_singleton, h]⟩
+            grind
     omega
   · push Not at hcount
     obtain ⟨hout1, hout2⟩ := lastGateNoInput d hs hN comp heval
@@ -855,10 +825,7 @@ private theorem wireValD_restrictD_killing_w2_gen {n s : Nat} (d : CircDesc (n +
   have h_n2 : (d_r g).2.2.2 = (d g).2.2.2.xor b := by
     change (remapWireR ⟨0, _⟩ b g (d g).2.1.2 (d g).2.2.2).2 = _; simp [remapWireR, hw2]
   have step1 := wireValD_at_gate d_r x g
-  have hw2_nlt : ¬((d_r g).2.1.2.val < n + g.val) := by rw [h_w2_val]; omega
-  simp only [hw2_nlt, ite_false, Bool.xor_false] at step1
-  rw [h_isAnd, h_n2, hkill] at step1
-  exact step1.trans (by cases (d g).1 <;> simp)
+  grind
 
 /-- Any gate with a self-referencing wire has output that is either constant
     or a pass-through to its other wire. -/
@@ -926,8 +893,7 @@ private theorem gateElimRedirect_const {n s : Nat} (d : CircDesc (n + 1) s) (g :
   obtain ⟨hop, hn1, hn2, _, _⟩ := restrictD_false_components d g
   have step1 := wireValD_at_gate (restrictD d ⟨0, by omega⟩ false) x g
   simp only [hw1, hw2, ite_false, Bool.xor_false] at step1
-  rw [hop, hn1, hn2] at step1
-  exact step1
+  grind
 
 /-- After restricting input 0 to `false`, any gate of `d` that reads input 0
     can be replaced by a `GateRedirect`: its output is either constant or a

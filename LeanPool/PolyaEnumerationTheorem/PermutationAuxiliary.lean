@@ -116,8 +116,7 @@ lemma forall_exists_lt_perm_pow_eq_perm_pow {n : ℕ} {f : Equiv.Perm X} {x : X}
   · have hp : (0 : ℤ) < n + 1 := by positivity
     have hnn : 0 ≤ k % (n + 1 : ℤ) := Int.emod_nonneg k (by linarith)
     have hlt : k % (n + 1 : ℤ) < (n + 1 : ℤ) := Int.emod_lt_of_pos k hp
-    have heq : ((k % (n + 1 : ℤ)).toNat : ℤ) = k % (n + 1 : ℤ) := Int.toNat_of_nonneg hnn
-    omega
+    grind
   · have hp : (0 : ℤ) < n + 1 := by positivity
     have hnn : 0 ≤ k % (n + 1 : ℤ) := Int.emod_nonneg k (by linarith)
     have heq : ((k % (n + 1 : ℤ)).toNat : ℤ) = k % (n + 1 : ℤ) := Int.toNat_of_nonneg hnn

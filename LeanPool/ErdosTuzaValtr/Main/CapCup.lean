@@ -66,9 +66,7 @@ theorem cap_cup (a b : ℕ) (S : Finset α) (hS : Nat.choose (a + b) a < S.card)
     set sz_a1b := (a + 1 + b).choose (a + 1) with eq_sz_a1b
     set sz_a1b1 := (a + 1 + (b + 1)).choose (a + 1) with eq_sz_a1b1
     have eq_sz : sz_a1b1 = sz_ab1 + sz_a1b := by
-      rw [eq_sz_ab1, eq_sz_a1b, eq_sz_a1b1]
-      rw [show a + 1 + (b + 1) = (a + (b + 1)) + 1 by ring,
-        show a + 1 + b = a + (b + 1) by ring, Nat.choose_succ_succ (a + (b + 1)) a]
+      grind
     -- numerical details now not relevant
     clear eq_sz_ab1 eq_sz_a1b eq_sz_a1b1
     intro hab1 ha1b S hS
@@ -77,17 +75,14 @@ theorem cap_cup (a b : ℕ) (S : Finset α) (hS : Nat.choose (a + b) a < S.card)
     set T := Finset.filter is_start_of_cap S with def_T
     have eq_card : (S \ T).card + T.card = S.card :=
       by
-      apply Finset.card_sdiff_add_card_eq_card
-      rw [def_T]; exact S.filter_subset is_start_of_cap
+      grind
     have sz_cases : sz_ab1 < (S \ T).card ∨ sz_a1b < T.card := by by_contra! h; omega
     rcases sz_cases with sz_cases | sz_cases
     -- case sz_ab1 < (S \ T).card
     · rcases hab1 (S \ T) sz_cases with hcap | hcup
       · rcases hcap with ⟨c, ⟨c_cap, c_length⟩, c_in⟩
         have c_nnil : c ≠ [] := by
-          rintro rfl
-          simp only [List.length_nil] at c_length
-          omega
+          grind
         rcases List.takeHead c_nnil with ⟨ch, ct, eq_c⟩
         have h : ch ∈ S \ T := c_in ch (by rw [eq_c]; simp)
         rw [def_T, Finset.mem_sdiff, Finset.mem_filter] at h
@@ -106,8 +101,7 @@ theorem cap_cup (a b : ℕ) (S : Finset α) (hS : Nat.choose (a + b) a < S.card)
     · rcases ha1b T sz_cases with hcap | hcup
       · left
         refine hasNCap_supset ?_ hcap
-        rw [def_T]
-        exact Finset.filter_subset _ _
+        grind
       · rcases hcup with ⟨cl, ⟨cl_cup, cl_length⟩, cl_in_T⟩
         have cl_sz2 : 2 ≤ cl.length := by rw [cl_length]; omega
         rcases List.takeLast2 cl_sz2 with ⟨p, q, cl', eq_cl⟩
@@ -146,8 +140,7 @@ theorem cap_cup (a b : ℕ) (S : Finset α) (hS : Nat.choose (a + b) a < S.card)
               rw [eq_cl] at cl_cup
               have h_infix : [p, q] <:+: cl' ++ [p, q] := ⟨cl', [], by simp⟩
               exact List.isChain_pair.mp (cl_cup.left.infix h_infix)
-            · rw [eq_cr] at cr_cap
-              exact cr_cap
+            · grind
           · rw [List.length_cons, cr_length]
           · rw [List.cons_in]
             refine ⟨?_, cr_in_S⟩

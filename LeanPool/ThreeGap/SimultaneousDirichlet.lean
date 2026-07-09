@@ -53,9 +53,7 @@ noncomputable def box (α : Fin d → ℝ) (Q : ℕ) (hQ : 1 ≤ Q) (i : ℕ) : 
     have hlt : Int.fract ((i : ℝ) * α k) * Q < Q := by nlinarith
     have hub : ⌊Int.fract ((i : ℝ) * α k) * Q⌋ < (Q : ℤ) := by
       exact_mod_cast lt_of_le_of_lt (Int.floor_le _) hlt
-    have hge : 0 ≤ ⌊Int.fract ((i : ℝ) * α k) * Q⌋ :=
-      Int.floor_nonneg.mpr (mul_nonneg (Int.fract_nonneg _) (by positivity))
-    omega⟩
+    grind⟩
 
 /-- **Dirichlet's simultaneous approximation theorem (inverse-resolution form).** For `Q ≥ 1` there
 is
@@ -74,9 +72,7 @@ theorem exists_delta_lt_inv (α : Fin d → ℝ) (Q : ℕ) (hQ : 1 ≤ Q) :
   -- orient the pair so that `i < j`
   obtain ⟨i, j, hlt, hbox⟩ :
       ∃ i j, i < j ∧ box α Q hQ i = box α Q hQ j := by
-    rcases lt_or_gt_of_ne hij with h | h
-    · exact ⟨i₀, j₀, h, hbox₀⟩
-    · exact ⟨j₀, i₀, h, hbox₀.symm⟩
+    grind
   -- the integer translate: M k = ⌊j αₖ⌋ − ⌊i αₖ⌋
   set q : ℕ := j - i with hq
   refine ⟨q, by omega, ?_⟩

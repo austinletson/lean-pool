@@ -221,8 +221,7 @@ def CSmulAux (c : C) : M α β →ₗ[F] M α β :=
     | add f g _ _ => simp_all
     | single a b =>
       simp only [mulLinearMap_single_single, Finsupp.smul_single, smul_eq_mul, map_mul]
-      congr 1
-      field_simp [← _root_.mul_assoc])
+      grind)
 
 lemma CSmulAux_calc (k : K) (σ : Gal(K, F)) (a : A) (b : B) :
     CSmulAux (k • basis σ) (Submodule.Quotient.mk (a ⊗ₜ[F] b) : M α β) =
@@ -552,8 +551,7 @@ def AoxKBEquivM : M α β ≃ₗ[F] A ⊗[K] B := .ofLinear MtoAoxKB AoxKBToM
         Function.comp_apply, liftAddHom_tmul, AddMonoidHom.coe_mk, ZeroHom.coe_mk,
         Submodule.liftQ_apply, lift.tmul, LinearMap.id_coe, id_eq]
     | add x y hx hy =>
-      simp only [LinearMap.coe_comp, Function.comp_apply, LinearMap.id_coe, id_eq] at hx hy
-      simp only [LinearMap.coe_comp, Function.comp_apply, map_add, hx, hy, LinearMap.id_coe, id_eq]
+      grind
     | zero => simp)
   (by
     ext a b
@@ -834,8 +832,7 @@ lemma SM_F_dim : Fintype.card ι * finrank F SM = finrank F K ^ 2 := by
     show (Fintype.card ι : Cardinal) * (finrank F SM : Cardinal) =
       ((Fintype.card ι * finrank F SM : ℕ) : Cardinal) by simp] at eq2
   have := finrank_eq_of_rank_eq (n := Fintype.card ι * finrank F SM) eq2
-  rw [this] at eq1
-  exact eq1.symm
+  grind
 
 instance : Module.Finite C (Fin (Fintype.card ι * finrank F K) → SM) := by
   have := Finsupp.linearEquivFunOnFinite C SM (Fin (Fintype.card ι * finrank F K))

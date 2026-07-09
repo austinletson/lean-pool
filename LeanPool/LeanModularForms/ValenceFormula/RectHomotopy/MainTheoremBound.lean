@@ -72,14 +72,7 @@ private lemma not_diffAt_at_two (s : ℝ) (hs0 : s ≠ 0) :
       HasDerivAt (fun t' : ℝ =>
           Complex.exp (((Real.pi : ℝ) / 2 + (t' - 2) * ((Real.pi : ℝ) / 6)) * I))
         (((Real.pi : ℝ) / 6) * I * I) (2 : ℝ) := by
-    have h_raw := hasDerivAt_arc_exp (Real.pi / 2) (Real.pi / 6) 2 2
-    have h_val : Complex.exp (((↑(Real.pi / 2) : ℂ) +
-        ((↑(2 : ℝ) : ℂ) - ↑(2 : ℝ)) * (↑(Real.pi / 6) : ℂ)) * I) = I := by
-      rw [show ((↑(Real.pi / 2) : ℂ) + ((↑(2 : ℝ) : ℂ) - ↑(2 : ℝ)) * (↑(Real.pi / 6) : ℂ)) =
-          ↑(Real.pi / 2) from by push_cast; ring]
-      exact exp_pi_div_two_eq_I
-    rw [h_val] at h_raw
-    convert h_raw using 2 <;> push_cast <;> ring
+    grind
   have h_chord_right :
       HasDerivAt (fun t' : ℝ => chordSegment iPoint rho (t' - 2)) (rho - iPoint) (2 : ℝ) :=
     hasDerivAt_chordSegment_shift iPoint rho 2 2
@@ -124,9 +117,7 @@ private lemma not_diffAt_at_two (s : ℝ) (hs0 : s ≠ 0) :
     simp [Complex.add_im, Complex.sub_im, Complex.mul_im, Complex.ofReal_im, Complex.ofReal_re,
       Complex.I_im, Complex.I_re, Complex.neg_im, Complex.div_ofNat_im, Complex.div_ofNat_re,
       Complex.one_im]
-  have h_im_eq := congr_arg Complex.im h_pts_eq
-  rw [h_im_left, h_im_right] at h_im_eq
-  nlinarith [Real.sq_sqrt (by norm_num : (3 : ℝ) ≥ 0), Real.sqrt_nonneg 3]
+  grind
 
 /-- The derivative-norm bound at the corner `t = 2`, `s = 0` (the homotopy is smooth there). -/
 private lemma deriv_bound_at_two_zero :

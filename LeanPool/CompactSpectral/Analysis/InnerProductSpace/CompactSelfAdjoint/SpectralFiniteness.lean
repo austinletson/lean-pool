@@ -109,12 +109,7 @@ theorem finiteDimensional_eigenspace_of_isCompactOperator (T : E →L[𝕜] E)
   have hge : ‖μ‖ ≤ dist ((y ∘ φ) (N + 1)) ((y ∘ φ) N) := by
     have h := hsep hne
     simpa [Function.comp_apply, dist_eq_norm] using h
-  have : ¬ (‖μ‖ ≤ ‖μ‖ / 2) := by
-    have : (‖μ‖ / 2 : ℝ) < ‖μ‖ := by
-      have := half_lt_self hμnorm
-      simpa [div_eq_mul_inv] using this
-    exact not_le_of_gt this
-  exact this (le_trans hge (le_of_lt hlt))
+  grind
 end
 /-! ### Finiteness of large eigenvalues (self-adjoint case) -/
 /-- For a compact self-adjoint operator, there is no infinite sequence of distinct eigenvalues whose
@@ -154,8 +149,7 @@ lemma not_exists_injective_hasEigenvalue_norm_ge_of_isCompactOperator_of_isSelfA
     · subst hij
       simp [inner_self_eq_norm_sq_to_K, he_norm i]
     · have hijμ : μ i ≠ μ j := by
-        intro hEq
-        exact hij (hμinj hEq)
+        grind
       have hOrtho : (t.eigenspace (μ i)) ⟂ (t.eigenspace (μ j)) :=
         (hSymm.orthogonalFamily_eigenspaces).isOrtho hijμ
       have hji : inner 𝕜 (e j) (e i) = 0 := hOrtho (he_mem i) (e j) (he_mem j)
@@ -182,9 +176,7 @@ lemma not_exists_injective_hasEigenvalue_norm_ge_of_isCompactOperator_of_isSelfA
     have hε' : (0 : ℝ) < ε := hε
     have hTlt : ∀ᶠ n in atTop, ‖T (e n)‖ < ε :=
       Filter.Tendsto.eventually_lt_const (u := ε) (v := (0 : ℝ)) hε' hTnorm
-    refine hTlt.mono ?_
-    intro n hn
-    simpa [hnorm_e n] using hn
+    grind
   rcases (Filter.Eventually.exists hμlt) with ⟨n, hn⟩
   exact (not_lt_of_ge (hμge n)) hn
 /-- For a compact self-adjoint operator, the set of eigenvalues with norm bounded below by
@@ -205,11 +197,9 @@ theorem finite_set_hasEigenvalue_norm_ge_of_isCompactOperator_of_isSelfAdjoint
   have hμinj : Function.Injective μ := by
     intro m n hmn
     apply emb.injective
-    ext
-    exact hmn
+    grind
   have hμmem : ∀ n, μ n ∈ s := by
-    intro n
-    exact (emb n : s.Elem).property
+    grind
   have hμge : ∀ n, ε ≤ ‖μ n‖ := fun n => (hμmem n).1
   have hμeig :
       ∀ n, Module.End.HasEigenvalue (T : E →ₗ[𝕜] E) (μ n) := fun n => (hμmem n).2
@@ -231,8 +221,7 @@ theorem countable_set_hasEigenvalue_ne_zero_of_isCompactOperator_of_isSelfAdjoin
     have hpos : 0 < ‖μ‖ := (norm_pos_iff).2 hμ.1
     obtain ⟨n, hn⟩ := exists_nat_one_div_lt hpos
     refine Set.mem_iUnion.2 ⟨n, ?_⟩
-    have hn' : (1 : ℝ) / ((n : ℝ) + 1) ≤ ‖μ‖ := le_of_lt hn
-    exact ⟨hn', hμ.2⟩
+    grind
   have hcountU : (⋃ n : ℕ, u n).Countable := by
     refine Set.countable_iUnion ?_
     intro n
@@ -262,9 +251,7 @@ theorem tendsto_norm_of_injective_hasEigenvalue_of_isCompactOperator_of_isSelfAd
       Set.Infinite.natEmbedding _ hInf
     let idx : ℕ → ℕ := fun n => (emb n : (setOf fun n => ε ≤ ‖μ n‖).Elem).1
     have hidx_inj : Function.Injective idx := fun m n hmn => by
-      apply emb.injective
-      ext
-      exact hmn
+      grind
     have hidx_ge : ∀ n, ε ≤ ‖μ (idx n)‖ := fun n =>
       (emb n : (setOf fun n => ε ≤ ‖μ n‖).Elem).property
     have hμ' :
@@ -277,10 +264,8 @@ theorem tendsto_norm_of_injective_hasEigenvalue_of_isCompactOperator_of_isSelfAd
             (∀ n, Module.End.HasEigenvalue (T : E →ₗ[𝕜] E) (μ' n)) := by
       refine ⟨fun n => μ (idx n), ?_, ?_, ?_⟩
       · exact hμinj.comp hidx_inj
-      · intro n
-        simpa using hidx_ge n
-      · intro n
-        simpa using hμeig (idx n)
+      · grind
+      · grind
     exact hμ' hcontra
   rcases (Filter.eventually_atTop.1 hev) with ⟨N, hN⟩
   refine ⟨N, ?_⟩
@@ -309,10 +294,7 @@ lemma exists_ball_hasEigenvalue_eq_of_isCompactOperator_of_isSelfAdjoint
   let F : Finset 𝕜 := hsFin.toFinset
   have hμF : μ ∈ F := by
     have hμs : μ ∈ s := by
-      refine ⟨?_, hμeig⟩
-      have : (ε0 : ℝ) ≤ ‖μ‖ := by
-        simp [ε0]
-      exact this
+      grind
     exact (hsFin.mem_toFinset (a := μ)).2 hμs
   have hnorm_ge_of_ball {ν : 𝕜} (hν : dist ν μ < ε0) : ε0 ≤ ‖ν‖ := by
     -- From `‖μ‖ ≤ ‖μ - ν‖ + ‖ν‖` and `‖μ - ν‖ ≤ ε0 = ‖μ‖/2`, conclude `ε0 ≤ ‖ν‖`.
@@ -320,16 +302,11 @@ lemma exists_ball_hasEigenvalue_eq_of_isCompactOperator_of_isSelfAdjoint
       -- `μ = (μ - ν) + ν`
       simpa [sub_eq_add_neg, add_assoc] using (norm_add_le (μ - ν) ν)
     have hsub : ‖μ‖ - ‖μ - ν‖ ≤ ‖ν‖ := by
-      refine (sub_le_iff_le_add).2 ?_
-      simpa [add_comm, add_left_comm, add_assoc] using htri
+      grind
     have hnorm_sub : ‖μ - ν‖ ≤ ε0 := by
       have : ‖ν - μ‖ ≤ ε0 := le_of_lt (by simpa [ε0, dist_eq_norm] using hν)
       simpa [norm_sub_rev] using this
-    have hmid : (ε0 : ℝ) ≤ ‖μ‖ - ‖μ - ν‖ := by
-      have := sub_le_sub_left hnorm_sub ‖μ‖
-      -- `‖μ‖ - ε0 = ε0`
-      simpa [ε0, sub_half] using this
-    exact le_trans hmid hsub
+    grind
   by_cases hNonempty : (F.erase μ).Nonempty
   · -- There are other eigenvalues in the finite set `s`; use the minimum distance to them.
     let D : Finset ℝ := (F.erase μ).image fun ν => dist ν μ
@@ -360,13 +337,7 @@ lemma exists_ball_hasEigenvalue_eq_of_isCompactOperator_of_isSelfAdjoint
         exact Finset.mem_image.2 ⟨ν, hνerase, rfl⟩
       have : D.min' hDne ≤ dist ν μ := Finset.min'_le D (dist ν μ) hmem
       simpa [d] using this
-    have hlt : dist ν μ < d / 2 := lt_of_lt_of_le hdist (min_le_right _ _)
-    have : ¬ d ≤ d / 2 := by
-      have : (d / 2 : ℝ) < d := by
-        have := half_lt_self hdpos
-        simpa [div_eq_mul_inv] using this
-      exact not_le_of_gt this
-    exact this (le_trans hd_le (le_of_lt hlt))
+    grind
   · -- No other eigenvalues in the finite set `s`; use the radius `ε0 = ‖μ‖/2`.
     have hErase : F.erase μ = ∅ := Finset.not_nonempty_iff_eq_empty.1 hNonempty
     refine ⟨ε0, hε0, ?_⟩

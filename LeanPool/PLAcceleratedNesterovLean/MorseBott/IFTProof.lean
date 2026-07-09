@@ -121,8 +121,7 @@ private lemma fderiv_eq_zero_of_locally_const_comp
       ContinuousLinearMap.coe_id', id_eq]
   have h3 : F' (ContinuousLinearMap.inl ℝ A B dt) = 0 := by
     have := ContinuousLinearMap.ext_iff.mp hF'_inl_zero dt
-    simp only [ContinuousLinearMap.comp_apply, zero_apply] at this
-    exact this
+    grind
   rw [h3, zero_add] at h2
   have h4 : fderiv ℝ φ 0 dt = 0 :=
     hF_inj (by simp only [ContinuousLinearMap.comp_apply, map_zero]; exact h2)
@@ -383,8 +382,7 @@ lemma ift_gives_graph_impl₂ (f : E → ℝ) (μ : ℝ) (x₀ : E) (hμ : 0 < �
       hf.fderiv_right (by norm_cast : (2 : WithTop ℕ∞) + 1 ≤ 3)
     have h1 : ContDiffAt ℝ 2 (fun p => fderiv ℝ f (x₀ + ι p)) (0, 0) := by
       have hfdr_at : ContDiffAt ℝ 2 (fderiv ℝ f) (x₀ + ι (0 : ↥T × ↥N)) := by
-        rw [hι0, add_zero]
-        exact hfdr
+        grind
       apply ContDiffAt.comp (f := fun p : ↥T × ↥N => x₀ + ι p)
       · exact hfdr_at
       · exact (contDiff_const.add ι.contDiff).contDiffAt
@@ -477,8 +475,7 @@ lemma ift_gives_graph_impl₂ (f : E → ℝ) (μ : ℝ) (x₀ : E) (hμ : 0 < �
     have h : (↑(orthogonalProjectionOnto T (x - x₀)) : E) +
         ↑(orthogonalProjectionOnto N (x - x₀)) = x - x₀ :=
       T.starProjection_add_starProjection_orthogonal (x - x₀)
-    rw [h]
-    abel
+    grind
   have h_fwd_local :
       ∀ᶠ p in 𝓝 (0 : ↥T × ↥N), F p = F (0, 0) ↔ φ p.1 = p.2 := by
     rw [hφ_def]

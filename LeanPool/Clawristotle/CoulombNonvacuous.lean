@@ -118,9 +118,7 @@ private lemma equilibriumMaxwellian_exp_lower_bound (ρ T : ℝ) (hρ : 0 < ρ) 
     have hT2 : (0 : ℝ) < 2 * T := by linarith
     have h_div : normSq v / (2 * T) ≤ 3 * (1 + ‖v‖) ^ 2 / (2 * T) :=
       div_le_div_of_nonneg_right h_normSq hT2.le
-    have : -(3 * (1 + ‖v‖) ^ 2 / (2 * T)) = -(3 * (1 + ‖v‖) ^ 2) / (2 * T) := by ring
-    rw [this]
-    exact div_le_div_of_nonneg_right (neg_le_neg h_normSq) hT2.le
+    grind
   · exact Real.exp_nonneg _
   · exact hpf.le
 

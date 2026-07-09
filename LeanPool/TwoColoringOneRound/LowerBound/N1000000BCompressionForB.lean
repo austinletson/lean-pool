@@ -88,8 +88,7 @@ noncomputable def vertexSigmaEquiv : V ≃ Σ k : DirIdx, BaseOrbit k where
   toFun := fun u => ⟨dirIdxBase u, ⟨u, (maskAt_dirIdxBase (u := u)).symm⟩⟩
   invFun := fun s => s.2.1
   left_inv := by
-    intro u
-    rfl
+    grind
   right_inv := by
     rintro ⟨k, u⟩
     -- First, identify the index by injectivity of `maskAt`.
@@ -101,8 +100,7 @@ noncomputable def vertexSigmaEquiv : V ≃ Σ k : DirIdx, BaseOrbit k where
     have hpred :
         ∀ x : V,
           (dirMask baseVertex x = maskAt (dirIdxBase u.1)) ↔ (dirMask baseVertex x = maskAt k) := by
-      intro x
-      simp [hk]
+      grind
     -- Use `Subtype.heq_iff_coe_eq` to reduce the `HEq` goal.
     have : (u.1 : V) = u.1 := rfl
     exact (Subtype.heq_iff_coe_eq hpred).2 this
@@ -264,10 +262,7 @@ theorem congr_A_eq_compBasis (r : Block) (d : DirIdx) :
         ∑ k : DirIdx,
           (baseTypeCount k : Q) * (∑ a : DirIdx,
           bVal r p k * (N k a d : Q) * bVal r q a) := by
-    refine Fintype.sum_congr _ _ ?_
-    · intro k
-      -- `∑ _u, ∑ a, ...` is definitionaly `∑ _u, (∑ a, ...)`.
-      exact huConst (k := k)
+    grind
   rw [hUsum]
   -- Expand the remaining product and reorder to match `compBasis`.
   classical
@@ -291,11 +286,7 @@ theorem congr_ASymm_eq_compBasisSymm (r : Block) (d : DirIdx) :
     have hCB : compBasisSymm r d = compBasis r d := by
       unfold compBasisSymm
       -- Avoid unfolding `tTr` by using `if_pos` directly.
-      simpa using (if_pos hFix :
-        (if tTr[d.1]! = d.1 then
-          compBasis r d
-        else
-          compBasis r d + compBasis r (invDir d)) = compBasis r d)
+      grind
     rw [hAS, hCB]
     exact congr_A_eq_compBasis (r := r) (d := d)
   · -- Non-fixed: `ASymm d = A d + A dTr`,

@@ -151,8 +151,7 @@ private lemma orbitProdStabilizerEquivGroup_smul_fst
     simpa [Subgroup.groupEquivQuotientProdSubgroup] using hfst
   -- Convert to the orbit element via `orbitEquivQuotientStabilizer`.
   have hx_orbit : (MulAction.orbitEquivQuotientStabilizer G b).symm (QuotientGroup.mk g) = x := by
-    have hx := (MulAction.orbitEquivQuotientStabilizer G b).left_inv x
-    rwa [hmk]
+    grind
   have hx_val :
       ((MulAction.orbitEquivQuotientStabilizer G b).symm (QuotientGroup.mk g) : Emb4) = x := by
     exact congrArg Subtype.val hx_orbit
@@ -175,8 +174,7 @@ private lemma avg_corrEmb_eq_avg_over_all_embeddings (f : Coloring n) (b : Emb4)
     simpa using (MulAction.orbit_eq_univ (M := G) (a := b))
   letI : Fintype (↑(MulAction.orbit G b)) := Fintype.ofFinite _
   have hbmem : ∀ x : Emb4, x ∈ MulAction.orbit G b := by
-    intro x
-    simp [hpre]
+    grind
   let hOrbitEquiv : (↑(MulAction.orbit G b)) ≃ Emb4 :=
     Equiv.subtypeUnivEquiv hbmem
   have hsumOrbit :
@@ -243,14 +241,7 @@ private lemma avg_corrEmb_eq_avg_over_all_embeddings (f : Coloring n) (b : Emb4)
   have hcardStab_ne : (Fintype.card (MulAction.stabilizer G b) : Q) ≠ 0 := by
     exact_mod_cast (ne_of_gt (Fintype.card_pos : 0 < Fintype.card (MulAction.stabilizer G b)))
   -- Finish by cancelling the stabilizer cardinality.
-  calc
-    (∑ σ : G, corrEmb f (σ • b)) / (Fintype.card G : Q)
-        =
-        ((Fintype.card (MulAction.stabilizer G b) : Q) * (∑ x : Emb4, corrEmb f x)) /
-          ((Fintype.card Emb4 : Q) * (Fintype.card (MulAction.stabilizer G b) : Q)) := by
-          rw [hsumG, hsumOrbit, hcardG]
-    _ = (∑ x : Emb4, corrEmb f x) / (Fintype.card Emb4 : Q) := by
-          field_simp [hcardEmb4_ne, hcardStab_ne, mul_assoc, mul_left_comm, mul_comm]
+  grind
 
 private lemma avg_corrEmb_eq_avg_corrEdge (f : Coloring n) :
     (∑ x : Emb4, corrEmb f x) / (Fintype.card Emb4 : Q)
@@ -262,10 +253,7 @@ private lemma avg_corrEmb_eq_avg_corrEdge (f : Coloring n) :
     have : Fintype.card Emb4 = edgeCount n := by
       simpa [edgeCount] using (Fintype.card_congr edgeEquivEmb.symm)
     exact_mod_cast this
-  calc
-    (∑ x : Emb4, corrEmb f x) / (Fintype.card Emb4 : Q)
-        = (∑ e : Edge n, corrEdge f e) / (Fintype.card Emb4 : Q) := by rw [hsum]
-    _ = (∑ e : Edge n, corrEdge f e) / (edgeCount n : Q) := by rw [hcard]
+  grind
 
 theorem xEdge_xFromColoring_eq_edgeCorrelation (f : Coloring n) :
     xEdge (xFromColoring f) = edgeCorrelation f := by
@@ -327,11 +315,7 @@ theorem xEdge_xFromColoring_eq_edgeCorrelation (f : Coloring n) :
       edgeCorrelation f = (∑ e : Edge n, corrEdge f e) / (edgeCount n : Q) :=
     edgeCorrelation_eq_avg_corrEdge (f := f)
   -- Finish.
-  calc
-    xEdge (xFromColoring f)
-        = corrAvg f (Edge.src edgeRep) (Edge.dst edgeRep) := hxEdge'
-    _ = (∑ e : Edge n, corrEdge f e) / (edgeCount n : Q) := hAvgAll
-    _ = edgeCorrelation f := hedgeCorr.symm
+  grind
 end N1000000Objective
 
 end Distributed2Coloring.LowerBound

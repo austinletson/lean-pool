@@ -71,17 +71,12 @@ private lemma DerivesIn.empty_of_append_left_aux {u v w : List (Symbol T g.NT)} 
     rw [hw, List.append_assoc, List.append_eq_append_iff] at heq₁
     cases heq₁ with
     | inl hpv =>
-      obtain ⟨x', hp, _⟩ := hpv
-      obtain ⟨m', _, _⟩ := @ih u (x' ++ r.output ++ q) (by simp [heq₂, hp])
-      use m'
-      tauto
+      grind
     | inr huq =>
       obtain ⟨x', hu, hr⟩ := huq
       cases x' with
       | nil =>
-        obtain ⟨m', _, _⟩ := @ih u (r.output ++ q) (by simp [heq₂, hu])
-        use m'
-        tauto
+        grind
       | cons h t =>
         obtain ⟨_, _⟩ := hr
         rw [List.append_eq, ← List.append_assoc] at heq₂
@@ -131,11 +126,7 @@ lemma DerivesIn.empty_of_append_right_aux {u v w : List (Symbol T g.NT)} {m : �
         rw [ContextFreeRule.rewrites_iff]
         exact ⟨[], q, hq.symm, rfl⟩
       | cons _ t =>
-        obtain ⟨_, _⟩ := hq
-        rw [List.append_eq, List.append_assoc] at heq₂
-        repeat rw [← List.append_assoc] at heq₂
-        obtain ⟨m', hm, hv⟩ := ih heq₂
-        exact ⟨m', Nat.le_succ_of_le hm, hv⟩
+        grind
 
 lemma DerivesIn.empty_of_append_right {m : ℕ} {u v : List (Symbol T g.NT)}
     (huv : g.DerivesIn (u ++ v) [] m) :
@@ -214,11 +205,7 @@ lemma symbols_nullable_nullableWord (u : List (Symbol T g.NT)) (hu : ∀ a ∈ u
     trans
     · apply Derives.append_right
       exact hu _ List.mem_cons_self
-    · apply ih
-      intro v hv
-      apply hu
-      right
-      exact hv
+    · grind
 
 lemma DerivesIn.nullable_mem_nonterminal {u : List (Symbol T g.NT)} {s : Symbol T g.NT} {m : ℕ}
     (hu : g.DerivesIn u [] m) (hsu : s ∈ u) :
@@ -417,11 +404,7 @@ lemma input_mem_generators {r : ContextFreeRule T g.NT} (hrg : r ∈ g.rules) :
   | cons _ _ ih =>
     simp only [List.mem_toFinset, List.mem_map, List.mem_cons, List.map_cons, List.toFinset_cons,
       Finset.mem_insert] at ih ⊢
-    rintro (c1 | c2)
-    · left
-      rw [c1]
-    · right
-      exact ih c2
+    grind
 
 lemma addIfNullable_subset_generators {r : ContextFreeRule T g.NT} {p : Finset g.NT}
     (hpg : p ⊆ g.generators) (hrg : r ∈ g.rules) :
@@ -532,34 +515,15 @@ lemma addIfNullable_monotone {r : ContextFreeRule T g.NT} {p₁ p₂ : Finset g.
   by_cases hsr : decide (∀ s ∈ r.output, symbolIsNullable p₁ s) = true <;>
     simp only [hsr, reduceIte, Finset.mem_insert] at hv
   · split <;> rename_i hsr'
-    · cases hv with
-      | inl hvr =>
-        rw [hvr]
-        exact Finset.mem_insert_self r.input p₂
-      | inr hv =>
-        exact Finset.mem_insert_of_mem (hpp hv)
+    · grind
     · cases hv with
       | inl =>
         simp only [symbolIsNullable, decide_false, decide_eq_true_eq, not_forall,
           Bool.not_eq_true] at hsr' hsr
-        obtain ⟨s, hsin, hs⟩ := hsr'
-        specialize hsr s
-        cases s with
-        | terminal =>
-          rw [Bool.false_eq_true, imp_false] at hsr
-          exfalso
-          exact hsr hsin
-        | nonterminal n =>
-          rw [decide_eq_false_iff_not] at hs
-          exfalso
-          apply hs
-          apply hpp
-          simpa using hsr hsin
+        grind
       | inr hvp₁ =>
         exact hpp hvp₁
-  · split
-    · exact Finset.mem_insert_of_mem (hpp hv)
-    · exact hpp hv
+  · grind
 
 private lemma subset_addIfNullable_rec {l : List (ContextFreeRule T g.NT)} {p : Finset g.NT} :
     p ⊆ List.foldr addIfNullable p l := by
@@ -687,11 +651,7 @@ lemma output_mem_removeNullableRule {r r' : ContextFreeRule T g.NT} {p : Finset 
     (hrr : r' ∈ removeNullableRule p r) :
     r'.output ≠ [] := by
   unfold removeNullableRule at hrr
-  rw [List.mem_filterMap] at hrr
-  obtain ⟨a, -, ha⟩ := hrr
-  cases a <;> simp only [reduceCtorEq, Option.some.injEq] at ha
-  rw [← ha]
-  tauto
+  grind
 
 lemma output_mem_removeNullables [DecidableEq T] {r : ContextFreeRule T g.NT} {p : Finset g.NT}
     (hr : r ∈ removeNullables p) :
@@ -820,9 +780,7 @@ lemma nullableRelated_mem_removeNullable {p : Finset g.NT} {u v : List (Symbol T
         exact ⟨hu.empty_of_append_left, ih (NullableRelated.empty_left l hu.empty_of_append_right)⟩
       | cons_nterm_match hu'u => exact Or.inr ⟨_, ih hu'u, rfl⟩
       | cons_nterm_nullable hvu hnn =>
-        left
-        rw [hn]
-        exact ⟨hnn, ih hvu⟩
+        grind
 
 variable [DecidableEq T]
 

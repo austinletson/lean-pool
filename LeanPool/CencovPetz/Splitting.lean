@@ -81,8 +81,7 @@ noncomputable def merge : MarkovMorphism (SplitTarget (α := α) m) α := by
       nonneg := ?_
       row_sum_eq_one := ?_
       col_pos := ?_ }
-  · intro b a
-    by_cases h : b.1 = a <;> simp [h]
+  · grind
   · intro b
     -- Exactly one `a` matches `b.1`.
     simp
@@ -133,8 +132,7 @@ lemma merge_pushforward_split (p : Simplex α) :
                 else 0) ?_)
           intro x
           by_cases hx : x = a
-          · subst hx
-            simp
+          · grind
           · simp [hx]
     _ = ∑ i : Fin (m a), ((split (α := α) m hm).pushforward p).p ⟨a, i⟩ := by
           -- Only the `x = a` term survives.
@@ -149,11 +147,7 @@ lemma merge_pushforward_split (p : Simplex α) :
             classical
             simp [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
           -- Cancel `m a`.
-          calc
-            (∑ _i : Fin (m a), p.p a / (m a : ℝ))
-                = (m a : ℝ) * (p.p a / (m a : ℝ)) := this
-            _ = p.p a := by
-                  field_simp [hm_ne]
+          grind
 
 lemma merge_tangentPushforward_split (u : tangentSpace (α := α)) :
     (merge (α := α) m hm).tangentPushforward ((split (α := α) m hm).tangentPushforward u) = u := by
@@ -197,8 +191,7 @@ lemma merge_tangentPushforward_split (u : tangentSpace (α := α)) :
                 else 0) ?_)
           intro x
           by_cases hx : x = a
-          · subst hx
-            simp
+          · grind
           · simp [hx]
     _ = ∑ i : Fin (m a),
           ((split (α := α) m hm).tangentPushforward u :
@@ -212,11 +205,7 @@ lemma merge_tangentPushforward_split (u : tangentSpace (α := α)) :
                 (m a : ℝ) * ((u : α → ℝ) a / (m a : ℝ)) := by
             classical
             simp [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
-          calc
-            (∑ _i : Fin (m a), (u : α → ℝ) a / (m a : ℝ))
-                = (m a : ℝ) * ((u : α → ℝ) a / (m a : ℝ)) := this
-            _ = (u : α → ℝ) a := by
-                  field_simp [hm_ne]
+          grind
 
 end MarkovMorphism
 end LeanPool.CencovPetz

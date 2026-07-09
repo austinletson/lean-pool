@@ -271,14 +271,7 @@ theorem transport (s : ℝ) (hs0 : 0 ≤ s) (m n : ℤ) (Mm Mn : ℝ)
   have hd2 := delta_sub_le astar (aprt s) n
   rw [norm_aprt s hs0, hm] at hd1
   rw [norm_aprt' s hs0, hn] at hd2
-  have hexp : 47 * ((|(m : ℝ)| + |(n : ℝ)|) * s)
-      = 47 * (|(m : ℝ)| * s) + 47 * (|(n : ℝ)| * s) := by ring
-  rw [hexp] at hgap
-  obtain ⟨U, hU⟩ : ∃ U, |(m : ℝ)| * s = U := ⟨_, rfl⟩
-  obtain ⟨V, hV⟩ : ∃ V, |(n : ℝ)| * s = V := ⟨_, rfl⟩
-  rw [hU] at hd1 hgap
-  rw [hV] at hd2 hgap
-  linarith [hd1, hd2, hgap]
+  grind
 
 /-- Bundles `transport` for an integer record gap: once `s` is small (`1222·s < 1`), an integer
 defect drop `Mm + 1 ≤ Mn` transports from `α*` to `aprt s`. -/

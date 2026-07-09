@@ -25,9 +25,7 @@ lemma mul_diagonal_mulVec
   (A * Matrix.diagonal d) *ᵥ x = ∑ i, d i • x i • A.col i := by
   ext j
   simp only [mulVec, dotProduct, mul_diagonal, sum_apply, Pi.smul_apply, col_apply, smul_eq_mul]
-  apply sum_congr rfl
-  intro i hi
-  ring_nf
+  grind
 
 omit [Fintype m] in
 lemma mulVec_apply [Fintype n]
@@ -48,9 +46,7 @@ lemma vecMul_diagonal_dotProduct
   x ᵥ* Matrix.diagonal d ⬝ᵥ y = ∑ i, d i * x i * y i := by
   simp only [dotProduct, vecMul, diagonal, of_apply, mul_ite, mul_zero, sum_ite_eq', mem_univ,
     ↓reduceIte]
-  apply sum_congr rfl
-  ring_nf
-  simp
+  grind
 
 end square
 

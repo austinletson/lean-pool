@@ -67,8 +67,7 @@ theorem exists_majorant_p_eq_2 (p : ℝ) (hp : p = 2) :
     have hsq : 2 * |x| * |y| ≤ |x| ^ 2 + |y| ^ 2 := by
       nlinarith [sq_nonneg (|x| - |y|)]
     have hxy_le : |x * y| ≤ |x| ^ 2 + |y| ^ 2 := by
-      rw [abs_mul]
-      nlinarith [abs_nonneg x, abs_nonneg y]
+      grind
     simpa [Real.rpow_two, sq_abs] using hxy_le
   · intro x y
     have hle : |y| ≤ |x| + |y| := by
@@ -86,8 +85,7 @@ theorem exists_majorant_p_eq_2 (p : ℝ) (hp : p = 2) :
       _ = Real.rpow |x| (2 - 1) + Real.rpow |y| (2 - 1) := by
         norm_num [Real.rpow_one]
       _ = 1 * (Real.rpow |x| (2 - 1) + Real.rpow |y| (2 - 1)) := by ring
-  · intro x y h k hk
-    nlinarith
+  · grind
   · intro x y
     calc
       v 2 x y = x * y := by
@@ -95,9 +93,7 @@ theorem exists_majorant_p_eq_2 (p : ℝ) (hp : p = 2) :
         norm_num [pStar, q]
         ring
       _ ≤ x * y := le_rfl
-  · intro x y hxy
-    exact hxy
-  · intro x y
-    rfl
+  · grind
+  · grind
 
 end Majorants

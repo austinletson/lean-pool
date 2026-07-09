@@ -104,9 +104,7 @@ private lemma pointwise_bound {h : ℝ} (hh : 0 < h) {f f' : ℝ → ℂ}
   have h_rewrite : f x - (↑(1 / h) : ℂ) * I = (↑(1 / h) : ℂ) * ∫ y in (0 : ℝ)..h, (f x - f y) := by
     rw [h_int_diff, Complex.real_smul, mul_sub]
     push_cast
-    rw [one_div]
-    congr 1
-    rw [← mul_assoc, inv_mul_cancel₀ hh_ne_C, one_mul]
+    grind
   rw [h_rewrite]
   -- ‖(↑(1/h)) * ∫(f x - f y)‖ = ‖↑(1/h)‖ * ‖∫(f x - f y)‖ = (1/h) * ‖∫(f x - f y)‖
   rw [norm_mul]
@@ -165,8 +163,7 @@ private lemma cauchy_schwarz_interval {a b : ℝ} (hab : a ≤ b) {g : ℝ → �
         intervalIntegral.integral_const_mul, intervalIntegral.integral_const, smul_eq_mul]
     -- Goal: (-2 * c * ∫ g) + (b - a) * c ^ 2 = -c ^ 2 * (b - a)
     -- We know ∫ g = S = c * (b - a)
-    have h_int_eq : ∫ x in a..b, g x = c * (b - a) := hcba.symm
-    rw [h_int_eq]; ring
+    grind
   rw [hexpand, hint_linear] at hvar
   -- Now hvar: 0 ≤ ∫g² + (-c²(b-a)) = ∫g² - c²(b-a)
   have h_ineq : c ^ 2 * (b - a) ≤ ∫ t in a..b, g t ^ 2 := by linarith
@@ -208,8 +205,7 @@ theorem poincare_interval {h : ℝ} (hh : 0 < h) {f f' : ℝ → ℂ}
   -- Step 3: CS: M² ≤ h * ∫₀ʰ ‖f' t‖² dt
   have hCS : M ^ 2 ≤ h * ∫ t in (0 : ℝ)..h, ‖f' t‖ ^ 2 := by
     have := cauchy_schwarz_interval hh.le hf'_cont.norm
-    simp only [sub_zero] at this
-    exact this
+    grind
   -- Step 4: Combine
   calc ∫ x in (0 : ℝ)..h, ‖f x - f_bar‖ ^ 2
       ≤ h * M ^ 2 := hint_bound

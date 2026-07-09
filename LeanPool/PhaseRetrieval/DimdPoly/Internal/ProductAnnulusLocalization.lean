@@ -64,10 +64,7 @@ private theorem norm_ne_zero_of_ne_zero_pkappa_wip
     have hsum_pos : 0 < Finset.sum F.support (fun a : Idx d => ‖F a‖ ^ 2) :=
       lt_of_lt_of_le hterm_pos hle
     change Real.sqrt (Finset.sum F.support (fun a : Idx d => ‖F a‖ ^ 2)) = 0 at hnorm
-    have hsqrt_pos :
-        0 < Real.sqrt (Finset.sum F.support (fun a : Idx d => ‖F a‖ ^ 2)) :=
-      Real.sqrt_pos.mpr hsum_pos
-    linarith
+    grind
   · exact Finsupp.notMem_support_iff.mp hmem
 
 private lemma continuous_Phi_wip
@@ -126,9 +123,7 @@ private lemma sum_indicator_productAnnulus_le_wip
     rw [hsum]
     simp [Set.indicator, hj0z]
   · have hzero : ∀ j ∈ s, z ∉ productAnnulus j := by
-      intro j hjs
-      by_contra hjz
-      exact hs ⟨j, hjs, hjz⟩
+      grind
     rw [Finset.sum_eq_zero]
     · linarith
     · intro j hj
@@ -151,9 +146,7 @@ private theorem integrable_evalPkappa_sq_wip
         (∫ z : Cd d, ‖evalPkappa kappa F z‖ ^ 2 ∂ gammaD d) = ‖F‖ ^ 2 :=
       evalPkappa_total_mass hd kappa F
     have hnorm_ne : ‖F‖ ≠ 0 := norm_ne_zero_of_ne_zero_pkappa_wip hd hF
-    have hpos : 0 < ‖F‖ ^ 2 :=
-      pow_pos (lt_of_le_of_ne (norm_nonneg_pkappa_wip hd F) hnorm_ne.symm) 2
-    linarith
+    grind
 
 private theorem finite_sum_annulusMass_le_wip
     {d : Nat} (hd : 0 < d) (kappa : MultiIndex d)
@@ -211,11 +204,7 @@ private theorem phi1D_eq_oneDimPhi_wip
         _ = (Nat.factorial n : ℂ) := by exact_mod_cast Nat.choose_mul_factorial_mul_factorial hjn
         _ = ((Nat.factorial n : ℂ) / (Nat.factorial (n - j) : ℂ)) *
               (Nat.factorial (n - j) : ℂ) := by field_simp [hfac_ne]
-    simpa [mul_assoc, mul_left_comm, mul_comm] using
-      congrArg
-        (fun x : ℂ =>
-          ((-1 : ℂ) ^ j) * x * (Nat.choose k j : ℂ) * z ^ (n - j) * (star z) ^ (k - j))
-        hfactor
+    grind
 
 private theorem Phi_eq_PhiKappaAlpha_wip
     {d : Nat} (kappa alpha : MultiIndex d) (z : Cd d) :
@@ -546,12 +535,7 @@ private theorem remainderPart_eq_self_of_support_far_wip
     Hermite1DimdLEAN.remainderPart j M ⟨F⟩ = ⟨F⟩ := by
   unfold Hermite1DimdLEAN.remainderPart
   congr
-  ext alpha
-  by_cases hα : alpha ∈ F.support
-  · have hdist := hfar alpha hα
-    simp [Hermite1DimdLEAN.farCoeffSet, Hermite1DimdLEAN.FiniteHermiteSum.support, hdist]
-  · simp [Hermite1DimdLEAN.farCoeffSet, Hermite1DimdLEAN.FiniteHermiteSum.support,
-      Finsupp.notMem_support_iff.mp hα]
+  grind
 
 theorem annulusMassPartition
     {d : Nat} (hd : 0 < d) (kappa : MultiIndex d)

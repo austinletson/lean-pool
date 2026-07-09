@@ -73,8 +73,7 @@ private lemma AONFor_wireValue_gate {N : Nat} [NeZero N] (f : BitString N → Bo
       (AONFor.mkGate f i).eval ((AONFor f).wireValue x) := by
   have hge : ¬ ((Fin.natAdd N i).val < N) := by simp [Fin.natAdd]
   rw [Circuit.wireValue_ge _ _ _ hge]
-  congr 1; simp only [AONFor]; congr 1
-  exact Fin.ext (by simp [Fin.natAdd])
+  congr 1; simp only [AONFor]; grind
 
 @[simp] private lemma AONFor_outputs {N : Nat} [NeZero N] (f : BitString N → Bool) (j : Fin 1) :
     (AONFor f).outputs j =
@@ -149,8 +148,7 @@ private lemma mkGate_eval_true_iff {N : Nat} (f : BitString N → Bool) (i : Fin
   rw [mkGate_true f i hfi]
   simp only [Gate.eval, Basis.unboundedAON, AONOp.eval]
   rw [foldl_band_eq_true]
-  exact ⟨fun h j => (xor_not_eq_true_iff _ _).mp (h j),
-         fun h j => (xor_not_eq_true_iff _ _).mpr (h j)⟩
+  grind
 
 private lemma exists_testBit_encode (N : Nat) (x : BitString N) :
     ∃ m : Fin (2 ^ N), ∀ j : Fin N, m.val.testBit j.val = x j := by
@@ -167,16 +165,9 @@ private lemma exists_testBit_encode (N : Nat) (x : BitString N) :
       (by
         simp only [Fin.val_last]
         rw [Nat.testBit_lt_two_pow hm'_bound]
-        simp only [Bool.false_or]
-        split <;> rename_i h
-        · simp [Nat.testBit_two_pow_self, h]
-        · cases hx : x (Fin.last n) <;> simp_all [Nat.zero_testBit])
+        grind)
       (fun k => by
-        simp only [Fin.val_castSucc]
-        rw [hm' k]
-        split
-        · rw [Nat.testBit_two_pow]; simp [Nat.ne_of_gt k.isLt]
-        · simp [Nat.zero_testBit])
+        grind)
       j
 
 /-- The single-output DNF circuit correctly computes `f`. -/
@@ -213,9 +204,7 @@ theorem AONFor_is_Correct {N : Nat} [NeZero N] (f : BitString N → Bool) :
       rw [mkGate_eval_true_iff f m _ hfm]
       intro j; rw [AONFor_wireValue_input f x j]; exact (hm j).symm
   -- Close by Bool case analysis using the ↔
-  cases hfx : f x <;>
-    cases hfold : Fin.foldl (2 ^ N) (fun acc i =>
-      acc || (AONFor.mkGate f i).eval ((AONFor f).wireValue x)) false <;>
+  grind <;>
     simp_all
 
 /-! ## Multi-output DNF circuit: AONForM -/
@@ -306,8 +295,7 @@ private lemma AONForM_mkGate_eval_true_iff {N M : Nat}
     unfold AONForM_mkGate; simp [hfi]
   rw [hmk]; simp only [Gate.eval, Basis.unboundedAON, AONOp.eval]
   rw [foldl_band_eq_true]
-  exact ⟨fun h k => (xor_not_eq_true_iff _ _).mp (h k),
-         fun h k => (xor_not_eq_true_iff _ _).mpr (h k)⟩
+  grind
 
 -- Helper: relate index `j * 2^N + k` to `AONForM_i` and `AONForM_j`
 private lemma AONForM_i_of_add {N M : Nat} (j : Fin M) (k : Fin (2 ^ N))
@@ -396,9 +384,7 @@ theorem AONForM_is_Correct {N M : Nat} [NeZero N] [NeZero M]
       intro p; rw [AONForM_wireValue_input f x p]
       rw [AONForM_idx_i]; exact (hm p).symm
   -- Close by Bool case analysis
-  cases hfx : f x j <;>
-    cases hfold : Fin.foldl (2 ^ N) (fun acc k =>
-      acc || (AONForM_mkGate f (AONForM_idx j k)).eval ((AONForM f).wireValue x)) false <;>
+  grind <;>
     simp_all
 
 instance : CompleteBasis Basis.unboundedAON where

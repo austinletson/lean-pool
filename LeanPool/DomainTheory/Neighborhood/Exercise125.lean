@@ -112,9 +112,7 @@ theorem exists_Ici_of_mem {X : Set Δ} (hX : (finalSegmentSystem Δ).mem X) :
     ∃ a, X = Set.Ici a := by
   obtain ⟨a, haX, hmin⟩ := (IsWellFounded.wf (r := (· < · : Δ → Δ → Prop))).has_min X hX.1
   refine ⟨a, Set.ext fun b => ⟨fun hb => ?_, fun hb => ?_⟩⟩
-  · rcases lt_or_ge b a with hlt | hge
-    · exact absurd hlt (hmin b hb)
-    · exact hge
+  · grind
   · exact hX.2 (Set.mem_Ici.mp hb) haX
 
 /-! ### The classification of `|𝒟|` as the non-empty lower sets (initial
@@ -154,12 +152,9 @@ def ofLowerSet (S : Set Δ) (hSne : S.Nonempty) :
         ((Set.Ici_subset_Ici.mpr (le_max_left a b)).trans haX)
         ((Set.Ici_subset_Ici.mpr (le_max_right a b)).trans hbY)
     refine ⟨(finalSegmentSystem Δ).inter_mem hX hY (Ici_mem (max a b)) hsub, max a b, ?_, hsub⟩
-    rcases max_choice a b with h | h
-    · rw [h]; exact haS
-    · rw [h]; exact hbS
+    grind
   up_mem := by
-    rintro X Y ⟨_, a, haS, haX⟩ hY hXY
-    exact ⟨hY, a, haS, haX.trans hXY⟩
+    grind
 
 omit [WellFoundedLT Δ] in
 theorem lowerSetOf_ofLowerSet (S : Set Δ) (hSne : S.Nonempty) (hS : IsLowerSet S) :

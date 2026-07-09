@@ -40,14 +40,7 @@ variable {d : ℕ}
 `|a − b| ≤ r`. (If both `≥ 0` or both `≤ 0`, the difference cannot exceed the larger magnitude.) -/
 theorem abs_sub_le_of_same_sign {a b r : ℝ} (hsign : (0 ≤ a) ↔ (0 ≤ b))
     (ha : |a| ≤ r) (hb : |b| ≤ r) : |a - b| ≤ r := by
-  rw [abs_le] at ha hb ⊢
-  rcases lt_or_ge a 0 with h | h
-  · have hb0 : b < 0 := by
-      by_contra hb'
-      exact absurd (hsign.mpr (not_lt.mp hb')) (not_le.mpr h)
-    exact ⟨by linarith, by linarith⟩
-  · have hb0 : 0 ≤ b := hsign.mp h
-    exact ⟨by linarith [ha.1, ha.2, hb.1, hb.2], by linarith [ha.1, ha.2, hb.1, hb.2]⟩
+  grind
 
 /-- **Same-orthant sup-norm bound.** If `u, v : Fin d → ℝ` lie in the same orthant
 (`0 ≤ u k ↔ 0 ≤ v k` for every `k`) and each has sup-norm `≤ r`, then `‖u − v‖ ≤ r`. -/
@@ -91,8 +84,7 @@ theorem supNorm_growth_doubling (α : Fin d → ℝ) (q : ℕ → ℤ) (p : ℕ 
     have hsign : ∀ i, (0 ≤ ε j1 i) ↔ (0 ≤ ε j2 i) := by
       intro i
       have hi := congrFun hse i
-      simp only [hsgn, decide_eq_decide] at hi
-      exact hi
+      grind
     have hsub : ‖ε j2 - ε j1‖ ≤ delta α (q N) :=
       norm_sub_le_of_sameOrthant (fun i => (hsign i).symm) hnorm2 hnorm1
     have hdd : delta α (q (N + j2) - q (N + j1)) ≤ ‖ε j2 - ε j1‖ := by

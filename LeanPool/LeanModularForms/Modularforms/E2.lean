@@ -105,9 +105,7 @@ lemma E₂_S_transform (z : ℍ) :
   have h := E₂_transform z
   rw [SL_slash_apply, ModularGroup.denom_S, zpow_neg, zpow_two] at h
   have hz2 : (z : ℂ) * (z : ℂ) ≠ 0 := mul_ne_zero (ne_zero z) (ne_zero z)
-  rw [sq, mul_comm]
-  -- `only` is required here; without it simp rewrites the congrArg term structure
-  simpa only [mul_assoc, inv_mul_cancel₀ hz2, mul_one] using congrArg (· * ((z : ℂ) * (z : ℂ))) h
+  grind
 
 private lemma cexp_succ_eq_pow (z : ℍ) (n : ℕ) :
     cexp (2 * π * Complex.I * (n + 1) * z) = cexp (2 * π * Complex.I * z) ^ (n + 1) := by

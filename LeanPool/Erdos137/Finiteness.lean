@@ -222,8 +222,7 @@ theorem erdos137_eventually_not_powerful (k : ℕ) (hk : 3 ≤ k) (hRadLB : RadL
     have h1 : (rad (F k n) : ℝ) ^ 2 ≤ (F k n : ℝ) := by exact_mod_cast hradsq
     have h2 : (F k n : ℝ) ≤ ((k : ℝ) * (n : ℝ)) ^ k := by
       have := (Nat.cast_le (α := ℝ)).mpr hFle
-      rw [Nat.cast_pow, Nat.cast_mul] at this
-      exact this
+      grind
     exact le_trans h1 h2
   have hlowbase : C * (n : ℝ) ^ ((k : ℝ) - 1 - ε) ≤ (rad (F k n) : ℝ) := hrad
   have hlowpos : (0 : ℝ) ≤ C * (n : ℝ) ^ ((k : ℝ) - 1 - ε) := by
@@ -238,8 +237,7 @@ theorem erdos137_eventually_not_powerful (k : ℕ) (hk : 3 ≤ k) (hRadLB : RadL
     rw [mul_pow]
     congr 1
     rw [← Real.rpow_natCast ((n : ℝ) ^ ((k : ℝ) - 1 - ε)) 2, ← Real.rpow_mul (le_of_lt hnpos)]
-    push_cast
-    ring_nf
+    grind
   have hRHS : ((k : ℝ) * (n : ℝ)) ^ k = (k : ℝ) ^ k * (n : ℝ) ^ (k : ℝ) := by
     rw [mul_pow]
     congr 1
@@ -273,12 +271,7 @@ theorem erdos137_finite (k : ℕ) (hk : 3 ≤ k) (hRadLB : RadLB k) :
     {n : ℕ | 1 ≤ n ∧ Powerful (F k n)}.Finite := by
   obtain ⟨N₀, hN₀⟩ := erdos137_eventually_not_powerful k hk hRadLB
   apply Set.Finite.subset (Set.finite_Iio N₀)
-  intro n hn
-  simp only [Set.mem_setOf_eq] at hn
-  simp only [Set.mem_Iio]
-  by_contra hcontra
-  push Not at hcontra
-  exact hN₀ n hcontra hn.2
+  grind
 
 end  -- noncomputable section
 

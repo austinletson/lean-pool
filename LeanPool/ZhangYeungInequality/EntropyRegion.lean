@@ -163,9 +163,7 @@ theorem entropyFnN_restrictFirstFour
     have hValueEq : g₁ ⟨e i, by simpa using (Finset.mem_map' e).2 hi⟩ =
         g₂ ⟨e i, by simpa using (Finset.mem_map' e).2 hi⟩ :=
       congrFun hMapEq ⟨i, hi⟩
-    have hj : j = ⟨e i, by simpa using (Finset.mem_map' e).2 hi⟩ := Subtype.ext hij.symm
-    cases hj
-    simpa using hValueEq
+    grind
   have h_meas : Measurable (fun ω : Ω => fun j : α.map e => X j.1 ω) :=
     measurable_pi_lambda _ (fun j => hX j.1)
   change H[(fun ω : Ω => fun j : α.map e => X j.1 ω); μ] =

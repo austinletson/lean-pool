@@ -155,8 +155,7 @@ lemma approxProb_error_bound
     rw [abs_sub_comm, abs_of_nonneg hT_bounds.1]; exact hT_bounds.2
   have hdelta_abs : |(approxCount p N a : ℝ) - M * p a| ≤ 1 := by
     have hdelta := approxCount_mul_bounds p N a
-    simp only [M] at hdelta ⊢
-    rw [abs_of_nonneg hdelta.1]; exact hdelta.2
+    grind
   have hp_abs_le_one : |p a| ≤ 1 := by
     rw [abs_of_nonneg (prob_nonneg p a)]; exact prob_le_one p a
   have hnum :
@@ -166,19 +165,12 @@ lemma approxProb_error_bound
       calc |p a| * |M - T| ≤ 1 * (Fintype.card α : ℝ) :=
             mul_le_mul hp_abs_le_one habs_MT (abs_nonneg _) (by norm_num)
         _ = (Fintype.card α : ℝ) := one_mul _
-    have hdecomp : (approxCount p N a : ℝ) - p a * T
-        = ((approxCount p N a : ℝ) - M * p a) + p a * (M - T) := by ring
-    calc
-      |(approxCount p N a : ℝ) - p a * T|
-          = |((approxCount p N a : ℝ) - M * p a) + p a * (M - T)| := by rw [hdecomp]
-      _ ≤ |(approxCount p N a : ℝ) - M * p a| + |p a * (M - T)| := abs_add_le _ _
-      _ ≤ (Fintype.card α : ℝ) + 1 := by linarith
+    grind
   have hsub :
       approxProb p N a - p a
         = ((approxCount p N a : ℝ) - p a * T) / T := by
     rw [approxProb_apply]
-    change (approxCount p N a : ℝ) / T - p a = ((approxCount p N a : ℝ) - p a * T) / T
-    field_simp [hT_ne]
+    grind
   calc
     |approxProb p N a - p a|
         = |((approxCount p N a : ℝ) - p a * T) / T| := by rw [hsub]

@@ -195,8 +195,7 @@ lemma twist_le_twist_iff [Fintype ι] (b : Basis ι K (ι → K)) {ϖ : R}
     rw [Submodule.mem_span_range_iff_exists_fun] at this
     obtain ⟨c, hc⟩ := this
     have heq : ∑ j : ι, c j • (b.twist hϖ g) j - ϖ.val ^ f i • b i = 0 := by
-      rw [hc]
-      simp
+      grind
     simp only [twist_apply] at heq
     have : ϖ.val ^ f i • b i = ∑ j : ι, (if i = j then ϖ.val ^ f i else 0) • b j := by
       simp
@@ -215,8 +214,7 @@ lemma twist_le_twist_iff [Fintype ι] (b : Basis ι K (ι → K)) {ϖ : R}
     rw [← zpow_add₀ (by simpa using hϖ.ne_zero)] at this
     have : f i - g i ≥ 0 := by
       rw [← irreducible_zpow_mem_subring_iff (R := R) (hϖ := hϖ)]
-      rw [sub_eq_add_neg, ← this]
-      exact (c i).property
+      grind
     simpa using this
   · intro hgf
     simp only [toSubmodule]
@@ -249,8 +247,7 @@ lemma twist_eq_twist_iff [Fintype ι] (b : Basis ι K (ι → K)) {ϖ : R}
     apply le_antisymm
     · rw [← b.twist_le_twist_iff hϖ, h]
     · rw [← b.twist_le_twist_iff hϖ, h]
-  · rintro rfl
-    rfl
+  · grind
 
 lemma twist_lt_twist_iff [Fintype ι] (b : Basis ι K (ι → K)) {ϖ : R}
     (hϖ : Irreducible ϖ) (f g : ι → ℤ) :
@@ -264,9 +261,7 @@ lemma twist_lt_twist_iff [Fintype ι] (b : Basis ι K (ι → K)) {ϖ : R}
     by_contra hnotlt
     simp only [not_and, not_exists, not_lt] at hnotlt
     have hfg : f ≤ g := hnotlt hgf
-    have : f = g := le_antisymm hfg hgf
-    rw [this] at h
-    simp at h
+    grind
   · intro h
     rw [← b.twist_le_twist_iff hϖ] at h
     apply lt_of_le_of_ne h.left
@@ -291,8 +286,7 @@ lemma twist₂_eq_twist₂_iff (b : Basis (Fin 2) K (Fin 2 → K)) {ϖ : R} (hϖ
       n₂ = n₁ ∧ m₂ = m₁ := by
   rw [twist₂, twist₂, twist_eq_twist_iff]
   refine ⟨fun h ↦ ⟨by simpa using congrFun h 0, by simpa using congrFun h 1⟩, fun h ↦ ?_⟩
-  ext i
-  fin_cases i <;> [exact h.left; exact h.right]
+  grind
 
 lemma ntwist₂_le_ntwist₂_iff (b : Basis (Fin 2) K (Fin 2 → K)) {ϖ : R} (hϖ : Irreducible ϖ)
     (n₁ m₁ n₂ m₂ : ℕ) :
@@ -746,8 +740,7 @@ lemma map_subtype_smul_standard_eq_standard (g : GL (Fin 2) R) :
     simp only [Submodule.mem_comap, LinearMap.coe_restrictScalars, Matrix.mulVecLin_apply,
       LinearMap.mem_range]
     use g.val.mulVec x
-    ext i
-    simp [Algebra.algebraMap_ofSubsemiring_apply, this]
+    grind
   · rintro - ⟨x, rfl⟩
     simp only [Submodule.mem_map, LinearMap.mem_range, LinearMap.coe_restrictScalars,
       Matrix.mulVecLin_apply, exists_exists_eq_and]

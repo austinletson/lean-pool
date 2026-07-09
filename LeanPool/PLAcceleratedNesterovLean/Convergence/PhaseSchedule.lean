@@ -111,8 +111,7 @@ theorem muOfPhase_eq (μ : ℝ) (k : ℕ) :
 theorem one_sub_muOfPhase_div {μ : ℝ} (hμ : 0 < μ) (k : ℕ) :
     1 - muOfPhase μ k / μ = thetaOfPhase k := by
   simp only [muOfPhase, thetaOfPhase]
-  field_simp
-  ring
+  grind
 
 /-- a_k = √(μ_k·η) ≤ √(μ·η) for all k. -/
 theorem sqrt_muOfPhase_eta_le {μ η : ℝ} (hμ : 0 < μ) (hη : 0 < η) (k : ℕ) :
@@ -148,10 +147,7 @@ theorem partial_geometric_sum_le {r : ℝ} (hr0 : 0 ≤ r) (hr1 : r < 1) (K : �
   have hgeom : (∑ k ∈ Finset.range K, r ^ k) * (r - 1) = r ^ K - 1 :=
     geom_sum_mul r K
   have hsum_eq : ∑ k ∈ Finset.range K, r ^ k = (1 - r ^ K) / (1 - r) := by
-    have : (∑ k ∈ Finset.range K, r ^ k) = (1 - r ^ K) / (1 - r) := by
-      rw [eq_div_iff h1mr.ne']
-      linarith
-    exact this
+    grind
   rw [hsum_eq]
   rw [show r * ((1 - r ^ K) / (1 - r)) = r * (1 - r ^ K) / (1 - r) from by ring]
   apply div_le_div_of_nonneg_right _ (le_of_lt h1mr)

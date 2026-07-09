@@ -243,31 +243,12 @@ theorem featCompC_layer (W : Fin (N + 1) → Matrix (Fin d) (Fin d) ℂ) (lam : 
         obtain ⟨hlt, hge⟩ := ih i ω' hω' a
         simp only [Pi.add_apply, Pi.smul_apply, Pi.single_apply, smul_eq_mul, mul_ite,
           mul_one, mul_zero]
-        refine ⟨fun hlt1 => ?_, fun hge2 => ?_⟩
-        · by_cases hak : a = (⟨j, hj⟩ : Fin N)
-          · have haj : (a : ℕ) = j := by rw [hak]
-            rw [if_pos hak, hge (by omega)]
-            exact ⟨i, by ring⟩
-          · rw [if_neg hak, add_zero]
-            refine hlt ?_
-            have hne : (a : ℕ) ≠ j := fun he => hak (Fin.ext he)
-            omega
-        · have hak : a ≠ (⟨j, hj⟩ : Fin N) := by
-            intro he
-            have hcontra : (a : ℕ) = j := by
-              rw [he]
-            omega
-          rw [if_neg hak, add_zero]
-          exact hge (by omega)
+        grind
       · have hfc : featCompC W lam ψ (j + 1) m = featCompC W lam ψ j m := by
           simp only [featCompC, dif_neg hj]
         rw [hfc] at hω
         obtain ⟨hlt, hge⟩ := ih m ω hω a
-        have hN : N ≤ j := Nat.not_lt.mp hj
-        refine ⟨fun _ => hlt (Nat.lt_of_lt_of_le a.isLt hN), fun hge2 => ?_⟩
-        exfalso
-        have ha := a.isLt
-        omega
+        grind
 
 /-- At the full circuit (`j = N`), every feature-component frequency coordinate is a
 negated eigenvalue. -/

@@ -133,9 +133,7 @@ lemma segLookup_fst_lt (n : Nat) (f : Nat → Nat) (idx : Nat) (h : idx < prefix
   | zero => simp [prefixSum] at h
   | succ n ih =>
     simp only [segLookup]
-    split
-    · exact Nat.lt_succ_of_lt (ih _)
-    · exact Nat.lt_succ_of_le (Nat.le_refl n)
+    grind
 
 lemma segLookup_snd_lt (n : Nat) (f : Nat → Nat) (idx : Nat) (h : idx < prefixSum f n) :
     (segLookup n f idx h).2 < f (segLookup n f idx h).1 := by
@@ -154,9 +152,7 @@ lemma segLookup_sum (n : Nat) (f : Nat → Nat) (idx : Nat) (h : idx < prefixSum
   | zero => simp [prefixSum] at h
   | succ n ih =>
     simp only [segLookup]
-    split
-    · exact ih _
-    · dsimp only; omega
+    grind
 
 /-! ## Wire layout definitions -/
 
@@ -318,12 +314,8 @@ private lemma mkChainInputs_lt {W : Nat} (hW : 0 < W) (k : Nat)
   split_ifs with hk0 hk1 hj0
   · dsimp only; omega
   · exact Nat.lt_of_lt_of_le (hri_lt _) (Nat.le_add_right _ _)
-  · simp only [fin2]; split_ifs
-    · exact Nat.lt_of_lt_of_le (hri_lt _) (by omega)
-    · exact Nat.lt_of_lt_of_le (hri_lt _) (by omega)
-  · simp only [fin2]; split_ifs
-    · dsimp only; omega
-    · exact Nat.lt_of_lt_of_le (hri_lt _) (Nat.le_add_right _ _)
+  · simp only [fin2]; grind
+  · simp only [fin2]; grind
 
 /-! ## Compiled circuit -/
 
@@ -464,15 +456,12 @@ lemma segLookup_of_prefixSum (n : Nat) (f : Nat → Nat) (i j : Nat)
   | succ n ihn =>
     simp only [segLookup]
     by_cases hlt : prefixSum f i + j < prefixSum f n
-    · have hin : i < n := by
-        by_contra h'; have := prefixSum_mono f (show n ≤ i by omega); omega
-      simp [hlt, ihn hin hlt]
+    · grind
     · have : i = n := by
         by_contra h'
         have := prefixSum_mono f (by omega : i + 1 ≤ n)
         rw [prefixSum_succ] at this; omega
-      subst this
-      simp
+      grind
 
 /-- Partial fold: the result of folding `op.binOp` over the first `j` values. -/
 private def partialFold (op : AONOp) (v : Fin k → Bool) (j : Nat) : Bool :=
@@ -729,10 +718,7 @@ theorem wireValue_remapWire (c : Circuit Basis.unboundedAON N M G) (input : BitS
               (c.gates ⟨n - N, hi⟩).fanIn; unfold G'; omega⟩
             from Fin.ext (by rw [remapWire_gate c hi])]
         exact lastChainValue_eq c input (n - N) hi (fun w' hw' => by
-          have hwlt : w'.val < n := by
-            have : w'.val < N + (n - N) := hw'
-            omega
-          exact ih w'.val hwlt w'.isLt)
+          grind)
   exact hmain w.val w.isLt
 
 /-- The eval of the compiled gate at output offset position equals the chain gate's eval. -/

@@ -112,10 +112,7 @@ omit [Inhabited T] [Fintype T] IST in
 lemma goods_slacks_disjoint (σ : Finset T) (C : Finset I) :
     Disjoint (σ.image Sum.inl) ((Finset.univ \ C).image Sum.inr) := by
   rw [Finset.disjoint_left]
-  intro x hxGoods hxSlack
-  rcases Finset.mem_image.mp hxGoods with ⟨t, _, rfl⟩
-  rcases Finset.mem_image.mp hxSlack with ⟨i, _, h⟩
-  cases h
+  grind
 
 omit [Inhabited T] [Fintype T] IST in
 lemma card_toPrimitiveSet (σ : Finset T) (C : Finset I) :
@@ -123,14 +120,12 @@ lemma card_toPrimitiveSet (σ : Finset T) (C : Finset I) :
   rw [toPrimitiveSet, Finset.card_union_of_disjoint (goods_slacks_disjoint σ C)]
   have hGoods : (σ.image (Sum.inl : T → ExtendedGoods T I)).card = σ.card := by
     apply Finset.card_image_of_injOn
-    intro a _ b _ h
-    exact Sum.inl.inj h
+    intro a grind
   have hSlacks :
       (((Finset.univ \ C).image (Sum.inr : I → ExtendedGoods T I)).card =
         (Finset.univ \ C).card) := by
     apply Finset.card_image_of_injOn
-    intro a _ b _ h
-    exact Sum.inr.inj h
+    intro a grind
   rw [hGoods, hSlacks]
 
 omit [Inhabited T] IST in
@@ -170,12 +165,10 @@ lemma exists_insert_eq_of_subset_card_eq_succ {α : Type*} [DecidableEq α]
     {s t : Finset α} (hsub : s ⊆ t) (hcard : t.card = s.card + 1) :
     ∃ x, x ∉ s ∧ insert x s = t := by
   have hdiff_card : (t \ s).card = 1 := by
-    rw [Finset.card_sdiff_of_subset hsub, hcard]
-    omega
+    grind
   obtain ⟨x, hx⟩ := Finset.card_eq_one.mp hdiff_card
   have hxmem : x ∈ t \ s := by
-    rw [hx]
-    simp
+    grind
   refine ⟨x, (Finset.mem_sdiff.mp hxmem).2, ?_⟩
   calc
     insert x s = {x} ∪ s := rfl
@@ -328,8 +321,7 @@ lemma doorof_toAlmost_subset_toPrimitive {τ σ : Finset T} {D C : Finset I}
       | idoor _ _ _ _ hInsert hD =>
           rw [mem_toAlmostPrimitive_inl] at hz
           rw [mem_toPrimitiveSet_inl]
-          rw [← hInsert]
-          exact Finset.mem_insert_of_mem hz
+          grind
       | odoor _ _ _ hNot hτ hD =>
           rw [mem_toAlmostPrimitive_inl] at hz
           rw [mem_toPrimitiveSet_inl]
@@ -343,8 +335,7 @@ lemma doorof_toAlmost_subset_toPrimitive {τ σ : Finset T} {D C : Finset I}
       | odoor _ _ j hNot hτ hD =>
           rw [mem_toAlmostPrimitive_inr] at hz
           rw [mem_toPrimitiveSet_inr]
-          rw [hD] at hz
-          exact fun hiC => hz (Finset.mem_insert_of_mem hiC)
+          grind
 
 /-- A useful packaged form of the door/primitive-set incidence correspondence. -/
 lemma doorof_iff_subset_primitive {τ σ : Finset T} {D C : Finset I} :
@@ -442,8 +433,7 @@ lemma nativeAlmostPrimitive_to_almostPrimitive {Y : Finset (ExtendedGoods T I)}
       have hDle : D.card ≤ Fintype.card I := Finset.card_le_univ D
       omega
   have hsubParts : toAlmostPrimitive (I := I) τ D ⊆ toPrimitiveSet (I := I) σ C := by
-    rw [← hYeq]
-    exact hsub
+    grind
   exact ⟨τ, D, σ, C, subset_toPrimitive_toAlmost_doorof hDoor hRoom hsubParts, hYeq⟩
 
 lemma almostPrimitive_to_nativeAlmostPrimitive {Y : Finset (ExtendedGoods T I)}
@@ -555,8 +545,7 @@ theorem native_internal_almostPrimitive_exactly_two_incident_primitives
     nativeAlmostPrimitive_to_almostPrimitive hY
   obtain ⟨X₁, X₂, hNe, hPrim₁, hPrim₂, hSub₁, hSub₂, hUnique⟩ :=
     internal_almostPrimitive_exactly_two_incident_primitives hY' hInternal
-  exact ⟨X₁, X₂, hNe, hPrim₁, hPrim₂, hSub₁, hSub₂, fun X hX hSub =>
-    hUnique X hX hSub⟩
+  grind
 /--
 Native Scarf main lemma in the "remove one point" form: after removing a
 point from a primitive set, either the resulting face lies in the slack
@@ -573,10 +562,7 @@ theorem native_primitive_erase_mainLemma
   have hYnative : isAlmostPrimitiveNative (IST := IST) Y := by
     constructor
     · have hcardErase : Y.card + 1 = X.card := by
-        change (X.erase x).card + 1 = X.card
-        rw [Finset.card_erase_of_mem hx]
-        have hpos : 0 < X.card := Finset.card_pos.mpr ⟨x, hx⟩
-        omega
+        grind
       exact hcardErase.trans hX.1
     · exact ⟨X, hX, Finset.erase_subset x X⟩
   by_cases hInternal : (fromGoods (T := T) (I := I) Y).Nonempty
@@ -586,25 +572,12 @@ theorem native_primitive_erase_mainLemma
     have hXmem := hUnique X hX (Finset.erase_subset x X)
     rcases hXmem with hXX₁ | hXX₂
     · refine ⟨X₂, ⟨hPrim₂, hSub₂, ?_⟩, ?_⟩
-      · intro hX₂
-        exact hNe (hXX₁.symm.trans hX₂.symm)
-      · intro Z hZ
-        rcases hZ with ⟨hPrimZ, hSubZ, hZneX⟩
-        rcases hUnique Z hPrimZ hSubZ with hZ₁ | hZ₂
-        · exfalso
-          exact hZneX (hZ₁.trans hXX₁.symm)
-        · exact hZ₂
+      · grind
+      · grind
     · refine ⟨X₁, ⟨hPrim₁, hSub₁, ?_⟩, ?_⟩
-      · intro hX₁
-        exact hNe (hX₁.trans hXX₂)
-      · intro Z hZ
-        rcases hZ with ⟨hPrimZ, hSubZ, hZneX⟩
-        rcases hUnique Z hPrimZ hSubZ with hZ₁ | hZ₂
-        · exact hZ₁
-        · exfalso
-          exact hZneX (hZ₂.trans hXX₂.symm)
-  · left
-    exact hInternal
+      · grind
+      · grind
+  · grind
 
 /--
 Scarf's main lemma in the paper's replacement form: after removing `x` from
@@ -632,37 +605,14 @@ theorem native_primitive_erase_replacement_mainLemma
       rw [hPrimX'.1, hYcard]
     obtain ⟨y, hyNotY, hyInsert⟩ := exists_insert_eq_of_subset_card_eq_succ hSub hX'card
     have hyNotX : y ∉ X := by
-      intro hyX
-      have hyx : y = x := by
-        by_contra hyNe
-        exact hyNotY (Finset.mem_erase.mpr ⟨hyNe, hyX⟩)
-      subst hyx
-      have hX'eqX : X' = X := by
-        rw [← hyInsert]
-        simp [hx]
-      exact hNe hX'eqX
+      grind
     refine ⟨y, ⟨hyNotX, ?_⟩, ?_⟩
-    · rw [hyInsert]
-      exact hPrimX'
+    · grind
     · intro z hz
       rcases hz with ⟨hzNotX, hzPrim⟩
       have hNez : insert z Y ≠ X := by
-        intro hEq
-        have hzX : z ∈ X := by
-          rw [← hEq]
-          exact Finset.mem_insert_self z Y
-        exact hzNotX hzX
-      have hEqToX' : insert z Y = X' :=
-        hUniqueX (insert z Y) ⟨hzPrim, Finset.subset_insert z Y, hNez⟩
-      have hEqInsert : insert z Y = insert y Y := hEqToX'.trans hyInsert.symm
-      have hzNotY : z ∉ Y := fun hzY => hzNotX (Finset.erase_subset x X hzY)
-      have hzMem : z ∈ insert y Y := by
-        rw [← hEqInsert]
-        exact Finset.mem_insert_self z Y
-      rw [Finset.mem_insert] at hzMem
-      rcases hzMem with hzy | hzY
-      · exact hzy
-      · exact False.elim (hzNotY hzY)
+        grind
+      grind
 
 /-- The boundary almost primitive set made only of slacks, missing `i`. -/
 def slackBoundary (i : I) : Finset (ExtendedGoods T I) :=
@@ -744,20 +694,13 @@ lemma slackBoundary_unique_incident_primitive (i : I) :
     cases hDoorof with
     | idoor hCellσC _ x _ hInsert hD_eq =>
         have hσ : σ = ({x} : Finset T) := by
-          rw [← hInsert]
-          rfl
+          grind
         have hC : C = ({i} : Finset I) := hD_eq.symm
         have hx_eq : x = xMax := by
           have hAbove : ∀ y : T, (IST i).le y x := by
             intro y
             obtain ⟨j, hj, hle⟩ := hCellσC y
-            have hji : j = i := by
-              rw [hC] at hj
-              exact Finset.mem_singleton.mp hj
-            subst hji
-            apply hle
-            rw [hσ]
-            simp
+            grind
           have hx_le_max : (IST i).le x xMax :=
             @Finset.le_max' T (IST i) Finset.univ x (Finset.mem_univ x)
           have hmax_le_x : (IST i).le xMax x := hAbove xMax
@@ -766,16 +709,14 @@ lemma slackBoundary_unique_incident_primitive (i : I) :
     | odoor _ _ j _ hτ_eq _ =>
         exfalso
         have hσNonempty : σ.Nonempty := IST.sigma_nonempty_of_room hRoom
-        rw [← hτ_eq] at hσNonempty
-        exact Finset.not_nonempty_empty hσNonempty
+        grind
 
 lemma slackBoundary_unique_incident_nativePrimitive (i : I) :
     ∃! X : Finset (ExtendedGoods T I),
       isPrimitiveNative (IST := IST) X ∧ slackBoundary (T := T) (I := I) i ⊆ X := by
   rcases slackBoundary_unique_incident_primitive (IST := IST) i with ⟨X, hX, hUnique⟩
   refine ⟨X, hX, ?_⟩
-  intro Y hY
-  exact hUnique Y hY
+  grind
 
 /--
 Every almost primitive face made only of slack vectors is one of the boundary
@@ -794,8 +735,7 @@ lemma boundary_almostPrimitive_eq_slackBoundary {Y : Finset (ExtendedGoods T I)}
     have hDoorCard := hDoor.2
     rw [hGoods] at hDoorCard
     have hEmpty : (Finset.empty : Finset T).card = 0 := rfl
-    rw [hEmpty] at hDoorCard
-    simpa using hDoorCard
+    grind
   obtain ⟨i, hD⟩ := Finset.card_eq_one.mp hDcard
   refine ⟨i, ?_⟩
   rw [almostPrimitive_eq_toAlmost_from_parts hY, hGoods, hD]
@@ -1003,15 +943,10 @@ lemma full_color_primitive_iff_colorful_room (c : T → I) {σ : Finset T} {C : 
     have hC_subset_image : C ⊆ σ.image c := by
       intro i hiC
       have hiUnion : i ∈ (σ.image c) ∪ (Finset.univ \ C) := by
-        rw [hUnion]
-        exact Finset.mem_univ i
-      rcases Finset.mem_union.mp hiUnion with hiImage | hiCompl
-      · exact hiImage
-      · exact False.elim ((Finset.mem_sdiff.mp hiCompl).2 hiC)
+        grind
+      grind
     have hImage_card_le_C : (σ.image c).card ≤ C.card := by
-      calc
-        (σ.image c).card ≤ σ.card := Finset.card_image_le
-        _ = C.card := hRoom.2.symm
+      grind
     exact ⟨hRoom.1, (Finset.eq_of_subset_of_card_le hC_subset_image hImage_card_le_C).symm⟩
   · intro hColorful
     rw [image_extendedColoring_toPrimitiveSet, hColorful.2]
@@ -1067,16 +1002,14 @@ lemma diff_image_eq_singleton_iff_allButColor_toPrimitiveSet
           intro hji
           subst j
           have hiDiff : i ∈ C \ σ.image c := by
-            rw [hDiff]
-            simp
+            grind
           exact (Finset.mem_sdiff.mp hiDiff).2 hjImage
         exact Finset.mem_erase.mpr ⟨hji, Finset.mem_univ j⟩
       · have hji : j ≠ i := by
           intro hji
           subst j
           have hiDiff : i ∈ C \ σ.image c := by
-            rw [hDiff]
-            simp
+            grind
           exact (Finset.mem_sdiff.mp hjCompl).2 (Finset.mem_sdiff.mp hiDiff).1
         exact Finset.mem_erase.mpr ⟨hji, Finset.mem_univ j⟩
     · intro hj
@@ -1086,43 +1019,20 @@ lemma diff_image_eq_singleton_iff_allButColor_toPrimitiveSet
         have hjNotC : j ∉ C := by
           intro hjC
           have hjDiff : j ∈ C \ σ.image c := Finset.mem_sdiff.mpr ⟨hjC, hjImage⟩
-          have : j = i := by
-            rw [hDiff] at hjDiff
-            exact Finset.mem_singleton.mp hjDiff
-          exact hji this
+          grind
         exact Finset.mem_union_right _ (Finset.mem_sdiff.mpr ⟨Finset.mem_univ j, hjNotC⟩)
   · intro hAllBut
     ext j
     constructor
     · intro hj
       have hjNotUnion : j ∉ σ.image c ∪ (Finset.univ \ C) := by
-        intro hUnion
-        rcases Finset.mem_union.mp hUnion with hjImage | hjCompl
-        · exact (Finset.mem_sdiff.mp hj).2 hjImage
-        · exact (Finset.mem_sdiff.mp hjCompl).2 (Finset.mem_sdiff.mp hj).1
-      have hjNotErase : j ∉ Finset.univ.erase i := by
-        rw [← hAllBut]
-        exact hjNotUnion
-      have hji : j = i := by
-        by_contra hne
-        exact hjNotErase (Finset.mem_erase.mpr ⟨hne, Finset.mem_univ j⟩)
-      rw [hji]
-      simp
+        grind
+      grind
     · intro hj
       have hji : j = i := Finset.mem_singleton.mp hj
       subst j
       have hiNotErase : i ∉ (Finset.univ.erase i : Finset I) := by simp
-      have hiNotUnion : i ∉ σ.image c ∪ (Finset.univ \ C) := by
-        rw [hAllBut]
-        exact hiNotErase
-      have hiC : i ∈ C := by
-        by_contra hiNotC
-        exact hiNotUnion (Finset.mem_union_right _
-          (Finset.mem_sdiff.mpr ⟨Finset.mem_univ i, hiNotC⟩))
-      have hiNotImage : i ∉ σ.image c := by
-        intro hiImage
-        exact hiNotUnion (Finset.mem_union_left _ hiImage)
-      exact Finset.mem_sdiff.mpr ⟨hiC, hiNotImage⟩
+      grind
 
 omit [Fintype T] IST in
 lemma diff_image_eq_singleton_iff_allButColor_toAlmostPrimitive
@@ -1186,11 +1096,8 @@ omit [Fintype T] IST in
     rcases hj with hjEmpty | hjCompl
     · rcases Finset.mem_image.mp hjEmpty with ⟨x, hx, _⟩
       exact False.elim (Finset.notMem_empty x hx)
-    · exact Finset.mem_erase.mpr
-        ⟨fun hji => (Finset.mem_sdiff.mp hjCompl).2 (by simp [hji]), Finset.mem_univ j⟩
-  · intro hj
-    exact Finset.mem_union_right _ (Finset.mem_sdiff.mpr
-      ⟨Finset.mem_univ j, fun hji => (Finset.mem_erase.mp hj).1 (Finset.mem_singleton.mp hji)⟩)
+    · grind
+  · grind
 
 lemma slackBoundary_GiDoorVertex (c : T → I) (i : I) :
     GiDoorVertex (IST := IST) c i
@@ -1445,8 +1352,7 @@ lemma giVertex_of_GiDegree_eq_one {c : T → I} {i : I} {v : GiCell T I}
   have hNonempty : (GiNeighbors (IST := IST) c i v).Nonempty := by
     apply Finset.card_pos.mp
     change 0 < GiDegree (IST := IST) c i v
-    rw [hdeg]
-    norm_num
+    grind
   rcases hNonempty with ⟨w, hw⟩
   exact GiEdge.left_vertex ((mem_GiNeighbors (IST := IST)).1 hw)
 
@@ -1486,8 +1392,7 @@ lemma reachableComponentGraph_degree_eq
     H.degree x = (H.neighborFinset x).card := rfl
     _ = ((H.neighborFinset x).image (fun y : {v : α // G.Reachable v₀ v} => y.1)).card := by
       rw [Finset.card_image_of_injOn]
-      intro a _ b _ h
-      exact Subtype.ext h
+      intro a grind
     _ = (G.neighborFinset x.1).card := by rw [hImage]
     _ = G.degree x.1 := rfl
 
@@ -1520,8 +1425,7 @@ theorem scarfAlgorithmTrace_exists [Inhabited I] (c : T → I) (i : I) :
     exact (GiPathStructure_of_degreeCharacterization
       (IST := IST) (GiDegreeCharacterization_holds (IST := IST) c i)).2 w.1
   have hwDegreeOne : G.degree w.1 = 1 := by
-    rcases hwOddG with ⟨k, hk⟩
-    omega
+    grind
   have hwGiDegreeOne : GiDegree (IST := IST) c i w.1 = 1 := by
     rw [← hwDegreeOne]
     rfl
@@ -1532,11 +1436,7 @@ theorem scarfAlgorithmTrace_exists [Inhabited I] (c : T → I) (i : I) :
     rcases hwEndpointKind with hOutside | hColorful
     · have hwEqOutside := outsideDoor_endpoint_cell_eq_slackBoundary
         (IST := IST) hOutside.1 hOutside.2
-      have hwEq : w = outsideSub := by
-        apply Subtype.ext
-        change w.1 = outside
-        simpa [outside] using hwEqOutside
-      exact False.elim (hwNe hwEq)
+      grind
     · exact hColorful
   let X : Finset (ExtendedGoods T I) := toPrimitiveSet (I := I) w.1.1 w.1.2
   have hRoom : IST.isRoom w.1.1 w.1.2 := IST.room_of_colorful hwColorful
@@ -1550,8 +1450,7 @@ theorem scarfAlgorithmTrace_exists [Inhabited I] (c : T → I) (i : I) :
   change (GiGraph (IST := IST) c i).Reachable outside (associatedCell (T := T) (I := I) X)
   have hAssoc : associatedCell (T := T) (I := I) X = w.1 := by
     simp [X, associatedCell]
-  rw [hAssoc]
-  exact ⟨p⟩
+  grind
 
 /--
 Scarf's combinatorial theorem in the primitive-set language from §3: after
@@ -1636,13 +1535,10 @@ lemma orderUtility_order_iff (i : I) (x y : T) :
     have hSubset : Finset.univ.filter (fun z : T => z ≤ x) ⊂
         Finset.univ.filter (fun z : T => z ≤ y) := by
       constructor
-      · intro z hz
-        rw [Finset.mem_filter] at hz ⊢
-        exact ⟨hz.1, le_trans hz.2 (le_of_lt hxy)⟩
+      · grind
       · intro hEq
         have hy_mem_x : y ∈ Finset.univ.filter (fun z : T => z ≤ x) := hEq (by simp)
-        rw [Finset.mem_filter] at hy_mem_x
-        exact not_le_of_gt hxy hy_mem_x.2
+        grind
     have hCard : (Finset.univ.filter (fun z : T => z ≤ x)).card <
         (Finset.univ.filter (fun z : T => z ≤ y)).card :=
       Finset.card_lt_card hSubset
@@ -1653,9 +1549,7 @@ lemma orderUtility_order_iff (i : I) (x y : T) :
     unfold orderUtility orderLowerSet at hlt
     have hSubset : Finset.univ.filter (fun z : T => z ≤ y) ⊆
         Finset.univ.filter (fun z : T => z ≤ x) := by
-      intro z hz
-      rw [Finset.mem_filter] at hz ⊢
-      exact ⟨hz.1, le_trans hz.2 hyx⟩
+      grind
     have hCard : (Finset.univ.filter (fun z : T => z ≤ y)).card ≤
         (Finset.univ.filter (fun z : T => z ≤ x)).card :=
       Finset.card_le_card hSubset
@@ -1711,10 +1605,7 @@ noncomputable def utilityImageEquiv [Inhabited I] (u : I → T → ℝ)
     have hchosen := Classical.choose_spec (Finset.mem_image.mp hmem)
     exact utilityVector_injective_of_realization (IST := IST) hu hchosen.2
   right_inv v := by
-    rcases v with ⟨v, hv⟩
-    have hchosen := Classical.choose_spec (Finset.mem_image.mp hv)
-    ext i
-    exact congrFun hchosen.2 i
+    grind
 
 /--
 The coordinate model of Scarf's slack vector for face `i`: the `i`th
@@ -1869,14 +1760,9 @@ noncomputable def extendedCoordinateEquivCoordinateEnlargedSet
     (coordinateEnlargedSet_exists_preimage (T := T) (I := I) u M v.2)
   left_inv z := by
     apply extendedCoordinatePoint_injective_of_realization (IST := IST) hu hM
-    exact Classical.choose_spec
-      (coordinateEnlargedSet_exists_preimage (T := T) (I := I) u M
-        (extendedCoordinatePoint_mem_coordinateEnlargedSet u M z))
+    grind
   right_inv v := by
-    ext j
-    exact congrFun
-      (Classical.choose_spec
-        (coordinateEnlargedSet_exists_preimage (T := T) (I := I) u M v.2)) j
+    grind
 
 omit [Inhabited T] [Fintype T] [Fintype I] [DecidableEq T] IST in
 @[simp] lemma extendedCoordinatePoint_good (u : I → T → ℝ) (M : I → ℝ) (x : T) :
@@ -2195,8 +2081,7 @@ lemma coordinateGoods_le_of_original_le {u : I → T → ℝ} {M : I → ℝ}
   letI : LinearOrder (ExtendedGoods T I) := (coordinateIndexedLOrder (T := T) (I := I) u M hCoord) i
   letI : LinearOrder T := IST i
   by_cases hEq : x = y
-  · subst hEq
-    exact le_rfl
+  · grind
   · exact le_of_lt (show ((coordinateIndexedLOrder (T := T) (I := I) u M hCoord) i).lt
       (Sum.inl x) (Sum.inl y) from
         extendedCoordinateLt_goods_of_original_lt hu (lt_of_le_of_ne hxy hEq))
@@ -2271,8 +2156,7 @@ theorem nativePrimitive_to_coordinatePrimitive {u : I → T → ℝ} {M : I → 
         | inr k =>
             have hkNotC : k ∉ C := by simpa [C] using hz
             have hik : i ≠ k := by
-              intro hEq
-              exact hkNotC (hEq ▸ hiC)
+              grind
             letI : LinearOrder (ExtendedGoods T I) := (coordinateIndexedLOrder (T := T) (I := I)
                 u M hCoord) i
             exact le_of_lt (show ((coordinateIndexedLOrder (T := T) (I := I) u M hCoord) i).lt

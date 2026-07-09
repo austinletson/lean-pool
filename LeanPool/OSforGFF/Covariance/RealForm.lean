@@ -272,8 +272,7 @@ lemma sqrtPropagatorMap_norm_eq_covariance (m : ℝ) [Fact (0 < m)] (f : TestFun
         ‖sqrtPropagatorMap m f k‖ = ‖F k * momentumWeightSqrtMathlib m k‖ := rfl
         _ = ‖F k‖ * ‖(momentumWeightSqrtMathlib m k : ℂ)‖ := by simp
         _ = ‖F k‖ * momentumWeightSqrtMathlib m k := by
-          have h := congrArg (fun t : ℝ => ‖F k‖ * t) h_abs
-          simpa using h
+          grind
     have h_sq : ‖sqrtPropagatorMap m f k‖ ^ 2
         = ‖F k‖ ^ 2 * (momentumWeightSqrtMathlib m k) ^ 2 := by
       simp [pow_two, h_norm, mul_comm, mul_left_comm, mul_assoc]
@@ -307,11 +306,7 @@ lemma sqrtPropagatorMap_norm_eq_covariance (m : ℝ) [Fact (0 < m)] (f : TestFun
                 freeCovarianceℂ_bilinear_agrees_on_reals m f f
     have := congrArg (fun z : ℂ => z.re) h_complex
     simpa using this
-  calc
-    sqrtPropagatorMapNormSq m f
-        = ∫ k, ‖F k‖ ^ 2 * momentumWeightMathlib m k ∂volume := h_norm_int
-    _ = (freeCovarianceℂ m (toComplex f) (toComplex f)).re := h_integral_eq
-    _ = freeCovarianceFormR m f f := h_real_cov
+  grind
 
 /-! ## The Proof of sqrtPropagatorEmbedding -/
 
@@ -432,8 +427,7 @@ lemma embeddingMapCLM_apply (m : ℝ) [Fact (0 < m)] (f : TestFunction) :
   have h_weight : (fun k => (momentumWeightSqrtMathlib m k : ℂ) * A k)
       =ᵐ[volume] fun k => (momentumWeightSqrtMathlib m k : ℂ) * g k := by
     refine h_A.mono ?_
-    intro k hk
-    simp [hk]
+    grind
   have h_mul'' : embeddingMapCLM m f =ᵐ[volume]
       fun k => (momentumWeightSqrtMathlib m k : ℂ) * g k :=
     h_mul'.trans h_weight

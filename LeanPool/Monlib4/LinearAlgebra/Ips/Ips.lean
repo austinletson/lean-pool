@@ -100,11 +100,7 @@ theorem LinearMap.IsProj.isCompl_range_ker {V R : Type _} [Ring R] [AddCommGroup
       rcases h'.2 with ⟨y, hy⟩
       rw [← hy, ← IsIdempotentElem.eq this, Module.End.mul_apply, hy]
       exact h'.1
-    · intro h'
-      rw [h', map_zero]
-      simp only [true_and]
-      use x
-      simp only [h', map_zero]
+    · grind
   · suffices ∀ x : V, ∃ v : ker T, ∃ w : range T, x = v + w
       by
       rw [codisjoint_iff, ← Submodule.add_eq_sup]

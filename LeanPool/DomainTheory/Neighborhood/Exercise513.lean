@@ -88,10 +88,7 @@ theorem two_dvd_mul_succ (k : ℕ) : 2 ∣ k * (k + 1) := by
   induction k with
   | zero => exact ⟨0, by ring⟩
   | succ n ih =>
-      obtain ⟨c, hc⟩ := ih
-      refine ⟨c + (n + 1), ?_⟩
-      have hexp : (n + 1) * (n + 1 + 1) = n * (n + 1) + 2 * (n + 1) := by ring
-      rw [hexp, hc]; ring
+      grind
 
 /-- The defining doubling identity `2·T(k) = k(k+1)` — the division is exact
 because `k(k+1)` is
@@ -104,10 +101,7 @@ theorem tri_mul_two (k : ℕ) : tri k * 2 = k * (k + 1) := by
 theorem tri_succ (k : ℕ) : tri (k + 1) = tri k + (k + 1) := by
   have e1 : tri k * 2 = k * (k + 1) := tri_mul_two k
   have e2 : tri (k + 1) * 2 = (k + 1) * (k + 1 + 1) := tri_mul_two (k + 1)
-  have key : tri (k + 1) * 2 = (tri k + (k + 1)) * 2 := by
-    have hexp : (tri k + (k + 1)) * 2 = tri k * 2 + (k + 1) * 2 := by ring
-    rw [hexp, e1, e2]; ring
-  exact Nat.eq_of_mul_eq_mul_right (by norm_num) key
+  grind
 
 theorem tri_le_succ (k : ℕ) : tri k ≤ tri (k + 1) := by
   rw [tri_succ]; omega
@@ -131,8 +125,7 @@ theorem num_zero_zero : num 0 0 = 0 := rfl
 
 theorem num_succ_right (n m : ℕ) : num n (m + 1) = num (n + 1) m + 1 := by
   unfold num
-  have h : n + (m + 1) = (n + 1) + m := by omega
-  rw [h]; omega
+  grind
 
 theorem num_succ_left (n : ℕ) : num (n + 1) 0 = num 0 n + 1 := by
   unfold num
@@ -166,10 +159,7 @@ theorem num_injective : Function.Injective numP := by
       have h3 : tri (n₁ + m₁) ≤ num n₁ m₁ := by unfold num; omega
       omega
   have hbase : tri (n₁ + m₁) + m₁ = tri (n₂ + m₂) + m₂ := h'
-  rw [hs] at hbase
-  have hm : m₁ = m₂ := by omega
-  have hn : n₁ = n₂ := by omega
-  subst hm; subst hn; rfl
+  grind
 
 /-! ### The inverse: walking the diagonals -/
 

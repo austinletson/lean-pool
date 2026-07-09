@@ -366,10 +366,7 @@ def deduct [DecidableEq F] {φ ψ : F} {Γ : Set F} : (insert φ Γ) *⊢[𝓢] 
     ⟨ Δ.filter (· ≠ φ), by
       intro ψ; simp only [ne_eq, decide_not, List.mem_filter, Bool.not_eq_eq_eq_not,
         Bool.not_true, decide_eq_false_iff_not, mem_coe_iff, and_imp]
-      intro hq ne
-      rcases h ψ hq
-      · contradiction
-      · assumption,
+      grind,
       FiniteContext.deduct b' ⟩
 
 /-- Imported declaration from the Incompleteness formalization. -/

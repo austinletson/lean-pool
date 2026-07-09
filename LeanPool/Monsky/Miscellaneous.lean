@@ -119,9 +119,7 @@ lemma fin2_im {α : Type} [DecidableEq α] {f : Fin 2 → α}
   constructor
   · rintro ⟨j, rfl⟩
     fin_cases j <;> simp
-  · rintro (rfl | rfl)
-    · exact ⟨0, rfl⟩
-    · exact ⟨1, rfl⟩
+  · grind
 
 
 /- This lemma is in mathlib but somehow I cannot get it to work unless it is in this form. -/
@@ -143,10 +141,7 @@ lemma forall_exists_pos_swap {α : Type} [Finite α] {P : ℝ → α → Prop}
       use min' (image fδ univ) hS
       refine ⟨?_,?_⟩
       · rw [gt_iff_lt, Finset.lt_min'_iff]
-        intro y hy
-        have ⟨x,_,hx⟩ := mem_image.1 hy
-        rw [←hx]
-        exact (hfδ x).1
+        grind
       · intro x
         apply h (fδ x) x (hfδ x).2
         exact min'_le _ _ (mem_image_of_mem fδ (mem_univ x))
@@ -166,8 +161,7 @@ lemma real_interval_δ {x : ℝ} (y : ℝ) (hx : 0 < x) : ∃ δ > 0, ∀ a, |a|
         |a * y| = |a| * |y| := abs_mul a y
         _ ≤ (x / (2 * |y|)) * |y| := by gcongr
         _ = x / 2 := by field_simp [hyabs.ne']
-    have hneg : -(x / 2) ≤ a * y := (abs_le.mp hmul_abs).1
-    linarith
+    grind
 
 
 /- Pigeonhole lemma of the form that I have not been able to find. -/
@@ -179,9 +173,7 @@ lemma finset_infinite_pigeonhole {α β : Type} [Infinite α] {f : α → β} {B
   constructor
   · exact Finset.coe_mem b
   · convert Set.infinite_coe_iff.mp hb
-    ext a
-    cases b
-    simp [f_B]
+    grind
 
 lemma infinite_distinct_el {α : Type} {S : Set α} (hS : Set.Infinite S) (k : α) :
     ∃ a ∈ S, a ≠ k := by

@@ -291,10 +291,7 @@ def hequivBoundaryJar {n : ℕ} : (I^ Fin n) ≃ₕ ⊔I^(n + 1) where
       ContinuousMap.coe_mk, ContinuousMap.comp_assoc, ContinuousMap.comp_apply,
       Homeomorph.funSplitAt_symm_apply, ContinuousMap.id_apply]
     split
-    · rename_i hi
-      change i.castSucc = _ at hi
-      exfalso
-      exact (Fin.castSucc_ne_last i) hi
+    · grind
     · simp only [homeoNeqLast, ne_eq, Homeomorph.piCongr_apply]
       rfl
   right_inv := Nonempty.intro <|

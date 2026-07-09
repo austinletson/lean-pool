@@ -417,8 +417,7 @@ lemma entropy_map_le
   have : Hk[κ, μ] = Hk[map κ (fun x ↦ (x, f x)), μ] := by
     refine (entropy_map_of_injective κ μ (f := fun x ↦ (x, f x)) ?_ (by fun_prop)).symm
     intro x y hxy
-    simp only [Prod.mk.injEq] at hxy
-    exact hxy.1
+    grind
   rw [this, chain_rule' hκ.map]
   simp_rw [snd_map_prod κ measurable_id', le_add_iff_nonneg_right]
   exact entropy_nonneg _ _

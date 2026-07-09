@@ -94,9 +94,7 @@ theorem davenport' {a b : k[X]} (hab : IsCoprime a b) (haderiv : derivative a �
     rw [derivative_neg, neg_eq_zero, derivative_pow, derivative_pow, Nat.add_one_sub_one,
       Nat.add_one_sub_one, mul_eq_zero, mul_eq_zero, mul_eq_zero, mul_eq_zero, or_iff_left haderiv,
       or_iff_left hbderiv, or_iff_left (pow_ne_zero 2 ha), or_iff_left (pow_ne_zero 1 hb)] at h
-    replace h := h.1.trans h.2.1.symm
-    rw [← sub_eq_zero, ← C_sub, ← Nat.cast_sub (Nat.le_succ 2), Nat.cast_one, C_1] at h
-    exact (one_ne_zero h).elim
+    grind
   · -- When we have inequality from ABC.
     rw [natDegree_neg, Nat.max₃, max_eq_left (natDegree_sub_le _ _), neg_mul, neg_mul, radical_neg,
       radical_hMul (h1.mul_left h2), radical_hMul hab.pow, radical_pow a three_pos,
@@ -108,9 +106,7 @@ theorem davenport' {a b : k[X]} (hab : IsCoprime a b) (haderiv : derivative a �
       le_trans h
         (add_le_add (add_le_add (radical_natDegree_le _) (radical_natDegree_le _)) <|
           radical_natDegree_le _)
-    rw [max_le_iff] at h
-    -- Add two inequalities and simplifying it gives the desired inequality.
-    nlinarith only [add_le_add h.1 h.2]
+    grind
 
 end Polynomial
 

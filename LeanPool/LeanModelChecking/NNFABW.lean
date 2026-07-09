@@ -92,10 +92,7 @@ theorem until_expand_repeat {AP} (f g : NNF AP) : ∀ w, (f.until g).language w
       simp only [NNF.repeatAndNext, NNF.language]
       intros w hg hf
       refine ⟨hf 0 (by omega), ?_⟩
-      apply ih
-      · exact hg
-      · intros k hk
-        exact hf (k + 1) (by omega)
+      grind
   · simp only [NNF.language, forall_exists_index]
     intros n h
     exists n
@@ -328,8 +325,7 @@ def runDag
       obtain ⟨Y, p_sat, p_sub⟩ := p_sat M.q₀ _ 0 G.p_root
       exists Subtype.embedLe hle '' Y
       constructor
-      · apply h_delta_root
-        exact p_sat
+      · grind
       · rw [Set.subset_def]
         simp only [Set.mem_image, Set.mem_prod]
         rintro ⟨⟨q, l⟩, q'⟩ H
@@ -376,9 +372,7 @@ lemma runDag_accepting
   have p_path' := preserves_path hle M.q₀ M'.q₀ G.toDAG p p_path
   intros i
   obtain ⟨j, hj, H⟩ := G_acc _ p_path' i
-  refine ⟨j + 1, by omega, ?_⟩
-  have := (hF _).mpr H
-  rwa [show Subtype.embedLe hle _ = p (j + 1) from rfl] at this
+  grind
 
 end replaceRoot
 
@@ -438,10 +432,7 @@ def runDag
     simp only [dag, Set.singleton_union, Set.mem_insert_iff, Prod.mk.injEq, Set.mem_image,
       Prod.exists, Subtype.exists] at hV ⊢
     rcases hV with ⟨rfl, rfl⟩|⟨z, hz, l, hV, rfl, rfl⟩
-    · exists {⟨M.q₀.val, M.q₀.prop.trans hle⟩}
-      constructor
-      · exact h_root
-      · simp
+    · grind
     · specialize p_sat _ hV
       simp only at p_sat
       obtain ⟨Y, p_sat, p_sub⟩ := p_sat
@@ -512,9 +503,7 @@ def dag : DAG (Iic Φ) := {
       constructor
       · split
         next q_root =>
-          cases q_root
-          left; left
-          simp only [Set.mem_singleton_iff]
+          grind
         · left; right
           simp only [Set.mem_image, Set.mem_sdiff]
           grind
@@ -526,9 +515,6 @@ def dag : DAG (Iic Φ) := {
       constructor
       · right
         simp only [Set.mem_image, Set.mem_sdiff]
-        exists (⟨q, qp⟩, l)
-        simp only [hV₂, Set.mem_setOf_eq, not_and, not_or, true_and, and_true]
-        rintro rfl
         grind
       · simp only [Set.singleton_union, Set.mem_union, Set.mem_insert_iff,
           Set.mem_image, Set.mem_sdiff, Set.mem_singleton_iff]
@@ -611,10 +597,7 @@ lemma runDag_p_sat
           Set.mem_image, Subtype.exists, dag, base, Set.singleton_union, Prod.mk.eta, Prod.mk.injEq,
           Functor.map, Prod.exists, Prod.forall, Subtype.forall,
         ]
-        rintro q pq l q' _
-        rintro (⟨⟨q_eq, rfl⟩, ⟨pq', q'_in_Y₁⟩⟩|⟨⟨q_eq, rfl⟩, ⟨pq', q'_in_Y₂⟩⟩)
-        · left; grind
-        · right; grind
+        grind
     · simp only [Set.mem_image, Set.mem_sdiff, Set.mem_singleton_iff, Prod.exists, Prod.mk.injEq,
       not_and, Subtype.exists] at hv
       rcases hv with ⟨q, pq, l, ⟨hV₁, not_root⟩, rfl⟩
@@ -648,7 +631,6 @@ lemma runDag_p_sat
           simp only [Set.mem_prod, Set.mem_singleton_iff, Set.mem_image, Subtype.exists] at he
           rcases he with ⟨e1_eq, q', pq', q'_in_Y₁, e2_eq⟩
           exists ((⟨q, hq1⟩, l), ⟨q', pq'⟩)
-          exists Set.mem_of_subset_of_mem p_sub₁ (by grind)
           grind
       · obtain ⟨Y₂, p_sat₂, p_sub₂⟩ := G₂.p_sat _ hV₂
         exists Subtype.embedLe leφ₂ '' Y₂
@@ -759,7 +741,6 @@ def shiftConjoinDag.runDag
           simp only [Set.mem_prod, Set.mem_singleton_iff, Set.mem_image, Subtype.exists] at he
           rcases he with ⟨e1_eq, q', pq', q'_in_Y₁, e2_eq⟩
           exists ((⟨q, hq1⟩, l + 1), ⟨q', pq'⟩)
-          simp
           grind
       · obtain ⟨Y₂, p_sat₂, p_sub₂⟩ := G₂.p_sat _ hV₂
         simp only
@@ -870,9 +851,7 @@ lemma mini_le q l (H : (q, l) ∈ Vb G) : mini G (q, l) ≤ l := by
   rcases H with ⟨i, q, pq, l, hV, rfl, rfl⟩
   apply (show ∀ x y z, x ≤ z → x ≤ y + z by omega)
   apply csInf_le ⟨0, by intro i _; exact Nat.zero_le i⟩
-  simp only [Set.mem_setOf_eq, le_add_iff_nonneg_left, zero_le, add_tsub_cancel_right,
-    true_and]
-  exact hV
+  grind
 
 lemma mini_in q l (H : (q, l) ∈ Vb G) : let i' := mini G (q, l); (q, l - i') ∈ (G i').V := by
   have hne : Set.Nonempty { i | i ≤ l ∧ (q, l - i) ∈ (G i).V } := by
@@ -1015,8 +994,7 @@ def runDag
     · obtain ⟨Y, p_sat, p_sub⟩ := (G l).p_sat _ (G l).p_root
       exists ((Subtype.embedLe ltφ.le) '' Y) ∪ {M.q₀}
       constructor
-      · apply h_delta_root
-        simpa using p_sat
+      · grind
       · simp only [dag, base, E]
         grind only [
           = Set.subset_def,
@@ -1327,8 +1305,6 @@ lemma next_mpr {AP : Type} {φ : NNF AP} {w} : (φ.toABW.language fun j =>
   intros p p_path i
   have p_path := shiftDag.preserves_path _ _ _ _ _ _ p_path
   specialize G_acc _ p_path i
-  obtain ⟨j, G_acc⟩ := G_acc
-  exists (j + 1)
   grind
 
 lemma until_mp {S} {φ₁ φ₂ : NNF S} {w} (H : (φ₁.until φ₂).toABW.language w) : ∃ n,
@@ -1550,8 +1526,7 @@ lemma next
           Y ⊆ _ by grind)
         let : DecidablePred (· ∈ w 0) := by classical infer_instance
         rwa [←PositiveBool.sat_map_image _ delta_forall]
-      · right
-        simp
+      · grind
     )
   intros op op_path
   rcases conjoinDag.preserves_path _ _ _ _ _ _ _ _ op_path with ⟨k, p_path⟩|p_path
@@ -1643,10 +1618,7 @@ theorem NNF.toABW_lang {AP} (ψ : NNF AP) : ψ.toABW.language = ψ.language := b
         constructor
         · rw [←f_ih]
           exact h2 0 (by omega)
-        · apply ih
-          · exact h1
-          · intros k hk
-            exact h2 (k + 1) (by omega)
+        · grind
     · intros H
       obtain ⟨n, H⟩ := H
       revert w
@@ -1700,8 +1672,7 @@ theorem NNF.toABW_lang {AP} (ψ : NNF AP) : ψ.toABW.language = ψ.language := b
         induction n
         · intros w H hgn
           specialize H 0
-          simp at H
-          contradiction
+          grind
         next n ih =>
           intros w H hgn
           rw [release_expand] at H

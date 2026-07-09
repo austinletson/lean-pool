@@ -27,8 +27,7 @@ lemma int_tendsto_nat {f : ℤ → ℂ} {x : ℂ} (hf : Tendsto f atTop (𝓝 x)
   intro ε hε
   obtain ⟨N, hN⟩ := hf ε hε
   use N.natAbs
-  intro n hn
-  exact hN n (by omega)
+  grind
 
 lemma pnat_tendsto_nat (f : ℕ → ℂ) (x : ℂ) (hf : Tendsto (fun n : ℕ+ => f n) atTop (𝓝 x)) :
   Tendsto f atTop (𝓝 x) := tendsto_comp_val_Ioi_atTop.mp hf

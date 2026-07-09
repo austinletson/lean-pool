@@ -102,8 +102,7 @@ theorem pfix_eq_fixElement_recOp (τ : ApproximableMap (prod V V) V) :
     intro x
     have hfix : (recOp τ).toElementMap g₀ = g₀ := toElementMap_fixElement (recOp τ)
     have := recOp_apply τ g₀ x
-    rw [hfix] at this
-    rw [hG]; exact this
+    grind
   apply le_antisymm
   · -- `pfix τ ⊑ G`: `pfix τ (x)` is the least fixed point of the section, `G(x)` is some
     -- fixed point.
@@ -131,16 +130,14 @@ theorem pfix_eq_fixElement_recOp (τ : ApproximableMap (prod V V) V) :
           (recOp τ).toElementMap (toFilter (pfix τ)) := by
         have he := (funSpaceEquiv V V).symm_apply_apply ((recOp τ).toElementMap (toFilter (pfix τ)))
         rwa [funSpaceEquiv_apply, funSpaceEquiv_symm_apply] at he
-      rw [hround2] at h1
-      exact h1
+      grind
     have hle : g₀ ≤ toFilter (pfix τ) := fixElement_le_of_toElementMap_le (recOp τ) hpre
     have := (funSpaceEquiv V V).monotone hle
     rw [funSpaceEquiv_apply, funSpaceEquiv_apply] at this
     have hround : toApproxMap (toFilter (pfix τ)) = pfix τ := by
       have he := (funSpaceEquiv V V).apply_symm_apply (pfix τ)
       rwa [funSpaceEquiv_apply, funSpaceEquiv_symm_apply] at he
-    rw [hG, ← hround]
-    exact this
+    grind
 
 end ApproximableMap
 

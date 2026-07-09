@@ -272,10 +272,8 @@ lemma UniversalEnvelopingAlgebra.induction
   · intro r
     simpa [C'] using hAM r
   · exact hι
-  · intro ta tb hta htb
-    simpa only [C', map_mul] using hMul _ _ hta htb
-  · intro ta tb hta htb
-    simpa only [C', map_add] using hAdd _ _ hta htb
+  · grind
+  · grind
 
 lemma UniversalEnvelopingAlgebra.central_of_forall_lie_eq_zero
     {Z : 𝓰} (hZ : ∀ (X : 𝓰), ⁅Z, X⁆ = 0) (a : 𝓤 𝕜 𝓰) :

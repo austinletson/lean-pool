@@ -172,11 +172,7 @@ theorem shiftDown_gt (b : ℕ → Piece) {start n i : ℕ} (h : n < i) :
     obtain ⟨N, hN⟩ := s.finite_support
     refine ⟨max N (n + 1), fun m hm => ?_⟩
     unfold shiftDown
-    split_ifs with h1 h2 h3
-    · exact hN _ (by omega)
-    · exact hN _ (by omega)
-    · rfl
-    · exact hN _ (by omega)
+    grind
 
 @[simp]
 theorem shiftDownB_board (s : Board) (start n : ℕ) :
@@ -228,17 +224,14 @@ theorem weight_shiftDownB_lt {s : Board} {start n : ℕ} (hsn : start ≤ n)
           Finset.range (n + 1 + s.finite_support.choose) =
             Finset.range start ∪ Finset.Ico start n ∪ {n} ∪
               Finset.Ico (n + 1) (n + 1 + s.finite_support.choose) := by
-        grind only [usr Exists.choose_spec, = Finset.union_singleton, = Finset.insert_union,
-          = Finset.mem_union, = Finset.mem_range, = Finset.mem_insert, = Finset.mem_Ico,
-          = Finset.mem_singleton]
+        grind
       rw [h_range, Finset.sum_union, Finset.sum_union, Finset.sum_union] <;> norm_num
       · simp +decide only [shiftDown, lt_self_iff_false, ↓reduceIte, ite_eq_right_iff,
           isEmpty_Prop, not_lt, hsn, IsEmpty.forall_iff, add_zero]
         congr! 2
         · exact Finset.sum_congr rfl fun x hx => by aesop
         · refine Finset.sum_congr rfl fun x hx => ?_
-          have := Finset.mem_Ico.mp hx
-          split_ifs <;> omega
+          grind
         · grind only [= Finset.mem_Ico]
       · exact Finset.disjoint_left.mpr fun x hx₁ hx₂ => by
           have := Finset.mem_range.mp hx₁; have := Finset.mem_Ico.mp hx₂; omega
@@ -298,16 +291,14 @@ theorem board_eq_none_of_gt_rightmostPos {s : Board} {k : ℕ}
   by_cases hk2 : k ≤ s.finite_support.choose
   · by_contra h
     exact absurd (Nat.le_findGreatest hk2 h) (not_le.mpr hk)
-  · simp at hk2
-    grind only [Exists.choose_spec]
+  · grind
 
 theorem rightmostPos_greatest {s : Board} {k : ℕ} (hk : s.board k ≠ .none) :
     k ≤ s.rightmostPos := by
   by_contra h
   push Not at h
   have hk2 : k ≤ s.finite_support.choose := by
-    by_contra h2; push Not at h2
-    exact hk (s.finite_support.choose_spec k (by omega))
+    grind
   exact hk (board_eq_none_of_gt_rightmostPos h)
 
 /-- A nonzero `rightmostPos` is always occupied. -/
@@ -340,9 +331,7 @@ theorem rightmost_of_stride_pos {p : Player} {s : Board}
     (hs : s.stride p ≠ 0) :
     s.board s.rightmostPos = .ofPlayer p ∧ s.rightmostPos + 1 = s.stride p := by
   unfold Strip.Board.stride at ⊢ hs
-  simp only [ne_eq, ite_eq_right_iff, Nat.add_eq_zero_iff, one_ne_zero, and_false, imp_false,
-             not_not] at hs
-  simp only [hs, ↓reduceIte, and_self]
+  grind
 
 theorem neg_push_below_rightmost {s : Board} {p : Player} {m : ℕ}
     (hrm : s.board s.rightmostPos = .ofPlayer p)
@@ -448,9 +437,7 @@ protected def moves : Player → R → Set R :=
 theorem mem_moves_iff (p : Player) (s s' : R) :
     s' ∈ Strip.moves p s ↔ ∃ n, board s n = Piece.ofPlayer p ∧ s' = push s n := by
   simp only [Strip.moves, Set.mem_image, Set.mem_setOf_eq]
-  constructor
-  · rintro ⟨n, hn, rfl⟩; exact ⟨n, hn, rfl⟩
-  · rintro ⟨n, hn, rfl⟩; exact ⟨n, hn, rfl⟩
+  grind
 
 /-- The game graph of a strip ruleset. -/
 def graph (R : Type u) [Strip R] : GameGraph R where
@@ -694,8 +681,7 @@ theorem stride_zero_of_push {s : R} {p : Player} {m : ℕ}
     (hs : stride s p = 0) (hm : board s m ≠ .none) :
     stride (push s m) p = 0 := by
   have := stride_push_le p hm
-  rw [hs] at this
-  exact Nat.le_zero.mp this
+  grind
 
 theorem push_to_empty_is_neg {s : R} {p : Player} {m : ℕ}
     (hs : stride s p = 0)
@@ -711,8 +697,7 @@ theorem push_to_empty_is_neg {s : R} {p : Player} {m : ℕ}
       have hle : m ≤ (toBoard s).finite_support.choose := by
         have := Board.rightmostPos_greatest hm_piece
         have := Board.rightmostPos_le (toBoard s)
-        rw [rightmostPos_def] at h
-        omega
+        grind
       exact Board.rightmostPos_spec (toBoard s) hle hm_piece
     exact hkey (h_empty _)
   rw [h_m_eq] at hm_piece ⊢
@@ -829,16 +814,14 @@ theorem toGameForm_hasStride (s : R) (p : Player) :
         · have hm_eq : m = rightmostPos s := by
             refine le_antisymm ?_ (Nat.not_lt.mp hm_lt)
             apply rightmostPos_greatest
-            rw [hm_p]
-            exact Piece.ofPlayer_ne_none p
+            grind
           have := stride_push_eq_rightmostPos p hm_ne hm_eq
           omega
       exact ⟨stride (push s m) p, h_stride_ge, ih_push m p hm_ne⟩
     · refine ⟨Strip.toGameForm (push s k), toGameForm_push_mem_moves p hrm, ?_, ?_⟩
       · by_cases hk_pos : 0 < k
         · have h_str := stride_push_at_rightmost p rfl hk_pos hrm
-          have h_hs := ih_push k p hk_ne
-          rwa [h_str] at h_hs
+          grind
         · have hk_zero : (k : ℕ) = 0 := by omega
           have h_empty : ∀ n, board (push s 0) n = .none :=
             push_rightmost_zero_empty (by rw [← hk_def]; exact hk_zero)
@@ -861,10 +844,7 @@ theorem toGameForm_hasStride (s : R) (p : Player) :
       have hm_ne : board s m ≠ .none := by rw [hm_neg]; exact Piece.ofPlayer_ne_none (-p)
       have h_stride_eq : stride (push s m) p = k + 1 := by
         rw [stride_push_below p (by rw [← hk_def]; exact hm_lt), hstride_eq]
-      use k + 1
-      refine ⟨le_refl _, ?_⟩
-      rw [← h_stride_eq]
-      exact ih_push m p hm_ne
+      grind
     · intro hne
       have ⟨g', hg'⟩ := Set.nonempty_iff_ne_empty.mpr hne
       obtain ⟨m, hm_neg, rfl⟩ := (mem_moves_toGameForm_iff s (-p) g').mp hg'
@@ -872,10 +852,7 @@ theorem toGameForm_hasStride (s : R) (p : Player) :
       have hm_ne : board s m ≠ .none := by rw [hm_neg]; exact Piece.ofPlayer_ne_none (-p)
       have h_stride_eq : stride (push s m) p = k + 1 := by
         rw [stride_push_below p (by rw [← hk_def]; exact hm_lt), hstride_eq]
-      use Strip.toGameForm (push s m)
-      use (mem_moves_toGameForm_iff s (-p) _).mpr ⟨m, hm_neg, rfl⟩
-      rw [← h_stride_eq]
-      exact ih_push m p hm_ne
+      grind
 
 /-!
 ### Building the `Strided` structure and the equivalence with `ℤ`
@@ -899,9 +876,7 @@ theorem mk_with_stride (p : Player) (n : ℕ) :
   · set b : Board :=
       { board := fun m => if m = n then Piece.ofPlayer p else Piece.none,
         finite_support := ⟨n + 1, by
-          intro m hm
-          show (if m = n then Piece.ofPlayer p else Piece.none) = Piece.none
-          rw [if_neg (show m ≠ n by omega)]⟩ }
+          grind⟩ }
       with hb_def
     have hbn : b.board n = .ofPlayer p := by rw [hb_def]; simp only [↓reduceIte]
     have hb_other : ∀ m, m ≠ n → b.board m = .none := by
@@ -931,8 +906,7 @@ noncomputable instance ruleset (R : Type u) [Strip R] : Ruleset R where
   toGameForm := Strip.toGameForm
   moves_toGameForm p r g' h_g' := by
     rw [moves_toGameForm] at h_g'
-    obtain ⟨r', _, rfl⟩ := h_g'
-    exact ⟨r', rfl⟩
+    grind
 
 /--
 The `Strided` structure on the additive closure of any `Strip` ruleset.

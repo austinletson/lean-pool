@@ -93,8 +93,7 @@ theorem sum_range_C_mul (x y : ℤ) :
       ring
     · rw [ih₁, mul_sum]
       congr! 1 with j hj
-      rw [show k + 2 - (j + 1) = k + 1 - j by lia]
-      ring
+      grind
     · symm
       iterate 2 rw [sum_range_succ, C_eq_zero_of_lt (by lia), cast_zero, zero_mul, add_zero]
       let g (j : ℕ) := C k j * (s ^ (2 * j + 1) * p ^ (k + 2 - j))
@@ -243,9 +242,7 @@ lemma log_radical_prod_tup_le (hk : k ≠ 0) :
     rw [sub_pos]
     exact (one_lt_pow₀ one_lt_two hk)
   apply (Int.le_of_dvd (by positivity) (radical_prod_tup_dvd)).trans
-  simp_rw [mul_rotate 2, CP, cast_mul, cast_pow, cast_ofNat]
-  gcongr
-  lia
+  grind
 
 lemma le_tupleQuality (hk : k ≠ 0) :
     .ofReal ((2 * n + 1) * (k * Real.log 2) /
@@ -272,9 +269,7 @@ lemma liminf_tupleQuality_tup : (2 * n + 1 : ℕ) ≤ liminf (tupleQuality ∘ t
   apply Tendsto.const_mul
   have l2n0 : Real.log 2 ≠ 0 := by positivity
   have key := tendsto_add_mul_div_add_mul_atTop_nhds 0 Q (Real.log 2) l2n0
-  rw [div_self l2n0] at key
-  convert key using 2 with k
-  rw [zero_add, mul_comm]
+  grind
 
 end Quality
 

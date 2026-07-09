@@ -194,8 +194,7 @@ private lemma heitmann_prop1_surj_pow
     exact ⟨0, by
       change Ideal.Quotient.mk _ _ = Ideal.Quotient.mk _ y
       rw [Ideal.Quotient.eq, show IsLocalRing.maximalIdeal T ^ 0 = ⊤ from by
-        rw [pow_zero]
-        exact Ideal.one_eq_top]
+        grind]
       exact Submodule.mem_top⟩
   | succ n _ih =>
     set M := IsLocalRing.maximalIdeal T
@@ -239,8 +238,7 @@ private lemma heitmann_prop1_surj_pow
           have := M.neg_mem he
           rwa [show -((r_a : T) - a) = a - (r_a : T) from by ring] at this
         rw [show M ^ (n + 1) = M * M ^ n from by
-          rw [mul_comm]
-          exact (pow_succ M n).symm]
+          grind]
         exact Ideal.mul_mem_mul ha_sub hx_in
     intro q
     obtain ⟨t, rfl⟩ := Ideal.Quotient.mk_surjective q
@@ -475,8 +473,7 @@ theorem maximal_not_assoc_of_depth_ge_two
     exact (Ideal.Quotient.eq_zero_iff_mem).mpr h
   have ha_in_ann : a ∈ (⊥ : Submodule T (T ⧸ Ideal.span {r})).colon
       {Ideal.Quotient.mk (Ideal.span {r}) x_lift} := by
-    rw [← hx_ann]
-    exact ha_mem
+    grind
   have ha_mul : a * x_lift ∈ Ideal.span ({r} : Set T) := by
     rw [Submodule.mem_colon] at ha_in_ann
     have := ha_in_ann (Ideal.Quotient.mk _ x_lift) (Set.mem_singleton _)
@@ -485,8 +482,7 @@ theorem maximal_not_assoc_of_depth_ge_two
     exact this
   have hb_in_ann : b ∈ (⊥ : Submodule T (T ⧸ Ideal.span {r})).colon
       {Ideal.Quotient.mk (Ideal.span {r}) x_lift} := by
-    rw [← hx_ann]
-    exact hb_mem
+    grind
   have hb_mul : b * x_lift ∈ Ideal.span ({r} : Set T) := by
     rw [Submodule.mem_colon] at hb_in_ann
     have := hb_in_ann (Ideal.Quotient.mk _ x_lift) (Set.mem_singleton _)
@@ -497,11 +493,7 @@ theorem maximal_not_assoc_of_depth_ge_two
   obtain ⟨y₁, hy₁⟩ := ha_mul
   obtain ⟨y₂, hy₂⟩ := hb_mul
   have h_eq : r * (b * y₁) = r * (a * y₂) := by
-    have h1 : b * (a * x_lift) = a * (b * x_lift) := by ring
-    rw [hy₁, hy₂] at h1
-    calc r * (b * y₁) = b * (r * y₁) := by ring
-    _ = a * (r * y₂) := h1
-    _ = r * (a * y₂) := by ring
+    grind
   -- Cancel r (domain), then use b regular on T/aT to get y₁ ∈ aT
   have h_cancel : b * y₁ = a * y₂ := mul_left_cancel₀ hr h_eq
   have hby₁_mem : b * y₁ ∈ Ideal.span ({a} : Set T) :=
@@ -523,13 +515,11 @@ theorem maximal_not_assoc_of_depth_ge_two
     have hby₁_smul : b * y₁ ∈ (a • ⊤ : Submodule T T) := h_eq ▸ hby₁_mem
     have hy₁_smul : y₁ ∈ (a • ⊤ : Submodule T T) :=
       mem_of_isSMulRegular_quotient_of_smul_mem hb_reg_mod_a (by rwa [smul_eq_mul])
-    rw [h_eq]
-    exact hy₁_smul
+    grind
   rw [Ideal.mem_span_singleton] at hy₁_in_aT
   obtain ⟨z, hz⟩ := hy₁_in_aT
   -- Cancel a (regular on T): x_lift = r * z, contradicting x ≠ 0
-  have h_ax : a * x_lift = a * (r * z) := by rw [hy₁, hz]
-                                             ring
+  have h_ax : a * x_lift = a * (r * z) := by grind
   have h_x_eq : x_lift = r * z := by
     have := ha_reg (show a • x_lift = a • (r * z) by rwa [smul_eq_mul, smul_eq_mul])
     exact this

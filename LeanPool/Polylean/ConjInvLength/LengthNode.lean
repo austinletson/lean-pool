@@ -93,16 +93,13 @@ def lengthNodes (w : Wrd) : IO Float := do
       let x := w.back
       let ys : Wrd := w.pop
       have ysize : ys.size = m := by
-        rw [Array.size_pop, h]
-        rfl
+        grind
       have _ : ys.size < w.size := by
-        rw [ysize, h]
-        exact Nat.lt_succ_self m
+        grind
       let base := 1 + (← lengthNodes ys)
       let derived ←  (ys.splits x⁻¹).mapM fun ⟨(fst, snd), hfst_snd⟩ => do
         have hsplit : fst.size + snd.size < w.size := by
-          rw [h, ← ysize]
-          exact Nat.lt_trans hfst_snd (Nat.lt_succ_self _)
+          grind
         have _ : fst.size < w.size := Nat.lt_of_le_of_lt (Nat.le_add_right _ _) hsplit
         have _ : snd.size < w.size := Nat.lt_of_le_of_lt (Nat.le_add_left _ _) hsplit
         return ((← lengthNodes fst) + (← lengthNodes snd), fst, snd)

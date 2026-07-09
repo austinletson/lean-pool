@@ -164,16 +164,13 @@ lemma zaddVal_spec (x : Kˣ) : ∃ (ϖ : R) (hϖ : Irreducible ϖ)
   obtain ⟨ϖ, hϖ, h⟩ := zaddVal_spec' (R := R) x
   use ϖ, hϖ
   obtain ⟨u, hu⟩ := zaddVal'_spec ϖ hϖ x
-  use u
-  rwa [h]
+  grind
 
 include hϖ in
 lemma unit_mul_zpow_congr_zpow' (a b : Rˣ) (m n : ℤ) (h : a * ϖ.val ^ m = b * ϖ.val ^ n) :
     m = n := by
   wlog hmn : m ≤ n
-  · simp only [not_le] at hmn
-    symm
-    exact this ϖ hϖ b a n m h.symm (le_of_lt hmn)
+  · grind
   have h' : a * ϖ.val ^ m * ϖ.val ^ (-m) = b * ϖ.val ^ n * ϖ.val ^ (-m) :=
     congrFun (congrArg HMul.hMul h) (ϖ.val ^ (-m))
   rw [mul_assoc, mul_assoc, ← zpow_add₀ (by simpa using hϖ.ne_zero),
@@ -188,10 +185,7 @@ lemma unit_mul_zpow_congr_zpow' (a b : Rˣ) (m n : ℤ) (h : a * ϖ.val ^ m = b 
     norm_cast
   have : 0 = Int.toNat (n - m) :=
     IsDiscreteValuationRing.unit_mul_pow_congr_pow hϖ hϖ a b 0 (Int.toNat (n - m)) this
-  rw [← Nat.cast_inj (R := ℤ)] at this
-  simp only [CharP.cast_eq_zero, Int.ofNat_toNat, right_eq_sup, tsub_le_iff_right, zero_add] at this
-  symm
-  exact Int.le_antisymm this hmn
+  grind
 
 lemma unit_mul_zpow_congr_zpow {p q : R} (hp : Irreducible p) (hq : Irreducible q)
     (a b : Rˣ) (m n : ℤ) (h : a * p.val ^ m = b * q.val ^ n) :
@@ -250,8 +244,7 @@ lemma neg_pow_not_mem_subring (n : ℕ) (hn : n > 0) : ϖ.val ^ (- n : ℤ) ∉ 
         simpa only [pow_zero, inv_one, mul_one] using
           inv_irreducible_not_mem_subring ϖ hϖ
       · have : (ϖ.val ^ n)⁻¹ ∉ R := by
-          apply ih
-          exact Nat.zero_lt_of_ne_zero hnz
+          grind
         contrapose! this
         have : ϖ.val * ϖ.val⁻¹ * (ϖ.val ^ n)⁻¹ = (ϖ.val ^ n)⁻¹ := by field_simp
         rw [← this, mul_assoc]
@@ -268,8 +261,7 @@ lemma irreducible_zpow_mem_subring_iff (n : ℤ) : ϖ.val ^ n ∈ R ↔ n ≥ 0 
     have hn : - n ≥ 0 := by
       simpa only [ge_iff_le, Left.nonneg_neg_iff] using Int.le_of_lt h
     convert_to (ϖ.val ^ (- (- n).toNat : ℤ)) ∉ R
-    · rw [Int.toNat_of_nonneg hn]
-      simp
+    · grind
     · apply neg_pow_not_mem_subring _ (-n).toNat (hϖ := hϖ)
       simpa
   · intro hn

@@ -53,9 +53,7 @@ lemma isCover_iff (X : Set ℝ²) (S : Set Triangle)
     : isDisjointCover X S ↔ covers S X closedHull ∧ disjointSet S openHull := by
   simp only [isDisjointCover, isCover, isDisjointPolygonSet, ne_eq, covers, disjointSet,
     and_congr_right_iff]
-  intro _
-  exact ⟨fun h Δ₁ Δ₂ hΔ₁ hΔ₂ hneq ↦ h Δ₁ hΔ₁ Δ₂ hΔ₂ hneq,
-    fun h Δ₁ hΔ₁ Δ₂ hΔ₂ hneq ↦ h Δ₁ Δ₂ hΔ₁ hΔ₂ hneq⟩
+  grind
 
 lemma disjoint_aux {α β : Type} (S₁ S₂ : Set α) (f : α → Set β) (h₁ : disjointSet S₁ f)
     (h₂ : disjointSet S₂ f)
@@ -231,12 +229,10 @@ lemma zag_open_disjoint {n : ℕ} : disjointSet ((zagPartCover n) : Set Triangle
     intro x hx₂ hx₁
     rw [←hs₁, open_triangle_iff (by
       simp [det, translateTriangle, scaleTriangle, Δ₀', translateVector, scaleVector]
-      field_simp [Nat.ne_zero_of_lt nsign]
-      ring_nf; norm_num)] at hx₁
+      grind)] at hx₁
     rw [←hs₂, open_triangle_iff (by
       simp [det, translateTriangle, scaleTriangle, Δ₀', translateVector, scaleVector]
-      field_simp [Nat.ne_zero_of_lt nsign]
-      ring_nf; norm_num)] at hx₂
+      grind)] at hx₂
     have hx₁₀ := hx₁ 0
     have hx₁₁ := hx₁ 1
     have hx₁₂ := hx₁ 2
@@ -279,8 +275,7 @@ lemma zig_zag_open_disjoint {n : ℕ}
     field_simp [nsign] at hx₁₀ hx₁₁ hx₁₂ hx₂₀ hx₂₁ hx₂₂
     have l := fin_el_bound (x := x 1 * ↑n) (s₁ := s₁) (s₂ := s₂)
       (by linarith) (by linarith) (by linarith) (by linarith)
-    rw [l] at hx₁₀ hx₁₂
-    linarith
+    grind
   · simp [Nat.eq_zero_of_not_pos nsign, zagPartCover]
 
 
@@ -383,8 +378,7 @@ lemma zig_zag_covers_square {n : ℕ} (hn : n ≠ 0)
         refine ⟨⟨hs₁, by linarith⟩, ?_, ?_⟩
         · have hnpos : (0 : ℝ) < ↑n := Nat.cast_pos'.mpr (Nat.zero_lt_of_ne_zero hn)
           have hmul : (0 : ℝ) ≤ ↑n * x.ofLp 1 := by
-            have : (0 : ℝ) ≤ (s.1 : ℝ) := Nat.cast_nonneg' s.1
-            linarith
+            grind
           exact (mul_nonneg_iff_of_pos_left hnpos).mp hmul
         · have hnpos : (0 : ℝ) < ↑n := Nat.cast_pos'.mpr (Nat.zero_lt_of_ne_zero hn)
           rw [add_assoc, le_neg_add_iff_le] at hs₀
@@ -430,8 +424,7 @@ theorem monsky_easy_direction' {n : ℕ} (hn : Even n) (hnneq : n ≠ 0)
     refine ⟨?_,?_⟩
     · convert zig_zag_covers_square (n := m) ?_
       · simp only [coe_union]
-      · intro h; apply hnneq
-        rw [hm,h,add_zero]
+      · grind
     · convert disjoint_aux (S₁ := zigPartCover m) (S₂ := (zagPartCover m : Set Triangle))
         (f := openHull) zig_open_disjoint zag_open_disjoint zig_zag_open_disjoint
       exact coe_union (zigPartCover m) (zagPartCover m)

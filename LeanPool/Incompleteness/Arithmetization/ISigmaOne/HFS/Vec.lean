@@ -495,8 +495,7 @@ lemma graph_cons {x xs y : V} :
   rcases c.graph_case.mp h with (h | ⟨x, xs, y, h, hg⟩)
   · simp at h
   · simp only [pair_ext_iff, cons_inj] at h
-    rcases h with ⟨⟨rfl, rfl⟩, rfl⟩
-    exact ⟨y, rfl, hg⟩
+    grind
 
 variable (param)
 
@@ -518,8 +517,7 @@ lemma graph_unique {xs y₁ y₂ : V} : c.Graph param ⟪xs, y₁⟫ → c.Graph
     rw [graph_nil, graph_nil]; rintro rfl rfl; rfl
   case cons x v ih =>
     rw [graph_cons, graph_cons]
-    rintro ⟨l₁, rfl, h₁⟩ ⟨l₂, rfl, h₂⟩
-    rcases ih h₁ h₂; rfl
+    grind
 
 variable (param)
 
@@ -823,11 +821,7 @@ def construction : VecRec.Construction V blueprint where
       Structure.LT.lt, Matrix.cons_app_two, eval_cons, LogicalConnective.Prop.arrow_eq,
       Structure.LE.le, Matrix.cons_app_four, Structure.Eq.eq, LogicalConnective.Prop.and_eq,
       exists_eq_left]
-    change (v 0 = if len (v 2) < v 4 then v 1 ∷ v 2 else v 3) ↔
-      (len (v 2) < v 4 → v 0 = v 1 ∷ v 2) ∧ (v 4 ≤ len (v 2) → v 0 = v 3)
-    rcases lt_or_ge (len (v 2)) (v 4) with (hv | hv)
-    · simp [hv]
-    · simp [hv, not_lt.mpr hv]
+    grind
 
 end TakeLast
 

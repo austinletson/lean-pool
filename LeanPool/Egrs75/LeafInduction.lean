@@ -98,12 +98,7 @@ theorem seed_lowDigits_pow {p : ℕ} (hp : 3 ≤ p) (k : ℕ) : LowDigits p (p ^
   rcases hd with hd | hd
   · rw [List.mem_replicate] at hd; omega
   · rw [Nat.digits_of_lt p 1 (by norm_num) (by omega)] at hd
-    simp only [List.mem_singleton] at hd
-    rw [hd]
-    -- `1 ≤ (p-1)/2` since `p ≥ 3`
-    have : 2 ≤ p - 1 := by omega
-    calc (1 : ℕ) = 2 / 2 := by norm_num
-      _ ≤ (p - 1) / 2 := Nat.div_le_div_right this
+    grind
 
 /-- `N < p^(N+1)` for `p ≥ 2`, via `N < 2^N ≤ 2^(N+1) ≤ p^(N+1)`.  KERNEL-CLEAN. -/
 theorem seed_lt_pow_succ {p : ℕ} (hp : 2 ≤ p) (N : ℕ) : N < p ^ (N + 1) := by
@@ -172,10 +167,7 @@ theorem align_of_repair {p q : ℕ} (N : ℕ)
     · -- potential 0 ⟹ already LowDigits q : done with `n` itself
       exact ⟨n, hN, hpn, (badCountQ_eq_zero_iff_lowDigits).mp hzero⟩
     · -- potential > 0 ⟹ repair once, recurse on the strictly smaller potential
-      obtain ⟨n', hlt, hpn', hdrop⟩ := hrepair hpn hpos
-      -- the new potential `badCountQ q n'` is `< k`
-      have hk' : badCountQ q n' < k := by rw [← hk]; exact hdrop
-      exact ih (badCountQ q n') hk' n' rfl (lt_trans hN hlt) hpn'
+      grind
 
 /-! ## The target: ALIGN, with the single `sorry` discharged via `repair_step`
 

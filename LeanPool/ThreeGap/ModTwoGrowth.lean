@@ -64,14 +64,11 @@ theorem growth_additive_modTwo {d : ℕ}
   have key : ∀ i0 j0 : ℕ, i0 < j0 → j0 ≤ 2 ^ (d + 1) → sig i0 = sig j0 → False := by
     intro i0 j0 hlt hle hse
     have hqpar : Even (q (n + j0)) ↔ Even (q (n + i0)) := by
-      have h := congrArg Prod.snd hse
-      simp only [hsig, decide_eq_decide] at h
-      exact h.symm
+      grind
     have hppar : ∀ k, Even (p (n + j0) k) ↔ Even (p (n + i0) k) := by
       intro k
       have h := congrFun (congrArg Prod.fst hse) k
-      simp only [hsig, decide_eq_decide] at h
-      exact h.symm
+      grind
     have hqeven : Even (q (n + j0) - q (n + i0)) := Int.even_sub.mpr hqpar
     have hpeven : ∀ k, Even (p (n + j0) k - p (n + i0) k) := fun k => Int.even_sub.mpr (hppar k)
     set a2 : ℤ := q (n + j0) - q (n + i0) with ha2
@@ -115,9 +112,7 @@ theorem growth_additive_modTwo {d : ℕ}
       linarith [hstep1, hatt_j, hatt_i]
     -- assemble the contradiction
     have hQle : δ (q n) ≤ δ Q := hbest n Q hQpos hQlt
-    have hδQ : δ Q ≤ N (rem α Q Pv) := hδ_le Q Pv
-    have hdn : δ (q (n + 1)) < δ (q n) := hdec n
-    linarith [hQle, hδQ, hdouble, hbound, hdn]
+    grind
   -- pigeonhole over the 2^{d+1}+1 indices
   have hcard : Fintype.card ((Fin d → Bool) × Bool) < Fintype.card (Fin (2 ^ (d + 1) + 1)) := by
     rw [Fintype.card_prod, Fintype.card_fun, Fintype.card_bool, Fintype.card_fin, Fintype.card_fin,
@@ -125,12 +120,7 @@ theorem growth_additive_modTwo {d : ℕ}
     omega
   obtain ⟨a, b, hab, heq⟩ :=
     Fintype.exists_ne_map_eq_of_card_lt (fun k : Fin (2 ^ (d + 1) + 1) => sig k.val) hcard
-  have hne : a.val ≠ b.val := fun h => hab (Fin.val_injective h)
-  have hale : a.val ≤ 2 ^ (d + 1) := Nat.lt_succ_iff.mp a.isLt
-  have hble : b.val ≤ 2 ^ (d + 1) := Nat.lt_succ_iff.mp b.isLt
-  rcases lt_or_gt_of_ne hne with h | h
-  · exact key a.val b.val h hble heq
-  · exact key b.val a.val h hale heq.symm
+  grind
 
 /-- **The sup-norm additive growth inequality** as the concrete instance of the abstract mod-2
 theorem at the sup norm `‖·‖` on `Fin d → ℝ` (with `δ = SimApprox.delta`): `2 q_{n+1} + q_n ≤

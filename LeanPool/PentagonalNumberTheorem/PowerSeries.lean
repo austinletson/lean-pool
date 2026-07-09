@@ -37,8 +37,7 @@ theorem summable_gamma_powerSeries [TopologicalSpace R] (k : ℕ) :
   contrapose! h
   unfold gamma
   have : ¬ (k + 1) * i ≤ n := by
-    rw [not_le]
-    exact h.trans_le <| Nat.le_mul_of_pos_left i (by simp)
+    grind
   simp [PowerSeries.coeff_X_pow_mul', this]
 
 theorem multipliable_pentagonalLhs_powerSeries' [Nontrivial R] [TopologicalSpace R] (k : ℕ) :

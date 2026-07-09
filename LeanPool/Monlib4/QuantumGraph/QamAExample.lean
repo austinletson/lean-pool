@@ -159,8 +159,7 @@ theorem Qam.iso_preserves_ir_reflexive [Nontrivial n] {φ : Module.Dual ℂ ℍ}
   · intro hA
     apply hconj_injective
     rwa [hconj_const]
-  · intro hA
-    rw [hA, hconj_const]
+  · grind
 
 /-- a function `f : A → B` is _almost injective_ if for all $x, y \in A$,
   if $f(x)=f(y)$ then there exists some $0\neq\alpha \in \mathbb{C}$ such that
@@ -202,39 +201,22 @@ theorem spectra_fin_two_ext_aux {A : Type _} (α β γ : A) :
   constructor
   · intro h
     simp_rw [Multiset.cons_eq_cons, Multiset.singleton_inj, Multiset.singleton_eq_cons_iff] at h
-    rcases h with (h1 | ⟨_, cs, ⟨hcs₁, _⟩, ⟨hcs₃, _⟩⟩)
-    · exact h1
-    · exact ⟨hcs₁, hcs₃.symm⟩
-  · rintro ⟨rfl, rfl⟩
-    rfl
+    grind
+  · grind
 
 theorem spectra_fin_two_ext {α : Type _} (α₁ α₂ β₁ β₂ : α) :
     ({α₁, α₂} : Multiset α) = {β₁, β₂} ↔ α₁ = β₁ ∧ α₂ = β₂ ∨ α₁ = β₂ ∧ α₂ = β₁ := by
   by_cases H₁ : α₁ = α₂
   · rw [H₁, spectra_fin_two_ext_aux]
-    constructor
-    · rintro ⟨h1, h2⟩
-      left
-      exact ⟨h1, h2⟩
-    · rintro (⟨h1, h2⟩ | ⟨h1, h2⟩)
-      · exact ⟨h1, h2⟩
-      · exact ⟨h2, h1⟩
+    grind
   by_cases h' : α₁ = β₁
   · simp_rw [h', true_and, Multiset.insert_eq_cons, Multiset.cons_inj_right,
       Multiset.singleton_inj]
-    constructor
-    · intro hi
-      left
-      exact hi
-    rintro (h | ⟨_, h2⟩)
-    · exact h
-    · rw [← h', eq_comm] at h2
-      contradiction
+    grind
   simp_rw [Multiset.insert_eq_cons, Multiset.cons_eq_cons, Multiset.singleton_inj,
     Multiset.singleton_eq_cons_iff, ne_eq, h', false_and, false_or, not_false_iff,
     true_and]
-  simp only [exists_eq_right_right, and_true, eq_comm]
-  simp_rw [and_comm]
+  grind
 
 @[reducible, instance]
 def Multiset.hasSmul {α : Type _} [SMul ℂ α] : SMul ℂ (Multiset α)

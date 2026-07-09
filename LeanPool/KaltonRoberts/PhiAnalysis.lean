@@ -158,9 +158,7 @@ theorem Phi_E₁_at_delta : Phi 4 (1/3) (1/100 : ℝ) < -(1 : ℝ)/1000 := by
   have := Real.sum_range_le_log_div
     (show 0 ≤ 33 / 161 by norm_num) (show 33 / 161 < 1 by norm_num) 6;
   norm_num at *;
-  (have := Real.log_div_le_sum_range_add
-    (show 0 ≤ 33 / 161 by norm_num) (show 33 / 161 < 1 by norm_num) 6;
-   norm_num at *);
+  (grind);
   linarith
 
 theorem Phi_E₁_at_alpha : Phi 4 (1/3) (1003/10000 : ℝ) < -(1 : ℝ)/1000 := by

@@ -100,28 +100,22 @@ theorem tag_injective : ∀ {ns₁ ns₂ : List ℕ} {m₁ m₂ : ℕ},
       cases ns₂ with
       | nil =>
           have hp := num_injective (show numP (0, m₁) = numP (0, m₂) from h)
-          injection hp with _ hm
-          exact ⟨rfl, hm⟩
+          grind
       | cons n₂ ns₂' =>
           exfalso
           have hp := num_injective (show numP (0, m₁) = numP (n₂ + 1, tag ns₂' m₂) from h)
-          injection hp with h1 _
-          omega
+          grind
   | cons n₁ ns₁' ih =>
       intro ns₂ m₁ m₂ h
       cases ns₂ with
       | nil =>
           exfalso
           have hp := num_injective (show numP (n₁ + 1, tag ns₁' m₁) = numP (0, m₂) from h)
-          injection hp with h1 _
-          omega
+          grind
       | cons n₂ ns₂' =>
           have hp := num_injective
             (show numP (n₁ + 1, tag ns₁' m₁) = numP (n₂ + 1, tag ns₂' m₂) from h)
-          injection hp with h1 h2
-          have hn : n₁ = n₂ := by omega
-          obtain ⟨hns, hm⟩ := ih h2
-          exact ⟨by rw [hn, hns], hm⟩
+          grind
 
 /-- **The tag is onto**: every `c : ℕ` decodes as some `tag ns m`. Strong
 induction on `c`,

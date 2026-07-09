@@ -325,8 +325,7 @@ lemma covariance_imaginary_L2_bound (m : ℝ) [Fact (0 < m)] (f : TestFunction�
       have : 0 ≤ (2 * Real.pi)^2 * ‖k‖^2 := by positivity
       linarith
     -- 0 < m^2 and m^2 ≤ (2π)²‖k‖² + m^2 ⇒ 1 / ((2π)²‖k‖² + m^2) ≤ 1 / m^2
-    have := one_div_le_one_div_of_le (a := m^2) (b := (2 * Real.pi)^2 * ‖k‖^2 + m^2) (by exact
-      hm2pos) hden
+    have := one_div_le_one_div_of_le (a := m^2) (b := (2 * Real.pi)^2 * ‖k‖^2 + m^2) (by grind) hden
     simpa [one_div] using this
   -- Show integrability of ‖F‖² via MemLp → Integrable (square norm)
   have hF_memLp : MemLp F 2 volume := F.memLp 2 volume

@@ -202,9 +202,7 @@ theorem trivialNonZeroElem_trivial_nonzeroAux {R G : Type _} [Ring R] [Group G]
       have : p.coords = FormalSum.coords [(a, g)] := hyp.left
       rw [this] at h
       simp only [FormalSum.coords, monomCoeff, add_zero] at h
-      by_cases c : x = g
-      · exact c
-      · simp only [beq_false_of_ne (Ne.symm c), not_true] at h
+      grind
 
 /-- Triviality of `p : R[G]` coincides with the direct definition `p = a ⬝ g`, `a ≠ 0`. -/
 theorem trivialNonZeroElem_trivial_nonzero {R G : Type _} [Ring R] [Group G]
@@ -217,7 +215,6 @@ theorem trivialNonZeroElem_trivial_nonzero {R G : Type _} [Ring R] [Group G]
   conv =>
     enter [a, 2, 1, a, 1, g, 1]
     rw [Quotient.eq]
-  intro a
-  rfl
+  grind
 
 end LeanPool.Polylean

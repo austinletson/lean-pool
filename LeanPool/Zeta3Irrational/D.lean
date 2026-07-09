@@ -63,14 +63,8 @@ theorem Nat_primeFactors_lcm {a b : ℕ} (ha : a ≠ 0) (hb : b ≠ 0) :
   constructor
   · rintro ⟨hp1, hp2, hp3⟩
     obtain hp4 | hp4 := Nat_Prime_dvd_lcm hp1 a b hp2
-    · left; refine ⟨hp1, hp4, ?_⟩
-      contrapose! hp3
-      subst hp3
-      simp
-    · right; refine ⟨hp1, hp4, ?_⟩
-      contrapose! hp3
-      subst hp3
-      simp
+    · grind
+    · grind
   · rintro (⟨hp1, hp2, hp3⟩|⟨hp1, hp2, hp3⟩)
     · refine ⟨hp1, hp2.trans <| dvd_lcm_left a b, ?_⟩
       contrapose! hp3
@@ -151,8 +145,7 @@ theorem d_factorization (s : Finset ℕ) (hs : s.Nonempty) (p : ℕ) (hs₁ : 0 
       then
       simp only [Finset.image_insert]
       have hs₀ : 0 ∉ s := by
-        intro h0
-        exact hs₁ (Finset.mem_insert_of_mem h0)
+        grind
       rw [ih hs hs₀]
       rw [Finset.max'_insert]
       else
@@ -193,8 +186,7 @@ theorem d_primeFactors (s : Finset ℕ) (hs : 0 ∉ s) :
   | @insert m s hm ih =>
     simp only [Finset.mem_insert, not_or] at hs
     rw [d_insert, Nat_primeFactors_lcm (by aesop) (d_ne_zero _ (by aesop))]
-    simp only [Finset.sup_insert, Finset.sup_eq_union]
-    rw [ih (by aesop)]
+    grind
 
 theorem d_factorization_eq_div_log'' (p : ℕ) :
     (d (Finset.Icc 1 0)).factorization p =
@@ -221,8 +213,7 @@ theorem d_factorization_eq_div_log' (n p : ℕ) (hp : Nat.Prime p) :
           linarith
         · norm_cast
           exact Nat.Prime.one_lt hp
-        · norm_cast
-          omega
+        · grind
       · rw [← sub_lt_iff_lt_add]
         · by_contra! h
           rw [Finset.max'_le_iff] at h
@@ -247,13 +238,11 @@ theorem d_factorization_eq_div_log' (n p : ℕ) (hp : Nat.Prime p) :
             aesop
           · norm_cast
             exact Nat.Prime.one_lt hp
-          · norm_cast
-            omega
+          · grind
   · apply Real.logb_nonneg
     · norm_cast
       exact Nat.Prime.one_lt hp
-    · norm_cast
-      omega
+    · grind
 
 theorem d_factorization_eq_div_log (n p : ℕ) (hp : Nat.Prime p) :
     (d (Finset.Icc 1 n)).factorization p =
@@ -327,8 +316,7 @@ theorem d_le_pow_counting (n : ℕ) : d (Finset.Icc 1 n) ≤ n ^ (n.primeCountin
     calc
     _ ≤ ∏ _ ∈ ((n + 1).primesBelow), n := by
       apply Finset.prod_le_prod
-      · intro p _
-        simp only [zero_le]
+      · grind
       · intro p hp
         rw [Nat.mem_primesBelow] at hp
         have h2 : 1 ≤ p := by
@@ -359,8 +347,7 @@ theorem d_le_pow_counting (n : ℕ) : d (Finset.Icc 1 n) ≤ n ^ (n.primeCountin
             rw [div_self, mul_one, Real.exp_one_rpow, Real.exp_log (by norm_cast)]
             rw [Real.log_ne_zero]
             norm_cast
-            simp only [not_false_eq_true, and_true]
-            omega
+            grind
     _ ≤ n ^ (n.primeCounting) := by
       rw [Finset.prod_const]
       suffices ((n + 1).primesBelow).card = n.primeCounting by

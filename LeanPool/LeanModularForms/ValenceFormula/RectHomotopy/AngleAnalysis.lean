@@ -134,9 +134,7 @@ lemma v4_quadrant (p : ℂ) (hp_re : |p.re| < 1 / 2) (hp_im : p.im < HHeight) :
                Complex.I_re, Complex.I_im, Complex.ofReal_im, mul_one, zero_mul,
                Complex.neg_im, Complex.div_ofNat_im, Complex.one_im, zero_div, neg_zero,
                zero_add, add_zero]
-  constructor
-  · rw [hre]; linarith
-  · rw [him]; linarith
+  grind
 
 /-- Q1: re > 0, im > 0 → 0 < arg < π/2. -/
 lemma arg_Q1 (z : ℂ) (hz_re : 0 < z.re) (hz_im : 0 < z.im) :
@@ -175,9 +173,7 @@ lemma arg_Q2 (z : ℂ) (hz_re : z.re < 0) (hz_im : 0 < z.im) :
   · by_contra h
     push Not at h
     rw [Complex.arg_le_pi_div_two_iff] at h
-    cases h with
-    | inl h_re_pos => linarith
-    | inr h_im_neg => linarith
+    grind
   · exact (Complex.arg_mem_Ioc z).2
 
 /-- The unique time on seg4 where (fdPolygon t - p) crosses the negative real axis. -/
@@ -238,15 +234,7 @@ lemma seg4_vec_im_sign (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_re : |p.re| < 1 / 2
   set D := HHeight - Real.sqrt 3 / 2 with hD_def
   have him_eq : (fdPolygon t - p).im = D * (t - tL p) := by
     rw [Complex.sub_im, him, tL, hD_def]
-    have h1 : Real.sqrt 3 / 2 + (t - 3) * (HHeight - Real.sqrt 3 / 2) - p.im =
-        (HHeight - Real.sqrt 3 / 2) * (t - 3) + (Real.sqrt 3 / 2 - p.im) := by ring
-    rw [h1]
-    have h2 : (HHeight - Real.sqrt 3 / 2) * (t - (3 + (p.im - Real.sqrt 3 / 2) /
-          (HHeight - Real.sqrt 3 / 2))) =
-        (HHeight - Real.sqrt 3 / 2) * (t - 3) - (HHeight - Real.sqrt 3 / 2) *
-            ((p.im - Real.sqrt 3 / 2) / (HHeight - Real.sqrt 3 / 2)) := by ring
-    rw [h2, mul_div_cancel₀ _ hdenom_ne]
-    ring
+    grind
   refine ⟨?_, ?_, ?_⟩
   · intro hlt; rw [him_eq]
     exact mul_neg_of_pos_of_neg hdenom_pos (by linarith)
@@ -316,8 +304,7 @@ lemma fdPolygon_zero_ne_interior (p : ℂ) (hp_im : p.im < HHeight) : fdPolygon 
     simp only [Complex.add_im, Complex.mul_im, Complex.ofReal_re, Complex.I_re, Complex.I_im,
                Complex.ofReal_im, mul_one, zero_mul, Complex.div_ofNat_im, Complex.one_im,
                zero_div, zero_add, add_zero]
-  have hp_im' : p.im = HHeight := by rw [← heq]; exact him
-  linarith
+  grind
 
 /-- fdPolygon 5 ≠ p for interior points. -/
 lemma fdPolygon_five_ne_interior (p : ℂ) (hp_im : p.im < HHeight) : fdPolygon 5 ≠ p := by
@@ -467,8 +454,7 @@ lemma winding_fdPolygon_center_invariant (p₁ p₂ : ℂ)
   · intro t _ht; simp [H, γ₀]
   · intro t _ht; simp [H, γ₁]
   · intro s _hs; simp only [H]; rw [fdPolygon_closed]
-  · intro t ht s hs
-    simp only [H]; rw [sub_ne_zero]; exact havoid s hs t ht
+  · grind
   · intro t ht ht_not_P _s _hs
     exact (fdPolygon_differentiableAt_off_partition t ht ht_not_P
       ).sub_const _

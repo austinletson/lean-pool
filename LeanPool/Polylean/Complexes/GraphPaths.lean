@@ -175,9 +175,7 @@ def reducePathAux [DecidableEq V] [DecidableEq E] {G : Graph V E} {x y z : V}
     if c : (x = term G ey) ∧ (ey = G.bar ex) then
     ⟨ Eq.symm (Eq.trans (And.left c) h₄) ▸ eyz, by
       have h₅ : (Eq.symm (Eq.trans (And.left c) h₄) ▸ eyz).length = eyz.length := by
-        let ih := Eq.symm (Eq.trans (And.left c) h₄)
-        cases ih with
-        | refl => rfl
+        grind
       simp [EdgePath.length, h₅,
         Nat.le_trans (Nat.le_succ (length eyz)) (Nat.le_succ (length eyz + 1))]
     ⟩
@@ -377,8 +375,7 @@ theorem homotopy_right_mult {G : Graph V E} {x y z : V}
          let s₃ := Eq.trans (Eq.symm s₂) (congrArg inverse s₁)
          let t₁ := inverse_mult x y z p₂ q
          let t₂ := inverse_involution (multiply p₂ q)
-         let t₃ := Eq.trans (Eq.symm t₂) (congrArg inverse t₁)
-         apply s₃ ▸ t₃ ▸ r₃
+         grind
 
 
 /-- defines multiplication of homotopy class with a path to its left -/
@@ -418,8 +415,7 @@ def homotopyMultiplication : ht G x y → ht G y z → ht G x z := by
             exact homotopy_right_mult q₁ q₂ p' h'
           exact this
         apply Quot.ind g''
-      let hh := g' p₂
-      exact hh
+      grind
   let k := (Quot.lift (fun x => func x) g)
   apply k p₁
 
@@ -538,8 +534,7 @@ instance htOne {G : Graph V E} {x : V} : One (ht G x x) where
 theorem ht_mult_assoc {G : Graph V E} {x : V} (a b c : ht G x x) :
     ((a # b) # c) = (a # (b # c)) := by
   let k := @homotopy_mult_assoc V E G x x x x
-  let l (a b c : ht G x x) := k b c a
-  apply (l a b c)
+  grind
 
 /-- proves that the identity homotopy class is the right multiplicative identity -/
 theorem ht_right_identity {G : Graph V E} {x : V} :

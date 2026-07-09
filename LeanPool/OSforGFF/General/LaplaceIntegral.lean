@@ -69,8 +69,7 @@ lemma hasDerivAt_glasser_map (c : ℝ) (u : ℝ) (hu : u ≠ 0) :
   have h := ((hasDerivAt_inv hu).const_mul c).sub (hasDerivAt_id u)
   have hf : (fun x : ℝ => c / x - x) = (fun y => c * y⁻¹) - id := by
     ext x; simp only [Pi.sub_apply, id_eq]; ring
-  have hv : -c / u^2 - 1 = c * -(u^2)⁻¹ - 1 := by rw [div_eq_mul_inv]; ring
-  rw [hf, hv]; exact h
+  grind
 
 /-! ## Part 3: The core Glasser integral
 
@@ -135,10 +134,7 @@ lemma glasser_integral_substitution_identity (c : ℝ) (hc : 0 < c) :
 
 /-- Split (0, ∞) = (0, 1] ∪ (1, ∞) -/
 private lemma Ioi_zero_eq_Ioc_union_Ioi : Ioi (0 : ℝ) = Ioc 0 1 ∪ Ioi 1 := by
-  ext x; simp only [mem_union, mem_Ioi, mem_Ioc]
-  constructor
-  · intro hx; by_cases h : x ≤ 1 <;> [exact .inl ⟨hx, h⟩; exact .inr (not_le.mp h)]
-  · intro h; cases h with | inl h => exact h.1 | inr h => exact lt_trans one_pos h
+  grind
 
 /-- The Glasser integrand is integrable on (0, ∞).
     Proof: On (0, 1], bounded by 1 on finite measure set.
@@ -223,9 +219,7 @@ theorem glasser_weighted_integrable (c : ℝ) (hc : 0 < c) :
         · field_simp
     have h_int_image : IntegrableOn (fun v => exp (-(c/v - v)^2)) (Ici c) := by
       apply h_base.mono_set
-      intro v hv
-      simp only [mem_Ici, mem_Ioi] at hv ⊢
-      exact lt_of_lt_of_le hc hv
+      grind
     -- f(u) = c/u is antitone on (0, 1]
     have h_anti : AntitoneOn (fun u => c / u) (Ioc 0 1) := by
       intro x hx y hy hxy
@@ -240,9 +234,7 @@ theorem glasser_weighted_integrable (c : ℝ) (hc : 0 < c) :
       intro u hu
       have hu_ne : u ≠ 0 := ne_of_gt hu.1
       have h := (HasDerivAt.const_mul c (hasDerivAt_inv hu_ne)).hasDerivWithinAt (s := Ioc (0:ℝ) 1)
-      have hf : (fun u : ℝ => c / u) = fun y => c * y⁻¹ := by ext y; ring
-      have hv : -c / u^2 = c * -(u^2)⁻¹ := by rw [div_eq_mul_inv]; ring
-      rw [hf, hv]; exact h
+      grind
     -- Apply the key change of variables lemma for integrability
     rw [← h_image] at h_int_image
     have h_cov := integrableOn_image_iff_integrableOn_deriv_smul_of_antitoneOn
@@ -262,12 +254,8 @@ theorem glasser_weighted_integrable (c : ℝ) (hc : 0 < c) :
         congr 1
         -- c/(c/u) = u when u ≠ 0
         have h1 : c / (c / u) = u := by field_simp
-        rw [h1]
-        -- (u - c/u)² = (c/u - u)² since (a-b)² = (b-a)²
-        congr 2
-        ring
-    rw [h_eq] at h_cov
-    exact h_cov.mp h_int_image
+        grind
+    grind
   · -- On (1, ∞): c/u² ≤ c, dominated by c · e^{2c} · e^{-u²}
     have h_bound : ∀ u ∈ Ioi (1 : ℝ),
         ‖(c/u^2) * exp (-(c/u - u)^2)‖ ≤ ‖c * exp (2*c) * exp (-u^2)‖ := by
@@ -331,9 +319,7 @@ lemma glasser_tendsto_atTop_at_zero (c : ℝ) (hc : 0 < c) :
     constructor
     · rw [mem_nhdsWithin]; use Iio (1 : ℝ)
       refine ⟨isOpen_Iio, (zero_lt_one : (0 : ℝ) < 1), ?_⟩
-      intro x hx
-      simp only [mem_inter_iff, mem_Ioi, mem_Iio, mem_Ioo] at hx ⊢
-      exact ⟨hx.2, hx.1⟩
+      grind
     · intro u hu; simp only [mem_Ioo] at hu; linarith
   have h_eq : (fun u => c / u - u) = (fun u => (-u) + (c / u)) := by ext u; ring
   rw [h_eq]
@@ -365,13 +351,7 @@ lemma glasser_strictAntiOn (c : ℝ) (hc : 0 < c) : StrictAntiOn (fun u => c / u
     apply div_pos
     · exact mul_pos hc (sub_pos.mpr hxy)
     · exact mul_pos hx hy
-  have h3 : x - y < 0 := sub_neg_of_lt hxy
-  calc c / y - y = c / x - (c / x - c / y) - y := by ring
-    _ = c / x - c * (y - x) / (x * y) - y := by rw [h1]
-    _ < c / x - 0 - y := by linarith
-    _ = c / x - x + (x - y) := by ring
-    _ < c / x - x + 0 := by linarith
-    _ = c / x - x := by ring
+  grind
 
 /-- The Glasser map is injective on (0, ∞). -/
 lemma glasser_injOn (c : ℝ) (hc : 0 < c) : InjOn (fun u => c / u - u) (Ioi 0) :=
@@ -392,10 +372,7 @@ lemma glasser_image_eq_univ (c : ℝ) (hc : 0 < c) :
   have htop := glasser_tendsto_atTop_at_zero c hc
   have hbot := glasser_tendsto_atBot_at_top c hc
   have h_at_sqrt : f (sqrt c) = 0 := by
-    simp only [f]
-    have h : sqrt c ≠ 0 := ne_of_gt (sqrt_pos.mpr hc)
-    have h2 : c / sqrt c = sqrt c := by rw [div_eq_iff h, ← sq]; exact (sq_sqrt (le_of_lt hc)).symm
-    linarith
+    grind
   have h_sqrt_pos : sqrt c ∈ Ioi 0 := sqrt_pos.mpr hc
   have hpc : IsPreconnected (Ioi (0 : ℝ)) := isPreconnected_Ioi
   have hatTop_le : (atTop : Filter ℝ) ≤ 𝓟 (Ioi 0) := le_principal_iff.mpr (Ioi_mem_atTop 0)
@@ -404,8 +381,7 @@ lemma glasser_image_eq_univ (c : ℝ) (hc : 0 < c) :
     haveI : (atTop : Filter ℝ).NeBot := atTop_neBot
     have h_ivt : Iic (f (sqrt c)) ⊆ f '' Ioi 0 :=
       hpc.intermediate_value_Iic h_sqrt_pos hatTop_le hcont hbot
-    rw [h_at_sqrt] at h_ivt
-    exact h_ivt (mem_Iic.mpr hw)
+    grind
   · -- Case w > 0: use IVT from 0⁺ to √c (where f goes from +∞ to 0)
     push Not at hw
     haveI : (nhdsWithin (0 : ℝ) (Ioi 0)).NeBot := nhdsWithin_Ioi_neBot (le_refl 0)
@@ -413,8 +389,7 @@ lemma glasser_image_eq_univ (c : ℝ) (hc : 0 < c) :
       inf_le_right.trans (le_refl _)
     have h_ivt : Ici (f (sqrt c)) ⊆ f '' Ioi 0 :=
       hpc.intermediate_value_Ici h_sqrt_pos hnhds_le hcont htop
-    rw [h_at_sqrt] at h_ivt
-    exact h_ivt (mem_Ici.mpr (le_of_lt hw))
+    grind
 
 /-- The absolute value of the Glasser map derivative is 1 + c/u². -/
 lemma glasser_deriv_abs (c : ℝ) (hc : 0 < c) (u : ℝ) (hu : u ∈ Ioi 0) :
@@ -442,10 +417,7 @@ theorem weighted_glasser_integral_eq_gaussian (c : ℝ) (hc : 0 < c) :
   -- The LHS of h_cov is ∫_ℝ exp(-w²) = √π
   have h_gaussian : ∫ w : ℝ, exp (-w^2) = sqrt π := by
     have h := integral_gaussian (1 : ℝ)
-    simp only [div_one] at h
-    convert h using 2
-    ext w
-    simp only [one_mul, neg_mul]
+    grind
   -- Transform h_cov: ∫_ℝ g = ∫_{Ioi 0} |f'| • (g ∘ f)
   -- i.e., √π = ∫_{Ioi 0} |f' u| * exp(-(c/u - u)²)
   simp only [smul_eq_mul, f, f', g] at h_cov
@@ -513,17 +485,7 @@ lemma laplace_integral_subst_sq (a b : ℝ) (_ha : 0 < a) (_hb : 0 < b) :
   -- The issue is t ^ (2 : ℕ) vs t ^ (2 : ℝ) (natural power vs rpow)
   -- For positive t, these are equal but not definitionally
   have h_pow_eq : (t : ℝ) ^ (2 : ℕ) = t ^ (2 : ℝ) := (rpow_natCast t 2).symm
-  simp only [h_pow_eq]
-  -- Goal: (-a - (t^2)^2 * b) * t^2 = t^2 * (-a - b * t^4)
-  -- Use: (t^2)^2 = t^4
-  -- We need to show: (-a - (t^2)^2 * b) * t^2 = t^2 * (-a - b * t^4)
-  -- Both sides equal -a*t^2 - b*t^6
-  -- The goal involves both rpow (t ^ (2:ℝ)) and nat power (t ^ 2)
-  -- We need to convert all to nat powers for ring to work
-  have h_rpow_nat : (t : ℝ) ^ (2 : ℝ) = t ^ (2 : ℕ) := rpow_natCast t 2
-  simp only [h_rpow_nat]
-  -- Now all powers should be natural, ring can solve
-  ring
+  grind
 
 /-- After completing the square, factor out exp(-2√(ab)) -/
 lemma laplace_integral_factor (a b : ℝ) (ha : 0 < a) (hb : 0 < b) :
@@ -578,10 +540,7 @@ theorem laplace_integral_half_power_nonneg (a b : ℝ) (ha : 0 ≤ a) (hb : 0 < 
     -- First simplify the integrand: -0/s - b*s = -b*s
     have h_integrand : ∀ s ∈ Ioi (0:ℝ), s^(-(1/2 : ℝ)) * exp (-(0:ℝ)/s - b*s) =
         s^((1/2 : ℝ) - 1) * exp (-(b * s)) := by
-      intro s _
-      congr 1
-      · norm_num  -- -1/2 = 1/2 - 1
-      · ring_nf   -- -0/s - b*s = -(b*s)
+      grind   -- -0/s - b*s = -(b*s)
     rw [setIntegral_congr_fun measurableSet_Ioi h_integrand]
     -- Goal: ∫ s in Ioi 0, s^(1/2 - 1) * exp(-(b*s)) = sqrt(π/b) * exp(-2*sqrt(0*b))
     -- Use integral_rpow_mul_exp_neg_mul_Ioi with exponent 1/2

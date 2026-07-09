@@ -303,11 +303,7 @@ theorem Psi.schurMul {A B : Type*} [starAlgebra A] [starAlgebra B]
     obtain ⟨α, β, rfl⟩ := LinearMap.exists_sum_rankOne f
     obtain ⟨γ, δ, rfl⟩ := LinearMap.exists_sum_rankOne g
     simp only [map_sum, LinearMap.sum_apply, Finset.mul_sum, Finset.sum_mul]
-    apply Finset.sum_congr rfl
-    intro i _
-    apply Finset.sum_congr rfl
-    intro j _
-    exact this (α j) (γ i) (β j) (δ i)
+    grind
   intro a c b d
   rw [schurMul.apply_rankOne]
   repeat rw [QuantumSet.Psi_apply]

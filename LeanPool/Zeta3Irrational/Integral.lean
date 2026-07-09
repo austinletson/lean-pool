@@ -28,15 +28,11 @@ open scoped Nat
 open BigOperators Finset
 
 lemma Nat_Ico_succ_right (a b : ℕ) : Finset.Ico a (b + 1) = Finset.Icc a b := by
-  ext x
-  simp only [Finset.mem_Ico, Finset.mem_Icc]
-  omega
+  grind
 
 lemma Nat_Ico_succ_succ (a b : ℕ) :
     Finset.Ico (a + 1) (b + 1) = Finset.Ioc a b := by
-  ext x
-  simp only [Finset.mem_Ico, Finset.mem_Ioc]
-  omega
+  grind
 
 /-- The two-variable Apéry integral with monomial weights. -/
 noncomputable abbrev J (r s : ℕ) : ℝ :=
@@ -74,46 +70,31 @@ lemma log_rpow_integral' (n : ℝ) (hn : n > -1) (a : ℝ) (ha : 0 < a ∧ a ≤
       (Set.Icc a 1)
     refine ContinuousOn.sub (ContinuousOn.div_const ?_ (((n : ℝ) + 1) ^ 2)) ?_
     · apply ContinuousOn.rpow_const continuousOn_id
-      intro x hx
-      left
-      simp only [gt_iff_lt, Set.mem_Icc, id_eq, ne_eq] at *
-      linarith
+      grind
     · apply ContinuousOn.div_const
       apply ContinuousOn.mul
       · apply ContinuousOn.rpow_const continuousOn_id
-        intro x hx
-        left
-        simp only [gt_iff_lt, Set.mem_Icc, id_eq, ne_eq] at *
-        linarith
+        grind
       · apply ContinuousOn.log continuousOn_id
-        intro x hx
-        simp only [Set.mem_Icc, id_eq] at hx ⊢
-        linarith
+        grind
   · intro x hx
     simp only [Set.mem_Ioo] at hx
     simp only [f]
     rw [show -x.log * x ^ n = x ^ n / (↑n + 1) - (x ^ n * x.log + x ^ n / (↑n + 1)) by ring]
     apply HasDerivAt.sub
     · have h : x ^ n / (↑n + 1) = x ^ n * (↑n + 1) / (↑n + 1) ^ 2 := by
-        rw[div_eq_div_iff (by linarith)]
-        · ring
-        · simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, pow_eq_zero_iff]
-          linarith
+        grind
       rw [h]
       apply HasDerivAt.div_const
       rw [mul_comm]
       nth_rw 3 [show n = n + 1 - 1 by simp]
       norm_cast
       apply Real.hasDerivAt_rpow_const
-      left
-      linarith
+      grind
     · have h :
           x ^ n * x.log + x ^ n / (↑n + 1) =
             ((↑n + 1) * x ^ n * x.log + x ^ n) / (↑n + 1) := by
-        rw [add_div]
-        congr 1
-        rw [eq_div_iff (by linarith)]
-        ring
+        grind
       rw[h]
       apply HasDerivAt.div_const
       nth_rw 2 [show x ^ n = x ^ (n + 1) * (1 / x) by
@@ -123,8 +104,7 @@ lemma log_rpow_integral' (n : ℝ) (hn : n > -1) (a : ℝ) (ha : 0 < a ∧ a ≤
       · nth_rw 3 [show n = n + 1 - 1 by simp]
         norm_cast
         apply Real.hasDerivAt_rpow_const
-        left
-        linarith
+        grind
       · apply HasDerivAt.log (hasDerivAt_id' x) (by linarith)
   · apply IntervalIntegrable.continuousOn_mul
     · apply intervalIntegral.intervalIntegrable_rpow
@@ -135,8 +115,7 @@ lemma log_rpow_integral' (n : ℝ) (hn : n > -1) (a : ℝ) (ha : 0 < a ∧ a ≤
       apply ContinuousOn.log continuousOn_id
       intro x hx
       rw [Set.uIcc_of_le ha.2] at hx
-      simp only [Set.mem_Icc, id_eq, ne_eq] at hx ⊢
-      nlinarith
+      grind
 
 lemma log_rpow_integrable (n : ℝ) (hn : n > -1) :
     IntervalIntegrable (fun x ↦ -Real.log x * x ^ n) MeasureTheory.volume 0 1 := by
@@ -162,8 +141,7 @@ lemma log_rpow_integrable (n : ℝ) (hn : n > -1) :
       apply ContinuousOn.log continuousOn_id
       intro x hx
       rw [Set.uIcc_of_le hi.2] at hx
-      simp only [Set.mem_Icc, id_eq, ne_eq] at hx ⊢
-      nlinarith
+      grind
   · exact tendsto_one_div_add_atTop_nhds_zero_nat
   · rw [Filter.eventually_atTop]
     use 0
@@ -218,8 +196,7 @@ lemma log_rpow_integral (n : ℝ) (hn : n > -1) :
     rw [show -Real.log x * x ^ n * (n + 1) ^ 2 =
       (n + 1) * x ^ n - ((n + 1) * x ^ n + Real.log x * x ^ n * (n + 1) ^ 2) by ring]
     apply HasDerivAt.sub
-    · rw [show (n + 1) * x ^ n = 1 * (n + 1) * x ^ (n + 1 - 1) by simp only [one_mul,
-      add_sub_cancel_right]]
+    · rw [show (n + 1) * x ^ n = 1 * (n + 1) * x ^ (n + 1 - 1) by grind]
       apply HasDerivAt.rpow_const (hasDerivAt_id' x)
       left; linarith
     · have : (n + 1) * x ^ n + Real.log x * x ^ n * (n + 1) ^ 2 =
@@ -228,8 +205,7 @@ lemma log_rpow_integral (n : ℝ) (hn : n > -1) :
         ring_nf
       rw [this]
       apply HasDerivAt.mul
-      · rw [show (n + 1) * x ^ n = 1 * (n + 1) * x ^ (n + 1 - 1) by simp only [one_mul,
-          add_sub_cancel_right]]
+      · rw [show (n + 1) * x ^ n = 1 * (n + 1) * x ^ (n + 1 - 1) by grind]
         apply HasDerivAt.rpow_const (hasDerivAt_id' x)
         left; linarith
       · apply HasDerivAt.const_mul
@@ -251,8 +227,7 @@ lemma log_rpow_integral (n : ℝ) (hn : n > -1) :
     · apply Filter.Tendsto.div_const
       rw [show (fun a : ℝ => a ^ (n + 1) * ((n + 1) * Real.log a)) =
           (fun a => Real.log a * a ^ (n + 1) * (n + 1)) by
-        funext a
-        ring]
+        grind]
       nth_rw 3 [show (0 : ℝ) = 0 * (n + 1) by simp]
       apply Filter.Tendsto.mul_const
       apply tendsto_log_mul_rpow_nhdsGT_zero
@@ -317,8 +292,7 @@ lemma ENN_log_pow_integral (n : ℕ) : ∫⁻ (x : ℝ) in Set.Ioo 0 1,
     ENNReal.ofReal (-x.log * x ^ n) = ENNReal.ofReal (1 / (n + 1) ^ 2) := by
   rw [← ENN_log_rpow_integral]
   · norm_cast
-  · suffices 0 ≤ n by linarith
-    omega
+  · grind
 
 lemma ENN_pow_integral (n : ℕ) : ∫⁻ (x : ℝ) in Set.Ioo 0 1,
     ENNReal.ofReal (x ^ n) = ENNReal.ofReal (1 / (n + 1)) := by
@@ -380,10 +354,7 @@ lemma sub_mul_mul_ne_zero (y : ℝ) (x : ℝ × ℝ)
   · simp only [sub_pos, Set.mem_Icc] at *
     suffices (1 - x.1 * x.2) * y < y by linarith
     rwa [mul_lt_iff_lt_one_left]
-    rcases hy with ⟨hy1, _⟩
-    by_contra! h
-    suffices y = 0 by tauto
-    linarith
+    grind
 
 lemma integrableOn_aux (x : ℝ × ℝ)
     (h1 : 0 < 1 - (1 - x.1 * x.2)) (h2 : 1 - (1 - x.1 * x.2) < 1) :
@@ -402,12 +373,7 @@ lemma integrableOn_aux (x : ℝ × ℝ)
   · intro y hy
     have h : 1 / (1 - (1 - x.1 * x.2) * y) =
       -(-(1 - x.1 * x.2)) / (1 - (1 - x.1 * x.2) * y) / (1 - x.1 * x.2) := by
-      rw [neg_neg, div_div, div_eq_div_iff]
-      · ring
-      · exact sub_mul_mul_ne_zero y x (Set.mem_Icc_of_Ioo hy) h1
-      · apply mul_ne_zero (sub_mul_mul_ne_zero y x (Set.mem_Icc_of_Ioo hy) h1)
-        suffices 1 - x.1 * x.2 > 0 by linarith
-        linarith
+      grind
     rw [h]
     apply HasDerivAt.div_const
     rw [neg_div]
@@ -468,8 +434,7 @@ lemma JENN_eq_triple_aux (x : ℝ × ℝ) (hx : x ∈ Set.Ioo 0 1 ×ˢ Set.Ioo 0
     · congr
       ext y
       rw [← ENNReal.ofReal_mul]
-      · congr 1
-        field_simp
+      · grind
       rcases x with ⟨x1, x2⟩
       rcases hx with ⟨⟨hx1, hx1'⟩, ⟨hx2,hx2'⟩⟩
       positivity
@@ -566,8 +531,7 @@ lemma aux_lintegral2 (k r s : ℕ) (x : ℝ) (hx : 0 < x ∧ x < 1) :
       ext y
       cases hx
       rw [← ENNReal.ofReal_mul]
-      · congr 1
-        ring
+      · grind
       positivity
     · apply Measurable.ennreal_ofReal
       apply Measurable.mul
@@ -731,11 +695,7 @@ lemma J_ENN_rs_eq_tsum (r s : ℕ) : JENN r s = ∑' (k : ℕ), ENNReal.ofReal
       · rw [← tsum_mul_left, ← tsum_mul_right, ← tsum_mul_right,
           ENNReal.ofReal_tsum_of_nonneg]
         · simp only [neg_mul, pow_add, mul_pow, ← mul_assoc]
-          congr
-          ext k
-          nth_rw 2 [mul_assoc]
-          nth_rw 4 [mul_assoc]
-          nth_rw 5 [mul_comm]
+          grind
         · intro n
           rw [mul_pow, ← mul_assoc]
           apply mul_nonneg _ (by apply pow_nonneg (by linarith))
@@ -766,10 +726,7 @@ lemma J_ENN_rr (r : ℕ) : JENN r r = ENNReal.ofReal
       2 * ∑ m ∈ Finset.Icc 1 r, 1 / (m : ℝ) ^ 3) := by
   have h : JENN r r = ∑' (k : ℕ), ENNReal.ofReal (2 / ((k + r + 1) ^ 3)) := by
     rw [J_ENN_rs_eq_tsum r r]
-    congr
-    ext k
-    rw [← pow_one (a := (k : ℝ) + r + 1), ← pow_mul, ← pow_add, ← pow_add, one_mul]
-    simp only [Nat.reduceAdd, pow_one, ← two_mul, mul_one_div]
+    grind
   rw [h]
   have h1 : ∑' (k : ℕ), 2 / (((k : ℝ) + r + 1) ^ 3) =
       2 * ∑' n : ℕ , 1 / ((n : ℝ) + 1) ^ 3 -
@@ -798,8 +755,7 @@ lemma J_ENN_rr (r : ℕ) : JENN r r = ENNReal.ofReal
     simp only [Nat.one_lt_ofNat] at h2
     apply Iff.symm at h2
     rw [true_iff, ← summable_mul_left_iff (a := 2) (by norm_num)] at h2
-    simp only [mul_one_div] at h2
-    exact h2
+    grind
 
 lemma fun_of_J_nonneg (r s : ℕ) (x : ℝ × ℝ) (hx : x ∈ Set.Ioo 0 1 ×ˢ Set.Ioo 0 1) :
     0 ≤ -Real.log (x.1 * x.2) / (1 - x.1 * x.2) * x.1 ^ r * x.2 ^ s := by
@@ -888,8 +844,7 @@ theorem J_rr (r : ℕ) :
       intro y hy
       by_cases h : y ∈ Set.Ioo 0 1 ×ˢ Set.Ioo 0 1
       · exact fun_of_J_nonneg r r y h
-      · rw [Set.mem_inter_iff] at hy
-        tauto
+      · grind
   · apply AEMeasurable.aestronglyMeasurable
     apply Measurable.aemeasurable
     · apply Measurable.mul
@@ -1068,8 +1023,7 @@ lemma J_rs' (r s : ℕ) (h : r > s) :
       intro y hy
       by_cases h : y ∈ Set.Ioo 0 1 ×ˢ Set.Ioo 0 1
       · exact fun_of_J_nonneg r s y h
-      · rw [Set.mem_inter_iff] at hy
-        tauto
+      · grind
   · apply AEMeasurable.aestronglyMeasurable
     apply Measurable.aemeasurable
     · apply Measurable.mul
@@ -1144,8 +1098,7 @@ lemma J_eq_toReal_J_ENN (r s : ℕ) : J r s = (JENN r s).toReal := by
       intro y hy
       by_cases h : y ∈ Set.Ioo 0 1 ×ˢ Set.Ioo 0 1
       · exact fun_of_J_nonneg r s y h
-      · rw [Set.mem_inter_iff] at hy
-        tauto
+      · grind
   · apply AEMeasurable.aestronglyMeasurable
     apply Measurable.aemeasurable
     · apply Measurable.mul

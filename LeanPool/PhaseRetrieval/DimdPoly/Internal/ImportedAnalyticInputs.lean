@@ -107,17 +107,14 @@ noncomputable def carrierArc (N : Nat) (k : Fin N) : CircleArc where
         (2 * Real.pi) * ((k.1 + 1 : Nat) : ℝ) / (N : ℝ) -
           (2 * Real.pi) * (k.1 : ℝ) / (N : ℝ) =
         (2 * Real.pi) / (N : ℝ) := by
-      field_simp [ne_of_gt hNpos]
-      norm_num
+      grind
     rw [hwidth]
     exact div_le_self hpi_nonneg hNge
 
 theorem carrierArc_length {N : Nat} (k : Fin N) :
     arcLength (carrierArc N k) = (2 * Real.pi) / (N : ℝ) := by
   unfold arcLength carrierArc
-  have hNpos : (0 : ℝ) < (N : ℝ) := by exact_mod_cast k.pos
-  field_simp [ne_of_gt hNpos]
-  norm_num
+  grind
 
 theorem carrierArc_length_pos {N : Nat} (k : Fin N) :
     0 < arcLength (carrierArc N k) := by
@@ -182,8 +179,7 @@ theorem carrierArc_arcSet_eq_mk_image_Icc {N : Nat} (k : Fin N) :
       have hlen_pos : 0 < arcLength (carrierArc N k) :=
         carrierArc_length_pos k
       apply congrArg (fun r : ℝ => (QuotientAddGroup.mk r : Circle))
-      field_simp [ne_of_gt hlen_pos]
-      ring_nf
+      grind
 
 theorem carrierArc_arcSet_eq_mk_image_Ioc_union_left {N : Nat} (k : Fin N) :
     arcSet (carrierArc N k) =
@@ -197,10 +193,7 @@ theorem carrierArc_arcSet_eq_mk_image_Ioc_union_left {N : Nat} (k : Fin N) :
           {((carrierArc N k).left)} := by
     ext y
     constructor
-    · intro hy
-      by_cases hleft : y = (carrierArc N k).left
-      · exact Or.inr hleft
-      · exact Or.inl ⟨lt_of_le_of_ne hy.1 (Ne.symm hleft), hy.2⟩
+    · grind
     · intro hy
       rcases hy with hy | hy
       · exact ⟨le_of_lt hy.1, hy.2⟩
@@ -222,9 +215,7 @@ theorem quotient_mk_injOn_Ioc_zero_period :
       AddCircle.equivIoc (2 * Real.pi) (0 : ℝ)
           (QuotientAddGroup.mk y : Circle) = ⟨y, hy0⟩ :=
     AddCircle.equivIoc_coe_eq hy0
-  have h := congrArg (AddCircle.equivIoc (2 * Real.pi) (0 : ℝ)) hxy
-  rw [hx', hy'] at h
-  exact Subtype.ext_iff.mp h
+  grind
 
 theorem carrierArc_mk_preimage_image_Ioc_inter_fundamental
     {N : Nat} (k : Fin N) :
@@ -350,8 +341,7 @@ theorem volume_mk_image_carrierArc_Ioc {N : Nat} (k : Fin N) :
     simpa [S] using carrierArc_mk_preimage_image_Ioc_inter_fundamental k
   rw [hpre_set, Real.volume_Ioc] at hpre
   dsimp [arcLength]
-  symm
-  rw [← hpre]
+  grind
 
 theorem period_smul_μCircle_mk_image_carrierArc_Ioc {N : Nat} (k : Fin N) :
     ENNReal.ofReal (2 * Real.pi) *
@@ -429,26 +419,16 @@ theorem carrierArc_mk_image_Ioc_integral_eq_scaled
       intro t htF
       by_cases htS : (QuotientAddGroup.mk t : Circle) ∈ S
       · have htA : t ∈ A := by
-          have htpre :
-              t ∈ ((fun t : ℝ => (QuotientAddGroup.mk t : Circle)) ⁻¹' S) ∩ F :=
-            ⟨htS, htF⟩
-          simpa [hpre_set] using htpre
+          grind
         simp [Set.indicator_of_mem htS, Set.indicator_of_mem htA]
       · have htA : t ∉ A := by
-          intro htA
-          exact htS ⟨t, htA, rfl⟩
+          grind
         simp [Set.indicator_of_notMem htS, Set.indicator_of_notMem htA]
     rw [MeasureTheory.setIntegral_congr_fun measurableSet_Ioc hfun]
     rw [MeasureTheory.setIntegral_indicator (μ := MeasureTheory.volume) (s := F) (t := A)
       measurableSet_Ioc]
     have h_inter : F ∩ A = A := by
-      ext t
-      constructor
-      · intro ht
-        exact ht.2
-      · intro htA
-        exact ⟨⟨lt_of_le_of_lt (carrierArc_left_nonneg k) htA.1,
-          le_trans htA.2 (carrierArc_right_le_period k)⟩, htA⟩
+      grind
     rw [h_inter]
   calc
     (∫ x in (fun t : ℝ => (QuotientAddGroup.mk t : Circle)) ''
@@ -602,10 +582,7 @@ private theorem carrierArc_interval_rho_sq_eq_full_circle
       (fun s => g (s / ↑N)) hN_ne
       (a := (carrierArc N k).left) (b := (carrierArc N k).right)
     have h_simp : (fun x => g ((↑N : ℝ) * x / ↑N)) = g := by
-      ext x
-      show g (↑N * x / ↑N) = g x
-      congr 1
-      field_simp [hN_ne]
+      grind
     rw [h_simp] at key
     have h_el : (↑N : ℝ) * (carrierArc N k).left =
         (2 * Real.pi) * ↑k.val := by
@@ -614,8 +591,7 @@ private theorem carrierArc_interval_rho_sq_eq_full_circle
     have h_er : (↑N : ℝ) * (carrierArc N k).right =
         (2 * Real.pi) * (↑k.val + 1) := by
       unfold carrierArc
-      push_cast
-      field_simp [hN_ne]
+      grind
     rw [h_el, h_er] at key
     rw [key, smul_eq_mul]
     congr 1
@@ -624,9 +600,7 @@ private theorem carrierArc_interval_rho_sq_eq_full_circle
             ((2 * Real.pi) * (↑k.val + 1)),
           g (s / ↑N) =
             (FockSPR.rho ((fourier (1 : ℤ) (↑s : Circle) : ℂ) * q)) ^ 2 := by
-      intro s _
-      change (FockSPR.rho (circleChar N (↑(s / ↑N) : Circle) * q)) ^ 2 = _
-      rw [fourier_rescale]
+      grind
     rw [intervalIntegral.integral_congr h_congr]
     set g₁ : ℝ → ℝ := fun s =>
       (FockSPR.rho ((fourier (1 : ℤ) (↑s : Circle) : ℂ) * q)) ^ 2
@@ -651,9 +625,7 @@ private theorem carrierArc_interval_rho_sq_eq_full_circle
           ∫ t : Circle, (FockSPR.rho ((fourier (1 : ℤ) t : ℂ) * q)) ^ 2
             ∂AddCircle.haarAddCircle := by
         rw [h_haar, smul_eq_mul]
-        set V := ∫ t : Circle, (FockSPR.rho ((fourier (1 : ℤ) t : ℂ) * q)) ^ 2
-        rw [mul_comm (2 * Real.pi) ((2 * Real.pi)⁻¹ * V), mul_assoc,
-          mul_comm V (2 * Real.pi), ← mul_assoc, inv_mul_cancel₀ hT_ne, one_mul]
+        grind
   exact h_eq_haar_int
 
 private theorem carrierArc_interval_rho_sq_lower
@@ -683,8 +655,7 @@ private lemma constant_center_defect_eq_norm_sq_rho
   have hfactor : c + z * u = c * (1 + z * (u / c)) := by field_simp [hc]
   rw [hfactor, norm_mul]
   unfold FockSPR.rho
-  rw [sq_abs]
-  ring
+  grind
 
 private theorem carrierArc_setIntegral_constant_center_lower
     {N : Nat} (k : Fin N) {c u : ℂ} (hc : c ≠ 0) :
@@ -744,8 +715,7 @@ theorem circleChar_carrierArc_arcParam {N : Nat} (k : Fin N) (t : ℝ) :
         Complex.I * (2 * Real.pi * (k.1 : ℝ)) +
           Complex.I * (2 * Real.pi * t) := by
     push_cast
-    field_simp [hN, hNreal]
-    ring
+    grind
   rw [harg, Complex.exp_add]
   have hint : Complex.exp (Complex.I * (2 * Real.pi * (k.1 : ℝ))) = 1 := by
     rw [show Complex.I * (2 * Real.pi * (k.1 : ℝ)) =
@@ -810,8 +780,7 @@ theorem constantCenter_fastRotate_carrierArc_sq_le_defectSq
     _ = Crot * ((2 * Real.pi)⁻¹ * J) := by
       unfold Crot
       have hpi_ne : Real.pi ≠ 0 := ne_of_gt Real.pi_pos
-      field_simp [hpi_ne]
-      ring
+      grind
 
 private theorem gamma_d_isOpenPosMeasure (d : Nat) :
     MeasureTheory.Measure.IsOpenPosMeasure (gammaD d) := by
@@ -839,8 +808,7 @@ private theorem gamma_d_isOpenPosMeasure (d : Nat) :
       (MeasureTheory.withDensity_apply_eq_zero hw_meas).1 hzero'
     have hball_eq :
         {z : Cd d | w z ≠ 0} ∩ Metric.ball x r = Metric.ball x r := by
-      ext z
-      simp [hw_ne_zero z]
+      grind
     have hball_vol_zero : MeasureTheory.volume (Metric.ball x r) = 0 := by
       simpa [hball_eq] using hvol_zero
     exact (Metric.measure_ball_pos (MeasureTheory.volume : MeasureTheory.Measure (Cd d)) x hr).ne'
@@ -979,12 +947,7 @@ theorem symplecticFourierRep_sub_le_lpNorm_one {d : Nat}
         = ‖∫ η : PhaseSpace d, (G₁ η - G₂ η) * φ η ∂μ‖ := by
             unfold symplecticFourierRep
             rw [← MeasureTheory.integral_sub h1φ h2φ]
-            have hfun :
-                (fun η : PhaseSpace d => G₁ η * φ η - G₂ η * φ η) =
-                  (fun η : PhaseSpace d => (G₁ η - G₂ η) * φ η) := by
-              funext η
-              simp [sub_mul]
-            rw [hfun]
+            grind
     _ ≤ ∫ η : PhaseSpace d, ‖(G₁ η - G₂ η) * φ η‖ ∂μ := by exact norm_integral_le_integral_norm _
     _ = ∫ η : PhaseSpace d, ‖G₁ η - G₂ η‖ ∂μ := by
           refine integral_congr_ae ?_
@@ -1028,8 +991,7 @@ theorem symplecticFourierRep_eq_of_lpNorm_one_approx {d : Nat}
   have hright :
       Tendsto (fun n : Nat => symplecticFourierRep (Gₙ n) ξ) atTop (nhds A) := by
     rw [show (fun n : Nat => symplecticFourierRep (Gₙ n) ξ) = Aₙ by
-      funext n
-      exact hEq n]
+      grind]
     exact hA
   exact tendsto_nhds_unique hleft hright
 
@@ -1092,8 +1054,7 @@ private theorem schwartzApproxRealVec_lpNorm_le {d : Nat}
         = MeasureTheory.lpNorm (f - (f - (schwartzApproxRealVec hf n : RealVec d -> ℂ)))
             2 μ := by
             congr 1
-            funext t
-            simp
+            grind
     _ ≤ MeasureTheory.lpNorm f 2 μ +
         MeasureTheory.lpNorm (f - (schwartzApproxRealVec hf n : RealVec d -> ℂ)) 2 μ := by
           exact MeasureTheory.lpNorm_sub_le
@@ -1159,8 +1120,7 @@ private theorem schwartzApproxRealVec_tendsto_lpNorm {d : Nat}
                 ((schwartzApproxRealVec hf n : RealVec d -> ℂ) -
                   ((schwartzApproxRealVec hf n : RealVec d -> ℂ) - f)) 2 μ := by
                   congr 1
-                  funext t
-                  simp
+                  grind
         _ ≤ MeasureTheory.lpNorm (schwartzApproxRealVec hf n : RealVec d -> ℂ) 2 μ +
             MeasureTheory.lpNorm ((schwartzApproxRealVec hf n : RealVec d -> ℂ) - f) 2 μ := by
             exact MeasureTheory.lpNorm_sub_le
@@ -1959,8 +1919,7 @@ private theorem tendsto_lintegral_filter_of_dominated_convergence_ae
   rcases h with ⟨k, h⟩
   rw [← tendsto_add_atTop_iff_nat k]
   refine tendsto_lintegral_of_dominated_convergence' bound ?_ ?_ h_fin ?_
-  · intro n
-    exact (h (n + k) (Nat.le_add_left _ _)).1
+  · grind
   · intro n
     exact (h (n + k) (Nat.le_add_left _ _)).2
   · refine h_lim.mono fun a h_lim => ?_
@@ -2094,26 +2053,22 @@ theorem continuous_modulateL2_apply {d : Nat} (f : L2Real d) :
 theorem stftRep_congr_right
     {d : Nat} {h f g : L2Real d} (hfg : f = g) :
     stftRep h f = stftRep h g := by
-  subst hfg
-  rfl
+  grind
 
 theorem stftRep_congr_left
     {d : Nat} {h h' f : L2Real d} (hh : h = h') :
     stftRep h f = stftRep h' f := by
-  subst hh
-  rfl
+  grind
 
 theorem ambiguityRep_congr_left
     {d : Nat} {f f' g : L2Real d} (hf : f = f') :
     ambiguityRep f g = ambiguityRep f' g := by
-  subst hf
-  rfl
+  grind
 
 theorem ambiguityRep_congr_right
     {d : Nat} {f g g' : L2Real d} (hg : g = g') :
     ambiguityRep f g = ambiguityRep f g' := by
-  subst hg
-  rfl
+  grind
 
 theorem ambiguityRep_eq_lpPairing
     {d : Nat} (f g : L2Real d) (ξ : PhaseSpace d) :
@@ -2868,9 +2823,7 @@ private theorem lpNorm_mul_le_real
     refine integral_congr_ae ?_
     filter_upwards with x
     simp [Real.norm_eq_abs]
-  rw [hleft]
-  rw [hf_lp, hg_lp] at hholder
-  exact hholder
+  grind
 
 -- This is the Hölder/square-difference estimate over phase space; the proof is copied
 -- from the one-dimensional STFT route but with vector-valued `L2Real` approximants.
@@ -3118,9 +3071,7 @@ private lemma moyal_kernel_iterated_eq {d : Nat}
                   (h (t - y) * star (h (t + x - y))) * modulationPhase ω y
                 = ∫ y : RealVec d, (star (f t) * f (t + x)) *
                     (h (t - y) * star (h (t + x - y)) * modulationPhase ω y) := by
-                    refine integral_congr_ae ?_
-                    filter_upwards with y
-                    ring
+                    grind
             _ = (star (f t) * f (t + x)) *
                 ∫ y : RealVec d,
                   h (t - y) * star (h (t + x - y)) * modulationPhase ω y := by
@@ -3143,9 +3094,7 @@ private lemma moyal_kernel_iterated_eq {d : Nat}
                 = ∫ t : RealVec d, star (ambiguityRep hLp hLp (x, ω)) *
                     ((star (f t) * f (t + x)) *
                       modulationPhase ω (t + (1 / 2 : ℝ) • x) ) := by
-                    refine integral_congr_ae ?_
-                    filter_upwards with t
-                    ring
+                    grind
             _ = star (ambiguityRep hLp hLp (x, ω)) *
                 ∫ t : RealVec d,
                   (star (f t) * f (t + x)) *
@@ -3193,9 +3142,7 @@ private lemma moyal_slice_collapse {d : Nat}
             (((‖stftRep (h.toLp 2 MeasureTheory.volume)
               (f.toLp 2 MeasureTheory.volume) (y, η)‖ ^ 2 : ℝ) : ℂ) *
               modulationPhase (-x) η) := by
-              refine integral_congr_ae ?_
-              filter_upwards with η
-              ring
+              grind
     _ = modulationPhase ω y *
         ∫ η : RealVec d,
           ((‖stftRep (h.toLp 2 MeasureTheory.volume)
@@ -3495,13 +3442,7 @@ theorem L2_eq_zero_of_rep_ae_eq_zero
 theorem boxPartialSums_have_L2_limit
     {d : Nat} (hd : 0 < d) (kappa : MultiIndex d) :
     True := by
-  let _ := hd
-  let _ := kappa
-  /-
-  Placeholder for the imported `L²` convergence package for box partial sums of
-  square-summable coefficient data.
-  -/
-  trivial
+  grind
 
 theorem circleFourier_exact_modulus_bridge :
     True := by

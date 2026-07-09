@@ -289,11 +289,8 @@ theorem numDistinctColorings_mul_card_group_eq_sum_numGroupOfNumCycles_mul_card_
       congr
       ext
       apply Finset.sum_congr
-      · ext
-        simp [Fin.ext_iff]
-      · intro _ hg
-        simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hg
-        rw [hg]
+      · grind
+      · grind
     _ = ∑ i : Fin (Fintype.card X + 1),
           (numGroupOfNumCycles X G i.1) * (Fintype.card Y) ^ i.1 := by simp
 

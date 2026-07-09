@@ -125,24 +125,13 @@ theorem CWComplex_induced_map_injective
         have : (fun x : TopCat.of (({0, 1} : Set ℝ) × X.toTopCat) ↦
                   if x.fst.val = 0 then g₀.hom x.snd else g₁.hom x.snd) =
             (fun x ↦ if x.fst.val ≤ 1 / 2 then g₀.hom x.snd else g₁.hom x.snd) := by
-          ext ⟨⟨tval, tprop⟩, x⟩
-          rw [Set.mem_insert_iff, Set.mem_singleton_iff] at tprop
-          cases tprop with
-          | inl h0 => subst h0; simp only [one_div, inv_nonneg, Nat.ofNat_nonneg]
-          | inr h1 => subst h1; simp only [one_ne_zero, one_div, (by norm_num : ¬((1 : ℝ) ≤ 2⁻¹))]
+          grind
         rw [this]
         refine Continuous.if_le
           ((Hom.hom g₀).continuous.comp continuous_snd)
           ((Hom.hom g₁).continuous.comp continuous_snd)
           (continuous_subtype_val.comp continuous_fst) continuous_const ?_
-        intro x hx
-        simp_all only [Category.assoc, TopCat.hom_comp, ContinuousMap.comp_assoc, hom_ofHom,
-          one_div]
-        obtain ⟨⟨val, property⟩, snd⟩ := x
-        subst hx
-        dsimp only
-        simp_all only [Set.mem_insert_iff, inv_eq_zero, OfNat.ofNat_ne_zero,
-          Set.mem_singleton_iff, inv_eq_one, OfNat.ofNat_ne_one, or_self] }
+        grind }
   have sq : CommSq G₀₁ X.zeroOneProdInclIProd (MapCyl.domIncl f) G := ⟨by
     ext ⟨⟨tval, tprop⟩, x⟩
     unfold G₀₁ G

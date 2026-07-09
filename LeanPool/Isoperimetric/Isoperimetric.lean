@@ -77,9 +77,7 @@ theorem isoperimetric_inequality
       symm
       apply Finset.sum_eq_add_of_mem
         0 1 (Finset.insert_eq_self.mp rfl) (Finset.self_mem_range_succ 1) Nat.zero_ne_one
-      intro c _ _
-      have : c = 0 ∨ c = 1 := by grind
-      simp_all
+      grind
     _ ≤ ∑ i ∈ Finset.range (Dnat + 1), F i := by gcongr; unfold Dnat; linarith
     _ ≤ volume (A + epsBall) := by rw [add_comm, add_pow] at h_bm_Dpow; exact h_bm_Dpow
   -- Rearrange and simplify to get the desired result

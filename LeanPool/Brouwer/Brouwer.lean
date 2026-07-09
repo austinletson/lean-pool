@@ -99,13 +99,9 @@ instance TT.IST : IsStrictTotalOrder (TT n l) (TT.Ilt i) where
         Lex (Fin (l + 1) × TT n l))) h_eq
     exact congrArg Prod.snd h_pair
   irrefl := by
-    intro a
-    unfold TT.Ilt
-    exact lt_irrefl _
+    grind
   trans := by
-    intro a b c h_ab h_bc
-    unfold TT.Ilt at *
-    exact lt_trans h_ab h_bc
+    grind
 
 
 variable {n l} in
@@ -157,13 +153,8 @@ lemma size_bound_key (σ : Finset (TT n l)) (C : Finset (Fin n)) (h : TT.ILO.isD
       have sum_eq : ∑ x ∈ Finset.univ.erase 0, (if x = 0 then M' 0 + R else M' x)
           = ∑ x ∈ Finset.univ.erase 0, M' x := by
         apply Finset.sum_congr rfl
-        intro k hk
-        simp only [if_neg (Finset.ne_of_mem_erase hk)]
-      rw [sum_eq, add_comm (M' 0) R, add_assoc, ← h1]
-      simp only [R]
-      have hM'0_le_S : M' 0 ≤ S :=
-        Finset.single_le_sum (fun _ _ => Nat.zero_le _) (Finset.mem_univ 0)
-      omega
+        grind
+      grind
     have h_M_coords_bound : ∀ k, M_coords k ≤ l := by
       intro k
       by_cases h_is_zero : k = 0
@@ -181,10 +172,7 @@ lemma size_bound_key (σ : Finset (TT n l)) (C : Finset (Fin n)) (h : TT.ILO.isD
     use ⟨M_val, by simp [M_val, h_M_coords_sum]⟩
     intro k hk_in_C
     change m k + 1 ≤ (M_val k : ℕ)
-    by_cases h_is_zero : k = 0
-    · rw [h_is_zero] at hk_in_C ⊢
-      simp [M_val, M_coords, M', hk_in_C]
-    · simp [M_val, M_coords, h_is_zero, M', hk_in_C]
+    grind
   obtain ⟨M, hM⟩ := h_exists_point
   have h_contradiction : ∀ k ∈ C, ∃ x_min ∈ σ, x_min <[k] M := by
     intro k hk_in_C
@@ -241,8 +229,7 @@ theorem size_bound_in (σ : Finset (TT n l)) (C : Finset (Fin n)) (h : TT.ILO.is
           _ ≤ ∑ k, (x k : ℕ) := Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ C)
               (by simp)
           _ = l := x.2
-      rw [Nat.sub_lt_iff_lt_add h_sum_le_l, add_comm]
-      exact h_key
+      grind
     have h_bound : ∀ z ∈ σ, (z i : ℕ) - m' i < C.card := by
       intro z hz
       by_cases hi_in_C : i ∈ C
@@ -287,13 +274,7 @@ theorem size_bound_in (σ : Finset (TT n l)) (C : Finset (Fin n)) (h : TT.ILO.is
         intro z hz
         have := h_bound z hz
         simp only [m'] at this ⊢
-        split_ifs at this ⊢ with h_case
-        · have : (z i : ℕ) - m i < C.card := this
-          simp
-          have h_le : m i ≤ (z i : ℕ) := Finset.min'_le _ _ (Finset.mem_image_of_mem _ hz)
-          omega
-        · simp only [Int.ofNat_zero, sub_zero]
-          exact Int.ofNat_lt.mpr this
+        grind
       calc
         abs ((x i : ℤ) - (y i : ℤ)) = abs (((x i : ℤ) - (m' i : ℤ)) - ((y i : ℤ) - (m' i : ℤ)))
             := by rw [sub_sub_sub_cancel_right]
@@ -376,8 +357,7 @@ instance stdSimplex.upidx (x y : stdSimplex ℝ (Fin n)) : Nonempty { i | x.1 i 
         intro hle
         exact @IsEmpty.false _ h ⟨i, hle⟩
       exact lt_of_not_ge this
-  rw [sum_y_eq_1, sum_x_eq_1] at sum_lt
-  exact (lt_irrefl 1 sum_lt).elim
+  grind
 
 
 /-- A chosen index where `x` does not exceed `y`, for two simplex points. -/
@@ -421,8 +401,7 @@ theorem exists_subseq_constant_of_finite_image {s : Finset α} (e : ℕ → α) 
       by_contra hnf
       have a_in_imgs : a ∈ imgs := by
         simpa only [Set.not_finite, Finset.mem_filter, ha, true_and, imgs] using hnf
-      have : imgs ≠ ∅ := Finset.ne_empty_of_mem a_in_imgs
-      contradiction
+      grind
     have nat_finite : Set.Finite (Set.univ : Set ℕ) := by
       have univ_eq : Set.univ = e ⁻¹' (s : Set α) := by ext n; simp [he]
       rw [univ_eq]
@@ -440,8 +419,7 @@ theorem exists_subseq_constant_of_finite_image {s : Finset α} (e : ℕ → α) 
   have h_nonempty : preimage.Nonempty := by
     by_contra h_empty
     rw [Set.not_nonempty_iff_eq_empty] at h_empty
-    rw [h_empty] at preimage_infinite
-    exact Set.finite_empty.not_infinite preimage_infinite
+    grind
   obtain ⟨m₀, hm₀⟩ := h_nonempty
   have h_exists_larger : ∀ k : ℕ, ∃ m ∈ preimage, k < m := by
     intro k
@@ -759,8 +737,7 @@ theorem Brouwer (hf : Continuous f) : ∃ x , f x = x := by
       apply Finset.sum_eq_zero
       intro i_1 hi
       exact coords_outside_C_zero i_1 (Finset.mem_compl.mp hi)
-    rw [split_sum, compl_sum_zero, add_zero] at total_sum_eq_one
-    exact total_sum_eq_one
+    grind
   have f_coords_ge_z_coords := f_coords_ge_z_coords f hf
   have sum_f_coords_ge_one : ∑ i_1 ∈ C, (f z).1 i_1 ≥ 1 := by
     calc ∑ i_1 ∈ C, (f z).1 i_1
@@ -779,25 +756,19 @@ theorem Brouwer (hf : Continuous f) : ∃ x , f x = x := by
     have compl_sum_zero : ∑ i_2 ∈ Cᶜ, (f z).1 i_2 = 0 := by
       have split_sum : ∑ i, (f z).1 i = ∑ i ∈ C, (f z).1 i + ∑ i ∈ Cᶜ, (f z).1 i :=
         (Finset.sum_add_sum_compl C ((f z).1)).symm
-      rw [total_sum_f, sum_f_C_eq_one] at split_sum
-      linarith
+      grind
     have hi_in_compl : i_1 ∈ Cᶜ := Finset.mem_compl.mpr hi_not_C
     have h_nonneg : (f z).1 i_1 ≥ 0 := (f z).2.1 i_1
     have h_le_sum : (f z).1 i_1 ≤ ∑ j ∈ Cᶜ,
         (f z).1 j := Finset.single_le_sum (fun j _ => (f z).2.1 j) hi_in_compl
-    rw [compl_sum_zero] at h_le_sum
-    exact le_antisymm h_le_sum h_nonneg
+    grind
   have f_coords_eq_z_coords : ∀ i_1 ∈ C, (f z).1 i_1 = z.1 i_1 := by
     intro i_1 hi_C
     have h_sum_eq : ∑ i_2 ∈ C, (f z).1 i_2 = ∑ i_2 ∈ C, z.1 i_2 := by
       rw [sum_f_C_eq_one, sum_coords_in_C_eq_one]
     exact (((Finset.sum_eq_sum_iff_of_le fun i_2 hi => f_coords_ge_z_coords i_2 hi).mp
         h_sum_eq.symm) i_1 hi_C).symm
-  ext i_1
-  by_cases hi : i_1 ∈ C
-  · exact f_coords_eq_z_coords i_1 hi
-  · change (f z).1 i_1 = z.1 i_1
-    rw [f_coords_outside_C_zero i_1 hi, coords_outside_C_zero i_1 hi]
+  grind
 
 
 end Brouwer

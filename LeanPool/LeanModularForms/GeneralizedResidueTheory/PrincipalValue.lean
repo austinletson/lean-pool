@@ -79,9 +79,7 @@ lemma measurableSet_pv_support (γ : ℝ → ℂ) (a b : ℝ) (z₀ : ℂ)
     · intro ⟨hx_U, hx_Icc⟩
       exact ⟨by
         have : (⟨x, hx_Icc⟩ : ↑(Icc a b)) ∈ Subtype.val ⁻¹' U := hx_U
-        rw [hU_eq] at this
-        simp only [mem_preimage, restrict_apply, mem_Ioi] at this
-        exact this, hx_Icc⟩
+        grind, hx_Icc⟩
   rw [h_eq]
   exact hU_open.measurableSet.inter isClosed_Icc.measurableSet
 
@@ -131,12 +129,7 @@ private theorem aEStronglyMeasurable_pv_integrand
     Measure.restrict_le_self).congr ?_
   filter_upwards [ae_restrict_mem isClosed_Icc.measurableSet] with t ht
   simp only [piecewise]
-  by_cases ht_S : t ∈ S
-  · simp only [show t ∈ S ∩ Icc a b from ⟨ht_S, ht⟩,
-      ↓reduceIte, show ε < ‖γ t - z₀‖ from ht_S, ↓reduceIte]
-  · simp only [show t ∉ S ∩ Icc a b from fun h => ht_S h.1,
-      ↓reduceIte, show ¬(ε < ‖γ t - z₀‖) from ht_S,
-      ↓reduceIte]
+  grind
 
 theorem cauchyPrincipalValueIntegrand_integrable
     (f : ℂ → ℂ) (γ : ℝ → ℂ) (a b : ℝ) (z₀ : ℂ)
@@ -296,8 +289,7 @@ theorem cauchyPrincipalValueExists_of_singular_inv
       apply intervalIntegral.integral_congr
       intro t ht
       rw [uIcc_of_le γ.hab.le] at ht
-      simp only [gt_iff_lt, show ε < ‖γ.toFun t - z₀‖ from
-        lt_of_lt_of_le hε.2 (hδ_le t ht), ite_true])
+      grind)
 
 /-- Uniform avoidance on compact sets. -/
 theorem uniform_avoidance_on_compact

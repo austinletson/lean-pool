@@ -419,27 +419,20 @@ def ofBool : Bool → ZFBool
   | .false => ⟨zffalse, ZFBool.zffalse_mem_𝔹⟩
 
 theorem mem_ofBool_𝔹 (b : Bool) : (ofBool b).val ∈ 𝔹 := by
-  unfold 𝔹
-  rcases b <;> simp [ofBool]
+  grind
 
 theorem sub_ofBool_singleton_𝔹 (b : Bool) : {(ofBool b).val} ⊆ 𝔹 := by
   intro
   rw [mem_singleton]
-  rintro rfl
-  exact mem_ofBool_𝔹 b
+  grind
 
 theorem to_Bool_ofBool (b : Bool) : ZFBool.toBool (ofBool b) = b := by
   cases b <;> rw [ofBool, ZFBool.toBool]
   · split_ifs with h
     · nomatch zftrue_ne_zffalse.symm h
     · rfl
-    · generalize_proofs
-      contradiction
-  · split_ifs with h
-    · rfl
-    · contradiction
-    · generalize_proofs
-      contradiction
+    · grind
+  · grind
 
 theorem of_Bool_toBool (b : ZFBool) : ofBool b.toBool = b := by
   obtain ⟨b, hb⟩ := b
@@ -459,8 +452,7 @@ theorem ofBool_decide_eq_true_iff {P : Prop} [Decidable P] : ofBool (decide P) =
   · intro h
     cases hP : decide P with
     | false =>
-      rw [Bool.decide_false_iff] at hP
-      contradiction
+      grind
     | true => rfl
 
 theorem ofBool_decide_eq_false_iff {P : Prop} [Decidable P] : ofBool (decide P) = ⊥ ↔ ¬P := by
@@ -477,8 +469,7 @@ theorem ofBool_decide_eq_false_iff {P : Prop} [Decidable P] : ofBool (decide P) 
     cases hP : decide P with
     | false => rfl
     | true =>
-      rw [Bool.decide_iff] at hP
-      contradiction
+      grind
 
 /-- The equivalence between ZF booleans and Lean booleans. -/
 def instEquivBool : ZFBool ≃ Bool where

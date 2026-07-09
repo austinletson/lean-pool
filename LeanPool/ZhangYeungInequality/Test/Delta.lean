@@ -61,8 +61,7 @@ example (Z : Ω → S₁) (U : Ω → S₂) (X : Ω → S₃) (Y : Ω → S₄) 
     delta Z U X Y μ
       ≤ (1 / 2) * I[X : Y; μ]
         + (1 / 4) * (I[X : ⟨Z, U⟩; μ] + I[Y : ⟨Z, U⟩; μ]) := by
-  apply (delta_form23_iff Z U X Y μ).mp
-  exact delta_form23_of_form21_form22 h21 h22
+  grind
 
 end PureAlgebra
 

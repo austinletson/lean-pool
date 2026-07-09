@@ -143,8 +143,7 @@ theorem curv_absorption_algebraic
       mul_le_mul_of_nonneg_left h2 (norm_nonneg _)
     have h5 : 2 * (sm * ‖wn‖ * ‖hn‖) ≤ sm ^ 2 * ‖wn‖ ^ 2 + ‖hn‖ ^ 2 := by
       have := sq_nonneg (sm * ‖wn‖ - ‖hn‖)
-      have : (sm * ‖wn‖ - ‖hn‖) ^ 2 = sm^2 * ‖wn‖^2 - 2*sm*‖wn‖*‖hn‖ + ‖hn‖^2 := by ring
-      linarith
+      grind
     -- sm * (‖w‖ * ‖ξ‖) ≤ sm * ‖w‖ * (ε₁ * ‖h‖) = ε₁ * (sm*‖w‖*‖h‖) ≤ ε₁/2 * (sm²‖w‖²+‖h‖²)
     have h6 : sm * (‖wn‖ * ‖ξn‖) ≤ ε₁ * (sm * ‖wn‖ * ‖hn‖) := by
       calc sm * (‖wn‖ * ‖ξn‖) ≤ sm * (‖wn‖ * (ε₁ * ‖hn‖)) :=

@@ -263,9 +263,7 @@ lemma prekopa_leindler_1d_normalized
       apply nonempty_def.mpr
       suffices ∃ x, x ∈ {x | ENNReal.ofReal t < f x} by
         simp only [mem_setOf_eq] at this ⊢
-        rcases this with ⟨x, hx⟩
-        use x
-        exact le_of_lt hx
+        grind
       simp only [mem_setOf_eq]
       apply exists_lt_of_lt_ciSup
       simp only [hf_sup1, ENNReal.ofReal_lt_one, ht.2]
@@ -304,8 +302,7 @@ lemma prekopa_leindler_1d_normalized
   have hhint : hint = ∫⁻ t in Ioi 0, vh t := layercake hh_measurable
   -- implies ∫ f + ∫ g ≤ ∫ h
   have h_ineq_integral : fint + gint ≤ hint := by
-    rw [← hhint, ← hfint, ← hgint] at h_vol_ineq_integral
-    exact h_vol_ineq_integral
+    grind
   -- quickly prove the result in the case of fint = ⊤ or gint = ⊤
   by_cases h_fint_eq_top : fint = ⊤
   · simp only [h_fint_eq_top, top_add, top_le_iff] at h_ineq_integral
@@ -557,11 +554,7 @@ lemma lintegral_fix_eq_lmarginal {d : ℕ}
     rw [congrFun h_lmarginal_singleton (append x1 default), this]
   rw [lintegral_fin1]
   unfold fix append Function.update
-  simp_all only [Pi.default_def, eq_rec_constant, Fin.default_eq_zero, Fin.isValue, dite_eq_ite,
-    Function.comp_apply]
-  congr; ext; congr; ext i; split
-  case e_f.isTrue => simp_all
-  case e_f.isFalse h => simp [Fin.val_lt_last h]
+  grind
 
 /-- Iterated integral of `fix f` recovers the integral of `f`. -/
 lemma lintegral_fix_lintegral_eq_lintegral
@@ -754,21 +747,4 @@ theorem prekopa_leindler
           (by linarith) (ne_of_gt <| mul_pos (by linarith) (by linarith)) (by grind)
       exact Eq.symm <| Real.rpow_of_add_eq
         (by linarith) (ne_of_gt <| mul_pos (by linarith) (by linarith)) (by grind)
-  have result_d_3 : ENNReal.ofReal ((1-θ)^((d+2)*(1-θ))*θ^((d+2)*θ))⁻¹
-      * (∫⁻ (x : Fin (d + 2) → ℝ), f x) ^ (1 - θ) * (∫⁻ (x : Fin (d + 2) → ℝ), g x) ^ θ ≤
-      ∫⁻ (x : Fin (d + 2) → ℝ), h x := by
-    rw [rewrite_lhs_of_result_d_2, combine_consts_of_result_d_2] at result_d_2
-    exact result_d_2
-  have rewrite_const_of_result_d_3 :
-      ENNReal.ofReal ((1-θ)^((d+2)*(1-θ))*θ^((d+2)*θ))⁻¹ =
-      ENNReal.ofReal ((1-θ)^((↑(d+1)+1)*(1-θ))*θ^((↑(d+1)+1)*θ))⁻¹ := by
-    congr 5
-    · simp only [Nat.cast_add, Nat.cast_one]
-      ring
-    simp only [Nat.cast_add, Nat.cast_one]
-    ring
-  change ENNReal.ofReal ((1-θ)^((↑(d+1)+1)*(1-θ))*θ^((↑(d+1)+1)*θ))⁻¹
-    * (∫⁻ (x : Fin (d + 2) → ℝ), f x)^(1-θ) * (∫⁻ (x : Fin (d + 2) → ℝ), g x)^θ
-    ≤ ∫⁻ (x : Fin (d + 2) → ℝ), h x
-  rw [rewrite_const_of_result_d_3] at result_d_3
-  exact result_d_3
+  grind

@@ -88,11 +88,7 @@ theorem generalizedWindingNumber_circleMap_eq_inv_circleIntegral
     hab := h2pi
     partition := {0, 2 * Real.pi}
     partition_subset := by
-      intro x hx
-      simp only [Finset.coe_pair, Set.mem_insert_iff, Set.mem_singleton_iff] at hx
-      rcases hx with rfl | rfl
-      · exact ⟨le_refl _, h2pi.le⟩
-      · exact ⟨h2pi.le, le_refl _⟩
+      grind
     endpoints_in_partition := ⟨by simp, by simp⟩
     continuous_toFun := hcont
     smooth_off_partition := hdiff
@@ -104,9 +100,7 @@ theorem generalizedWindingNumber_circleMap_eq_inv_circleIntegral
     have h_norm : ‖circleMap c R t - c‖ = R := by
       simp [circleMap, Complex.norm_real, abs_of_pos hR,
         Complex.norm_exp_ofReal_mul_I]
-    intro heq
-    rw [heq] at h_norm
-    exact hw h_norm
+    grind
   -- Apply the classical away theorem
   have hclass := generalizedWindingNumber_eq_classical_away γ w havoids
   simp only [γ] at hclass

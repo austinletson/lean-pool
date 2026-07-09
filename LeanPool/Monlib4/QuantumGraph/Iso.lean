@@ -169,8 +169,7 @@ theorem InnerAut.toMatrix [hφ : φ.IsFaithfulPosMap] (U : unitaryGroup n ℂ) :
     congr 1
     simp_rw [star_apply, ← conjTranspose_apply,
       (PosDef.rpow.isPosDef _ _).isHermitian.eq]
-    nth_rw 1 [mul_rotate', ← mul_assoc]
-    rw [mul_comm _ (PosDef.rpow _ (1 / 2) _ _), mul_assoc])
+    grind)
 
 theorem unitary_commutes_with_hφ_matrix_iff_isIsometry (hφ : φ.IsFaithfulPosMap) [Nontrivial n]
     (U : unitaryGroup n ℂ) :

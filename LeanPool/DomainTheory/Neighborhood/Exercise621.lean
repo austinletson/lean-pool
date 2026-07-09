@@ -58,12 +58,10 @@ the shared `sumTokMaster`. -/
 /-- If `X ⊆ Δ` and `X ≠ Δ`, then any intersection `X ∩ X'` is still `≠ Δ` (it is
 `⊆ X ⊊ Δ`). -/
 theorem inter_ne_of_ne_left {X X' Δ : Set Str} (hX : X ⊆ Δ) (hne : X ≠ Δ) : X ∩ X' ≠ Δ := by
-  intro h
-  exact hne (Set.Subset.antisymm hX (by rw [← h]; exact Set.inter_subset_left))
+  grind
 
 theorem inter_ne_of_ne_right {X X' Δ : Set Str} (hX' : X' ⊆ Δ) (hne : X' ≠ Δ) : X ∩ X' ≠ Δ := by
-  intro h
-  exact hne (Set.Subset.antisymm hX' (by rw [← h]; exact Set.inter_subset_right))
+  grind
 
 /-- **Exercise 6.21 — the coalesced sum system `𝒟₀ ⊕ 𝒟₁` over `{0,1}*`.** As
 `sumTok`, but the
@@ -952,8 +950,7 @@ theorem gFun_iter_fixed (T : GExpr) (hT : T.RootedConst) :
   have hU : ∀ v, v ∈ (⋃ n, gIter T n) ↔ ∃ S ∈ Set.range (gIter T), v ∈ S := by
     intro v
     constructor
-    · intro hv; rw [Set.mem_iUnion] at hv; obtain ⟨n, hn⟩ := hv
-      exact ⟨gIter T n, ⟨n, rfl⟩, hn⟩
+    · intro hv; rw [Set.mem_iUnion] at hv; grind
     · rintro ⟨S, ⟨n, rfl⟩, hv⟩; exact Set.mem_iUnion.mpr ⟨n, hv⟩
   apply Set.ext; intro w
   rw [gFun_continuous T hdir hne hU w]

@@ -55,8 +55,7 @@ variable (H : TreeLift hyp)
 @[ext] lemma ext' {H H' : TreeLift hyp} (hR : H.R = H'.R) (hx : H.x.val = H'.x.val) : H = H' := by
   ext
   · simp [hR]
-  · rw [Subtype.heq_iff_coe_heq rfl (by simp [hR])]
-    simpa
+  · grind
 attribute [simp] TreeLift.hlvl
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
 lemma hlvl_le : 2 * k + 1 ≤ H.x.val.length (α := no_index _) := by linarith [H.hlvl]
@@ -83,8 +82,7 @@ lemma take_of_length_le {h} (h' : H.x.val.length ≤ n) : H.take n h = H := by e
 def extension hp := H.preLift.extension hp ((strategyEquivSystem H.R).str _)
 @[congr] lemma extension_val_congr {H H' : TreeLift hyp} (h : H = H') {hp} :
   (H.extension hp).val = (H'.extension (by subst h; exact hp)).val := by
-  subst h
-  rfl
+  grind
 lemma stratMap'_extend : stratMap' H.R (subtreeIncl _ H.x) = H.extension := by
   ext hp; dsimp [stratMap', stratMap]; split_ifs with h
   · change H.x.val.length ≤ 2 * k at h
@@ -479,8 +477,7 @@ lemma lLift_mem_tree (h : H.preLift.Losable) :
         congr
         simp [take_coe, hnX]
       · have htake : min (n + 1) ((List.take (n + 1) H.x.val).length - 1) = n := by
-          rw [List.length_take, min_eq_left (Nat.succ_le_of_lt hnX)]
-          omega
+          grind
         change
           (defensiveQuasi
             (H.preLift.take
@@ -489,8 +486,7 @@ lemma lLift_mem_tree (h : H.preLift.Losable) :
             Player.one (hyp.pruned.sub _)).1.subtree = _
         have hG :
             (H.preLift.take (min (n + 1) ((List.take (n + 1) H.x.val).length - 1)) (by
-              rw [htake]
-              omega)).game = H.preLift.game := by rw [PreLift.game_take]
+              grind)).game = H.preLift.game := by rw [PreLift.game_take]
         exact Game.defensiveQuasi_subtree (hG := hG) (hp := rfl) _
 
 lemma take_winnable (h : H.preLift.Winnable) n :

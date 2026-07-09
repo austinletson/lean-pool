@@ -341,17 +341,7 @@ lemma matrixEquivForward_surjective
   erw [Algebra.coe_lmul_eq_mul]
   rw [LinearMap.mul]
   simp only [LinearMap.mk₂_apply]
-  simp only [Matrix.single, Matrix.of_apply, mul_ite, mul_one, mul_zero]
-  split_ifs with h1 h2 h3 h4 h5
-  · rfl
-  · simp only [not_and, ne_eq] at h3
-    refine h3 ?_ ?_ |>.elim <;> ext <;> aesop
-  · simp only [not_and] at h2
-    refine h2 ?_ ?_ |>.elim <;> aesop
-  · rfl
-  · simp only [not_and] at h1
-    refine h1 ?_ ?_ |>.elim <;> aesop
-  · rfl
+  grind
 
 /-- The tensor product of matrix algebras is a matrix algebra on the product index type. -/
 def matrixEqv (m n : ℕ) : (Matrix (Fin m) (Fin m) K) ⊗[K] (Matrix (Fin n) (Fin n) K) ≃ₐ[K]
@@ -639,11 +629,7 @@ def e2 :
         · subst h; simp [Matrix.single]
         · rw [Matrix.one_apply_ne h]
           apply Finset.sum_eq_zero
-          intros k
-          simp only [Finset.mem_univ, Matrix.single, Matrix.of_apply, ite_eq_right_iff,
-            one_ne_zero, imp_false, not_and, forall_const]
-          rintro rfl
-          exact h }
+          grind }
 
 /-- Reassociates a tensor product after base change along `K → E`. -/
 def e3 :

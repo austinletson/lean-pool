@@ -76,10 +76,7 @@ lemma unitArc_fdBoundary_eq (H : ℝ) (s : ℂ)
   rw [h_angle]
   rw [exp_real_angle_I]
   have hs_re_range : s.re ∈ Icc (-1 : ℝ) 1 := by
-    constructor
-    · have := abs_le.mp (le_of_lt hs_re |>.trans (by norm_num : (1 : ℝ)/2 ≤ 1))
-      linarith [(abs_le.mp (le_of_lt hs_re)).1]
-    · linarith [(abs_lt.mp hs_re).2]
+    grind
   rw [Real.cos_arccos hs_re_range.1 hs_re_range.2]
   have h_sq : s.re ^ 2 + s.im ^ 2 = 1 := unitArc_re_sq_add_im_sq hs_norm
   have h_sin : Real.sin (Real.arccos s.re) = s.im := by
@@ -115,9 +112,7 @@ private lemma unitArc_dist_from_seg5 (s : ℂ) (hs_norm : ‖s‖ = 1) (H : ℝ)
 lemma unitArc_min_dist_pos (s : ℂ) (_hs_norm : ‖s‖ = 1) (hs_re : |s.re| < 1 / 2)
     (_hs_im_pos : 0 < s.im) (H : ℝ) (hH : 1 < H) :
     0 < min (min (1/2 - s.re) (s.re + 1/2)) (H - 1) := by
-  simp only [lt_min_iff]
-  exact ⟨⟨by linarith [(abs_lt.mp hs_re).2], by linarith [(abs_lt.mp hs_re).1]⟩,
-         by linarith⟩
+  grind
 
 /-- Non-arc segments of fdBoundaryH stay at distance ≥ d from arc point s. -/
 lemma unitArc_min_dist_from_non_arc (H : ℝ) (hH : 1 < H) (s : ℂ)
@@ -337,12 +332,7 @@ private lemma unitArc_logDeriv_ae_eq {lo hi : ℝ} (hlo_hi : lo ≤ hi) (g h : �
       rw [compl_compl]
       exact (Set.toFinite ({lo, hi} : Set ℝ)).measure_zero volume)
   filter_upwards [h_excl] with t ht_ne ht_mem
-  rw [Set.uIoc_of_le hlo_hi] at ht_mem
-  have ht_lo : lo < t := lt_of_le_of_ne ht_mem.1.le
-    (fun h => ht_ne (by simp only [mem_insert_iff, mem_singleton_iff]; exact Or.inl h.symm))
-  have ht_hi : t < hi := lt_of_le_of_ne ht_mem.2
-    (fun h => ht_ne (by simp only [mem_insert_iff, mem_singleton_iff]; exact Or.inr h))
-  rw [hg_eq t ht_lo ht_hi, hderiv_eq t ⟨ht_lo, ht_hi⟩]
+  grind
 
 private lemma unitArc_seg1_eq_arc_at_one (H : ℝ) (s : ℂ) :
     fdBoundarySeg1H H 1 - s = exp (↑(Real.pi * (1 + (1 : ℝ)) / 6) * I) - s := by

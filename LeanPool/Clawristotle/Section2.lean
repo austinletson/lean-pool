@@ -92,8 +92,7 @@ theorem landauMatrix_quadForm_eq_zero_iff {Ψ : ℝ → ℝ} {z : Fin 3 → ℝ}
       (z 0 * Y 1 - z 1 * Y 0) ^ 2 + (z 0 * Y 2 - z 2 * Y 0) ^ 2 +
       (z 1 * Y 2 - z 2 * Y 1) ^ 2 = 0 := by
     simp only [dotProduct, normSq, Fin.sum_univ_three, sq] at heq
-    nlinarith [sq_nonneg (z 0 * Y 1 - z 1 * Y 0), sq_nonneg (z 0 * Y 2 - z 2 * Y 0),
-               sq_nonneg (z 1 * Y 2 - z 2 * Y 1)]
+    grind
   -- Step 4: Extract individual proportionality relations z_i * Y_j = z_j * Y_i
   have h01 : z 0 * Y 1 = z 1 * Y 0 := by
     nlinarith [hcross, sq_nonneg (z 0 * Y 2 - z 2 * Y 0), sq_nonneg (z 1 * Y 2 - z 2 * Y 1)]
@@ -110,31 +109,25 @@ theorem landauMatrix_quadForm_eq_zero_iff {Ψ : ℝ → ℝ} {z : Fin 3 → ℝ}
     ext i; fin_cases i
     · simp [Pi.smul_apply, smul_eq_mul, div_mul_cancel₀ _ h0]
     · simp [Pi.smul_apply, smul_eq_mul]
-      field_simp
-      linarith [h01]
+      grind
     · simp [Pi.smul_apply, smul_eq_mul]
-      field_simp
-      linarith [h02]
+      grind
   · rcases not_and_or.mp h12ne with h1 | h2
     · -- Case z 1 != 0: let l = Y 1 / z 1
       refine ⟨Y 1 / z 1, ?_⟩
       ext i; fin_cases i
       · simp [Pi.smul_apply, smul_eq_mul]
-        field_simp
-        linarith [h01]
+        grind
       · simp [Pi.smul_apply, smul_eq_mul, div_mul_cancel₀ _ h1]
       · simp [Pi.smul_apply, smul_eq_mul]
-        field_simp
-        linarith [h12]
+        grind
     · -- Case z 2 != 0: let l = Y 2 / z 2
       refine ⟨Y 2 / z 2, ?_⟩
       ext i; fin_cases i
       · simp [Pi.smul_apply, smul_eq_mul]
-        field_simp
-        linarith [h02]
+        grind
       · simp [Pi.smul_apply, smul_eq_mul]
-        field_simp
-        linarith [h12]
+        grind
       · simp [Pi.smul_apply, smul_eq_mul, div_mul_cancel₀ _ h2]
 
 -- ============================================================================
@@ -146,8 +139,7 @@ theorem innerLandauMatrix_mulVec_self (z : Fin 3 → ℝ) :
     mulVec (innerLandauMatrix z) z = 0 := by
   unfold innerLandauMatrix
   simp only [sub_mulVec, smul_mulVec, one_mulVec, vecMulVec_self_mulVec, normSq]
-  ext i
-  simp [Pi.sub_apply, Pi.smul_apply, smul_eq_mul, sub_self]
+  grind
 
 /-- Lemma 3: A(z) z = 0. Reference: lem:zA_zero -/
 theorem landauMatrix_mulVec_self (Ψ : ℝ → ℝ) (z : Fin 3 → ℝ) :

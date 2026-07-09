@@ -166,9 +166,7 @@ private lemma circle_linfty_bound {L : ℕ} (_hL : 1 ≤ L) {E : Finset ℕ}
       _ ≤ Real.sqrt (∑ n ∈ E, 1) * Real.sqrt (∑ n ∈ E, ‖b n‖ ^ 2) := hcs
       _ = Real.sqrt L * Real.sqrt (∑ n ∈ E, ‖b n‖ ^ 2) := by congr 1; simp [hE]
   have h3 : ∑ n ∈ E, ‖b n‖ ^ 2 = circleNormSq P := by rw [hP]; exact (parseval_finite b).symm
-  calc ‖P t‖ ≤ ∑ n ∈ E, ‖b n‖ := h1
-    _ ≤ Real.sqrt L * Real.sqrt (∑ n ∈ E, ‖b n‖ ^ 2) := h2
-    _ = Real.sqrt L * Real.sqrt (circleNormSq P) := by rw [h3]
+  grind
 
 /-! ### ∫ P² = 0 for positive-frequency sums -/
 
@@ -279,11 +277,9 @@ private lemma rho_sq_lower_bound (w : ℂ) (hw : ‖w‖ ≤ 1 / 4) :
         (2 * r) ^ 2 >
           (2 + 2 * u + s - u ^ 2 / 2 + s ^ 2) ^ 2 :=
       sq_lt_sq' (by linarith) h_neg
-    rw [show (2 * r) ^ 2 = 4 * r ^ 2 from by ring, hr_sq] at h1
-    linarith
+    grind
   have hw4 : ‖w‖ ^ 4 = s ^ 2 := by
-    have : ‖w‖ ^ 4 = (‖w‖ ^ 2) ^ 2 := by ring
-    rw [this, hw_sq]
+    grind
   rw [hw4]; nlinarith [sq_nonneg (r - 1)]
 
 /-! ### ∫ ‖P‖⁴ bound -/
@@ -355,9 +351,7 @@ private lemma small_amplitude {L : ℕ} (hL : 1 ≤ L) {E : Finset ℕ}
     have h_add := integral_add
       (real_cont_integrable ((Complex.continuous_re.comp hP_cont).pow 2))
       (real_cont_integrable ((Complex.continuous_im.comp hP_cont).pow 2))
-    trans (∫ t, ((P t).re ^ 2 + (P t).im ^ 2) ∂AddCircle.haarAddCircle)
-    · congr 1; ext t; exact h_norm_sq t
-    · exact h_add
+    grind
   have h_re_half :
       ∫ t : AddCircle T, (P t).re ^ 2 ∂AddCircle.haarAddCircle =
         cns / 2 := by linarith
@@ -380,9 +374,7 @@ private lemma small_amplitude {L : ℕ} (hL : 1 ≤ L) {E : Finset ℕ}
       ∫ t : AddCircle T, (P t).re ^ 2 / 2 ∂AddCircle.haarAddCircle =
       (∫ t : AddCircle T, (P t).re ^ 2 ∂AddCircle.haarAddCircle) / 2 := by
     simp_rw [div_eq_mul_inv]; exact integral_mul_const 2⁻¹ _
-  rw [h_integral_sub, h_div, h_re_half] at h_lower
-  -- cns/2/2 - ∫ ‖P‖⁴ ≥ cns/4 - cns/16 = 3cns/16
-  linarith
+  grind
 
 /-! ### ∫ ‖1+P‖² = 1 + circleNormSq P -/
 

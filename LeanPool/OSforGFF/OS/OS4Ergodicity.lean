@@ -220,9 +220,7 @@ lemma gff_exp_time_translated_memLp_two (m : ℝ) [Fact (0 < m)] (s : ℝ) (f : 
       simp [distributionPairingℂReal]
     rw [h_norm, h_re, sq, ← Real.exp_add]
     apply Real.exp_le_exp.mpr
-    have h_le : ω (complexTestFunctionDecompose g).1 ≤ |ω (complexTestFunctionDecompose g).1| :=
-      le_abs_self _
-    linarith
+    grind
   -- Conclude MemLp 2 via domination
   rw [MeasureTheory.memLp_two_iff_integrable_sq_norm h_meas]
   have h_sq_meas : AEStronglyMeasurable (fun ω => ‖Complex.exp (distributionPairingℂReal ω g)‖^2)
@@ -805,8 +803,7 @@ private lemma clustering_decay_at (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ)
     have h_conj_exp : ∀ ω, starRingEnd ℂ (Complex.exp (distributionPairingℂReal ω f)) =
         Complex.exp (distributionPairingℂReal ω (conjSchwartz f)) := fun ω => by
       rw [(Complex.exp_conj _).symm, distributionPairingℂ_real_conj]
-    simp_rw [h_conj_exp]
-    ring
+    grind
   have h_int_rw : ∫ ω, A t ω * starRingEnd ℂ (A 0 ω) ∂μ =
       ∫ ω, Complex.exp (distributionPairingℂReal ω (conjSchwartz f) +
             distributionPairingℂReal (timeTranslationDistribution t ω) f) ∂μ := by
@@ -930,9 +927,7 @@ lemma variance_decay_from_clustering (m : ℝ) [Fact (0 < m)] (f : TestFunction�
     -- Step 2: ‖Cov(s,u)‖ ≤ c·(1+|s-u|)^{-3} for s,u in [0,T]
     have h_cov_bound : ∀ s u, s ∈ Set.Icc (0 : ℝ) T → u ∈ Set.Icc (0 : ℝ) T →
         ‖Cov s u‖ ≤ c * (1 + |s - u|)^(-(3 : ℝ)) := by
-      intro s u hs hu
-      simp only [Set.mem_Icc] at hs hu
-      exact h_cov_decay s u hs.1 hu.1
+      grind
     -- Step 3: ∫∫ ‖Cov‖ ≤ c · ∫∫ (1+|s-u|)^{-3} ≤ c · 2TC
     -- First establish continuity facts for integrability
     have h_Cov_cont : Continuous (fun (p : ℝ × ℝ) => Cov p.1 p.2) := gff_covariance_continuous m f
@@ -940,10 +935,7 @@ lemma variance_decay_from_clustering (m : ℝ) [Fact (0 < m)] (f : TestFunction�
       apply Continuous.mul continuous_const
       apply Continuous.rpow_const
       · exact continuous_const.add (continuous_abs.comp (continuous_fst.sub continuous_snd))
-      · intro x
-        left
-        -- 1 + |x.1 - x.2| ≥ 1 > 0, so never zero
-        linarith [abs_nonneg (x.1 - x.2)]
+      · grind
     have h_cov_double_bound : ∫ s in Set.Icc (0 : ℝ) T, ∫ u in Set.Icc (0 : ℝ) T, ‖Cov s u‖ ≤
         c * (2 * T * C) := by
       -- First bound by ∫∫ c·(1+|s-u|)^{-3}
@@ -1023,10 +1015,7 @@ lemma variance_decay_from_clustering (m : ℝ) [Fact (0 < m)] (f : TestFunction�
     have h2 : Filter.Tendsto (fun T : ℝ => (2 * c * C) * T⁻¹) Filter.atTop (nhds ((2 * c * C) * 0))
       :=
       Filter.Tendsto.const_mul (2 * c * C) h1
-    simp only [mul_zero] at h2
-    convert h2 using 1
-    ext T
-    rw [div_eq_mul_inv]
+    grind
   -- Lower bound: variance ≥ 0
   have h_nonneg : ∀ T, 0 ≤ ∫ ω, ‖(1 / T) * ∫ s in Set.Icc (0 : ℝ) T,
       Complex.exp (distributionPairingℂReal (timeTranslationDistribution s ω) f)
@@ -1122,8 +1111,7 @@ theorem OS4'_implies_OS4 (m : ℝ) [Fact (0 < m)] :
             - ∫ ω', Complex.exp (distributionPairingℂReal ω' (f j)) ∂μ) := by
         intro s
         rw [h_mean_sum, ← Finset.sum_sub_distrib]
-        congr 1 with j
-        ring
+        grind
       -- The time integral of the difference
       have h_diff_int : ∀ j, MeasureTheory.IntegrableOn
           (fun s => z j * (Complex.exp (distributionPairingℂReal (timeTranslationDistribution s ω)
@@ -1144,8 +1132,7 @@ theorem OS4'_implies_OS4 (m : ℝ) [Fact (0 < m)] :
         fun c g => MeasureTheory.integral_const_mul (L := ℂ) c g
       simp_rw [h_icm2]
       rw [Finset.mul_sum]
-      congr 1 with j
-      ring
+      grind
     -- Apply Cauchy-Schwarz pointwise
     have h_cs : ∀ ω, ‖∑ j, z j * Err j T ω‖^2 ≤ Z * ∑ j, ‖Err j T ω‖^2 :=
       fun ω => norm_sq_weighted_sum_le z (fun j => Err j T ω)

@@ -88,8 +88,7 @@ theorem uniformScalar_eq_of_mul (G : MonotoneMetricFamily) {n m : ℕ} (hn : 2 �
   let i0 : Fin n := ⟨0, lt_of_lt_of_le Nat.zero_lt_two hn⟩
   let i1 : Fin n := ⟨1, lt_of_lt_of_le Nat.one_lt_two hn⟩
   have hi01 : i0 ≠ i1 := by
-    intro h
-    exact Nat.zero_ne_one (congrArg Fin.val h)
+    grind
   let u : tangentSpace (α := α) := TangentFin.Basis.dij (n := n) i0 i1
   -- Transport `u` along replicate, then along the equivalence `e : β ≃ Fin N`.
   let v : tangentSpace (α := Fin N) := δ.tangentPushforward (κ.tangentPushforward u)
@@ -101,11 +100,7 @@ theorem uniformScalar_eq_of_mul (G : MonotoneMetricFamily) {n m : ℕ} (hn : 2 �
       simpa using h'
     have hu_eval' : (u : α → ℝ) i0 = (1 : ℝ) := by
       simp [u, TangentFin.Basis.dij_coe, TangentFin.Basis.e, hi01]
-    have : (1 : ℝ) = 0 := by
-      calc
-        (1 : ℝ) = (u : α → ℝ) i0 := hu_eval'.symm
-        _ = 0 := hu_eval
-    exact one_ne_zero this
+    grind
   have hFpos : 0 < fisherBilin (Simplex.uniform (α := α)) u u :=
     fisherBilin.pos (p := Simplex.uniform (α := α)) u hu0
   have hFne : fisherBilin (Simplex.uniform (α := α)) u u ≠ 0 := ne_of_gt hFpos
@@ -169,8 +164,7 @@ theorem uniformScalar_eq_of_mul (G : MonotoneMetricFamily) {n m : ℕ} (hn : 2 �
     let j0 : Fin N := ⟨0, lt_of_lt_of_le Nat.zero_lt_two (two_le_card_prod (n := n) (m := m) hn hm)⟩
     let j1 : Fin N := ⟨1, lt_of_lt_of_le Nat.one_lt_two (two_le_card_prod (n := n) (m := m) hn hm)⟩
     have hj01 : j0 ≠ j1 := by
-      intro h
-      exact Nat.zero_ne_one (congrArg Fin.val h)
+      grind
     simpa [MonotoneMetricFamily.uniformScalar, j0, j1] using
       (TangentFin.Bilin.B_eq_smul_fisherBilin_uniform (G := G) (n := N) (i0 := j0) (i1 := j1) hj01)
   have hFinn :
@@ -195,34 +189,7 @@ theorem uniformScalar_eq_of_mul (G : MonotoneMetricFamily) {n m : ℕ} (hn : 2 �
     have := congrArg (fun B => B u u) hFinn
     simpa [TangentFin.Bilin.B, mul_assoc, α] using this
   -- Compare the two scalar factors using `hG` and `hF`.
-  have :
-      (uniformScalar G N (two_le_card_prod (n := n) (m := m) hn hm)) *
-          fisherBilin (Simplex.uniform (α := α)) u u
-        =
-        (uniformScalar G n hn) *
-          fisherBilin (Simplex.uniform (α := α)) u u := by
-    -- Rewrite `hFinN_apply` and `hFinn_apply` using `hG`/`hF`.
-    calc
-      (uniformScalar G N (two_le_card_prod (n := n) (m := m) hn hm)) *
-          fisherBilin (Simplex.uniform (α := α)) u u
-          =
-        (uniformScalar G N (two_le_card_prod (n := n) (m := m) hn hm)) *
-          fisherBilin (Simplex.uniform (α := Fin N)) v v := by
-            simp [hF]
-      _ =
-        G.g (α := Fin N) (Simplex.uniform (α := Fin N)) v v := by
-            symm
-            simpa [mul_assoc] using hFinN_apply
-      _ =
-        G.g (α := α) (Simplex.uniform (α := α)) u u := hG
-      _ =
-        (uniformScalar G n hn) * fisherBilin (Simplex.uniform (α := α)) u u := by
-            simpa [mul_assoc] using hFinn_apply
-  -- Cancel the positive Fisher factor.
-  have hscalar :
-      uniformScalar G N (two_le_card_prod (n := n) (m := m) hn hm) = uniformScalar G n hn :=
-    mul_right_cancel₀ hFne this
-  simpa [β, N] using hscalar
+  grind
 
 theorem uniformScalar_eq_uniformScalar_two (G : MonotoneMetricFamily) {n : ℕ} (hn : 2 ≤ n) :
     uniformScalar G n hn = uniformScalar G 2 (by decide) := by
@@ -247,16 +214,7 @@ theorem uniformScalar_eq_uniformScalar_two (G : MonotoneMetricFamily) {n : ℕ} 
       Fintype.card (Fin n × Fin 2) = Fintype.card (Fin 2 × Fin n) := by
     simp [Nat.mul_comm]
   -- Rewrite the first equality along `hcard` and conclude.
-  have hn_to' :
-      uniformScalar G (Fintype.card (Fin 2 × Fin n)) h2n = uniformScalar G n hn := by
-    -- `uniformScalar` is proof-irrelevant in the `Fin` proofs, so rewriting the index suffices.
-    simpa [hcard] using hn_to
-  calc
-    uniformScalar G n hn
-        = uniformScalar G (Fintype.card (Fin 2 × Fin n)) h2n := by
-            symm
-            exact hn_to'
-    _ = uniformScalar G 2 (by decide) := htwo_to
+  grind
 
 end MonotoneMetricFamily
 end LeanPool.CencovPetz

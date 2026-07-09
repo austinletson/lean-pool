@@ -212,8 +212,7 @@ def decodeCodeo : ℕ → codeo
   | n + 4 =>
     let q := n / 5
     have hq : q < n + 4 := by
-      have : n + 1 ≤ n + 4 := Nat.add_le_add_left (show (1 : ℕ) ≤ 4 from by decide) _
-      exact lt_of_le_of_lt (Nat.div_le_self _ _) (lt_of_lt_of_le (Nat.lt_succ_self _) this)
+      grind
     have hq₁ : q.unpair.1 < n + 4 := lt_of_le_of_lt q.unpair_left_le hq
     have hq₂ : q.unpair.2 < n + 4 := lt_of_le_of_lt q.unpair_right_le hq
     match n % 5 with
@@ -285,8 +284,7 @@ fun c => match c with
           grind
       · grind
     obtain ⟨c, hc⟩ := h_surjective (n + 5)
-    specialize h_inv c
-    aesop
+    grind
 
 theorem decodeCodeo_encodeCodeo (c : codeo) : decodeCodeo (encodeCodeo c) = c := by
   have h_inj : ∀ c1 c2 : codeo, encodeCodeo c1 = encodeCodeo c2 → c1 = c2 := by

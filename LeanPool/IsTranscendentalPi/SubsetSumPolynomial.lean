@@ -192,9 +192,7 @@ lemma polyOfNonzeroSubsetSums_as_poly
   intro k
   by_cases hk : k + (subsetSums (valuesFin a)).count 0 ≤ (subsetSums (valuesFin a)).card
   · obtain ⟨Q, hQ⟩ := coeff_polyOfNonzeroSubsetSums_as_coeff_poly B a hmonic hroots hk
-    refine ⟨MvPolynomial.aeval (σ := Fin n) (R := ℤ) (S₁ := R)
-      (fun i : Fin n => (-1) ^ (i.1 + 1) * B.coeff (n - (i.1 + 1))) Q, ?_⟩
-    simpa [eq_comm] using hQ
+    grind
   · refine ⟨0, ?_⟩
     simp only [_root_.map_zero]
     symm
@@ -275,11 +273,9 @@ lemma coeff_monicRescaleOf_scaleRoots
       _ = (c : ℚ) ^ (d - 1 - k) * ((T.coeff k : ℤ) : ℚ) := by simp
       _ = (c : ℚ) ^ (d - 1 - k) * ((c : ℚ) * T'.coeff k) := by rw [hcoeffT]
       _ = T'.coeff k * (c : ℚ) ^ ((d - 1 - k) + 1) := by
-            rw [pow_succ']
-            ring
+            grind
       _ = _ := by
-            congr 2
-            omega
+            grind
   · have hlead : T'.coeff d = 1 := by
       simpa [hd] using hmonic.coeff_natDegree
     simp [monicRescaleCoeff, hk, hlead]

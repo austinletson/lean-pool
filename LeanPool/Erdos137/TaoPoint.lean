@@ -68,17 +68,13 @@ theorem prime_dvd_two_terms_eq {p n k i j : ℕ} (_hp : p.Prime) (hk : k ≤ p)
   rw [hsimp] at hdvd
   -- |i - j| < k ≤ p, and p ∣ (i - j), forcing i - j = 0.
   have hlt : |(i : ℤ) - (j : ℤ)| < (p : ℤ) := by
-    have hik : (i : ℤ) < (k : ℤ) := by exact_mod_cast hi
-    have hjk : (j : ℤ) < (k : ℤ) := by exact_mod_cast hj
-    have hkp : (k : ℤ) ≤ (p : ℤ) := by exact_mod_cast hk
-    rw [abs_lt]; constructor <;> nlinarith [Int.natCast_nonneg i, Int.natCast_nonneg j]
+    grind
   have hzero : (i : ℤ) - (j : ℤ) = 0 := by
     rcases eq_or_ne ((i : ℤ) - (j : ℤ)) 0 with h | h
     · exact h
     · exact absurd (Int.le_of_dvd (abs_pos.mpr h) ((dvd_abs _ _).mpr hdvd)) (by
         simp only [not_le]; exact hlt)
-  have : (i : ℤ) = (j : ℤ) := by linarith
-  exact_mod_cast this
+  grind
 
 /-- **Very bad block + large prime ⟹ the prime squares the unique factor it touches.**
 If `F k n` is powerful, `p ≥ k` is prime, and `p ∣ n + i` for some `i < k`, then `p ^ 2 ∣ n + i`.

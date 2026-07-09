@@ -32,10 +32,8 @@ local infixr:60 " ≈ₜ " => TraceEquiv es
 def emptyConf : Conf es :=
   ⟨(∅ : Set es.Event), by
     constructor
-    · intro e₁ e₂ h₁ h₂
-      exact False.elim (by simp at h₁)
-    · intro e e' hmem hle
-      exact False.elim (by simp at hmem)
+    · grind
+    · grind
   ⟩
 
 /-- A computation to a configuration `c` is an asynchronous path

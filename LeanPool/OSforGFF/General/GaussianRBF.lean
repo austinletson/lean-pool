@@ -79,8 +79,7 @@ lemma innerProduct_is_pd_kernel :
     rw [Complex.re_sum]
     apply Finset.sum_congr rfl; intro i _
     rw [Complex.re_sum]
-    apply Finset.sum_congr rfl; intro j _
-    exact re_prod i j
+    grind
   rw [sum_re]
   -- Split into two sums
   have split_sum : ∑ i : Fin m, ∑ j : Fin m, (a i * a j + b i * b j) * ⟪x i, x j⟫_ℝ =
@@ -203,9 +202,7 @@ lemma exp_is_pd_kernel {α : Type*} (K : α → α → ℂ) (hK : IsPositiveDefi
       apply Finset.sum_congr rfl
       intro i _
       rw [Finset.mul_sum]
-      apply Finset.sum_congr rfl
-      intro j _
-      ring
+      grind
     simp [sum_w_matrix a, sum_w_matrix b]
   rw [h_sum_eq]
   exact add_nonneg (hN_psd.dotProduct_mulVec_nonneg a) (hN_psd.dotProduct_mulVec_nonneg b)
@@ -262,11 +259,7 @@ theorem gaussian_rbf_pd_innerProduct_proof :
   have h_sum : ∑ i : Fin m, ∑ j : Fin m, star (c i) * c j * cexp (-(1/2 : ℂ) * (‖x i - x j‖^2 : ℝ))
     =
                ∑ i : Fin m, ∑ j : Fin m, star (d i) * d j * cexp (⟪x i, x j⟫_ℝ : ℂ) := by
-    apply Finset.sum_congr rfl; intro i _
-    apply Finset.sum_congr rfl; intro j _
-    rw [factor, star_d]
-    simp only [d]
-    ring
+    grind
   -- The goal uses star which equals starRingEnd for Complex
   change 0 ≤ (∑ i : Fin m, ∑ j : Fin m,
       (starRingEnd ℂ) (c i) * c j * (fun h => cexp (-(1/2 : ℂ) * (‖h‖^2 : ℝ))) (x i - x j)).re

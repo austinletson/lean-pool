@@ -115,8 +115,7 @@ theorem dist_eq_zero_iff {n : ℕ} {x y : HypercubeVertex n} :
       exact Finset.card_eq_zero.mp hdist
     have hi : i ∈ (Finset.univ.filter fun i : Fin n => x i ≠ y i) := by
       simp [hne]
-    rw [hempty] at hi
-    simp at hi
+    grind
   · intro h
     subst y
     exact dist_self x
@@ -132,15 +131,7 @@ theorem dist_triangle {n : ℕ} (x y z : HypercubeVertex n) :
   apply (Finset.card_mono ?_).trans
   · exact Finset.card_union_le _ _
   intro i hi
-  rw [Finset.mem_filter] at hi
-  rw [Finset.mem_union, Finset.mem_filter, Finset.mem_filter]
-  by_cases hxy : x i = y i
-  · right
-    refine ⟨Finset.mem_univ i, ?_⟩
-    intro hyz
-    exact hi.2 (hxy.trans hyz)
-  · left
-    exact ⟨Finset.mem_univ i, hxy⟩
+  grind
 
 /-- The `n`-dimensional hypercube graph. -/
 def graph (n : ℕ) : Graph (HypercubeVertex n) where

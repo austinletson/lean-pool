@@ -57,8 +57,7 @@ lemma deterministic_pushforward_apply_of_equiv
       p.p (e.symm b) := by
   classical
   have hs : (Finset.univ.filter fun a : α => e a = b) = {e.symm b} := by
-    ext a
-    simp [e.apply_eq_iff_eq_symm_apply]
+    grind
   calc
     ((MarkovMorphism.deterministic (α := α) (β := β)
           (g := (e : α → β))
@@ -79,8 +78,7 @@ lemma deterministic_tangentPushforward_apply_of_equiv
       (u : α → ℝ) (e.symm b) := by
   classical
   have hs : (Finset.univ.filter fun a : α => e a = b) = {e.symm b} := by
-    ext a
-    simp [e.apply_eq_iff_eq_symm_apply]
+    grind
   calc
     ((MarkovMorphism.deterministic (α := α) (β := β)
           (g := (e : α → β))

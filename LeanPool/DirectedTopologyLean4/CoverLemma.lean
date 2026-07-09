@@ -39,8 +39,7 @@ lemma mid_point_I {i n : ℕ} (hi : i < n) : (2 * i + 1 : ℝ)/(2 * n : ℝ) ∈
   refine ⟨div_nonneg (by positivity) (by positivity), ?_⟩
   refine (div_le_one (mul_pos (by norm_num) n_cast_pos)).mpr ?_
   have hcast : (↑(2 * i + 1) : ℝ) ≤ ↑(2 * n) := Nat.cast_le.mpr hbound
-  push_cast at hcast
-  linarith
+  grind
 
 namespace UnitIntervalSub
 
@@ -74,8 +73,7 @@ theorem lebesgue_number_lemma_unit_interval {ι : Sort u} {c : ι → Set ℝ}
   have n_pos : 0 < n := by
     rcases Nat.eq_zero_or_pos n with h | h
     · rw [h] at hn
-      simp at hn
-      linarith
+      grind
     · exact h
   have n_cast_pos : 0 < (n : ℝ) := Nat.cast_pos.mpr n_pos
   refine ⟨n_pos, ?_⟩
@@ -90,12 +88,10 @@ theorem lebesgue_number_lemma_unit_interval {ι : Sort u} {c : ι → Set ℝ}
   change dist x ((2 * i + 1 : ℝ)/(2 * n : ℝ)) < δ
   have hδ_bound : 1/(n : ℝ) < δ := by
     apply (div_lt_iff₀' n_cast_pos).mpr
-    apply lt_of_lt_of_le (show (1 : ℝ) < (2 : ℝ) by norm_num)
-    exact (nsmul_eq_mul n δ) ▸ hn
+    grind
   apply lt_of_le_of_lt _ hδ_bound
   apply le_trans (Real.dist_le_of_mem_Icc hx mid_point_Icc)
-  rw [div_sub_div_same]
-  simp
+  grind
 
 /-! ### Covering lemma for the unit square -/
 
@@ -159,28 +155,21 @@ theorem lebesgue_number_lemma_unitSquare {ι : Sort u} {c : ι → Set (I × I)}
   apply lt_of_le_of_lt this
   have hδ_bound : 1/(n.succ : ℝ) < δ/2 := by
     apply (div_lt_iff₀' n_cast_pos).mpr
-    rw [mul_div]
-    have hnδ : (n : ℝ) * δ ≥ 2 := (nsmul_eq_mul n δ) ▸ hn
-    have hnsδ : (n.succ : ℝ) * δ > 2 := by
-      rw [Nat.cast_succ, add_mul, one_mul]
-      exact lt_add_of_le_of_pos hnδ δ_pos
-    linarith
+    grind
   have hx2_mem : (x.2 : ℝ) ∈ Set.Icc ((j : ℝ) / n.succ) ((j + 1) / n.succ) := by
     refine ⟨?_, ?_⟩
     · have := hx.2.1
       rwa [← Subtype.coe_le_coe, Fraction.Fraction_coe] at this
     · have := hx.2.2
       rw [← Subtype.coe_le_coe, Fraction.Fraction_coe] at this
-      push_cast at this ⊢
-      linarith
+      grind
   have hx1_mem : (x.1 : ℝ) ∈ Set.Icc ((i : ℝ) / n.succ) ((i + 1) / n.succ) := by
     refine ⟨?_, ?_⟩
     · have := hx.1.1
       rwa [← Subtype.coe_le_coe, Fraction.Fraction_coe] at this
     · have := hx.1.2
       rw [← Subtype.coe_le_coe, Fraction.Fraction_coe] at this
-      push_cast at this ⊢
-      linarith
+      grind
   have hsub_v : ((j + 1 : ℝ) / n.succ) - ((j : ℝ) / n.succ) = 1 / n.succ := by
     rw [div_sub_div_same]; ring_nf
   have hsub_h : ((i + 1 : ℝ) / n.succ) - ((i : ℝ) / n.succ) = 1 / n.succ := by
@@ -189,14 +178,10 @@ theorem lebesgue_number_lemma_unitSquare {ι : Sort u} {c : ι → Set (I × I)}
     apply lt_of_le_of_lt _ hδ_bound
     have hxeq : x = (x.1, x.2) := by ext <;> rfl
     rw [hxeq, dist_prod_same_left, Subtype.dist_eq, Real.dist_eq, ← hsub_v]
-    have := Real.dist_le_of_mem_Icc hx2_mem mid_point_v_Icc
-    rw [Real.dist_eq] at this
-    exact this
+    grind
   have h₂ : dist (x.1, (⟨mp_v, mid_point_v_I⟩ : I))
       ((⟨mp_h, mid_point_h_I⟩ : I), (⟨mp_v, mid_point_v_I⟩ : I)) < (δ/2) := by
     apply lt_of_le_of_lt _ hδ_bound
     rw [dist_prod_same_right, Subtype.dist_eq, Real.dist_eq, ← hsub_h]
-    have := Real.dist_le_of_mem_Icc hx1_mem mid_point_h_Icc
-    rw [Real.dist_eq] at this
-    exact this
+    grind
   linarith

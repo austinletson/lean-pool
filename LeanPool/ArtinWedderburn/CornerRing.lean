@@ -75,8 +75,7 @@ theorem el_in_corner_ring (x : R) : x ∈ bothMul e e ↔ x ∈ CornerSubringNon
 -- reducing corner subring equality to set equality
 theorem eq_carrier_eq_corner (x y : R) (h : bothMul x x = bothMul y y) :
     CornerSubringNonUnital x = CornerSubringNonUnital y := by
-  apply NonUnitalSubring.ext
-  simp only [← el_in_corner_ring, h, implies_true]
+  grind
 
 /-- The corner subring `eRe` packaged as a `NonUnitalSubring`, tagged with the
 proof that `e` is idempotent. The proof argument lets later constructions
@@ -251,13 +250,9 @@ identity on carriers. -/
 def eqElIsoCorner (e f : R) (idem_e : IsIdempotentElem e) (idem_f : IsIdempotentElem f)
     (e_eq_f : e = f) : (CornerSubring idem_e) ≃+* (CornerSubring idem_f) :=
   { toFun := fun x => ⟨x.val, by
-      let ⟨y, hy⟩ := x.property
-      have h : x = (f : R) * y * f := by rw [← e_eq_f]; exact hy
-      exact ⟨y, h⟩⟩,
+      grind⟩,
     invFun := fun x => ⟨x.val, by
-      let ⟨y, hy⟩ := x.property
-      have h : x = (e : R) * y * e := by rw [e_eq_f]; exact hy
-      exact ⟨y, h⟩⟩,
+      grind⟩,
     left_inv := fun _ => rfl,
     right_inv := fun _ => rfl,
     map_mul' := fun _ _ => rfl,
@@ -364,8 +359,7 @@ lemma el_push_smul_in_I (a y : R) (I : Ideal (CornerSubring idem_e)) :
     rw [Subtype.ext_iff]
     rw [NonUnitalSubring.val_mul]
     simpa only [v, w, elPush] using h
-  rw [← h''] at h'
-  exact h'
+  grind
 
 -- if x in the lift of I then its push is in I
 theorem ideal_push_pull_inclusion (I : Ideal (CornerSubring idem_e)) (x : R) :
@@ -404,8 +398,7 @@ theorem push_pull (idem_e : IsIdempotentElem e) (I : Ideal (CornerSubring idem_e
     have hx' : (↑x : R) ∈ CornerRingSet e := Subtype.coe_prop x
     apply (corner_ring_set_mem idem_e).1 at hx'
     unfold elPush
-    symm
-    exact SetLike.coe_eq_coe.mp hx'
+    grind
 
 theorem lift_strict_monotonicity (I J : Ideal (CornerSubring idem_e)) :
     I < J → (idealLift idem_e I) < (idealLift idem_e J) := by
@@ -434,8 +427,7 @@ theorem lift_acc_then_ideal_acc (idem_e : IsIdempotentElem e) (J : Ideal R)
       intro I2 hI2
       rw [← push_pull idem_e I2]
       have subJ2 := (lift_strict_monotonicity idem_e I2 I) hI2
-      rw [← hI] at subJ2
-      exact hi (idealLift idem_e I2) subJ2 ⟨I2, rfl⟩
+      grind
     exact Acc.intro I c1
 
 -- Lemma 2.10
@@ -476,9 +468,7 @@ theorem both_mul_lift (x y : CornerSubring idem_e) :
     let sc : R := (1 : (CornerSubring idem_e)) * s * (1 : (CornerSubring idem_e))
     rw [← mul_assoc] at hs
     have ha : a = x * sc * y := by
-      simp only [sc]
-      rw [hs]
-      simp only [mul_assoc]
+      grind
     have hsc : sc ∈ CornerSubring idem_e := by
       simp only [sc]
       apply corner_ring_both_mul_mem'

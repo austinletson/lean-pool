@@ -185,8 +185,7 @@ private lemma supportError_eq_boolTestExpectation
     supportError Y q h c =
     boolTestExpectation q (fun y : ↥Y => decide (h (y : X) ≠ c (y : X))) := by
   simp only [supportError, boolTestExpectation, trueExpectation]
-  congr 1; ext y
-  by_cases heq : h (y : X) = c (y : X) <;> simp [heq]
+  grind
 
 /-- Finite VC dimension implies existence of a proper finite-support learner.
     The construction uses ERM + finite_support_vc_approx on the disagreement family. -/
@@ -221,10 +220,7 @@ theorem vcdim_finite_imp_proper_finite_support_learner
     let Z : Finset X := Finset.univ.image (fun t => ((hs t : ↥Y) : X))
     refine ⟨Z, ?_, ?_, ?_⟩
     · -- Z ⊆ Y
-      intro x hx
-      simp only [Z, Finset.mem_image, Finset.mem_univ, true_and] at hx
-      obtain ⟨t, rfl⟩ := hx
-      exact (hs t).property
+      grind
     · -- Z.card ≤ T
       calc Z.card ≤ Finset.univ.card := Finset.card_image_le
         _ = T := Fintype.card_fin T
@@ -272,10 +268,7 @@ theorem vcdim_finite_imp_proper_finite_support_learner
         -- ERM learn is consistent on Z because c ∈ C realizes the labels.
         -- (hs t : X) ∈ Z by construction.
         suffices h_agree : h_out ((hs t : ↥Y) : X) = c ((hs t : ↥Y) : X) by
-          change (if disagree (hs t) then (1 : ℝ) else 0) = 0
-          have : disagree (hs t) = false := by
-            simp only [disagree, h_agree, ne_eq, not_true_eq_false, decide_false]
-          rw [this]; simp
+          grind
         -- h_out = learn(labeledSampleOfFinset c Z), which is consistent with c on Z.
         -- The realizability witness for the labeled sample from Z is c itself.
         have hreal_Z : ∃ c' ∈ C, ∀ i : Fin Z.card,
@@ -284,8 +277,7 @@ theorem vcdim_finite_imp_proper_finite_support_learner
         -- learn_consistent gives: learn agrees with labels on all sample indices.
         -- We need to find the index of (hs t : X) in Z.
         have ht_in_Z : ((hs t : ↥Y) : X) ∈ Z := by
-          simp only [Z, Finset.mem_image, Finset.mem_univ, true_and]
-          exact ⟨t, rfl⟩
+          grind
         -- Use Z.equivFin to get the index
         set y_sub : ↥Z := ⟨((hs t : ↥Y) : X), ht_in_Z⟩ with hy_sub_def
         set i := Z.equivFin y_sub with hi_def
@@ -296,10 +288,7 @@ theorem vcdim_finite_imp_proper_finite_support_learner
         have h_symm : Z.equivFin.symm i = y_sub := Z.equivFin.symm_apply_apply y_sub
         rwa [h_symm] at hcons_i
       -- Now combine: |true - 0| ≤ 1 / 3, and true is nonneg, so true ≤ 1 / 3
-      rw [h_emp_zero, sub_zero] at hclose
-      calc boolTestExpectation q disagree
-          ≤ |boolTestExpectation q disagree| := le_abs_self _
-        _ ≤ 1 / 3 := hclose
+      grind
     ⟩, trivial⟩
 
 /-! ## Hypothesis Envelope -/
@@ -405,10 +394,7 @@ lemma decodeWitnessXCoords_encode_eq
         simp only [dif_pos hltCard, Finset.mem_singleton] at hx
         have hrt := congrArg Subtype.val
           (Equiv.symm_apply_apply (kernel.equivFin) ⟨(x0, c x0), hmk⟩)
-        rw [hrt] at hx
-        have hx_eq : x = x0 := by simpa using hx
-        rw [hx_eq]
-        exact hx0W
+        grind
       · simp [dif_pos hmk, dif_neg hlt] at hidx_mem2
     · simp [dif_neg hmk] at hidx_mem2
   · intro hxW
@@ -423,10 +409,7 @@ lemma decodeWitnessXCoords_encode_eq
     -- Show x is in the decoded set from that idx
     change x ∈ decodeWitnessXCoords kernel (encodeWitnessInfo kernel c K W)
     simp only [decodeWitnessXCoords, Finset.mem_biUnion]
-    refine ⟨⟨(kernel.equivFin ⟨(x, c x), hmk⟩).val, hltK⟩, hidx_in_enc, ?_⟩
-    have hltCard : ((kernel.equivFin ⟨(x, c x), hmk⟩ : Fin kernel.card) : ℕ) < kernel.card :=
-      (kernel.equivFin ⟨(x, c x), hmk⟩).isLt
-    simp [Equiv.symm_apply_apply]
+    grind
 
 /-- On the encoded witness support, the decoded label function agrees with the true
 label function `c`, provided every pair in the kernel has the correct second coordinate. -/
@@ -439,17 +422,8 @@ lemma decodeWitnessLabel_eq_on_encoded
   intro x hxW
   unfold decodeWitnessLabel
   by_cases hc : c x = true
-  · have hmem : (x, true) ∈ kernel := by
-      simpa [hc] using hWker x hxW
-    simp [hmem, hc]
-  · have hnot : (x, true) ∉ kernel := by
-      intro htrue
-      have hcoord : true = c x := by
-        simpa using hlabels (x, true) htrue
-      exact hc hcoord.symm
-    have hfalse : c x = false := by
-      cases hcx : c x <;> simp_all
-    simp [hnot, hfalse]
+  · grind
+  · grind
 
 /-- If two label functions agree on all points of `Z`, then the labeled samples they
 induce on `Z.equivFin` are equal. -/
@@ -460,8 +434,7 @@ lemma labeledSampleOfFinset_eq_of_eq_on_support
     labeledSampleOfFinset ℓ₁ Z = labeledSampleOfFinset ℓ₂ Z := by
   funext j
   simp only [labeledSampleOfFinset]
-  congr 1
-  exact hℓ _ (Z.equivFin.symm j).property
+  grind
 
 /-- Generic roundtrip theorem for the compression reconstruction invariant.
 
@@ -531,10 +504,7 @@ private lemma agreeTests_boolVCDim_le
     (Finset.univ.filter (fun b : Fin (d + 1) → Bool => b j = true)).image
       (fun b => (embed b).val)
   have halfSet'_sub : ∀ j, halfSet' j ⊆ T := by
-    intro j h hh
-    simp only [halfSet', Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and] at hh
-    obtain ⟨b, _, rfl⟩ := hh
-    exact (embed b).property
+    grind
   -- Step 2: For each j, use shattering to find x_j ∈ Y.
   have hpoints : ∀ j : Fin (d + 1), ∃ x ∈ Y,
       ∀ h : ↥HY, h ∈ T →
@@ -568,19 +538,16 @@ private lemma agreeTests_boolVCDim_le
     let h0 : ↥T := embed b0
     -- h0.val ∈ halfSet' j
     have h0_in_j : h0.val ∈ halfSet' j := by
-      simp only [halfSet', Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and]
-      exact ⟨b0, by simp [b0], rfl⟩
+      grind
     -- h0.val ∉ halfSet' k
     have h0_nin_k : h0.val ∉ halfSet' k := by
       simp only [halfSet', Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and]
       intro ⟨b', hb'k, hb'eq⟩
       have := hembed_inj (Subtype.ext hb'eq : embed b' = h0)
-      rw [this] at hb'k; simp [b0] at hb'k
-      exact hjk_ne hb'k.symm
+      grind
     -- x j = x k gives: h.val (x j) = c (x j) ↔ h ∈ halfSet' j, same for k.
     have hj := (hx j h0.val h0.property).mpr h0_in_j
-    rw [hjk] at hj
-    exact h0_nin_k ((hx k h0.val h0.property).mp hj)
+    grind
   -- Step 4: Build P = {x 0, ..., x d}.
   let P : Finset X := Finset.univ.image x
   have hP_card : P.card = d + 1 := by
@@ -614,8 +581,7 @@ private lemma agreeTests_boolVCDim_le
       hx_j.trans h_wit_in_half_iff
     change h_wit.val.val (x j) = g ⟨x j, hx_mem j⟩
     by_cases heq : g ⟨x j, hx_mem j⟩ = c (x j)
-    · have hbj : b j = true := by simp [b, heq]
-      rw [heq]; exact h_agree_iff.mpr hbj
+    · grind
     · have hbj : b j = false := by
         simp only [b, decide_eq_false_iff_not]; exact heq
       have h_ne : h_wit.val.val (x j) ≠ c (x j) :=
@@ -801,8 +767,7 @@ private lemma good_on_support_gives_row_response
       ⟨Finset.mem_powerset.mpr hZY, hZcard⟩, rfl⟩
   refine ⟨⟨h, hh_mem⟩, ?_⟩
   have hag := supportAgreement_eq_one_sub_supportError Y q h c
-  simp only [decide_eq_true_eq] at *
-  linarith
+  grind
 
 private theorem pointSupportNonempty {X : Type u} {m : ℕ} (S : Fin m → X × Bool)
     (hm : 0 < m) : Nonempty ↥(pointSupport S) :=
@@ -818,10 +783,7 @@ private theorem moranKernel_labels {X : Type u} [DecidableEq X] {T : ℕ} (c : X
     (getWitness : Fin T → Finset X) :
     ∀ pair ∈ Finset.univ.biUnion (fun t => (getWitness t).image (fun x => (x, c x))),
       pair.2 = c pair.1 := by
-  intro pair hp
-  simp only [Finset.mem_biUnion, Finset.mem_image] at hp
-  obtain ⟨_, _, x, _, rfl⟩ := hp
-  rfl
+  grind
 
 private theorem witness_mem_moranKernel {X : Type u} [DecidableEq X] {T : ℕ} (c : X → Bool)
     (getWitness : Fin T → Finset X) (t : Fin T) {x : X} (hx : x ∈ getWitness t) :
@@ -914,10 +876,8 @@ private theorem moran_yehudayoff_forward_construction
           simp [Finset.sum_const, Fintype.card_fin, Kreal])
         apply Finset.sum_le_sum; intro t _
         exact Finset.card_image_le.trans (hwitness_bound _)
-      · next => -- m = 0 branch
-        simp
-    · next => -- ¬realizable branch
-      simp
+      · grind
+    · grind
   have hsub : ∀ {m : ℕ} (S : Fin m → X × Bool),
       ↑(compressCore S).1 ⊆ Set.range S := by
     intro m S p hp; dsimp only [compressCore] at hp
@@ -1139,8 +1099,7 @@ theorem compress_with_info_injective_on_labelings {X : Type u} {n : ℕ}
     obtain ⟨c, hcC, hc⟩ := hg_real; exact ⟨c, hcC, fun i => by simp [hc i]⟩
   have hf := cs.correct (fun i => (pts i, f i)) hf_real' i
   have hg := cs.correct (fun i => (pts i, g i)) hg_real' i
-  simp only at hf hg
-  rw [← hf, congr_fun h_recon (pts i), hg]
+  grind
 
 private lemma shatters_subset_compression {X : Type u} {C : ConceptClass X Bool}
     {S T : Finset X} (hST : T ⊆ S) (hS : Shatters X C S) : Shatters X C T := by
@@ -1153,8 +1112,7 @@ private lemma shatters_subset_compression {X : Type u} {C : ConceptClass X Bool}
 private lemma succ_le_two_pow_compression (k : ℕ) : k + 1 ≤ 2 ^ k := by
   induction k with
   | zero => simp
-  | succ k ih => calc k + 1 + 1 ≤ 2 ^ k + 2 ^ k := by omega
-                   _ = 2 ^ (k + 1) := by ring
+  | succ k ih => grind
 
 /-- Exponential beats polynomial for the compression pigeonhole argument. -/
 private lemma exp_beats_poly_compression (s : ℕ) :
@@ -1213,9 +1171,7 @@ theorem compression_with_info_imp_vcdim_finite
     intro f
     let f' : ↥T → Bool := fun ⟨x, hx⟩ => f (T.equivFin ⟨x, hx⟩)
     obtain ⟨c, hcC, hcf'⟩ := hT_shatt f'
-    exact ⟨c, hcC, fun i => by
-      have := hcf' (eqv i); simp only [f', pts] at this ⊢
-      rwa [T.equivFin.apply_symm_apply i] at this⟩
+    grind
   have h_inj : Function.Injective (cs.compress ∘ mkSample) := by
     intro f g hfg
     exact compress_with_info_injective_on_labelings cs pts hpts_inj f g
@@ -1232,11 +1188,7 @@ theorem compression_with_info_imp_vcdim_finite
     · intro p hp
       have hsub := cs.compress_sub (mkSample f)
       have hp_range := hsub (Finset.mem_coe.mpr hp)
-      obtain ⟨i, hi⟩ := hp_range
-      simp only [mkSample] at hi
-      rw [Finset.mem_product]
-      exact ⟨by rw [show p.1 = pts i from (congr_arg Prod.fst hi).symm]; exact (eqv i).2,
-             Finset.mem_univ _⟩
+      grind
     · exact cs.compress_small (mkSample f)
   -- Cardinality bounds
   have hA_card : A.card = 2 * n := by simp [hA_def, Finset.card_product]; ring

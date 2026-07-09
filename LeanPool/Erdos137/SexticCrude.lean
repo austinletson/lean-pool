@@ -59,13 +59,7 @@ def BlockRadLB6 : Prop :=
 `5/6` and `(6-1)/6` agree, and the guard `6 ≤ k` matches `g ≤ k`). -/
 lemma blockRadLB6_iff : BlockRadLB6 ↔ BlockRadLBg 6 := by
   unfold BlockRadLB6 BlockRadLBg
-  constructor
-  · intro h k n hk hn
-    have := h k n hk hn
-    rwa [show (((6 : ℕ) : ℝ) - 1) / ((6 : ℕ) : ℝ) = (5 : ℝ) / 6 by norm_num]
-  · intro h k n hk hn
-    have := h k n hk hn
-    rwa [show (((6 : ℕ) : ℝ) - 1) / ((6 : ℕ) : ℝ) = (5 : ℝ) / 6 by norm_num] at this
+  grind
 
 /-! ## The `g = 6` block objects as literal instances of the generic framework -/
 
@@ -99,8 +93,7 @@ theorem not_powerful_of_large_g6 (hBlock : BlockRadLB6) {k n : ℕ}
     simpa using this   -- (6-2)=4, 2*6=12
   have hlt : k ^ 12 < n ^ 4 := by
     have h2 : (k ^ 3) ^ 4 < n ^ 4 := Nat.pow_lt_pow_left hn (by norm_num)
-    have : (k ^ 3) ^ 4 = k ^ 12 := by ring
-    omega
+    grind
   omega
 
 /-- **Per-`k` finiteness (sextic crude).** For `k ≥ 6` under `BlockRadLB6`,

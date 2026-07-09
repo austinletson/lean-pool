@@ -186,8 +186,7 @@ theorem schwartz_tonelli_spacetime
       filter_upwards with p
       simp only [norm_mul, Real.norm_eq_abs, abs_of_nonneg (norm_nonneg _)]
       have h_K_bound : |K p.1.1 p.2.1| ≤ C := by
-        rw [abs_of_nonneg (hK_nn p.1.1 p.2.1)]
-        exact hC p.1.1 p.2.1
+        grind
       calc ‖f (spacetimeDecomp.symm p.1)‖ * ‖g (spacetimeDecomp.symm p.2)‖ * |K p.1.1 p.2.1|
           ≤ ‖f (spacetimeDecomp.symm p.1)‖ * ‖g (spacetimeDecomp.symm p.2)‖ * C := by
             apply mul_le_mul_of_nonneg_left h_K_bound
@@ -221,8 +220,7 @@ theorem schwartz_tonelli_spacetime
           = ‖g (spacetimeDecomp.symm p₂)‖ * |K t₁ p₂.1| := by simp [abs_of_nonneg (norm_nonneg _)]
         _ ≤ ‖g (spacetimeDecomp.symm p₂)‖ * C := by
             apply mul_le_mul_of_nonneg_left
-            · rw [abs_of_nonneg (hK_nn t₁ p₂.1)]
-              exact hC t₁ p₂.1
+            · grind
             · exact norm_nonneg _
         _ = C * ‖g (spacetimeDecomp.symm p₂)‖ := by ring
     have h_eq : (fun p₂ => ‖f (spacetimeDecomp.symm (t₁,
@@ -266,9 +264,7 @@ theorem schwartz_tonelli_spacetime
     filter_upwards with p
     simp only [G_g]
     rw [← MeasureTheory.integral_const_mul, ← MeasureTheory.integral_const_mul]
-    apply integral_congr_ae
-    filter_upwards with v₂
-    ring
+    grind
   simp_rw [h_swap]
   -- Step 6: Factorize the inner integrals
   apply integral_congr_ae
@@ -303,9 +299,7 @@ theorem schwartz_tonelli_spacetime
     _ = K t₁ t₂ * (G_g t₂ * ∫ v₁, a v₁) := by
         congr 1
         rw [← MeasureTheory.integral_const_mul]
-        apply MeasureTheory.integral_congr_ae
-        filter_upwards with v₁
-        ring
+        grind
     _ = K t₁ t₂ * (G_g t₂ * G_f t₁) := by
         simp only [a, G_f]
     _ = K t₁ t₂ * G_f t₁ * G_g t₂ := by

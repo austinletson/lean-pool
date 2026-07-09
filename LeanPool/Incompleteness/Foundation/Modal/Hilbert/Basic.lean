@@ -125,10 +125,7 @@ lemma of_subset (hs : H₁.axioms ⊆ H₂.axioms) : H₁ ⊢! φ → H₂ ⊢! 
   | maxm h =>
     obtain ⟨ψ, h, ⟨s, rfl⟩⟩ := h;
     apply maxm!;
-    use ψ;
-    constructor;
-    · exact hs h;
-    · use s;
+    grind
   | mdp ih₁ ih₂ => exact mdp! ih₁ ih₂;
   | nec ih => exact nec! ih;
   | _ => simp;

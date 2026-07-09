@@ -148,8 +148,7 @@ theorem cuspfunc_lim_coef {k : ℤ} {F : Type u_1} [inst : FunLike F ℍ ℂ] (n
     (SlashInvariantFormClass.periodic_comp_ofComplex f (by simp))
   simp only [smul_eq_mul, ne_eq] at *
   rw [Function.Periodic.qParam_right_inv] at this hft
-  · rw [← this] at hft
-    exact hft
+  · grind
   · simp only [ne_eq, Nat.cast_eq_zero]
     exact NeZero.ne n
   · exact hq1
@@ -468,8 +467,7 @@ lemma Ek_q_exp_zero (k : ℕ) (hk : 3 ≤ (k : ℤ)) (hk2 : Even k) : (qExpansio
     (1 / (riemannZeta (k))) * ((-2 * ↑π * Complex.I) ^ k / (k - 1)!) * (σ (k-1) m)
   have h := q_exp_unique 1 c (E k hk) (fun z => Ek_hasSum k hk hk2 z)
   have hc := congr_fun h 0
-  rw [Nat.cast_one] at hc
-  simp [← hc, c]
+  grind
 
 lemma Ek_q_exp (k : ℕ) (hk : 3 ≤ (k : ℤ)) (hk2 : Even k) :
     (fun m => (qExpansion 1 (E k hk)).coeff m) =
@@ -494,8 +492,7 @@ lemma E4_q_exp : (fun m => (qExpansion 1 E₄).coeff m) =
   simp_all only [inv_div]
   split
   next h =>
-    subst h
-    simp_all only
+    grind
   next h =>
     simp_all only [mul_eq_mul_right_iff, Nat.cast_eq_zero]
     left
@@ -619,8 +616,7 @@ lemma Delta_cuspFuntion_eq : Set.EqOn (cuspFunction 1 Delta)
     simpa using this
   · rw [Function.Periodic.cuspFunction_eq_of_nonzero]
     · simp only [comp_apply]
-      have hz := Function.Periodic.im_invQParam_pos_of_norm_lt_one (h := 1) (by exact
-        Real.zero_lt_one) (q := y) ?_ ?_
+      have hz := Function.Periodic.im_invQParam_pos_of_norm_lt_one (h := 1) (by grind) (q := y) ?_ ?_
       · rw [ofComplex_apply_of_im_pos hz]
         rw [Delta_apply, Δ]
         have hq := Function.Periodic.qParam_right_inv (h := 1) ?_ (q := y) hyn0
@@ -637,12 +633,10 @@ lemma Delta_cuspFuntion_eq : Set.EqOn (cuspFunction 1 Delta)
             rw [← Complex.exp_nsmul]
             congr
             ring
-          rw [this]
-          congr
+          grind
         exact Ne.symm (zero_ne_one' ℝ)
       · simp only [one_div, mem_ball, dist_zero_right] at hy
-        apply lt_trans hy
-        linarith
+        grind
       · exact hyn0
     exact hyn0
 
@@ -683,8 +677,7 @@ theorem diffwithinat_prod_1 :
         apply multipliable_lt_one x
           (by
             simp only [one_div, mem_ball, dist_zero_right] at *
-            apply lt_trans hx
-            exact two_inv_lt_one))]
+            grind))]
     simp
   apply DifferentiableWithinAt.pow
   have hu := asdf.differentiableOn ?_ ?_
@@ -712,9 +705,7 @@ lemma Delta_q_one_term : (qExpansion 1 Delta).coeff 1 = 1 := by
       zero_pow, sub_zero, one_pow, tprod_one, mul_one, zero_mul, add_zero]
       have := derivWithin_id' ( 0 * ∏' (i : ℕ), (1 - 0 ^ (i + 1)) ^ 24 : ℂ)
         (Metric.ball 0 (1 / 2 : ℝ)) ?_
-      · simp only [one_div, ne_eq, Nat.add_eq_zero_iff, one_ne_zero, and_false, not_false_eq_true,
-        zero_pow, sub_zero, one_pow, tprod_one, mul_one] at *
-        rw [this]
+      · grind
       simp only [one_div, ne_eq, Nat.add_eq_zero_iff, one_ne_zero, and_false, not_false_eq_true,
         zero_pow, sub_zero, one_pow, tprod_one, mul_one]
       apply IsOpen.uniqueDiffWithinAt
@@ -762,8 +753,7 @@ lemma Ek_ne_zero (k : ℕ) (hk : 3 ≤ (k : ℤ)) (hk2 : Even k) : E k hk ≠ 0 
   have hqzero : PowerSeries.constantCoeff (qExpansion 1 (0 : ℍ → ℂ)) = 0 := by
     simpa using congrArg (fun p : PowerSeries ℂ => p.coeff 0)
       ((qExpansion_zero (h := (1 : ℕ))) : qExpansion 1 (0 : ℍ → ℂ) = 0)
-  have : (0 : ℂ) = 1 := by simp [hqzero] at hcoeff
-  exact zero_ne_one this
+  grind
 
 /-This is in the mod forms repo-/
 lemma E4_ne_zero : E₄ ≠ 0 := Ek_ne_zero 4 (by norm_num) (Nat.even_iff.mpr rfl)

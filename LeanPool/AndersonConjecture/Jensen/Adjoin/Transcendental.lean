@@ -70,17 +70,13 @@ lemma adjoinLocSet_subring (R : NSubring T) (x : T) :
   case mul =>
     intro t₁ t₂ ⟨p₁, q₁, hq₁, h₁⟩ ⟨p₂, q₂, hq₂, h₂⟩
     refine ⟨p₁ * p₂, q₁ * q₂, ?_, ?_⟩
-    · rw [map_mul]
-      exact hprod_notmem _ _ hq₁ hq₂
-    · rw [map_mul, map_mul, ← h₁, ← h₂]
-      ring
+    · grind
+    · grind
   case add =>
     intro t₁ t₂ ⟨p₁, q₁, hq₁, h₁⟩ ⟨p₂, q₂, hq₂, h₂⟩
     refine ⟨p₁ * q₂ + p₂ * q₁, q₁ * q₂, ?_, ?_⟩
-    · rw [map_mul]
-      exact hprod_notmem _ _ hq₁ hq₂
-    · rw [map_mul, map_add, map_mul, map_mul, ← h₁, ← h₂]
-      ring
+    · grind
+    · grind
 
 /-- R.carrier ≤ adjoinLocSet carrier -/
 lemma adjoinLocSet_le (R : NSubring T) (x : T)
@@ -168,8 +164,7 @@ lemma adjoin_height_case_bot
       exact P.mul_mem_right _ (hx_P : (x' : T) ∈ P)
     have hpx'_q : φ px' ∈ q := by
       change px' ∈ J
-      rw [heq]
-      exact hpx'_J'
+      grind
     have hmul_q : x' * ⟨aeval x qx', eval_mem' qx'⟩ ∈ q :=
       (Subtype.ext heqx' : x' * ⟨aeval x qx', eval_mem' qx'⟩ = φ px') ▸
         hpx'_q
@@ -225,8 +220,7 @@ lemma adjoin_height_case_bot
     have : Ideal.under (Polynomial R.carrier) (⊥ : Ideal (Polynomial K)) = ⊥ := by
       simpa [Ideal.under_def] using
         Ideal.comap_bot_of_injective (algebraMap (Polynomial R.carrier) (Polynomial K)) hψ_inj
-    rw [this] at hsat
-    exact hJ_ne hsat.symm
+    grind
   -- K[X] is a PID, dim ≤ 1: nonzero prime ≤ prime implies equality
   have hmap_eq : Ideal.map (algebraMap _ (Polynomial K)) J =
       Ideal.map (algebraMap _ (Polynomial K)) J' :=
@@ -286,9 +280,7 @@ lemma adjoin_height_case_ne_bot
         rw [Multiset.prod_cons] at hprod
         rcases (hP_prime.comap R.carrier.subtype).mem_or_mem hprod with ha | hs
         · exact ⟨a, Multiset.mem_cons_self a s, ha⟩
-        · obtain ⟨f, hf, hfP⟩ :=
-            ih (fun b hb => hpr b (Multiset.mem_cons_of_mem hb)) hs
-          exact ⟨f, Multiset.mem_cons_of_mem hf, hfP⟩
+        · grind
     obtain ⟨f, hf_mem, hf_P⟩ := hfactor_in_P
     exact ⟨f, hfp f hf_mem, dvd_trans (Multiset.dvd_prod hf_mem) hassoc.dvd, hf_P⟩
   have hp₀_ne : p₀ ≠ 0 := hp₀_prime_R.ne_zero
@@ -356,8 +348,7 @@ lemma adjoin_height_case_ne_bot
       calc (a : T) = a * aeval x qa * ↑uqa⁻¹ := by
             rw [← huqa, mul_assoc, uqa.mul_inv, mul_one]
         _ = aeval x pa * ↑uqa⁻¹ := by rw [heqa]
-    rw [ha_val, heq_eval]
-    ring
+    grind
   have hp₀_not_unit_T : ¬IsUnit (p₀ : T) :=
     fun hu => hP_prime.ne_top (P.eq_top_of_isUnit_mem hp₀_P hu)
   set p₀_S : S_sub := ⟨(p₀ : T), hRS_le p₀.2⟩
@@ -389,17 +380,13 @@ lemma adjoin_height_case_ne_bot
   have ha_P : (a : T) ∈ P := hq_lt.le ha_q
   obtain ⟨b, hb_eq⟩ := hdiv_p₀ a ha_P
   have hb_ne_T : (b : T) ≠ 0 := by
-    intro h
-    rw [h, mul_zero] at hb_eq
-    exact ha_ne_T (haw ▸ hb_eq)
+    grind
   have hab : a = p₀_S * b := Subtype.ext hb_eq
   have hb_q : b ∈ q :=
     (hq_prime.mem_or_mem (hab ▸ ha_q)).resolve_left hp₀_not_q
   have hdvd : DvdNotUnit (b : T) w :=
     ⟨hb_ne_T, (p₀ : T), hp₀_not_unit_T, haw.symm.trans (hb_eq.trans (mul_comm _ _))⟩
-  exact ha_ne (Subtype.ext (by
-    have hb0 := ih (b : T) hdvd b rfl hb_q
-    simp [hb_eq, congrArg Subtype.val hb0]))
+  grind
 
 /-- Elements of the localization carrier outside the maximal ideal are units. -/
 private lemma adjoinLoc_isUnit_of_notMem_maximalIdeal
@@ -422,9 +409,7 @@ private lemma adjoinLoc_isUnit_of_notMem_maximalIdeal
     have : (↑u⁻¹ : T) * ↑u = 1 := by
       rw [← Units.val_mul]
       simp
-    rw [← heq]
-    ring_nf
-    rw [this, one_mul]
+    grind
   exact IsUnit.of_mul_eq_one (⟨↑u⁻¹, hinv_mem⟩ : S_sub)
     (Subtype.ext (by
                     change (↑u : T) * ↑u⁻¹ = 1
@@ -480,8 +465,7 @@ private lemma adjoinLoc_uniqueFactorizationMonoid
       refine (factors.map _).prod_induction IsUnit (fun a b => IsUnit.mul) isUnit_one ?_
       intro t ht
       rw [Multiset.mem_map] at ht
-      obtain ⟨f, hf, rfl⟩ := ht
-      exact hunit f hf
+      grind
     obtain ⟨u, hu⟩ := hassoc
     have : IsUnit (aeval x pa : T) := by
       rw [← hu, map_mul, map_multiset_prod]
@@ -517,21 +501,12 @@ private lemma adjoinLoc_uniqueFactorizationMonoid
   have hinj := transcendental_iff_injective.mp hx_trans
   have poly_eq : pb * pc * qa * qd = pa * pd * qb * qc := by
     apply hinj
-    simp only [map_mul]
-    calc aeval x pb * aeval x pc * aeval x qa * aeval x qd
-        = (↑b * aeval x qb) * (↑c * aeval x qc) * aeval x qa * aeval x qd := by
-          rw [heqb, heqc]
-      _ = ↑b * ↑c * (aeval x qb * aeval x qc * aeval x qa * aeval x qd) := by ring
-      _ = ↑a * ↑d * (aeval x qb * aeval x qc * aeval x qa * aeval x qd) := by rw [heq_T]
-      _ = (↑a * aeval x qa) * (↑d * aeval x qd) * aeval x qb * aeval x qc := by ring
-      _ = aeval x pa * aeval x pd * aeval x qb * aeval x qc := by rw [heqa, heqd]
+    grind
   have hf_dvd_rhs : f ∣ pb * pc * qa * qd := by
-    have : pa ∣ pb * pc * qa * qd := ⟨pd * qb * qc, by rw [poly_eq]
-                                                       ring⟩
+    have : pa ∣ pb * pc * qa * qd := ⟨pd * qb * qc, by grind⟩
     exact dvd_trans ⟨g, hfg⟩ this
   have hf_dvd_rhs' : f ∣ (pb * pc) * (qa * qd) := by
-    rw [show (pb * pc) * (qa * qd) = pb * pc * qa * qd from by ring]
-    exact hf_dvd_rhs
+    grind
   have hassoc_fa : Associated (⟨aeval x f, eval_mem f⟩ : S_sub) a :=
     ⟨hv_unit.unit, by rw [IsUnit.unit_spec]
                       exact (Subtype.ext ha_eq).symm⟩
@@ -610,21 +585,14 @@ private lemma adjoinLoc_prime_of_prime
       have hab : (a : T) * (b : T) = r.1 * (c : T) := by
         have h := Subtype.ext_iff.mp hc
         simpa using h
-      calc aeval x pa * aeval x pb * aeval x qc
-          = ((a : T) * aeval x qa) * ((b : T) * aeval x qb) * aeval x qc := by
-            rw [heqa, heqb]
-        _ = (a : T) * (b : T) * (aeval x qa * aeval x qb * aeval x qc) := by ring
-        _ = r.1 * (c : T) * (aeval x qa * aeval x qb * aeval x qc) := by rw [hab]
-        _ = r.1 * ((c : T) * aeval x qc) * aeval x qa * aeval x qb := by ring
-        _ = r.1 * aeval x pc * aeval x qa * aeval x qb := by rw [heqc]
+      grind
     have hinj := transcendental_iff_injective.mp hx_trans
     have poly_eq : pa * pb * qc = C r * pc * qa * qb := by
       apply hinj
       simp only [map_mul, aeval_C]
       exact heq_T
     have hCr_prime : Prime (C r : (R.carrier)[X]) := Polynomial.prime_C_iff.mpr hr
-    have hCr_dvd : C r ∣ pa * pb * qc := ⟨pc * qa * qb, by rw [poly_eq]
-                                                           ring⟩
+    have hCr_dvd : C r ∣ pa * pb * qc := ⟨pc * qa * qb, by grind⟩
     have hr_mem_M : r.1 ∈ IsLocalRing.maximalIdeal T := by
       have hmem : r ∈ IsLocalRing.maximalIdeal R.carrier :=
         (IsLocalRing.mem_maximalIdeal _).mpr hr.not_unit
@@ -655,8 +623,7 @@ private lemma adjoinLoc_prime_of_prime
         have ha_eq : (a : T) = r.1 * c' := by
           have hqa_ne : (aeval x qa : T) ≠ 0 := IsUnit.ne_zero hqa_unit
           have h : (a : T) * aeval x qa = r.1 * c' * aeval x qa := by
-            rw [mul_assoc, hc'_eq]
-            exact heq_a
+            grind
           exact mul_right_cancel₀ hqa_ne h
         exact ⟨⟨c', hc'_S⟩, Subtype.ext ha_eq⟩
       · right
@@ -682,8 +649,7 @@ private lemma adjoinLoc_prime_of_prime
           have hqb_ne : (aeval x qb : T) ≠ 0 :=
             IsUnit.ne_zero (IsLocalRing.notMem_maximalIdeal.mp hqb)
           have h : (b : T) * aeval x qb = r.1 * c' * aeval x qb := by
-            rw [mul_assoc, hc'_eq]
-            exact heq_b
+            grind
           exact mul_right_cancel₀ hqb_ne h
         exact ⟨⟨c', hc'_S⟩, Subtype.ext hb_eq⟩
     · exfalso
@@ -734,8 +700,7 @@ theorem adjoin_transcendental_isNSubring
         simp at this
       exact (IsLocalRing.maximalIdeal.isMaximal (R := T)).ne_top
         ((IsLocalRing.maximalIdeal T).eq_top_iff_one.mpr h1)
-    · left
-      exact hinv ⟨a, ha⟩ ham
+    · grind
   -- Step 3: Cardinality bound via injection S ↪ R[X] × R[X]
   have hCard_S : Cardinal.mk S_sub ≤ max Cardinal.aleph0 (Cardinal.mk R.carrier) := by
     have h_mem : ∀ s : S_sub, (s : T) ∈ adjoinLocSet R x := fun s => hS_eq ▸ s.2
@@ -750,13 +715,7 @@ theorem adjoin_transcendental_isNSubring
       have hq_unit := (h_mem s₁).choose_spec.choose_spec.1
       ext
       apply mul_right_cancel₀ (IsUnit.ne_zero (IsLocalRing.notMem_maximalIdeal.mp hq_unit))
-      calc (↑s₁ : T) * aeval x (h_mem s₁).choose_spec.choose
-          = aeval x (h_mem s₁).choose := heq₁
-        _ = aeval x (h_mem s₂).choose := congrArg (aeval x ·) hp
-        _ = (↑s₂ : T) * aeval x (h_mem s₂).choose_spec.choose := heq₂.symm
-        _ = (↑s₂ : T) * aeval x (h_mem s₁).choose_spec.choose := by
-            congr 1
-            exact congrArg (aeval x ·) hq.symm
+      grind
     calc Cardinal.mk S_sub
         ≤ Cardinal.mk ((R.carrier)[X] × (R.carrier)[X]) := Cardinal.mk_le_of_injective hf
       _ = Cardinal.mk (R.carrier)[X] * Cardinal.mk (R.carrier)[X] :=

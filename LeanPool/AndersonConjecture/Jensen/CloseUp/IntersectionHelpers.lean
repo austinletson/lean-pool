@@ -90,11 +90,9 @@ private def close_up_aux_factor_intersection_large_proof
             (Finset.mem_coe.mpr (Finset.mem_erase.mpr ⟨hne, Finset.mem_coe.mp hx⟩))
       · exact Ideal.span_mono (Finset.coe_subset.mpr (Finset.erase_subset _ _))
     have h_erase_card2 : (rest'2.erase (div_q_b2 b)).card ≤ n'' + 1 := by
-      rw [Finset.card_erase_of_mem hb_rest'2, hrest'2_card]
-      omega
+      grind
     have h_ins_card4 : (insert a (rest'2.erase (div_q_b2 b))).card ≤ n'' + 1 + 1 := by
-      rw [Finset.card_insert_of_notMem (fun h => ha_rest'2 ((Finset.erase_subset _ _) h))]
-      omega
+      grind
     have hw_mem_T2 : (↑w : T) ∈ Ideal.map R.carrier.subtype
         (span (↑(insert a (rest'2.erase (div_q_b2 b))) : Set R.carrier)) := by
       have hspan_le2 : span (↑(insert a rest'2) : Set R.carrier) ≤
@@ -183,11 +181,7 @@ private def close_up_aux_factor_intersection_large_proof
           apply Nat.add_lt_add_left
           have hinj_b2 : Set.InjOn div_q_b2 ↑rest :=
             fun x hx y hy hxy => by
-              have hx_eq := hdiv_b2 x (Finset.mem_coe.mp hx)
-              have hy_eq := hdiv_b2 y (Finset.mem_coe.mp hy)
-              calc x = q' * div_q_b2 x := hx_eq
-                _ = q' * div_q_b2 y := by rw [hxy]
-                _ = y := hy_eq.symm
+              grind
           rw [hrest'2_def, Finset.sum_image hinj_b2]
           apply Finset.sum_lt_sum
           · intro x hx
@@ -221,12 +215,7 @@ private def close_up_aux_factor_intersection_large_proof
                 normalizedFactors_irreducible (irreducible_iff_prime.mpr hq'),
                 Multiset.card_singleton]
             omega
-        calc gcdComplexity s₁' =
-              gcdComplexity (insert a rest'2) := hcross
-          _ < gcdComplexity (insert a rest) :=
-              hstrict
-          _ ≤ gcdComplexity s := hgcd_rest
-          _ ≤ m := hs_gcd
+        grind
       obtain ⟨S₂, hAext₂, hle₂, hw_S₂⟩ :=
         ih_m (gcdComplexity s₁') hgcd_s₁' S₁ hS₁_card (liftR₁' a) s₁' le_rfl hs₁'_card
           ha_s₁' w hw_s₁'
@@ -311,8 +300,7 @@ theorem gcdComplexity_div_prime_strict
     gcdComplexity (insert a (s'.image div_f)) <
       gcdComplexity s := by
   have ha_not_s' : a ∉ s' := by
-    rw [hs'_def]
-    simp [Finset.mem_erase]
+    grind
   letI : NormalizationMonoid R.carrier :=
     UniqueFactorizationMonoid.normalizationMonoid
   unfold gcdComplexity
@@ -320,11 +308,7 @@ theorem gcdComplexity_div_prime_strict
   apply Nat.add_lt_add_left
   have hinj_f : Set.InjOn div_f ↑s' :=
     fun x hx y hy hxy => by
-      have hx_eq := hdiv x (Finset.mem_coe.mp hx)
-      have hy_eq := hdiv y (Finset.mem_coe.mp hy)
-      calc x = p * div_f x := hx_eq
-        _ = p * div_f y := by rw [hxy]
-        _ = y := hy_eq.symm
+      grind
   rw [Finset.sum_image hinj_f]
   apply Finset.sum_lt_sum
   · intro x hx
@@ -348,14 +332,10 @@ theorem gcdComplexity_div_prime_strict
       have : s' ⊆ {0} :=
         fun x hx => Finset.mem_singleton.mpr (h x hx)
       have := Finset.card_le_card this
-      simp at this
-      omega
+      grind
     refine ⟨x, hx_mem, ?_⟩
     have hfx_ne : div_f x ≠ 0 := by
-      intro hfx0
-      have h := hdiv x hx_mem
-      rw [hfx0, mul_zero] at h
-      exact hx_ne h
+      grind
     have hx_eq := hdiv x hx_mem
     open UniqueFactorizationMonoid in
     have : (normalizedFactors x).card = 1 + (normalizedFactors (div_f x)).card := by

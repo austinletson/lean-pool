@@ -197,8 +197,7 @@ def greedyElement : V.Element where
         ((V.interUpTo_antitone (Y V enum) (le_max_right n m)).trans hm)
     exact ⟨V.inter_mem hX hX' (mem_interUpTo_Y V enum henum (max n m)) hsub, max n m, hsub⟩
   up_mem := by
-    rintro X X' ⟨_, n, hn⟩ hX' hsub
-    exact ⟨hX', n, hn.trans hsub⟩
+    grind
 
 /-- Every `Yₙ` belongs to the greedy element. -/
 theorem greedyElement_mem_Y (n : ℕ) : (greedyElement V enum henum).mem (Y V enum n) :=
@@ -262,10 +261,7 @@ theorem filters_sequence_determined (x : V.Element) :
     constructor
     · intro hZ
       obtain ⟨k, hk⟩ := hsurj (x.sub hZ)
-      have hxk : x.mem (enum k) := by rw [hk]; exact hZ
-      refine ⟨x.sub hZ, k, ?_⟩
-      change (if x.mem (enum k) then enum k else V.master) ⊆ Z
-      rw [if_pos hxk]; exact hk.subset
+      grind
     · rintro ⟨hZmem, n, hn⟩
       have hsx : x.mem (if x.mem (enum n) then enum n else V.master) := by
         by_cases h : x.mem (enum n)

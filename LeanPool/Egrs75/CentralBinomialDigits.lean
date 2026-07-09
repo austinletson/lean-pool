@@ -149,12 +149,7 @@ lemma doubleDigitsAux_ofDigits {b : ℕ} (hb : 2 ≤ b) :
       rw [doubleDigitsAux, Nat.ofDigits_cons, ih hnext htail, Nat.ofDigits_cons]
       -- goal: (2d+carry)%b + b*(2*ofDigits ds + carryStep) = 2*(d + b*ofDigits ds) + carry
       -- use local conservation to rewrite (2d+carry)%b.
-      have : (2 * d + carry) % b =
-          2 * d + carry - b * doubleCarryStep b carry d := by omega
-      rw [this]
-      have hge : b * doubleCarryStep b carry d ≤ 2 * d + carry := by omega
-      zify [hge]
-      ring
+      grind
 
 /-- Conservation with carry count: `S(2n via aux) + (b−1)·carries = 2·S(ds) + carry`. -/
 lemma doubleDigitsAux_sum {b : ℕ} (hb : 2 ≤ b) :
@@ -174,22 +169,7 @@ lemma doubleDigitsAux_sum {b : ℕ} (hb : 2 ≤ b) :
       have hstep := doubleCarryStep_le_one b carry d
       simp only [doubleDigitsAux, doubleCarryCountAux, List.sum_cons]
       -- expand (b-1)*(next + count) and use IH + local conservation
-      rw [Nat.mul_add]
-      -- both `next` and the mod term are bounded; omega from hlocal, hih.
-      have hb1 : 1 ≤ b := by omega
-      cases hcs : doubleCarryStep b carry d with
-      | zero =>
-          simp only [hcs, Nat.mul_zero, Nat.add_zero, Nat.zero_add] at *
-          omega
-      | succ k =>
-          -- next ≤ 1 forces k = 0, i.e. next = 1
-          have : k = 0 := by omega
-          subst this
-          simp only [hcs] at hih ⊢
-          -- hlocal: (2d+carry)%b + b*1 = 2d+carry
-          have hloc1 : (2 * d + carry) % b + b = 2 * d + carry := by
-            simpa [hcs] using hlocal
-          omega
+      grind
 
 /-! ### From the aux list to the genuine base-`b` digits of `2n` -/
 
@@ -255,10 +235,7 @@ theorem carryCount_eq_zero_iff {b : ℕ} (_hb : 2 ≤ b) (ds : List ℕ) :
               simpa [doubleCarryCountAux] using h
             omega
           rwa [hstep] at this
-        intro e he
-        rcases List.mem_cons.mp he with he | he
-        · subst he; exact hhead
-        · exact (ih.mp htail0) e he
+        grind
       · intro h
         have hhead : 2 * d < b := h d List.mem_cons_self
         have htail : ∀ e ∈ ds, 2 * e < b := fun e he => h e (List.mem_cons_of_mem d he)

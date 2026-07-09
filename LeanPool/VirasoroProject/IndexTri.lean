@@ -39,15 +39,11 @@ lemma pairwise_disjoint_indexTri :
     · aesop
     · aesop
     · apply Set.disjoint_image_image fun k hk l hl ↦ ?_
-      by_contra con
-      simp only [Set.mem_setOf_eq, Option.some.injEq] at hk hl con
-      linarith
+      grind
   · cases ε₂
     · aesop
     · apply Set.disjoint_image_image fun k hk l hl ↦ ?_
-      by_contra con
-      simp only [Set.mem_setOf_eq, Option.some.injEq] at hk hl con
-      linarith
+      grind
     · aesop
 
 lemma iUnion_indexTri :

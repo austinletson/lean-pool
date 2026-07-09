@@ -121,17 +121,13 @@ theorem replaceFiber_move_left [DecidableEq V] [DecidableEq W] {G : Graph V} {H 
         · by_cases hxv : x = v
           · subst x
             have hvu : v ≠ u := by
-              intro hvu
-              subst u
-              exact (G.loopless v) huv
+              grind
             simp [fibersDistribution, replaceFiber, moveDistribution, hvu]
           · simp [fibersDistribution, replaceFiber, moveDistribution, hxu, hxv]
       · have hp_ne_from : (x, z') ≠ (u, z) := by
-          intro hp
-          exact hz' (Prod.ext_iff.mp hp).2
+          grind
         have hp_ne_to : (x, z') ≠ (v, z) := by
-          intro hp
-          exact hz' (Prod.ext_iff.mp hp).2
+          grind
         simp [fibersDistribution, replaceFiber, moveDistribution, hz', hp_ne_from, hp_ne_to]
 
 /-- A pebbling sequence in the first factor can be replayed inside a fixed
@@ -233,20 +229,16 @@ theorem slice_move_right [DecidableEq V] [DecidableEq W] {G : Graph V} {H : Grap
         · by_cases hzv : z = v
           · subst z
             have hvu : v ≠ u := by
-              intro hvu
-              subst u
-              exact (H.loopless v) huv
+              grind
             simp [sliceDistribution, moveDistribution, hvu]
           · simp [sliceDistribution, moveDistribution, hzu, hzv]
     · cases p with
       | mk x' z =>
         simp only at hpx
         have hp_ne_from : (x', z) ≠ (x, u) := by
-          intro hp
-          exact hpx (Prod.ext_iff.mp hp).1
+          grind
         have hp_ne_to : (x', z) ≠ (x, v) := by
-          intro hp
-          exact hpx (Prod.ext_iff.mp hp).1
+          grind
         simp [sliceDistribution, moveDistribution, hpx, hp_ne_from, hp_ne_to]
 
 /-- A pebbling sequence in the second factor can be replayed inside a fixed

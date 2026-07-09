@@ -201,9 +201,7 @@ lemma transformSeq_props {k : ℕ} {b : Fin (k + 1) → ℕ}
             rw [add_comm, Finset.sum_singleton]; omega
           · exact Finset.mem_univ _
         · -- ∀ i, update b max' (b max' - 1) i ≤ b i
-          intro i
-          by_cases hi : i = Finset.max' (Finset.filter (fun j => baseSeq k j < b j)
-            Finset.univ) h <;> aesop
+          grind
       · -- ¬h.Nonempty branch: b' = b — but this is impossible because we have `j` with
         -- `baseSeq k j < b j`, so the filter is non-empty
         exfalso
@@ -279,8 +277,7 @@ lemma polynomialMethod_reduction_lemma {k : ℕ} {b : Fin (k + 1) → ℕ} (h_va
             have h_sum_1 : ∑ i, baseSeq k i > p + (k + 2).choose 2 - 1 := ‹_›
             rw [ sum_baseSeq ] at h_sum_1;
             have hp : p > 1 := Fact.out
-            have hk : 0 < (k + 2).choose 2 := Nat.choose_pos ( by linarith : 2 ≤ k + 2 )
-            omega
+            grind
           · obtain ⟨h1, h2, h3⟩ := transformSeq_props h_valid h_eq_base
             exact ⟨ transformSeq k b, h1, h2, h3 ⟩;
         grind
@@ -349,8 +346,7 @@ theorem compressedSizes_restricted_sum (A : Fin (k + 1) → Finset (ZMod p))
       · exact fun i => Finset.card_pos.mp ( by
           rw [ left_1 ];
           exact compressedSizes_pos h_last_pos i )
-      · intro i j hij
-        exact right i j hij
+      · grind
       · simp_rw [left_1]; exact h_case
     -- Since $A'_i \subseteq A_i$, we have $restrictedSumSet k A' \subseteq restrictedSumSet k
     -- A$.
@@ -396,17 +392,6 @@ theorem compressedSizes_restricted_sum (A : Fin (k + 1) → Finset (ZMod p))
         hA''₄ ⟩ := h_subset
     have :=
         Finset.card_mono ( show restrictedSumSet k A'' ⊆ restrictedSumSet k A from ?_ )
-    · simp_all only [gt_iff_lt, not_le, ne_eq, ge_iff_le, Order.add_one_le_iff, inf_le_iff]
-      obtain ⟨left, right⟩ := hb''
-      obtain ⟨left_1, right⟩ := right
-      omega
+    · grind
     · intro x hx; unfold restrictedSumSet at *
-      simp_all only [gt_iff_lt, not_le, ne_eq, ge_iff_le, Order.add_one_le_iff, mem_image,
-          mem_filter, Fintype.mem_piFinset]
-      obtain ⟨left, right⟩ := hb''
-      obtain ⟨w, h⟩ := hx
-      obtain ⟨left_1, right⟩ := right
-      obtain ⟨left_2, right_1⟩ := h
-      obtain ⟨left_2, right_2⟩ := left_2
-      subst right_1
-      exact ⟨w, ⟨fun a => hA''₁ _ (left_2 a), right_2⟩, rfl⟩
+      grind

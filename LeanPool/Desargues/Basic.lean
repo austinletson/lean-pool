@@ -41,9 +41,7 @@ theorem rel_sym_cab
   (l2 : ∀ a b p q, ell a p q → ell b p q → p ≠ q → ell a b p)
   (abc_col : ell a b c) :
     ell c a b := by
-  obtain rfl | bc_neq := eq_or_ne b c
-  · exact l1 b a
-  · exact l2 c a b c (l1 c b) abc_col bc_neq
+  grind
 
 -- Now we can easily generate the other three.
 theorem rel_sym_bca
@@ -86,8 +84,7 @@ theorem l1_l2_eq_imp_l3
     exact ⟨d, rel_sym_cab d c d l1 l2 (l1 d c), l1 d b⟩
   · rw [ap_eq]
     exact ⟨d, rel_sym_cab p c d l1 l2 pcd_col, l1 d b⟩
-  · rw [bc_eq]
-    exact ⟨c, l1 c a, rel_sym_cab c d c l1 l2 (l1 c d)⟩
+  · grind
   · rw [bd_eq]
     exact ⟨c, l1 c a, rel_sym_bca d c d l1 l2 (l1 d c)⟩
   · rw [bp_eq]
@@ -154,8 +151,7 @@ theorem p_2 :
   · simp only [↓reduceIte, setOf_eq_eq_singleton, mem_singleton_iff]
   · split
     case inr.isTrue eq =>
-      rw [eq]
-      simp only [setOf_eq_eq_singleton, mem_singleton_iff]
+      grind
     case inr.isFalse _ =>
       simp only [mem_setOf_eq]
       apply rel_sym_bca a b a PG.l1 PG.l2 (PG.l1 a b)
@@ -188,14 +184,12 @@ theorem p_3
       constructor
       · split
         case left.isTrue eq =>
-          apply ac_neq at eq
-          contradiction
+          grind
         case left.isFalse neq =>
           relSym
       · intro _
         apply PG.l1 b d
-    rw [inter_empty] at b_in_inter
-    exact b_in_inter
+    grind
   · have abp_col : ell a b p := star_imp_ell a b p a_in_bp
     have pcd_col : ell p c d := star_imp_ell p c d p_in_cd
     have abc_neq : a ≠ b ∧ a ≠ c ∧ b ≠ c := ncol_imp_neq (ell := ell) a b c abc_col
@@ -207,9 +201,7 @@ theorem p_3
       have ab_eq :
           a = b := by
         unfold star at a_in_bp
-        simp only [↓reduceIte, setOf_eq_eq_singleton, mem_singleton_iff] at a_in_bp
-        rw [<- bp_eq] at a_in_bp
-        exact a_in_bp
+        grind
       contradiction
     have bd_neq :
         b ≠ d := by
@@ -244,8 +236,7 @@ theorem p_3
             contradiction
           case right.isFalse _ =>
             relSym
-      rw [inter_empty] at q_in_inter
-      exact q_in_inter
+      grind
 
 theorem p_4
   (a b c : G)
@@ -274,21 +265,12 @@ theorem p_5
       have c_in_ab : c ∈ star ell a b := p_4 a b c a_in_bc ab_neq
       -- We may assume that p ≠ a and p ≠ c.
       obtain rfl | pa_neq := eq_or_ne p a
-      · unfold star at c_in_ab
-        simp only [mem_setOf_eq] at c_in_ab
-        split at c_in_ab
-        · contradiction
-        · unfold star
-          simp only [mem_setOf_eq]
-          split
-          · contradiction
-          · relSym
+      · grind
       · obtain rfl | pc_neq := eq_or_ne p c
         · unfold star
           simp only [mem_setOf_eq]
           split
-          · rename_i bp_eq
-            exact id bp_eq.symm
+          · grind
           · apply rel_sym_bca p b p PG.l1 PG.l2 (PG.l1 p b)
         · have b_in_pa : b ∈ star ell p a := p_4 p a b p_in_ab pa_neq
           have inter_nempty : star ell c p ∩ star ell a a ≠ ∅ :=
@@ -385,9 +367,7 @@ theorem p_9
         rw [<- nonempty_def]
         have disj : inter = ∅ ∨ Set.Nonempty inter := eq_empty_or_nonempty inter
         have inter_nempty : inter ≠ ∅ := p_3 a b c d p a_in_bp p_in_cd ab_eq
-        rcases disj
-        case inl _ => contradiction
-        case inr nempty => exact nempty
+        grind
       match q_ex with
       | ⟨q, q_in_ac, q_in_bd⟩ =>
         use q
@@ -403,9 +383,7 @@ theorem p_9
               apply rel_sym_bca q c q PG.l1 PG.l2 (PG.l1 q c)
           · have c_in_qa : c ∈ star ell q a := p_4 q a c q_in_ac qa_neq
             have cq_neq : c ≠ q := by
-              intro cq_eq
-              rw [cq_eq] at c_in_bd
-              exact c_in_bd q_in_bd
+              grind
             apply p_4 c q a c_in_qa cq_neq
 
 /-- The central projection with center `z` of a point `x` on the line `a ⋆ c`
@@ -438,15 +416,9 @@ theorem star_nempty_and_neq_imp_sing
       intro xy_neq
       have xy_eq_ab : star ell x y = star ell a b := p_8 x y a b x_in_ab y_in_ab xy_neq
       have xy_eq_cd : star ell x y = star ell c d := p_8 x y c d x_in_cd y_in_cd xy_neq
-      rw [xy_eq_ab] at xy_eq_cd
-      apply neq
-      exact xy_eq_cd
-    simp only [ne_eq, Decidable.not_not] at xy_neq_neq
-    exact id (Eq.symm xy_neq_neq)
-  · intro y y_in_x
-    simp only [mem_singleton_iff] at y_in_x
-    rw [y_in_x]
-    exact mem_inter x_in_ab x_in_cd
+      grind
+    grind
+  · grind
 
 theorem abc_inter_sing
   (a b c : G)
@@ -478,14 +450,10 @@ theorem abc_inter_sing
           | intro ac_neq _ =>
             have cab_col :
                 ell c a b := by
-              split at b_in_ab
-              · rw [b_in_ab]
-                apply PG.l1 c a
-              · exact b_in_ab
+              grind
             apply abc_ncol
             relSym
-      simp only [ne_eq, Decidable.not_not] at ax_neq_neq
-      exact id (Eq.symm ax_neq_neq)
+      grind
   · intro x x_in_a; simp only [mem_singleton_iff] at x_in_a; rw [x_in_a]
     rw [inter_def]
     simp only [star, mem_setOf_eq, if_true_left]
@@ -554,8 +522,7 @@ theorem elbow_center_neq :
     x.val ≠ z.val := by
   intro xz_eq
   have z_nin_ac : z.val ∉ star ell a c := by apply nin_arm
-  rw [<- xz_eq] at z_nin_ac
-  exact z_nin_ac x.property
+  grind
 
 theorem shadow_exists :
     star ell x.val z ∩ star ell c b ≠ ∅ := by
@@ -587,13 +554,9 @@ theorem cen_proj_sing :
   | ⟨y, y_in_inter⟩ =>
     have y_in_cb :
         y ∈ star ell c b := by
-      apply mem_of_mem_inter_right (a := (star ell x.val z.val))
-      rw [y_in_inter]
-      exact rfl
+      grind
     use ⟨y, y_in_cb⟩
-    rw [y_in_inter]
-    ext w
-    simp only [mem_preimage, mem_singleton_iff, Subtype.ext_iff]
+    grind
 
 /-- The central projection as a function: the unique image point on `b ⋆ c` of
 the point `x` on `a ⋆ c` under projection from the center `z`. -/
@@ -678,10 +641,7 @@ theorem cen_proj_left :
       next _ =>
         have _ := by apply cen_proj_arg_col b a c ⟨z, zp_sym⟩ y
         relSym
-    have x_eq_yy : x = yy := by exact x_in_yy
-    have ψy_eq_yy : ψ y = yy := by exact ψy_in_yy
-    rw [<- x_eq_yy] at ψy_eq_yy
-    exact ψy_eq_yy
+    grind
 
 theorem cen_proj_bij :
     Function.Bijective φ := by
@@ -713,8 +673,7 @@ theorem φa_eq_b :
   have φa_in_bc := (φ ⟨a, a_in_ac⟩).property
   have φa_in_inter : (φ ⟨a, a_in_ac⟩).val ∈ star ell a b ∩ star ell b c := by
     constructor <;> assumption
-  rw [b_inter] at φa_in_inter
-  exact φa_in_inter
+  grind
 
 theorem φc_eq_c :
     φ ⟨c, c_in_ac⟩ = c := by
@@ -726,8 +685,7 @@ theorem φc_eq_c :
       split
       next bc_eq =>
         have abc_neq := by apply ncol_imp_neq a b c CPQ.abc_ncol
-        match abc_neq with
-        | ⟨_, _, bc_neq⟩ => exact False.elim (bc_neq bc_eq)
+        grind
       next _ => relSym
     have z_in_ba : z.val ∈ star ell b a := by rw [p_6]; exact z.property
     have b_inter := by
@@ -747,7 +705,6 @@ theorem φc_eq_c :
   have φc_in_bc := (φ ⟨c, c_in_ac⟩).property
   have φc_in_inter : (φ ⟨c, c_in_ac⟩).val ∈ star ell c z ∩ star ell b c := by
     constructor <;> assumption
-  rw [c_inter] at φc_in_inter
-  exact φc_in_inter
+  grind
 
 end Basic

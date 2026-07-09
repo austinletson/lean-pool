@@ -88,17 +88,7 @@ theorem elem_idempotent_iff_ker_and_range_invariantUnder_commutant (M : VonNeuma
       rw [← hp]
       change (e * e) p = e p
       rw [IsIdempotentElem.eq h]
-    calc
-      (m * e) x = m (e ((v : H) + w)) := by
-        rw [← hvw]
-        rfl
-      _ = m (w : H) := by
-        rw [map_add, hv_ker, hw_fixed, zero_add]
-      _ = e (m ((v : H) + w)) := by
-        rw [map_add, map_add, hmv_ker, hmw_fixed, zero_add]
-      _ = (e * m) x := by
-        rw [hvw]
-        rfl
+    grind
 
 /-- The algebra of all bounded linear operators on a Hilbert space as a von Neumann algebra. -/
 def ofHilbertSpace : VonNeumannAlgebra H

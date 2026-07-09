@@ -90,12 +90,7 @@ theorem rsqrt_le_boundedSqrt (y : ℚ) (n : ℕ) (b : ℕ) (hb : 0 < b) :
   · have h₁ : 0 < (y.num * b ^ n).sqrt := by
       suffices 0 < Nat.sqrt (Int.toNat (y.num) * b ^ n) by
         rw [Int.sqrt.eq_1]
-        norm_cast
-        convert this
-        conv_rhs => apply (Int.toNat_natCast _).symm
-        push_cast
-        congr
-        exact (Int.toNat_of_nonneg ((Rat.num_pos.mpr hy).le)).symm
+        grind
       by_contra h₁
       simp [← Nat.ne_zero_iff_zero_lt, Nat.sqrt_eq_zero, hy, hb.ne'] at h₁
     positivity
@@ -173,8 +168,7 @@ as an approximation when ε is small compared to y, and we wish to approximate
 `x / (y + ε)` with `x / y`. -/
 lemma denom_err (x y ε : ℝ) (hy : y ≠ 0) (hyε : y + ε ≠ 0) :
     x / (y + ε) = x / y - (x / y) * ε / (y + ε) := by
-  field_simp
-  ring_nf
+  grind
 
 theorem sqrt_le_mkRat_add (q : ℚ) (n : ℕ) :
     Real.sqrt q ≤ mkRat (Int.sqrt (q.num * 4^n)) ((q.den * 4^n).sqrt + 1) + 2 * Real.sqrt q / 2^n
@@ -230,9 +224,7 @@ theorem sqrt_le_mkRat_add (q : ℚ) (n : ℕ) :
     rw [show √↑z * 2 ^ n / (√↑y * 2 ^ n) = √↑z / √↑y by field_simp]
     suffices (√↑z / √↑y * ε₂ / (√↑y * 2 ^ n + ε₂) ≤ √↑z / √↑y / 2 ^ n)
       ∧ (ε₁ / (√↑y * 2 ^ n + ε₂) ≤ √↑z / √↑y / 2 ^ n) by
-      rcases this
-      rw [← mul_div 2]
-      linarith
+      grind
     replace h : 1 ≤ √↑z := Real.one_le_sqrt.mpr (by norm_cast at h ⊢)
     replace hd : 1 ≤ √↑y := Real.one_le_sqrt.mpr (Nat.one_le_cast.mpr hd)
     constructor
@@ -320,9 +312,7 @@ theorem mkRat_sub_le_sqrt (q : ℚ) (n : ℕ) :
   simp only [_root_.mul_neg, neg_div, sub_neg_eq_add]
   suffices (√↑z / √↑y * ε₁ / (√↑y * 2 ^ n + -ε₁) ≤ 3 * (√↑z / √↑y / 2 ^ n))
     ∧ (ε₂ / (√↑y * 2 ^ n + -ε₁) ≤ 4 * (√↑z / √↑y / 2 ^ n)) by
-    rcases this
-    rw [← mul_div 7]
-    linarith
+    grind
   have hi₁ : 1 /3 ≤ √↑y - ε₁ := by
     suffices 4 / 3 ≤ √↑y by linarith
     trans √2
@@ -372,10 +362,7 @@ theorem sqrt_le_sqrtq_add (r : ℝ) (x : ℚInterval) (n : ℕ) (hq : x.fst ≤ 
   suffices (√r - √x.fst) * (1 - 2 / 2^n) ≤ (x.snd - x.fst) / (2 * √x.fst) by
     have h₁ := sqrt_le_mkRat_add x.fst n
     have h₂ := sqrt_lb_def x n
-    rw [if_neg (Rat.not_le.mpr hx₂)] at h₂
-    rw [← h₂] at h₁
-    ring_nf at *
-    linarith
+    grind
   by_cases hn : n = 0 ∨ n = 1
   · rcases hn with rfl|rfl
     · norm_num1
@@ -386,9 +373,7 @@ theorem sqrt_le_sqrtq_add (r : ℝ) (x : ℚInterval) (n : ℕ) (hq : x.fst ≤ 
       positivity
   replace hn : 2 ≤ n := by omega
   have h₃ : √r - √x.fst = (r - x.fst) / (√r + √x.fst) := by
-    field_simp
-    ring_nf
-    rw [Real.sq_sqrt hrp.le, Real.sq_sqrt hxp.le]
+    grind
   have h₄ : (0 : ℝ) ≤ 1 - 2 / 2 ^ n := by
     have h2n : 2 ≤ 2^n := hn.trans Nat.lt_two_pow_self.le
     rify at h2n
@@ -415,10 +400,7 @@ theorem sqrt_le_sqrtq_add' (r : ℝ) (x : ℚInterval) (n : ℕ) (hq : x.fst ≤
   suffices (√r - √x.fst) * (1 - 2 / 2^n) ≤ (x.snd - x.fst) / √r by
     have h₁ := sqrt_le_mkRat_add x.fst n
     have h₂ := sqrt_lb_def x n
-    rw [if_neg (Rat.not_le.mpr hx₂)] at h₂
-    rw [← h₂] at h₁
-    ring_nf at *
-    linarith
+    grind
   by_cases hn : n = 0 ∨ n = 1
   · rcases hn with rfl|rfl
     · norm_num1
@@ -466,14 +448,9 @@ theorem sqrtq_sub_le_sqrt (r : ℝ) (x : ℚInterval) (n : ℕ) (hq : x.fst ≤ 
   suffices (√x.snd - √r) * (1 + 7 / 2^n) ≤ (x.snd - x.fst) / √x.fst by
     have h₁ := mkRat_sub_le_sqrt x.snd n
     have h₂ := sqrt_ub_def x n
-    rw [if_neg (Rat.not_le.mpr hx₂)] at h₂ h₁
-    rw [← h₂] at h₁
-    ring_nf at *
-    linarith
+    grind
   have h₃ : √x.snd - √r = (x.snd - r) / (√x.snd + √r) := by
-    field_simp
-    ring_nf
-    rw [Real.sq_sqrt hrp.le, Real.sq_sqrt hxp₂.le]
+    grind
   have h₄ : (0 : ℝ) ≤ 1 + 7 / 2 ^ n := by positivity
   trans (x.snd - x.fst) / √x.fst * ((1 + 7 / 2^n) / 2)
   · suffices (√↑x.toProd.2 - √r) * (1 + 7 / 2 ^ n) ≤ (↑x.toProd.2 - ↑x.toProd.1) / (2 *
@@ -505,14 +482,9 @@ theorem sqrtq_sub_le_sqrt' (r : ℝ) (x : ℚInterval) (n : ℕ) (hq : x.fst ≤
   suffices (√x.snd - √r) * (1 + 7 / 2^n) ≤ (x.snd - x.fst) / √r by
     have h₁ := mkRat_sub_le_sqrt x.snd n
     have h₂ := sqrt_ub_def x n
-    rw [if_neg (Rat.not_le.mpr hx₂)] at h₂ h₁
-    rw [← h₂] at h₁
-    ring_nf at *
-    linarith
+    grind
   have h₃ : √x.snd - √r = (x.snd - r) / (√x.snd + √r) := by
-    field_simp
-    ring_nf
-    rw [Real.sq_sqrt hr.le, Real.sq_sqrt hxp₂.le]
+    grind
   have h₄ : (0 : ℝ) ≤ 1 + 7 / 2 ^ n := by positivity
   trans (x.snd - x.fst) / √r * ((1 + 7 / 2^n) / 2)
   · suffices (√↑x.toProd.2 - √r) * (1 + 7 / 2 ^ n) ≤ (↑x.toProd.2 - ↑x.toProd.1) / (2 * √r) * (1 +
@@ -552,9 +524,7 @@ theorem TLUW_lower : TendstoLocallyUniformlyWithout
   · set tm := max (2 * x) 1
     have htm₀ : 0 < tm := by positivity
     have htm : x < tm := by
-      by_cases 0 < x
-      · exact lt_sup_of_lt_left (by linarith)
-      · exact lt_sup_of_lt_right (by linarith)
+      grind
     use Set.Ioo (-1) tm, Ioo_mem_nhds (by linarith) htm
     set ε' := (ε / (2 * tm.sqrt)) with hε'
     set a := Int.clog 2 (1 / ε') with ha
@@ -601,9 +571,7 @@ theorem TLUW_upper : TendstoLocallyUniformlyWithout
   · set tm := max (2 * x) 1
     have htm₀ : 0 < tm := by positivity
     have htm : x < tm := by
-      by_cases 0 < x
-      · exact lt_sup_of_lt_left (by linarith)
-      · exact lt_sup_of_lt_right (by linarith)
+      grind
     use Set.Ioo (-1) tm, Ioo_mem_nhds (by linarith) htm
     set ε' := (ε / (7 * tm.sqrt)) with hε'
     set a := Int.clog 2 (1 / ε') with ha
@@ -618,9 +586,7 @@ theorem TLUW_upper : TendstoLocallyUniformlyWithout
     push Not at hq₃
     suffices 7 * √↑q / 2 ^ b < ε by
       have hb₁ := rsqrt_le_boundedSqrt q b 4 (by norm_num)
-      rw [Nat.cast_ofNat] at hb₁
-      rw [abs_sub_lt_iff]
-      constructor <;> linarith
+      grind
     replace hb : Int.clog 2 (1 / ε') ≤ b := Int.toNat_le.mp hb
     replace hb : 2 ^ (Int.clog 2 (1 / ε')) ≤ (2 : ℝ) ^ (b : ℤ) := zpow_le_zpow_right₀ (one_le_two)
       hb

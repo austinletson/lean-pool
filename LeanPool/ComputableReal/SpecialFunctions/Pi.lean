@@ -79,8 +79,7 @@ theorem sqrtTwoAddSeriesN_lb_gt_one (n k : ℕ) (hk : 3 ≤ k) : 1 ≤ (sqrtTwoA
   have h₂ := Sqrt.sqrt_le_mkRat_add (2 + x) k
   generalize ↑(mkRat (Int.sqrt ((2 + x).num * 4 ^ k)) (((2 + x).den * 4 ^ k).sqrt + 1))=y at h₂ ⊢
   replace h₂ : √↑(2 + x) * (1 - 2 / 2^k) ≤ y := by
-    ring_nf at h₂ ⊢
-    linarith
+    grind
   refine le_trans ?_ (le_trans (a := √↑(2 + x) * 3 / 4) ?_ h₂)
   · suffices 4 / 3 ≤ √↑(2 + x) by linarith
     apply Real.le_sqrt_of_sq_le
@@ -153,8 +152,7 @@ theorem sqrtTwoAddSeriesN_bounds (n k : ℕ) (hk : 3 ≤ k) :
     · have hy2 : y < 2 := Real.sqrtTwoAddSeries_lt_two (n.succ)
       linarith
     · exact_mod_cast Nat.two_pow_pos k
-  rw [mul_add, add_div]
-  linarith
+  grind
 
 /-- Definition of `sqrtTwoSubSqrtTwoAddSeriesN`. -/
 noncomputable def sqrtTwoSubSqrtTwoAddSeriesN : ℕ → ComputableℝSeq :=
@@ -229,9 +227,7 @@ theorem sqrtTwoSubSqrtTwoAddSeries_lb (n k : ℕ) (hk : 3 ≤ k) :
     suffices √(2 - z) ≤ 2 by linarith
     rw [Real.sqrt_le_left zero_le_two]
     linarith
-  have h₁₀ : ((18 * n * 2 ^ n + 4) / 2 ^ k : ℝ) = 18 * ↑n / 2 ^ k * 2 ^ n + 4 / 2 ^ k := by
-    ring_nf
-  linarith
+  grind
 
 theorem sqrtTwoSubSqrtTwoAddSeries_ub (n k : ℕ) (hk : 3 ≤ k) :
     (sqrtTwoSubSqrtTwoAddSeriesN n).ub k - (18 * n * 2 ^ n + 14) / 2 ^ k ≤ √(2 -
@@ -286,9 +282,7 @@ theorem sqrtTwoSubSqrtTwoAddSeries_ub (n k : ℕ) (hk : 3 ≤ k) :
     suffices √(2 - z) ≤ 2 by linarith
     rw [Real.sqrt_le_left zero_le_two]
     linarith
-  have h₁₀ : ((18 * n * 2 ^ n + 14) / 2 ^ k : ℝ) = 18 * ↑n / 2 ^ k * 2 ^ n + 14 / 2 ^ k := by
-    ring_nf
-  linarith
+  grind
 
 /-- See theorem Real.pi_lt_sqrtTwoAddSeries in Mathlib -/
 noncomputable def piLb (n : ℕ) : ℚ :=
@@ -340,8 +334,7 @@ theorem piLb_ge_pi_sub_pow (n : ℕ) (hn : 0 < n) : Real.pi - 41 * n / 2 ^ n ≤
     ring_nf
   rw [h₁]; clear h₁
   suffices (9 / 4 ^ n : ℚ) ≤ 5 * n / 2 ^ n by
-    simp only [← mul_div] at this ⊢
-    linarith
+    grind
   exact div_le_div₀ (by positivity) (by linarith) (by positivity) (pow_le_pow_left₀ rfl rfl n)
 
 theorem piUb_le_pi_add_pow (n : ℕ) (hn : 0 < n) : piUb n ≤ Real.pi + 51 * n / 2 ^ n := by
@@ -367,8 +360,7 @@ theorem piUb_le_pi_add_pow (n : ℕ) (hn : 0 < n) : piUb n ≤ Real.pi + 51 * n 
     ring_nf
   rw [h₁]; clear h₁
   suffices (29 / 4 ^ n : ℚ) ≤ 15 * n / 2 ^ n by
-    simp only [← mul_div] at this ⊢
-    linarith
+    grind
   exact div_le_div₀ (by positivity) (by linarith) (by positivity) (pow_le_pow_left₀ rfl rfl n)
 
 theorem piLb_causeq : ∃ (h' : IsCauSeq abs piLb), Real.mk ⟨piLb, h'⟩ = Real.pi := by

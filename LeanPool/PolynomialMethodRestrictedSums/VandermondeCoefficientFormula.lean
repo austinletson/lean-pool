@@ -144,12 +144,10 @@ lemma det_fallingFactorial_eq_det_vandermonde (c : Fin (k + 1) → ℕ) :
             rw [← h_poly]
             rw [Finset.prod_eq_zero (i := (⟨c i, hi⟩ : Fin j))
                   (Finset.mem_univ _)
-                  (by change ((c i - ↑(⟨c i, hi⟩ : Fin j) : ℕ) : ℚ) = 0
-                      simp)]
+                  (by grind)]
             symm
             apply Finset.prod_eq_zero (i := (⟨c i, hi⟩ : Fin j)) (Finset.mem_univ _)
-            change (↑(c i) - ↑↑(⟨c i, hi⟩ : Fin j) : ℚ) = 0
-            simp
+            grind
           · exact Eq.trans
               (Finset.prod_congr rfl fun _ _ => by
                 rw [Nat.cast_sub (by linarith [Fin.is_lt ‹_›])])
@@ -222,8 +220,7 @@ lemma fallingFactorial_eq_factorial_div (n k : ℕ) :
           rw [Nat.descFactorial_eq_prod_range]
     · split
       next h =>
-        subst h
-        simp_all only [not_lt_zero]
+        grind
       next h =>
         split
         next h_1 =>
@@ -273,8 +270,7 @@ lemma symmetricSumFixed_eq_expectedValue (c : Fin (k + 1) → ℕ) (m : ℕ) :
         (∏ i, (fallingFactorial (c i) (σ i).val : ℚ)) := by
       rw [Matrix.det_apply']
       refine Finset.sum_bij (fun σ _ => σ.symm) ?_ ?_ ?_ ?_
-      · intro a ha
-        simp_all only [mem_univ]
+      · grind
       · intro a₁ ha₁ a₂ ha₂ a
         simp_all only [mem_univ]
         simpa using congr_arg Equiv.symm a
@@ -301,10 +297,7 @@ lemma symmetricSumFixed_eq_expectedValue (c : Fin (k + 1) → ℕ) (m : ℕ) :
         intros
         rw [Nat.cast_div (Nat.factorial_dvd_factorial <| Nat.sub_le _ _) (by positivity)]
       · rw [Finset.prod_eq_zero_iff]
-        rename_i h
-        simp_all only [mem_univ, ite_eq_right_iff, Nat.cast_eq_zero, Nat.div_eq_zero_iff, true_and]
-        obtain ⟨w, h⟩ := h
-        exact ⟨w, fun hw => False.elim <| h.not_ge hw⟩
+        grind
     -- By combining the results from h_det_fallingFactorial and h_fallingFactorial, we can
     -- conclude the proof.
     have h_final : Matrix.det (vandermondeMatrix c) = (∏ i, ((c i).factorial : ℚ)) *
@@ -440,13 +433,7 @@ lemma coeff_term (c : Fin (k + 1) → ℕ) (m : ℕ) (σ : Equiv.Perm (Fin (k + 
                 rw [Equiv.sum_comp σ fun x => (x : ℤ)]; norm_num [Nat.choose_two_right]; ring_nf
                 exact Eq.symm (Nat.recOn k (by norm_num) fun n ih => by
                   norm_num [Fin.sum_univ_castSucc] at *
-                  linarith [
-                    Nat.div_mul_cancel
-                      (show 2 ∣ n + 1 + (n + 1) ^ 2
-                        from even_iff_two_dvd.mp (by simp +arith +decide [parity_simps])),
-                    Nat.div_mul_cancel
-                      (show 2 ∣ n + (n) ^ 2
-                        from even_iff_two_dvd.mp (by simp +arith +decide [parity_simps]))])
+                  grind)
               rw [h_multinomial, MvPolynomial.coeff_sum]
               rw [Finset.sum_eq_single (fun i => c i - (σ i : ℕ))]
               · norm_num [MvPolynomial.coeff_smul, MvPolynomial.coeff_X_pow,
@@ -537,8 +524,7 @@ lemma coeff_term (c : Fin (k + 1) → ℕ) (m : ℕ) (σ : Equiv.Perm (Fin (k + 
         -- means the coefficient of $snd$ in the product of $X_i^{\sigma i}$ is zero.
         have h_snd_w : snd w < σ w := by
           unfold toFinsupp at a
-          simp_all only [ne_eq, Finsupp.coe_mk]
-          linarith
+          grind
         rw [Finset.prod_eq_prod_sdiff_singleton_mul <| Finset.mem_univ w]
         rw [MvPolynomial.coeff_mul]
         have fwd : LE.le (α := ℕ) (snd w : ℕ) (σ w : Fin (k + 1)).1 := le_of_lt h_snd_w
@@ -550,12 +536,7 @@ lemma coeff_term (c : Fin (k + 1) → ℕ) (m : ℕ) (σ : Equiv.Perm (Fin (k + 
         obtain ⟨fst_1, snd⟩ := x
         simp_all only
         rw [MvPolynomial.coeff_X_pow]
-        simp_all only [ite_eq_right_iff, one_ne_zero, imp_false]
-        apply Or.inr
-        apply Aesop.BuiltinRules.not_intro
-        intro a_1
-        subst a_1
-        simp_all only [Finsupp.single_eq_same, add_lt_iff_neg_right, not_lt_zero]
+        grind
 
 end AristotleLemmas
 
@@ -589,24 +570,13 @@ theorem Vandermonde_coefficient_formula (c : Fin (k + 1) → ℕ) (m : ℕ)
         rw [Finset.prod_sigma', Finset.prod_sigma']
         rw [← Finset.prod_filter]
         refine Finset.prod_bij (fun x hx => ⟨x.snd, x.fst⟩) ?_ ?_ ?_ ?_
-        · intro a ha
-          simp_all only [mem_sigma, mem_univ, mem_Ioi, true_and]
-          simp_all only [univ_sigma_univ, mem_filter, mem_univ, true_and]
-        · intro a₁ ha₁ a₂ ha₂ a
-          simp_all only [Sigma.mk.injEq, heq_eq_eq]
-          simp_all only [univ_sigma_univ, mem_filter, mem_univ, true_and, and_self]
-          obtain ⟨fst, snd⟩ := a₁
-          obtain ⟨fst_1, snd_1⟩ := a₂
-          obtain ⟨left, right⟩ := a
-          subst left right
-          simp_all only
+        · grind
+        · grind
         · intro b a
           simp_all only [mem_sigma, mem_univ, mem_Ioi, true_and, univ_sigma_univ, mem_filter,
               exists_prop, Sigma.exists]
-          obtain ⟨fst, snd⟩ := b
-          simp_all only [Sigma.mk.injEq, heq_eq_eq, ↓existsAndEq, true_and, exists_eq_right]
-        · intro a ha
-          simp_all only
+          grind
+        · grind
       rw [h_coeff, Matrix.det_apply']
       simp +decide [Algebra.smul_def]
     simp +decide only [h_vandermonde, mul_smul_comm, Finset.mul_sum _ _ _]

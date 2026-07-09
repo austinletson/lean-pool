@@ -316,15 +316,10 @@ lemma length_eq_dist_add_one_of_isStandard {l : List (Lattice R)} (hl : l.IsBTSt
   have h1 : l.head hl.ne_nil = (b.ntwist₂ hϖ (l.length - 1) 0).toLattice := by
     simpa [List.head_eq_getElem_zero hl.ne_nil] using h 0 hlen
   have h2 : l.getLast hl.ne_nil = (b.ntwist₂ hϖ 0 0).toLattice := by
-    have hlast_lt : l.length - 1 < l.length := Nat.sub_one_lt_of_lt hlen
-    have hlast := h (l.length - 1) hlast_lt
-    have hsub : l.length - (l.length - 1) - 1 = 0 := by omega
-    simpa [List.getLast_eq_getElem, hsub] using hlast
+    grind
   rw [h1, h2, Basis.ntwist₂_zero_zero]
   rw [dist_symm, dist_ntwist₂]
-  have : 1 ≤ l.length := by
-    match l with | (_ :: l) => simp
-  omega
+  grind
 
 end «Chain»
 
@@ -607,8 +602,7 @@ lemma _root_.List.IsBTSimpleChain.exists_GL_forall_smul (l : List (Lattice R))
     · exact hg'.left
     · rw [List.smul_lattice_def, ← List.map_zipIdx, List.forall_map_iff] at hg'
       convert hg'.right with ⟨L, n⟩
-      have : l.length + 1 - n - 1 = l.length - n := by omega
-      simp [this]
+      grind
 
 /--
 Any simple chain of lattices can be transformed by an element of `GL₂(K)` to a standard

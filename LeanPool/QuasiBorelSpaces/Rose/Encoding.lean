@@ -47,12 +47,8 @@ def fold (mk : A → List B → B) : Encoding A → B
     | cons head tail ih =>
       cases i using Fin.cases with
       | zero =>
-        simp only [
-          List.length_cons, Fin.coe_ofNat_eq_mod, Nat.zero_mod,
-          List.getElem_cons_zero, List.cons.sizeOf_spec]
         grind
       | succ i =>
-        simp only [List.length_cons, Fin.val_succ, List.getElem_cons_succ, List.cons.sizeOf_spec]
         grind
 
 @[simp]

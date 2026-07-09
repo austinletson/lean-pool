@@ -191,9 +191,7 @@ lemma eta_n_plus_one_le_n_div_six (η : ℝ) (_hη_pos : 0 < η) (hη_lt : η < 
   have h₂ : (n : ℝ) ≥ (1 : ℝ) / ((1 / 6 : ℝ) - η) := by simp_all
   have h₄ : ((1 / 6 : ℝ) - η) * (n : ℝ) ≥ 1 := by
     have := mul_le_mul_of_nonneg_left h₂ (le_of_lt h_delta_pos)
-    rw [mul_div_cancel₀] at this
-    · linarith
-    · exact ne_of_gt h_delta_pos
+    grind
   nlinarith
 
 lemma int_expr_real_lower_bound (η : ℝ) (n : ℕ) :
@@ -203,9 +201,7 @@ lemma int_expr_real_lower_bound (η : ℝ) (n : ℕ) :
     linarith [Int.sub_one_lt_floor ((n : ℝ) / 6)]
   have h₂ : (⌈(η * (n : ℝ))⌉ : ℝ) < (η * (n : ℝ)) + 1 := by
     linarith [Int.ceil_lt_add_one (η * (n : ℝ))]
-  have h₆ : ((⌊(n : ℝ) / 6⌋ + 1 - ⌈η * (n : ℝ)⌉ : ℤ) : ℝ) =
-      (⌊(n : ℝ) / 6⌋ : ℝ) + 1 - (⌈(η * (n : ℝ))⌉ : ℝ) := by norm_cast
-  linarith
+  grind
 
 lemma ceil_le_floor_for_large_n (η : ℝ) (hη_pos : 0 < η) (hη_lt : η < 1 / 6) :
     ∃ (N₀ : ℕ), ∀ n : ℕ, N₀ ≤ n →
@@ -232,9 +228,7 @@ lemma half_bound_for_large_n (η : ℝ) (_hη_pos : 0 < η) (hη_lt : η < 1 / 6
   have h₂ : (n : ℝ) ≥ (2 : ℝ) / ((1 / 6 : ℝ) - η) := by nlinarith
   have h₃ : ((1 / 6 : ℝ) - η) * (n : ℝ) ≥ 2 := by
     have := mul_le_mul_of_nonneg_left h₂ (le_of_lt h)
-    rw [mul_div_cancel₀] at this
-    · linarith
-    · exact ne_of_gt h
+    grind
   nlinarith
 
 lemma interval_toNat_lower_bound (η : ℝ) (hη_pos : 0 < η) (hη_lt : η < 1 / 6) :
@@ -250,11 +244,7 @@ lemma interval_toNat_lower_bound (η : ℝ) (hη_pos : 0 < η) (hη_lt : η < 1 
   have h_nonneg := hn₁
   set z := (⌊(n : ℝ) / 6⌋ + 1 - ⌈η * (n : ℝ)⌉ : ℤ) with hz_def
   have h_cast : (z.toNat : ℝ) = (z : ℝ) := by exact_mod_cast Int.toNat_of_nonneg h_nonneg
-  rw [h_cast]
-  calc ((1 / 6 - η) / 2) * (n : ℝ)
-      ≤ (1 / 6 - η) * (n : ℝ) - 1 := hn₂
-    _ = (n : ℝ) / 6 - η * (n : ℝ) - 1 := by ring
-    _ ≤ ((⌊(n : ℝ) / 6⌋ + 1 - ⌈η * (n : ℝ)⌉ : ℤ) : ℝ) := le_of_lt h_real_lb
+  grind
 
 theorem interval_ncard_lower_bound (η : ℝ) (hη_pos : 0 < η) (hη_lt : η < 1 / 6) :
     ∃ (N₀ : ℕ), ∀ n : ℕ, N₀ ≤ n →
@@ -271,9 +261,7 @@ lemma coprime_pairs_subset_product (A B : ℤ) :
       A ≤ pq.2 ∧ pq.2 ≤ B ∧
       Int.gcd pq.1 pq.2 = 1} ⊆
     Set.Icc A B ×ˢ Set.Icc A B := by
-  intro ⟨a, b⟩ h
-  simp only [Set.mem_setOf_eq, Set.mem_prod, Set.mem_Icc] at h ⊢
-  exact ⟨⟨h.1, h.2.1⟩, h.2.2.1, h.2.2.2.1⟩
+  grind
 
 lemma sq_add_one_le (a : ℝ) : (a + 1) ^ 2 ≤ 5 / 4 * a ^ 2 + 5 := by nlinarith [sq_nonneg (a - 4)]
 
@@ -302,8 +290,7 @@ lemma telescoping_sum_eq (N : ℕ) (hN : 3 ≤ N) :
           | zero => contradiction
           | succ n =>
             simp_all [Finset.sum_Icc_succ_top, Nat.cast_succ]
-            field_simp [Nat.cast_add_one_ne_zero]
-            ring_nf
+            grind
   exact h₁ N hN
 
 lemma tail_sum_le_half (N : ℕ) :
@@ -318,8 +305,7 @@ lemma tail_sum_le_half (N : ℕ) :
       _ = 1 / 2 - 1 / N := telescoping_sum_eq N hN
       _ ≤ 1 / 2 := by linarith [show (0 : ℝ) ≤ 1 / (N : ℝ) from by positivity]
   · have : Finset.Icc 3 N = ∅ := by
-      simp [Finset.Icc_eq_empty_iff]
-      omega
+      grind
     simp [this]
 
 lemma sum_Icc_split (N : ℕ) (hN : 2 ≤ N) (f : ℕ → ℝ) :
@@ -335,21 +321,17 @@ lemma sum_inv_sq_le_three_fourths (N : ℕ) :
     have h2 : ∑ k ∈ Finset.Icc 3 N, (1 : ℝ) / (k : ℝ) ^ 2 ≤ 1 / 2 := tail_sum_le_half N
     linarith
   · have : Finset.Icc 2 N = ∅ := by
-      push Not at hN
-      exact Finset.Icc_eq_empty (by omega)
+      grind
     simp [this]; norm_num
 
 lemma multiples_finite (A B : ℤ) (m : ℕ) :
     {x : ℤ | A ≤ x ∧ x ≤ B ∧ (m : ℤ) ∣ x}.Finite := by
   refine (Set.finite_Icc A B).subset (fun x hx => ?_)
-  simp only [Set.mem_Icc, Set.mem_setOf_eq] at hx ⊢
-  exact ⟨hx.1, hx.2.1⟩
+  grind
 
 lemma toNat_inj_of_nonneg (a b : ℤ) (ha : 0 ≤ a) (hb : 0 ≤ b)
     (h : a.toNat = b.toNat) : a = b := by
-  have h₁ : (a.toNat : ℤ) = a := Int.toNat_of_nonneg ha
-  have h₂ : (b.toNat : ℤ) = b := Int.toNat_of_nonneg hb
-  omega
+  grind
 
 lemma emod_eq_of_dvd (x₁ x₂ A : ℤ) (m : ℤ) (h₁ : m ∣ x₁) (h₂ : m ∣ x₂) :
     (x₁ - A) % m = (x₂ - A) % m := by
@@ -390,15 +372,7 @@ lemma shift_div_toNat_le (A B : ℤ) (m : ℕ) (hm : 0 < m) (x : ℤ)
   have hq : 0 ≤ (x - A) / (m : ℤ) := Int.ediv_nonneg h₁ (le_of_lt hm_pos_int)
   have hxa_le : (x - A) / (m : ℤ) ≤ (B + 1 - A) / (m : ℤ) :=
     Int.ediv_le_ediv hm_pos_int h₂
-  have hba_q : 0 ≤ (B + 1 - A) / (m : ℤ) := Int.ediv_nonneg h₃ (le_of_lt hm_pos_int)
-  have key1 : ((x - A) / (m : ℤ)).toNat ≤ ((B + 1 - A) / (m : ℤ)).toNat :=
-    Int.toNat_le_toNat hxa_le
-  have key2 : ((B + 1 - A) / (m : ℤ)).toNat = (B + 1 - A).toNat / m := by
-    have h_cast : (B + 1 - A : ℤ) = ((B + 1 - A).toNat : ℤ) :=
-      (Int.toNat_of_nonneg h₃).symm
-    conv_lhs => rw [h_cast]
-    rw [← Int.natCast_div, Int.toNat_natCast]
-  omega
+  grind
 
 lemma shift_div_image_subset_range (A B : ℤ) (m : ℕ) (hm : 0 < m) :
     (fun x => ((x - A) / (m : ℤ)).toNat) ''
@@ -459,13 +433,11 @@ lemma non_coprime_subset_union (A B : ℤ) (_hAB : A ≤ B) (B' : ℕ)
   have hAq := (Set.mem_Icc.mp hS.2).1
   have hqB := (Set.mem_Icc.mp hS.2).2
   have hgcd : Int.gcd pq.1 pq.2 ≠ 1 := by
-    intro h
-    exact hnotC ⟨hAp, hpB, hAq, hqB, h⟩
+    grind
   obtain ⟨ℓ, hprime, h2le, hleB', hdvdp, hdvdq⟩ :=
     exists_prime_dvd_both A B B' hB' pq.1 pq.2 hAp hpB hAq hqB hgcd
   simp only [Set.mem_iUnion, Set.mem_prod, Set.mem_setOf_eq]
-  exact ⟨ℓ, Finset.mem_filter.mpr ⟨Finset.mem_Icc.mpr ⟨h2le, hleB'⟩, hprime⟩,
-    ⟨hAp, hpB, hdvdp⟩, ⟨hAq, hqB, hdvdq⟩⟩
+  grind
 
 lemma ncard_multiples_prod_le (A B : ℤ) (ℓ : ℕ) (hℓ : Nat.Prime ℓ) :
     let L := (Set.Icc A B).ncard
@@ -494,8 +466,7 @@ lemma non_coprime_ncard_le_sum (A B : ℤ) (hAB : A ≤ B) (B' : ℕ)
     apply Set.Finite.subset ((Set.finite_Icc A B).prod (Set.finite_Icc A B))
     intro ⟨x, y⟩ hxy
     simp only [Set.mem_iUnion, Set.mem_prod, Set.mem_setOf_eq] at hxy ⊢
-    obtain ⟨ℓ, _, ⟨hx1, hx2, _⟩, hy1, hy2, _⟩ := hxy
-    exact ⟨⟨hx1, hx2⟩, hy1, hy2⟩
+    grind
   calc (S \ C).ncard
       ≤ (⋃ ℓ ∈ (Finset.Icc 2 B').filter Nat.Prime,
           ({x : ℤ | A ≤ x ∧ x ≤ B ∧ (ℓ : ℤ) ∣ x}) ×ˢ
@@ -538,8 +509,7 @@ lemma term_sq_bound (L ℓ : ℕ) (hℓ : 2 ≤ ℓ) :
   have h3 : ((↑L : ℝ) / (↑ℓ : ℝ) + 1) ^ 2 ≤ 5 / 4 * ((↑L : ℝ) / (↑ℓ : ℝ)) ^ 2 + 5 :=
     sq_add_one_le _
   rw [div_pow] at h3
-  rw [mul_div_assoc]
-  linarith
+  grind
 
 lemma sum_sq_bound_real (L B' : ℕ) :
     (∑ ℓ ∈ (Finset.Icc 2 B').filter Nat.Prime, ((L / ℓ + 1 : ℕ) : ℝ) ^ 2) ≤
@@ -784,8 +754,7 @@ lemma div_toNat_mem_range (B : ℤ) (P : ℕ) (_hP : 0 < P) (hB : 0 ≤ B) (x : 
     (hx0 : 0 ≤ x) (hxB : x ≤ B) :
     (x / (P : ℤ)).toNat < B.toNat / P + 1 := by
   have h₂ : (x / (P : ℤ)).toNat = x.toNat / P := by
-    have : x / (P : ℤ) = ↑(x.toNat / P) := by simp_all
-    rw [this, Int.toNat_natCast]
+    grind
   have h₃ : x.toNat ≤ B.toNat := by omega
   have h₄ : x.toNat / P ≤ B.toNat / P := Nat.div_le_div_right h₃
   omega
@@ -800,8 +769,7 @@ lemma inj_div_toNat (B : ℤ) (P : ℕ) (hP : 0 < P) :
   have hqx : 0 ≤ x / (P : ℤ) := Int.ediv_nonneg hx₁ hPpos.le
   have hqy : 0 ≤ y / (P : ℤ) := Int.ediv_nonneg hy₁ hPpos.le
   have h₃ : x / (P : ℤ) = y / (P : ℤ) := by
-    have : (x / (P : ℤ)).toNat = (y / (P : ℤ)).toNat := hxy
-    omega
+    grind
   have h₈ : (x / (P : ℤ)) * (P : ℤ) = x := Int.ediv_mul_cancel hx₃
   have h₉ : (y / (P : ℤ)) * (P : ℤ) = y := Int.ediv_mul_cancel hy₃
   rw [← h₈, ← h₉, h₃]
@@ -830,9 +798,7 @@ lemma mul_P_mem_set (B : ℤ) (P : ℕ) (_hP : 0 < P) (hB : 0 ≤ B)
   have h₂ : (↑k * ↑P : ℤ) ≤ B := by
     have h₄ : k * P ≤ (B.toNat / P) * P := Nat.mul_le_mul_right P hk
     have h₅ : (B.toNat / P) * P ≤ B.toNat := Nat.div_mul_le_self B.toNat P
-    have hBcast : (B.toNat : ℤ) = B := Int.toNat_of_nonneg hB
-    have : (↑(k * P) : ℤ) ≤ (B.toNat : ℤ) := by exact_mod_cast (by omega : k * P ≤ B.toNat)
-    push_cast at this; omega
+    grind
   exact ⟨h₁, h₂, ⟨(k : ℤ), by ring⟩⟩
 
 lemma ncard_nonneg_multiples_ge (B : ℤ) (P : ℕ) (hP : 0 < P) (hB : 0 ≤ B) :
@@ -855,9 +821,7 @@ lemma ncard_nonneg_multiples_ge (B : ℤ) (P : ℕ) (hP : 0 < P) (hB : 0 ≤ B) 
     _ = (f '' ↑R).ncard := by rw [Set.InjOn.ncard_image hfinj, Set.ncard_coe_finset]
     _ ≤ S.ncard := by
         apply Set.ncard_le_ncard
-        · intro x hx
-          obtain ⟨k, hkR, rfl⟩ := hx
-          exact hfS k hkR
+        · grind
         · exact nonneg_multiples_finite B P
 
 lemma real_sq_div_mono (n : ℕ) (P : ℕ) (θ : ℝ)
@@ -893,8 +857,7 @@ lemma fiber_empty_of_gcd_ne_one (n : ℕ) (η : ℝ) (q : ℤ)
   apply Set.eq_empty_of_forall_notMem
   intro p hp
   simp only [Set.mem_setOf_eq, residueBadPairs, badPairsE, Set.mem_setOf_eq] at hp
-  apply hq
-  simp_all
+  grind
 
 lemma snd_lt_half_of_mem_truncatedObtuseRegion_fb (n : ℕ) (η : ℝ)
     (pq : ℤ × ℤ) (h : pq ∈ truncatedObtuseRegion n η) (hp_pos : 0 < pq.1) :
@@ -990,8 +953,7 @@ lemma fiber_div_injOn (n d : ℕ) (hd_pos : 0 < d) (b : ℕ)
     omega
   have ex := Int.emod_add_mul_ediv x (d : ℤ)
   have ey := Int.emod_add_mul_ediv y (d : ℤ)
-  rw [hmod, hdiv] at ex
-  omega
+  grind
 
 lemma int_ediv_eq_natCast_div (n : ℤ) (m : ℕ) (_hm : 0 < m) (hn : 0 ≤ n) :
     n / (m : ℤ) = ↑(n.toNat / m) := by simp_all
@@ -1017,9 +979,7 @@ lemma div_toNat_le_half_div (n d : ℕ) (hd_pos : 0 < d) (x : ℤ)
     _ = ((↑n : ℤ) / 2).toNat / d :=
       int_toNat_ediv_eq (↑n / 2) d hd_pos (Int.ediv_nonneg (Int.natCast_nonneg n) (by norm_num))
     _ = n / 2 / d := by
-        have : ((↑n : ℤ) / 2).toNat = n / 2 :=
-          int_toNat_ediv_eq (↑n : ℤ) 2 (by norm_num) (Int.natCast_nonneg n)
-        rw [this]
+        grind
     _ = n / (2 * d) := Nat.div_div_eq_div_mul n 2 d
 
 lemma fiber_div_mem_range (n d : ℕ) (hd_pos : 0 < d) (b : ℕ)
@@ -1063,8 +1023,7 @@ lemma rearrange_ineq (η : ℝ) (n : ℕ) (hn : 2 ≤ n) (p q : ℤ)
       (2 * (p : ℝ) - 1) * (2 * (q : ℝ) - 1) * (Nat.totient n : ℝ) / (n : ℝ) ^ 2 := by
   have h₂ : 0 < (n : ℝ) ^ 2 := by positivity
   have h₃ : (η : ℝ) ^ 2 * (n : ℝ) ^ 2 ≤ (2 * (p : ℝ) - 1) * (2 * (q : ℝ) - 1) := by
-    calc (η : ℝ) ^ 2 * (n : ℝ) ^ 2 = (η * (n : ℝ)) ^ 2 := by ring
-      _ ≤ (2 * (p : ℝ) - 1) * (2 * (q : ℝ) - 1) := h
+    grind
   calc
     (η : ℝ) ^ 2 * (Nat.totient n : ℝ)
         = ((η : ℝ) ^ 2 * (n : ℝ) ^ 2) * ((Nat.totient n : ℝ) / (n : ℝ) ^ 2) := by
@@ -1249,8 +1208,7 @@ lemma combine_error_terms_real (P R A : ℝ) (hP : 2 ≤ P) (hR : 1 ≤ R) (hA :
     A / (P - 1) + 7 * R * A / P ≤ 9 * R * A / P := by
   have hP0 : (0 : ℝ) < P := by linarith
   have h := bound_first_term P R A hP hR hA
-  have h2 : 2 * R * A / P + 7 * R * A / P = 9 * R * A / P := by ring
-  linarith
+  grind
 
 /-- The error term `E_{P₀}(p, q)`: the contribution of frequencies `(k, l)` with
 `P ^ (α - 1) ∣ k * p + l * q` but `P ^ α ∤ k * p + l * q` to the Fourier expansion. -/
@@ -1311,8 +1269,7 @@ lemma card_intervalSet_filter (n : ℕ) [NeZero n] (m : ℕ) (hm2 : m < n) :
       · rw [ZMod.val_natCast_of_lt (by omega)]
         exact htm.2)
     (hj := fun j hj => by
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hj
-      exact Finset.mem_Icc.mpr hj)
+      grind)
     (left_inv := fun t ht => by
       have htm := Finset.mem_Icc.mp ht
       exact ZMod.val_natCast_of_lt (by omega))
@@ -1334,8 +1291,7 @@ lemma normalizedDFT_intervalIndicator_zero (n : ℕ) [NeZero n] (m : ℕ) (hm1 :
 
 lemma mp_lower_bound (p : ℤ) (hp : 1 ≤ p) :
     1 ≤ (2 * p - 1).toNat := by
-  have h₁₃ : (2 * p - 1 : ℤ) ≥ 1 := by linarith
-  omega
+  grind
 
 lemma mp_upper_bound (n : ℕ) (_hn : 2 ≤ n) (p q : ℤ) (hp : 1 ≤ p) (hq : 1 ≤ q)
     (hpq : (p : ℝ) + (q : ℝ) < (n : ℝ) / 2) :
@@ -1382,8 +1338,7 @@ lemma zero_zero_term_eq_main
   rw [ramanujanSum_zero]
   rw [normalizedDFT_intervalIndicator_zero n _ hmp.1 hmp.2]
   rw [normalizedDFT_intervalIndicator_zero n _ hmq.1 hmq.2]
-  have hn_ne : (n : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr (by omega)
-  field_simp
+  grind
 
 lemma full_sum_split_zero_nonzero
     (n : ℕ) [NeZero n] (F : ZMod n → ZMod n → ℂ) :
@@ -1415,8 +1370,7 @@ lemma sum_stdAddChar_mul_eq (n : ℕ) [NeZero n] (t : ℤ) :
     simp [AddChar.sum_mulShift, ZMod.isPrimitive_stdAddChar, ZMod.card]
   have h3 : (t : ZMod n) = 0 ↔ (n : ℤ) ∣ t :=
     ZMod.intCast_zmod_eq_zero_iff_dvd t n
-  rw [h2]
-  simp only [h3]
+  grind
 
 lemma sum_filter_units_eq_sum_units (n : ℕ) [NeZero n] (f : ZMod n → ℂ) :
     ∑ a ∈ Finset.univ.filter (fun a : ZMod n => IsUnit a), f a =
@@ -1482,11 +1436,7 @@ lemma p_dvd_val_of_not_isUnit {p : ℕ} [hp : Fact (Nat.Prime p)] {k : ℕ}
   have h₁ : IsUnit (a : ZMod (p ^ k)) ↔ Nat.Coprime a.val (p ^ k) := by
     simp [← ZMod.isUnit_iff_coprime]
   have h₂ : ¬Nat.Coprime a.val (p ^ k) := by
-    intro h₃
-    have h₄ : IsUnit (a : ZMod (p ^ k)) := by
-      rw [h₁] at *
-      exact h₃
-    exact ha h₄
+    grind
   have h₃ : Nat.Coprime (p : ℕ) a.val := hp.1.coprime_iff_not_dvd.mpr h
   exact h₂ (h₃.pow_left k).symm
 
@@ -1727,10 +1677,7 @@ lemma decompose_largest_prime (n : ℕ) (hn : 2 ≤ n) :
   have mul_eq := Nat.ordProj_mul_ordCompl_eq_self n P
   have p_coprime_m := Nat.coprime_ordCompl P_prime hn_ne_zero
   have coprime := (Nat.coprime_pow_left_iff α_pos _ _).mpr p_coprime_m
-  have dvd := Nat.ordProj_dvd n P
-  have hPα_pos : 0 < P ^ α := Nat.pos_of_ne_zero (pow_ne_zero _ P_prime.ne_zero)
-  have m_pos := Nat.div_pos (Nat.le_of_dvd (by omega) dvd) hPα_pos
-  exact ⟨mul_eq, coprime, m_pos⟩
+  grind
 
 lemma ramanujan_vanish_low_valuation
     (n : ℕ) [NeZero n] (hn : 2 ≤ n) (t : ℤ)
@@ -1752,8 +1699,7 @@ lemma ramanujan_vanish_low_valuation
   haveI : Fact (Nat.Prime P) := ⟨hP_prime⟩
   have vanish_comp : ramanujanSum (P ^ α) t = 0 :=
     ramanujanSum_prime_pow_eq_zero hα_pos ht
-  rw [vanish_comp]
-  ring
+  grind
 
 lemma summand_eq_EP0_plus_EPalpha
     (n : ℕ) [NeZero n] (hn : 2 ≤ n)
@@ -1790,31 +1736,17 @@ lemma summand_eq_EP0_plus_EPalpha
            normalizedDFT n (intervalIndicator n (2 * q - 1).toNat) l *
            ramanujanSum n t
   have hiff : ¬(k = 0 ∧ l = 0) ↔ (k, l) ≠ (0, 0) := by
-    constructor
-    · intro h hprod; exact h ⟨(Prod.mk.inj hprod).1, (Prod.mk.inj hprod).2⟩
-    · intro h ⟨hk, hl⟩; exact h (Prod.mk.injEq k l 0 0 |>.mpr ⟨hk, hl⟩)
+    grind
   by_cases hkl : (k, l) = (0, 0)
-  · have hkl' : ¬¬(k = 0 ∧ l = 0) := not_not.mpr ⟨(Prod.mk.inj hkl).1, (Prod.mk.inj hkl).2⟩
-    rw [if_neg hkl',
-        if_neg (show ¬((k, l) ≠ (0, 0) ∧ _) from fun ⟨h, _⟩ => h hkl),
-        if_neg (show ¬((k, l) ≠ (0, 0) ∧ _) from fun ⟨h, _⟩ => h hkl)]
-    ring
+  · grind
   · have hkl' : ¬(k = 0 ∧ l = 0) := hiff.mpr hkl
     rw [if_pos hkl']
     by_cases hP0 : (↑(P ^ (α - 1)) : ℤ) ∣ t
-    · by_cases hd : (↑(P ^ α) : ℤ) ∣ t
-      · rw [if_neg (show ¬((_ ≠ _) ∧ _ ∧ ¬_) from by push Not; exact fun _ _ => hd),
-            if_pos ⟨hkl, hd⟩]
-        ring
-      · rw [if_pos ⟨hkl, hP0, hd⟩,
-            if_neg (show ¬((_ ≠ _) ∧ _) from by push Not; exact fun _ => hd)]
-        ring
+    · grind
     · have hnotd : ¬((↑(P ^ α) : ℤ) ∣ t) := fun hd =>
         hP0 (dvd_trans (by exact_mod_cast pow_dvd_pow P (Nat.sub_le α 1)) hd)
       have hvanish : ramanujanSum n t = 0 := ramanujan_vanish_low_valuation n hn t hP0
-      rw [if_neg (show ¬((_ ≠ _) ∧ _ ∧ _) from by push Not; exact fun _ h => absurd h hP0),
-          if_neg (show ¬((_ ≠ _) ∧ _) from by push Not; exact fun _ => hnotd)]
-      simp [V, hvanish]
+      grind
 
 lemma nonzero_sum_eq_EP0_plus_EPalpha
     (n : ℕ) [NeZero n] (hn : 2 ≤ n)
@@ -1928,8 +1860,7 @@ lemma ramanujanSum_prime_pow_eq_neg {p : ℕ} [hp : Fact (Nat.Prime p)] {k : ℕ
     @ramanujanSum (p ^ k) ⟨pow_ne_zero k hp.out.ne_zero⟩ t =
     -(p : ℂ) ^ (k - 1) := by
   rw [ramanujanSum_prime_pow_decomp hk t, sum_stdAddChar_mul_eq, sum_stdAddChar_mul_eq]
-  simp only [Nat.cast_pow] at ht1 ht2 ⊢
-  simp [ht1, ht2]
+  grind
 
 lemma norm_ramanujanSum_prime_pow_eq_neg {p : ℕ} [hp : Fact (Nat.Prime p)] {k : ℕ} (hk : 0 < k)
     {t : ℤ} (ht1 : (p : ℤ) ^ (k - 1) ∣ t) (ht2 : ¬ ((p : ℤ) ^ k ∣ t)) :
@@ -1981,8 +1912,7 @@ lemma ramanujanSum_EP0_norm_bound
       @ramanujanSum (P ^ α) hne_Pα t * @ramanujanSum m hne_m t :=
     ramanujanSum_multiplicative hcop t
   have hn_rw : ‖@ramanujanSum n _ t‖ = ‖@ramanujanSum (P ^ α * m) ⟨hPαm_ne⟩ t‖ := by
-    congr 2
-    exact hdecomp.symm
+    grind
   calc ‖@ramanujanSum n _ t‖
       = ‖@ramanujanSum (P ^ α * m) ⟨hPαm_ne⟩ t‖ := hn_rw
     _ = ‖@ramanujanSum (P ^ α) hne_Pα t * @ramanujanSum m hne_m t‖ := by rw [h_mult]
@@ -2030,8 +1960,7 @@ lemma summand_reindex (n : ℕ) [NeZero n] (m : ℕ) (hm2 : m < n) (k : ZMod n) 
     simp only [Finset.mem_filter, Finset.mem_univ, true_and, intervalSet, Set.mem_setOf_eq] at hj
     have hv : ZMod.val j - 1 + 1 = ZMod.val j := by omega
     have : (↑(ZMod.val j - 1 + 1 : ℕ) : ZMod n) = j := by rw [hv]; exact ZMod.natCast_zmod_val j
-    simp only [Nat.cast_add, Nat.cast_one] at this
-    rw [show (↑(ZMod.val j - 1) + 1 : ZMod n) = j from this]
+    grind
 
 lemma character_multiplication_simplify (n : ℕ) [NeZero n] (t : ℕ) (k : ZMod n) :
     ZMod.stdAddChar (-((t + 1 : ZMod n) * k)) =
@@ -2221,8 +2150,7 @@ lemma summand_min_eq (N : ℕ) (_hN : 1 ≤ N) (t : ℕ) (ht : t ∈ Finset.Icc 
     have h₄ : (t : ℝ) ≥ (N + 1 : ℝ) := by norm_cast
     linarith
   have h₄ : min (t : ℝ) ((2 * N + 1 : ℝ) - t) = (2 * N + 1 : ℝ) - t := by
-    apply min_eq_right
-    linarith
+    grind
   rw [h₄]
 
 lemma second_half_min_simplify (N : ℕ) (hN : 1 ≤ N) :
@@ -2259,13 +2187,7 @@ lemma combine_halves (N : ℕ) :
     ∑ u ∈ Finset.Icc 1 N, (u : ℝ)⁻¹ := by
   rw [show ∑ u ∈ Finset.Icc 1 N, (1 : ℝ) / (2 * u) + ∑ u ∈ Finset.Icc 1 N, (1 : ℝ) / (2 * u)
       = 2 * ∑ u ∈ Finset.Icc 1 N, (1 : ℝ) / (2 * u) from by ring, Finset.mul_sum]
-  apply Finset.sum_congr rfl
-  intro u hu
-  have h₂₂₂ : 1 ≤ u := (Finset.mem_Icc.mp hu).1
-  have h₂₂₃ : (u : ℝ) ≠ 0 := by
-    have : (1 : ℝ) ≤ (u : ℝ) := by exact_mod_cast h₂₂₂
-    linarith
-  field_simp
+  grind
 
 lemma symmetric_sum_odd (N : ℕ) (hN : 1 ≤ N) :
     ∑ t ∈ Finset.Icc 1 (2 * N),
@@ -2280,14 +2202,7 @@ lemma symmetric_sum_odd (N : ℕ) (hN : 1 ≤ N) :
 lemma Icc_split_three (N : ℕ) (hN : 2 ≤ N) :
     Finset.Icc 1 (2 * N - 1) =
       Finset.Icc 1 (N - 1) ∪ {N} ∪ Finset.Icc (N + 1) (2 * N - 1) := by
-  have h₂ : Finset.Icc 1 (N - 1) ∪ {N} ∪ Finset.Icc (N + 1) (2 * N - 1) ⊆ Finset.Icc 1 (2 * N -
-    1) :=
-      by
-        intro x hx; simp only [Finset.mem_union, Finset.mem_Icc,
-          Finset.mem_singleton] at hx ⊢; omega
-  have h_main : Finset.Icc 1 (2 * N - 1) = Finset.Icc 1 (N - 1) ∪ {N} ∪ Finset.Icc (N + 1) (2 * N -
-    1) := by ext x; simp only [Finset.mem_union, Finset.mem_Icc, Finset.mem_singleton]; omega
-  exact h_main
+  grind
 
 lemma Icc_disjoint_high (N : ℕ) (hN : 2 ≤ N) :
     Disjoint (Finset.Icc 1 (N - 1) ∪ {N}) (Finset.Icc (N + 1) (2 * N - 1)) := by
@@ -2301,9 +2216,7 @@ lemma Icc_disjoint_high (N : ℕ) (hN : 2 ≤ N) :
 lemma Icc_disjoint_mid (N : ℕ) (hN : 2 ≤ N) :
     Disjoint (Finset.Icc 1 (N - 1)) ({N} : Finset ℕ) := by
   apply Finset.disjoint_left.mpr
-  intro x hx₁ hx₂
-  simp only [Finset.mem_singleton, Finset.mem_Icc] at hx₁ hx₂
-  omega
+  grind
 
 lemma sum_region_A (N : ℕ) (hN : 2 ≤ N) :
     ∑ t ∈ Finset.Icc 1 (N - 1),
@@ -2319,8 +2232,7 @@ lemma sum_region_A (N : ℕ) (hN : 2 ≤ N) :
 
 lemma min_midpoint (N : ℕ) :
     min (N : ℝ) ((2 * N : ℝ) - N) = (N : ℝ) := by
-  rw [show (2 * (N : ℝ) - N : ℝ) = (N : ℝ) from by ring]
-  simp
+  grind
 
 lemma min_eq_complement_in_region_C (N : ℕ) (t : ℕ) (ht : t ∈ Finset.Icc (N + 1) (2 * N - 1)) :
     min (t : ℝ) ((2 * N : ℝ) - t) = (2 * N : ℝ) - t := by
@@ -2368,15 +2280,12 @@ lemma symmetric_sum_even (N : ℕ) (hN : 1 ≤ N) :
 lemma ratio_rewrite (u : ℕ) (hu : 1 ≤ u) :
     (2 * (u : ℝ) + 1) / (2 * u - 1) = 1 + 2 / (2 * u - 1) := by
   have h₁ : (u : ℝ) ≥ 1 := by exact_mod_cast hu
-  have h₂ : (2 : ℝ) * u - 1 > 0 := by linarith
-  field_simp
-  ring
+  grind
 
 lemma pade_algebraic_identity (u : ℕ) (hu : 1 ≤ u) :
     2 * (2 / (2 * (u : ℝ) - 1)) / (2 / (2 * u - 1) + 2) = (u : ℝ)⁻¹ := by
   have h₁ : (u : ℝ) ≥ 1 := by exact_mod_cast hu
-  have h₂ : (2 : ℝ) * (u : ℝ) - 1 ≠ 0 := by nlinarith
-  field_simp; ring
+  grind
 
 lemma inv_le_log_ratio (u : ℕ) (hu : 1 ≤ u) :
     (u : ℝ)⁻¹ ≤ Real.log ((2 * u + 1) / (2 * u - 1)) := by
@@ -2402,9 +2311,7 @@ lemma telescoping_log_sum (N : ℕ) (hN : 1 ≤ N) :
       have h₃ : (2 * (n : ℝ) - 1 : ℝ) > 0 := by linarith
       have h₄ : (2 * (n.succ : ℝ) + 1 : ℝ) > 0 := by positivity
       have h₅ : (2 * (n.succ : ℝ) - 1 : ℝ) > 0 := by
-        have h₆ : (n : ℝ) ≥ 1 := by exact_mod_cast hn
-        norm_num [Nat.cast_add, Nat.cast_one] at h₆ ⊢
-        linarith
+        grind
       have h₇ : (2 * (n.succ : ℝ) + 1 : ℝ) = (2 * (n : ℝ) + 3 : ℝ) := by push_cast; ring
       have h₈ : (2 * (n.succ : ℝ) - 1 : ℝ) = (2 * (n : ℝ) + 1 : ℝ) := by push_cast; ring
       rw [h₇, h₈, Real.log_div (by linarith) (by linarith)]
@@ -2423,11 +2330,7 @@ lemma one_sub_inv_ratio_eq (N : ℕ) (hN : 1 ≤ N) :
   have h₁ : (2 : ℝ) * (N : ℝ) - 1 > 0 := by
     have h₁ : (N : ℝ) ≥ 1 := by exact_mod_cast hN
     linarith
-  have h₂ : (2 : ℝ) * (N : ℝ) > 0 := by linarith
-  rw [show (2 * (N : ℝ) / (2 * N - 1))⁻¹ = (2 * N - 1 : ℝ) / (2 * N : ℝ) from by
-    field_simp [h₁.ne', h₂.ne']]
-  field_simp
-  ring
+  grind
 
 lemma inv_two_N_le_log_ratio (N : ℕ) (hN : 1 ≤ N) :
     1 / (2 * (N : ℝ)) ≤ Real.log (2 * N / (2 * N - 1)) := by
@@ -2460,8 +2363,7 @@ lemma harmonic_Icc_plus_remainder_le_log_even (N : ℕ) (hN : 1 ≤ N) :
           have hpos : (2 : ℝ) * N - 1 > 0 := by
             linarith [show (2 : ℝ) ≤ (N : ℝ) from by exact_mod_cast hN2]
           rw [← Real.log_mul (by linarith) (by positivity)]
-          congr 1
-          field_simp
+          grind
 
 lemma symmetric_harmonic_sum_le_log (n : ℕ) (hn : 2 ≤ n) :
     ∑ t ∈ Finset.Icc 1 (n - 1),
@@ -2798,8 +2700,7 @@ lemma zero_term_vanishes
   apply Finset.sum_eq_zero
   intro u _
   apply Finset.sum_eq_zero
-  intro l _
-  simp
+  grind
 
 lemma summand_congr_on_filter
     (n d : ℕ) [NeZero n] [NeZero d]
@@ -2817,8 +2718,7 @@ lemma summand_congr_on_filter
         then ‖normalizedDFT n (intervalIndicator n mq) l‖ /
              (2 * min (ZMod.val k : ℝ) ((n : ℝ) - ZMod.val k))
         else 0)) := by
-  congr 1; ext u; congr 1; ext l
-  simp [hk]
+  grind
 
 lemma sum_restrict_to_nonzero
     (n d : ℕ) [NeZero n] [NeZero d]
@@ -2877,14 +2777,7 @@ lemma split_nonzero_by_divisibility
     have h2 : Finset.univ.filter (fun k : ZMod n =>
       k ≠ 0 ∧ ¬((d : ℕ) ∣ ZMod.val k)) ∪ Finset.univ.filter (fun k : ZMod n =>
         k ≠ 0 ∧ (d : ℕ) ∣ ZMod.val k) = Finset.univ.filter (fun k : ZMod n => k ≠ 0) := by
-      apply Finset.ext
-      intro x
-      simp only [Finset.mem_union, Finset.mem_filter]
-      constructor
-      · intro h
-        by_cases hx : x = 0 <;> by_cases hd : (d : ℕ) ∣ ZMod.val x <;> simp_all
-      · intro h
-        by_cases hx : x = 0 <;> by_cases hd : (d : ℕ) ∣ ZMod.val x <;> simp_all
+      grind
     rw [h2]
   have h3 : (∑ k ∈ Finset.univ.filter (fun k : ZMod n =>
     k ≠ 0 ∧ ¬((d : ℕ) ∣ ZMod.val k)) ∪ Finset.univ.filter (fun k : ZMod n =>
@@ -2906,9 +2799,7 @@ lemma split_nonzero_by_divisibility
       k ≠ 0 ∧ ¬((d : ℕ) ∣ ZMod.val k))) (Finset.univ.filter (fun k : ZMod n =>
         k ≠ 0 ∧ (d : ℕ) ∣ ZMod.val k)) := by
       apply Finset.disjoint_left.mpr
-      intro x hx1 hx2
-      simp only [Finset.mem_filter] at hx1 hx2
-      exact hx1.2.2 hx2.2.2
+      grind
     rw [Finset.sum_union h4]
   rw [h1, h3]
 
@@ -2956,8 +2847,7 @@ lemma factor_weight_from_double_sum
   · rw [Finset.sum_div]
     refine Finset.sum_congr rfl (fun u _ => ?_)
     rw [Finset.sum_div]
-    refine Finset.sum_congr rfl (fun l _ => ?_)
-    split_ifs <;> simp
+    grind
   · exact absurd hk' hk
 
 lemma dvd_simplify_multiple_case
@@ -3081,9 +2971,7 @@ lemma min_factor_d_nat (n d : ℕ) [NeZero n] [NeZero d] (hd_dvd : d ∣ n) (k :
 
 lemma div_factor_d (d M : ℝ) (hd : d ≠ 0) :
     (1 : ℝ) / (2 * (d * M)) = (1 / d) * (1 / (2 * M)) := by
-  rcases eq_or_ne M 0 with h₂ | h₂
-  · simp [h₂]
-  · field_simp
+  grind
 
 lemma summand_eq_via_bwd (n d : ℕ) [NeZero n] [NeZero d] (hd_dvd : d ∣ n) (_hd_pos : 0 < d)
     (k : ZMod n) (hk : k ∈ Finset.univ.filter (fun k : ZMod n => k ≠ 0 ∧ (d : ℕ) ∣ ZMod.val k)) :
@@ -3187,10 +3075,7 @@ lemma restricted_fourier_mass_le
         else 0)
       ≤ ∑ l : ZMod n, ‖normalizedDFT n (intervalIndicator n mq) l‖ := by
         apply Finset.sum_le_sum
-        intro l _
-        split_ifs with h
-        · exact le_refl _
-        · exact norm_nonneg _
+        grind
     _ ≤ 1 + Real.log (n : ℝ) :=
         fourier_intervalIndicator_l1_bound n hn mq hmq1 hmq2
 
@@ -3242,8 +3127,7 @@ lemma triple_sum_eq_card_times_product
     rw [Finset.sum_congr rfl hk_eq]
     simp_rw [div_eq_mul_inv]
     rw [← Finset.mul_sum]
-    congr 1
-    simp
+    grind
   exact le_of_eq lhs_eq
 
 lemma triple_sum_bound_via_factoring
@@ -3332,8 +3216,7 @@ lemma weight_sum_le_log
     1 + Real.log ↑n := by
   have h_subset : Finset.univ.filter (fun k : ZMod n => k ≠ 0 ∧ ¬((d : ℕ) ∣ ZMod.val k)) ⊆
       Finset.univ.filter (fun k : ZMod n => k ≠ 0) := by
-    intro k
-    simpa only [Finset.mem_filter, Finset.mem_univ, true_and] using And.left
+    grind
   have h_nonneg : ∀ k ∈ Finset.univ.filter (fun k : ZMod n => k ≠ 0),
       k ∉ Finset.univ.filter (fun k : ZMod n => k ≠ 0 ∧ ¬((d : ℕ) ∣ ZMod.val k)) →
       0 ≤ (1 : ℝ) / (2 * min (ZMod.val k : ℝ) ((n : ℝ) - ZMod.val k)) := by
@@ -3361,14 +3244,7 @@ lemma sum_eq_two_mul_half_sum (M : ℕ) :
     2 * (∑ t ∈ Finset.Icc 1 (M - 1),
       (1 : ℝ) / (2 * min (t : ℝ) ((M : ℝ) - t))) := by
   rw [Finset.mul_sum]
-  apply Finset.sum_congr rfl
-  intro t ht
-  have h5 : 1 ≤ t := (Finset.mem_Icc.mp ht).1
-  have h6 : t ≤ M - 1 := (Finset.mem_Icc.mp ht).2
-  have h8 : (t : ℝ) < M := by exact_mod_cast (by omega : t < M)
-  have ht1 : (1 : ℝ) ≤ (t : ℝ) := by exact_mod_cast h5
-  have h3 : (min ((t : ℝ)) ((M : ℝ) - (t : ℝ)) : ℝ) > 0 := lt_min (by linarith) (by linarith)
-  field_simp
+  grind
 
 lemma harmonic_min_sum_le_two_log (M n : ℕ) (hM : 2 ≤ M) (hMn : M ≤ n) :
     (∑ t ∈ Finset.Icc 1 (M - 1),
@@ -3736,8 +3612,7 @@ lemma summand_rewrite
 
 lemma pv_cancel (pv : ℝ) (x : ℝ) (hpv : 0 < pv) (hx : x ≠ 0) :
     pv * (1 / (pv * x)) = 1 / x := by
-  have h₂ : pv ≠ 0 := by linarith
-  field_simp
+  grind
 
 lemma unit_mod_coprime_p
     (p : ℕ) (hp : Nat.Prime p) (α : ℕ) (hα : 1 ≤ α)
@@ -3807,21 +3682,12 @@ lemma fiber_sum_cancel
               v)) % p ^ (α - v) : ℕ))) =
     (1 : ℝ) / (((p ^ v : ℕ) : ℝ) * min (((k_val / p ^ v) * s % p ^ (α - v) : ℕ) : ℝ)
             (((p ^ (α - v) : ℕ) : ℝ) - ((k_val / p ^ v) * s % p ^ (α - v) : ℕ))) := by
-    intro u hu
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hu
-    rw [summand_fiber_constant (k_val / p ^ v) (p ^ (α - v)) s _ hu]
+    grind
   rw [Finset.sum_congr rfl h_const, Finset.sum_const, nsmul_eq_mul]
   rw [projection_fiber_card p hp α hα v hv_pos hv_lt s hs_lt hs_cop]
   have hpv_pos : (0 : ℝ) < ((p ^ v : ℕ) : ℝ) :=
     Nat.cast_pos.mpr (Nat.pos_of_ne_zero (pow_ne_zero v hp.ne_zero))
-  have hr_ne : (k_val / p ^ v) * s % p ^ (α - v) ≠ 0 :=
-    reduced_product_mod_ne_zero_of_coprime p hp α hα k_val v hv_pos hv_lt hv_val hv_max s hs_cop
-  have hr_lt : (k_val / p ^ v) * s % p ^ (α - v) < p ^ (α - v) :=
-    Nat.mod_lt _ (Nat.pos_of_ne_zero (NeZero.ne _))
-  have hmin_ne : (min (((k_val / p ^ v) * s % p ^ (α - v) : ℕ) : ℝ)
-    (((p ^ (α - v) : ℕ) : ℝ) - ((k_val / p ^ v) * s % p ^ (α - v) : ℕ))) ≠ 0 :=
-    ne_of_gt (min_pos_of_ne_zero_lt _ _ hr_ne hr_lt)
-  exact pv_cancel ((p ^ v : ℕ) : ℝ) _ hpv_pos hmin_ne
+  grind
 
 lemma unit_mod_coprime_pow
     (p : ℕ) (hp : Nat.Prime p) (α : ℕ) (hα : 1 ≤ α)
@@ -3982,12 +3848,7 @@ lemma orbit_fiber_sum_eq
 lemma distribute_two_over_sum (k : ℕ) (hk : 1 ≤ k) :
     2 * ((∑ u ∈ Finset.Icc 1 (k - 1), (u : ℝ)⁻¹) + 1 / (2 * (k : ℝ))) =
     2 * (∑ u ∈ Finset.Icc 1 (k - 1), (u : ℝ)⁻¹) + 1 / (k : ℝ) := by
-  have h₂ : (k : ℝ) ≠ 0 := by
-    have : (1 : ℝ) ≤ (k : ℝ) := by exact_mod_cast hk
-    linarith
-  rw [mul_add]
-  congr 1
-  field_simp
+  grind
 
 lemma even_step_lhs_eq (k : ℕ) (hk : 1 ≤ k) :
     (∑ t ∈ Finset.Icc 1 (2 * k - 1),
@@ -3998,8 +3859,7 @@ lemma even_step_lhs_eq (k : ℕ) (hk : 1 ≤ k) :
     2 * (∑ t ∈ Finset.Icc 1 (2 * k - 1),
       (1 : ℝ) / (2 * min (t : ℝ) ((2 * k : ℝ) - t))) := by
     have := sum_eq_two_mul_half_sum (2 * k)
-    simp only [Nat.cast_mul, Nat.cast_ofNat] at this
-    exact this
+    grind
   rw [h1, symmetric_sum_even k hk]
   exact distribute_two_over_sum k hk
 
@@ -4050,13 +3910,7 @@ lemma rhs_eq (k : ℕ) (hk : 1 ≤ k) :
       push_cast; ring]
   rw [h1]
   have h2 := symmetric_sum_even (k + 1) (by omega : 1 ≤ k + 1)
-  rw [show 2 * (k + 1) - 1 = 2 * k + 1 from by omega, show k + 1 - 1 = k from by omega] at h2
-  congr 1
-  conv at h2 => lhs; arg 2; ext t; rw [show (2 * (↑(k + 1) : ℝ) : ℝ) = 2 * (↑k : ℝ) + 1 + 1 from by
-    push_cast; ring]
-  rw [h2]
-  congr 1
-  push_cast; ring
+  grind
 
 lemma odd_step (k : ℕ) (hk : 1 ≤ k) :
     (∑ t ∈ Finset.Icc 1 (2 * k),
@@ -4102,11 +3956,7 @@ lemma harmonic_min_sum_mono
   | succ k ih =>
     have ih' := ih (by omega)
     have hstep := harmonic_min_sum_step (M + k) (by omega)
-    have h1 : M + k + 1 - 1 = M + k := by omega
-    have h2 : M + (k + 1) - 1 = M + k := by omega
-    rw [h2]
-    rw [h1] at hstep
-    exact le_trans ih' hstep
+    grind
 
 lemma exists_padic_valuation
     (p : ℕ) (hp : Nat.Prime p) (α : ℕ) (_hα : 1 ≤ α)
@@ -4232,10 +4082,7 @@ lemma totient_prime_pow_simplify (P α : ℕ) (hP2 : 2 ≤ P) (hα : 0 < α) :
   have hPα1_pos : (0 : ℝ) < ↑(P ^ (α - 1)) := by positivity
   have hkey : (↑(P ^ α) : ℝ) = ↑(P ^ (α - 1)) * ↑P := by rw [← Nat.cast_mul, pow_pred_mul_eq P α hα]
   have hcast : (↑(P - 1) : ℝ) = ↑P - 1 := cast_nat_sub_one P hP2
-  rw [Nat.cast_mul, hcast, hkey]
-  have hPne : (↑P : ℝ) ≠ 0 := ne_of_gt hP_pos
-  have hPα1ne : (↑(P ^ (α - 1)) : ℝ) ≠ 0 := ne_of_gt hPα1_pos
-  field_simp
+  grind
 
 lemma four_times_sub_one_div_ge_two (P : ℕ) (hP2 : 2 ≤ P) :
     2 ≤ 4 * ((↑P : ℝ) - 1) / ↑P := by
@@ -4364,16 +4211,7 @@ lemma zmod_eq_zero_forward
     (h : (k_val : ZMod d) * (u_val : ZMod d) + (l_val : ZMod d) * (q : ZMod d) = 0) :
     (l_val : ZMod d) = -(q : ZMod d)⁻¹ * ((k_val * u_val : ℕ) : ZMod d) := by
   have h₂ : (q : ZMod d)⁻¹ * (q : ZMod d) = 1 := by exact ZMod.inv_mul_of_unit _ hq
-  have h₃ : (l_val : ZMod d) = -(q : ZMod d)⁻¹ * ((k_val : ZMod d) * (u_val : ZMod d)) := by
-    have : (l_val : ZMod d) * (q : ZMod d) = -((k_val : ZMod d) * (u_val : ZMod d)) :=
-      by linear_combination h
-    calc (l_val : ZMod d)
-        = (l_val : ZMod d) * ((q : ZMod d)⁻¹ * (q : ZMod d)) := by rw [h₂, mul_one]
-      _ = ((l_val : ZMod d) * (q : ZMod d)) * (q : ZMod d)⁻¹ := by ring
-      _ = -((k_val : ZMod d) * (u_val : ZMod d)) * (q : ZMod d)⁻¹ := by rw [this]
-      _ = -(q : ZMod d)⁻¹ * ((k_val : ZMod d) * (u_val : ZMod d)) := by ring
-  have h₄ : (l_val : ZMod d) = -(q : ZMod d)⁻¹ * ((k_val * u_val : ℕ) : ZMod d) := by simp_all
-  exact h₄
+  grind
 
 lemma zmod_eq_zero_backward
     (d : ℕ) [NeZero d] (k_val u_val l_val : ℕ) (q : ℤ)
@@ -4383,9 +4221,7 @@ lemma zmod_eq_zero_backward
   have h1 : (l_val : ZMod d) * (q : ZMod d) = -((q : ZMod d)⁻¹ * (q : ZMod d)) * ((k_val *
     u_val : ℕ) : ZMod d) := by rw [h]; ring
   have h2 : ((q : ZMod d)⁻¹ * (q : ZMod d) : ZMod d) = 1 := ZMod.inv_mul_of_unit _ hq
-  have h3 : (l_val : ZMod d) * (q : ZMod d) = -((k_val * u_val : ℕ) : ZMod d) := by simp_all
-  have h4 : (k_val : ZMod d) * (u_val : ZMod d) = ((k_val * u_val : ℕ) : ZMod d) := by simp
-  rw [h4, h3]; ring
+  grind
 
 lemma zmod_eq_zero_iff_eq_neg_inv_mul
     (d : ℕ) [NeZero d] (k_val u_val l_val : ℕ) (q : ℤ)
@@ -4442,8 +4278,7 @@ lemma cond_sum_eq_residue_class_sum
   apply Finset.sum_congr rfl
   intro l _
   have h := divisibility_iff_residue_class n d hd_dvd q hq_coprime_d k hk u l
-  simp only at h
-  simp only [h]
+  grind
 
 lemma nonzero_of_val_mod_eq_pos (n d : ℕ) [NeZero n] [NeZero d]
     (l : ZMod n) (b : ℕ) (hb_pos : 1 ≤ b) (_hb_lt : b < d)
@@ -4480,8 +4315,7 @@ lemma val_eq_of_mod_eq_and_quot_eq (n d : ℕ) [NeZero n] [NeZero d]
   have hb2 : b ≤ ZMod.val l₂ := h2 ▸ Nat.mod_le _ _
   have hr1 := fiber_reconstruct d b (ZMod.val l₁) h1 hb1
   have hr2 := fiber_reconstruct d b (ZMod.val l₂) h2 hb2
-  rw [heq] at hr1
-  linarith
+  grind
 
 lemma quotient_injOn (n d : ℕ) [NeZero n] [NeZero d] (_hd_dvd : d ∣ n)
     (b : ℕ) (hb_lt : b < d) :
@@ -4581,8 +4415,7 @@ lemma sum_range_split (J : ℕ) (f : ℕ → ℝ) :
     ∑ j ∈ Finset.range (J + 1), f j = f 0 + ∑ j ∈ Finset.Icc 1 J, f j := by
   have h : Finset.range (J + 1) = {0} ∪ Finset.Icc 1 J := by
     ext x; simp [Finset.mem_range, Finset.mem_Icc]; omega
-  have hdisj : Disjoint ({0} : Finset ℕ) (Finset.Icc 1 J) := by simp [Finset.mem_Icc]
-  rw [h, Finset.sum_union hdisj, Finset.sum_singleton]
+  grind
 
 lemma two_mul_add_one_le_real (M n : ℕ) (hM : M ≤ n) :
     (2 : ℝ) * ↑M + 1 ≤ 2 * ↑n + 1 := by
@@ -4655,12 +4488,7 @@ lemma sum_factor_Icc (n d : ℕ) (hd_pos : 0 < d) :
       (1 : ℝ) / (2 * ((j : ℝ) * (d : ℝ))) =
     (∑ j ∈ Finset.Icc 1 (n / (2 * d)), (1 : ℝ) / (j : ℝ)) / (2 * (d : ℝ)) := by
   rw [Finset.sum_div]
-  apply Finset.sum_congr rfl
-  intro j hj
-  have h₃ : 1 ≤ j := (Finset.mem_Icc.mp hj).1
-  have h₄ : 0 < (j : ℝ) := by exact_mod_cast h₃
-  have h₅ : 0 < (d : ℝ) := by exact_mod_cast hd_pos
-  field_simp
+  grind
 
 lemma sum_Icc_eq_sum_range (J : ℕ) :
     ∑ j ∈ Finset.Icc 1 J, (1 : ℝ) / (j : ℝ) =
@@ -4731,8 +4559,7 @@ lemma high_range_pointwise_bound
     ‖normalizedDFT n (intervalIndicator n mq) l‖ ≤
       1 / (2 * ((n : ℝ) - ZMod.val l)) := by
   have hval_pos : 0 < ZMod.val l := by
-    have h1 : 0 < ZMod.val l % d := by rw [hl_mod]; exact hb_pos
-    exact Nat.pos_of_ne_zero (by intro h; simp [h] at h1)
+    grind
   have hl_ne : l ≠ 0 := by
     intro h
     rw [h, ZMod.val_zero] at hval_pos
@@ -4759,15 +4586,8 @@ lemma nat_sub_mul_add (A B d b : ℕ) (hBA : B < A) (hbd : b < d) :
   have e1 : d * (A - B) = d * A - d * B := Nat.mul_sub_left_distrib d A B
   have e2 : d * (A - B - 1) + d = d * (A - B) := by
     rw [← Nat.mul_succ]
-    congr 1
-    omega
-  have e3 : d * B + d ≤ d * A := by
-    have hmul : d * (B + 1) ≤ d * A := by
-      apply Nat.mul_le_mul_left
-      omega
-    rw [Nat.mul_add, Nat.mul_one] at hmul
-    exact hmul
-  omega
+    grind
+  grind
 
 lemma n_sub_v_eq
     (n d : ℕ) (hd_dvd : d ∣ n) (b : ℕ) (hb_pos : 1 ≤ b) (hb_lt : b < d)
@@ -4956,8 +4776,7 @@ lemma reindex_filtered_sum
   have hv_big : n < 2 * ZMod.val l := by omega
   have heq :=
     complement_eq_arith_prog_real n d hd_dvd b hb_pos hb_lt (ZMod.val l) hv_lt hv_mod hv_big
-  rw [show (2 : ℝ) * ((n : ℝ) - ZMod.val l) = 2 * ((d : ℝ) - b + ((n - ZMod.val l - (d - b)) /
-    d : ℕ) * d) from by rw [heq]]
+  grind
 
 lemma image_subset_range
     (n d : ℕ) [NeZero n] [NeZero d] (_hn : 2 ≤ n)
@@ -5011,8 +4830,7 @@ lemma sum_range_le_sum_Icc (n d : ℕ) (hd_pos : 0 < d)
     intro j hj
     have h₄ : (j : ℕ) ∈ Finset.Icc 1 (n / (2 * d)) := hj
     have h₅ : 1 ≤ j := by
-      simp only [Finset.mem_Icc] at h₄
-      exact h₄.1
+      grind
     have h₉ : (d : ℝ) - b ≥ 0 := by
       have h₁₀ : (d : ℕ) ≥ b := by omega
       have h₁₁ : (d : ℝ) ≥ (b : ℝ) := by exact_mod_cast h₁₀
@@ -5300,8 +5118,7 @@ lemma per_unit_inner_sum_bound
 lemma combine_orbit_and_tail_bounds
     (C L d_real : ℝ) (_hC : 0 ≤ C) (_hL : 0 ≤ L) (hd : 0 < d_real) :
     C * (4 * L / d_real) + C * (L / d_real) ≤ C * (5 * L / d_real) := by
-  rw [show C * (4 * L / d_real) + C * (L / d_real) = C * (4 * L / d_real + L / d_real) from by ring,
-    show 4 * L / d_real + L / d_real = 5 * L / d_real from by field_simp; ring]
+  grind
 
 lemma orbit_average_bound
     (n d : ℕ) [NeZero n] [NeZero d] (hn : 2 ≤ n)
@@ -5318,22 +5135,7 @@ lemma orbit_average_bound
     ↑(Fintype.card (ZMod d)ˣ) * (5 * (1 + Real.log ↑n) / ↑d) := by
   have h_step1 := per_unit_inner_sum_bound n d hn hd q hq_coprime hq_pos hq_bound mq hmq k hk hk_nd
   have h_step2 := orbit_reciprocal_sum_bound n d hn hd k hk hk_nd
-  calc (∑ u : (ZMod d)ˣ,
-        (∑ l : ZMod n,
-          if ((d : ℤ) ∣ (↑(ZMod.val k) * ↑(u : ZMod d).val + ↑(ZMod.val l) * q))
-          then ‖normalizedDFT n (intervalIndicator n mq) l‖
-          else 0))
-      ≤ (∑ u : (ZMod d)ˣ,
-          1 / min ((ZMod.val k * (u : ZMod d).val % d : ℕ) : ℝ)
-                  ((d : ℝ) - (ZMod.val k * (u : ZMod d).val % d : ℕ)))
-        + ↑(Fintype.card (ZMod d)ˣ) * ((1 + Real.log ↑n) / ↑d) := h_step1
-    _ ≤ ↑(Fintype.card (ZMod d)ˣ) * (4 * (1 + Real.log ↑n) / ↑d)
-        + ↑(Fintype.card (ZMod d)ˣ) * ((1 + Real.log ↑n) / ↑d) := by gcongr
-    _ ≤ ↑(Fintype.card (ZMod d)ˣ) * (5 * (1 + Real.log ↑n) / ↑d) :=
-          combine_orbit_and_tail_bounds
-            ↑(Fintype.card (ZMod d)ˣ) (1 + Real.log ↑n) ↑d
-            (by positivity) (by positivity)
-            (Nat.cast_pos.mpr (NeZero.pos d))
+  grind
 
 lemma nonmultiple_d_weighted_bound
     (n d : ℕ) [NeZero n] [NeZero d] (hn : 2 ≤ n)
@@ -5385,9 +5187,7 @@ lemma nonmultiple_d_weighted_bound
         ∑ k ∈ Finset.univ.filter (fun k : ZMod n => k ≠ 0 ∧ ¬((d : ℕ) ∣ ZMod.val k)),
           (1 : ℝ) / (2 * min (ZMod.val k : ℝ) ((n : ℝ) - ZMod.val k)) := by
         rw [Finset.mul_sum]
-        congr 1
-        ext k
-        ring
+        grind
     _ ≤ ↑(Fintype.card (ZMod d)ˣ) * (5 * (1 + Real.log ↑n) / ↑d) *
         (1 + Real.log ↑n) := by
         apply mul_le_mul_of_nonneg_left (weight_sum_le_log n d hn)
@@ -5447,16 +5247,14 @@ lemma sum_filter_le_sum_univ
     ∑ u ∈ (Finset.univ.filter (fun u : (ZMod d)ˣ => ↑R * avg < f u)), f u ≤
       ∑ u : (ZMod d)ˣ, f u := by
   apply Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _)
-  intro i _ _
-  exact hf i
+  grind
 
 lemma card_mul_R_le_of_nsmul_le
     (s C R : ℕ) (avg : ℝ) (havg : 0 < avg)
     (h : s • (↑R * avg) ≤ ↑C * avg) :
     s * R ≤ C := by
   have h₁ : (s : ℝ) * (R : ℝ) * avg ≤ (C : ℝ) * avg := by
-    have h₂ : (s : ℝ) * (R : ℝ) * avg = s • (↑R * avg) := by simp [mul_comm, mul_left_comm]
-    rw [h₂]; exact h
+    grind
   have h₂ : (s : ℝ) * (R : ℝ) ≤ (C : ℝ) := le_of_mul_le_mul_right (by linarith) havg
   exact_mod_cast h₂
 
@@ -5470,8 +5268,7 @@ lemma filter_empty_of_avg_zero
   intro u _
   have h₆ : f u ≤ ∑ u : (ZMod d)ˣ, f u :=
     Finset.single_le_sum (fun i _ => hf i) (Finset.mem_univ u)
-  have : f u ≤ 0 := by linarith
-  linarith
+  grind
 
 lemma markov_card_mul_le
     (d : ℕ) [NeZero d]
@@ -5490,8 +5287,7 @@ lemma markov_card_mul_le
       have : Finset.univ.filter (fun u : (ZMod d)ˣ => 0 < f u) = ∅ :=
         filter_empty_of_avg_zero d f hf (by simp_all) R
       simpa [S, mul_zero] using this
-    rw [hS_empty]
-    simp
+    grind
   · have hlower := sum_filter_lower_bound d f hf avg R S (fun u hu => by
       exact (Finset.mem_filter.mp hu).2)
     have hupper := sum_filter_le_sum_univ d f hf avg R
@@ -5536,14 +5332,7 @@ lemma bad_set_from_average
   refine ⟨B, ?_, ?_⟩
   · have hcard := markov_card_filter_le d f hf avg havg hsum R hR
     exact image_val_card_le d B_units R hR hcard
-  · intro u hu
-    by_contra h
-    push Not at h
-    have : u ∈ B_units := by
-      simpa only [hB_units_def, Finset.mem_filter, Finset.mem_univ, true_and] using h
-    have : (u : ZMod d).val ∈ B := by
-      simpa only [hB_def] using Finset.mem_image_of_mem _ this
-    contradiction
+  · grind
 
 lemma k_zero_term_eq (n d : ℕ) [NeZero n] [NeZero d]
     (mp mq : ℕ) (p q : ℤ) :
@@ -5593,8 +5382,7 @@ lemma filtered_sum_to_full_sum (n d : ℕ) [NeZero n] [NeZero d]
   by_cases hk : k = 0
   · subst hk
     simp
-  · rw [if_pos hk]
-    exact inner_sum_eq_of_k_ne_zero n d mp mq p q k hk
+  · grind
 
 lemma double_sum_split_k0_kneq0
     (n d : ℕ) [NeZero n] [NeZero d]
@@ -5795,14 +5583,8 @@ lemma summand_le (n d : ℕ) [NeZero n] [NeZero d] (hn : 2 ≤ n)
           mul_le_mul_of_nonneg_right hbound hnorm_nonneg
       _ = ‖normalizedDFT n (intervalIndicator n (2 * q - 1).toNat) l‖ /
           (2 * min (ZMod.val k : ℝ) ((n : ℝ) - ZMod.val k)) := by
-          rw [one_div, mul_comm]
-          rfl
-  · rw [if_neg hcond]
-    by_cases hcond2 : k ≠ 0 ∧ ((d : ℤ) ∣ (↑(ZMod.val k) * ↑u_val + ↑(ZMod.val l) * q))
-    · exfalso
-      apply hcond
-      exact ⟨hcond2.1, h_equiv.mpr hcond2.2⟩
-    · rw [if_neg hcond2]
+          grind
+  · grind
 
 lemma k_nonzero_contribution_bound
     (n d : ℕ) [NeZero n] [NeZero d] (hn : 2 ≤ n)
@@ -5864,13 +5646,7 @@ lemma combine_bounds_arithmetic
         field_simp [h₆₃.ne']
       _ ≤ (7 * ↑R * (1 + Real.log n_real) ^ 2 : ℝ) * (1 / (P : ℝ)) := by gcongr
       _ = (7 * ↑R * (1 + Real.log n_real) ^ 2 : ℝ) / (P : ℝ) := by field_simp [h₆₂.ne']
-  have h₇ : (S0 : ℝ) + Sneq0 ≤ (7 * ↑R * (1 + Real.log n_real) ^ 2 : ℝ) / (P : ℝ) := by
-    calc
-      (S0 : ℝ) + Sneq0 ≤ ((1 + Real.log n_real) + 6 * ↑R * (1 + Real.log n_real) ^ 2) / ↑d :=
-        by linarith
-      _ ≤ (7 * ↑R * (1 + Real.log n_real) ^ 2 : ℝ) / ↑d := by linarith
-      _ ≤ (7 * ↑R * (1 + Real.log n_real) ^ 2 : ℝ) / (P : ℝ) := by linarith
-  exact h₇
+  grind
 
 lemma combine_k0_kneq0_bounds
     (n : ℕ) (hn : 2 ≤ n) (d : ℕ) [NeZero d]
@@ -5939,10 +5715,7 @@ lemma int_not_dvd_imp_nat_not_dvd
 lemma natAbs_mod_eq_emod_toNat
     (d : ℕ) (d_pos : 0 < d) (p : ℤ) (hp_pos : 1 ≤ p) :
     p.natAbs % d = (p % (d : ℤ)).toNat := by
-  have hp_nn : 0 ≤ p := by omega
-  have h₁ : p.natAbs = p.toNat := by omega
-  rw [h₁, Int.toNat_emod hp_nn (by omega : (0 : ℤ) ≤ ↑d)]
-  simp
+  grind
 
 lemma intCast_eq_natCast_of_pos
     (d : ℕ) [NeZero d] (p : ℤ) (hp_pos : 1 ≤ p) :
@@ -6030,8 +5803,7 @@ lemma double_sum_bad_set_construction
       then ‖normalizedDFT n (intervalIndicator n (2 * q - 1).toNat) l‖ /
            (2 * min (ZMod.val k : ℝ) ((n : ℝ) - ZMod.val k))
       else 0) ≤ 6 * ↑R * (1 + Real.log ↑n) ^ 2 / ↑d := by
-      calc _ ≤ ↑R * (6 * (1 + Real.log ↑n) ^ 2 / ↑d) := hS_bound
-        _ = 6 * ↑R * (1 + Real.log ↑n) ^ 2 / ↑d := by ring
+      grind
     have hu_congr : (p : ZMod d) = ((u : ZMod d).val : ZMod d) := by
       rw [ZMod.natCast_zmod_val]; exact hu_eq
     exact good_p_double_sum_bound n d hn rfl p q hp_pos hq_pos hpq hq_coprime hp_cop
@@ -6102,16 +5874,7 @@ lemma error_split_bound
   refine ⟨B, hB_card, fun p hp_ndvd hp_pos hp_sum hp_notbad => ?_⟩
   have h_decomp := error_decomposition n hn p q hp_pos hq_pos hp_sum
   have h_EP0 := error_EP0_universal_bound n hn p q hp_pos hq_pos hp_sum
-  have h_EPalpha := hB_bound p hp_ndvd hp_pos hp_sum hp_notbad
-  rw [h_decomp]
-  calc |(@errorTermEP0 n ⟨by omega⟩ p q).re + (@errorTermEPalpha n ⟨by omega⟩ p q).re|
-      ≤ |(@errorTermEP0 n ⟨by omega⟩ p q).re| + |(@errorTermEPalpha n ⟨by omega⟩ p q).re| :=
-        abs_add_le _ _
-    _ ≤ (Nat.totient n : ℝ) * (1 + Real.log (n : ℝ)) ^ 2 /
-          ((largestPrimeFactor n : ℝ) - 1) +
-        7 * ⌈Real.log (n : ℝ)⌉₊ * (Nat.totient n : ℝ) *
-          (1 + Real.log (n : ℝ)) ^ 2 / (largestPrimeFactor n : ℝ) :=
-        add_le_add h_EP0 h_EPalpha
+  grind
 
 lemma combine_error_P0_Palpha
     (n : ℕ) (hn : 2 ≤ n) :
@@ -6133,8 +5896,7 @@ lemma combine_error_P0_Palpha
     (largestPrimeFactor n : ℝ) (⌈Real.log (n : ℝ)⌉₊ : ℝ)
     ((Nat.totient n : ℝ) * (1 + Real.log (n : ℝ)) ^ 2)
     hP_real hR_real hA
-  ring_nf at key ⊢
-  linarith
+  grind
 
 lemma fourier_markov_bad_set
     (n : ℕ) (hn : 2 ≤ n)
@@ -6198,8 +5960,7 @@ theorem fourier_without_totient' (η θ : ℝ)
       9 * (1 + Real.log (n : ℝ)) ^ 3 / (n : ℝ) ^ θ :=
     log_cube_div_P_le_div_rpow' θ hθ_pos n hn hP
   have h3 : 9 * (1 + Real.log (n : ℝ)) ^ 3 / (n : ℝ) ^ θ < 9 * (η ^ 2 / 100) := by
-    rw [mul_div_assoc]
-    exact mul_lt_mul_of_pos_left h_small (by positivity)
+    grind
   have h4 : 9 * (η ^ 2 / 100) < η ^ 2 / 10 := nine_hundredths_lt_tenth' η hη_pos
   linarith
 
@@ -6275,16 +6036,7 @@ lemma combine_main_and_error (η : ℝ) (hη_pos : 0 < η)
     (hM : η ^ 2 * (Nat.totient n : ℝ) ≤ M_val)
     (hE : |S_val - M_val| < η ^ 2 / 10 * (Nat.totient n : ℝ)) :
     η ^ 2 / 2 * (Nat.totient n : ℝ) ≤ S_val := by
-  have h4 : (η ^ 2 : ℝ) * (Nat.totient n : ℝ) ≥ 0 := by positivity
-  have h6 : S_val ≥ M_val - |S_val - M_val| := by
-    obtain h6 | h6 := abs_cases (S_val - M_val) <;> linarith
-  have h7 : S_val ≥ η ^ 2 * (Nat.totient n : ℝ) - η ^ 2 / 10 * (Nat.totient n : ℝ) := by
-    linarith [h6, hE, hM]
-  have h8 : η ^ 2 * (Nat.totient n : ℝ) - η ^ 2 / 10 * (Nat.totient n : ℝ) = (9 : ℝ) / 10 * η ^ 2 *
-    (Nat.totient n : ℝ) := by
-    ring_nf
-  rw [h8] at h7
-  linarith
+  grind
 
 lemma fourier_markov_residue_bound (η : ℝ) (θ : ℝ)
     (hη_pos : 0 < η) (hη_lt : η < 1 / 6) (hθ_pos : 0 < θ) (hθ_lt : θ < 1)
@@ -6304,10 +6056,7 @@ lemma fourier_markov_residue_bound (η : ℝ) (θ : ℝ)
   exact ⟨B, hB_card, fun p hp_coprime hpq hp_notinB => by
     have hE := hB_error p hp_coprime hpq hp_notinB
     have hM := main_term_lower_bound η hη_pos n hn p q hpq
-    exact combine_main_and_error η hη_pos n
-      (countingFunctionS n p q : ℝ)
-      ((2 * ↑p - 1) * (2 * ↑q - 1) * (Nat.totient n : ℝ) / (n : ℝ) ^ 2)
-      hM hE⟩
+    grind⟩
 lemma bad_residues_bound (η : ℝ) (θ : ℝ)
     (hη_pos : 0 < η) (hη_lt : η < 1 / 6) (hθ_pos : 0 < θ) (hθ_lt : θ < 1)
     (n : ℕ) (hn : 2 ≤ n)
@@ -6458,18 +6207,14 @@ lemma snd_mem_Icc_of_mem_residueBadPairs (n : ℕ) (η : ℝ) (hη : 0 < η) (_h
 lemma fiber_pair_ncard_le (S : Set (ℤ × ℤ)) (q : ℤ) :
     {pq ∈ S | pq.2 = q}.ncard ≤ {p : ℤ | (p, q) ∈ S}.ncard := by
   have h₁ : {pq ∈ S | pq.2 = q} = Set.image (fun p : ℤ => (p, q)) {p : ℤ | (p, q) ∈ S} := by
-    ext ⟨a, b⟩; simp only [Set.mem_setOf_eq, Set.mem_image, Prod.mk.injEq]
-    constructor
-    · rintro ⟨ha, rfl⟩; exact ⟨a, ha, rfl, rfl⟩
-    · rintro ⟨_, hp, rfl, rfl⟩; exact ⟨hp, rfl⟩
+    grind
   have h₂ : Function.Injective (fun p : ℤ => (p, q)) := fun a b hab => (Prod.mk.inj hab).1
   rw [h₁]; exact (Set.ncard_image_of_injective _ h₂).le
 
 lemma card_Icc_one_half_le (n : ℕ) (_hn : 2 ≤ n) :
     (Finset.Icc (1 : ℤ) (↑n / 2)).card ≤ n / 2 := by
   rw [show (Finset.Icc (1 : ℤ) (↑n / 2)).card = ((↑n / 2 : ℤ) + 1 - 1).toNat from by simp]
-  have h₇ : (↑n / 2 : ℤ) = ↑(n / 2 : ℕ) := by omega
-  rw [show ((↑n / 2 : ℤ) + 1 - 1 : ℤ) = ↑n / 2 from by ring, h₇, Int.toNat_natCast]
+  grind
 
 lemma residueBadPairs_ncard_from_fibers (η : ℝ) (θ : ℝ)
     (hη_pos : 0 < η) (_hη_lt : η < 1 / 6) (_hθ_pos : 0 < θ) (_hθ_lt : θ < 1)
@@ -6525,9 +6270,7 @@ lemma residueBadPairs_ncard_le_counting (η : ℝ) (θ : ℝ)
       (n / (2 * largestPrimeFactor n ^ n.factorization (largestPrimeFactor n)) + 1) := by
   have hfibers := residueBadPairs_ncard_from_fibers η θ hη_pos hη_lt hθ_pos hθ_lt n hn hP
     h_small (fiber_ncard_bound η θ hη_pos hη_lt hθ_pos hθ_lt n hn hP h_small)
-  linarith [Nat.mul_assoc (n / 2)
-    (largestPrimeFactor n ^ n.factorization (largestPrimeFactor n) / ⌈Real.log ↑n⌉₊)
-    (n / (2 * largestPrimeFactor n ^ n.factorization (largestPrimeFactor n)) + 1)]
+  grind
 
 lemma nat_div_prod_le (a b c d : ℕ) (hc : 0 < c) (hd : 0 < d) :
     (a / c) * (b / d) ≤ (a * b) / (c * d) := by
@@ -6661,9 +6404,7 @@ lemma three_fourths_ceil_le_inv_log (n : ℕ) (hn : 2 ≤ n) :
   have h₆ : (n : ℝ) ^ 2 / ⌈Real.log (n : ℝ)⌉₊ ≥ 0 := by positivity
   have h₇ : ((n : ℝ) ^ 2 / ⌈Real.log (n : ℝ)⌉₊) ≤ ((n : ℝ) ^ 2 / Real.log (n : ℝ)) :=
     div_le_div_of_nonneg_left (by positivity) h₂ h₃
-  rw [show 3 / 4 * (n : ℝ) ^ 2 / ⌈Real.log (n : ℝ)⌉₊ =
-    (3 / 4 : ℝ) * ((n : ℝ) ^ 2 / ⌈Real.log (n : ℝ)⌉₊) from by ring]
-  nlinarith
+  grind
 
 lemma residueBadPairs_ncard_bound (η : ℝ) (θ : ℝ)
     (hη_pos : 0 < η) (hη_lt : η < 1 / 6) (hθ_pos : 0 < θ) (hθ_lt : θ < 1)
@@ -6734,9 +6475,7 @@ lemma pdivPairs_subset_prod_half (n : ℕ) (η : ℝ) (hη_pos : 0 < η) :
   have hb2 : (2 * b : ℤ) < (n : ℤ) := by
     have hr : (2 : ℝ) * (b : ℝ) < (n : ℝ) := by linarith
     exact_mod_cast hr
-  have h₁₁ : (a : ℤ) ≤ (n / 2 : ℤ) := by omega
-  have h₁₂ : (b : ℤ) ≤ (n / 2 : ℤ) := by omega
-  exact ⟨⟨h₇, h₁₁, h₆⟩, ⟨h₈, h₁₂⟩⟩
+  grind
 
 lemma ncard_nonneg_multiples_eq (B : ℤ) (P : ℕ) (hP : 0 < P) (hB : 0 ≤ B) :
     ({x : ℤ | 0 ≤ x ∧ x ≤ B ∧ (P : ℤ) ∣ x}).ncard = B.toNat / P + 1 :=
@@ -6798,10 +6537,7 @@ lemma pdivPairs_ncard_le_when_small_P (n : ℕ) (η : ℝ) (hη_pos : 0 < η)
     rw [ncard_prod_eq]
     exact Nat.mul_le_mul ncard_multiples ncard_interval
   have arith_bound := nat_div_mul_le_mul_div n (largestPrimeFactor n) hP_pos
-  calc (pdivPairs n η).ncard
-      ≤ prod_set.ncard := ncard_mono
-    _ ≤ (n / largestPrimeFactor n) * n := ncard_prod_le
-    _ ≤ n * n / largestPrimeFactor n := arith_bound
+  grind
 
 lemma nat_sq_div_le_real (n : ℕ) (P : ℕ) (θ : ℝ)
     (hn : 2 ≤ n) (hP_pos : 0 < P)
@@ -6841,11 +6577,7 @@ lemma badPairsE_subset_union (n : ℕ) (η : ℝ) :
   intro ⟨p, q⟩ hpq
   simp only [badPairsE, pdivPairs, residueBadPairs, Set.mem_setOf_eq,
              Set.mem_union] at hpq ⊢
-  by_cases h : (largestPrimeFactor n : ℤ) ∣ p
-  · left
-    exact ⟨hpq.1, hpq.2.1, h⟩
-  · right
-    exact ⟨hpq, h⟩
+  grind
 
 lemma badPairsE_ncard_le (η : ℝ) (θ : ℝ)
     (hη_pos : 0 < η) (hη_lt : η < 1 / 6) (hθ_pos : 0 < θ) (hθ_lt : θ < 1)
@@ -7019,9 +6751,7 @@ lemma exceptional_set_with_counting_bound (η : ℝ) (θ : ℝ)
 
 lemma pred_sq_ge (p : ℕ) (hp : 3 ≤ p) : p ≤ (p - 1) ^ 2 := by
   obtain ⟨m, rfl⟩ : ∃ m, p = m + 3 := ⟨p - 3, by omega⟩
-  simp only [show m + 3 - 1 = m + 2 from by omega]
-  ring_nf
-  nlinarith
+  grind
 
 lemma odd_prime_pow_le_totient_sq (p k : ℕ) (hp : Nat.Prime p) (hodd : p ≠ 2) (hk : 1 ≤ k) :
     p ^ k ≤ (p ^ k).totient ^ 2 := by
@@ -7097,10 +6827,7 @@ lemma totient_sq_lower_bound (n : ℕ) (hn : 1 ≤ n) : n ≤ 2 * n.totient ^ 2 
   have hn0 : n ≠ 0 := by omega
   have hm_odd : ¬ 2 ∣ m := Nat.not_dvd_ordCompl Nat.prime_two hn0
   have hm_pos : 1 ≤ m := by
-    by_contra h
-    push Not at h
-    interval_cases m
-    simp at hn_eq; omega
+    grind
   rcases v.eq_zero_or_pos with hv0 | hv_pos
   · rw [hv0] at hn_eq
     simp only [pow_zero, one_mul] at hn_eq
@@ -7188,8 +6915,7 @@ lemma badPairsSet_ncard_upper_bound (η : ℝ) (θ : ℝ)
     have hpq_mem := hpq.1
     have hpq_gcd := hpq.2.1
     have hpq_lt := hpq.2.2
-    have hge := hE_good pq hpq_mem hpq_gcd hpqE
-    omega
+    grind
   calc ((badPairsSet n η).ncard : ℝ)
       ≤ (E.ncard : ℝ) := by exact_mod_cast Set.ncard_le_ncard hbad_sub hE_fin
     _ ≤ (n : ℝ) ^ 2 * (1 / (n : ℝ) ^ θ + 1 / Real.log n) := hE_card
@@ -7247,9 +6973,7 @@ lemma asymptotic_decay (θ : ℝ) (hθ_pos : 0 < θ) :
   obtain ⟨N₁, hN₁⟩ := inv_rpow_eventually_lt θ hθ_pos (ε / 2) hε2
   obtain ⟨N₂, hN₂⟩ := inv_log_eventually_lt (ε / 2) hε2
   exact ⟨max N₁ N₂, fun n hn => by
-    have h1 := hN₁ n (le_of_max_le_left hn)
-    have h2 := hN₂ n (le_of_max_le_right hn)
-    linarith⟩
+    grind⟩
 
 lemma ratio_bound_core (bad Hn c C n2 decay ε : ℝ)
     (hc_pos : 0 < c) (hC_pos : 0 < C) (hε_pos : 0 < ε)

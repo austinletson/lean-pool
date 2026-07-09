@@ -207,8 +207,7 @@ lemma flux_times_log_integrable_coulomb
     fun j N => schwartz_partial_decay hSchwartz x j N
   -- Uniform Newtonian bounds
   obtain ⟨M₀, hM₀, hM₀_bound⟩ := newtonian_schwartz_uniform_bound (fun w => f x w)
-    (fun N => by obtain ⟨C, hC, hb⟩ := hf_decay N; exact ⟨C, hC, fun w => by
-      change |(fun w => f x w) w| * _ ≤ C; exact hb w⟩)
+    (fun N => by obtain ⟨C, hC, hb⟩ := hf_decay N; grind)
     (hf_smooth_v x).continuous.aestronglyMeasurable
   have hMj : ∀ j : Fin 3, ∃ M > 0, ∀ v,
       ∫ w, ‖v - w‖⁻¹ * |fderiv ℝ (f x) w (Pi.single j 1)| ≤ M := by
@@ -277,8 +276,7 @@ lemma flux_times_log_integrable_coulomb
           rw [pow_add (1 + ‖v‖) K_log 4]; field_simp
       _ ≤ C_bound / (1 + ‖v‖) ^ 4 := by
           gcongr
-          simp only [C_bound]
-          linarith
+          grind
 
 -- ============================================================================
 -- Flux component bound with polynomial gradient hypothesis

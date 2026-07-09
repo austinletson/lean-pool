@@ -109,8 +109,7 @@ theorem safety_liveness_decomposition
   · -- `B` is a liveness property
     intro α
     by_cases h : ∃ β : InfWord T, α.append β ∈ P
-    · rcases h with ⟨β, hβ⟩
-      exact ⟨β, Or.inl hβ⟩
+    · grind
     · have hforall : ∀ β : InfWord T, α.append β ∉ P := not_exists.mp h
       obtain ⟨t⟩ := t_nonempty
       refine ⟨fun _ => t, Or.inr fun hA => ?_⟩
@@ -119,8 +118,7 @@ theorem safety_liveness_decomposition
       exact hforall γ (by convert hγ using 1; simp [hslice])
   · -- intersection equals `P`
     ext σ; constructor
-    · intro hσ
-      exact hσ.2.resolve_right (fun h => h hσ.1)
+    · grind
     · intro hσ
       refine ⟨fun n => ⟨fun k => σ (k + n), ?_⟩, Or.inl hσ⟩
       convert hσ using 1

@@ -354,20 +354,7 @@ theorem ext_pairing_inj [ModelPairing V] {a b a' b' c : V} :
   have h0_a' : a' = a ∨ a' = b := (h0 a').mpr (Or.inl rfl)
   have h0_b : b = a' ∨ b = b' := (h0 b).mp (Or.inr rfl)
   have h0_b' : b' = a ∨ b' = b := (h0 b').mpr (Or.inr rfl)
-  by_cases h_a_eq_a' : a = a'
-  · by_cases h_b_eq_b' : b = b'
-    · exact Or.inl ⟨h_a_eq_a', h_b_eq_b'⟩
-    · have h1 : b = a' := Or.resolve_right h0_b h_b_eq_b'
-      have h2 : b' = a := Or.resolve_right h0_b' (Ne.symm h_b_eq_b')
-      absurd h_b_eq_b'
-      rw [h1, h_a_eq_a'.symm, h2.symm]
-  · by_cases h_b_eq_b' : b = b'
-    · have h1 : a = b' := Or.resolve_left h0_a h_a_eq_a'
-      have h2 : a' = b := Or.resolve_left h0_a' (Ne.symm h_a_eq_a')
-      absurd h_a_eq_a'
-      rw [h1, h_b_eq_b'.symm, h2.symm]
-    · exact Or.inr ⟨(Or.resolve_right h0_b' (Ne.symm h_b_eq_b')).symm,
-        Or.resolve_right h0_b h_b_eq_b'⟩
+  grind
 
 /-- Every element has a singleton. -/
 theorem ext_singleton [ModelPairing V] : ∀ (a : V), ∃ (b : V), ExtIsSingleton a b := by
@@ -774,9 +761,7 @@ theorem ExtRegularity [ModelEPUPIR V] (a : V) : (∃ (b : V), b ∈ a) →
     (∃ (b : V), b ∈ a ∧ ∀ (c : V), (c ∈ a → c ∉ b)) := by
   suffices h : ∀ (x y : V), y ∈ x →
       ∃ (z : V), z ∈ x ∧ ∀ (w : V), w ∈ x → w ∉ z by
-    intro h_nonempty
-    obtain ⟨b', h_b'⟩ := h_nonempty
-    exact h a b' h_b'
+    grind
   have h := ModelRegularity.regularity (default : ℕ → V) default
   unfold intRegularity at h
   simpa using h
@@ -786,8 +771,7 @@ theorem no_loop [ModelEPUPIR V] (a : V) : a ∉ a := by
   obtain ⟨a_sing, h_a_sing⟩ := ext_singleton a
   obtain ⟨b, h_b⟩ := ExtRegularity a_sing ⟨a, (h_a_sing a).mpr rfl⟩
   have h1 : b = a := (h_a_sing b).mp h_b.left
-  rw [← h1]
-  exact h_b.right b ((h_a_sing b).mpr h1)
+  grind
 
 /-- No set satisfies a∈a internally. -/
 theorem int_no_loop [ModelEPUPIR V] {n : ℕ} (s : ℕ → V) (xs : Fin n → V) :
@@ -935,9 +919,7 @@ theorem ext_omega_exists [ModelEPUPIC V] {n : ℕ} {s : ℕ → V}
     unfold ϕ
     simp
   have h_b' : ∀ (x : V), x ∈ b ↔ x ∈ a ∧ ∀ (c : V), ExtIsInductive c → x ∈ c := by
-    intro x
-    rw [h_b]
-    exact and_congr_right fun _ ↦ h_realize_ϕ x
+    grind
   unfold ExtIsOmega
   constructor
   · unfold ExtIsInductive
@@ -958,9 +940,7 @@ theorem ext_omega_exists [ModelEPUPIC V] {n : ℕ} {s : ℕ → V}
       apply (h_b y).mpr
       constructor
       · unfold ExtIsInductive at h_a
-        apply h_a.right x
-        · apply ((h_b x).mp h_xb).left
-        · apply h_xy
+        grind
       · apply (h_realize_ϕ y).mpr
         intro c h_c
         have h_x_in_c : x ∈ c := by
@@ -1021,8 +1001,7 @@ theorem ext_induction [ModelEPUPIC V] {n : ℕ} {s : ℕ → V} {xs : Fin n → 
         unfold ExtIsInductive at h_omega
         apply h_omega.left.left _emp _h_emp
       · have h_emp_eq : _emp = emp := ext_emptyset_unique _h_emp h_emp
-        rw [h_emp_eq]
-        exact h_basis
+        grind
     · intro x h_xb y h1
       unfold ExtIsSeparation at h_b
       apply (h_b y).mpr
@@ -1030,9 +1009,7 @@ theorem ext_induction [ModelEPUPIC V] {n : ℕ} {s : ℕ → V} {xs : Fin n → 
       · have h_x_in_omega : x ∈ omega := by
           apply ((h_b x).mp h_xb).left
         apply omega_closed_under_succ omega h_omega x y h_x_in_omega h1
-      · have h_ϕ_x : ϕ.Realize (replaceInitialValues s ![x]) xs := by
-          apply ((h_b x).mp h_xb).right
-        apply h_inductive x h_ϕ_x y h1
+      · grind
   intro x h_x
   unfold ExtIsOmega at h_omega
   have h2 : omega ⊆ b := by

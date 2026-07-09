@@ -42,9 +42,7 @@ theorem IsUnifLocDoublingMeasure.exists_closedBall_covering_tsum_measure_le_of_m
     rcases hf x hx (min δ (4 * scalingScaleOf μ 4)) (by positivity) with ⟨r, hfr, hr₀, hr⟩
     rw [lt_min_iff] at hr
     refine ⟨r / 4, by positivity, ?_, ?_, ?_⟩
-    · grw [hr.2]
-      field_simp
-      rfl
+    · grind
     · field_simp; assumption
     · grw [← hδU]
       gcongr

@@ -74,15 +74,13 @@ theorem cone_not_subset_singleton (σ τ : Str) : ¬ cone σ ⊆ ({τ} : Set Str
   rw [Set.mem_singleton_iff] at h1 h2
   rw [← h1] at h2
   have hlen := congrArg List.length h2
-  simp only [List.length_append, List.length_cons, List.length_nil] at hlen
-  omega
+  grind
 
 /-- Cones and singletons are distinct neighbourhoods. -/
 theorem cone_ne_singleton (σ τ : Str) : cone σ ≠ ({τ} : Set Str) := by
   intro h
   refine cone_not_subset_singleton σ τ ?_
-  intro x hx
-  rw [← h]; exact hx
+  grind
 
 /-- Nested-or-disjoint for a cone vs. a terminator singleton: `{τ} ⊆ σΣ*` iff `σ prefix
 τ`, else
@@ -96,8 +94,7 @@ theorem cone_singleton_nd (σ τ : Str) :
       ext w
       simp only [Set.mem_inter_iff, mem_cone, Set.mem_singleton_iff, Set.mem_empty_iff_false,
         iff_false, not_and]
-      rintro hw rfl
-      exact h hw))
+      grind))
 
 /-- Nested-or-disjoint for a terminator singleton vs. a cone (the mirror of
 `cone_singleton_nd`). -/
@@ -110,21 +107,13 @@ theorem singleton_cone_nd (σ τ : Str) :
       ext w
       simp only [Set.mem_inter_iff, Set.mem_singleton_iff, mem_cone, Set.mem_empty_iff_false,
         iff_false, not_and]
-      rintro rfl hw
-      exact h hw))
+      grind))
 
 /-- Nested-or-disjoint for two terminator singletons: equal or disjoint. -/
 theorem singleton_singleton_nd (σ τ : Str) :
     ({σ} : Set Str) ⊆ ({τ} : Set Str) ∨ ({τ} : Set Str) ⊆ ({σ} : Set Str) ∨
       ({σ} : Set Str) ∩ ({τ} : Set Str) = ∅ := by
-  rcases (inferInstance : Decidable (σ = τ)) with h | h
-  · refine Or.inr (Or.inr ?_)
-    ext w
-    simp only [Set.mem_inter_iff, Set.mem_singleton_iff, Set.mem_empty_iff_false, iff_false,
-      not_and]
-    rintro rfl h2
-    exact h h2
-  · subst h; exact Or.inl subset_rfl
+  grind
 
 /-- **`𝒞` is pairwise nested-or-disjoint.** Cone/cone is the `𝔹` trichotomy; the
 mixed and
@@ -167,8 +156,7 @@ theorem subset_singleton_eq {W : Set Str} {σ : Str} (hW : C.mem W) (hsub : W �
     W = ({σ} : Set Str) := by
   rcases hW with ⟨ρ, rfl⟩ | ⟨ρ, rfl⟩
   · exact absurd hsub (cone_not_subset_singleton ρ σ)
-  · rw [Set.singleton_subset_iff, Set.mem_singleton_iff] at hsub
-    rw [hsub]
+  · grind
 
 /-! ### Total elements: finite sequences `↑{σ}`, and `⊥ ⊏ Λ`. -/
 
@@ -204,8 +192,7 @@ theorem bot_lt_Lambda : C.bot < Lambda := by
     rw [h]; exact ⟨memC_singleton [], subset_rfl⟩
   rw [C.mem_bot, C_master] at hmem
   have h2 : ([true] : Str) ∈ ({([] : Str)} : Set Str) := by rw [hmem]; trivial
-  rw [Set.mem_singleton_iff] at h2
-  exact absurd h2 (by decide)
+  grind
 
 /-! ### Prepending a string to a `𝒞`-neighbourhood. -/
 
@@ -213,9 +200,7 @@ theorem bot_lt_Lambda : C.bot < Lambda := by
 theorem prepend_singleton (σ ρ : Str) : prepend σ ({ρ} : Set Str) = ({σ ++ ρ} : Set Str) := by
   ext w
   simp only [mem_prepend, Set.mem_singleton_iff]
-  constructor
-  · rintro ⟨τ, rfl, rfl⟩; rfl
-  · rintro rfl; exact ⟨ρ, rfl, rfl⟩
+  grind
 
 /-- Prepending preserves `𝒞`-membership (cone ↦ cone, singleton ↦ singleton). -/
 theorem memC_prepend (σ : Str) {Y : Set Str} (hY : C.mem Y) : C.mem (prepend σ Y) := by
@@ -318,10 +303,7 @@ theorem juxtapose_singleton_mem (σ : Str) (y : C.Element) {Z : Set Str} :
       refine ⟨C.master, y.master_mem, ?_⟩
       rw [C_master, prepend_univ]
       exact (cone_subset_cone.mpr hρσ).trans hsub
-    · obtain rfl : σ = ρ := by
-        have := Set.singleton_subset_iff.mp hsingleX
-        rwa [Set.mem_singleton_iff] at this
-      exact ⟨Y, hYmem, hsub⟩
+    · grind
   · rintro ⟨hZ, Y', hY'mem, hsub⟩
     exact ⟨{σ}, Y', ⟨memC_singleton σ, subset_rfl⟩, hY'mem, y.sub hY'mem, hZ,
       Or.inr ⟨σ, rfl, hsub⟩⟩

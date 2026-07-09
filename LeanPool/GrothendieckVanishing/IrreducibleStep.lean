@@ -86,11 +86,7 @@ theorem sHom_stalk_bijective_at
       (TopCat.Sheaf.zeroOutsideInt.generator U)) = R.germ U x hxU s := by
     change T.map (TopCat.Sheaf.zeroOutsideInt.sHomVal hRsh s) _ = _
     rw [TopCat.Presheaf.stalkFunctor_map_germ_apply]
-    change ConcreteCategory.hom (R.germ U x hxU)
-        ((ConcreteCategory.hom ((TopCat.Sheaf.zeroOutsideInt.sHomVal hRsh s).app (op U)))
-          (TopCat.Sheaf.zeroOutsideInt.generator U)) =
-      ConcreteCategory.hom (R.germ U x hxU) s
-    exact congrArg (R.germ U x hxU) h_sHom_app
+    grind
   have h_surj : Function.Surjective sHom_x := by
     intro a; obtain ⟨k, hk⟩ := hgen a
     refine ⟨k • (TopCat.Sheaf.zeroOutsideInt U).presheaf.germ U x hxU
@@ -224,8 +220,7 @@ theorem exists_section_generating_stalks
         rw [hn0, zero_smul] at hn
         exact hn
       exact hzero.trans (map_zero (i_x x₀')).symm
-    exact (cyclic_generator_of_coeff hn_ne hn).imp fun _ he ↦
-        ⟨he.1, x₀', hx₀'V, he.2.1, he.2.2⟩
+    grind
   classical
   let d : ℤ := Nat.find hP
   obtain ⟨hd_nat_pos, x₀, hx₀V, ⟨a₁, ha₁⟩, _⟩ := Nat.find_spec hP

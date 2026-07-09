@@ -49,8 +49,7 @@ private lemma injective_topDualPairing_flip : Function.Injective (topDualPairing
     have h :
         inner 𝕜 (x - y) (x - y) = inner 𝕜 (x - y) x - inner 𝕜 (x - y) y := by
       simpa using (inner_sub_right (𝕜 := 𝕜) (x := x - y) (y := x) (z := y))
-    rw [h]
-    exact hdiff
+    grind
   have : x - y = 0 := (inner_self_eq_zero).1 hself
   exact sub_eq_zero.mp this
 

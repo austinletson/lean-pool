@@ -134,10 +134,7 @@ theorem mk_derivedSet_le (S : Set Ordinal) : #(derivedSet S) ≤ #S := by
   -- Helper: derive a contradiction when `a.1 < b.1` (in any LT instance) and `f a = f b`.
   suffices aux : ∀ (a b : derivedSet S),
       (a.1 < b.1 : Prop) → f a = f b → a.1 = b.1 by
-    rcases lt_trichotomy a.1 b.1 with h | h | h
-    · exact aux a b h hab
-    · exact h
-    · exact (aux b a h hab.symm).symm
+    grind
   clear hab a b
   intro a b altb hab
   exfalso
@@ -151,9 +148,7 @@ theorem mk_derivedSet_le (S : Set Ordinal) : #(derivedSet S) ≤ #S := by
       have hkey : sInf (S ∩ Ioi a.1) < b.1 :=
         csInf_lt_of_lt (a := x) (OrderBot.bddBelow _) ⟨hx.1, hx.2.1⟩ hx.2.2
       exact lt_irrefl _ (lt_of_lt_of_le (heq ▸ hkey) blt)
-    · unfold f at hab
-      rw [dif_pos ha, dif_neg hb] at hab
-      cases hab
+    · grind
   · obtain ⟨x, hx⟩ := IsAccPt.forall_lt b.2 a.1 altb
     exact ha ⟨x, ⟨hx.1, hx.2.1⟩⟩
 

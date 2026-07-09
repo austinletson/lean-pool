@@ -119,11 +119,8 @@ lemma floatrep_of_false₂ (P : FloatRep C → FloatRep C → Prop)
   apply floatrep_of_false₁ (f := f2)
   · apply h2
   apply floatrep_of_false₁ (f := f1)
-  · intro f h e m
-    apply h1
-    apply h
-  intro e m e' m'
-  apply h3
+  · grind
+  grind
 
 lemma coe_q_of_Cprec (b : Bool) (e : ℤ) :
   coeQ (⟨b, e, C.prec⟩ : FloatRep C) = (if b then -1 else 1) * 2^(e + 1) := by
@@ -175,9 +172,7 @@ lemma max_mantissa_q (C : FloatCfg) : (1 ≤ 2 - (1 : ℚ) / C.prec) ∧ (2 - (1
     · exact Nat.cast_pos'.mpr this
     norm_num
   have : 0 < (1 : ℚ) / C.prec := by positivity
-  constructor
-  · linarith
-  linarith
+  grind
 
 lemma normal_range (f : FloatRep C) (ve : f.validE) (vm : f.validM) :
   C.emin ≤ Int.log 2 |coeQ f| ∧ Int.log 2 |coeQ f| ≤ C.emax := by
@@ -205,8 +200,7 @@ lemma normal_range' (m : ℕ) (e : ℤ) (vm : m < C.prec) (ve2 : e ≤ C.emax) :
   gcongr
   · rw [abs_of_nonneg (by positivity)]
     suffices (m + (1 : ℚ)) / C.prec ≤ 1 by
-      rw [add_div] at this
-      linarith
+      grind
     rw [div_le_one (by norm_cast)]
     suffices m + 1 < C.prec + 1 by
       norm_cast
@@ -226,8 +220,7 @@ lemma coe_q_max_float_rep : coeQ (maxFloatRep C) = maxFloatQ C := by
   left
   have : ((C.prec - 1 : ℕ) : ℚ) = C.prec - 1 := by
     simp only [C.prec_pos, Nat.cast_pred]
-  simp only [C.prec_pos, Nat.cast_pred, sub_div, div_self (by linarith : (C.prec : ℚ) ≠ 0), one_div]
-  linarith
+  grind
 
 
 /-- Ordering on positive representations: larger exponent, or equal exponent
@@ -242,18 +235,7 @@ def floatrepLePos' (f1 f2 : FloatRep C) : Prop :=
 lemma floatrep_pos_equiv (f1 f2 : FloatRep C) :
   (floatrepLePos f1 f2) ↔ (floatrepLePos' f1 f2) := by
   simp only [floatrepLePos, floatrepLePos']
-  constructor
-  · rintro (h | h)
-    · refine ⟨le_of_lt h, ?_⟩
-      intro h
-      linarith
-    refine ⟨le_of_eq h.1, ?_⟩
-    intro _
-    exact h.2
-  intro h
-  by_cases h' : f1.e = f2.e
-  · right; tauto
-  left; exact lt_of_le_of_ne h.1 h'
+  grind
 
 lemma floatrep_le_pos_neg₁ (f1 f2 : FloatRep C) :
   floatrepLePos (FloatRep.neg f1) f2 ↔ floatrepLePos f1 f2 := by

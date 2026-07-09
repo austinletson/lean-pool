@@ -101,9 +101,7 @@ theorem hasParity_zero (p : ℕ) : HasParity 0 p := fun k hk => by simp at hk
 theorem hasParity_C (c : ℂ) {p : ℕ} (hp : p % 2 = 0) : HasParity (C c) p := by
   intro k hk
   rw [Polynomial.coeff_C] at hk
-  rcases Nat.eq_zero_or_pos k with rfl | hpos
-  · simp [hp]
-  · simp [Nat.pos_iff_ne_zero.mp hpos] at hk
+  grind
 
 theorem HasParity.add {P Q : ℂ[X]} {p : ℕ} (hP : HasParity P p)
     (hQ : HasParity Q p) : HasParity (P + Q) p := by
@@ -157,11 +155,7 @@ theorem coeff_X_sq_mul (P : ℂ[X]) (n : ℕ) :
   rcases n with - | m
   · simp
   · rw [if_neg (Nat.succ_ne_zero m), Nat.succ_sub_one, coeff_X_mul' P m]
-    rcases m with - | l
-    · simp
-    · have h1 : ¬ (l + 2 < 2) := by omega
-      have h2 : l + 2 - 2 = l + 1 - 1 := by omega
-      simp [h1, h2]
+    grind
 
 theorem HasParity.X_mul {P : ℂ[X]} {p : ℕ} (hP : HasParity P p) :
     HasParity (X * P) (p + 1) := by
@@ -198,13 +192,7 @@ theorem coeff_mul_at_bound_add {P Q : ℂ[X]} {a b n : ℕ} (hn : n = a + b)
   refine Finset.sum_eq_single_of_mem (a, b)
     (Finset.mem_antidiagonal.mpr rfl) (fun c hc hne => ?_)
   rw [Finset.mem_antidiagonal] at hc
-  rcases lt_or_ge a c.1 with h1 | h1
-  · rw [hP c.1 h1, zero_mul]
-  · have h2 : b < c.2 := by
-      rcases lt_or_ge b c.2 with h | h
-      · exact h
-      · exact absurd (Prod.ext (by omega) (by omega)) hne
-    rw [hQ c.2 h2, mul_zero]
+  grind
 
 /-- Product coefficient above the sum of two coefficient bounds vanishes. -/
 theorem coeff_mul_eq_zero_of_bound_add {P Q : ℂ[X]} {a b n : ℕ}
@@ -214,9 +202,7 @@ theorem coeff_mul_eq_zero_of_bound_add {P Q : ℂ[X]} {a b n : ℕ}
   rw [Polynomial.coeff_mul]
   refine Finset.sum_eq_zero fun c hc => ?_
   rw [Finset.mem_antidiagonal] at hc
-  rcases lt_or_ge a c.1 with h1 | h1
-  · rw [hP c.1 h1, zero_mul]
-  · rw [hQ c.2 (by omega), mul_zero]
+  grind
 
 /-! ### Reflection of coefficients -/
 
@@ -251,8 +237,7 @@ theorem reflect_succ {F : ℂ[X]} {L : ℕ} (hF : F.natDegree ≤ L) :
     rcases Nat.lt_or_ge k (L + 2) with hk2 | hk2
     · rw [Polynomial.revAt_le (by omega), Polynomial.coeff_reflect,
         Polynomial.revAt_le (by omega)]
-      congr 1
-      omega
+      grind
     · rw [Polynomial.revAt_eq_self_of_lt (by omega), Polynomial.coeff_reflect,
         Polynomial.revAt_eq_self_of_lt (by omega),
         Polynomial.coeff_eq_zero_of_natDegree_lt (by omega),
@@ -266,8 +251,7 @@ theorem reflect_X_mul {F : ℂ[X]} {L : ℕ} (hF : F.natDegree ≤ L) :
   rcases Nat.lt_or_ge k (L + 1) with hk | hk
   · rw [Polynomial.revAt_le (by omega), Polynomial.revAt_le (by omega),
       coeff_X_mul', if_neg (by omega)]
-    congr 1
-    omega
+    grind
   · rcases Nat.lt_or_ge k (L + 2) with hk2 | hk2
     · have hkeq : k = L + 1 := by omega
       subst hkeq
@@ -311,7 +295,6 @@ theorem eq_of_circle_eval_eq {F G : ℂ[X]}
       = G.eval (Complex.exp ((x : ℂ) * Complex.I))) : F = G := by
   refine Polynomial.eq_of_infinite_eval_eq F G ?_
   refine ((Set.Ioo_infinite Real.pi_pos).image exp_I_injOn_Ioo).mono ?_
-  rintro z ⟨x, _, rfl⟩
-  exact h x
+  grind
 
 end QuantumAlg

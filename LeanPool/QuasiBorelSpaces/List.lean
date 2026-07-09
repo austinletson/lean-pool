@@ -200,10 +200,7 @@ lemma isHom_get
   by_cases hB : Nonempty B
   · have : Inhabited B := ⟨hB.some⟩
     have : (fun x ↦ (f x)[g x]'(h x)) = fun x ↦ ((f x)[g x]?).getD default := by
-      funext x
-      rw [List.getElem?_eq_getElem]
-      · simp only [Option.getD_some]
-      · apply h
+      grind
     simp only [this]
     exact QuasiBorelSpace.Option.isHom_getD (isHom_getElem_opt hf hg) (by fun_prop)
   · rw [isHom_def]
@@ -314,12 +311,7 @@ lemma isHom_erase
     induction xs with
     | nil => simp only [List.erase_nil, List.foldr_nil, and_self]
     | cons head tail ih =>
-      by_cases h : head = x
-      · simp only [h, List.foldr_cons, ↓reduceIte, ih, List.erase_cons_head, and_self]
-      · have h' : x ≠ head := by grind
-        simp only [
-          List.foldr_cons, h', ↓reduceIte, ih, beq_iff_eq,
-          h, not_false_eq_true, List.erase_cons_tail, and_self]
+      grind
   simp only [Prod.ext_iff] at this
   simp only [this.1]
   fun_prop

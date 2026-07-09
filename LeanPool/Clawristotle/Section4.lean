@@ -210,22 +210,13 @@ private lemma spatial_transport_log_zero {X : Type*} [FlatTorus3 X]
       (hDiff_fv.of_le (by decide)) (fun x => hf_pos x v) x i
   have h_lhs : (∫ x, f x v * FlatTorus3.gradX (fun y => Real.log (f y v)) x i) =
       ∫ x, FlatTorus3.gradX (fun y => f y v) x i := by
-    congr 1
-    ext x
-    rw [h_chain]
-    have := ne_of_gt (hf_pos x v)
-    field_simp
+    grind
   rw [h_lhs] at h_ibp
   have h_grad_int : (∫ x, FlatTorus3.gradX (fun y => f y v) x i) = 0 := by
     have := FlatTorus3.hGradIntZero (fun y => f y v) (hDiff_fv.of_le (by decide)) (Pi.single i 1)
     simp [dotProduct, Fin.sum_univ_three] at this
     fin_cases i <;> simp_all [Pi.single, Function.update]
-  rw [h_grad_int] at h_ibp
-  have h_comm : (∫ x, Real.log (f x v) * FlatTorus3.gradX (fun y => f y v) x i) = 0 := by
-    linarith
-  have : (fun x => FlatTorus3.gradX (fun y => f y v) x i * Real.log (f x v)) =
-      (fun x => Real.log (f x v) * FlatTorus3.gradX (fun y => f y v) x i) := by ext x; ring
-  rw [this]; exact h_comm
+  grind
 
 /-- Transport entropy vanishes at steady state on T³.
     Proof: Multiply Vlasov by log f, integrate over v and X.
@@ -268,9 +259,7 @@ lemma transport_entropy_from_vlasov
     (∫ x, entropyDissipation Ψ (f x)) = 0 := by
   -- Strategy: ν * ∫D = 0, and ν > 0.
   suffices h_zero : ν * (∫ x, entropyDissipation Ψ (f x)) = 0 by
-    rcases mul_eq_zero.mp h_zero with h | h
-    · linarith
-    · exact h
+    grind
   -- ν * ∫D = ∫(ν * D) via integral_mul_left
   have h_comm : ν * (∫ x, entropyDissipation Ψ (f x)) =
       ∫ x, ν * entropyDissipation Ψ (f x) := by
@@ -285,11 +274,7 @@ lemma transport_entropy_from_vlasov
     have hrw : (fun v => ν * (LandauOperator Ψ (f x) v * Real.log (f x v))) =
         (fun v => v ⬝ᵥ FlatTorus3.gradX (fun y => f y v) x * Real.log (f x v) +
           (E x + cross v (B x)) ⬝ᵥ vGrad (f x) v * Real.log (f x v)) := by
-      ext v
-      have hV := hVlasov x v
-      have : ν * (LandauOperator Ψ (f x) v * Real.log (f x v)) =
-          (ν * LandauOperator Ψ (f x) v) * Real.log (f x v) := by ring
-      rw [this, ← hV]; ring
+      grind
     rw [hrw, integral_add (hSpatialTransport_int x) (hForceTransport_int x)]
     rw [force_transport_zero (f x) (E x) (B x) (hf_pos x) (hf_smooth x) (hf_int x)
       (hForceIBP_f_dg x) (hForceIBP_fg x)]

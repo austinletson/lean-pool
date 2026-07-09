@@ -198,13 +198,7 @@ private lemma approx_coord_upper (p : Simplex α) (n : ℕ) (a : α) :
         ≤ (p.p a * (n + 1 : ℝ) + 1) / (n + 1 : ℝ) :=
     div_le_div_of_nonneg_right (approxWeight_upper (p := p) n a) (le_of_lt hNpos)
   have h3 : (p.p a * (n + 1 : ℝ) + 1) / (n + 1 : ℝ) = p.p a + 1 / (n + 1 : ℝ) := by
-    have hn : (n + 1 : ℝ) ≠ 0 := by exact_mod_cast Nat.succ_ne_zero n
-    calc
-      (p.p a * (n + 1 : ℝ) + 1) / (n + 1 : ℝ)
-          = (p.p a * (n + 1 : ℝ)) / (n + 1 : ℝ) + 1 / (n + 1 : ℝ) := by
-              simp [add_div]
-      _ = p.p a + 1 / (n + 1 : ℝ) := by
-              simp [hn]
+    grind
   simpa [approx, approxDenom, h3] using le_trans (le_trans h1 h2) (le_of_eq h3)
 
 private lemma tendsto_approx_coord (p : Simplex α) (a : α) :
@@ -224,12 +218,7 @@ private lemma tendsto_approx_coord (p : Simplex α) (a : α) :
     have hmul :
         Filter.Tendsto (fun n : ℕ => p.p a * f (n + 1)) Filter.atTop (𝓝 (p.p a * (1 : ℝ))) :=
       (tendsto_const_nhds.mul hshift)
-    have hrewrite :
-        (fun n : ℕ => p.p a * f (n + 1)) =
-          fun n : ℕ => p.p a * (n + 1 : ℝ) / ((n + 1 : ℝ) + Fintype.card α) := by
-      funext n
-      simp [f, mul_div_assoc, add_comm, add_left_comm]
-    simpa [hrewrite] using hmul
+    grind
   -- Upper function tends to `p(a)`.
   have hUpper :
       Filter.Tendsto (fun n : ℕ => p.p a + 1 / (n + 1 : ℝ)) Filter.atTop (𝓝 (p.p a)) := by

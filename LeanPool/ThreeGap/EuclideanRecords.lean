@@ -107,12 +107,10 @@ theorem bestDenom_hbest (α : Fin 2 → ℝ) (hr : RecordsContinue (deltaE α)) 
   have hmnat : (m.toNat : ℤ) = m := Int.toNat_of_nonneg hpos.le
   have hj1 : 1 ≤ m.toNat := by omega
   have hj2 : m.toNat < bestDenom (deltaE α) hr k := by
-    have : (m.toNat : ℤ) < (bestDenom (deltaE α) hr k : ℤ) := by rw [hmnat]; exact hlt
-    exact_mod_cast this
+    grind
   have := bestDenom_strict_floor (deltaE α) hr k hj1 hj2
   simp only [deltaE] at this
-  rw [← hmnat]
-  exact this
+  grind
 
 /-- **The Euclidean growth `2 q_k ≤ q_{k+5}` for the record denominators (unconditional).** -/
 theorem bestDenom_euclidean_growth (α : Fin 2 → ℝ) {k₀ : Fin 2} (hirr : Irrational (α k₀))

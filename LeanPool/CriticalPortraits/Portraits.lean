@@ -125,8 +125,7 @@ lemma portrait_eq_empty_of_degenerate (d m : ℕ) (h0 : d * m = 0)
       apply Finset.sum_pos'
       · intro i _; exact Nat.zero_le _
       · exact ⟨S, hS, by omega⟩
-    rw [hw] at hpos
-    omega
+    grind
 
 instance instFinitePortrait (d m : ℕ) :
     Finite {P : Finset (Finset (ZMod (d * m))) // Portrait d m P} := by
@@ -165,9 +164,7 @@ noncomputable def eraseMin {N : ℕ} (S : Finset (ZMod N)) : Finset (ZMod N) :=
 
 lemma eraseMin_subset {N : ℕ} (S : Finset (ZMod N)) : eraseMin S ⊆ S := by
   unfold eraseMin
-  split
-  · exact Finset.erase_subset _ _
-  · exact subset_rfl
+  grind
 
 lemma eraseMin_card {N : ℕ} (S : Finset (ZMod N)) (h : S.Nonempty) :
     (eraseMin S).card = S.card - 1 := by
@@ -179,8 +176,7 @@ lemma eraseMin_card {N : ℕ} (S : Finset (ZMod N)) (h : S.Nonempty) :
 lemma mem_eraseMin {N : ℕ} (S : Finset (ZMod N)) (h : S.Nonempty) (x : ZMod N) :
     x ∈ eraseMin S ↔ x ∈ S ∧ x ≠ minVal S h := by
   unfold eraseMin
-  rw [dif_pos h, Finset.mem_erase]
-  tauto
+  grind
 
 /-- `T(P)`: delete the lowest-level point of every set, then take the union. -/
 noncomputable def T {N : ℕ} (P : Finset (Finset (ZMod N))) : Finset (ZMod N) :=
@@ -258,8 +254,7 @@ theorem minVal_lt_survivor {d m : ℕ} (hd : 0 < d) (hm : 0 < m)
   have hxS : x ∈ S := eraseMin_subset S hx
   have hxne : x ≠ minVal S h := by
     unfold eraseMin at hx
-    rw [dif_pos h] at hx
-    exact (Finset.mem_erase.mp hx).1
+    grind
   have hsame : (minVal S h).val % m = x.val % m := by
     rw [hfib _ (minVal_mem S h), hfib _ hxS]
   have hle : (minVal S h).val / m ≤ x.val / m :=
@@ -282,8 +277,7 @@ lemma val_eq_level_mul_add_col {N : ℕ} (m : ℕ) (i : ZMod N) :
 lemma sep_master {m : ℕ} {p q a c : ℕ} (hp : p < m) (_hq : q < m) (hac : a < c) :
     p + a * m < q + c * m := by
   have hstep : (a + 1) * m ≤ c * m := Nat.mul_le_mul_right m (by omega)
-  have : a * m + m ≤ c * m := by rw [Nat.add_mul, Nat.one_mul] at hstep; omega
-  omega
+  grind
 
 /-- A crossing quadruple in strict val-order makes `A, B` linked (the (M)-witness hook). -/
 lemma linked_of_lt {N : ℕ} {A B : Finset (ZMod N)} {a1 a2 b1 b2 : ZMod N}

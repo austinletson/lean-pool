@@ -310,8 +310,7 @@ theorem fubini_gaussian_charFun
       (fun x => gaussDensity σ x - gaussDensity σ x * (φ x).re) from by ext x; ring]
     rw [integral_sub (gaussDensity_integrable' σ hσ) hgdre_int,
       mul_sub, inv_mul_cancel₀ hC_ne]
-    congr 1
-    rw [← key, ← mul_assoc, inv_mul_cancel₀ hC_ne, one_mul]
+    grind
   -- Product integrability
   have hprod : Integrable (uncurry (fun (y : V) (x : V) =>
       (gaussDensity σ x : ℂ) * cexp (↑⟪y, x⟫_ℝ * I)))
@@ -329,8 +328,7 @@ theorem fubini_gaussian_charFun
     · have : (fun y : V => ∫ x, ‖uncurry (fun (y : V) (x : V) =>
             (gaussDensity σ x : ℂ) * cexp (↑⟪y, x⟫_ℝ * I)) (y, x)‖ ∂volume) =
           fun _ => ∫ x : V, gaussDensity σ x := by
-        ext y; congr 1; ext x
-        simp only [Function.uncurry_apply_pair, norm_bound]
+        grind
       rw [this]; exact integrable_const _
   have fubini := integral_integral_swap hprod
   have lhs_eq : ∫ y, (∫ x, (gaussDensity σ x : ℂ) * cexp (↑⟪y, x⟫_ℝ * I)) ∂μ.toMeasure =
@@ -416,8 +414,7 @@ private lemma half_sq_le_cosh_sub_one' (x : ℝ) : x ^ 2 / 2 ≤ Real.cosh x - 1
       have := id_le_sinh' (by linarith : 0 ≤ -t)
       rw [Real.sinh_neg] at this; linarith
     have h2 : Real.sinh t ≤ 0 := by
-      have := id_le_sinh' (by linarith : 0 ≤ -t)
-      rw [Real.sinh_neg] at this; linarith
+      grind
     have ha : Real.sinh t + t ≤ 0 := by linarith
     have hb : Real.sinh t - t ≤ 0 := by linarith
     exact mul_nonneg_of_nonpos_of_nonpos ha hb
@@ -451,9 +448,7 @@ private lemma gaussDensity_exp_inner_integral' (σ : ℝ) (hσ : 0 < σ) (w : V)
   have lhs_eq : (fun x : V => gaussDensity σ x * rexp (c * @inner ℝ V _ w x)) =
       fun x => rexp (-b * ‖x‖ ^ 2 + c * @inner ℝ V _ w x) := by
     ext x; unfold gaussDensity; rw [← Real.exp_add]
-  have rhs_eq : c ^ 2 * σ ^ 2 * ‖w‖ ^ 2 / 2 = c ^ 2 * ‖w‖ ^ 2 / (4 * b) := by
-    rw [hb_def]; field_simp; ring
-  rw [lhs_eq, h, rhs_eq]
+  grind
 
 private lemma tendsto_exp_slope' (A : ℝ) :
     Filter.Tendsto (fun t => (rexp (t * A) - 1) / t) (nhdsWithin (0 : ℝ) (Set.Ioi 0))
@@ -558,8 +553,7 @@ private lemma gaussian_inner_sq_le' (σ : ℝ) (hσ : 0 < σ) (w : V) :
             rw [← integral_const_mul]; congr 1; ext x; ring
           rw [step_a, integral_sub (gaussDensity_mul_cosh_integrable' σ hσ w c)
             (gaussDensity_integrable' σ hσ), gaussDensity_cosh_integral' σ hσ w c, hc]
-          have : rexp (t * σ ^ 2 * ‖w‖ ^ 2 / 2) = rexp (t * A) := by congr 1; rw [hA_def]; ring
-          rw [this]; ring
+          grind
   have step2 : Filter.Tendsto (fun t => 2 * C * (rexp (t * A) - 1) / t)
       (nhdsWithin (0 : ℝ) (Set.Ioi 0)) (nhds (C * (σ ^ 2 * ‖w‖ ^ 2))) := by
     have htarget : C * (σ ^ 2 * ‖w‖ ^ 2) = 2 * C * A := by rw [hA_def]; ring
@@ -659,9 +653,7 @@ lemma gaussDensity_mul_quadForm_integrable' (σ : ℝ) (hσ : 0 < σ)
   have hbound_int : Integrable (fun x : V => C * Real.exp (-(b / 2) * ‖x‖ ^ 2)) volume := by
     apply Integrable.const_mul
     have h := gaussDensity_integrable' (V := V) (σ * Real.sqrt 2) (by positivity)
-    unfold gaussDensity at h
-    convert h using 1; ext x; congr 1
-    rw [mul_pow, Real.sq_sqrt (by positivity : (2 : ℝ) ≥ 0)]; ring
+    grind
   have hqf_cont : Continuous (fun x : V => quadForm S x) := by unfold quadForm; fun_prop
   apply hbound_int.mono'
   · exact ((gaussDensity_continuous' σ).mul hqf_cont).aestronglyMeasurable
@@ -685,15 +677,10 @@ lemma gaussDensity_mul_quadForm_integrable' (σ : ℝ) (hσ : 0 < σ)
       have hexp_nn := (Real.exp_pos (-(b / 2) * s)).le
       have key := mul_exp_neg_le_one' (show 0 ≤ b / 2 * s by positivity)
       have hkey2 : b / 2 * (Real.exp (-(b / 2 * s)) * s) ≤ 1 := by
-        linarith [show b / 2 * s * Real.exp (-(b / 2 * s)) =
-          b / 2 * (Real.exp (-(b / 2 * s)) * s) from by ring]
+        grind
       have hse : Real.exp (-(b / 2 * s)) * s ≤ 2 / b := by
         rw [le_div_iff₀ (by positivity : (0 : ℝ) < b)]
-        calc Real.exp (-(b / 2 * s)) * s * b
-            = 2 * (b / 2 * (Real.exp (-(b / 2 * s)) * s)) := by ring
-          _ = 2 * (b / 2 * s * Real.exp (-(b / 2 * s))) := by ring
-          _ ≤ 2 * 1 := by linarith
-          _ = 2 := by ring
+        grind
       rw [show -(b / 2) * s = -(b / 2 * s) from by ring] at hexp_nn ⊢
       calc Real.exp (-(b / 2 * s)) * Real.exp (-(b / 2 * s)) * s
           = Real.exp (-(b / 2 * s)) * (Real.exp (-(b / 2 * s)) * s) := by ring
@@ -795,10 +782,7 @@ theorem gaussian_averaging_bound
       ≤ C⁻¹ * ∫ x, g x * (ε + 2 * quadForm S x) := hint_le
     _ = C⁻¹ * (ε * C + 2 * ∫ x, g x * quadForm S x) := by rw [hint_split]
     _ = ε + 2 * (C⁻¹ * ∫ x, g x * quadForm S x) := by
-        have hCne : C ≠ 0 := ne_of_gt hC_pos
-        rw [mul_add]; congr 1
-        · rw [← mul_assoc, mul_comm C⁻¹ ε, mul_assoc, inv_mul_cancel₀ hCne, mul_one]
-        · ring
+        grind
     _ ≤ ε + 2 * (σ ^ 2 * T) := by linarith [gaussian_quadForm_integral_le σ hσ S hS T hT h_trace]
     _ = ε + 2 * σ ^ 2 * T := by ring
 
@@ -948,8 +932,7 @@ theorem orthonormal_diag_le_hilbert_trace (S : H →L[ℝ] H) (hS : S.IsPositive
     rw [sa (v j) (∑ i, @inner ℝ H _ (v i) (↑(b k)) • v i)]
     simp only [sum_inner, inner_smul_left, RCLike.conj_to_real]
     rw [Finset.mul_sum]
-    refine Finset.sum_congr rfl fun i _ => ?_
-    rw [sa]; ring
+    grind
   have hB_parseval : ∀ j i : Fin n,
       HasSum (fun k => @inner ℝ H _ (v j) (b k) * @inner ℝ H _ (v i) (b k))
         (@inner ℝ H _ (v j) (v i)) := by
@@ -975,13 +958,7 @@ theorem orthonormal_diag_le_hilbert_trace (S : H →L[ℝ] H) (hS : S.IsPositive
       (∑' k, @inner ℝ H _ (b k) (S (b k)) -
        ∑ j, @inner ℝ H _ (v j) (S (v j))) := by
     have h := ((hsum.hasSum.sub (hA.add hA)).add hB)
-    have hv : (∑' k, @inner ℝ H _ (b k) (S (b k)) -
-        (∑ j, @inner ℝ H _ (v j) (S (v j)) + ∑ j, @inner ℝ H _ (v j) (S (v j))) +
-        ∑ j, @inner ℝ H _ (v j) (S (v j))) =
-        ∑' k, @inner ℝ H _ (b k) (S (b k)) - ∑ j, @inner ℝ H _ (v j) (S (v j)) := by ring
-    rw [← hv]
-    refine h.congr (fun k => ?_)
-    ring_nf
+    grind
   linarith [hQ.tsum_eq]
 
 omit [CompleteSpace H] in

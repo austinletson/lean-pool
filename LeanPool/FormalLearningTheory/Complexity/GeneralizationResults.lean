@@ -49,35 +49,15 @@ private theorem thresholdX_not_shatter_pair {X : Type u} {φ : ℕ ↪ X}
   have hc₁b : ¬ ∃ k, k ≤ n₁ ∧ φ k = b := by
     intro hbad
     have h := hc₁ ⟨b, hb⟩
-    have htrue : decide (∃ k, k ≤ n₁ ∧ φ k = b) = true := decide_eq_true hbad
-    have hfalse : (if (b : X) = a then true else false) = false := by
-      simp [Ne.symm hab]
-    change decide (∃ k, k ≤ n₁ ∧ φ k = b) =
-        (if (b : X) = a then true else false) at h
-    rw [htrue, hfalse] at h
-    cases h
+    grind
   obtain ⟨c₂, ⟨n₂, rfl⟩, hc₂⟩ := hshat (fun s => if (s : X) = b then true else false)
   have hc₂a : ¬ ∃ k, k ≤ n₂ ∧ φ k = a := by
     intro hbad
     have h := hc₂ ⟨a, ha⟩
-    have htrue : decide (∃ k, k ≤ n₂ ∧ φ k = a) = true := decide_eq_true hbad
-    have hfalse : (if (a : X) = b then true else false) = false := by
-      simp [hab]
-    change decide (∃ k, k ≤ n₂ ∧ φ k = a) =
-        (if (a : X) = b then true else false) at h
-    rw [htrue, hfalse] at h
-    cases h
+    grind
   have hc₂b : ∃ k, k ≤ n₂ ∧ φ k = b := by
     simpa using hc₂ ⟨b, hb⟩
-  obtain ⟨i, hi_le, rfl⟩ := hc₁a
-  obtain ⟨j, hj_le, hφj⟩ := hc₂b
-  have hj_gt : n₁ < j := by
-    by_contra h; push Not at h
-    exact hc₁b ⟨j, h, hφj⟩
-  have hi_gt : n₂ < i := by
-    by_contra h; push Not at h
-    exact hc₂a ⟨i, h, rfl⟩
-  omega
+  grind
 
 /-- VCDim of C_φ is finite (≤ 1). -/
 private theorem vcdim_thresholdX_finite {X : Type u} (φ : ℕ ↪ X) :
@@ -130,13 +110,11 @@ private theorem adversary_threshold {X : Type u} {φ : ℕ ↪ X}
     · obtain ⟨seq', n, hn_lo, hn_hi, hn_mem, hn_count⟩ := ih (L.update s (φ mid) false) lo
       have hn_lt_mid : n < mid := by omega
       have hcn_mid : decide (∃ k, k ≤ n ∧ φ k = φ mid) = false := by
-        simp only [decide_eq_false_iff_not]
-        rintro ⟨k, hk, hφ⟩; have := φ.injective hφ; omega
+        grind
       refine ⟨φ mid :: seq', n, hn_lo, by ring_nf; omega, hn_mem, ?_⟩
       change (if L.predict s (φ mid) ≠ _ then 1 else 0) +
         mistakesFromG L (L.update s (φ mid) _) _ seq' = d + 1
-      have : (fun x => decide (∃ k, k ≤ n ∧ φ k = x)) (φ mid) = false := hcn_mid
-      rw [this, hpred]; simp; omega
+      grind
     · have hpf : L.predict s (φ mid) = false := by
         cases h : L.predict s (φ mid) <;> simp_all
       obtain ⟨seq', n, hn_lo, hn_hi, hn_mem, hn_count⟩ := ih (L.update s (φ mid) true) mid
@@ -146,8 +124,7 @@ private theorem adversary_threshold {X : Type u} {φ : ℕ ↪ X}
       refine ⟨φ mid :: seq', n, by omega, by ring_nf; omega, hn_mem, ?_⟩
       change (if L.predict s (φ mid) ≠ _ then 1 else 0) +
         mistakesFromG L (L.update s (φ mid) _) _ seq' = d + 1
-      have : (fun x => decide (∃ k, k ≤ n ∧ φ k = x)) (φ mid) = true := hcn_mid
-      rw [this, hpf]; simp; omega
+      grind
 
 /-- PAC uniform convergence does NOT imply online learnability.
     There exist concept classes with finite VCDim (hence PAC learnable)

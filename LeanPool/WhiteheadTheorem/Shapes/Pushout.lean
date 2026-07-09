@@ -146,8 +146,7 @@ lemma injective_pushoutInr' : Function.Injective <| pushoutInr' f g := by
         rw [pushout.inr_desc]; rfl
       change (pYZ.hom ((pushout.inr f g).hom z) : Z) = _
       have hfinal : (pushout.inr f g ≫ pYZ).hom z = (⟨z, hz⟩ : {z | z ∉ Set.range g}) := by
-        rw [heq]
-        exact dif_pos hz
+        grind
       exact congrArg Subtype.val hfinal
     have : Function.Injective (pYZ.hom ∘ inr') := by
       rw [this]
@@ -158,10 +157,7 @@ lemma pushoutInr_neq_pushoutInr_of_mem_compl_range_of_mem_range :
     ∀ z ∈ (Set.range g)ᶜ, ∀ z' ∈ Set.range g, (pushout.inr f g) z ≠ (pushout.inr f g) z' := by
   haveI : ∀ z : Z, Decidable (z ∈ Set.range g) := fun _ ↦ Classical.dec _
   obtain emp | nemp := Set.eq_empty_or_nonempty (Set.range g)ᶜ
-  · have : IsEmpty {z | z ∉ Set.range g} := Set.isEmpty_coe_sort.mpr emp
-    intro z hz z' hz'
-    simp_all only [Set.compl_empty_iff, Set.mem_univ, not_true_eq_false, Set.setOf_false,
-      Set.isEmpty_coe_sort, Set.compl_univ, Set.mem_empty_iff_false]
+  · grind
   · have z₀ : {z | z ∉ Set.range g} := Nonempty.some <| Set.Nonempty.to_subtype nemp
     let B := @TopCat.of (ULift Bool) ⊤  -- with the indiscrete topology
     let pZ : Z ⟶ B := @TopCat.ofHom _ _ _ ⊤ <| @ContinuousMap.mk _ _ _ ⊤
@@ -189,10 +185,7 @@ lemma pushoutInr_neq_pushoutInl_of_mem_compl_range :
     ∀ z ∈ (Set.range g)ᶜ, ∀ y : Y, (pushout.inr f g) z ≠ (pushout.inl f g) y := by
   haveI : ∀ z : Z, Decidable (z ∈ Set.range g) := fun _ ↦ Classical.dec _
   obtain emp | nemp := Set.eq_empty_or_nonempty (Set.range g)ᶜ
-  · have : IsEmpty {z | z ∉ Set.range g} := Set.isEmpty_coe_sort.mpr emp
-    intro z hz y hy
-    simp_all only [Set.compl_empty_iff, Set.mem_univ, not_true_eq_false, Set.setOf_false,
-      Set.isEmpty_coe_sort, Set.compl_univ, Set.mem_empty_iff_false]
+  · grind
   · have z₀ : {z | z ∉ Set.range g} := Nonempty.some <| Set.Nonempty.to_subtype nemp
     let B := @TopCat.of (ULift Bool) ⊤  -- with the indiscrete topology
     let pZ : Z ⟶ B := @TopCat.ofHom _ _ _ ⊤ <| @ContinuousMap.mk _ _ _ ⊤
@@ -214,8 +207,7 @@ lemma pushoutInr_neq_pushoutInl_of_mem_compl_range :
         change (if _ : z ∉ Set.range g then (⟨true⟩ : ULift Bool) else ⟨false⟩) = ⟨true⟩
         exact dif_pos hz
       change (pushout.inr f g ≫ pYZ).hom z ≠ (pushout.inl f g ≫ pYZ).hom y
-      rw [hl, hr]
-      decide
+      grind
     exact fun heq ↦ p_neq (congrArg pYZ heq)
 
 lemma _root_.Function.Injective.preimage_image_of_restrict
@@ -226,17 +218,10 @@ lemma _root_.Function.Injective.preimage_image_of_restrict
   · intro x hx
     obtain ⟨a, has, ha⟩ := hx
     have hxA : x ∈ A := by
-      by_contra hnxA
-      exact hf a a.property x hnxA ha
+      grind
     rw [(by rfl : f x = Set.restrict A f ⟨x, hxA⟩)] at ha
-    have hax := inj_f ha
-    subst hax
-    use ⟨x, hxA⟩
-  · intro x hx
-    apply Set.mem_preimage.mpr
-    obtain ⟨a, has, hax⟩ := hx
-    subst hax
-    exact ⟨a, has, rfl⟩
+    grind
+  · grind
 
 /--
 In the pushout square below, if `g X` is closed in `Z`,

@@ -133,8 +133,7 @@ def extensionOfOrtIdem (e : R) (idem_e : IsIdempotentElem e)
           have h2' : (idempotents e (fun i ↦ ↑(oi.f i)) j) = oi.f l := by rw [hl]; rfl
           rw [h2']
           have k_neq_l : k ≠ l := by
-            have k_neq_l' : k.succ ≠ l.succ := by rw [← hk, ← hl]; exact i_neq_j
-            exact fun a ↦ k_neq_l' (congrArg Fin.succ a)
+            grind
           let ort := oi.orthogonal k l k_neq_l
           apply orth_coercion
           exact ort }

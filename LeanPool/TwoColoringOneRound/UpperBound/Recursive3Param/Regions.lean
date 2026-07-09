@@ -84,26 +84,19 @@ private lemma mu_Ico_eq (a r : Rand) : μ (Set.Ico a r) = ENNReal.ofReal ((r : �
 
 private lemma Iio_inter_Iio_left {a b : Rand} (hab : a ≤ b) :
     (Set.Iio a ∩ Set.Iio b : Set Rand) = Set.Iio a := by
-  rw [Set.inter_eq_left]
-  exact Set.Iio_subset_Iio hab
+  grind
 
 private lemma Iio_diff_Iio {a b : Rand} (_hab : a ≤ b) :
     (Set.Iio b \ Set.Iio a : Set Rand) = Set.Ico a b := by
-  ext c
-  simp only [Set.mem_sdiff, Set.mem_Iio, Set.mem_Ico, not_lt]
-  exact ⟨fun h => ⟨h.2, h.1⟩, fun h => ⟨h.2, h.1⟩⟩
+  grind
 
 private lemma Ico_inter_Iio {a b c : Rand} (hcb : c ≤ b) :
     (Set.Ico a b ∩ Set.Iio c : Set Rand) = Set.Ico a c := by
-  ext x
-  simp only [Set.mem_inter_iff, Set.mem_Ico, Set.mem_Iio]
-  exact ⟨fun h => ⟨h.1.1, h.2⟩, fun h => ⟨⟨h.1, lt_of_lt_of_le h.2 hcb⟩, h.2⟩⟩
+  grind
 
 private lemma Ico_diff_Iio {a b c : Rand} (hac : a ≤ c) :
     (Set.Ico a b \ Set.Iio c : Set Rand) = Set.Ico c b := by
-  ext x
-  simp only [Set.mem_sdiff, Set.mem_Ico, Set.mem_Iio, not_lt]
-  exact ⟨fun h => ⟨h.2, h.1.2⟩, fun h => ⟨⟨le_trans hac h.1, h.2⟩, h.1⟩⟩
+  grind
 
 private lemma measurable_mul_Ico_measure {g : Rand → ℝ≥0∞} (hg : Measurable g) (r : Rand) :
     Measurable fun b : Rand => g b * μ (Set.Ico b r) := by
@@ -206,17 +199,7 @@ lemma lintegral_innerBC_Iio_one_of_b_lt_t1 {b : Rand} (hb : b < t1) :
       (∫⁻ c in Set.Ico b t, innerBC b c ∂μ) =
           ∫⁻ _c in Set.Ico b t, gTB b ∂μ := MeasureTheory.setLIntegral_congr_fun (μ := μ) hs hEq
       _ = gTB b * μ (Set.Ico b t) := by simp
-  have hsplit2' :
-      (∫⁻ c in Set.Iio t, innerBC b c ∂μ) =
-        (∫⁻ c in Set.Iio b, innerBC b c ∂μ) + ∫⁻ c in Set.Ico b t, innerBC b c ∂μ := by
-    have := hsplit2.symm
-    simpa [hBint, hBdiff, add_comm] using this
-  -- Put everything together.
-  calc
-    (∫⁻ c in (Set.Iio (1 : Rand) : Set Rand), innerBC b c ∂μ) =
-        ∫⁻ c in Set.Iio t, innerBC b c ∂μ := hA
-    _ = (∫⁻ c in Set.Iio b, innerBC b c ∂μ) + ∫⁻ c in Set.Ico b t, innerBC b c ∂μ := hsplit2'
-    _ = (∫⁻ c in Set.Iio b, gCt c ∂μ) + gTB b * μ (Set.Ico b t) := by simp [hIo, hIco]
+  grind
 
 private lemma lintegral_b_below_t1_triangle_value :
     (∫⁻ b in Set.Iio t1, ∫⁻ c in Set.Iio b, gCt c ∂μ ∂μ) =
@@ -401,8 +384,7 @@ lemma lintegral_innerBC_Iio_one_of_t1_le_b_lt_t2 {b : Rand} (hb1 : t1 ≤ b) (hb
   have hsplit2' :
       (∫⁻ c in Set.Iio t, innerBC b c ∂μ) =
         (∫⁻ c in Set.Iio t2, innerBC b c ∂μ) + constT1T * μ (Set.Ico t2 t) := by
-    have := hsplit2.symm
-    simpa [hBint, hBdiff, hconst, add_comm, add_left_comm, add_assoc] using this
+    grind
   -- Split `c < t2` at `t1`.
   have ht1meas : MeasurableSet (Set.Iio t1 : Set Rand) := by simp
   have hsplit3 :=
@@ -451,14 +433,12 @@ lemma lintegral_innerBC_Iio_one_of_t1_le_b_lt_t2 {b : Rand} (hb1 : t1 ≤ b) (hb
   have hsplit4' :
       (∫⁻ c in Set.Ico t1 t2, innerBC b c ∂μ) =
         (∫⁻ c in Set.Ico t1 b, gCt2 c ∂μ) + gT2B b * μ (Set.Ico b t2) := by
-    have := hsplit4.symm
-    simpa [hDint, hDdiff, hPartD1, hPartD2, add_comm, add_left_comm, add_assoc] using this
+    grind
   have hsplit3' :
       (∫⁻ c in Set.Iio t2, innerBC b c ∂μ) =
         (∫⁻ c in Set.Iio t1, gCt c ∂μ) +
           ((∫⁻ c in Set.Ico t1 b, gCt2 c ∂μ) + gT2B b * μ (Set.Ico b t2)) := by
-    have := hsplit3.symm
-    simpa [hCint, hCdiff, hPartC, hsplit4', add_comm, add_left_comm, add_assoc] using this
+    grind
   -- Put everything together.
   calc
     (∫⁻ c in (Set.Iio (1 : Rand) : Set Rand), innerBC b c ∂μ) =
@@ -561,8 +541,7 @@ private lemma lintegral_gCt2_triangle_t1_t2_value :
           ∫⁻ c in Set.Ici t1 ∩ Set.Iio b, gCt2 c ∂μ := by
         simp [f, hsIci]
     have hset : (Set.Ici t1 ∩ Set.Iio b : Set Rand) = Set.Ico t1 b := by
-      ext c
-      simp [Set.mem_Ici, Set.mem_Iio, Set.mem_Ico]
+      grind
     simpa [hset] using this
   -- Apply the triangle swap and simplify the RHS to the already computed rectangle integral.
   have hIio_eval :
@@ -590,20 +569,8 @@ private lemma lintegral_gCt2_triangle_t1_t2_value :
       (MeasureTheory.setLIntegral_indicator (μ := μ) (s := Set.Ici t1) (t := Set.Iio t2) hsIci
         (fun c : Rand => gCt2 c * μ (Set.Ioo c t2)))
     have hset : (Set.Ici t1 ∩ Set.Iio t2 : Set Rand) = Set.Ico t1 t2 := by
-      ext c
-      simp [Set.mem_Ici, Set.mem_Iio, Set.mem_Ico]
-    have hInd' :
-        (∫⁻ c in Set.Iio t2,
-              (Set.Ici t1).indicator (fun c : Rand => gCt2 c * μ (Set.Ioo c t2)) c ∂μ) =
-            ∫⁻ c in Set.Ico t1 t2, gCt2 c * μ (Set.Ioo c t2) ∂μ := by
-      -- rewrite the target set and reuse `hInd`
-      rwa [← hset]
-    calc
-      (∫⁻ c in Set.Iio t2, f c * μ (Set.Ioo c t2) ∂μ) =
-          ∫⁻ c in Set.Iio t2,
-              (Set.Ici t1).indicator (fun c : Rand => gCt2 c * μ (Set.Ioo c t2)) c ∂μ := by
-                simp_rw [hind]
-      _ = ∫⁻ c in Set.Ico t1 t2, gCt2 c * μ (Set.Ioo c t2) ∂μ := hInd'
+      grind
+    grind
   have hEqIntegrand :
       (fun c : Rand => gCt2 c * μ (Set.Ioo c t2)) =
         fun c : Rand => gT2B c * μ (Set.Ico c t2) := by
@@ -612,15 +579,7 @@ private lemma lintegral_gCt2_triangle_t1_t2_value :
   have hSwap_to_Rect :
       (∫⁻ c in Set.Ico t1 t2, gCt2 c * μ (Set.Ioo c t2) ∂μ) =
         (∫⁻ b in Set.Ico t1 t2, gT2B b * μ (Set.Ico b t2) ∂μ) := by
-    have hsIco : MeasurableSet (Set.Ico t1 t2 : Set Rand) := by simp
-    have hEqOn :
-        Set.EqOn (fun c : Rand => gCt2 c * μ (Set.Ioo c t2))
-          (fun c : Rand => gT2B c * μ (Set.Ico c t2)) (Set.Ico t1 t2 : Set Rand) := by
-      intro c _hc
-      simpa using congrArg (fun f => f c) hEqIntegrand
-    have hcongr :=
-      (MeasureTheory.setLIntegral_congr_fun (μ := μ) hsIco hEqOn)
-    simpa using hcongr
+    grind
   calc
     (∫⁻ b in Set.Ico t1 t2, ∫⁻ c in Set.Ico t1 b, gCt2 c ∂μ ∂μ) =
         (∫⁻ b in Set.Iio t2, ∫⁻ c in Set.Iio b, f c ∂μ ∂μ) := this
@@ -685,8 +644,7 @@ private lemma lintegral_t1_t2_main_value :
         fun b : Rand =>
           gT2B b * μ (Set.Ico b t2) +
             ((∫⁻ c in Set.Iio t1, gCt c ∂μ) + constT1T * μ (Set.Ico t2 t)) := by
-    funext b
-    simp [add_assoc, add_comm]
+    grind
   -- Rewrite the LHS integrand, then split and plug in the values.
   simp_rw [hrew]
   rw [hsplitMain, lintegral_gT2B_rect_t1_t2_value, hconstInt]

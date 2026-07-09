@@ -47,10 +47,7 @@ lemma rho_norm : ‖rho‖ = 1 := by
     mul_re, ofReal_re, I_re, mul_zero, ofReal_im, I_im,
     mul_one, add_im, neg_im, one_im, div_ofNat_im,
     mul_im, add_zero]
-  ring_nf
-  have h : (Real.sqrt 3) ^ 2 = 3 :=
-    Real.sq_sqrt (by linarith : (0 : ℝ) ≤ 3)
-  rw [h]; norm_num
+  grind
 
 lemma rho'_norm : ‖rho'‖ = 1 := by
   rw [Complex.norm_eq_sqrt_sq_add_sq]
@@ -58,10 +55,7 @@ lemma rho'_norm : ‖rho'‖ = 1 := by
     mul_re, ofReal_re, I_re, mul_zero, ofReal_im, I_im,
     mul_one, add_im, one_im, div_ofNat_im,
     mul_im, add_zero]
-  ring_nf
-  have h : (Real.sqrt 3) ^ 2 = 3 :=
-    Real.sq_sqrt (by linarith : (0 : ℝ) ≤ 3)
-  rw [h]; norm_num
+  grind
 
 lemma i_point_norm : ‖iPoint‖ = 1 := by simp only [iPoint, Complex.norm_I]
 
@@ -167,11 +161,7 @@ lemma exists_ball_in_polygon_interior (p : ℂ) (hp : ‖p‖ > 1) (hp_im : 0 < 
   have hz₂ : ‖z - p‖ < p.im/2 := lt_of_lt_of_le hz (min_le_right _ _)
   have h_im_bound : |z.im - p.im| ≤ ‖z - p‖ := Complex.abs_im_le_norm (z - p)
   have h_norm_bound : |‖z‖ - ‖p‖| ≤ ‖z - p‖ := abs_norm_sub_norm_le z p
-  constructor
-  · linarith [(abs_lt.mp (lt_of_le_of_lt h_im_bound hz₂)).1,
-              (abs_lt.mp (lt_of_le_of_lt h_im_bound hz₂)).2]
-  · linarith [(abs_lt.mp (lt_of_le_of_lt h_norm_bound hz₁)).1,
-              (abs_lt.mp (lt_of_le_of_lt h_norm_bound hz₁)).2]
+  grind
 
 lemma circleIntegral_winding (p : ℂ) (ε : ℝ) (hε : 0 < ε) :
     (∮ z in C(p, ε), (z - p)⁻¹) =

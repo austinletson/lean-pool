@@ -160,32 +160,10 @@ lemma FactorizationSystem_diagonal_canonicity
     rw [Category.assoc, F.factorization S.bot]
   let fact'' : F.leftMap S.top ≫ F.rightMap S.top ≫ r = l ≫ S.bot := by
     rw [reassoc_of% F.factorization S.top, ← S.comm]
-  let comm₀ : (l ≫ F.leftMap S.bot) ≫ ii.hom = F.leftMap S.top := by calc
-    (l ≫ F.leftMap S.bot) ≫ ii.hom =
-      (l ≫ F.leftMap S.bot ≫ I.fst.inv) ≫ I'.fst.hom := by simp; rfl
-    _ = F.leftMap (l ≫ S.bot) ≫ I'.fst.hom := by
-      have c : l ≫ F.leftMap S.bot ≫ I.fst.inv = F.leftMap (l ≫ S.bot) := by
-        rw [← reassoc_of% I.snd.left, I.fst.hom_inv_id, Category.comp_id]
-      rw [ c ]
-    _ = F.leftMap S.top := I'.snd.left
-  let comm₁ : ii.hom ≫ F.rightMap S.top ≫ r = F.rightMap S.bot := by calc
-    ii.hom ≫ F.rightMap S.top ≫ r = I.fst.inv ≫ I'.fst.hom ≫ F.rightMap S.top ≫ r := by
-      simp only [ii, Iso.trans_hom, Iso.symm_hom, Category.assoc]
-    _ = I.fst.inv ≫ F.rightMap (l ≫ S.bot) := by rw [I'.snd.right]
-    _ = I.fst.inv ≫ I.fst.hom ≫ F.rightMap S.bot := by rw [I.snd.right]
-    _ = F.rightMap S.bot := by simp
-  let comm₀' : (l ≫ F.leftMap S.bot) ≫ kk.hom = F.leftMap S.top := by calc
-    (l ≫ F.leftMap S.bot) ≫ kk.hom = l ≫ (F.leftMap S.bot ≫ K'.fst.hom) ≫ K.fst.inv := by
-      simp; rfl
-    _ = (l ≫ F.leftMap d.map) ≫ K.fst.inv := by rw [K'.snd.left]; simp
-    _ = (F.leftMap S.top ≫ K.fst.hom) ≫ K.fst.inv := by rw [K.snd.left]
-    _ = F.leftMap S.top := by simp
-  let comm₁' : kk.hom ≫ F.rightMap S.top ≫ r = F.rightMap S.bot := by calc
-    kk.hom ≫ F.rightMap S.top ≫ r = K'.fst.hom ≫ K.fst.inv ≫ F.rightMap S.top ≫ r := by
-      aesop_cat
-    _ = K'.fst.hom ≫ K.fst.inv ≫ (K.fst.hom ≫ F.rightMap d.map) ≫ r := by rw [K.snd.right]
-    _ = K'.fst.hom ≫ F.rightMap d.map ≫ r := by simp
-    _ = F.rightMap S.bot := K'.snd.right
+  let comm₀ : (l ≫ F.leftMap S.bot) ≫ ii.hom = F.leftMap S.top := by grind
+  let comm₁ : ii.hom ≫ F.rightMap S.top ≫ r = F.rightMap S.bot := by grind
+  let comm₀' : (l ≫ F.leftMap S.bot) ≫ kk.hom = F.leftMap S.top := by grind
+  let comm₁' : kk.hom ≫ F.rightMap S.top ≫ r = F.rightMap S.bot := by grind
   let uniq := factorization_iso_is_unique' F (l ≫ S.bot) (F.image S.bot) (F.image S.top)
     (l ≫ F.leftMap S.bot) (F.is_closed_comp_left_class.precomp l hl (F.leftMap S.bot)
     (F.left_map_in_left_class S.bot)) (F.rightMap S.bot) (F.right_map_in_right_class S.bot)
@@ -195,9 +173,7 @@ lemma FactorizationSystem_diagonal_canonicity
   calc
     d.map = F.leftMap d.map ≫ F.rightMap d.map := by rw [F.factorization d.map]
     _ = (F.leftMap S.bot ≫ K'.fst.hom) ≫ (K.fst.inv ≫ F.rightMap S.top) := by
-      rw [K'.snd.left]; congr; calc
-      F.rightMap d.map = K.fst.inv ≫ K.fst.hom ≫ F.rightMap d.map := by simp
-      _ = K.fst.inv ≫ F.rightMap S.top := by rw [K.snd.right]
+      grind
     _ = F.leftMap S.bot ≫ (K'.fst ≪≫ K.fst.symm).hom ≫ F.rightMap S.top := by simp
     _ = F.leftMap S.bot ≫ kk.hom ≫ F.rightMap S.top := by rfl
     _ = F.leftMap S.bot ≫ ii.hom ≫ F.rightMap S.top := by rw [ uniq ]

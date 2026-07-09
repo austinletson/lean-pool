@@ -323,8 +323,7 @@ def inlProj : ApproximableMap (oplusTok D₀ D₁ h₀ h₁) D₀ where
     · have hXm := X_eq_master_of_embT_subset_leftN (h₁ B hB) hsub
       have hX'm := X_eq_master_of_embT_subset_leftN (h₁ B hB) hsub'
       subst hXm; subst hX'm; rw [Set.inter_self]
-      exact ⟨oplusTok_mem_embT hB hBne, D₀.master_mem, by
-        rw [leftN_master]; exact embT_subset_sumTokMaster hB⟩
+      grind
   mono := by
     rintro W W' X X' ⟨_, hX, hsub⟩ hW'W hXX' hW' hX'
     exact ⟨hW', hX', hW'W.trans (hsub.trans ((leftN_subset_iff hX hX').mpr hXX'))⟩
@@ -584,15 +583,9 @@ def twoPt : NeighborhoodSystem Str where
   master := Set.univ
   master_mem := Or.inl rfl
   sub_master := by
-    rintro X (rfl | rfl)
-    · exact subset_rfl
-    · exact Set.subset_univ _
+    grind
   inter_mem := by
-    rintro X Y Z (rfl | rfl) (rfl | rfl) _ _
-    · rw [Set.inter_self]; exact Or.inl rfl
-    · rw [Set.univ_inter]; exact Or.inr rfl
-    · rw [Set.inter_univ]; exact Or.inr rfl
-    · rw [Set.inter_self]; exact Or.inr rfl
+    grind
 
 /-- The one-point unit domain `𝟙` over `{0,1}*` (only neighbourhood `{[]}`). -/
 def unitPt : NeighborhoodSystem Str := (singletonSys ({[]} : Set Str) ⟨[], rfl⟩).sys

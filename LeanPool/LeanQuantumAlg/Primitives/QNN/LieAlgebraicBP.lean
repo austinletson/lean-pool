@@ -185,9 +185,7 @@ theorem dlaDim_diagonalFamily (n : ℕ) :
     rintro x ⟨i, rfl⟩ y ⟨j, rfl⟩
     rw [hg, Ring.lie_def, Matrix.diagonal_mul_diagonal, Matrix.diagonal_mul_diagonal,
       sub_eq_zero]
-    congr 1
-    funext x
-    exact mul_comm _ _
+    grind
   -- the generators are linearly independent (reflected by the `diag` linear map)
   have hbasis : LinearIndependent ℂ (fun i : Fin n => Pi.single i (1 : ℂ)) := by
     have h := (Pi.basisFun ℂ (Fin n)).linearIndependent

@@ -192,8 +192,7 @@ theorem cone_trig_crux (b c βj βk : ℝ) (hb : 0 < b) (hbc : b ≤ c)
     have h := Real.sin_sub_sin (βj / 2 + βk) (βj / 2)
     have hfac : Real.sin (βj / 2 + βk) - Real.sin (βj / 2)
         = 2 * Real.sin (βk / 2) * Real.cos ((βj + βk) / 2) := by
-      rw [h, show ((βj / 2 + βk) - βj / 2) / 2 = βk / 2 by ring,
-        show ((βj / 2 + βk) + βj / 2) / 2 = (βj + βk) / 2 by ring]
+      grind
     have hsk : 0 ≤ Real.sin (βk / 2) :=
       Real.sin_nonneg_of_nonneg_of_le_pi (by linarith) (by linarith)
     have hck : 0 ≤ Real.cos ((βj + βk) / 2) :=

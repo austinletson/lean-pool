@@ -110,12 +110,7 @@ lemma disintegration (κ : Kernel T (S × U)) [IsFiniteKernel κ] :
   conv_lhs => rw [← this]
   rw [measure_iUnion]
   · intro a a' haa'
-    rw [Function.onFun, Set.disjoint_iff]
-    intro su
-    simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_singleton_iff, Set.mem_setOf_eq,
-      Set.mem_empty_iff_false, and_imp]
-    intro h1 _ h1' _
-    exact haa' (h1.symm.trans h1')
+    grind
   · refine fun _ ↦ (measurable_fst (.singleton _)).inter ?_
     exact measurable_prodMk_left.comp measurable_snd hs
 
@@ -136,8 +131,7 @@ lemma condKernel_compProd_ae_eq
   rw [← Prod.eta x, ← Set.singleton_prod_singleton, Set.mk_preimage_prod_right_eq_if] at hy
   simp only [ne_eq, Set.mem_singleton_iff] at hy
   by_cases hyx1 : y = x.1
-  · simp only [hyx1, ite_true] at hy
-    exact hy.2
+  · grind
   · simp [hyx1] at hy
 
 lemma compProd_swapLeft_prodMkLeft {α β γ : Type*} {mα : MeasurableSpace α} {mβ :
@@ -188,10 +182,7 @@ lemma condKernel_map_prodMk_left {V : Type*} [Nonempty V] [MeasurableSpace V]
   have h_ne_zero : κ x.1 (Prod.fst ⁻¹' {x.2}) ≠ 0 := by
     refine fun h_zero ↦ hy.2 ?_
     refine measure_mono_null ?_ h_zero
-    intro p
-    simp only [Set.mem_setOf_eq, Set.mem_preimage, Set.mem_singleton_iff]
-    conv_lhs => rw [← Prod.eta x, Prod.mk_inj]
-    exact fun h ↦ h.2
+    grind
   have h_preimage : (fun p ↦ (p.1,
     f p)) ⁻¹' (Prod.fst ⁻¹' {x.2}) = Prod.fst ⁻¹' {x.2} := by
     ext p; simp
@@ -203,15 +194,7 @@ lemma condKernel_map_prodMk_left {V : Type*} [Nonempty V] [MeasurableSpace V]
   congr
   rw [map_apply' _ .of_discrete _ ((measurableSet_singleton _).prod hs)]
   congr
-  ext p
-  simp only [Set.singleton_prod, Set.mem_preimage, Set.mem_image, Prod.mk.injEq,
-    exists_eq_right_right, Set.mem_setOf_eq]
-  refine ⟨fun h ↦ ⟨p.2, ?_, ?_⟩, fun ⟨p2, h_mem, h_eq⟩ ↦ ?_⟩
-  · rw [h.2, Prod.mk.eta]
-    exact h.1
-  · rw [h.2, Prod.mk.eta]
-  · rw [← h_eq]
-    simp [h_mem]
+  grind
 
 end condKernel
 
@@ -311,10 +294,7 @@ lemma _root_.ProbabilityTheory.condKernel_condDistrib_ae_eq [Nonempty S]
   ext A hA
   have hx1 : μ (Z ⁻¹' {x.1}) ≠ 0 := by
     refine fun h_null ↦ hx (measure_mono_null ?_ h_null)
-    intro ω hω
-    simp only [Set.mem_preimage, Set.mem_singleton_iff] at hω ⊢
-    rw [← Prod.eta x, Prod.mk_inj] at hω
-    exact hω.1
+    grind
   rw [Kernel.condKernel_apply']
   swap
   · rw [condDistrib_apply' (hX.prodMk hY) hZ _ _ hx1]
@@ -322,10 +302,7 @@ lemma _root_.ProbabilityTheory.condKernel_condDistrib_ae_eq [Nonempty S]
     · exact measurable_fst (.singleton _)
     simp only [ne_eq, mul_eq_zero, ENNReal.inv_eq_zero, measure_ne_top μ, false_or]
     convert hx
-    ext ω
-    simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_singleton_iff]
-    conv_rhs => rw [← Prod.eta x]
-    exact Prod.mk_inj.symm
+    grind
   rw [condDistrib_apply' (hX.prodMk hY) hZ _ _ hx1]
   swap
   · exact measurable_fst (.singleton _)
@@ -336,15 +313,10 @@ lemma _root_.ProbabilityTheory.condKernel_condDistrib_ae_eq [Nonempty S]
   have : (fun a ↦ (X a, Y a)) ⁻¹' (Prod.fst ⁻¹' {x.2}) = X ⁻¹' {x.2} := by rfl
   simp_rw [this]
   have : (fun a ↦ (X a, Y a)) ⁻¹' ({x.2} ×ˢ A) = X ⁻¹' {x.2} ∩ Y ⁻¹' A := by
-    ext y;
-    simp only [Set.singleton_prod, Set.mem_preimage, Set.mem_image, Prod.mk.injEq,
-      exists_eq_right_right, Set.mem_inter_iff, Set.mem_singleton_iff]
-    tauto
+    grind
   simp_rw [this]
   have : (fun a ↦ (Z a, X a)) ⁻¹' {x} = Z ⁻¹' {x.1} ∩ X ⁻¹' {x.2} := by
-    ext y
-    simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_inter_iff]
-    conv_lhs => rw [← Prod.eta x, Prod.mk_inj]
+    grind
   rw [this, ENNReal.mul_inv (Or.inr (measure_ne_top _ _)), inv_inv]
   swap; · left; simp [hx1]
   calc (μ (Z ⁻¹' {x.1})) * (μ (Z ⁻¹' {x.1} ∩ X ⁻¹' {x.2}))⁻¹ *
@@ -368,9 +340,7 @@ lemma _root_.ProbabilityTheory.swap_condDistrib_ae_eq
   rw [Kernel.comap_apply']
   have h_swap : (fun a ↦ (X a, Z a)) ⁻¹' {Prod.swap x} = (fun a ↦ (Z a,
     X a)) ⁻¹' {x} := by
-    ext ω
-    simp only [Set.mem_preimage, Set.mem_singleton_iff]
-    rw [← Prod.eta x, Prod.swap_prod_mk, Prod.mk_inj, Prod.mk_inj, and_comm]
+    grind
   rw [condDistrib_apply' hY (hX.prodMk hZ) _ _ _ hA]
   swap; · rwa [Measure.map_apply (hZ.prodMk hX) (.singleton _), ← h_swap] at hx
   rw [condDistrib_apply' hY (hZ.prodMk hX) _ _ _ hA]
@@ -384,10 +354,7 @@ lemma _root_.ProbabilityTheory.condDistrib_const_unit (hX : Measurable X) (hY : 
   rw [Filter.EventuallyEq, ae_iff_of_countable]
   intro x hx
   have : (fun a ↦ ((), X a)) ⁻¹' {x} = X ⁻¹' {x.2} := by
-    ext ω
-    simp only [Set.mem_preimage, Set.mem_singleton_iff]
-    rw [← Prod.eta x, Prod.mk_inj]
-    simp
+    grind
   rw [Measure.map_apply (measurable_const.prodMk hX) (.singleton _), this] at hx
   ext s hs
   rw [Kernel.condKernel_apply']
@@ -434,13 +401,7 @@ lemma _root_.ProbabilityTheory.map_compProd_condDistrib
     simp
   rw [this, measure_iUnion]
   · intro i j hij
-    rw [Function.onFun]
-    refine Disjoint.mono Set.inter_subset_left Set.inter_subset_left ?_
-    rw [Set.disjoint_iff]
-    intro z
-    simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_singleton_iff, Set.mem_empty_iff_false,
-      and_imp]
-    exact fun hi hj ↦ hij (hi.symm.trans hj)
+    grind
   intro u
   exact (hZ (.singleton _)).inter (measurable_const.prodMk hX hA)
 
@@ -496,11 +457,7 @@ lemma _root_.ProbabilityTheory.condDistrib_eq_prod_of_indepFun [Nonempty S]
   rw [h_Union, Set.inter_iUnion, measure_iUnion]
   rotate_left
   · intro i j hij
-    rw [Function.onFun, Set.disjoint_iff]
-    intro y
-    simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_singleton_iff, Set.mem_empty_iff_false,
-      and_imp]
-    exact fun _ _ h3 _ _ _ h7 _ ↦ hij (h3.symm.trans h7)
+    grind
   · intro b
     refine ((hZ (.singleton _)).inter (hW (.singleton _))).inter ?_
     exact (hX (.singleton _)).inter (hY (measurable_prodMk_left hs))
@@ -508,8 +465,7 @@ lemma _root_.ProbabilityTheory.condDistrib_eq_prod_of_indepFun [Nonempty S]
   calc μ (Z ⁻¹' {x.1} ∩ W ⁻¹' {x.2} ∩ (X ⁻¹' {b} ∩ Y ⁻¹' (Prod.mk b ⁻¹' s)))
     = μ (Z ⁻¹' {x.1} ∩ X ⁻¹' {b} ∩
         (W ⁻¹' {x.2} ∩ Y ⁻¹' (Prod.mk b ⁻¹' s))) := by
-        rw [Set.inter_assoc, ← Set.inter_assoc (W ⁻¹' {x.2}), Set.inter_comm (W ⁻¹' {x.2}),
-          ← Set.inter_assoc, ← Set.inter_assoc, ← Set.inter_assoc]
+        grind
   _ = μ ((fun ω ↦ (X ω, Z ω)) ⁻¹' {(b, x.1)}
       ∩ ((fun ω ↦ (Y ω, W ω)) ⁻¹' ((Prod.mk b ⁻¹' s) ×ˢ {x.2}))) := by
         rw [← Set.singleton_prod_singleton, Set.mk_preimage_prod, Set.inter_comm (Z ⁻¹' {x.1}),
@@ -551,12 +507,10 @@ lemma _root_.MeasureTheory.Measure.compProd_apply_singleton
     by_cases ha : a = t
     · simp only [ha, Set.mem_singleton_iff, Set.indicator_of_mem]
       congr
-      ext y
-      simp
+      grind
     · simp only [Set.mem_singleton_iff, ha, not_false_eq_true, Set.indicator_of_notMem]
       suffices Prod.mk a ⁻¹' {(t, s)} = ∅ by simp [this]
-      ext y
-      simp [ha]
+      grind
   simp_rw [this]
   rw [lintegral_indicator (.singleton _)]
   simp
@@ -731,11 +685,7 @@ lemma _root_.ProbabilityTheory.Kernel.local_support_of_finiteKernelSupport
   change κ t (A.biUnion fun t ↦ (h t).choose)ᶜ = 0
   set B := (h t).choose
   refine measure_mono_null ?_ (h t).choose_spec
-  intro s
-  simp only [Finset.coe_biUnion, SetLike.mem_coe, Set.compl_iUnion, Set.mem_iInter,
-    Set.mem_compl_iff]
-  contrapose!; intro h
-  use t
+  grind
 
 /-- Finite range implies finite kernel support. -/
 lemma _root_.ProbabilityTheory.Kernel.finiteKernelSupport_of_finite_range
@@ -767,10 +717,7 @@ lemma _root_.ProbabilityTheory.Kernel.FiniteKernelSupport.map [MeasurableSinglet
     use Finset.image f A
     rw [Kernel.map_apply' _ hf]
     · refine measure_mono_null ?_ hA
-      intro s
-      simp only [Finset.coe_image, Set.preimage_compl, Set.mem_compl_iff, Set.mem_preimage,
-        Set.mem_image, SetLike.mem_coe, not_exists, not_and]
-      contrapose!; intro hs; use s
+      grind
     · apply MeasurableSet.compl
       apply Set.Finite.measurableSet
       exact Finset.finite_toSet (Finset.image f A)
@@ -786,10 +733,7 @@ lemma _root_.ProbabilityTheory.Kernel.AEFiniteKernelSupport.map
     use Finset.image f A
     rw [Kernel.map_apply' _ hf]
     · refine measure_mono_null ?_ hA
-      intro s
-      simp only [Finset.coe_image, Set.preimage_compl, Set.mem_compl_iff, Set.mem_preimage,
-        Set.mem_image, SetLike.mem_coe, not_exists, not_and]
-      contrapose!; intro hs; use s
+      grind
     · apply MeasurableSet.compl
       apply Set.Finite.measurableSet
       exact Finset.finite_toSet (Finset.image f A)
@@ -869,12 +813,7 @@ lemma _root_.ProbabilityTheory.Kernel.aefiniteKernelSupport_of_cond
   simp only [Finset.coe_image, Set.singleton_prod, mul_eq_zero, ENNReal.inv_eq_zero]
   right
   refine measure_mono_null ?_ hA
-  intro x
-  simp only [Set.mem_image, Set.mem_compl_iff, Finset.mem_coe, Prod.exists, exists_eq_right,
-    not_exists, forall_exists_index, and_imp]
-  intro y h hsyx
-  rw [← hsyx]
-  exact h s
+  grind
 
 /-- Swapping a kernel right preserves finite kernel support. -/
 lemma _root_.ProbabilityTheory.Kernel.FiniteKernelSupport.swapRight

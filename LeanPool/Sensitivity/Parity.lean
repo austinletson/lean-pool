@@ -72,16 +72,12 @@ theorem parity_flipBit (x : Fin n → Bool) (i : Fin n) :
     have hS : Finset.univ.filter (fun j : Fin n => flipBit x i j) =
               insert i (Finset.univ.filter (fun j : Fin n => x j)) := by
       ext j; simp [flipBit]; by_cases h : j = i <;> simp [h, hxi, Function.update]
-    have hni : i ∉ Finset.univ.filter (fun j : Fin n => x j) := by simp [hxi]
-    rw [hS, Finset.card_insert_of_notMem hni]
+    grind
   · left
     have hS : Finset.univ.filter (fun j : Fin n => flipBit x i j) =
               (Finset.univ.filter (fun j : Fin n => x j)).erase i := by
       ext j; simp [flipBit]; by_cases h : j = i <;> simp [h, hxi, Function.update]
-    have hi : i ∈ Finset.univ.filter (fun j : Fin n => x j) := by simp [hxi]
-    rw [hS, Finset.card_erase_of_mem hi]
-    have hpos := Finset.card_pos.mpr ⟨i, hi⟩
-    omega
+    grind
 
 namespace BoolFun
 
@@ -96,11 +92,7 @@ theorem sensitiveAt_of_paritySigned_eq (f : BoolFun n)
   intro heq
   rw [heq] at h
   have hpnz := parity_ne_zero x
-  rcases mul_eq_zero.mp (by linarith : (if f x then (1 : ℤ) else -1) * (-2 * parity x) = 0)
-    with h1 | h1
-  · split_ifs at h1
-    omega
-  · exact hpnz (by linarith)
+  grind
 
 end BoolFun
 
@@ -163,11 +155,7 @@ theorem moebius_parity_sum (f : BoolFun n) (hn : 0 < n) :
   intro T
   simp only [Equiv.ofBijective_apply]
   have hcard := congrArg Finset.card (filter_true_indicator T)
-  rw [show
-        (-1 : ℤ) ^ T.card * boolToInt (f (indicator T)) =
-          boolToInt (f (indicator T)) * (-1) ^ T.card from by ring]
-  congr 2
-  exact hcard.symm
+  grind
 
 /-- If `f` has full multilinear degree (`c_univ(f) ≠ 0`), then the
 parity-weighted sum is nonzero. -/
@@ -195,13 +183,10 @@ theorem fullDegree_imbalance (f : BoolFun n) (hn : 0 < n)
   set A := Finset.univ.filter (fun x : Fin n → Bool => f.paritySigned x = 1)
   set B := Finset.univ.filter (fun x : Fin n → Bool => f.paritySigned x = -1)
   have hunion : A ∪ B = Finset.univ := by
-    ext x; simp only [Finset.mem_union, Finset.mem_filter, Finset.mem_univ, true_and, A, B]
-    exact iff_of_true (hval x) trivial
+    grind
   have hdisj : Disjoint A B := by
     rw [Finset.disjoint_left]
-    intro x hxA hxB
-    simp only [A, B, Finset.mem_filter, Finset.mem_univ, true_and] at hxA hxB
-    linarith
+    grind
   have hsum : ∑ x : Fin n → Bool, f.paritySigned x = ↑A.card - ↑B.card := by
     have hA_sum : ∑ x ∈ A, f.paritySigned x = (A.card : ℤ) := by
       calc ∑ x ∈ A, f.paritySigned x = ∑ _ ∈ A, (1 : ℤ) :=
@@ -227,14 +212,6 @@ theorem fullDegree_imbalance (f : BoolFun n) (hn : 0 < n)
     have h2pow : 2 ^ n = 2 * 2 ^ (n - 1) := by
       conv_lhs => rw [show n = (n - 1) + 1 from by omega]
       rw [pow_succ]; ring
-    suffices hne' : B.card ≠ 2 ^ (n - 1) by
-      set p := 2 ^ (n - 1)
-      omega
-    intro heq
-    have hA_eq : A.card = 2 ^ (n - 1) := by
-      set p := 2 ^ (n - 1)
-      omega
-    apply hne
-    rw [hsum, hA_eq, heq]; push_cast; omega
+    grind
 
 end LeanPoolSensitivity

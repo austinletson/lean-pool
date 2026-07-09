@@ -197,10 +197,7 @@ theorem finite_zeros_in_fd (hf : f ≠ 0) :
   have hre := abs_le.mp habs_re
   constructor
   · simp only [fdBox, Set.mem_setOf_eq]
-    refine ⟨by linarith [hre_bridge], by linarith [hre_bridge], him_gt, ?_⟩
-    by_contra h_ge; push Not at h_ge
-    have : H₀ ≤ (↑p : ℂ).im := by linarith
-    exact absurd hp_zero (hH₀_no_zeros p this)
+    grind
   · exact (modularFormCompOfComplex_eq' f p).symm ▸ hp_zero
 
 /-- The set of orbits with nonzero `ordOrbit` is finite. -/
@@ -213,9 +210,7 @@ theorem finite_support_ordOrbit (hf : f ≠ 0) :
     rintro _ ⟨q, hq, rfl⟩
     exact ⟨(hrep q).2, by rw [← ordOrbit_mk f (rep q), (hrep q).1]; exact hq⟩
   have h_inj : Set.InjOn rep S := by
-    intro q₁ _ q₂ _ h
-    have : orb (rep q₁) = orb (rep q₂) := congrArg orb h
-    rw [(hrep q₁).1, (hrep q₂).1] at this; exact this
+    intro q₁ grind
   exact (finite_zeros_in_fd f hf).subset h_image |>.of_finite_image h_inj
 
 /-- The set of non-elliptic orbits with nonzero `ordOrbit` is finite. -/
@@ -224,9 +219,7 @@ theorem finite_support_ordOrbit_nonEll (hf : f ≠ 0) :
   apply Set.Finite.subset ((finite_support_ordOrbit f hf).preimage
       (fun (a : NonEllOrbit) _ (b : NonEllOrbit) _ h =>
         Subtype.val_injective h))
-  intro ⟨q, hq_ne⟩ hq_ord
-  simp only [Set.mem_preimage, Set.mem_setOf_eq] at hq_ord ⊢
-  exact hq_ord
+  grind
 
 /-- The canonical finite set of zeros (with nonzero order) in `𝒟`. -/
 noncomputable def s₀ (hf : f ≠ 0) : Finset ℍ := (finite_zeros_in_fd f hf).toFinset

@@ -37,12 +37,7 @@ theorem main_recovery {t s r : ℕ} (hr : 0 < r) (hrt : r ∣ 2 ^ t)
     2 ^ t / Nat.gcd (s * (2 ^ t / r)) (2 ^ t) = r := by
   obtain ⟨m, hm⟩ := hrt
   have hmpos : 0 < m := by
-    rcases Nat.eq_zero_or_pos m with hm0 | hm0
-    · exfalso
-      have h2 : 0 < 2 ^ t := pow_pos (by norm_num) t
-      rw [hm, hm0, Nat.mul_zero] at h2
-      exact (Nat.lt_irrefl 0) h2
-    · exact hm0
+    grind
   have hdiv : 2 ^ t / r = m := by
     rw [hm]
     exact Nat.mul_div_cancel_left m hr
@@ -73,10 +68,7 @@ theorem main_exact_dyadic {t s r : ℕ} (hr : 0 < r) (hrt : r ∣ 2 ^ t)
     have h2t0 : (2 : ℝ) ^ t ≠ 0 := by positivity
     have hrr : (r : ℝ) * ((2 ^ t / r : ℕ) : ℝ) = (2 : ℝ) ^ t := by
       exact_mod_cast Nat.mul_div_cancel' hrt
-    rw [div_eq_div_iff hr0 h2t0]
-    push_cast
-    rw [← hrr]
-    ring
+    grind
   · rw [hj]
     exact main_recovery hr hrt hsr
 
@@ -199,12 +191,7 @@ theorem main_output_with_resources {N x t r s : ℕ}
           (orderFindingExactResourceProfile t) 1 t (t ^ 2) 1 := by
   obtain ⟨q, hq⟩ := hrt
   have hqpos : 0 < q := by
-    rcases Nat.eq_zero_or_pos q with hzero | hpos
-    · exfalso
-      have hpow : 0 < 2 ^ t := pow_pos (by norm_num) t
-      rw [hq, hzero, Nat.mul_zero] at hpow
-      exact (Nat.lt_irrefl 0) hpow
-    · exact hpos
+    grind
   have hdiv : 2 ^ t / r = q := by
     rw [hq]
     exact Nat.mul_div_cancel_left q hinput.order_pos

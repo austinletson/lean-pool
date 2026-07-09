@@ -27,16 +27,12 @@ lemma sum_singletons [AddCommMonoid α] {F : Finset ι → α} {G : ι → α} (
   · intro j _ l _ h'
     simp only at h'
     exact Finset.singleton_inj.mp h'
-  · intro j _
-    simp
+  · intro j grind
   · intro S hS hS'
     simp only [mem_filter, mem_univ, true_and] at hS
     obtain ⟨i, hi⟩ := card_eq_one.mp hS
-    simp only [coe_univ, Set.image_univ, Set.mem_range, not_exists] at hS'
-    exact absurd hi.symm (hS' i)
-  · intro i _
-    symm
-    exact h i
+    grind
+  · grind
 
 lemma sum_singletons' [AddCommMonoid α] {F : Finset ι → α} :
     ∑ S ∈ {S | S.card = 1}, F S = ∑ i, F {i} := by apply sum_singletons; intro i; rfl
@@ -48,15 +44,11 @@ lemma ite_ite_same (a b c : α) :
 
 lemma rw_ite_left (h : P → a = c) :
     ite P a b = ite P c b := by
-  split_ifs with hp
-  · rw [h hp]
-  · rfl
+  grind
 
 lemma rw_ite_right (h : ¬P → a = c) :
     ite P b a = ite P b c := by
-  split_ifs with hp
-  · rfl
-  · rw [h hp]
+  grind
 
 lemma ite_add_ite {α : Type*} [AddCommMonoid α] (a₁ b₁ a₂ b₂ : α) :
     ite P a₁ b₁ + ite P a₂ b₂ = ite P (a₁ + a₂) (b₁ + b₂) := by split_ifs <;> simp
@@ -78,8 +70,7 @@ lemma oneOn_true (h : p) : oneOn p = 1 := by simpa
 lemma oneOn_false (h : ¬p) : oneOn p = 0 := by simpa
 
 lemma oneOn_and : oneOn (p ∧ q) = (oneOn p) * (oneOn q) := by
-  unfold oneOn
-  split_ifs <;> simp_all
+  grind
 
 lemma oneOn_not : oneOn (¬p) = 1 - oneOn p := by
   unfold oneOn; split_ifs <;> simp

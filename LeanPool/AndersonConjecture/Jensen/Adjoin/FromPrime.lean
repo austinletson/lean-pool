@@ -76,8 +76,7 @@ private def adjoin_from_prime_proof
       rw [mem_iUnion] at hP
       obtain ⟨r, hP'⟩ := hP
       rw [mem_iUnion] at hP'
-      obtain ⟨hr_ne, hP_assoc⟩ := hP'
-      exact ⟨r, hr_ne, hP_assoc⟩
+      grind
     have hC_prime : ∀ P ∈ C, P.IsPrime := by
       intro P hP
       obtain ⟨r, _, hP_assoc⟩ := hC_mem P hP
@@ -149,11 +148,7 @@ private def adjoin_from_prime_proof
           exact hx_ne this
         exact hq_ne_bot this
     have hq_not_le' : ∀ P ∈ C', ¬(q ≤ P) := by
-      intro P hP hle
-      rcases hP with hP | hP
-      · exact hq_not_le P hP hle
-      · rw [mem_singleton_iff.mp hP] at hle
-        exact hq_ne_bot (le_bot_iff.mp hle)
+      grind
     let φ : (P : Ideal T) → R.carrier →+* T ⧸ P :=
       fun P => (Ideal.Quotient.mk P).comp R.carrier.subtype
     let liftQ : (P : Ideal T) → T ⧸ P → T :=
@@ -314,9 +309,7 @@ private def adjoin_from_prime_proof
             conv_lhs => rw [← hdecomp, map_add, map_mul, aeval_X, aeval_C]
           have hc_in_q : algebraMap R.carrier T (f.coeff 0) ∈ q := by
             have heq : algebraMap R.carrier T (f.coeff 0) = -(t * aeval t f.divX) := by
-              have h0 := hf_eval
-              rw [heval_decomp] at h0
-              exact eq_neg_of_add_eq_zero_right h0
+              grind
             rw [heq]
             exact q.neg_mem (q.mul_mem_right _ ht_q)
           have hc_comap : f.coeff 0 ∈ q.comap R.carrier.subtype :=
@@ -325,8 +318,7 @@ private def adjoin_from_prime_proof
           exact (Submodule.mem_bot _).mp hc_comap
         have hf_eq : f = X * f.divX := by
           have := Polynomial.X_mul_divX_add f
-          rw [hc0, map_zero, add_zero] at this
-          exact this.symm
+          grind
         have hdivX_eval : aeval t f.divX = 0 := by
           have : aeval t f = t * aeval t f.divX := by
             conv_lhs => rw [hf_eq]

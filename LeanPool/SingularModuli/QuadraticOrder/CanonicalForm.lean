@@ -135,10 +135,7 @@ private lemma tau_mul_p_pow_mk_tau_sub_A_mem_zSpan
   -- `p^(m-k) · (A² - dA + q) = p^k · E` in `ℤ` (and hence in `QuadraticOrder d`).
   have hcoef_int :
       ((p : ℤ) ^ (m - k)) * (A ^ 2 - d * A + q) = ((p : ℤ) ^ k) * E := by
-    rw [hE]
-    rw [show ((p : ℤ) ^ (m - k)) * (((p : ℤ) ^ (2 * k - m)) * E) =
-          (((p : ℤ) ^ (m - k)) * ((p : ℤ) ^ (2 * k - m))) * E by ring,
-        ← pow_add, hk_eq]
+    grind
   have hcoef : ((p : QuadraticOrder d) ^ (m - k)) *
       ((A : QuadraticOrder d) ^ 2 - (d : QuadraticOrder d) * (A : QuadraticOrder d) +
         ((q : ℤ) : QuadraticOrder d)) =
@@ -149,20 +146,14 @@ private lemma tau_mul_p_pow_mk_tau_sub_A_mem_zSpan
   have hττ : tau (d := d) * tau =
       (d : QuadraticOrder d) * tau - ((q : ℤ) : QuadraticOrder d) := by
     have h := tau_minimal_poly (d := d)
-    rw [show tau (d := d) * tau = tau ^ 2 by ring]
-    have : tau (d := d) ^ 2 = (d : ℤ) • tau - q • (1 : QuadraticOrder d) := by
-      rw [hq_def] at *; linear_combination h
-    rw [this, zsmul_eq_mul, zsmul_eq_mul, mul_one]
+    grind
   -- The key algebraic identity.
   have hrw : tau (d := d) * ((p : QuadraticOrder d) ^ (m - k) *
       (tau - (A : QuadraticOrder d))) =
         ((d - A : ℤ)) • ((p : QuadraticOrder d) ^ (m - k) *
           (tau - (A : QuadraticOrder d))) +
         ((-E : ℤ)) • (p : QuadraticOrder d) ^ k := by
-    rw [zsmul_eq_mul, zsmul_eq_mul]
-    push_cast
-    linear_combination
-      ((p : QuadraticOrder d) ^ (m - k)) * hττ - hcoef
+    grind
   rw [hrw]
   exact Submodule.add_mem _
     (Submodule.smul_mem _ _ p_pow_mk_tau_sub_A_mem_zSpan)

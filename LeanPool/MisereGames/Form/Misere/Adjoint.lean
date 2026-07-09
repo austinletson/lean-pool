@@ -74,8 +74,7 @@ theorem misereOutcome_add_rootedAdjoint_eq_P {A : G → Prop} [Hereditary A] {r 
         (misereOutcome_add_rootedAdjoint_eq_P h_isRoot (Hereditary.of_mem_moves hg h2))
     · by_cases h3 : IsEnd (-p) g
       · have h4 : gr = r := Form.Adjoint.mem_rootedAdjoint_end_opposite h2 h3
-        rw [h4]
-        exact h_isRoot hg h3
+        grind
       · apply winsGoingFirst_of_moves
         have ⟨gl, h3, h4⟩ := Form.Adjoint.mem_rootedAdjoint_exists_opposite h2 h3
         rw [h4]

@@ -267,8 +267,7 @@ theorem pow_two_sub_eq_mul_half_pow {rOut i : ℕ} (hi : i ≤ rOut) :
     (2 ^ (rOut - i) : ℝ) = (2 ^ rOut : ℝ) * ((1 : ℝ) / 2) ^ i := by
   have hpow : (2 : ℝ) ^ rOut = (2 : ℝ) ^ (rOut - i) * (2 : ℝ) ^ i := by
     rw [← pow_add]
-    congr
-    omega
+    grind
   calc
     (2 ^ (rOut - i) : ℝ)
         = ((2 : ℝ) ^ (rOut - i) * ((2 : ℝ) ^ i * ((1 : ℝ) / 2) ^ i)) := by
@@ -345,19 +344,13 @@ theorem annulusMean_le_fullWeightedMean (n rIn rOut : ℕ) :
               (∑ i ∈ Finset.range (n + 1),
                 (Nat.choose n i : ℝ) * ((1 : ℝ) / 2) ^ i) := by
         rw [Finset.mul_sum]
-        refine Finset.sum_congr rfl ?_
-        intro i _hi
-        ring
+        grind
       rw [hsum_rearr, weightedSphereSum_half_eq]
       have hratio : (((3 : ℝ) / 2) ^ n) / ((2 : ℝ) ^ n) =
           ((3 : ℝ) / 4) ^ n := by
         rw [← div_pow]
         norm_num
-      calc
-        ((2 ^ rOut : ℝ) * ((3 : ℝ) / 2) ^ n) / (2 ^ n : ℝ)
-            = (2 ^ rOut : ℝ) * ((((3 : ℝ) / 2) ^ n) / ((2 : ℝ) ^ n)) := by
-              ring
-        _ = (2 ^ rOut : ℝ) * (((3 : ℝ) / 4) ^ n) := by rw [hratio]
+      grind
 
 /-- The probability that a `Binomial(n, 1/3)` random variable lies in the
 annulus window `[rIn, rOut]`.  This is the normalized form of the weighted
@@ -379,12 +372,10 @@ theorem annulusWeightedTerm_eq_fullFactor_mul_binomialTerm
         ((((1 : ℝ) / 3) ^ i) * (((2 : ℝ) / 3) ^ (n - i))) := by
   have hpow_r : (2 : ℝ) ^ rOut = (2 : ℝ) ^ (rOut - i) * (2 : ℝ) ^ i := by
     rw [← pow_add]
-    congr
-    omega
+    grind
   have hpow_n : (2 : ℝ) ^ n = (2 : ℝ) ^ (n - i) * (2 : ℝ) ^ i := by
     rw [← pow_add]
-    congr
-    omega
+    grind
   have hpow3_n : (3 : ℝ) ^ n = (3 : ℝ) ^ (n - i) * (3 : ℝ) ^ i := by
     rw [← pow_add]
     congr
@@ -512,15 +503,7 @@ theorem binomialWindow_tail_partition_term {n rIn rOut i : ℕ}
         (if i < rIn then binomialMassThird n i else 0) +
           (if rOut < i then binomialMassThird n i else 0) =
       binomialMassThird n i := by
-  by_cases hleft : i < rIn
-  · have hnot_inside : ¬ (rIn ≤ i ∧ i ≤ rOut) := by omega
-    have hnot_right : ¬ rOut < i := by omega
-    simp [hleft, hnot_inside, hnot_right]
-  · by_cases hright : rOut < i
-    · have hnot_inside : ¬ (rIn ≤ i ∧ i ≤ rOut) := by omega
-      simp [hleft, hright, hnot_inside]
-    · have hinside : rIn ≤ i ∧ i ≤ rOut := by omega
-      simp [hleft, hright, hinside]
+  grind
 
 /-- Window probability plus the two outside tails equals one. -/
 theorem binomialWindowProbThird_add_tails_eq_one
@@ -534,10 +517,7 @@ theorem binomialWindowProbThird_add_tails_eq_one
   refine Finset.sum_congr rfl ?_
   intro i _hi
   unfold binomialMassThird
-  have hterm := binomialWindow_tail_partition_term (n := n) (rIn := rIn)
-    (rOut := rOut) (i := i) hr
-  unfold binomialMassThird at hterm
-  exact hterm
+  grind
 
 /-- If the two binomial tails outside the annulus have total mass at most
 `eps`, then the annulus window has mass at least `1-eps`. -/
@@ -614,8 +594,7 @@ theorem binomialLeftTailProbThird_le_chernoff (n rIn : ℕ) {lam : ℝ}
         have hexp_le :
             Real.exp 0 ≤ Real.exp (lam * (rIn : ℝ) + (i : ℝ) * -lam) := by
           apply Real.exp_le_exp.mpr
-          rw [heq]
-          exact harg
+          grind
         simpa using hexp_le
       calc
         (if i < rIn then binomialMassThird n i else 0)
@@ -674,8 +653,7 @@ theorem binomialRightTailProbThird_le_chernoff (n rOut : ℕ) {lam : ℝ}
         have hexp_le :
             Real.exp 0 ≤ Real.exp (-(lam * (rOut : ℝ)) + (i : ℝ) * lam) := by
           apply Real.exp_le_exp.mpr
-          rw [heq]
-          exact harg
+          grind
         simpa using hexp_le
       calc
         (if rOut < i then binomialMassThird n i else 0)
@@ -784,10 +762,7 @@ theorem sum_centerSample_eval {n N : ℕ} (j : Fin N)
       simpa [fiber, CenterSample, card_vertex] using hpi
     have hconst :
         ∀ sample ∈ fiber, (f (sample j) : ℚ) = (f center : ℚ) := by
-      intro sample hsample
-      have hsample_eq : sample j = center := by
-        simpa [fiber] using (Finset.mem_filter.mp hsample).2
-      simp [hsample_eq]
+      grind
     calc
       (∑ sample ∈ (Finset.univ : Finset (CenterSample n N)) with sample j = center,
           (f (sample j) : ℚ))
@@ -890,13 +865,7 @@ theorem sampleContributionSecondMomentProxy_le_width_mul_expectation {n N rIn rO
     mul_le_mul_of_nonneg_left
       (oneCenterContributionSecondMoment_le_width_mul_expectation
         (rIn := rIn) (rOut := rOut) target) hN
-  calc
-    (N : ℚ) * oneCenterContributionSecondMoment rIn rOut target
-        ≤ (N : ℚ) *
-          ((2 ^ (rOut - rIn) : ℚ) * oneCenterContributionExpectation rIn rOut target) := h
-    _ = (2 ^ (rOut - rIn) : ℚ) *
-        ((N : ℚ) * oneCenterContributionExpectation rIn rOut target) := by
-          ring
+  grind
 
 /-- Paper-facing variance-proxy corollary: once the expected total contribution
 is at most `2T`, the Bernstein variance proxy is at most `2 B_0 T`. -/
@@ -911,11 +880,7 @@ theorem sampleContributionSecondMomentProxy_le_two_width_mul_T
     (sampleContributionSecondMomentProxy_le_width_mul_expectation
       (N := N) (rIn := rIn) (rOut := rOut) target).trans
       (mul_le_mul_of_nonneg_left hmean_upper hwidth_nonneg)
-  calc
-    sampleContributionSecondMomentProxy (N := N) rIn rOut target
-        ≤ (2 ^ (rOut - rIn) : ℚ) * (2 * (T : ℚ)) := h
-    _ = 2 * (2 ^ (rOut - rIn) : ℚ) * (T : ℚ) := by
-          ring
+  grind
 
 /-- The event that a particular target receives less than demand `T`. -/
 def sampleTargetFails {n N : ℕ} (rIn rOut T : ℕ)
@@ -1050,9 +1015,7 @@ theorem oneCenterNegativeExponentialMoment_le_chord {n rIn rOut : ℕ}
     _ = 1 - q *
         (((∑ center : HypercubeVertex n,
           (annulusContribution rIn rOut target center : ℝ)) / (2 ^ n : ℝ)) / B) := by
-          rw [hsum_chord_eq]
-          rw [hcard_eq]
-          field_simp [hBpos.ne', hcard_pos.ne']
+          grind
 
 /-- Sum of the one-center negative exponential factor over one Hamming sphere. -/
 theorem sum_filter_dist_eq_exp_annulusContribution {n rIn rOut i : ℕ}
@@ -1354,8 +1317,7 @@ theorem targetLowerTailExponentialMoment_le_exp_chord
               (oneCenterContributionExpectationReal rIn rOut target /
                 (2 ^ (rOut - rIn) : ℝ)))) := by
           rw [← Real.exp_add]
-          simp [B, m, u]
-          ring
+          grind
 
 /-- Optimized chord-based Chernoff bound for one fixed target.  This is the
 analytic gap-closing statement: if the expected annulus contribution `mu`
@@ -1406,8 +1368,7 @@ theorem targetLowerTailExponentialMoment_le_exp_optimized_chord
     calc
       (lam - lam ^ 2 * B) * mu =
           (lam * B - (lam * B) ^ 2) * ((N : ℝ) * (m / B)) := by
-            field_simp [hB_pos.ne']
-            ring
+            grind
       _ ≤ (1 - Real.exp (-(lam * B))) * ((N : ℝ) * (m / B)) := by
             exact mul_le_mul_of_nonneg_right hq_lower hcoeff_nonneg
       _ = (N : ℝ) *
@@ -1433,26 +1394,7 @@ theorem targetLowerTailExponentialMoment_le_exp_optimized_chord
     exact exp_chord_quadratic_optimized
       (T := (T : ℝ)) (gap := gap) (B := B) (mu := mu) (lam := lam)
       hB_pos hmu_pos' hgap (by simpa [mu, m] using hmean) rfl
-  calc
-    targetLowerTailExponentialMoment (N := N) rIn rOut T target
-        (gap /
-          (2 * (2 ^ (rOut - rIn) : ℝ) *
-            ((N : ℝ) * oneCenterContributionExpectationReal rIn rOut target)))
-        = targetLowerTailExponentialMoment (N := N) rIn rOut T target lam := by
-          simp [lam, B, m, mu]
-    _ ≤ Real.exp
-        (lam * (T : ℝ) -
-          (N : ℝ) *
-            ((1 - Real.exp (-(lam * (2 ^ (rOut - rIn) : ℝ)))) *
-              (oneCenterContributionExpectationReal rIn rOut target /
-                (2 ^ (rOut - rIn) : ℝ)))) := hchord
-    _ ≤ Real.exp (lam * (T : ℝ) - (lam - lam ^ 2 * B) * mu) :=
-          hchord_to_quad
-    _ ≤ Real.exp
-        (-(gap ^ 2 /
-          (4 * (2 ^ (rOut - rIn) : ℝ) *
-            ((N : ℝ) * oneCenterContributionExpectationReal rIn rOut target)))) := by
-          simpa [B, m, mu, mul_assoc] using hopt
+  grind
 
 /-- A target-independent one-center exponential-moment bound for a fixed
 Chernoff parameter.  The default target is arbitrary; the preceding
@@ -1761,8 +1703,7 @@ theorem bernsteinExponent_two_width_mul_T_ge
     have hBT_pos : 0 < B * T := mul_pos hB_pos hT_pos
     have hfactor_pos : 0 < 2 + delta / 12 := by nlinarith
     have hprod : 0 < 2 * (B * T) * (2 + delta / 12) := by positivity
-    convert hprod using 1
-    ring
+    grind
   have hden_le : 2 * (2 * B * T + B * (delta * T / 4) / 3) ≤
       5 * B * T := by
     have hBT_nonneg : 0 ≤ B * T := (mul_pos hB_pos hT_pos).le
@@ -1976,8 +1917,7 @@ theorem exists_goodCenterSample_of_optimized_chord_annulusMean_log_of_mean_gap
     ∃ sample : CenterSample n N,
       IsGoodCenterList n rIn rOut T sample.toList := by
   have hmu_pos : 0 < (N : ℝ) * (annulusMean n rIn rOut : ℝ) := by
-    have hT_nonneg : 0 ≤ (T : ℝ) := by positivity
-    nlinarith
+    grind
   exact exists_goodCenterSample_of_optimized_chord_annulusMean_log
     hgap_pos hmu_pos hmean hlog
 
@@ -1994,8 +1934,7 @@ theorem hasSolvableAtMostSize_of_optimized_chord_annulusMean_log_of_mean_gap
             ((N : ℝ) * (annulusMean n rIn rOut : ℝ)))) :
     HasSolvableAtMostSize (graph n) T (N * 2 ^ rOut) := by
   have hmu_pos : 0 < (N : ℝ) * (annulusMean n rIn rOut : ℝ) := by
-    have hT_nonneg : 0 ≤ (T : ℝ) := by positivity
-    nlinarith
+    grind
   exact hasSolvableAtMostSize_of_optimized_chord_annulusMean_log
     hgap_pos hmu_pos hmean hlog
 
@@ -2012,8 +1951,7 @@ theorem hasHighDemandDistribution_of_optimized_chord_annulusMean_log_of_mean_gap
             ((N : ℝ) * (annulusMean n rIn rOut : ℝ)))) :
     HasHighDemandDistribution n T (N * 2 ^ rOut) (2 ^ rOut) := by
   have hmu_pos : 0 < (N : ℝ) * (annulusMean n rIn rOut : ℝ) := by
-    have hT_nonneg : 0 ≤ (T : ℝ) := by positivity
-    nlinarith
+    grind
   have hfailure :
       globalFailureProbability (n := n) (N := N) rIn rOut T < 1 := by
     have hbernstein :=

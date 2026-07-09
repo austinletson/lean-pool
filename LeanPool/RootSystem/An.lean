@@ -179,8 +179,7 @@ theorem Ae_sum_eq {n : ℕ} [NeZero n] (p q : Fin n) (hpq : p ≤ q) (t : Fin n)
           Finset.Icc p ⟨ q, by linarith ⟩ ∪ {⟨q + 1, hq⟩} from ?_,
         Finset.sum_union] <;> norm_num;
       · rw [ ih p t ( by linarith ) ( Nat.le_of_lt_succ ( hpq.lt_of_ne hpq' ) ) ];
-        unfold Ae; simp +decide [ Fin.ext_iff ];
-        grind;
+        unfold Ae; grind
       · grind
 
 /-- `α J` evaluated at `t`, expressed in terms of Kronecker deltas. -/
@@ -221,8 +220,7 @@ theorem pairing_formula {n : ℕ} [NeZero n] (J K : SignedInterval n) :
     · rw [ Finset.card_eq_one ];
       use ⟨ K.i - 1, by
         exact lt_of_le_of_lt ( Nat.pred_le _ ) ( Fin.is_lt _ ) ⟩
-      generalize_proofs at *;
-      grind +locals;
+      grind
     · grind;
   have h_simplify4 :
       ∑ x ∈ Finset.Icc J.i J.j,
@@ -236,8 +234,7 @@ theorem pairing_formula {n : ℕ} [NeZero n] (J K : SignedInterval n) :
     · rw [ Finset.card_eq_one ];
       use ⟨ K.j + 1, by
         linarith [Fin.is_lt K.j, Fin.is_lt J.j, show (K.j : ℕ) < J.j from by tauto] ⟩
-      ext
-      aesop;
+      grind
     · lia;
   rw [← Finset.mul_sum _ _ _]
   simp_all +decide [Finset.sum_add_distrib, Finset.sum_sub_distrib]
@@ -296,10 +293,7 @@ theorem reflectionPerm_root' {n : ℕ} [NeZero n] (J K : SignedInterval n) :
 theorem pairing_symm {n : ℕ} [NeZero n] (J K : SignedInterval n) :
     (ZnPairing n (α J)) (αDual K) = (ZnPairing n (α K)) (αDual J) := by
   rw [pairing_formula J K, pairing_formula K J]
-  obtain ⟨Ji, Jj, _, Jε⟩ := J
-  obtain ⟨Ki, Kj, _, Kε⟩ := K
-  unfold SignedInterval.sign
-  cases Jε <;> cases Kε <;> simp only [ite_true] <;> split_ifs <;> omega
+  grind
 
 theorem reflectionPerm_coroot_single {n : ℕ} [NeZero n] (J K : SignedInterval n) (t : Fin n) :
     ((αDual K - (ZnPairing n (α J)) (αDual K) • αDual J) ∘ₗ
@@ -350,13 +344,9 @@ instance finite (n : ℕ) : Fintype (SignedInterval n) := by
           ε := x.1.2 }
       invFun := fun J => ⟨((J.i, J.j), J.ε), J.hij⟩
       left_inv := by
-        intro x
-        rcases x with ⟨⟨⟨i, j⟩, ε⟩, hij⟩
-        rfl
+        grind
       right_inv := by
-        intro J
-        cases J
-        rfl }
+        grind }
 
 lemma An_is_finite (n : ℕ) [NeZero n] : Finite (SignedInterval n) := by
   infer_instance

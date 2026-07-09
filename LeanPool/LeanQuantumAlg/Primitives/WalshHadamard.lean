@@ -111,9 +111,7 @@ theorem walshSign_zero_right (x : Fin (2 ^ n)) :
 theorem dotParity_comm (x y : Fin (2 ^ n)) : dotParity x y = dotParity y x := by
   have hset : (Finset.univ.filter fun k : Fin n => bit x k && bit y k)
       = Finset.univ.filter fun k : Fin n => bit y k && bit x k := by
-    apply Finset.filter_congr
-    intro k _
-    rw [Bool.and_comm]
+    grind
   unfold dotParity
   rw [hset]
 
@@ -150,14 +148,12 @@ theorem bit_flipBit (x : Fin (2 ^ n)) (k k' : Fin n) :
   change (x.val ^^^ 2 ^ k.val).testBit k'.val = (bit x k' ^^ decide (k = k'))
   rw [Nat.testBit_xor, Nat.testBit_two_pow]
   congr 1
-  rw [decide_eq_decide]
-  exact Fin.val_inj
+  grind
 
 theorem flipBit_flipBit (x : Fin (2 ^ n)) (k : Fin n) :
     flipBit (flipBit x k) k = x := by
   unfold flipBit
-  ext
-  simp [Nat.xor_assoc]
+  grind
 
 theorem flipBit_ne (x : Fin (2 ^ n)) (k : Fin n) : flipBit x k ≠ x := by
   intro h
@@ -190,8 +186,7 @@ theorem dotParity_flipBit (x z : Fin (2 ^ n)) (k : Fin n) :
         rcases eq_or_ne k' k with rfl | hk
         · simp [bit_flipBit, hx]
         · simp [bit_flipBit, hk, Ne.symm hk]
-      rw [hset, ← decide_not, decide_eq_decide,
-        ← Finset.card_erase_add_one hmem, Nat.odd_add_one, not_not]
+      grind
     · have hnot : k ∉ Finset.univ.filter fun k' : Fin n => bit x k' && bit z k' := by
         simp [hx]
       have hset : (Finset.univ.filter fun k' : Fin n => bit (flipBit x k) k' && bit z k')
@@ -201,8 +196,7 @@ theorem dotParity_flipBit (x z : Fin (2 ^ n)) (k : Fin n) :
         rcases eq_or_ne k' k with rfl | hk
         · simp [bit_flipBit, hx, hz]
         · simp [bit_flipBit, hk, Ne.symm hk]
-      rw [hset, Finset.card_insert_of_notMem hnot, ← decide_not,
-        decide_eq_decide, Nat.odd_add_one]
+      grind
 
 /-- Two distinct labels differ at some bit. -/
 theorem exists_bit_ne {y s : Fin (2 ^ n)} (h : y ≠ s) :
@@ -232,10 +226,8 @@ theorem walshSign_mul_walshSign_flipBit {y s : Fin (2 ^ n)} {k : Fin n}
     dotParity_flipBit, dotParity_comm x y, dotParity_comm x s]
   cases hy : bit y k <;> cases hs : bit s k
   · exact absurd (hy.trans hs.symm) hk
-  · rw [Bool.xor_false, if_xor_true]
-    ring
-  · rw [Bool.xor_false, if_xor_true]
-    ring
+  · grind
+  · grind
   · exact absurd (hy.trans hs.symm) hk
 
 /-- Walsh-character orthogonality: for `y ≠ s` the signed sum over all basis

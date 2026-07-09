@@ -92,10 +92,7 @@ lemma logDeriv_modform_S_transform (z : ℂ) (hz : 0 < z.im) (hz_ne : z ≠ 0)
       logDeriv (fun w => w ^ k * g w) z := by
     simp only [logDeriv_apply]; rw [h_eq_nhd.eq_of_nhds, h_eq_nhd.deriv.eq_of_nhds]
   rw [h_logDeriv_eq, h_logDeriv_mul, logDeriv_zpow z k] at h_logDeriv_comp
-  rw [h_deriv_S] at h_logDeriv_comp
-  have h_key : logDeriv g z = logDeriv g (-(1 : ℂ)/z) * (1 / z ^ 2) - ↑k / z := by
-    linear_combination h_logDeriv_comp
-  rw [h_key]; ring
+  grind
 
 /-! ### S-isometry on unit circle -/
 
@@ -138,8 +135,7 @@ private lemma arc_indicator_symmetric_of_sArcOfS
     have h_norm_s := h_S_unit s₀ hs₀
     calc ‖fdBoundaryH H t - (-(1 : ℂ)/s₀)‖
         = ‖-(1 : ℂ)/fdBoundaryH H t - (-(1 : ℂ)/(-(1 : ℂ)/s₀))‖ :=
-          (S_isometry_unit_circle _ _ h_norm_t (by rw [norm_div, norm_neg, norm_one, h_norm_s,
-            div_one])).symm
+          (S_isometry_unit_circle _ _ h_norm_t (by grind)).symm
       _ = ‖-(1 : ℂ)/fdBoundaryH H t - s₀‖ := by
           congr 1; congr 1
           have hne : s₀ ≠ 0 := by intro h; rw [h, norm_zero] at h_norm_s; norm_num at h_norm_s
@@ -176,11 +172,7 @@ private lemma cpv_integrand_intervalIntegrable_arc (S : Finset UpperHalfPlane)
     ext t; simp only [Set.mem_iInter, Set.mem_setOf]; exact Iff.rfl
   set K := {t ∈ Set.uIoc (1 : ℝ) 3 | ¬∃ s ∈ (↑S_arc : Set ℂ), ‖γ t - s‖ ≤ ε}
   have hK_subset_K' : K ⊆ K' := by
-    intro t ⟨ht_uioc, h_not_near⟩
-    have ht_Ioc : t ∈ Set.Ioc 1 3 := by rwa [Set.uIoc_of_le (by norm_num)] at ht_uioc
-    refine ⟨⟨le_of_lt ht_Ioc.1, ht_Ioc.2⟩, fun s hs => ?_⟩
-    by_contra h_contra; push Not at h_contra
-    exact h_not_near ⟨s, Finset.mem_coe.mpr hs, h_contra.le⟩
+    grind
   have h_cont : ContinuousOn (fun t => logDeriv g (γ t) * deriv γ t) K' := by
     intro t ⟨⟨ht1, ht3⟩, h_far⟩
     have ht_not_1 : t ≠ 1 := by
@@ -233,8 +225,7 @@ private lemma cpv_integrand_intervalIntegrable_arc (S : Finset UpperHalfPlane)
     intro t ⟨_, h_not_near⟩
     change cauchyPrincipalValueIntegrandOn (↑S_arc) (logDeriv g) γ ε t = _
     simp only [cauchyPrincipalValueIntegrandOn]
-    simp only [Finset.mem_coe] at h_not_near
-    exact if_neg h_not_near
+    grind
   have h_int_K : MeasureTheory.IntegrableOn F K :=
     (MeasureTheory.IntegrableOn.mono_set h_int hK_subset_K').congr_fun hF_K.symm hK_meas
   have h_compl_zero : EqOn F 0 (Set.uIoc (1 : ℝ) 3 \ K) := by
@@ -316,8 +307,7 @@ lemma arc_cpv_integral_S_identity (S : Finset UpperHalfPlane)
           sub_self, norm_zero]; linarith⟩
   have h_cov : ∫ t in (1 : ℝ)..3, F (4 - t) = ∫ t in (1 : ℝ)..3, F t := by
     have h := @intervalIntegral.integral_comp_sub_left ℂ _ _ 1 3 F 4
-    simpa only [show (4 : ℝ) - 3 = 1 from by norm_num,
-      show (4 : ℝ) - 1 = 3 from by norm_num] using h
+    grind
   have h_ind_sym : ∀ t ∈ Set.Ioo (1 : ℝ) 3, (ind (4 - t) ↔ ind t) :=
     fun t ht => arc_indicator_symmetric_of_sArcOfS S H ε t ht
   have h_arc_ne_zero : ∀ t, t ∈ Set.Ioo (1 : ℝ) 3 → γ t ≠ 0 := by
@@ -342,21 +332,13 @@ lemma arc_cpv_integral_S_identity (S : Finset UpperHalfPlane)
         change cauchyPrincipalValueIntegrandOn _ _ _ _ _ = 0
         rw [cauchyPrincipalValueIntegrandOn, if_pos h_near]
       have h_ind_4mt : ind (4 - t) := by
-        by_cases h1 : 1 < t ∧ t < 3
-        · exact (h_ind_sym t ⟨h1.1, h1.2⟩).mpr h_near
-        · push Not at h1
-          rcases eq_or_lt_of_le ht.1 with rfl | h_lt
-          · exact (show (4 : ℝ) - 1 = 3 from by norm_num) ▸ h_ind_3
-          · have : t = 3 := le_antisymm ht.2 (h1 h_lt)
-            subst this; exact (show (4 : ℝ) - 3 = 1 from by norm_num) ▸ h_ind_1
+        grind
       have h_F_4mt : F (4 - t) = 0 := by
         change cauchyPrincipalValueIntegrandOn _ _ _ _ _ = 0
         rw [cauchyPrincipalValueIntegrandOn, if_pos h_ind_4mt]
       rw [h_F_4mt, h_F_t]; simp [h_near]
     · have ht_ioo : t ∈ Set.Ioo (1 : ℝ) 3 := by
-        constructor
-        · exact lt_of_le_of_ne ht.1 (fun h => h_near (h ▸ h_ind_1))
-        · exact lt_of_le_of_ne ht.2 (fun h => h_near (h ▸ h_ind_3))
+        grind
       have h_4mt := h_4mt_ioo t ht_ioo
       have h_not_ind_4mt : ¬ind (4 - t) := fun h => h_near ((h_ind_sym t ht_ioo).mp h)
       have h_F_t : F t = logDeriv g (γ t) * deriv γ t := by
@@ -397,15 +379,7 @@ lemma arc_cpv_integral_S_identity (S : Finset UpperHalfPlane)
   have h_sum_split : ∫ t in (1 : ℝ)..3, (F (4 - t) + F t) =
       (∫ t in (1 : ℝ)..3, F (4 - t)) + ∫ t in (1 : ℝ)..3, F t :=
     intervalIntegral.integral_add h_cov_int hF_int
-  have h_2I : I_val + I_val = -(↑k * (↑Real.pi / 6 * I)) * ↑m_val := by
-    have : (∫ t in (1 : ℝ)..3, F (4 - t)) + I_val =
-        -(↑k * (↑Real.pi / 6 * I)) * ↑m_val := by rw [← h_sum_split]; exact h_sum_int
-    rwa [h_cov] at this
-  have h_solve : I_val = -(↑k * (↑Real.pi / 12 * I)) * ↑m_val := by
-    have two_ne : (2 : ℂ) ≠ 0 := by norm_num
-    apply mul_left_cancel₀ two_ne
-    rw [show (2 : ℂ) * I_val = I_val + I_val from by ring, h_2I]; ring
-  exact h_solve
+  grind
 
 /-! ### Non-excluded measure tends to 2 -/
 
@@ -446,16 +420,11 @@ lemma arc_non_excluded_measure_tendsto (S : Finset UpperHalfPlane) (H : ℝ) :
       have ht_ioo : t ∈ Set.Ioo (1 : ℝ) 3 :=
         ⟨ht_mem.1, lt_of_le_of_ne ht_mem.2 h_ne_3⟩
       have h_not_in_S : (fdBoundaryH H t : ℂ) ∉ (↑(sArcOfS S) : Set ℂ) := by
-        rw [Finset.mem_coe]; intro h_mem
-        exact h_pre _ h_mem ht_ioo rfl
+        grind
       obtain ⟨δ, hδ_pos, hδ_le⟩ := arc_min_dist_pos S H ht_ioo h_not_in_S
       apply tendsto_const_nhds.congr'
       filter_upwards [Ioo_mem_nhdsGT hδ_pos] with ε hε
-      rw [Set.mem_Ioo] at hε
-      rw [if_neg]; push Not
-      intro s hs
-      calc ε < δ := hε.2
-        _ ≤ ‖fdBoundaryH H t - ↑s‖ := hδ_le s hs
+      grind
     · apply measure_union_null
       · exact ((sArcOfS S).finite_toSet.biUnion (fun s _ =>
             (arc_preimage_subsingleton H s).finite)).measure_zero _
@@ -522,8 +491,7 @@ private lemma arc_ne_svert (H : ℝ) (S : Finset UpperHalfPlane)
   rcases lt_or_eq_of_le ht.1 with ht1 | rfl
   · rcases lt_or_eq_of_le ht.2 with ht3 | rfl
     · have := arc_re_strictly_between H t ⟨ht1, ht3⟩
-      rw [h_eq] at this
-      rcases hs_re with h | h <;> linarith [this.1, this.2]
+      grind
     · rw [fdBoundary_H_at_three H] at h_eq
       exact hs_not (h_eq ▸ sArcOfS_rho_in S)
   · rw [fdBoundary_H_at_one H] at h_eq
@@ -560,21 +528,7 @@ private lemma arc_svert_combined_dist (H : ℝ) (S : Finset UpperHalfPlane) :
     induction SV using Finset.induction_on with
     | empty => intro _; exact ⟨1, one_pos, fun s hs => absurd hs (Finset.notMem_empty s)⟩
     | @insert a SV' _ha ih =>
-      intro h_all
-      obtain ⟨δ₁, hδ₁_pos, hδ₁_bound⟩ := ih (fun s hs =>
-        h_all s (Finset.mem_insert_of_mem hs))
-      by_cases ha_need : a ∈ sVertOfS S ∧ a ∉ sArcOfS S
-      · obtain ⟨δ₂, hδ₂_pos, hδ₂_bound⟩ :=
-          h_all a (Finset.mem_insert_self _ _) ha_need.1 ha_need.2
-        exact ⟨min δ₁ δ₂, lt_min hδ₁_pos hδ₂_pos, fun s hs h_sv h_na t ht => by
-          rcases Finset.mem_insert.mp hs with rfl | h
-          · exact le_trans (min_le_right _ _) (hδ₂_bound t ht)
-          · exact le_trans (min_le_left _ _) (hδ₁_bound s h h_sv h_na t ht)⟩
-      · push Not at ha_need
-        exact ⟨δ₁, hδ₁_pos, fun s hs h_sv h_na t ht => by
-          rcases Finset.mem_insert.mp hs with rfl | h
-          · exact absurd (ha_need h_sv) h_na
-          · exact hδ₁_bound s h h_sv h_na t ht⟩
+      grind
 
 omit f hf in
 lemma arc_cpv_eventually_eq_union (S : Finset UpperHalfPlane)
@@ -597,14 +551,7 @@ lemma arc_cpv_eventually_eq_union (S : Finset UpperHalfPlane)
   · have h_union : ∃ s ∈ sArcOfS S ∪ sVertOfS S, ‖fdBoundaryH H t - s‖ ≤ ε := by
       obtain ⟨s, hs, hle⟩ := h_sarc; exact ⟨s, Finset.mem_union_left _ hs, hle⟩
     rw [if_pos h_union, if_pos h_sarc]
-  · have h_no_union : ¬∃ s ∈ sArcOfS S ∪ sVertOfS S, ‖fdBoundaryH H t - s‖ ≤ ε := by
-      rintro ⟨s, hs, hle⟩
-      rcases Finset.mem_union.mp hs with h_arc | h_vert
-      · exact h_sarc ⟨s, h_arc, hle⟩
-      · by_cases hs_arc : s ∈ sArcOfS S
-        · exact h_sarc ⟨s, hs_arc, hle⟩
-        · exact absurd hle (not_le.mpr (h_ind_eq s h_vert hs_arc))
-    rw [if_neg h_no_union, if_neg h_sarc]
+  · grind
 
 /-! ### Final bridge for Assembly.lean -/
 

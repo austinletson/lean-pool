@@ -65,8 +65,7 @@ def Cl (F : Set τ) : Set τ := ⋂₀ {X | X ∈ C ∧ F ⊆ X}
 theorem subset_Cl (F : Set τ) : F ⊆ Cl C F := by
   intro t ht
   rw [Cl, Set.mem_sInter]
-  intro X hX
-  exact hX.2 ht
+  grind
 
 /-- `Fbar ⊆ X` whenever `X ∈ C` contains `F`: the closure is the *smallest* member
 of `C` over `F`. -/
@@ -90,8 +89,7 @@ theorem Cl_mem {F : Set τ} (h : ∃ X ∈ C, F ⊆ X) : Cl C F ∈ C := by
   apply hInter
   · obtain ⟨X, hX, hFX⟩ := h
     exact ⟨X, hX, hFX⟩
-  · intro X hX
-    exact hX.1
+  · grind
 
 /-! ### The neighbourhood system `reprSystem`. -/
 
@@ -211,9 +209,7 @@ theorem exists_tok_of_finite_subset (x : (reprSystem C hInter hne).Element) {s :
     obtain ⟨Fa, hFa, haCl⟩ := ha'
     obtain ⟨Fs, hFs, hsCl⟩ := ih (fun y hy => hsub (Set.mem_insert_of_mem a hy))
     obtain ⟨F₃, hF₃, hFaF₃, hFsF₃⟩ := directed_step C hInter hne x hFa hFs
-    refine ⟨F₃, hF₃, ?_⟩
-    rw [Set.insert_subset_iff]
-    exact ⟨hFaF₃ haCl, hsCl.trans hFsF₃⟩
+    grind
 
 /-- **Key membership identity.** `C(G) ∈ x ↔ G ⊆ toC x`. Forward: `G ⊆ Gbar ⊆ toC x`.
 Reverse: `G` is

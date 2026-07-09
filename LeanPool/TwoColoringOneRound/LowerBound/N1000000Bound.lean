@@ -80,19 +80,11 @@ theorem monoFraction_ge_23879_of_psd (f : Coloring n)
   -- Convert correlation to monochromatic-edge fraction: `mono = (1 + corr)/2`.
   have hmono :
       ((1 : Q) + ((-26121 : Q) / 50000)) / 2 ≤ ((1 : Q) + edgeCorrelation f) / 2 := by
-    have : (1 : Q) + ((-26121 : Q) / 50000) ≤ (1 : Q) + edgeCorrelation f := by
-      simpa [add_le_add_iff_left] using hedgeCorr'
-    exact (div_le_div_of_nonneg_right this (by norm_num))
+    grind
   -- Finish by rewriting `monoFraction`.
   have hmonoEq := monoFraction_eq_one_add_edgeCorrelation_div_two (f := f) (hE := edgeCount_ne_zero)
   -- Arithmetic: `(1 + (-26121/50000))/2 = 23879/100000`.
-  have htarget : ((1 : Q) + ((-26121 : Q) / 50000)) / 2 = (23879 : Q) / 100000 := by norm_num
-  -- Combine.
-  calc
-    (23879 : Q) / 100000
-        = ((1 : Q) + ((-26121 : Q) / 50000)) / 2 := by simp [htarget]
-    _ ≤ ((1 : Q) + edgeCorrelation f) / 2 := hmono
-    _ = monoFraction f := by simp [hmonoEq]
+  grind
 
 end N1000000Bound
 

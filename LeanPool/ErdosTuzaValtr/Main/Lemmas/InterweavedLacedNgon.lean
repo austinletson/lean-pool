@@ -43,14 +43,12 @@ theorem Config.hasInterweavedLaced_hasNGon_ff {n : ℕ} {S : Finset α} (cap4_fr
     exact ⟨p_in_S, c2_in_S⟩
   -- (spq : label.Slope p q) from now on
   have cp_nnil : cp ≠ [] := by
-    rintro rfl
-    exact absurd cp_last (Option.not_mem_none p)
+    grind
   rcases List.takeLast cp_nnil with ⟨p', cp', eq_cp⟩
   rw [eq_cp, List.getLast?_concat, Option.mem_some_iff] at cp_last
   subst p'
   have cr_nnil : cr ≠ [] := by
-    rintro rfl
-    exact absurd cr_head (Option.not_mem_none r)
+    grind
   rcases List.takeHead cr_nnil with ⟨r', cr', eq_cr⟩
   rw [eq_cr, List.head?_cons, Option.mem_some_iff] at cr_head
   subst r'
@@ -76,16 +74,14 @@ theorem Config.hasInterweavedLaced_hasNGon_ff {n : ℕ} {S : Finset α} (cap4_fr
   · refine ⟨[p, q, r], c1, ⟨⟨?_, ?_, ?_, ?_, ?_, ?_⟩, ?_⟩, ?_, c1_in_S⟩
     · simp
     · refine ⟨?_, ?_⟩
-      · rw [List.isChain_cons_cons, List.isChain_cons_cons]
-        exact ⟨p_lt_q, q_lt_r, List.isChain_singleton r⟩
+      · grind
       · rw [show ([p, q, r] : List α) = [] ++ p :: q :: r :: [] by simp,
           List.chain3'_append_cons3]
         exact ⟨List.chain3'_pair p q, cpqr, List.chain3'_pair q r⟩
     · rw [hc1.2]; omega
     · exact hc1.left
     · rw [List.head?_cons]; exact c1_head.symm
-    · rw [List.getLast?_cons_cons, List.getLast?_cons_cons, List.getLast?_singleton]
-      exact c1_last.symm
+    · grind
     · simp only [List.length_cons, List.length_nil]
       rw [hc1.2]; omega
     · rw [List.cons_in, List.cons_in, List.cons_in]

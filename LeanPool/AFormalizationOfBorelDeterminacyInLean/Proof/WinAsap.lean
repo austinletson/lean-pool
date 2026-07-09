@@ -140,9 +140,7 @@ lemma prefix_strat_apply {G' p' y} (xy : x <+: y) (hG : G = G') (hp : p = p') {a
     rw [List.take_append_of_le_length (by simp)]
   ((h.of_prefix' xy hG hp).strat a hpa).val =
     (h.strat
-      ⟨a.val, by as_aux_lemma =>
-        subst hG
-        simpa [xy'] using a.prop⟩
+      ⟨a.val, by grind⟩
       (by as_aux_lemma =>
         subst hG hp
         simpa [xy'] using hpa)).val := by

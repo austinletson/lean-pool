@@ -32,14 +32,12 @@ variable {K L : Type*} [Field K] [LieRing L] [LieAlgebra K L]
 lemma abelian_or_basis (h : finrank K L = 2) :
   IsLieAbelian L ∨ (∃ B : Basis (Fin 2) K L, ⁅B 0, B 1⁆ = B 1) := by
   by_cases s : IsLieAbelian L
-  · left
-    assumption
+  · grind
   · right
     simp only [IsLieAbelian] at s
     have t : (∃ X Y : L, ⁅X,Y⁆ ≠ 0) := by
       have u : ¬ (∀ X Y : L, ⁅X,Y⁆ = 0) := fun H ↦ s ⟨ H ⟩
-      push Not at u
-      assumption
+      grind
     rcases t with ⟨x, y, hxy⟩
     have ⟨S_b, S_b0, S_b1⟩ := basis_of_bracket_ne_zero h _ _ hxy
     have ⟨ α , β , pf ⟩ : ∃ (α β : K), ⁅ x , y ⁆ = α • x + β • y := by
@@ -86,9 +84,7 @@ lemma abelian_or_basis (h : finrank K L = 2) :
               _ = 0 := by rw [Heq]; simp
     rw [← pf1] at pf2
     have ⟨ B, u ⟩ := basis_of_bracket_ne_zero h X Y pf2
-    use B
-    rw [u.1, u.2]
-    assumption
+    grind
 
 theorem classification (h : finrank K L = 2) :
     Nonempty (L ≃ₗ⁅K⁆ Abelian K) ∨ Nonempty (L ≃ₗ⁅K⁆ Affine K) := by

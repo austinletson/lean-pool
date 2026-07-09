@@ -63,8 +63,7 @@ noncomputable def deterministic (g : α → β) (hg : Function.Surjective g) : M
       nonneg := ?_
       row_sum_eq_one := ?_
       col_pos := ?_ }
-  · intro a b
-    by_cases h : g a = b <;> simp [h]
+  · grind
   · intro a
     simp
   · intro b

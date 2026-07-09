@@ -175,9 +175,7 @@ lemma least_number_h {P : V → Prop} (hP : Γ-[m].BoldfacePred P)
       intro w hx hw
       rcases le_iff_lt_or_eq.mp (lt_succ_iff_le.mp hx) with (hx | rfl)
       · exact IH w hx hw
-      · have : ∃ v < w, P v := A w hw
-        rcases this with ⟨v, hvw, hv⟩
-        exact IH v hvw hv
+      · grind
     case inst => exact inferInstance
   exact this (x + 1) x (by simp) h
 

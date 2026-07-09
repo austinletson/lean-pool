@@ -53,11 +53,7 @@ private lemma rhoFockNormSq_nonneg {D : ℕ} (a : Fin D → ℂ) : 0 ≤ rhoFock
 private lemma filter_cast_eq_singleton {D : ℕ} (k : Fin D) :
     (Finset.univ : Finset (Fin D)).filter
       (fun j => ((j.val + 1 : ℕ) : ℤ) = ((k.val + 1 : ℕ) : ℤ)) = {k} := by
-  ext j; constructor
-  · simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
-    intro h; ext; omega
-  · simp only [Finset.mem_singleton, Finset.mem_filter, Finset.mem_univ, true_and]
-    intro h; rw [h]
+  grind
 
 private lemma integrable_pow_mul_exp_neg_sq (n : ℕ) :
     Integrable (fun r : ℝ => r ^ n * Real.exp (-r ^ 2)) volume := by
@@ -297,8 +293,7 @@ private lemma circle_level_bound {D : ℕ} (hD : 1 ≤ D) (a : Fin D → ℂ)
       2 * (rho (U t)) ^ 2 + 2 * ‖R t‖ ^ 2 := by
     intro t
     have h_VU : V t - U t = -(R t) := by
-      simp only [V, R, U]; rw [polyEvalCircle_eq_polyEval]
-      simp [remainderPoly]
+      grind
     have h_lip : rho (V t) ≤ rho (U t) + ‖R t‖ := by
       calc rho (V t) ≤ rho (U t) + ‖V t - U t‖ := rho_pointwise_upper (V t) (U t)
         _ = rho (U t) + ‖R t‖ := by rw [h_VU, norm_neg]
@@ -322,18 +317,7 @@ private lemma circle_level_bound {D : ℕ} (hD : 1 ≤ D) (a : Fin D → ℂ)
     linarith
   have h_ann : ∫ t, ‖V t‖ ^ 2 ∂AddCircle.haarAddCircle ≤
       1620 ^ 2 * ∫ t, (rho (V t)) ^ 2 ∂AddCircle.haarAddCircle := h_annulus
-  have h_rho_nn : 0 ≤ ∫ t, (rho (V t)) ^ 2 ∂AddCircle.haarAddCircle :=
-    integral_nonneg (fun t => sq_nonneg _)
-  have h_rhoU_nn : 0 ≤ ∫ t, (rho (U t)) ^ 2 ∂AddCircle.haarAddCircle :=
-    integral_nonneg (fun t => sq_nonneg _)
-  have h_R_nn : 0 ≤ ∫ t, ‖R t‖ ^ 2 ∂AddCircle.haarAddCircle :=
-    integral_nonneg (fun t => sq_nonneg _)
-  have h_V_nn : 0 ≤ ∫ t, ‖V t‖ ^ 2 ∂AddCircle.haarAddCircle :=
-    integral_nonneg (fun t => sq_nonneg _)
-  change ∫ t, ‖U t‖ ^ 2 ∂AddCircle.haarAddCircle ≤
-    4 * 1620 ^ 2 * ∫ t, (rho (U t)) ^ 2 ∂AddCircle.haarAddCircle +
-    (4 * 1620 ^ 2 + 2) * ∫ t, ‖R t‖ ^ 2 ∂AddCircle.haarAddCircle
-  nlinarith [h_norm_add, h_ann, h_rho_sq, h_rho_nn, h_rhoU_nn, h_R_nn, h_V_nn]
+  grind
 
 /-! ## Annular decomposition infrastructure -/
 
@@ -629,10 +613,7 @@ private lemma annular_circle_bound {D : ℕ} (hD : 1 ≤ D) (a : Fin D → ℂ) 
         rw [intervalIntegral.integral_add (hwg_ii.const_mul _) (hwh_ii.const_mul _),
             intervalIntegral.integral_const_mul, intervalIntegral.integral_const_mul]
   -- Now combine: the goal has w*f = r*exp(-r²) * f, etc.
-  change 2 * ∫ r in (j : ℝ)..(j + 1 : ℝ), w r * f r ≤
-    C₁ * (2 * ∫ r in (j : ℝ)..(j + 1 : ℝ), w r * g r) +
-    C₂ * (2 * ∫ r in (j : ℝ)..(j + 1 : ℝ), w r * h r)
-  nlinarith [h_int_le]
+  grind
 
 /-! ## Pre-absorption inequality
 
@@ -746,11 +727,7 @@ private lemma pre_absorption {D : ℕ} (hD : 1 ≤ D) (a : Fin D → ℂ) :
   -- Chain: fockNormSq < 4B²R + C*(eta_J + ε')*F + δ/2
   have h_chain : fockNormSq a < 4 * 1620 ^ 2 * rhoFockNormSq a +
       C * (etaCoeff 5 J + ε') * fockNormSq a + δ / 2 := by
-    have : S_fock ≤ 4 * 1620 ^ 2 * rhoFockNormSq a +
-        C * ((etaCoeff 5 J + ε') * fockNormSq a) := by
-      calc S_fock ≤ 4 * 1620 ^ 2 * S_rho + C * S_leak := h2
-        _ ≤ 4 * 1620 ^ 2 * rhoFockNormSq a + C * ((etaCoeff 5 J + ε') * fockNormSq a) := by gcongr
-    nlinarith
+    grind
   -- Universal eta bound: C*eta_J < 1/4 (much tighter than < 1/2)
   have h_C_eta_tight : C * etaCoeff 5 J < 1 / 4 :=
     calc C * etaCoeff 5 J < C * (4 / (10 : ℝ) ^ 11) :=
@@ -763,9 +740,7 @@ private lemma pre_absorption {D : ℕ} (hD : 1 ≤ D) (a : Fin D → ℂ) :
       _ = 1 / 4 := by field_simp
   -- Therefore C*(eta_J + ε') < 1/4 + 1/4 = 1/2
   have h_absorb : C * (etaCoeff 5 J + ε') < 1 / 2 := by
-    calc C * (etaCoeff 5 J + ε') = C * etaCoeff 5 J + C * ε' := by ring
-      _ < 1 / 4 + 1 / 4 := by linarith
-      _ = 1 / 2 := by norm_num
+    grind
   -- Absorption: F*(1 - η) < 4B²R + δ/2 with η < 1/2, so F < 8B²R + δ
   change fockNormSq a < 8 * 1620 ^ 2 * rhoFockNormSq a + δ
   nlinarith [h_chain, h_absorb, hfock_nn, hrho_nn]

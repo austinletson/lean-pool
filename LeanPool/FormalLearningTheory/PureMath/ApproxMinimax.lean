@@ -464,8 +464,7 @@ private lemma boolGamePayoff_empirical_eq_avg
       · congr 1; ext t; simp
       · intro r₁ _ r₂ _ hne
         simp only [Function.onFun, Finset.disjoint_filter]
-        intro t _ ht1 ht2
-        exact hne (ht1.symm.trans ht2)]
+        grind]
   congr 1
   ext r
   rw [Finset.sum_congr rfl (fun t ht => by
@@ -521,9 +520,7 @@ private lemma hitRate_from_potential
     by linarith [Real.log_le_sub_one_of_pos hbasev]
   have hlog_down : -η / (1 - η) ≤ Real.log (1 - η) := by
     have h := Real.one_sub_inv_le_log_of_pos hbase
-    have hne : 1 - η ≠ 0 := by linarith
-    have hrew : 1 - (1 - η)⁻¹ = -η / (1 - η) := by field_simp [hne]; ring
-    simpa [hrew] using h
+    grind
   have hTreal_nonneg : (0 : ℝ) ≤ T := by positivity
   have hanti :
       (T : ℝ) * η * v - Real.log (N : ℝ) ≤
@@ -545,8 +542,7 @@ private lemma hitRate_from_potential
         nlinarith
       linarith [Real.log_natCast_nonneg N]
   have hcoef : -Real.log (1 - η) ≤ η / (1 - η) := by
-    have : -η / (1 - η) = -(η / (1 - η)) := by ring
-    linarith
+    grind
   have hanti' :
       (T : ℝ) * η * v - Real.log (N : ℝ) ≤
         (H : ℝ) * (η / (1 - η)) :=

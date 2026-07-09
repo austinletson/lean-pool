@@ -27,8 +27,7 @@ theorem embedding_singleton {x y : ZFSet} : {x} ↪ᶻ {y} := by
   use {x.pair y}, ?_
   · intro a b c ha hb hc ac bc
     rw [mem_singleton] at ha hb hc
-    subst a b c
-    rfl
+    grind
   · and_intros
     · intro z hz
       rw [mem_singleton] at hz
@@ -44,8 +43,7 @@ theorem embedding_singleton {x y : ZFSet} : {x} ↪ᶻ {y} := by
         rw [mem_singleton]
       · intro z hz
         rw [mem_singleton, pair_inj] at hz
-        obtain ⟨_, rfl⟩ := hz
-        rfl
+        grind
 
 theorem embedding_pair (a b c d : ZFSet) (hab_cd : a = b ↔ c = d) : {a, b} ↪ᶻ {c, d} := by
   use {a.pair c, b.pair d}, ?_
@@ -58,11 +56,9 @@ theorem embedding_pair (a b c d : ZFSet) (hab_cd : a = b ↔ c = d) : {a, b} ↪
     · rcases xy with ⟨⟨⟩, ⟨⟩⟩ | ⟨⟨⟩, ⟨⟩⟩ <;> rcases yz with ⟨⟨⟩, ⟨⟩⟩ | ⟨⟨⟩, ⟨⟩⟩ <;> try rfl
       rw [hab_cd]
     · rcases xy with ⟨⟨⟩, ⟨⟩⟩ | ⟨⟨⟩, ⟨⟩⟩ <;> rcases yz with ⟨⟨⟩, ⟨⟩⟩ | ⟨⟨⟩, ⟨⟩⟩ <;> try rfl
-      symm
-      rw [hab_cd]
+      grind
     · rcases xy with ⟨⟨⟩, ⟨⟩⟩ | ⟨⟨⟩, ⟨⟩⟩ <;> rcases yz with ⟨⟨⟩, ⟨⟩⟩ | ⟨⟨⟩, ⟨⟩⟩ <;> try rfl
-      symm
-      rw [hab_cd]
+      grind
   · and_intros
     · intro z hz
       rw [mem_pair] at hz
@@ -84,15 +80,13 @@ theorem embedding_pair (a b c d : ZFSet) (hab_cd : a = b ↔ c = d) : {a, b} ↪
           and_intros
           · beta_reduce
             rw [mem_pair]
-            left
-            rfl
+            grind
           · intro y hy
             rw [mem_pair, pair_inj] at hy
             rcases hy with ⟨_, rfl⟩ | eq
             · rfl
             · rw [pair_inj] at eq
-              obtain ⟨rfl, rfl⟩ := eq
-              nomatch hab_cd rfl
+              grind
       · by_cases hc : c = d
         · subst c
           rw [eq_self, iff_true] at hab_cd
@@ -103,8 +97,7 @@ theorem embedding_pair (a b c d : ZFSet) (hab_cd : a = b ↔ c = d) : {a, b} ↪
           and_intros
           · beta_reduce
             rw [mem_pair]
-            right
-            rfl
+            grind
           · intro y hy
             rw [mem_pair, pair_inj] at hy
             rcases hy with ⟨rfl, _⟩ | eq
@@ -116,8 +109,7 @@ theorem embedding_refl (A : ZFSet) : A ↪ᶻ A := by
   use A.Id, Id.IsFunc
   intro x y z hx hy hz xz yz
   rw [pair_mem_Id_iff] at xz yz
-  · subst x y
-    rfl
+  · grind
   · exact hy
   · exact hx
 

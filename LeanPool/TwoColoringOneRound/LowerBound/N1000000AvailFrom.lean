@@ -47,26 +47,17 @@ theorem card_availFrom (s : Nat) : Fintype.card (AvailFrom (s := s)) = n - s := 
     { toFun := fun i =>
         let xVal : Nat := s + i.1
         have hx : xVal < n := by
-          have hi : i.1 < n - s := i.2
-          simpa [xVal, Nat.add_comm, Nat.add_left_comm, Nat.add_assoc] using
-            (Nat.add_lt_of_lt_sub hi)
+          grind
         ⟨⟨xVal, hx⟩, Nat.le_add_right _ _⟩
       invFun := fun x =>
         ⟨x.1.1 - s, by
-          have hxlt : x.1.1 < n := x.1.2
-          have : x.1.1 - s < n - s := Nat.sub_lt_sub_right x.2 hxlt
-          simpa using this⟩
+          grind⟩
       left_inv := by
-        intro i
-        apply Fin.ext
-        dsimp
-        exact Nat.add_sub_cancel_left s i.1
+        grind
       right_inv := by
         intro x
         apply Subtype.ext
-        apply Fin.ext
-        dsimp
-        exact Nat.add_sub_of_le x.2 }
+        grind }
   simpa using (Fintype.card_congr e).symm
 
 end N1000000AvailFrom

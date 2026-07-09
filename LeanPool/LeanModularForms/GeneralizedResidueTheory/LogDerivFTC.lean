@@ -113,10 +113,7 @@ theorem ftc_log_piece {g h : ℝ → ℂ} {a b : ℝ} (hab : a ≤ b)
     mem_ae_iff.mpr (by rw [compl_compl]; exact measure_singleton b)
   have h_congr : ∀ᵐ t ∂volume, t ∈ Ι a b → deriv g t / g t = deriv h t / h t := by
     filter_upwards [hb_ae] with t ht_ne_b ht_mem
-    have ht_ne : t ≠ b := fun h => ht_ne_b (mem_singleton_iff.mpr h)
-    rw [uIoc_of_le hab] at ht_mem
-    obtain ⟨hval, hderiv⟩ := heq t ⟨ht_mem.1, lt_of_le_of_ne ht_mem.2 ht_ne⟩
-    rw [hval, hderiv]
+    grind
   have hint_g : IntervalIntegrable (fun t => deriv g t / g t) volume a b := by
     constructor
     · exact MeasureTheory.Integrable.congr

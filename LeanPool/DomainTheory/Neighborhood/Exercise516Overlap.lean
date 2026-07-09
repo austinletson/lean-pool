@@ -63,9 +63,7 @@ theorem no_three_consec (j : ℕ) : ¬ (tm j = tm (j + 1) ∧ tm (j + 1) = tm (j
   rintro ⟨h1, h2⟩
   have hj : Odd j := odd_of_consec_eq h1
   have hj1 : Odd (j + 1) := odd_of_consec_eq h2
-  rcases hj with ⟨a, rfl⟩
-  rcases hj1 with ⟨b, hb⟩
-  omega
+  grind
 
 /-! ### Index reductions for `tm`. -/
 
@@ -134,11 +132,8 @@ theorem no_overlap (p : ℕ) : ∀ i, ¬ Overlap i p := by
           rw [tm_of_eq_two_mul_add_one (show 2 * a + 3 = 2 * (a + 1) + 1 by omega),
             tm_of_eq_two_mul (show 2 * a + (2 * q + 1) + 3 = 2 * (a + q + 2) by omega)] at r3
           refine no_three_consec (a + q) ⟨?_, ?_⟩
-          · revert r0 r1; cases tm a <;> cases tm (a + q) <;> cases tm (a + q + 1) <;>
-              simp_all
-          · revert r1 r2 r3
-            cases tm (a + 1) <;> cases tm (a + q + 1) <;> cases tm (a + q + 2) <;> cases tm a <;>
-              simp_all
+          · grind
+          · grind
         · -- `i = 2a+1`.
           subst hi
           rcases Nat.eq_or_lt_of_le hq1 with hq2 | hq2
@@ -158,8 +153,7 @@ theorem no_overlap (p : ℕ) : ∀ i, ¬ Overlap i p := by
             rw [tm_of_eq_two_mul (show 2 * a + 1 + 3 = 2 * (a + 2) by omega),
               tm_of_eq_two_mul_add_one
                 (show 2 * a + 1 + (2 * 1 + 1) + 3 = 2 * (a + 3) + 1 by omega)] at r3
-            revert r0 r1 r2 r3
-            cases tm a <;> cases tm (a + 1) <;> cases tm (a + 2) <;> cases tm (a + 3) <;> simp_all
+            grind
           · -- `q ≥ 2`, i.e. `p ≥ 5`: relations at `k = 1,2,3,4` give a run of three at `a+q+1`.
             have r1 := hrel 1 (by omega)
             have r2 := hrel 2 (by omega)
@@ -178,10 +172,8 @@ theorem no_overlap (p : ℕ) : ∀ i, ¬ Overlap i p := by
               tm_of_eq_two_mul
                 (show 2 * a + 1 + (2 * q + 1) + 4 = 2 * (a + q + 3) by omega)] at r4
             refine no_three_consec (a + q + 1) ⟨?_, ?_⟩
-            · revert r1 r2; cases tm (a + 1) <;> cases tm (a + q + 1) <;> cases tm (a + q + 2) <;>
-                simp_all
-            · revert r3 r4; cases tm (a + 2) <;> cases tm (a + q + 2) <;> cases tm (a + q + 3) <;>
-                simp_all
+            · grind
+            · grind
 
 /-! ### Cube-freeness — Scott's literal form `t ≠ u·a·a·a·v`. -/
 
@@ -205,15 +197,7 @@ indices `< 2|a|`
 (the three copies of `a` are identical). -/
 theorem append_three_period {α : Type*} (a : List α) (m : ℕ) (hm : m < 2 * a.length) :
     (a ++ (a ++ a))[m]? = (a ++ (a ++ a))[m + a.length]? := by
-  rcases lt_or_ge m a.length with h | h
-  · rw [List.getElem?_append_left h,
-      List.getElem?_append_right (by omega : a.length ≤ m + a.length),
-      show m + a.length - a.length = m by omega, List.getElem?_append_left h]
-  · rw [List.getElem?_append_right h,
-      List.getElem?_append_right (by omega : a.length ≤ m + a.length),
-      show m + a.length - a.length = m by omega,
-      List.getElem?_append_left (by omega : m - a.length < a.length),
-      List.getElem?_append_right (by omega : a.length ≤ m)]
+  grind
 
 /-- **Exercise 5.16 (Scott 1981, PRG-19) — `t` is cube-free.** Scott's literal
 statement: `t` is not
@@ -233,9 +217,7 @@ theorem tElt_cube_free (u a : Str) (ha : a ≠ []) :
   set N := (u ++ a ++ a ++ a).length with hN
   have hlen : N = u.length + 3 * a.length := by simp only [hN, List.length_append]; omega
   have hp : 1 ≤ a.length := by
-    cases a with
-    | nil => exact (ha rfl).elim
-    | cons _ _ => simp
+    grind
   refine no_cube u.length a.length hp (fun k hk => ?_)
   -- Both `tm (|u|+k)` and `tm (|u|+|a|+k)` read the same bit of `u·a·a·a`.
   have hk3 : u.length + k < N := by omega
@@ -244,17 +226,6 @@ theorem tElt_cube_free (u a : Str) (ha : a ≠ []) :
   have e2 : (tmList N)[u.length + a.length + k]? = some (tm (u.length + a.length + k)) :=
     tmListGetElemOptional hk3'
   -- Rewrite the prefix as `u ++ (a ++ (a ++ a))` and strip `u`.
-  have hassoc : u ++ a ++ a ++ a = u ++ (a ++ (a ++ a)) := by
-    simp [List.append_assoc]
-  rw [← heq, hassoc] at e1 e2
-  rw [List.getElem?_append_right (by omega : u.length ≤ u.length + k),
-    show u.length + k - u.length = k by omega] at e1
-  rw [List.getElem?_append_right (by omega : u.length ≤ u.length + a.length + k),
-    show u.length + a.length + k - u.length = k + a.length by omega] at e2
-  -- Period: `(a++(a++a))[k]? = (a++(a++a))[k+|a|]?`.
-  have hper := append_three_period a k (by omega)
-  have : some (tm (u.length + k)) = some (tm (u.length + a.length + k)) := by
-    rw [← e1, hper, e2]
-  exact Option.some.inj this
+  grind
 
 end Domain.Neighborhood.Exercise516

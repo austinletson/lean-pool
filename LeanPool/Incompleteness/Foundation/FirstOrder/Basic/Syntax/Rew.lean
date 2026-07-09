@@ -31,13 +31,7 @@ namespace Finset
 
 lemma biUnion_eq_empty [DecidableEq β] {s : Finset α} {f : α → Finset β} :
     s.biUnion f = ∅ ↔ ∀ i ∈ s, f i = ∅ := by
-  constructor
-  · intro h a ha; ext b
-    have := by simpa using congrFun (congrArg Membership.mem h) b
-    simpa using this a ha
-  · intro h; ext b
-    simp only [mem_biUnion, Collection.not_mem_empty, iff_false, not_exists, not_and]
-    intro a ha; simpa using congrFun (congrArg Membership.mem (h a ha)) b
+  grind
 
 end Finset
 
@@ -297,20 +291,12 @@ lemma eq_ex_iff {φ : Semiformula L ξ₁ n₁} {ψ : Semiformula L ξ₂ (n₂ 
 lemma eq_ball_iff {φ : Semiformula L ξ₁ n₁} {ψ₁ ψ₂ : Semiformula L ξ₂ (n₂ + 1)} :
     (ω ▹ φ = ∀[ψ₁] ψ₂) ↔ ∃ φ₁ φ₂ : Semiformula L ξ₁ (n₁ + 1), ω.q ▹ φ₁ = ψ₁ ∧ ω.q ▹ φ₂ = ψ₂ ∧ φ =
         ∀[φ₁] φ₂ := by
-  simp only [ball, eq_all_iff, eq_neg_iff, exists_and_left, existsAndEq, and_true]; constructor
-  · rintro ⟨φ₁, φ₂, ⟨h₁, h₂⟩, hφ⟩
-    exact ⟨φ₁, h₁, φ₂, h₂, hφ⟩
-  · rintro ⟨φ₁, h₁, φ₂, h₂, hφ⟩
-    exact ⟨φ₁, φ₂, ⟨h₁, h₂⟩, hφ⟩
+  simp only [ball, eq_all_iff, eq_neg_iff, exists_and_left, existsAndEq, and_true]; grind
 
 lemma eq_bex_iff {φ : Semiformula L ξ₁ n₁} {ψ₁ ψ₂ : Semiformula L ξ₂ (n₂ + 1)} :
     (ω ▹ φ = ∃[ψ₁] ψ₂) ↔ ∃ φ₁ φ₂ : Semiformula L ξ₁ (n₁ + 1), ω.q ▹ φ₁ = ψ₁ ∧ ω.q ▹ φ₂ = ψ₂ ∧ φ =
         ∃[φ₁] φ₂ := by
-  simp only [bex, eq_ex_iff, eq_and_iff, exists_and_left, existsAndEq, and_true]; constructor
-  · rintro ⟨φ₁, φ₂, ⟨h₁, h₂⟩, hφ⟩
-    exact ⟨φ₁, h₁, φ₂, h₂, hφ⟩
-  · rintro ⟨φ₁, h₁, φ₂, h₂, hφ⟩
-    exact ⟨φ₁, φ₂, ⟨h₁, h₂⟩, hφ⟩
+  simp only [bex, eq_ex_iff, eq_and_iff, exists_and_left, existsAndEq, and_true]; grind
 
 end «lp_section_1»
 

@@ -199,12 +199,10 @@ lemma AllWinning.residual (hW : G.AllWinning p) x :
         Game.residual_payoff_even G x hx]
       ext a
       constructor
-      · intro _
-        exact Set.mem_univ a
+      · grind
       · intro _ hmem
         have hcompl : body.append x a ∈ G.payoffᶜ := by
-          rw [hW]
-          exact Set.mem_univ _
+          grind
         exact hcompl hmem
     · have hx1 : x.length % 2 = 1 := Nat.mod_two_ne_zero.mp hx
       rw [Player.residual_odd x Player.one hx1, Player.swap_one, Player.payoff_zero,
@@ -215,8 +213,7 @@ lemma AllWinning.residual (hW : G.AllWinning p) x :
         exact Set.mem_univ a
       · intro _ hmem
         have hcompl : body.append x a ∈ G.payoffᶜ := by
-          rw [hW]
-          exact Set.mem_univ _
+          grind
         exact hcompl hmem
 /-- a game is determined if some player has a winning strategy -/
 def IsDetermined (G : Game A) := ∃ p, G.ExistsWinning p

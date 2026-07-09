@@ -245,11 +245,7 @@ def kernelQ1 (n : ℕ) : Submodule ℝ (Idx n → ℝ) :=
           rw [Finset.sum_comm]
           exact Finset.sum_congr rfl fun S _ => Finset.sum_congr rfl fun T _ => by
             unfold matrix1
-            have h_inner : ∑ x ∈ evalInterval n, basisCos n S ↑x * basisCos n T ↑x =
-                ∑ x ∈ evalInterval n, basisCos n T ↑x * basisCos n S ↑x := by
-              exact Finset.sum_congr rfl fun _ _ => by ring
-            rw [h_inner]
-            ring
+            grind
         linarith
       have h_sum2 : q1 n (a - b) = q1 n a + q1 n b - 2 * (∑ S ∈ Finset.univ.powerset,
           ∑ T ∈ Finset.univ.powerset, a S * matrix1 n S T * b T) := by
@@ -262,11 +258,7 @@ def kernelQ1 (n : ℕ) : Submodule ℝ (Idx n → ℝ) :=
           rw [Finset.sum_comm]
           exact Finset.sum_congr rfl fun S _ => Finset.sum_congr rfl fun T _ => by
             unfold matrix1
-            have h_inner : ∑ x ∈ evalInterval n, basisCos n S ↑x * basisCos n T ↑x =
-                ∑ x ∈ evalInterval n, basisCos n T ↑x * basisCos n S ↑x := by
-              exact Finset.sum_congr rfl fun _ _ => by ring
-            rw [h_inner]
-            ring
+            grind
         linarith
       have h_nonneg : ∀ (lambda : Idx n → ℝ), q1 n lambda ≥ 0 := fun lambda =>
         (Q_1_sum_sq n lambda).symm ▸ Finset.sum_nonneg fun _ _ => sq_nonneg _
@@ -281,8 +273,7 @@ def kernelQ1 (n : ℕ) : Submodule ℝ (Idx n → ℝ) :=
           exact Finset.sum_congr rfl fun _ _ => by
             rw [ Finset.mul_sum _ _ _ ]
             exact Finset.sum_congr rfl fun _ _ => by ring
-      intro c x a
-      simp_all [Set.mem_setOf_eq, mul_zero] }
+      grind }
 
 /--
 Lemma: $q1(\lambda) = 0$ if and only if $P_{multi}(\lambda, x) = 0$ for all $x \in \mathcal{A}_n$.
@@ -370,8 +361,7 @@ lemma Q_1_not_zero (n : ℕ) : ∃ lambda : Idx n → ℝ, q1 n lambda ≠ 0 := 
     exists_prop] at *
   unfold evalInterval; ring_nf; norm_num
   rw [ Nat.mod_eq_of_lt ] <;> norm_num
-  · constructor <;> nlinarith [ Nat.sub_add_cancel ( by
-      nlinarith : n * 2 ≤ 20 + n * 24 + n ^ 2 * 6 ) ]
+  · grind
   · refine lt_of_lt_of_le ?_ ( q_bound _ ?_ )
     · exact Nat.lt_succ_of_le ( Nat.sub_le_of_le_add <| by nlinarith )
     · linarith
@@ -402,12 +392,7 @@ lemma Ratio_scale (n : ℕ) (lambda : Idx n → ℝ) (c : ℝ) (hc : c ≠ 0) :
         rw [Finset.mul_sum]; congr 1; ext T; ring
     rw [h_pull, ← Finset.mul_sum]
   unfold Ratio
-  rw [h_pull_1, h_pull_2]
-  have hc2 : c^2 ≠ 0 := by positivity
-  by_cases hQ : q1 n lambda = 0
-  · simp only [hQ, mul_zero, ite_true]
-  · simp only [hQ, hc2, ite_false, mul_eq_zero, or_false]
-    rw [mul_div_mul_left _ _ hc2]
+  grind
 
 /--
 Lemma: For any vector $v$, the square of any component is bounded by the dot product.
@@ -622,8 +607,7 @@ lemma attainable_ratios_eq_image_sphere_perp (n : ℕ) :
   · intro h
     obtain ⟨lambda, hQ1, rfl⟩ := h
     obtain ⟨v, hv, h_ratio⟩ := exists_sphere_perp_ratio_eq n lambda hQ1
-    use v
-    exact ⟨hv, h_ratio.symm⟩
+    grind
   · intro h
     obtain ⟨v, hv, rfl⟩ := h
     use v
@@ -667,8 +651,7 @@ lemma exists_minimizer (n : ℕ) :
   have h_mem : muMin n ∈ attainableRatios n := by
     apply IsCompact.sInf_mem h_compact h_nonempty
   obtain ⟨lambda, hQ1, h_ratio⟩ := h_mem
-  use lambda
-  exact ⟨hQ1, h_ratio.symm⟩
+  grind
 
 /--
 Define the optimal coefficient vector $\lambda_{opt}$ which attains the minimum ratio.

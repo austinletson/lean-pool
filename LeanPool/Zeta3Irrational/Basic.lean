@@ -88,12 +88,7 @@ theorem linear_int (n : ℕ) : ∃ a b : ℕ → ℤ,
       norm_cast
       apply d_dvd_d_of_le
       simp_all only [Finset.mem_range, Finset.le_eq_subset]
-      intro a b
-      simp_all only [Finset.mem_Icc, true_and]
-      simp only [le_max_iff] at b
-      rcases b with ⟨_ ,(c | c)⟩
-      <;>
-      linarith
+      grind
     · simp only [Int.cast_pow, Int.cast_natCast, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true,
       pow_eq_zero_iff, Nat.cast_eq_zero]
       apply d_ne_zero
@@ -212,8 +207,7 @@ lemma integrableOn_JJ' (n : ℕ) : MeasureTheory.Integrable (fun (x : ℝ × ℝ
         simp only [Set.mem_prod, Set.mem_Ioo] at hx
         rw [ENNReal.ofReal_eq_ofReal_iff]
         · congr 3
-          · rw [abs_eq_self.2, abs_eq_self.2, abs_eq_self.2, abs_eq_self.2, abs_eq_self.2,
-              abs_eq_self.2] <;> nlinarith
+          · grind
           · simp only [abs_eq_self, sub_nonneg]
             apply mul_le_one₀ (by nlinarith) (by linarith) (by linarith)
           · simp only [abs_eq_self, sub_nonneg]
@@ -242,8 +236,7 @@ lemma shiftedLegendre_bound (n : ℕ) (x : ℝ) (hx : 0 < x ∧ x < 1) :
     · apply mul_le_mul_of_nonneg_left _ (by positivity)
       apply pow_le_one₀
       · simp
-      · rw [abs_eq_self.2 (by linarith)]
-        linarith
+      · grind
     · simp
 
 lemma Measurable_one_div_aux :
@@ -356,8 +349,7 @@ lemma integrableOn_JJ2 (n : ℕ) : MeasureTheory.Integrable (Function.uncurry fu
                     pow_le_one₀ (abs_nonneg _) ineq1
                   rw [show (1 - (1 - y * z) * x) = 1 - x + y * z * x by ring]
                   by_cases ineq : 1 - x + y * z * x = 0
-                  · rw [ineq]
-                    simp only [div_zero, mul_zero, abs_zero, zero_le_one]
+                  · grind
                   · rw [
                     show y * z * x * ((1 - z) / (1 - x + y * z * x)) = (1-z)/((1-x)/(y*z*x) + 1) by
                       rw [mul_div, div_eq_div_iff]
@@ -370,16 +362,7 @@ lemma integrableOn_JJ2 (n : ℕ) : MeasureTheory.Integrable (Function.uncurry fu
                             · linarith
                           · linarith
                       · exact ineq
-                      · rw [div_add_one]
-                        · intro r
-                          rw [_root_.div_eq_zero_iff] at r
-                          · refine ineq <| r.resolve_right ?_
-                            apply mul_ne_zero
-                            · apply mul_ne_zero <;> linarith
-                            · linarith
-                        · apply mul_ne_zero
-                          · apply mul_ne_zero <;> linarith
-                          · linarith, abs_div]
+                      · grind, abs_div]
                     trans |1 - z|
                     · apply div_le_self (abs_nonneg _)
                       rw [abs_of_nonneg, le_add_iff_nonneg_left]
@@ -395,10 +378,8 @@ lemma integrableOn_JJ2 (n : ℕ) : MeasureTheory.Integrable (Function.uncurry fu
                             · apply mul_nonneg <;> linarith
                             · linarith
                         · linarith
-                    rw [abs_le]
-                    exact ⟨by linarith, by linarith⟩
-              · simp only [pow_one]
-                exact le_abs_self (1 - (1 - x.2.1 * x.2.2) * x.1)
+                    grind
+              · grind
             · simp only [abs_pos]; linarith [pos_aux x hx]
             · exact pos_aux x hx
           · rw [mul_one_div]
@@ -459,13 +440,11 @@ lemma integrableOn_JJ3 (n : ℕ) : MeasureTheory.Integrable
                   · simp only [abs_pow]
                     apply pow_le_one₀
                     · simp only [abs_nonneg]
-                    · rw [abs_eq_self.2 (by linarith)]
-                      linarith
+                    · grind
                 · simp only [abs_pow]
                   apply pow_le_one₀
                   · simp only [abs_nonneg]
-                  · rw [abs_eq_self.2 (by linarith)]
-                    linarith
+                  · grind
               · exact le_abs_self (1 - (1 - x.2.1 * x.2.2) * x.1)
             · simp only [abs_pos]; linarith [pos_aux x hx]
             · exact pos_aux x hx
@@ -629,9 +608,7 @@ lemma ineq_aux (x : ℝ × ℝ) (z : ℝ)
       · suffices (1 - x.1 * x.2) * z < z by linarith
         rw [mul_lt_iff_lt_one_left]
         · simp only [sub_lt_self_iff]; nlinarith
-        · by_contra!
-          have : z = 0 := by linarith
-          exact h0 this
+        · grind
     · simp only [sub_pos]
       rw [mul_comm]
       suffices z * (1 - x.1 * x.2) ≤ (1 - x.1 * x.2) by nlinarith
@@ -652,8 +629,7 @@ lemma fun_eq_aux (x : ℝ × ℝ) (y : ℝ)
   rw [deriv_fun_div]
   · rw [deriv_const_sub, deriv_const_sub, deriv_const_mul _ differentiableAt_id]
     simp only [deriv_id'', neg_mul, one_mul, neg_sub, mul_one]
-    congr
-    ring
+    grind
   · apply DifferentiableAt.const_sub differentiableAt_id _
   · apply DifferentiableAt.const_sub (DifferentiableAt.const_mul differentiableAt_id _)
   · exact ineq_aux1 x y hx hy
@@ -737,9 +713,7 @@ lemma double_integral_eq2 (n : ℕ) (x : ℝ × ℝ)
                 (1 - (1 - x.1 * x.2) * y)) := by
               rw [sub_div, div_self (ineq_aux1 x y hx hy), mul_div]
             rw [div_eq_iff]
-            · rw [← eq1, ← eq2, mul_div,
-                div_eq_div_iff (ineq_aux1 x y hx hy) (ineq_aux1 x y hx hy)]
-              ring
+            · grind
             · rw [← eq2]
               apply div_ne_zero _ (ineq_aux1 x y hx hy)
               rw [mul_sub]
@@ -783,8 +757,7 @@ lemma double_integral_eq2 (n : ℕ) (x : ℝ × ℝ)
         exact ineq_aux1 x y hx hy
       · exact ineq_aux1 x y hx hy
     · apply mul_ne_zero
-      · apply pow_ne_zero
-        exact ineq_aux1 x y hx hy
+      · grind
       · simp only [g, ← eq2]
         apply div_ne_zero _ (ineq_aux1 x y hx hy)
         rw [mul_sub]
@@ -865,9 +838,7 @@ lemma double_integral_eq3 (n : ℕ) (z : ℝ) (hz : z ∈ Set.Ioo 0 1) :
       rw [← MeasureTheory.integral_Ioc_eq_integral_Ioo,
         ← intervalIntegral.integral_of_le (by norm_num)]
       have := legendre_integral_special n hy hz
-      simp only [mul_one_div] at this
-      simp only [← this]
-      simp only [mul_comm]
+      grind
     _ = ∫ (y : ℝ) in Set.Ioo 0 1, ∫ (x : ℝ) in Set.Ioo 0 1,
       (1 - y) ^ n * (y * x * z) ^ n * (1 - x) ^ n /
         (1 - (1 - y * x) * z) ^ (n + 1) := by
@@ -1007,16 +978,7 @@ theorem JJ_pos (n : ℕ) : 0 < JJ n := by
       rcases ha with ⟨⟨hx0, hx1⟩, ⟨hy0, hy1⟩, hz0, hz1⟩
       constructor
       · constructor
-        · intro h
-          rcases h with (h | h)
-          · rcases h with (h | h)
-            · rcases h with (h | h)
-              · rcases h with (h | h)
-                · rcases h with (h | h) <;> nlinarith
-                · nlinarith
-              · nlinarith
-            · nlinarith
-          · nlinarith
+        · grind
         · intro h
           suffices ¬1 - (1 - a.2.1 * a.2.2) * a.1 = 0 by tauto
           suffices 1 - (1 - a.2.1 * a.2.2) * a.1 > 0 by linarith
@@ -1046,8 +1008,7 @@ theorem JJ_pos (n : ℕ) : 0 < JJ n := by
       intro x hx
       by_cases h : x ∈ Set.Ioo 0 1 ×ˢ Set.Ioo 0 1 ×ˢ Set.Ioo 0 1
       · exact JJ'_nonneg x h n
-      · rw [Set.mem_inter_iff] at hx
-        tauto
+      · grind
   · exact integrableOn_JJ' n
 
 lemma Summable_of_zeta_two' : Summable (fun (n : ℕ) ↦ 1 / ((n : ℝ) + 1) ^ 2) := by
@@ -1111,8 +1072,7 @@ theorem JJ_upper (n : ℕ) :
       intro x hx
       by_cases h : x ∈ Set.Ioo 0 1 ×ˢ Set.Ioo 0 1 ×ˢ Set.Ioo 0 1
       · exact JJ'_nonneg x h n
-      · rw [Set.mem_inter_iff] at hx
-        tauto
+      · grind
   · apply AEMeasurable.aestronglyMeasurable
     measurability
 
@@ -1162,8 +1122,7 @@ lemma eventually_d_pow_three_le_exp :
     _ = (Real.exp (339 / 100 : ℝ)) ^ n := by
       rw [← Real.exp_nat_mul ((113 / 100 : ℝ) * (n : ℝ)) 3,
         ← Real.exp_nat_mul (339 / 100 : ℝ) n]
-      congr 1
-      ring
+      grind
 
 theorem fun1_tendsto_zero :
     Filter.Tendsto (fun n ↦ ENNReal.ofReal (fun1 n)) Filter.atTop (nhds 0) := by
@@ -1211,8 +1170,7 @@ theorem fun1_tendsto_zero :
             nth_rewrite 2 [mul_comm, div_eq_mul_one_div]
             rw [mul_pow, ← mul_assoc]
             apply mul_le_mul_of_nonneg_right _ (by positivity)
-            apply mul_le_mul_of_nonneg_left _ (by positivity)
-            exact hN1 n (le_of_max_le_left hn)
+            grind
       _ ≤ ε.toReal := by
         specialize hN2 n (le_of_max_le_right hn)
         rw [← ENNReal.ofReal_toReal_eq_iff.2 h,
@@ -1238,8 +1196,7 @@ theorem zeta3_irrational : ¬ ∃ r : ℚ, r = riemannZeta 3 := by
   rw [zero_mul] at prop1
   have prop2 : ∀ n : ℕ, fun1 n * q > 1 / 2 := by
     suffices ∀ n : ℕ, fun1 n * q ≥ 1 by
-      intro n
-      linarith [this n]
+      grind
     intro n
     obtain ⟨a, b, h⟩ := linear_int n
     have : fun1 n * q > 0 := by
@@ -1267,10 +1224,6 @@ theorem zeta3_irrational : ¬ ∃ r : ℚ, r = riemannZeta 3 := by
         rw [ENNReal.ofReal_div_of_pos (by norm_num)]
         simp] at prop2
     apply LE.le.trans_lt (b := (1 / 2 : ENNReal)) ha prop2
-  · apply mul_pos _ (by simp; omega)
-    apply mul_pos _ (JJ_pos (a + 1))
-    apply pow_pos
-    simp only [Nat.cast_pos]
-    exact fin_d_neq_zero (a + 1)
+  · grind
 
 end LeanPool.Zeta3Irrational

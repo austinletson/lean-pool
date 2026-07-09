@@ -140,9 +140,7 @@ lemma orthogonality_x (n : ℕ) (k : ZMod (q n)) :
     ∑ x : ZMod (q n), Complex.exp (2 * Real.pi * Complex.I * k.val * x.val / (q n : ℂ)) =
       if k = 0 then (q n : ℂ) else 0 := by
   convert sum_exp_orthogonality n k using 1
-  rw [ ← Equiv.sum_comp ( Equiv.ofBijective ( fun x : ZMod ( q n ) => x ) ⟨ fun x y hxy => by
-    subst hxy; simp_all only, fun x => ⟨ x, by aesop ⟩ ⟩ ) ]
-  norm_num [ mul_assoc, mul_comm, mul_left_comm ]
+  grind
 
 /--
 Application of orthogonality to simplify the double
@@ -223,8 +221,7 @@ lemma f_hat_normSq_expansion (n : ℕ) (r : Fin (w n) → ℕ) (h : ZMod (q n)) 
     simp +decide only [mul_assoc, Finset.mul_sum _ _ _, Finset.sum_mul]
     exact Finset.sum_comm.trans
       ( Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by
-        push_cast [ ← mul_assoc, ← Complex.exp_add ]
-        rw [ h_exp ]; ring_nf )
+        grind )
 
 /--
 Standard Parseval's Identity: The sum of the squared magnitudes of the Fourier coefficients equals

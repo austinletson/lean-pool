@@ -115,8 +115,7 @@ def rewindHistory
           subst hRs
           have n_lt := n.2
           change n.1 < min (2 * Γs.length + 1) (2 * ([] : List RuleApp).length) + 1 at n_lt
-          simp only [List.length_nil, mul_zero] at n_lt
-          omega
+          grind
       · right
         constructor
         · rfl
@@ -124,8 +123,7 @@ def rewindHistory
           subst hΓs
           have n_lt := n.2
           change n.1 < min (2 * ([] : List SplitSequent).length) (2 * Rs.length + 1) + 1 at n_lt
-          simp only [List.length_nil, mul_zero] at n_lt
-          omega)) ⟨m, by
+          grind)) ⟨m, by
             have ⟨n_val, n_prop⟩ := n
             simp_all only [Nat.lt_add_one_iff, ge_iff_le]
             rcases g with ⟨Γ | R, Γs, Rs⟩ <;>
@@ -181,12 +179,10 @@ def nextNext {Γ Δ : SplitSequent} {strat : Strategy coalgebraGame Prover}
     (pos : Δ ∈ (builderRuleApp g.1 g.2.2).splitSequents) : proof_type Γ strat :=
   let next : GamePos := ⟨Sum.inl <| Δ, g.1.2.1, builderRuleApp g.1 g.2.2 :: g.1.2.2⟩
   have P_next : coalgebraGame.turn next = Prover := by
-    unfold Game.turn next
-    simp
+    grind
   have next_in_moves : next ∈ coalgebraGame.moves g.1 := by
     rcases g with ⟨⟨Γ | R, Γs, Rs⟩, _, b_move⟩
-    · change Prover = Builder at b_move
-      cases b_move
+    · grind
     · unfold next
       dsimp [coalgebraGame]
       exact (Finset.mem_filterMap _).mpr
@@ -217,12 +213,10 @@ lemma next_next_cor {Γ Δ : SplitSequent} {strat : Strategy coalgebraGame Prove
     f (builderRuleApp (nextNext g h nrep pos).1 (nextNext g h nrep pos).2.2) = Δ := by
   let next : GamePos := ⟨Sum.inl <| Δ, g.1.2.1, builderRuleApp g.1 g.2.2 :: g.1.2.2⟩
   have P_next : coalgebraGame.turn next = Prover := by
-    unfold Game.turn next
-    simp
+    grind
   have next_in_moves : next ∈ coalgebraGame.moves g.1 := by
     rcases g with ⟨⟨Γ | R, Γs, Rs⟩, _, b_move⟩
-    · change Prover = Builder at b_move
-      cases b_move
+    · grind
     · unfold next
       dsimp [coalgebraGame]
       exact (Finset.mem_filterMap _).mpr
@@ -257,24 +251,13 @@ lemma history_length_in_cone {Γ : SplitSequent} (strat : Strategy coalgebraGame
       (coalgebraGame.turn g = Builder → g.2.1.length = g.2.2.length + 1) := by
     induction in_cone
     case nil =>
-      constructor
-      · intro _
-        rfl
-      · intro h
-        change Prover = Builder at h
-        cases h
+      grind
     case myStep q q_in_cone q_has_moves p_turn_q ih =>
       rcases hnext : strat q p_turn_q q_has_moves with ⟨next, next_mem⟩
       have mv : Move q next := move_iff_in_moves.2 next_mem
       cases mv
       case prover R Rs Δ Δs _ =>
-        constructor
-        · intro hturn
-          change Builder = Prover at hturn
-          cases hturn
-        · intro _
-          have hlen := ih.1 p_turn_q
-          simpa [coalgebraGame] using congrArg Nat.succ hlen
+        grind
       case builder =>
         change Builder = Prover at p_turn_q
         cases p_turn_q
@@ -289,9 +272,7 @@ lemma history_length_in_cone {Γ : SplitSequent} (strat : Strategy coalgebraGame
         · intro _
           have hlen := ih.2 b_turn_q
           simpa [coalgebraGame] using hlen
-        · intro hturn
-          change Prover = Builder at hturn
-          cases hturn
+        · grind
 
 /-- Defines the premise when we do not have a repeat. -/
 def repPos {Γ Δ : SplitSequent} {strat : Strategy coalgebraGame Prover} (g : proof_type Γ strat)
@@ -299,9 +280,7 @@ def repPos {Γ Δ : SplitSequent} {strat : Strategy coalgebraGame Prover} (g : p
   let n := Fin.find _ (List.mem_iff_get.1 rep)
   rewindHistory g.1 ⟨2 * n.1, by
     have := (history_length_in_cone strat g.1 g.2.1).2 g.2.2
-    unfold instMinNat min minOfLe
-    simp [g.2.2]
-    split <;> try grind⟩
+    grind⟩
 
 /-- Rewinding the game one step changes the player. -/
 lemma rewind_turn_one_step {g n h1 h2} :
@@ -442,8 +421,7 @@ lemma rewind_history_one_step_correspondence {Γ g} (strat : Strategy coalgebraG
     have mv : Move q (strat q P_turn_q q_has_moves).1 :=
       move_iff_in_moves.2 (strat q P_turn_q q_has_moves).2
     rw [rewind_history_one_step_of_move mv h0] at h1
-    rw [P_turn_q] at h1
-    cases h1
+    grind
   case oStep q q_in_cone B_turn_q g_in_moves_q =>
     have mv_qg : Move q g := move_iff_in_moves.2 g_in_moves_q
     have rew := rewind_history_one_step_of_move mv_qg h0
@@ -485,8 +463,7 @@ lemma builder_RuleApp_head_of_in_cone {Γ g} (strat : Strategy coalgebraGame Pro
     (h2 : 0 < g.2.1.length) : f (builderRuleApp g h) = g.2.1[0]'h2 := by
   cases in_cone
   case nil =>
-    change Prover = Builder at h
-    cases h
+    grind
   case myStep q q_in_cone q_has_moves P_turn_q =>
     have q_mem := (strat q P_turn_q q_has_moves).2
     rcases q with ⟨Δ0 | R0, Δs, Rs⟩
@@ -532,8 +509,7 @@ lemma rewind_history_correspondence_aux (Γ) (info : SplitSequent ⊕ RuleApp)
       case pos h =>
         constructor
         · intro b_turn_g
-          rw [h] at b_turn_g
-          cases b_turn_g
+          grind
         · intro _p_turn_q
           suffices f (builderRuleApp (rewindHistoryOneStep ⟨info, Γs, Rs⟩ _) _) = Γs[0] by
             simpa [rewindHistory, h] using this
@@ -546,37 +522,21 @@ lemma rewind_history_correspondence_aux (Γ) (info : SplitSequent ⊕ RuleApp)
           simpa only [mul_zero, Fin.zero_eta, rewind_history_zero, zero_add] using
             builder_RuleApp_head_of_in_cone strat in_cone h_builder h6
         · intro p_turn_q
-          rw [h_builder] at p_turn_q
-          cases p_turn_q
+          grind
     case succ n =>
       rcases info with Γ' | R
       · have := @rewind_turn ⟨Sum.inl Γ', Γs, Rs⟩ ⟨2 * (n + 1) + 1, h4⟩
         unfold rewindHistory
         simp only [reduceCtorEq, IsEmpty.forall_iff, true_and]
         have for_termination_1 : Γs.length + Rs.tail.length < Γs.length + Rs.length := by
-          cases Rs_def : Rs with
-          | nil =>
-              have hturn : coalgebraGame.turn (Sum.inl Γ', Γs, Rs) = Prover := rfl
-              rw [hturn] at h4
-              simp [Rs_def] at h4
-          | cons head tail =>
-              simp
+          grind
         intro p_turn_q
         have Rs_ne : Rs ≠ [] := by
-          intro hRs
-          cases Rs <;> simp_all
+          grind
         let Rprev := Rs.head Rs_ne
         have rec_h4 :
             2 * (n + 1) + 1 < min (2 * Γs.length) (2 * Rs.tail.length + 1) + 1 := by
-          change n + 1 < Γs.length at h2
-          cases Rs with
-          | nil => simp at for_termination_1
-          | cons R Rs =>
-              have hlen : Γs.length = (R :: Rs).length := length.1 rfl
-              simp only [List.length_cons] at hlen
-              rw [hlen]
-              simp
-              omega
+          grind
         have rec_h3 :
             2 * (n + 1) < min (2 * Γs.length) (2 * Rs.tail.length + 1) + 1 := by
           omega
@@ -590,31 +550,16 @@ lemma rewind_history_correspondence_aux (Γ) (info : SplitSequent ⊕ RuleApp)
         simp only [reduceCtorEq, if_false, IsEmpty.forall_iff, and_true] at h3 h4 ⊢
         unfold rewindHistory
         have for_termination_2 : Γs.tail.length + Rs.length < Γs.length + Rs.length := by
-          cases Γs_def : Γs
-          · simp_all
-          · grind
+          grind
         intro b_turn_g
         have Γs_ne : Γs ≠ [] := by
-          intro hΓs
-          cases Γs <;> simp_all
+          grind
         let Γprev := Γs.head Γs_ne
         have rec_h2 : n < Γs.tail.length := by
-          cases Γs with
-          | nil => simp at Γs_ne
-          | cons Γ' Γs => simpa using h2
+          grind
         have rec_h4 :
             2 * n < min (2 * Γs.tail.length + 1) (2 * Rs.length) := by
-          cases Γs with
-          | nil => simp at Γs_ne
-          | cons Γ' Γs =>
-              have h4' :
-                  2 * (n + 1) + 1 <
-                    min (2 * (Γ' :: Γs).length) (2 * Rs.length + 1) + 1 := by
-                simpa using h4
-              have hlen : (Γ' :: Γs).length = Rs.length + 1 := length.2 rfl
-              simp only [List.length_cons, List.tail_cons] at hlen h4' ⊢
-              rw [hlen] at h4'
-              omega
+          grind
         have rec_h3 :
             2 * n ≤ min (2 * Γs.tail.length + 1) (2 * Rs.length) := by
           exact Nat.le_of_lt rec_h4
@@ -659,9 +604,7 @@ def repNext (Γ : SplitSequent) {Δ : SplitSequent} {strat : Strategy coalgebraG
       have := @rewind_turn g.1 ⟨(2 * (Fin.find _ (List.mem_iff_get.1 rep)).1), by
         have length := history_length_in_cone strat g.1 g.2.1
         have hlen := length.2 g.2.2
-        have hfind := (Fin.find _ (List.mem_iff_get.1 rep)).2
-        simp only [g.2.2, reduceCtorEq, if_false]
-        omega⟩
+        grind⟩
       simp only [g.2.2, Nat.even_mul, even_two, true_or, if_true] at this
       convert this using 2
       unfold repPos
@@ -693,9 +636,7 @@ lemma rep_next_cor (Γ : SplitSequent) {Δ : SplitSequent} {strat : Strategy coa
 /-- A left game position is a Prover turn, so it cannot be a Builder turn. -/
 private lemma left_turn_not_builder {Γ : SplitSequent} {Γs : List SplitSequent}
     {Rs : List RuleApp} : coalgebraGame.turn (Sum.inl Γ, Γs, Rs) ≠ Builder := by
-  intro h
-  change Prover = Builder at h
-  cases h
+  grind
 
 /-- Define the list of premises from a Builder move. -/
 def builderMovePremises {Γ : SplitSequent} {strat : Strategy coalgebraGame Prover}
@@ -1050,8 +991,7 @@ lemma maximal_path_starts_in_prover_turn {Γ : SplitSequent}
       simp at first_def
       rcases head_cases with after | root
       · simp [first_def, afterBox] at after
-      · simp [first_def] at root
-        grind
+      · grind
 
 lemma maximal_path_ends_in_prover_turn {Γ : SplitSequent}
     {strat : Strategy coalgebraGame Builder} (h : winning strat (startPos Γ))
@@ -1065,23 +1005,20 @@ lemma maximal_path_ends_in_prover_turn {Γ : SplitSequent}
       apply max
       have is_winning : winning strat ⟨Sum.inr R, Γs, Rs⟩ := winning_of_in_cone_winning (by
         simp only [MaximalPath.last] at last_def
-        rw [← last_def]
-        exact in_cone (π.getLast ne) (List.getLast_mem ne)) h
+        grind) h
       have B_turn : coalgebraGame.turn ⟨Sum.inr R, Γs, Rs⟩ = Builder := by rfl
       have has_moves := winning_has_moves B_turn is_winning
       let z := strat ⟨Sum.inr R, Γs, Rs⟩ B_turn has_moves
       refine ⟨z.1, ?_, ?_⟩
       · apply move_iff_in_moves.2
         simp only [MaximalPath.last] at last_def
-        rw [last_def]
-        exact z.2
+        grind
       · have ⟨z, z_in⟩ := z
         unfold Game.Pos.moves Game.moves at z_in
         simp only [Finset.mem_filterMap] at z_in
         rcases z_in with ⟨Γ, _Γ_R, z_eq⟩
         by_cases Γ_mem : Γ ∈ Γs
-        · simp only [Γ_mem, if_true] at z_eq
-          cases z_eq
+        · grind
         · simp only [Γ_mem, if_false, Option.some.injEq] at z_eq
           cases z_eq
           simp [isBox]
@@ -1144,9 +1081,7 @@ lemma make_path_from_is_chain (strat : Strategy coalgebraGame Builder) (g : coal
       · simp only [Option.mem_def]
         intro g g_in
         have := make_path_from_head? strat (exists_non_box_move.choose)
-        simp only [this, Option.some.injEq] at g_in
-        subst g_in
-        exact exists_non_box_move.choose_spec
+        grind
     else by simp_all [makePathFrom]
   | ⟨Sum.inr R, Γs, Rs⟩ => if exists_non_box_move : ∃ g', nonBoxMove g g'
     then by
@@ -1212,12 +1147,7 @@ lemma make_path_is_max (strat : Strategy coalgebraGame Builder) (g : coalgebraGa
             ⟨exists_non_box_move.choose,
               move_iff_in_moves.1 (g_def ▸ exists_non_box_move.choose_spec.1)⟩))
         using 4
-      simp [
-        List.getLast_cons (make_path_from_is_nonempty strat
-          ((strat ⟨Sum.inr R, Γs, Rs⟩
-            (by rfl)
-            ⟨exists_non_box_move.choose,
-              move_iff_in_moves.1 (g_def ▸ exists_non_box_move.choose_spec.1)⟩)))]
+      grind
     else by simp_all [makePathFrom]
 termination_by
   coalgebraGame.wf.2.wrap g
@@ -1270,8 +1200,7 @@ lemma always_exists_maximal_path_from_root_or_after (Γ : SplitSequent)
     max := make_path_is_max strat g
     head_cases := by
       have := make_path_from_head strat g
-      rw [this]
-      exact head_cases
+      grind
     in_cone := by
       intro g' g'_in
       have ⟨i, i_eq⟩ := List.mem_iff_get.1 g'_in
@@ -1344,8 +1273,7 @@ lemma maximal_path_refl_trans_gen (as) (ne : as ≠ [])
   induction chain
   case nil => simp at ne
   case singleton g =>
-    simp only [List.head_cons, List.getLast_singleton]
-    exact Relation.ReflTransGen.refl
+    grind
   case cons_cons g g' gs g_g' gs_chain ih =>
     simp only [List.head_cons, ne_eq, reduceCtorEq, not_false_eq_true] at ih
     exact Relation.ReflTransGen.head g_g'.1 (ih trivial)
@@ -1451,7 +1379,6 @@ lemma diamond_in_last_of_diamond_in_first {Γ : SplitSequent}
       have eq3 : π.list.length - 1 - 1 = π.list.length - 2 := by omega
       rcases π with ⟨π, ne, chain, max, head_cases, in_cone⟩
       have length_gt_one : π.length > 1 := by
-        simp at lt
         grind
       have u₁_last := List.IsChain.getElem chain (π.length - (0 + 1) - 1) (by omega)
       have helper : π[π.length - 1]'(by omega) = π.getLast ne := by grind
@@ -1475,7 +1402,6 @@ lemma diamond_in_last_of_diamond_in_first {Γ : SplitSequent}
       rcases π with ⟨π, ne, chain, max, head_cases, in_cone⟩
       have ne_zero : π.length ≠ 0 := by grind
       have length_gt_two : π.length > 2 := by
-        simp at lt
         grind
       have eq3 : π.length - (i + 1 + 1) - 1 = π.length - i - 3 := by omega
       have eq2 : π.length - (i + 1 + 1) - 1 + 1 = π.length - i - 2 := by simp_all; omega
@@ -1524,7 +1450,6 @@ private lemma diamond_in_last_of_diamond_in_first_path {Γ : SplitSequent}
     ◇φ ∈ (lastSplitSequent h γ).toSequent := by
   apply diamond_in_last_of_diamond_in_first h γ φ (γ.list.length - 1)
   · rcases γ with ⟨ρ, ne, chain, max, head_cases, in_cone⟩
-    simp
     grind
   · convert hmem
     simp only [firstSplitSequent, MaximalPath.first]
@@ -1535,7 +1460,6 @@ private lemma diamond_in_last_of_diamond_in_first_path {Γ : SplitSequent}
       grind
     · grind
   · rcases γ with ⟨ρ, ne, chain, max, head_cases, in_cone⟩
-    simp
     grind
   · convert (maximal_path_starts_in_prover_turn γ)
     simp only [MaximalPath.first]
@@ -1652,8 +1576,7 @@ lemma no_terminal_rule_app_at_last {Δ : SplitSequent}
     simp
   let next_move : GamePos := ⟨Sum.inr R, (lastSplitSequent h π) :: Γs', Rs'⟩
   have B_turn_next : coalgebraGame.turn next_move = Builder := by
-    unfold Game.turn next_move
-    simp
+    grind
   have next_in_moves : next_move ∈ coalgebraGame.moves π.last := by
     simp only [last_def]
     unfold next_move
@@ -1700,7 +1623,6 @@ private lemma maximal_path_last_reverse_index_lt {Γ : SplitSequent}
     {strat : Strategy coalgebraGame Builder}
     (π : MaximalPath Γ strat) : π.list.length - 1 < π.list.length := by
   rcases π with ⟨π, ne, chain, max, head_cases, in_cone⟩
-  simp
   grind
 
 /-- The final reverse index lands at the first node of a nonempty maximal path. -/
@@ -1721,16 +1643,10 @@ private lemma maximal_path_first_reverse_index_turn {Γ : SplitSequent}
       (π.list[π.list.length - (π.list.length - 1) - 1]'
         (maximal_path_first_reverse_index_lt π)) = Prover := by
   have idx_zero : π.list.length - (π.list.length - 1) - 1 = 0 := by
-    have length_pos : 0 < π.list.length := by
-      have := π.ne
-      grind
-    omega
+    grind
   convert (maximal_path_starts_in_prover_turn π)
   simp only [MaximalPath.first, idx_zero]
-  rcases π with ⟨π, ne, chain, max, head_cases, in_cone⟩
-  cases π with
-  | nil => contradiction
-  | cons x xs => cases x; rfl
+  grind
 
 /-- Convert first-sequent membership to membership at the final reverse index. -/
 private lemma first_split_sequent_mem_at_reverse_index {Γ : SplitSequent}
@@ -1743,16 +1659,10 @@ private lemma first_split_sequent_mem_at_reverse_index {Γ : SplitSequent}
       (maximal_path_first_reverse_index_turn π) := by
   intro φ_in
   have idx_zero : π.list.length - (π.list.length - 1) - 1 = 0 := by
-    have length_pos : 0 < π.list.length := by
-      have := π.ne
-      grind
-    omega
+    grind
   convert φ_in
   simp only [firstSplitSequent, MaximalPath.first, idx_zero]
-  rcases π with ⟨π, ne, chain, max, head_cases, in_cone⟩
-  cases π with
-  | nil => contradiction
-  | cons x xs => cases x; simp [proverSplitSequent]
+  grind
 
 /-- A box rule application at the last node produces a related maximal path whose first
 sequent contains the unboxed formula. -/
@@ -1866,9 +1776,7 @@ private lemma no_penultimate_prover_turn {Δ : SplitSequent}
   have u₁_last := List.IsChain.getElem chain (π.length - (0 + 1) - 1) (by omega)
   have helper_last : π[π.length - 1]'(by omega) = π.getLast ne := by grind
   have u₁_last' : nonBoxMove π[π.length - 2] (π.getLast ne) := by
-    convert u₁_last using 2
-    · omega
-    · rw [← helper_last]; congr 1; omega
+    grind
   rcases u₁_def : π[π.length - 2] with ⟨Γ | R, Γs, Rs⟩
   · have u₁_last_mem := move_iff_in_moves.1 u₁_last'.1
     rw [u₁_def] at u₁_last_mem
@@ -1943,7 +1851,6 @@ lemma builder_win_strong_left_zero {Δ : SplitSequent}
   have φ_in' : Sum.inl φ ∈ lastSplitSequent h π := by
     convert φ_in
     simp [lastSplitSequent]
-    congr
     grind
   cases φ
   case bottom => simp_all
@@ -2035,13 +1942,10 @@ lemma builder_win_strong_left_succ {Δ : SplitSequent}
     rcases π with ⟨π, ne, chain, max, head_cases, in_cone⟩
     have ne_zero : π.length ≠ 0 := by grind
     have length_gt_two : π.length > 2 := by
-      simp at lt
       grind
     have eq3 : π.length - (i + 1 + 1) - 1 = π.length - i - 3 := by omega
     have eq2 : π.length - (i + 1 + 1) - 1 + 1 = π.length - i - 2 := by
-      have lt' : i + 1 + 1 < π.length := by
-        simpa using lt
-      omega
+      grind
     have y_u₁ := List.IsChain.getElem chain (π.length - (i + 1 + 1) - 1) (by omega)
     have raw_u₁_u₂ := List.IsChain.getElem chain (π.length - (i + 1 + 1) - 1 + 1) (by omega)
     have no_box_u₁ := y_u₁.2
@@ -2194,7 +2098,6 @@ lemma builder_win_strong_right_zero {Δ : SplitSequent}
   have φ_in' : Sum.inr φ ∈ lastSplitSequent h π := by
     convert φ_in
     simp [lastSplitSequent]
-    congr
     grind
   cases φ
   case bottom => simp_all
@@ -2295,13 +2198,10 @@ lemma builder_win_strong_right_succ {Δ : SplitSequent}
     rcases π with ⟨π, ne, chain, max, head_cases, in_cone⟩
     have ne_zero : π.length ≠ 0 := by grind
     have length_gt_two : π.length > 2 := by
-      simp at lt
       grind
     have eq3 : π.length - (i + 1 + 1) - 1 = π.length - i - 3 := by omega
     have eq2 : π.length - (i + 1 + 1) - 1 + 1 = π.length - i - 2 := by
-      have lt' : i + 1 + 1 < π.length := by
-        simpa using lt
-      omega
+      grind
     have y_u₁ := List.IsChain.getElem chain (π.length - (i + 1 + 1) - 1) (by omega)
     have raw_u₁_u₂ := List.IsChain.getElem chain (π.length - (i + 1 + 1) - 1 + 1) (by omega)
     have no_box_u₁ := y_u₁.2
@@ -2479,8 +2379,7 @@ theorem _root_.Lean4GlCoalgebras.Split.completeness
   rcases gamedet coalgebraGame (startPos Γ) with builder_wins | prover_wins
   · have ⟨strat, h⟩ := builder_wins
     have nΓ_sat := builder_win_builds_model strat h
-    exfalso
-    exact nΓ_sat Γ_sat
+    grind
   · have ⟨strat, h⟩ := prover_wins
     exact prover_win_builds_proof strat h
 

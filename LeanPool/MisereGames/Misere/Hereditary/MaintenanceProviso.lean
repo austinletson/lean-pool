@@ -176,8 +176,7 @@ private theorem auxCases {h x : G} {p : Player} (h1 : MiserePlayerOutcome (h + x
     ∨ (∃ hl ∈ moves p h, MiserePlayerOutcome (hl + x) (-p) = p)
     ∨ (IsEndLike p (h + x)) := by
   apply Or.elim ((winsGoingFirst_iff _ _).mp (miserePlayerOutcome_eq_iff_winsGoingFirst.mp h1))
-  · intro h1
-    exact (Or.inr (Or.inr h1))
+  · grind
   · intro ⟨hxl, h1, h2⟩
     simp only [moves_add, Set.mem_union, Set.mem_image] at h1 h2
     apply Or.elim h1
@@ -394,13 +393,9 @@ theorem _root_.MisereGames.Form.Hereditary.misereGE_of_moves
     : g ≥m A h := by
   refine misereGE_of_maintenance_proviso A ?_ ?_ ?_ ?_
   · intro gr h1
-    apply Or.inl
-    have ⟨hr, h3, h4⟩ := hr1 gr h1
-    use hr, h3
+    grind
   · intro hl h1
-    apply Or.inl
-    have ⟨hr, h3, h4⟩ := hl2 hl h1
-    use hr, h3
+    grind
   · intro h2 y hy h1
     rw [GameForm.isEndLike_iff_isEnd] at h2 h1
     refine winsGoingFirst_add_of_isEnd (isEnd_of_not_mem ?_) h1
@@ -417,18 +412,14 @@ private theorem misereEQ_of_moves.aux {A : GameForm → Prop} [Hereditary A] {g 
     (hr2 : ∀ hr ∈ moves .right h, ∃ gr ∈ moves .right g, hr =m A gr)
     : g ≥m A h := by
   apply misereGE_of_moves
-  · intro gl h_gl
-    have ⟨hl, h1, _⟩ := hl1 gl h_gl
-    use hl, h1
+  · grind
   · intro hl h_hl
     have ⟨gl, h1, h2⟩ := hl2 hl h_hl
     use gl, h1, misereGE_of_misereEQ (MisereEQ.symm h2)
   · intro gr h_gr
     have ⟨hr, h1, h2⟩ := hr1 gr h_gr
     use hr, h1, misereGE_of_misereEQ h2
-  · intro hr h_hr
-    have ⟨gr, h1, h2⟩ := hr2 hr h_hr
-    use gr, h1
+  · grind
 
 theorem _root_.MisereGames.Form.Hereditary.misereEQ_of_moves
     {A : GameForm → Prop} [Hereditary A] {g h : GameForm}

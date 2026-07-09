@@ -101,8 +101,7 @@ private def close_up_aux_factor_intersection_proof
   let div_q_b2 : R.carrier → R.carrier :=
     fun x => if h : q' ∣ x then Classical.choose h else x
   have hdiv_b2 : ∀ x ∈ rest, x = q' * div_q_b2 x := by
-    intro x hx
-    simpa only [div_q_b2, dif_pos (hq'_dvd x hx)] using Classical.choose_spec (hq'_dvd x hx)
+    grind
   let rest'2 := rest.image div_q_b2
   have h_ie_b2 : span (↑rest : Set R.carrier) =
       span {q'} * span (↑rest'2 : Set R.carrier) :=
@@ -223,8 +222,7 @@ private def close_up_aux_factor_intersection_proof
   · -- a ∉ rest'2
     by_cases hrest'2_card : rest'2.card ≤ n'' + 1
     · have h_ins_card3 : (insert a rest'2).card ≤ n'' + 1 + 1 := by
-        rw [Finset.card_insert_of_notMem ha_rest'2]
-        omega
+        grind
       let liftR₁ := Subring.inclusion hle₁
       let s₁ := (insert a rest'2).image liftR₁
       have hs₁_card : s₁.card ≤ n'' + 1 + 1 := Finset.card_image_le.trans h_ins_card3
@@ -244,9 +242,7 @@ private def close_up_aux_factor_intersection_proof
     · -- rest'2.card = n''+2
       push Not at hrest'2_card
       have hrest'2_card_eq : rest'2.card = n'' + 1 + 1 := by
-        have h_le : rest'2.card ≤ n'' + 1 + 1 :=
-          Finset.card_image_le.trans hrest_card
-        omega
+        grind
       have hb_rest'2 : div_q_b2 b ∈ rest'2 :=
         Finset.mem_image.mpr ⟨b, hb_rest, rfl⟩
       exact close_up_aux_factor_intersection_large
@@ -433,8 +429,7 @@ theorem close_up_aux_factor_no_factor
   · -- Negative case: no common prime divides all of rest
     have h_no_common : ∀ (q : R.carrier), Prime q →
         ¬(∀ x ∈ rest, q ∣ x) := by
-      intro q hq hall
-      exact h_common ⟨q, hq, hall⟩
+      grind
     have hc_n' : (c_n : T) ∈
         Ideal.map R.carrier.subtype (span (insert (a : R.carrier) (↑rest : Set R.carrier))) := by
       rw [← Finset.coe_insert]

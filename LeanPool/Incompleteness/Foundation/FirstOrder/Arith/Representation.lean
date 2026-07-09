@@ -66,19 +66,11 @@ lemma _root_.Nat.Partrec.projection {f : ℕ →. ℕ} (hf : Nat.Partrec f) (uni
             (fun x ih ↦ ih.rec (cf.evaln s (m.pair x)) Option.some) n
       case none =>
         simp only [hC]
-        constructor
-        · intro h; exact ⟨n, by simp, h⟩
-        · rintro ⟨x, hx, Hx⟩
-          rcases eq_or_lt_of_le (le_of_lt_succ hx) with (rfl | hx)
-          · exact Hx
-          · exfalso; simpa using ((ih _).mpr ⟨x, hx, Hx⟩).symm.trans hC
+        grind
       case some val =>
         simp only [hC]
         constructor
-        · intro h
-          have hval : val = a := Option.some.inj h
-          rcases (ih _).mp hC with ⟨x, hx, Hx⟩
-          exact ⟨x, lt_trans hx (by simp), by simpa [hval] using Hx⟩
+        · grind
         · rintro ⟨x, _, Hx⟩
           rcases (ih _).mp hC with ⟨y, _, Hy⟩
           exact congrArg Option.some
@@ -127,12 +119,7 @@ lemma _root_.Partrec.projection {f : α → β →. γ} (hf : Partrec₂ f) (uni
     simp only [Part.mem_bind_iff, Part.mem_ofOption, Option.mem_def, decode₂_eq_some,
       Part.mem_map_iff, Prod.exists, encode_prod_val, Nat.pair_eq_pair, ↓existsAndEq,
       and_true, exists_and_left] at H
-    intro c a; constructor
-    · intro h
-      rcases (H c a).mp h with ⟨a', ha, b, c', hc, hcenc⟩
-      exact ⟨a', b, ha, c', hc, hcenc⟩
-    · rintro ⟨a', b, ha, c', hc, hcenc⟩
-      exact (H c a).mpr ⟨a', ha, b, c', hc, hcenc⟩
+    grind
   intro c a
   constructor
   · intro hcga

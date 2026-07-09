@@ -87,8 +87,7 @@ lemma harnack_ineq_cont_normalized_upper
       convert poisson_integral_of_harmonicOn_unitDisc_continuousOn_closedUnitDisc h_harmonic hc
         (Metric.mem_ball_self zero_lt_one) using 1
       norm_num [Complex.norm_exp]
-    rw [h_f_zero] at h_integral
-    rw [div_mul_eq_mul_div, eq_div_iff] at h_integral <;> nlinarith [Real.pi_pos]
+    grind
   have hz' : ‖z‖ < 1 := mem_ball_zero_iff.mp hz
   calc u z
     _ = 1 / (2 * π) * ∫ (t : ℝ) in 0..2 * π, (1 - ‖z‖ ^ 2) /
@@ -101,9 +100,7 @@ lemma harnack_ineq_cont_normalized_upper
         congr 1
         rw [← intervalIntegral.integral_const_mul]
     _ = (1 + ‖z‖) / (1 - ‖z‖) := by
-        rw [h_integral]
-        field_simp [show (1 - ‖z‖) ≠ (0 : ℝ) by linarith]
-        ring
+        grind
 
 lemma harnack_ineq_cont_normalized_lower
     (u : ℂ → ℝ)
@@ -190,8 +187,7 @@ private lemma harnack_ineq_cont
   have h0_pos : u 0 > 0 := h_pos 0 (mem_ball_self zero_lt_one)
   rw [le_div_iff₀ h0_pos] at lower_bound
   rw [div_le_iff₀ h0_pos] at upper_bound
-  refine ⟨lower_bound, ?_⟩
-  linarith [show u 0 * (1 + ‖z‖) / (1 - ‖z‖) = (1 + ‖z‖) / (1 - ‖z‖) * u 0 from by ring]
+  grind
 
 /-- The scaled version of a harmonic function. -/
 private lemma harmonic_scaling
@@ -256,12 +252,10 @@ private lemma harnack_ineq_aux
         congr 1
         field_simp [hr.1.ne']
       convert hv_ineq using 2 <;> norm_num [abs_of_pos hr.1, mul_div_cancel₀, hr.1.ne']
-      · rw [hv0]
-        field_simp [hr.1.ne']
+      · grind
       · exact hvz.symm
       · exact hvz.symm
-      · rw [hv0]
-        field_simp [hr.1.ne']
+      · grind
 
 /-- **Harnack's inequality for positive harmonic functions.**
 A positive harmonic function on the unit disc satisfies

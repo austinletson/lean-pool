@@ -53,8 +53,7 @@ theorem normForm_mul (a b c e : ℤ) :
     normForm d (a * c - ((d ^ 2 - d) / 4) * (b * e)) (a * e + b * c + d * b * e) =
     normForm d a b * normForm d c e := by
   simp only [normForm]
-  set q := (d ^ 2 - d) / 4
-  ring
+  grind
 
 /-! ### Conjugate and norm involution
 
@@ -105,9 +104,6 @@ lemma normForm_eq_mul_conj (a b : ℤ) :
   have hprod : tau * tauConj = ((d ^ 2 - d) / 4 : ℤ) • (1 : QuadraticOrder d) :=
     tau_mul_tauConj
   simp only [normForm, zsmul_eq_mul] at hsum hprod ⊢
-  push_cast
-  linear_combination
-    ((b : QuadraticOrder d) * (a : QuadraticOrder d)) * hsum
-      + ((b : QuadraticOrder d) ^ 2) * hprod
+  grind
 
 end QuadraticOrder

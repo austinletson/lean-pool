@@ -140,15 +140,12 @@ def rotate₁ (d : 𝓚 ⟹ φ₂ :: φ₁ :: Γ) : 𝓚 ⟹ φ₁ :: φ₂ :: �
 /-- Imported declaration from the Incompleteness formalization. -/
 def rotate₂ (d : 𝓚 ⟹ φ₃ :: φ₁ :: φ₂ :: Γ) : 𝓚 ⟹ φ₁ :: φ₂ :: φ₃ :: Γ :=
   wk d (by
-    simp only [List.cons_subset, List.mem_cons, true_or, or_true, true_and]
-    apply List.subset_cons_of_subset _ (List.subset_cons_of_subset _ <| by simp))
+    grind)
 
 /-- Imported declaration from the Incompleteness formalization. -/
 def rotate₃ (d : 𝓚 ⟹ φ₄ :: φ₁ :: φ₂ :: φ₃ :: Γ) : 𝓚 ⟹ φ₁ :: φ₂ :: φ₃ :: φ₄ :: Γ :=
   wk d (by
-    simp only [List.cons_subset, List.mem_cons, true_or, or_true, true_and]
-    apply List.subset_cons_of_subset _ (List.subset_cons_of_subset _ <|
-      List.subset_cons_of_subset _ <| by simp))
+    grind)
 
 variable {𝓚 𝓛 : K} {Γ : List F}
 

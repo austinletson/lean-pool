@@ -135,11 +135,7 @@ lemma ψMap_prod_eq (d : Fin 3 →₀ ℕ) :
       rw [hi]
       simp)]
     have huniv : (Finset.univ : Finset (Fin 3)) = {0, 1, 2} := by decide
-    rw [huniv]
-    rw [Finset.prod_insert (show (0 : Fin 3) ∉ ({1, 2} : Finset (Fin 3)) by decide)]
-    rw [Finset.prod_insert (show (1 : Fin 3) ∉ ({2} : Finset (Fin 3)) by decide)]
-    rw [Finset.prod_singleton]
-    ring
+    grind
   rw [hprod]
   change ((MvPowerSeries.X 0 * MvPowerSeries.X 1 : MvPowerSeries (Fin 2) ℂ) ^ d 0 *
     ((MvPowerSeries.X 0) ^ 2) ^ d 1 *
@@ -163,8 +159,7 @@ lemma mkFin2_inj {a b c d : ℕ} : mkFin2 a b = mkFin2 c d ↔ a = c ∧ b = d :
   constructor
   · intro h
     exact ⟨congr_fun (congr_arg DFunLike.coe h) 0, congr_fun (congr_arg DFunLike.coe h) 1⟩
-  · rintro ⟨rfl, rfl⟩
-    rfl
+  · grind
 
 lemma mkFin3_inj {a b c d e f : ℕ} :
     mkFin3 a b c = mkFin3 d e f ↔ a = d ∧ b = e ∧ c = f := by
@@ -173,8 +168,7 @@ lemma mkFin3_inj {a b c d e f : ℕ} :
     exact ⟨congr_fun (congr_arg DFunLike.coe h) 0,
            congr_fun (congr_arg DFunLike.coe h) 1,
            congr_fun (congr_arg DFunLike.coe h) 2⟩
-  · rintro ⟨rfl, rfl, rfl⟩
-    rfl
+  · grind
 
 -- Fiber characterization: preimages under ψ are {mkFin3(m₀+2k)(m₁-k)(m₂-k) : k ≤ min(m₁,m₂)}
 lemma ψ_fiber_char (m₀ m₁ m₂ : ℕ) (hm₀ : m₀ ≤ 1) (d : Fin 3 →₀ ℕ) :
@@ -188,8 +182,7 @@ lemma ψ_fiber_char (m₀ m₁ m₂ : ℕ) (hm₀ : m₀ ≤ 1) (d : Fin 3 →�
     have hd2_le : d 2 ≤ m₂ := by omega
     set k := m₁ - d 1 with hk_def
     refine ⟨k, ?_, ?_⟩
-    · simp
-      omega
+    · grind
     · rw [mkFin3_ext d, mkFin3_inj]
       omega
   · rintro ⟨k, hk, rfl⟩
@@ -222,9 +215,7 @@ lemma ψHom_coeff_sum
     simp only [g] at hd
     split_ifs at hd with hcond
     · rw [he_def, eq_comm, ψ_fiber_char _ _ _ hm₀] at hcond
-      obtain ⟨k, hk, rfl⟩ := hcond
-      exact Finset.mem_coe.mpr (Finset.mem_image.mpr
-        ⟨k, Finset.mem_range.mpr (Nat.lt_succ_of_le hk), rfl⟩)
+      grind
     · exact absurd rfl hd
   rw [finsum_eq_sum_of_support_subset g hsupp]
   rw [show S = (Finset.range (min m₁ m₂ + 1)).image
@@ -326,26 +317,13 @@ lemma ψBar_injective : Function.Injective ψBar := by
       have hN : 1 ≤ N := by omega
       rw [show N - 1 + 1 = N from by omega]
       rw [show N + 1 = N.succ from rfl, Finset.sum_range_succ']
-      simp only [mul_zero, add_zero, Nat.sub_zero]
-      have hterms : ∀ k ∈ Finset.range N,
-          f (mkFin3 (m 0 + 2 * (k + 1)) (m 1 - (k + 1)) (m 2 - (k + 1))) =
-          f (mkFin3 (m 0 + 2 + 2 * k) (m 1 - 1 - k) (m 2 - 1 - k)) := by
-        intro k _
-        congr 1
-        rw [mkFin3_inj]
-        refine ⟨by ring, ?_, ?_⟩ <;> omega
-      rw [Finset.sum_congr rfl hterms]
-      ring
+      grind
     · push Not at hm12
       rw [if_neg (fun h => by
-                    rw [hd₁₂_iff] at h
-                    exact absurd h.2 (not_le.mpr (hm12 h.1)))]
+                    grind)]
       simp only [sub_zero]
       have hmin0 : min (m 1) (m 2) = 0 := by
-        by_cases h : 1 ≤ m 1
-        · have := hm12 h
-          omega
-        · omega
+        grind
       rw [hmin0, show (0 : ℕ) + 1 = 1 from rfl]
       simp only [Finset.sum_range_one, mul_zero, add_zero, Nat.sub_zero]
       change f m = f (mkFin3 (m 0) (m 1) (m 2))
@@ -353,8 +331,7 @@ lemma ψBar_injective : Function.Injective ψBar := by
   · -- m 0 < 2 (m 0 ≤ 1)
     have hm0' : m 0 ≤ 1 := by omega
     rw [if_neg (fun h => by
-                  rw [hd₀_iff] at h
-                  omega)]
+                  grind)]
     simp only [zero_sub]
     have hψ_sum : ∑ k ∈ Finset.range (min (m 1) (m 2) + 1),
         f (mkFin3 (m 0 + 2 * k) (m 1 - k) (m 2 - k)) = 0 := by
@@ -376,20 +353,13 @@ lemma ψBar_injective : Function.Injective ψBar := by
           f (mkFin3 (m 0 + 2 + 2 * k) (m 1 - 1 - k) (m 2 - 1 - k)) by
         rw [Finset.sum_congr rfl this] at hψ_sum
         exact (congr_arg f (mkFin3_ext m)).trans (eq_neg_of_add_eq_zero_right hψ_sum)
-      intro k _
-      congr 1
-      rw [mkFin3_inj]
-      refine ⟨by ring, ?_, ?_⟩ <;> omega
+      grind
     · push Not at hm12
       rw [if_neg (fun h => by
-                    rw [hd₁₂_iff] at h
-                    exact absurd h.2 (not_le.mpr (hm12 h.1)))]
+                    grind)]
       simp only [neg_zero]
       have : min (m 1) (m 2) = 0 := by
-        by_cases h : 1 ≤ m 1
-        · have := hm12 h
-          omega
-        · omega
+        grind
       rw [this, show (0 : ℕ) + 1 = 1 from rfl] at hψ_sum
       simp only [Finset.sum_range_one, mul_zero, add_zero, Nat.sub_zero] at hψ_sum
       change f m = 0

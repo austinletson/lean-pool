@@ -164,8 +164,7 @@ private def jensen_construction_p0_uncountable_proof
         exact ⟨0, by
           change Ideal.Quotient.mk _ _ = Ideal.Quotient.mk _ y
           rw [Ideal.Quotient.eq, show IsLocalRing.maximalIdeal T ^ 0 = ⊤ from by
-            rw [pow_zero]
-            exact Ideal.one_eq_top]
+            grind]
           exact Submodule.mem_top⟩
       | succ n _ih =>
         -- Inductive step: lift the mod-M^n approximation to mod-M^{n+1}
@@ -209,8 +208,7 @@ private def jensen_construction_p0_uncountable_proof
               have := M.neg_mem ((Ideal.Quotient.eq (I := M)).mp hr_a)
               rwa [show -((r_a : T) - a) = a - (r_a : T) from by ring] at this
             rw [show M ^ (n + 1) = M * M ^ n from by
-              rw [mul_comm]
-              exact (pow_succ M n).symm]
+              grind]
             exact Ideal.mul_mem_mul ha_sub hx_in
         intro q
         obtain ⟨t, rfl⟩ := Ideal.Quotient.mk_surjective q

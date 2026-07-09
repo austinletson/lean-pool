@@ -244,8 +244,7 @@ lemma winding_fdPolygon_at_ref_eq_neg_one :
             (by ring)).deriv
       rw [hd]; exact continuous_const
     have hθ_change : θ_target 5 - θ_target 0 = 2 * Real.pi * (-1 : ℤ) := by
-      change (θ₀ - 2 * Real.pi * 5 / 5) - (θ₀ - 2 * Real.pi * 0 / 5) = _
-      push_cast; ring
+      grind
     exact winding_of_S1_curve_eq_degree refP₀ 0 5 hab (-1) θ_target hθ_diff hθ_deriv_cont hθ_change
   set rc := fdPolygonRadialCircle refP₀ with hrc_def
   have h_dist_one : ∀ t ∈ Icc (0 : ℝ) 5, ‖rc t - refP₀‖ = 1 := by
@@ -320,16 +319,12 @@ lemma winding_fdPolygon_at_ref_eq_neg_one :
       ∫ t in (0 : ℝ)..5,
         if ‖γ_target t - refP₀‖ > ε then (γ_target t - refP₀)⁻¹ * deriv γ_target t else 0) =
       -2 * Real.pi * I := by
-    apply limUnder_eventually_eq_const
-    filter_upwards [Ioo_mem_nhdsGT (by norm_num : (0 : ℝ) < 1)] with ε hε
-    exact h_target_integral ε (mem_Ioo.mp hε).1 (mem_Ioo.mp hε).2
+    grind
   suffices h_rc_limit_eq : limUnder (𝓝[>] (0 : ℝ)) (fun ε =>
       ∫ t in (0 : ℝ)..5,
         if ‖rc t - refP₀‖ > ε then (rc t - refP₀)⁻¹ * deriv rc t else 0) =
       -2 * ↑Real.pi * I by
-    erw [h_rc_limit_eq]
-    erw [h_target_limit] at h_target_winding
-    exact h_target_winding
+    grind
   apply limUnder_eventually_eq_const
   filter_upwards [Ioo_mem_nhdsGT (by norm_num : (0 : ℝ) < 1)] with ε hε
   have hε_pos : ε > 0 := (mem_Ioo.mp hε).1

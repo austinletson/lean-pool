@@ -41,8 +41,7 @@ theorem huang_finset {m : ℕ} (H : Finset (Fin (m + 1) → Bool))
   have hmap : HQ.toFinset.map eEmb = H := by
     ext x
     simp [HQ, eEmb]
-  have hHQcard : HQ.toFinset.card = H.card := by rw [← hmap]
-                                                 simp
+  have hHQcard : HQ.toFinset.card = H.card := by grind
   have hHQ : HQ.toFinset.card ≥ 2 ^ m + 1 := by
     omega
   obtain ⟨q, hqH, hbound⟩ := Sensitivity.huang_degree_theorem HQ hHQ
@@ -62,7 +61,6 @@ theorem huang_finset {m : ℕ} (H : Finset (Fin (m + 1) → Bool))
     · subst hji; simp only [flipBit_apply_same]
       revert hne; cases q j <;> cases p j <;> simp
     · rw [flipBit_apply_ne _ _ hji]
-      have hne' : ¬¬ q j = p j := mt (huniq j) hji
-      exact (Classical.not_not.mp hne').symm⟩
+      grind⟩
 
 end LeanPoolSensitivity

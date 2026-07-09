@@ -43,10 +43,7 @@ def SwapVariablesFun (i j : Fin n) (p : MvPolynomial (Fin n) ℂ) : (MvPolynomia
 @[simp]
 lemma swap_variables_map_zero (i j : Fin n) : SwapVariablesFun i j 0 = 0 := by
   rw[SwapVariablesFun]
-  have : (0 : MvPolynomial (Fin n) ℂ) = C 0 := by
-    refine C_0.symm
-  rw[this]
-  exact rename_C (Equiv.swap i j) 0
+  grind
 
 @[simp]
 lemma swap_variables_map_one {i j : Fin n} : SwapVariablesFun i j 1 = 1 := by
@@ -97,8 +94,7 @@ lemma swap_variables_order_two {i j : Fin n} {p : MvPolynomial (Fin n) ℂ} :
   SwapVariablesFun i j (SwapVariablesFun i j p) = p := by
   rw [SwapVariablesFun, SwapVariablesFun, renameEquiv_apply, renameEquiv_apply, rename_rename]
   convert rename_id_apply (R := ℂ) p
-  funext k
-  simp
+  grind
 
 /-- The algebra equivalence swapping the variables indexed by `i` and `j`. -/
 def SwapVariables (i : Fin n) (j : Fin n) :
@@ -149,22 +145,16 @@ SwapVariablesFun i j (X k) = X k := by
 
 /- Some really specific and technical lemmas-/
 lemma fin_succ_ne_fin_castSucc (i : Fin n) : Fin.succ i ≠ Fin.castSucc i := by
-  apply Fin.val_ne_iff.mp
-  simp [Fin.val_succ, Fin.val_castSucc]
+  grind
 
 lemma wario_number_one {n : ℕ} {a : ℕ} {h : a < n} {a' : ℕ} {h' : a' < n} :
 ({ val := a, isLt := h } : Fin n) ≠ { val := a', isLt := h' } ↔ a ≠ a' := by
-  constructor
-  · intro h_ne haa
-    exact h_ne (Fin.ext haa)
-  · intro haa h_eq
-    exact haa (congrArg Fin.val h_eq)
+  grind
 
 
 lemma i_ne_i_plus_1 {i : ℕ} {h : i < n + 1} {h' : i + 1 < n + 1} :
  ({ val := i, isLt := h } : Fin (n + 1)) ≠ { val := i + 1, isLt := h' } := by
-  rw [wario_number_one]
-  omega
+  grind
 
 lemma demazure_denominator_not_null (i : Fin n) :
     (X (Fin.castSucc i) : MvPolynomial (Fin (n + 1)) ℂ) - X (Fin.succ i) ≠ 0 := by
@@ -175,8 +165,7 @@ lemma demazure_denominator_not_null (i : Fin n) :
     apply Finsupp.ne_iff.mpr
     use Fin.succ i
     simp [fin_succ_ne_fin_castSucc]
-  rw [if_neg h]
-  simp
+  grind
 
 /- Now we can use these to define the demazure numerator. We distinguish the variable x_i
  to perform division by (x_i - x_(i+1)) later (only univariable division is supported) -/
@@ -239,10 +228,7 @@ lemma demazure_division_exact : ∀(i : Fin n), ∀(p : MvPolynomial (Fin (n + 1
     · simp[h1, fin_succ_ne_fin_castSucc i, Fin.succ_ne_zero]
     by_cases h2 : j = Fin.succ i
     · simp[h2, fin_succ_ne_fin_castSucc i, Fin.succ_ne_zero]
-    by_cases h3 : j = 0
-    · subst h3
-      simp[h1, h2]
-    simp[h1, h2, h3]
+    grind
 
 
 /-- The Demazure operator as a function on multivariate polynomials. -/
@@ -258,8 +244,7 @@ def DemazureFun (i : Fin n) (p : MvPolynomial (Fin (n + 1)) ℂ) : MvPolynomial 
 lemma poly_mul_cancel {p q r : Polynomial (MvPolynomial (Fin n) ℂ)} (hr : r ≠ 0) :
     p = q ↔ (r * p) = (r * q) := by
   constructor
-  · intro h
-    exact congrArg (HMul.hMul r) h
+  · grind
   · intro h
     exact mul_left_cancel₀ hr h
 
@@ -272,21 +257,16 @@ lemma poly_div_cancel {p q r : Polynomial (MvPolynomial (Fin n) ℂ)}
     (hr : Polynomial.Monic r) (hp : p %ₘ r = 0) (hq : q %ₘ r = 0) :
     p = q ↔ (p /ₘ r) = (q /ₘ r) := by
   constructor
-  · intro h
-    exact congrArg (· /ₘ r) h
+  · grind
   · intro h
     have div_p := Polynomial.modByMonic_add_div p r
     have div_q := Polynomial.modByMonic_add_div q r
-    rw [hp, zero_add] at div_p
-    rw [hq, zero_add] at div_q
-    rw [← div_p, ← div_q]
-    exact (poly_mul_cancel (Polynomial.Monic.ne_zero hr)).mp h
+    grind
 
 lemma poly_exact_div_mul_cancel {p q : Polynomial (MvPolynomial (Fin n) ℂ)}
  (_q_monic : Polynomial.Monic q) (exact_div : p %ₘ q = 0) : q * (p /ₘ q) = p := by
   have := Polynomial.modByMonic_add_div p q
-  rw [exact_div, zero_add] at this
-  exact this
+  grind
 
 -- since the division is exact, the quotient perfectly divides the numerator
 lemma demazure_division_exact' : ∀(i : Fin n), ∀(p : MvPolynomial (Fin (n + 1)) ℂ),

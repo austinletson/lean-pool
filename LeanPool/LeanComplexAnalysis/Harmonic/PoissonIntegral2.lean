@@ -193,8 +193,7 @@ lemma goursat_integrand_eq_aux_disc (z : ℂ) (t R : ℝ) (hR : 0 < R) :
   nth_rewrite 2 [← inv_inv (exp (t * I)), inv_eq_one_div]
   rw [div_div, mul_sub, mul_comm (star z), ← mul_assoc,
       inv_mul_cancel₀ (Complex.exp_ne_zero (t * I)), one_mul]
-  congr 1
-  ring_nf
+  grind
 
 /-- The Cauchy-Goursat theorem for a disc centered at `0` implies the integral of a
 `ℂ`-differentiable function against a conjugate Cauchy kernel vanishes. -/
@@ -334,8 +333,7 @@ lemma bounds_of_continuousOn_circle_closedDisc {E : Type*} [NormedAddCommGroup E
               ⟨_, ball_subset_closedBall (mem_disc_of_scaled_exp_ofReal_mul_I hR hr t), rfl⟩
           · exact norm_nonneg _
           · apply sSup_nonneg
-            rintro _ ⟨_, ⟨_, hx⟩⟩
-            simp_rw [← hx, abs_nonneg]
+            grind
 
 /-- For a sequence `rₙ → 1` with `rₙ ∈ (0,1)`, the integral of
 `t ↦ k(R*e^{it}) • f(rₙ*R*e^{it})` on `[0 , 2π]` converges to the integral of

@@ -397,9 +397,7 @@ theorem distToAdditive_le_C₂_from_pipeline
     · exact key g hg_add ha cert cert hq
     · have hg'_add := IsApproxAdditive_neg g hg_add
       have hg'_bound : ∀ S : Finset U, |(fun S => -g S) S| ≤ distToAdditive f := by
-        intro S
-        simp only [abs_neg]
-        exact ha S
+        grind
       exact key _ hg'_add hg'_bound cert.neg cert.neg (by rw [cert.neg_negMass]; exact hp)
   -- Prove key: case split on q ≤ q₀ vs q₀ < q
   intro h hh_add hh_bound _ c hq_half

@@ -52,9 +52,7 @@ theorem highDemandDistribution_of_recursive_step
   intro n
   induction n using Nat.strong_induction_on with
   | h n ih =>
-      by_cases hn : n < n0
-      · exact hbase n hn
-      · exact hstep n (Nat.le_of_not_gt hn) ih
+      grind
 
 /-- Base-case helper: the trivial distribution with one pebble on every vertex
 solves demand `1`, and can be weakened to any larger cost bound and any

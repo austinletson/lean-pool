@@ -159,8 +159,7 @@ theorem Wg_dvd_refinedCap (hg : 1 ≤ g) {k n : ℕ} (hn : 1 ≤ n) :
       have h2 : overlapg g k n p ≤ k / g := overlapg_le_numBlocks g k n p
       -- `overlapg - 1 ≤ min(⌊k/p⌋, ⌊k/g⌋)`. (Use explicit `Nat` lemmas: `omega`'s `Nat.div`
       -- preprocessing mishandles the two division atoms here.)
-      exact Nat.le_min.mpr
-        ⟨Nat.sub_le_iff_le_add.mpr h1, le_trans (Nat.sub_le _ 1) h2⟩
+      grind
     · simp only [hpB, if_false]; exact Nat.zero_le _
   · -- `p ∉ primesBelow (k+1)`: either not prime, or `p > k`; either way `v_p(Wg) = 0`.
     rw [if_neg hp]
@@ -175,8 +174,7 @@ theorem Wg_dvd_refinedCap (hg : 1 ≤ g) {k n : ℕ} (hn : 1 ≤ n) :
       have hdiv0 : k / p = 0 := Nat.div_eq_of_lt (by omega)
       set o : ℕ := overlapg g k n p with ho
       have h1 : o ≤ k / p + 1 := overlapg_le hg hn
-      rw [hdiv0] at h1
-      omega
+      grind
     · simp only [hpB, if_false]; exact Nat.zero_le _
 
 /-- **Size form of the refined overlap bound.** `Wg g k n ≤ WgRefinedCap g k`, immediate from the
@@ -287,16 +285,13 @@ theorem master_ineq_crude_g_refinedOverlap (g : ℕ) (hBlock : BlockRadLBg g) (h
       ← Real.rpow_natCast (n : ℝ) ((g - 2) * k)]
     congr 1
     rw [Nat.cast_mul, Nat.cast_sub (by omega : 2 ≤ g)]
-    push_cast
-    ring
+    grind
   -- Simplify RHS:  (C²)^g = C^{2g}.
   have hRHS : (C ^ 2) ^ g = C ^ (2 * g) := by rw [← pow_mul]
   rw [hLHS, hRHS] at hpowg
   -- Cast the real inequality `n^{(g-2)k} ≤ (WgRefinedCap g k)^{2g}` down to ℕ.
   have hcast : ((n ^ ((g - 2) * k) : ℕ) : ℝ) ≤ ((WgRefinedCap g k ^ (2 * g) : ℕ) : ℝ) := by
-    rw [hC] at hpowg
-    push_cast
-    exact hpowg
+    grind
   exact_mod_cast hcast
 
 /-- **Smooth-refined master inequality with the refined cap.** Under `BlockRadLBg g`, for
@@ -358,10 +353,7 @@ theorem master_ineq_g_refinedOverlap (g : ℕ) (hBlock : BlockRadLBg g) (hg : 3 
   rw [hΦsplit] at hstep
   have hdiv : Φ ^ (((g : ℝ) - 2) / (g : ℝ)) * (L k : ℝ) ≤ (P k : ℝ) ^ 2 * C ^ 2 := by
     have h : Φ ^ (((g : ℝ) - 2) / (g : ℝ)) * (L k : ℝ) * Φ ≤ (P k : ℝ) ^ 2 * C ^ 2 * Φ := by
-      calc Φ ^ (((g : ℝ) - 2) / (g : ℝ)) * (L k : ℝ) * Φ
-          = Φ ^ (((g : ℝ) - 2) / (g : ℝ)) * Φ * (L k : ℝ) := by ring
-        _ ≤ Φ * (P k : ℝ) ^ 2 * C ^ 2 := hstep
-        _ = (P k : ℝ) ^ 2 * C ^ 2 * Φ := by ring
+      grind
     exact le_of_mul_le_mul_right h hΦpos
   -- Use Φ ≥ n^k.
   have hFlow : (n : ℝ) ^ k ≤ Φ := by rw [hΦ]; exact_mod_cast pow_le_F (k := k) (n := n)
@@ -391,14 +383,11 @@ theorem master_ineq_g_refinedOverlap (g : ℕ) (hBlock : BlockRadLBg g) (hg : 3 
       ← Real.rpow_natCast (n : ℝ) ((g - 2) * k)]
     congr 1
     rw [Nat.cast_mul, Nat.cast_sub (by omega : 2 ≤ g)]
-    push_cast
-    ring
+    grind
   -- Simplify RHS:  (P² · C²)^g = C^{2g} · P^{2g}.
   have hRHS : ((P k : ℝ) ^ 2 * C ^ 2) ^ g = C ^ (2 * g) * (P k : ℝ) ^ (2 * g) := by
     rw [mul_pow, ← pow_mul, ← pow_mul, mul_comm 2 g, mul_comm]
-  rw [hLHS, hRHS] at hpowg
-  rw [hC] at hpowg
-  exact hpowg
+  grind
 
 end  -- noncomputable section
 

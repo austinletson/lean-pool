@@ -41,13 +41,7 @@ private lemma piecewiseC1Immersion_continuousOn_deriv_off_partition (γ : Piecew
         t ht_Ioo ht_notP).continuousWithinAt
   · have ha_in_P := γ.toPiecewiseC1Curve.endpoints_in_partition.1
     have hb_in_P := γ.toPiecewiseC1Curve.endpoints_in_partition.2
-    have ht_endpoint : t = γ.a ∨ t = γ.b := by
-      simp only [Set.mem_Ioo, not_and, not_lt] at ht_Ioo
-      rcases ht_Icc.1.lt_or_eq with h | h
-      · right; exact le_antisymm ht_Icc.2 (ht_Ioo h)
-      · left; exact h.symm
-    rcases ht_endpoint with rfl | rfl
-    <;> exact (ht_notP (by assumption)).elim
+    grind
 
 /-! ## Measurability Infrastructure -/
 
@@ -68,8 +62,7 @@ private lemma measurableSet_norm_gt_of_continuousOn {f : ℝ → ℂ} {s : Set �
       rw [← hU_eq] at h1; exact h1
     · intro ⟨hx_U, hx_s⟩; refine ⟨?_, hx_s⟩
       have h1 : (⟨x, hx_s⟩ : ↑s) ∈ Subtype.val ⁻¹' U := hx_U
-      rw [hU_eq] at h1
-      simp only [Set.mem_preimage, Set.restrict_apply, Set.mem_Ioi] at h1; exact h1
+      grind
   rw [h_eq]; exact hU_open.measurableSet.inter hs
 
 private lemma measurableSet_norm_gt_Icc {f : ℝ → ℂ} {a b : ℝ} (ε : ℝ)
@@ -92,8 +85,7 @@ theorem aEStronglyMeasurable_of_continuousOn_off_finite {f : ℝ → ℂ} {a b :
     rw [Set.disjoint_left]; intro x ⟨_, hx_nP⟩ ⟨hx_P, _⟩; exact hx_nP hx_P
   have h_eq : volume.restrict (Icc a b) =
       volume.restrict (Icc a b \ P) + volume.restrict (↑P ∩ Icc a b) := by
-    rw [← Measure.restrict_union h_disj hP_inter_meas]; congr 1; ext x
-    simp only [Set.mem_union, Set.mem_sdiff, Set.mem_inter_iff]; tauto
+    rw [← Measure.restrict_union h_disj hP_inter_meas]; congr 1; grind
   rw [h_eq]; apply AEStronglyMeasurable.add_measure h_cont_meas
   simpa only [Measure.restrict_eq_zero.mpr hP_meas_zero] using aestronglyMeasurable_zero_measure f
 
@@ -103,19 +95,13 @@ private lemma measurableSet_multipoint_condition {γ : ℝ → ℂ} {a b ε : �
   have h_eq : {t | ∃ s ∈ S, ‖γ t - s‖ ≤ ε} ∩ Icc a b =
       ⋃ s ∈ S, ({t | ‖γ t - s‖ ≤ ε} ∩ Icc a b) := by
     ext t; simp only [Set.mem_inter_iff, Set.mem_setOf_eq, Set.mem_iUnion, exists_prop]
-    constructor
-    · intro ⟨⟨s, hs, h_norm⟩, ht_Icc⟩; exact ⟨s, hs, h_norm, ht_Icc⟩
-    · intro ⟨s, hs, h_norm, ht_Icc⟩; exact ⟨⟨s, hs, h_norm⟩, ht_Icc⟩
+    grind
   rw [h_eq]; apply Finset.measurableSet_biUnion; intro s _
   have h_compl_meas : MeasurableSet ({t | ε < ‖γ t - s‖} ∩ Icc a b) :=
     measurableSet_norm_gt_Icc ε (hγ.sub continuousOn_const)
   have h_eq' : {t | ‖γ t - s‖ ≤ ε} ∩ Icc a b =
       Icc a b \ ({t | ε < ‖γ t - s‖} ∩ Icc a b) := by
-    ext t; simp only [Set.mem_inter_iff, Set.mem_setOf_eq, Set.mem_sdiff, not_and]
-    constructor
-    · intro ⟨h_le, ht_Icc⟩; exact ⟨ht_Icc, fun h_gt => absurd h_gt (not_lt.mpr h_le)⟩
-    · intro ⟨ht_Icc, h_not⟩; refine ⟨?_, ht_Icc⟩
-      by_contra h_gt; push Not at h_gt; exact (h_not h_gt) ht_Icc
+    ext t; grind
   rw [h_eq']; exact isClosed_Icc.measurableSet.diff h_compl_meas
 
 private lemma measurableSet_multipoint_goodset {γ : ℝ → ℂ} {a b ε : ℝ} (S : Finset ℂ)
@@ -123,11 +109,7 @@ private lemma measurableSet_multipoint_goodset {γ : ℝ → ℂ} {a b ε : ℝ}
     MeasurableSet ({t | ∀ s ∈ S, ε < ‖γ t - s‖} ∩ Icc a b) := by
   have h_eq : {t | ∀ s ∈ S, ε < ‖γ t - s‖} ∩ Icc a b =
       Icc a b \ ({t | ∃ s ∈ S, ‖γ t - s‖ ≤ ε} ∩ Icc a b) := by
-    ext t; constructor
-    · intro ⟨h_good, ht_Icc⟩; refine ⟨ht_Icc, ?_⟩
-      intro ⟨⟨s, hs, h_le⟩, _⟩; linarith [h_good s hs]
-    · intro ⟨ht_Icc, h_not⟩; refine ⟨?_, ht_Icc⟩; intro s hs
-      by_contra h_le; push Not at h_le; exact h_not ⟨⟨s, hs, h_le⟩, ht_Icc⟩
+    ext t; grind
   rw [h_eq]; exact isClosed_Icc.measurableSet.diff (measurableSet_multipoint_condition S hγ)
 
 private lemma goodset_piecewise_ae_eq_multipoint {g : ℂ → ℂ} {γ : ℝ → ℂ} {a b ε : ℝ}
@@ -139,9 +121,7 @@ private lemma goodset_piecewise_ae_eq_multipoint {g : ℂ → ℂ} {γ : ℝ →
   filter_upwards [ae_restrict_mem isClosed_Icc.measurableSet] with t ht
   simp only [Set.piecewise, Set.mem_inter_iff, Set.mem_setOf_eq]
   by_cases ht_good : (∀ s ∈ S, ε < ‖γ t - s‖) ∧ t ∈ Icc a b
-  · rw [if_pos ht_good]
-    have : ¬∃ s ∈ S, ‖γ t - s‖ ≤ ε := by push Not; exact ht_good.1
-    simp only [this, ↓reduceIte]
+  · grind
   · rw [if_neg ht_good]
     have : ∃ s ∈ S, ‖γ t - s‖ ≤ ε := by
       by_contra h_not; push Not at h_not; exact ht_good ⟨h_not, ht⟩
@@ -220,11 +200,7 @@ private theorem
     isClosed_Icc.measurableSet] with t ht
   simp only [Set.piecewise, Set.mem_inter_iff,
     Set.mem_setOf_eq, gt_iff_lt]
-  by_cases h1 : ε < ‖γ t - s‖
-  · simp only [h1, ht, and_self, ↓reduceIte]
-  · push Not at h1
-    simp only [not_lt.mpr h1, ht, and_true,
-      ↓reduceIte]
+  grind
 
 private lemma aEStronglyMeasurable_singularSum_on_goodset
     {γ : ℝ → ℂ} {a b ε : ℝ}
@@ -275,9 +251,7 @@ private lemma goodset_piecewise_ae_eq_decomposed {g_reg : ℂ → ℂ} {γ : ℝ
   filter_upwards [ae_restrict_mem isClosed_Icc.measurableSet] with t ht
   simp only [Set.piecewise, Set.mem_inter_iff, Set.mem_setOf_eq]
   by_cases ht_good : (∀ s ∈ S, ε < ‖γ t - s‖) ∧ t ∈ Icc a b
-  · rw [if_pos ht_good]
-    have : ¬∃ s ∈ S, ‖γ t - s‖ ≤ ε := by push Not; exact ht_good.1
-    simp only [this, if_false]
+  · grind
   · rw [if_neg ht_good]
     have : ∃ s ∈ S, ‖γ t - s‖ ≤ ε := by
       by_contra h_not; push Not at h_not; exact ht_good ⟨h_not, ht⟩
@@ -333,9 +307,7 @@ lemma finset_discrete_min_sep (S0 : Finset ℂ) (hS0_nonempty : S0.Nonempty)
   · refine ⟨1, one_pos, fun s hs s' hs' hne => ?_⟩
     have h_card_eq : S0.card = 1 := by have := hS0_nonempty.card_pos; omega
     obtain ⟨x, hS0_eq⟩ := Finset.card_eq_one.mp h_card_eq
-    have hs_eq : s = x := by rw [hS0_eq] at hs; exact Finset.mem_singleton.mp hs
-    have hs'_eq : s' = x := by rw [hS0_eq] at hs'; exact Finset.mem_singleton.mp hs'
-    exact (hne (hs_eq.trans hs'_eq.symm)).elim
+    grind
   · push Not at h_singleton
     classical
     let dists : Finset ℝ := S0.biUnion (fun s =>
@@ -349,20 +321,14 @@ lemma finset_discrete_min_sep (S0 : Finset ℂ) (hS0_nonempty : S0.Nonempty)
           (by simp only [Finset.card_singleton, le_refl])
         omega
       obtain ⟨y, hy, hne⟩ := h_exists_y; refine ⟨‖y - x‖, ?_⟩
-      simp only [dists, Finset.mem_biUnion, Finset.mem_image, Finset.mem_filter]
-      exact ⟨x, hx, y, ⟨hy, hne⟩, rfl⟩
+      grind
     let δ := dists.min' h_nonempty
     have hδ_pos : 0 < δ := by
       have h_mem := Finset.min'_mem dists h_nonempty
-      simp only [dists, Finset.mem_biUnion, Finset.mem_image, Finset.mem_filter] at h_mem
-      obtain ⟨s, hs, s', ⟨hs', hne⟩, heq⟩ := h_mem
-      have h_pos : 0 < ‖s' - s‖ := hS0_discrete s hs s' hs' hne.symm
-      calc δ = ‖s' - s‖ := heq.symm
-        _ > 0 := h_pos
+      grind
     refine ⟨δ, hδ_pos, fun s hs s' hs' hne => ?_⟩
     have h_in : ‖s' - s‖ ∈ dists := by
-      simp only [dists, Finset.mem_biUnion, Finset.mem_image, Finset.mem_filter]
-      exact ⟨s, hs, s', ⟨hs', hne.symm⟩, rfl⟩
+      grind
     exact Finset.min'_le dists _ h_in
 
 /-- Disjoint balls for small epsilon. -/
@@ -504,8 +470,7 @@ lemma intervalIntegrable_residueTerm
               apply div_le_div_of_nonneg_left
                 (norm_nonneg c) hε
               exact le_of_lt h
-            · exact le_trans (hMγ' t ht)
-                (le_abs_self _)
+            · grind
             · exact norm_nonneg _
             · positivity
         _ ≤ M := by simp only [M]; linarith

@@ -96,9 +96,7 @@ def TwoSidedIdeal.equivRingConMatrix (oo : ι) : TwoSidedIdeal A ≃ TwoSidedIde
         subst ha hb
         simp only [single_apply_same, mul_single_apply_same,
           single_mul_apply_same, one_mul, mul_one]
-        specialize hy2 a b
-        simp only [sub_zero] at hy2
-        exact hy2.symm
+        grind
       · conv_lhs =>
           dsimp [single]
           rw [if_neg (by tauto)]

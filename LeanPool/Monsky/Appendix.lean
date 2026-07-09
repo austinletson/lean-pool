@@ -120,15 +120,10 @@ lemma lower_degree (B : Subring ℝ) (α : ℝ) (m n : ℕ) (H : α ∉ B ∧ α
     exact CommGroupWithZero.mul_inv_cancel 2 (Ne.symm (NeZero.ne' 2))
   have one_minus_two_v₀_eq : (aeval α) ((C (1 - 2*v₀)) * (2*p)) = (1 - 2*v₀) := by
     -- multiplying by a constant 1-2v₀ where it is seen as a polynomial of degree 0.
-    rw[constant_in_poly (1 - 2*v₀) (2*p), two_p_eval]
-    simp only [AddSubgroupClass.coe_sub, OneMemClass.coe_one, Subring.coe_mul, mul_one,
-      sub_right_inj, mul_eq_mul_right_iff, ZeroMemClass.coe_eq_zero]
-    left
-    rfl
+    grind
   let p1 := (C (1 - 2*v₀)) * (2*p) + (C (2*v₀)) -- Define polynomial p1 = (1-2v₀)2p+2v₀
   have one_eq : 1 = (aeval α) (p1) := by
-    rw[← Eq.symm (aeval_add α), aeval_C, algebramap (2*v₀), (one_minus_two_v₀_eq)]
-    exact sub_eq_iff_eq_add.mp rfl
+    grind
   -- For m>0 the m-th coefficient of (1-2v₀)(2p)+ 2v₀ is 2(1-2v₀) times the m-th coefficient of p
   have this6 : p1.erase m + (monomial m (2*(1 - 2*v₀)*p.coeff m)) = p1 := by
     rw[add_comm]
@@ -166,25 +161,18 @@ lemma lower_degree (B : Subring ℝ) (α : ℝ) (m n : ℕ) (H : α ∉ B ∧ α
     rw[algebramap, pow_mul_inv_pow_of_le hα0 (Nat.le_of_lt_succ in_Finset)]
     rfl
   have this2 : α^n = 2 * (aeval α) q1 := by
-    rw[← this, q_eval]
-    ring
+    grind
   have this3 : q1.erase n = q1 + - monomial n v₀ := by
   -- the leading coefficient of q_1
     nth_rewrite 2 [← (Polynomial.monomial_add_erase q1 n)]
-    rw[nth_coeff]
-    ring
+    grind
   have this4 : (aeval α) q1 - v₀*α^n  = (aeval α) (q1.erase n) := by
     rw[this3, aeval_add α]
     simp only [map_neg, aeval_monomial]
-    rw[algebramap v₀]
-    ring
+    grind
   have this5 : (1 - 2 * v₀) * α^n = 2 * (aeval α) (q1.erase n) := by
     -- (1-2v₀)α^n = 2 q'(α) where q'=q1 dropping the x^n term
-    rw[← this4]
-    ring_nf
-    simp only [add_right_inj]
-    rw[this2]
-    ring
+    grind
   have coeff_erase_neq_zero : coeff (q1.erase n) 0 = (coeff q) n := by
     -- the constant term of q' is the n-th coefficient of q
     rw[erase_ne q1 zero_lt_n.symm, Polynomial.finsetSum_coeff, Finset.sum_range_succ,
@@ -202,9 +190,7 @@ lemma lower_degree (B : Subring ℝ) (α : ℝ) (m n : ℕ) (H : α ∉ B ∧ α
     intro eq_zero4
     rw[← n_eq_degree_q] at eq_zero4
     simp at eq_zero4
-    have zero_lt_natDegree : 0 < q.natDegree := n_eq_degree_q ▸ Nat.zero_lt_of_ne_zero zero_lt_n
-    have q_neq_zero : q ≠ 0 := Polynomial.ne_zero_of_natDegree_gt zero_lt_natDegree
-    tauto
+    grind
   have deg1 : q1.natDegree ≤ n := by
     -- degree of sum is ≤ highest degree of summands
     apply natDegree_sum_le_of_forall_le
@@ -234,12 +220,7 @@ lemma lower_degree (B : Subring ℝ) (α : ℝ) (m n : ℕ) (H : α ∉ B ∧ α
     norm_num
     rw[mul_assoc]
     rw[← pow_add]
-    rw[Nat.add_sub_of_le leq]
-    simp only [mul_eq_mul_right_iff, sub_right_inj, ZeroMemClass.coe_eq_zero, pow_eq_zero_iff',
-      ne_eq]
-    left
-    left
-    abel
+    grind
   have deg4 : ((C (1 - 2*v₀)) * p + (C v₀)).natDegree ≤ m := by
     -- We show this by considering two different cases:
     -- (1-2v₀) = 0 and (1-2v₀) ≠ 0.
@@ -248,8 +229,7 @@ lemma lower_degree (B : Subring ℝ) (α : ℝ) (m n : ℕ) (H : α ∉ B ∧ α
       simp
     · rw[natDegree_add_C, natDegree_C_mul] -- the case (1-2v₀) ≠ 0
       · exact m_eq_degree_p.le
-      · simp
-        tauto
+      · grind
   have deg5 : (((C (1 - 2*v₀)) * p + (C v₀)).erase m).natDegree < m :=
     erase_degree_leq_n B _ m (Nat.zero_lt_of_ne_zero zero_lt_m) deg4
   -- Here we define a new polynomial which here we call pq (this is not the product of the two)
@@ -270,9 +250,7 @@ lemma lower_degree (B : Subring ℝ) (α : ℝ) (m n : ℕ) (H : α ∉ B ∧ α
     rw[← C_mul, monomial_mul_C, ← mul_assoc]
     nth_rewrite 5 [mul_comm]
     rw[← two_eq_constant, mul_del_commute, left_distrib, ← C_mul, ← mul_assoc]
-    nth_rewrite 2 [mul_comm]
-    rw[mul_assoc, two_eq_constant, ← aeval_add, this6]
-    exact one_eq
+    grind
   let m' := pq.natDegree
   have deg7 : (C 2 * C (p.coeff m) * (monomial (m-n) 1) * q1.erase n).natDegree < m := by
     rw[← C_mul, mul_assoc, natDegree_C_mul]
@@ -372,17 +350,13 @@ lemma inclusion_maximal_valuation (B : Subring ℝ) (h1 : (1 / 2) ∉ B)
     rw[← m_eq_degree_p, Polynomial.natDegree_eq_zero] at m_eq_zero
     rcases m_eq_zero with ⟨x, eq⟩
     rw[← eq, Polynomial.aeval_C, algebramap x] at p_eval
-    rw[← p_eval] at h1
-    apply h1
-    exact SetLike.coe_mem x
+    grind
   have zero_lt_n : n ≠ 0 := by
     intro n_eq_zero
     rw[← n_eq_degree_q, natDegree_eq_zero] at n_eq_zero
     rcases n_eq_zero with ⟨x, eq⟩
     rw[← eq, aeval_C, algebramap x] at q_eval
-    rw[← q_eval] at h1
-    apply h1
-    exact SetLike.coe_mem x
+    grind
   by_cases leq : n ≤ m
   · rcases (lower_degree B α m n H p q m_eq_degree_p n_eq_degree_q
      zero_lt_m zero_lt_n p_eval q_eval leq) with ⟨m', pq, deg, eval, deg2⟩
@@ -393,9 +367,7 @@ lemma inclusion_maximal_valuation (B : Subring ℝ) (h1 : (1 / 2) ∉ B)
     have H3 : α⁻¹ ∉ B ∧ α⁻¹⁻¹ ∉ B := by
       simpa only [inv_inv] using _root_.id (And.symm H)
     have p_eval2 : (aeval α⁻¹⁻¹) p = 1/2 := by
-      simp only [inv_inv, one_div]
-      rw[← one_div]
-      exact p_eval
+      grind
     rcases (lower_degree B α⁻¹ n m H3 q p n_eq_degree_q m_eq_degree_p
      zero_lt_n zero_lt_m q_eval p_eval2 leq2) with ⟨m', pq, deg, eval, deg2⟩
     have main : m' ∈ degree' := ⟨pq, deg2.symm, eval⟩
@@ -419,18 +391,10 @@ lemma Z_in_S : Z ∈ S := by
   -- Here we use injectivity of coercion
   have inj : (Int.castRingHom ℝ).toFun.Injective := Isometry.injective fun x1 ↦ congrFun rfl
   have two_n : (Int.castRingHom ℝ) (2*n) = 1 := by-- 2n=1∈ ℤ
-    rw[map_mul, h]
-    simp
+    grind
   rw[← (Int.castRingHom ℝ).map_one] at two_n
   have two_n_eq_one : 2*n = 1 := inj two_n
-  have n_two_eq_one : n*2 = 1 := by omega
-  have two_unit : ∃two : ℤˣ, two = (2:ℤ) := by-- implying 2 is a unit in ℤ
-    refine CanLift.prf 2 ?_
-    rw[isUnit_iff_exists]
-    use n
-  rcases two_unit with ⟨two, H⟩
-  -- We will now use that the only units in ℤ are ±1
-  obtain l | l := Int.units_eq_one_or two <;> (rw[l] at H; tauto)
+  grind
 
 lemma sUnion_is_ub : ∀ c ⊆ S, IsChain (· ≤ ·) c → ∃ ub ∈ S, ∀ z ∈ c, z ≤ ub := by
 -- Idea: The upper bound is the union of the subrings.
@@ -533,8 +497,7 @@ lemma sUnion_is_ub : ∀ c ⊆ S, IsChain (· ≤ ·) c → ∃ ub ∈ S, ∀ z 
     exact Subring.mem_carrier.mp (Set.mem_sUnion.mpr ⟨z, ⟨z, hz, rfl⟩, hx⟩)
   · simp only [ne_eq, Decidable.not_not] at emp_or_not
     refine ⟨Z, Z_in_S, ?_⟩ -- as Z lies in S, S is nonempty
-    rw[emp_or_not, Set.forall_mem_empty]
-    trivial
+    grind
 
 -- This lemma shows that there is a valuation ring of ℝ
 -- such that 1/2 does not lie in it
@@ -560,8 +523,7 @@ theorem valuation_on_reals : ∃(Γ₀ : Type) (_ : LinearOrderedCommGroupWithZe
     obtain ⟨B, h⟩ := valuation_ring_no_half
     use B.ValueGroup, inferInstance, B.valuation
     have g := valuation_le_one_iff B (1/2)
-    rw[← not_iff_not] at g
-    rwa[gt_iff_lt, ← not_le, g]
+    grind
 
 lemma odd_valuation (Γ₀ : Type) (_ : LinearOrderedCommGroupWithZero Γ₀) (v : Valuation ℝ Γ₀)
 (vhalf : v (1 / 2) > 1) : ∀ n : ℕ, Odd n → v (1/n) = 1 := by
@@ -578,8 +540,7 @@ lemma odd_valuation (Γ₀ : Type) (_ : LinearOrderedCommGroupWithZero Γ₀) (v
       intro kpos
       by_cases kpos' : k = 0
       · rw [kpos']
-        simp only [zero_add, Nat.cast_one, mul_one]
-        apply vhalf'
+        grind
       · apply kind at kpos'
         simpa only [Nat.cast_add, Nat.cast_one, mul_add, mul_one]
           using lt_of_le_of_lt (Valuation.map_add v _ _) (max_lt kpos' vhalf')
@@ -588,25 +549,15 @@ lemma odd_valuation (Γ₀ : Type) (_ : LinearOrderedCommGroupWithZero Γ₀) (v
     have this : 2*n ≠ 1 := by norm_num
     have this2 : v (1) = 1 := Valuation.map_one v
     rw [Valuation.map_add_of_distinct_val]
-    · specialize vind n hn
-      simp_all only [one_div, map_inv₀, gt_iff_lt, ne_eq, mul_eq_one, OfNat.ofNat_ne_one, false_and,
-        not_false_eq_true, map_mul, map_one, sup_eq_right, ge_iff_le]
-      exact le_of_lt vind
-    · rw [this2]
-      specialize vind n hn
-      simp_all only [one_div, map_inv₀, gt_iff_lt, ne_eq, mul_eq_one, OfNat.ofNat_ne_one, false_and,
-        not_false_eq_true, map_one, map_mul]
-      apply Aesop.BuiltinRules.not_intro
-      intro a
-      simp_all only [lt_self_iff_false]
+    · grind
+    · grind
   intro n odd
   rcases odd with ⟨k, eq⟩
   rw [eq]
   specialize vind' k
   by_cases kpos : k = 0
   · rw [kpos]
-    simp only [mul_zero, zero_add, one_div, map_inv₀, inv_eq_one, Nat.cast_one]
-    apply Valuation.map_one v
+    grind
   · have kpos_val : v (2 * ↑k + 1) = 1 := vind' kpos
     rw [show (1 : ℝ) / ↑(2 * k + 1) = (↑(2 * k + 1))⁻¹ by rw [one_div], map_inv₀,
       Nat.cast_add, Nat.cast_mul, Nat.cast_ofNat, Nat.cast_one, kpos_val]

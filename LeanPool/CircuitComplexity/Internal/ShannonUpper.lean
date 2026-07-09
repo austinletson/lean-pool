@@ -303,8 +303,7 @@ theorem dataBits_pos (N : Nat) (hN : 16 ≤ N) : 0 < dataBits N := by
 theorem dataBits_ge_two (N : Nat) (hN : 16 ≤ N) : 2 ≤ dataBits N := by
   unfold dataBits addrBits
   have : Nat.log 2 N < N := log_lt_N N hN
-  have : 4 ≤ Nat.log 2 N := Nat.le_log_of_pow_le (by omega) (by omega)
-  omega
+  grind
 
 /-! ### Key identities -/
 
@@ -343,13 +342,7 @@ private theorem two_n_plus_one_le (N : Nat) (hN : 4 ≤ N) : 2 * N + 1 ≤ 2 ^ N
   induction N with
   | zero => omega
   | succ n ih =>
-    cases Nat.lt_or_ge n 4 with
-    | inl h => interval_cases n <;> omega
-    | inr h =>
-      have := ih (by omega)
-      have := @Nat.lt_pow_self n 2 (by omega)
-      have : 2 ^ (n + 1) = 2 ^ n + 2 ^ n := by ring
-      omega
+    grind
 
 private theorem sq_le_pow (N : Nat) (hN : 16 ≤ N) : N * N ≤ 2 ^ N := by
   induction N with
@@ -360,9 +353,7 @@ private theorem sq_le_pow (N : Nat) (hN : 16 ≤ N) : N * N ≤ 2 ^ N := by
     | inr h =>
       have := ih (by omega)
       have := two_n_plus_one_le n (by omega)
-      have hsq : (n + 1) * (n + 1) = n * n + 2 * n + 1 := by ring
-      have : 2 ^ (n + 1) = 2 ^ n + 2 ^ n := by ring
-      omega
+      grind
 
 /-! ### Term-by-term bounds -/
 
@@ -384,13 +375,7 @@ private theorem pow_ge_four_mul (k : Nat) (hk : 4 ≤ k) : 4 * k ≤ 2 ^ k := by
   induction k with
   | zero => omega
   | succ n ih =>
-    cases Nat.lt_or_ge n 4 with
-    | inl h => interval_cases n <;> omega
-    | inr h =>
-      have := ih (by omega)
-      have := @Nat.lt_pow_self n 2 (by omega)
-      have : 2 ^ (n + 1) = 2 ^ n + 2 ^ n := by ring
-      omega
+    grind
 
 private theorem log_le_quarter (N : Nat) (hN : 16 ≤ N) : 4 * Nat.log 2 N ≤ N := by
   have hlog4 : 4 ≤ Nat.log 2 N := Nat.le_log_of_pow_le (by omega) (by omega)
@@ -528,10 +513,7 @@ lemma treeParentIdx_lt_j (l m j : Nat) (hl : 2 ≤ l)
   have hlm1 : l - 1 + 1 = l := by omega
   have hpow_eq : 2 ^ (l - 1 + 1) = 2 ^ l := by rw [hlm1]
   have hmod : m % 2 ^ l < 2 ^ l := Nat.mod_lt _ (by positivity)
-  have h2l : 2 ^ l ≤ 2 ^ (l + 1) := Nat.pow_le_pow_right (by omega) (by omega)
-  subst hm
-  rw [hpow_eq]
-  omega
+  grind
 
 private lemma treeLevel_parent (l m : Nat) (hl : 2 ≤ l) :
     treeLevel (treeParentIdx l m) = l - 1 := by
@@ -567,9 +549,7 @@ private lemma sum_pow_two_lt (n : Nat) :
   | zero => simp
   | succ n ih =>
     rw [Finset.sum_range_succ]
-    calc Finset.sum (Finset.range n) (fun j => 2 ^ j) + 2 ^ n
-        < 2 ^ n + 2 ^ n := by omega
-      _ = 2 ^ (n + 1) := by ring
+    grind
 
 theorem encodeCol_lt (k : Nat) (col : Fin (2 ^ k) → Bool) :
     encodeCol k col < 2^(2^k) := by
@@ -646,8 +626,7 @@ private theorem testBit_sum_cond_pow_fin (k : Nat) (b : BitString k) (i : Nat) (
         rw [hlast_eq] at hbn; exact hbn.symm
       · simp only [hbn, ite_false, Fin.val_last, Nat.add_zero, Bool.false_eq_true]
         rw [Nat.testBit_lt_two_pow hS_lt]
-        rw [hlast_eq] at hbn
-        exact (Bool.eq_false_iff.mpr hbn).symm
+        grind
 
 private theorem addrDataSum (N : Nat) (hN : 16 ≤ N) :
     addrBits N + dataBits N = N := by
@@ -731,8 +710,7 @@ private noncomputable def shannonGateArray (N : Nat) [NeZero N]
       have hpi_lt : treeParentIdx l m < j := treeParentIdx_lt_j l m j hl2 rfl hbase
       -- j < 2^(k+1) - 4, and oC q + (2^(k+1) - 4) ≤ G
       have hj_lt_G : oC q + j < G := by
-        change oC q + j < szSections k q
-        unfold szSections oC; omega
+        grind
       have hpw_b : pw < N + i.val := by
         change N + oC q + treeParentIdx l m < N + i.val; omega
       have hvw_b : vw < N + i.val := by change l < N + i.val; omega
@@ -774,36 +752,23 @@ private noncomputable def shannonGateArray (N : Nat) [NeZero N]
       omega
     have hi_lt : i.val < szSections k q := i.isLt
     have hamw_W (a : Nat) (ha : a < 2^k) : amw a < W := by
-      change N + oC q + (2^k - 4) + a < N + szSections k q
-      unfold szSections oC; omega
+      grind
     have hcfw_lt : cfw < N + i.val := by change N < N + i.val; omega
     have hcfw_W : cfw < W := by change N < N + szSections k q; omega
     -- selIdx bound helper
     have hsel_lt (pos : Nat) (hpos : pos < 2^k) : selIdx pos < N + i.val := by
-      change (if Nat.testBit p pos then amw pos else cfw) < N + i.val
-      split_ifs
-      · exact hamw_lt pos hpos
-      · exact hcfw_lt
+      grind
     have hsel_W (pos : Nat) (hpos : pos < 2^k) : selIdx pos < W := by
-      change (if Nat.testBit p pos then amw pos else cfw) < W
-      split_ifs
-      · exact hamw_W pos hpos
-      · exact hcfw_W
+      grind
     have hi_eq : oD k q + j = i.val := by omega
     have hpbr_j : blkSz * p + r = j := by
       change blkSz * (j / blkSz) + j % blkSz = j; exact Nat.div_add_mod j blkSz
     have hpbr : oD k q + p * blkSz + r = i.val := by nlinarith [mul_comm blkSz p]
     have hw0_lt : w0 < W := by
-      change (if r = 0 then selIdx 0 else N + oD k q + p * blkSz + (r - 1)) < W
-      split_ifs with hr0
-      · exact hsel_W 0 (by omega)
-      · have hi_lt := i.isLt; omega
+      grind
     have hw1_lt : w1 < W := hsel_W (r + 1) (by omega)
     have hb0 : w0 < N + i.val := by
-      change (if r = 0 then selIdx 0 else N + oD k q + p * blkSz + (r - 1)) < N + i.val
-      split_ifs with hr0
-      · exact hsel_lt 0 (by omega)
-      · omega
+      grind
     have hb1 : w1 < N + i.val := hsel_lt (r + 1) (by omega)
     exact mkG W .or w0 w1 false false hw0_lt hw1_lt (N + i.val) hb0 hb1
   -- ──── Section E: AND layer ────
@@ -822,19 +787,14 @@ private noncomputable def shannonGateArray (N : Nat) [NeZero N]
     -- dmw is in section B, which is before section E (where i lives)
     have hdmw_in_B : 1 + (2^q - 4) + y < oC q := by unfold oC; omega
     have hdmw_b : dmw < N + i.val := by
-      change N + 1 + (2^q - 4) + y < N + i.val
-      have : oC q ≤ oD k q := by unfold oD; omega
-      have : oD k q ≤ oE k q := by unfold oE; omega
-      omega
+      grind
     have hdmw_W : dmw < W := by
-      change N + 1 + (2^q - 4) + y < N + szSections k q
-      unfold szSections at *; omega
+      grind
     -- cw is the last gate of column block p (in section D, before section E)
     have hcw_in_D : p * (2^k - 1) + (2^k - 2) < 2^(2^k) * (2^k - 1) := by
       have hmul : (p + 1) * (2^k - 1) ≤ 2^(2^k) * (2^k - 1) :=
         Nat.mul_le_mul_right _ (by omega)
-      have hexp : p * (2^k - 1) + (2^k - 1) = (p + 1) * (2^k - 1) := by ring
-      omega
+      grind
     have hcw_b : cw < N + i.val := by
       change N + oD k q + p * (2^k - 1) + (2^k - 2) < N + i.val
       have hoE_le : oE k q ≤ i.val := by omega
@@ -843,35 +803,25 @@ private noncomputable def shannonGateArray (N : Nat) [NeZero N]
         unfold oE; omega
       omega
     have hcw_W : cw < W := by
-      change N + oD k q + p * (2^k - 1) + (2^k - 2) < N + szSections k q
-      have hi_lt := i.isLt; omega
+      grind
     exact mkG W .and dmw cw false false hdmw_W hcw_W (N + i.val) hdmw_b hcw_b
   -- ──── Section F: OR chain ────
   else
     let r := i.val - oF k q
     have hiF : oF k q ≤ i.val := by omega
     have hr : r < 2^q - 1 := by
-      change i.val - oF k q < 2^q - 1
-      have : i.val < oF k q + (2^q - 1) := by rw [← hG_eq]; exact i.isLt
-      omega
+      grind
     let w0 : Nat := if r = 0 then N + oE k q else N + oF k q + (r - 1)
     let w1 : Nat := N + oE k q + (r + 1)
     -- oE < oF ≤ i.val, and oE + (r+1) < oE + 2^q = oF ≤ i.val
     have hoEF : oE k q < oF k q := by unfold oF; omega
     have hsz_eq : szSections k q = oF k q + (2^q - 1) := hG_eq
     have hw0_lt : w0 < W := by
-      change (if r = 0 then N + oE k q else N + oF k q + (r - 1)) < N + szSections k q
-      split_ifs
-      · omega
-      · omega
+      grind
     have hw1_lt : w1 < W := by
-      change N + oE k q + (r + 1) < N + szSections k q
-      unfold oF at hsz_eq; omega
+      grind
     have hb0 : w0 < N + i.val := by
-      change (if r = 0 then N + oE k q else N + oF k q + (r - 1)) < N + i.val
-      split_ifs with hr0
-      · omega
-      · omega
+      grind
     have hb1 : w1 < N + i.val := by
       change N + oE k q + (r + 1) < N + i.val
       unfold oF at hiF; omega
@@ -927,8 +877,7 @@ private theorem colFun_at_actual_bits (N : Nat) [NeZero N]
   · exact testBit_sum_cond_pow_fin k _ idx h
   · have hq_bound : idx - k < q := by omega
     rw [testBit_sum_cond_pow_fin q _ (idx - k) hq_bound]
-    dsimp only
-    congr 1; ext; simp; omega
+    grind
 
 /-! #### Circuit correctness -/
 
@@ -956,8 +905,7 @@ private theorem foldl_or_all_false {n : Nat} {P : Nat → Bool}
   | zero => simp
   | succ m ih =>
     rw [List.range_succ, List.foldl_append, List.foldl_cons, List.foldl_nil]
-    rw [ih (fun y hy => hP y (by omega))]
-    rw [hP m (by omega)]; rfl
+    grind
 
 /-- A list foldl of OR where each non-matching term is false produces the
     value at the matching position. -/
@@ -971,9 +919,7 @@ private theorem foldl_or_unique_true {n : Nat} {P : Nat → Bool}
     rw [List.range_succ, List.foldl_append, List.foldl_cons, List.foldl_nil]
     by_cases htm : target < m
     · -- target < m: result after first m was already P target
-      rw [ih htm (fun y hy hne => hP y (by omega) hne)]
-      rw [hP m (by omega) (by omega)]
-      simp [Bool.or_false]
+      grind
     · -- target = m
       have htm_eq : target = m := by omega
       subst htm_eq
@@ -1394,10 +1340,7 @@ private theorem colOutput_constFalse (N : Nat) [NeZero N]
   rw [dif_pos (show N - N = 0 from by omega)]
   simp only [mkG, Gate.eval, Basis.andOr2, AONOp.eval,
     Fin.foldl_succ_last, Fin.foldl_zero, Bool.true_and]
-  simp only [Fin.val_last, Fin.val_castSucc, ite_true, ite_false,
-    show ¬((1 : Nat) = 0) from by omega, Bool.false_xor, Bool.true_xor]
-  rw [Circuit.wireValue_lt _ _ _ (show (⟨0, _⟩ : Fin _).val < N from h0N)]
-  cases x ⟨0, h0N⟩ <;> rfl
+  grind
 
 private theorem wireValue_colOutput (N : Nat) [NeZero N]
     (f : BitString N → Bool) (hN : 16 ≤ N) (x : BitString N)

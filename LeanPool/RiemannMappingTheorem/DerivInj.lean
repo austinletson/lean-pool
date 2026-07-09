@@ -47,10 +47,7 @@ lemma crucial (hU : IsOpen U) (hcr : closedBall c r ⊆ U) (hz₀ : z₀ ∈ bal
     have h5 : deriv f z = g z + (z - z₀) * deriv g z := by
       simp [h4, deriv_fun_mul e1 e2]
     have e3 : g z ≠ 0 := h2 z (sphere_subset_closedBall hz)
-    have := h10 z hz
-    field_simp
-    simp [h3 z hz', h5, mul_comm]
-    field_simp
+    grind
   simp only [cindex, integral_congr hr.le h6, ← mul_add]
   congr
   apply circleIntegral.integral_add

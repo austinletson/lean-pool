@@ -78,8 +78,7 @@ def zPrimitive {R : Type*} [AddCommGroup R] (f : ℤ → R) (n : ℤ) : R :=
     have n_natAbs : n.natAbs = (n+1).natAbs + 1 := by grind
     simp only [zPrimitive_apply_of_nonpos _ hn, zPrimitive_apply_of_nonpos _ hn.le, n_natAbs,
                sum_range_succ, Int.natCast_natAbs, neg_add_rev]
-    simp only [add_comm (-(f _)), add_assoc, left_eq_add]
-    simp [show -|n + 1| - 1 = n by rw [abs_of_nonpos hn, neg_neg]; ring]
+    grind
 
 lemma eq_zPrimitive_of_eq_zero_of_forall_eq_add {R : Type*} [AddCommGroup R] {f F : ℤ → R}
     (h0 : F 0 = 0) (h1 : ∀ n, F (n + 1) = F n + f n) :
@@ -207,8 +206,7 @@ lemma bosonic_sugawara_cc_calc (R : Type*) [Field R] [CharZero R] (n : ℤ) :
     zPrimitive (fun l ↦ (l : R) * (n - l)) n = (n^3 - n) / 6 := by
   have obs : (n^3 - n) / 6 = (n - 1 : R) * zMonomialF R 2 n - 2 * zMonomialF R 3 n := by
     rw [zMonomialF_two_eq, zMonomialF_three_eq]
-    field_simp
-    ring
+    grind
   have key : (zPrimitive fun l ↦ (n - 1 : R) * l) - (zPrimitive fun l ↦ 2 * zMonomialF R 2 l)
               = zPrimitive ((fun (l : ℤ) ↦ (l : R) * (n - l))) := by
     rw [← zPrimitive_sub]

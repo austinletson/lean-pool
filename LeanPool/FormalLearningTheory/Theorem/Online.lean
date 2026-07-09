@@ -93,11 +93,8 @@ private theorem soa_predict_spec {X : Type} (C : ConceptClass X Bool)
     LittlestoneDim X {c ∈ V | c x = !b} := by
   simp only [SOA]
   split
-  · simp only [Bool.not_true, ge_iff_le]
-    assumption
-  · simp only [Bool.not_false, ge_iff_le]
-    rename_i h
-    exact le_of_lt (not_le.mp h)
+  · grind
+  · grind
 
 /-- Truncate a complete tree to a smaller depth. -/
 def LTree.truncate {X : Type} {n m : ℕ} : (h : n ≤ m) → LTree X m → LTree X n := by
@@ -242,8 +239,7 @@ private theorem ldim_strict_decrease_on_mistake {X : Type}
       ext c'; simp only [Set.mem_sep_iff]; exact ⟨fun ⟨h, _⟩ => h, fun h => ⟨h, hagree c' h⟩⟩
     have h_notcx_empty : ¬ ({c' ∈ V | c' x = !(c x)}).Nonempty := by
       intro ⟨c', hc'V, hc'x⟩
-      have := hagree c' hc'V
-      cases hcx : c x <;> simp_all
+      grind
     have h_notcx_ldim : LittlestoneDim X {c' ∈ V | c' x = !(c x)} = ⊥ := by
       apply le_antisymm _ bot_le
       apply iSup₂_le; intro n ⟨T, hT⟩
@@ -264,8 +260,7 @@ private theorem ldim_strict_decrease_on_mistake {X : Type}
       -- But Ldim(true side) = ⊥ and Ldim(false side) ≥ 0
       rw [h_notcx_ldim] at hge_contra
       have : LittlestoneDim X {c' ∈ V | c' x = false} ≥ ↑(↑0 : WithTop ℕ) := by
-        rw [h_cx_side_eq_V]
-        exact le_iSup₂_of_le 0 ⟨.leaf, hne⟩ le_rfl
+        grind
       exact absurd (le_trans this hge_contra) (by simp)
     · -- c x = true
       simp only [hcx, Bool.not_true] at h_notcx_ldim h_cx_side_eq_V
@@ -277,17 +272,13 @@ private theorem ldim_strict_decrease_on_mistake {X : Type}
       push Not at hlt_contra
       rw [h_notcx_ldim] at hlt_contra
       have : LittlestoneDim X {c' ∈ V | c' x = true} ≥ ↑(↑0 : WithTop ℕ) := by
-        rw [h_cx_side_eq_V]
-        exact le_iSup₂_of_le 0 ⟨.leaf, hne⟩ le_rfl
+        grind
       exact absurd hlt_contra not_lt_bot
   | succ d' =>
   -- d ≥ 1. Use suffices + by_contra + both-side extraction.
   rw [hd0] at hd -- hd : LittlestoneDim X V = ↑(↑(d' + 1) : WithTop ℕ)
   suffices hsuff : LittlestoneDim X {c' ∈ V | c' x = c x} < ↑(↑(d' + 1) : WithTop ℕ) by
-    calc LittlestoneDim X (versionSpace C (history ++ [(x, c x)]))
-        ≤ LittlestoneDim X {c' ∈ V | c' x = c x} := hle_side
-      _ < ↑(↑(d' + 1) : WithTop ℕ) := hsuff
-      _ = LittlestoneDim X V := hd.symm
+    grind
   by_contra hge; push Not at hge
   have hsoa := soa_predict_spec C history x
   have hnb_ge : LittlestoneDim X {c' ∈ V | c' x = !b} ≥ ↑(↑(d' + 1) : WithTop ℕ) := by
@@ -302,8 +293,7 @@ private theorem ldim_strict_decrease_on_mistake {X : Type}
     match Tb, hTb with
     | .branch y l r, hTb =>
       simp only [LTree.isShattered] at hTb
-      obtain ⟨⟨c', hc'mem, _⟩, _⟩ := hTb
-      exact ⟨c', hc'mem.1, hc'mem.2⟩
+      grind
   have hge_dp : LittlestoneDim X V ≥ ↑(↑(d' + 1 + 1) : WithTop ℕ) :=
     ldim_branch_lower_bound ⟨Tb, hTb⟩ ⟨Tnb, hTnb⟩ hwb hwnb
   rw [hd] at hge_dp
@@ -317,11 +307,7 @@ private theorem ldim_strict_decrease_on_mistake {X : Type}
 private theorem cons_history_append {X : Type} {c : X → Bool} {history : List (X × Bool)}
     {x : X} (hcons : ∀ p ∈ history, c p.1 = p.2) :
     ∀ p ∈ history ++ [(x, c x)], c p.1 = p.2 := by
-  intro p hp
-  cases List.mem_append.mp hp with
-  | inl h => exact hcons p h
-  | inr h => have hp_eq : p = (x, c x) := by simpa using h
-             rw [hp_eq]
+  grind
 
 /-- The Ldim of the version space is monotone under appending to the history. -/
 private theorem ldim_versionSpace_append_le {X : Type} {C : ConceptClass X Bool}
@@ -362,17 +348,13 @@ private theorem soa_mistakes_bounded {X : Type} {C : ConceptClass X Bool}
         have hge0 : LittlestoneDim X (versionSpace C (history ++ [(x, c x)])) ≥
             ↑(↑0 : WithTop ℕ) :=
           le_iSup₂_of_le 0 ⟨.leaf, ⟨c, hc_vs'⟩⟩ le_rfl
-        have hlt := lt_of_lt_of_le hdecrease hd
-        exact absurd hlt (not_lt.mpr hge0)
+        grind
       | succ d' =>
         -- Ldim of new VS ≤ d' (reusable lattice fact: a < ↑↑(d'+1) → a ≤ ↑↑d')
         have hd_new : LittlestoneDim X (versionSpace C (history ++ [(x, c x)])) ≤
             ↑(↑d' : WithTop ℕ) :=
           WithBot_WithTop_lt_succ_le (lt_of_lt_of_le hdecrease hd)
-        have hfin_new : LittlestoneDim X (versionSpace C (history ++ [(x, c x)])) < ⊤ :=
-          lt_of_lt_of_le hdecrease (le_of_lt hfin)
-        have ih_result := ih (history ++ [(x, c x)]) hcons' d' hd_new hfin_new
-        omega
+        grind
     · -- SOA predicts correctly: no mistake, φ doesn't decrease but bound holds
       rw [if_neg hmistake]; simp only [Nat.zero_add]
       have hcons' := cons_history_append (c := c) (x := x) hcons

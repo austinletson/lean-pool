@@ -164,10 +164,7 @@ private lemma trueErrorReal_le_of_bestAdvice {X : Type u} [MeasurableSpace X]
   have hmin_le : EmpiricalError X Bool (cand best) Sval (zeroOneLoss Bool) ≤
       EmpiricalError X Bool (cand aStar) Sval (zeroOneLoss Bool) :=
     hmin.2 aStar (Finset.mem_univ _)
-  have h_best_close := hclose best
-  have h_star_close := hclose aStar
-  rw [abs_le] at h_best_close h_star_close
-  linarith
+  grind
 
 private lemma finite_validation_family_bound {X : Type u} [MeasurableSpace X]
     {A : Type*} [Fintype A]
@@ -215,25 +212,7 @@ private lemma finite_validation_family_bound {X : Type u} [MeasurableSpace X]
           (zeroOneLoss Bool) ≤ TrueErrorReal X (cand a) c D - η
       · exact Or.inl h
       · right
-        simp only [UpperTail, Set.mem_setOf_eq]
-        push Not at h
-        -- h: EmpErr > TrueErr - η, so TrueErr - EmpErr < η
-        -- hxs: |TrueErr - EmpErr| ≥ η
-        -- If TrueErr - EmpErr ≥ 0, then |TrueErr - EmpErr| = TrueErr - EmpErr < η,
-        -- contradicting hxs. So TrueErr - EmpErr < 0.
-        set diff := TrueErrorReal X (cand a) c D -
-          EmpiricalError X Bool (cand a) (fun i => (xs i, c (xs i)))
-            (zeroOneLoss Bool)
-        change |diff| ≥ η at hxs
-        have h_diff_lt : diff < η := by simp only [diff]; linarith
-        have h_neg : diff < 0 := by
-          by_contra h_nn
-          push Not at h_nn
-          have h_eq := abs_of_nonneg h_nn
-          rw [h_eq] at hxs
-          linarith
-        rw [abs_of_neg h_neg] at hxs
-        simp only [diff] at hxs; linarith
+        grind
     -- Each tail bounded by exp(-2mη²) via Hoeffding
     have h_lower := hoeffding_one_sided D (cand a) c m hm η hη hη1 hmeas
     have h_upper := hoeffding_one_sided_upper D (cand a) c m hm η hη hη1 hmeas
@@ -593,10 +572,7 @@ private lemma adviceValidationUniformBound {X : Type u} [MeasurableSpace X]
         |TrueErrorReal X (cand a) c D -
           EmpiricalError X Bool (cand a) (fun i => (xs i, c (xs i)))
             (zeroOneLoss Bool)| ≥ η} := by
-    intro xs hxs
-    simp only [Set.mem_setOf_eq, cand] at hxs ⊢
-    obtain ⟨a, ha⟩ := hxs
-    exact ⟨a, le_trans (min_le_left _ _) ha⟩
+    grind
   calc μ₂ {xs : Fin m₂ → X | ∃ a : A,
           |TrueErrorReal X (LA.learnWithAdvice a (fun i => (xs₁ i, c (xs₁ i)))) c D -
             EmpiricalError X Bool (LA.learnWithAdvice a (fun i => (xs₁ i, c (xs₁ i))))
@@ -1112,8 +1088,7 @@ theorem vcdim_not_implies_hardness :
       have ha' := hcall ⟨a, ha⟩
       have hb' := hcall ⟨b, hb⟩
       -- c = fun x => decide (x = n), so c a = true means a = n, c b = true means b = n
-      simp only [hn, decide_eq_true_eq] at ha' hb'
-      exact hab (ha'.trans hb'.symm)
+      grind
     exact lt_of_le_of_lt hle (WithTop.coe_lt_top 1)
   · -- SQDimension C D τ = ⊤ at D = Dirac at 0, τ = 1.
     -- For the Dirac measure δ₀ on ℕ and τ = 1:
