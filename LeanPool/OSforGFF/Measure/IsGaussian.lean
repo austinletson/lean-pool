@@ -164,11 +164,7 @@ lemma gaussian_rhs_slice_analytic_z0 (f g : TestFunction) (t : ℂ) :
       have hbase : AnalyticOnNhd ℂ
           (fun z₀ : ℂ => (2 * t * freeCovarianceFormR m f g) * z₀) Set.univ :=
         AnalyticOnNhd.mul analyticOnNhd_const analyticOnNhd_id
-      have hfun : (fun z₀ : ℂ => 2 * z₀ * t * (freeCovarianceFormR m f g : ℂ)) =
-          (fun z₀ : ℂ => (2 * t * freeCovarianceFormR m f g) * z₀) := by
-        funext z₀
-        ring
-      rwa [hfun]
+      grind
   · exact analyticOnNhd_const
 
 omit [Fact (0 < m)] in
@@ -187,11 +183,7 @@ lemma gaussian_rhs_slice_analytic_z1 (f g : TestFunction) (z₀ : ℂ) :
       have hbase : AnalyticOnNhd ℂ
           (fun z₁ : ℂ => (2 * z₀ * freeCovarianceFormR m f g) * z₁) Set.univ :=
         AnalyticOnNhd.mul analyticOnNhd_const analyticOnNhd_id
-      have hfun : (fun z₁ : ℂ => 2 * z₀ * z₁ * (freeCovarianceFormR m f g : ℂ)) =
-          (fun z₁ : ℂ => (2 * z₀ * freeCovarianceFormR m f g) * z₁) := by
-        funext z₁
-        ring
-      rwa [hfun]
+      grind
   · apply AnalyticOnNhd.mul _ (analyticOnNhd_const (v := (freeCovarianceFormR m g g : ℂ)))
     exact (analyticOnNhd_id (𝕜 := ℂ)).pow 2
 
@@ -309,8 +301,7 @@ theorem gff_complex_characteristic_OS0 :
           -(freeCovarianceFormR m g g : ℂ) := by
         rw [← mul_assoc, Complex.I_mul_I]
         ring
-      rw [hII]
-      ring
+      grind
     rw [h_Qc]
     simp only [one_pow, Complex.I_sq, one_mul]
     ring
@@ -345,10 +336,7 @@ theorem schwinger_eq_covariance_real (f g : TestFunction) :
   -- Use polarization identity: XY = ¼((X+Y)² - (X-Y)²)
   have h_polar : ∀ ω : FieldConfiguration,
       (ω f) * (ω g) = (1/4 : ℝ) * ((ω (f + g))^2 - (ω (f - g))^2) := by
-    intro ω
-    -- Linearity of pairing
-    simp only [map_add, map_sub]
-    ring
+    grind
   simp_rw [h_polar]
   rw [MeasureTheory.integral_const_mul]
   -- Use gff_second_moment_eq_covariance for each term

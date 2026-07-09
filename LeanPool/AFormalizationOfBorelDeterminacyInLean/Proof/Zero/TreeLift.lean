@@ -188,8 +188,7 @@ def extension (hp : IsPosition H.x.val Player.zero) :=
   (H.lift (by have := H.hlvl; synthIsPosition)).extension hp ((strategyEquivSystem H.R).str _)
 @[congr] lemma extension_val_congr {H H' : TreeLift hyp} (h : H = H') {hp} :
   (H.extension hp).val = (H'.extension (by subst h; exact hp)).val := by
-  subst h
-  rfl
+  grind
 @[simp] lemma lift_take hk h' : (H.take n hk).lift h'
   = (H.lift (by as_aux_lemma => synthIsPosition)).take n
       (by as_aux_lemma => synthIsPosition) := by

@@ -101,19 +101,7 @@ theorem calcstep {n N m M : k[X]} (nz_M : M ≠ 0) (nz_N : N ≠ 0)
   have nz_rM := RatFunc.algebraMap_ne_zero nz_M
   have nz_rN := RatFunc.algebraMap_ne_zero nz_N
   rw [← (RatFunc.algebraMap_injective k).eq_iff]
-  simp_rw [RingHom.map_mul, RingHom.map_add, RingHom.map_pow]
-  set rm := algebraMap k[X] (RatFunc k) m with eq_rm
-  set rM := algebraMap k[X] (RatFunc k) M with eq_rM
-  set rn := algebraMap k[X] (RatFunc k) n with eq_rn
-  set rN := algebraMap k[X] (RatFunc k) N with eq_rN
-  rw [eq_rm, eq_rM, eq_rn, eq_rN]
-  calc
-    rn ^ 2 * rM ^ 3 = rn ^ 2 / rN ^ 2 * rN ^ 2 * rM ^ 3 := by
-      rw [div_mul_cancel₀ _ (pow_ne_zero 2 nz_rN)]
-    _ = (rm ^ 3 / rM ^ 3 + 1) * rM ^ 3 * rN ^ 2 := by
-      rw [eqn, mul_assoc, mul_assoc, mul_comm (rN ^ 2) _]
-    _ = (rm ^ 3 + rM ^ 3) * rN ^ 2 := by
-      rw [add_mul, div_mul_cancel₀ _ (pow_ne_zero 3 nz_rM), one_mul]
+  grind
 
 theorem calcstep2 {m M n N : k[X]} (nz_M : M ≠ 0) (nz_N : N ≠ 0) (cp_mM : IsCoprime m M)
     (cp_nN : IsCoprime n N) (_nz_m : m ≠ 0) (_nz_n : n ≠ 0)
@@ -144,9 +132,7 @@ theorem calcstep2 {m M n N : k[X]} (nz_M : M ≠ 0) (nz_N : N ≠ 0) (cp_mM : Is
   · rw [← eq_Mw, isCoprime_mul_unit_left_right u.isUnit, IsCoprime.pow_right_iff] at cp_mM
     · exact cp_mM
     · decide
-  · rcases flat_eqn with eqn | w0
-    · convert eqn using 1 <;> ring_nf
-    · contradiction
+  · grind
 
 -- Main corollary
 theorem no_parametrization_y2_x3_1 (chk : ¬ringChar k ∣ 6) {x y : RatFunc k}

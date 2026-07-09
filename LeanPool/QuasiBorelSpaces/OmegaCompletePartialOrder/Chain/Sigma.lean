@@ -45,9 +45,7 @@ def distrib (c : Chain ((i : I) × P i)) : (i : I) × Chain (P i) where
     generalize_proofs h₂
     generalize c i₁ = ci₁, c i₂ = ci₂ at *
     rcases h₁ with ⟨i, _, _, h₁⟩
-    dsimp at h₂
-    subst h₂
-    exact h₁
+    grind
 
 @[simp]
 lemma distrib_inj {i} (c : Chain (P i)) : distrib (inj c) = ⟨i, c⟩ := rfl

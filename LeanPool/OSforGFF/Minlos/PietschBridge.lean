@@ -143,8 +143,7 @@ def hilbertianLift (f : ℕ → (E →L[ℝ] ℝ)) (c : ℕ → ℝ)
       intro u
       calc ∑ i ∈ u, f i x * f i y * c i
           = ∑ i ∈ u, (f i x * Real.sqrt (c i)) * (f i y * Real.sqrt (c i)) := by
-            apply Finset.sum_congr rfl; intro i _
-            rw [mul_mul_mul_comm, Real.mul_self_sqrt (hc_nn i)]
+            apply Finset.sum_congr rfl; grind
         _ ≤ Real.sqrt (∑ i ∈ u, (f i x * Real.sqrt (c i)) ^ 2) *
             Real.sqrt (∑ i ∈ u, (f i y * Real.sqrt (c i)) ^ 2) :=
             Real.sum_mul_le_sqrt_mul_sqrt u _ _
@@ -194,10 +193,7 @@ theorem hilbertianLift_isHilbertian (f : ℕ → (E →L[ℝ] ℝ)) (c : ℕ →
   rw [← (hAB (x + y)).tsum_add (hAB (x - y))]
   conv_rhs => rw [mul_add, ← (hAB x).tsum_mul_left 2, ← (hAB y).tsum_mul_left 2,
     ← ((hAB x).mul_left 2).tsum_add ((hAB y).mul_left 2)]
-  congr 1
-  ext n
-  simp only [map_add, map_sub]
-  ring
+  grind
 
 /-- Cauchy-Schwarz: the nuclear expansion is bounded by `√(Σcₖ) · r(x)`.
   `Σₖ |fₖ(x)|·cₖ ≤ √(Σₖ fₖ(x)²·cₖ) · √(Σₖ cₖ) = √(Σcₖ) · r(x)`

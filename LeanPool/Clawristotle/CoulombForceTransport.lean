@@ -240,17 +240,13 @@ lemma force_ibp_f_dg_integrable_coulomb
     rw [h_sub_hfd.fderiv]
     simp only [_root_.sub_apply, _root_.add_apply,
       _root_.smul_apply, smul_eq_mul]
-    have hfv_ne : f x v ≠ 0 := ne_of_gt (hf_pos x v)
-    rw [← mul_assoc, mul_inv_cancel₀ hfv_ne, one_mul]
-    ring
+    grind
   -- Rewrite integrand using the chain rule
   have heq : (fun v => (E x + cross v (B x)) i *
       fderiv ℝ (fun w => f x w * Real.log (f x w) - f x w) v (Pi.single i 1)) =
       fun v => (E x + cross v (B x)) i *
         fderiv ℝ (f x) v (Pi.single i 1) * Real.log (f x v) := by
-    ext v
-    rw [hfder_eq]
-    ring
+    grind
   rw [heq]
   exact force_fderiv_log_component_integrable E B hf_pos hf_smooth hSchwartz
     C_log K_log hLB x i
@@ -299,8 +295,7 @@ lemma force_ibp_fg_integrable_coulomb
     have h1v : (1 : ℝ) ≤ (1 + ‖v‖) ^ K_log := one_le_pow₀ (by linarith [norm_nonneg v])
     have hlog_sub : |Real.log (f x v) - 1| ≤ (|C_log| + 1) * (1 + ‖v‖) ^ K_log := by
       have htri : |Real.log (f x v) - 1| ≤ |Real.log (f x v)| + 1 := by
-        have := abs_sub (Real.log (f x v)) 1
-        simpa using this
+        grind
       have hbnd := le_trans (hLB x v) (mul_le_mul_of_nonneg_right (le_abs_self _)
         (pow_nonneg (by linarith [norm_nonneg v]) _))
       nlinarith
@@ -310,12 +305,7 @@ lemma force_ibp_fg_integrable_coulomb
       _ ≤ CL * (1 + ‖v‖) * (f x v * ((|C_log| + 1) * (1 + ‖v‖) ^ K_log)) := by
           gcongr; exact hCL v i
       _ = CL * (|C_log| + 1) * (1 + ‖v‖) ^ (K_log + 1) * |f x v| := by
-          rw [abs_of_pos hfv]
-          have h_pow : (1 + ‖v‖) * (1 + ‖v‖) ^ K_log = (1 + ‖v‖) ^ (K_log + 1) :=
-            (pow_succ' _ _).symm
-          calc CL * (1 + ‖v‖) * (f x v * ((|C_log| + 1) * (1 + ‖v‖) ^ K_log))
-              = CL * (|C_log| + 1) * ((1 + ‖v‖) * (1 + ‖v‖) ^ K_log) * f x v := by ring
-            _ = CL * (|C_log| + 1) * (1 + ‖v‖) ^ (K_log + 1) * f x v := by rw [h_pow]
+          grind
 
 
 end VML

@@ -111,8 +111,7 @@ theorem includeBlock_hMul_ne_same {o : Type _} [DecidableEq o] {m' : o → Type 
   ext
   simp_rw [includeBlock_apply, Pi.mul_apply, hMul_dite, dite_hMul, MulZeroClass.mul_zero,
     MulZeroClass.zero_mul, Pi.zero_apply]
-  simp only [eq_mp_eq_cast, dite_eq_ite, ite_self]
-  aesop
+  grind
 
 theorem includeBlock_hMul {o : Type _} [DecidableEq o] {m' : o → Type _} {α : Type _}
     [∀ i, Fintype (m' i)] [CommSemiring α] {i : o}
@@ -292,14 +291,12 @@ theorem coe_sum {k : Type _} [DecidableEq k] {s : k → Type _} {n : Type _} [Fi
   let σ : Fin (Fintype.card n) ≃ n := (Fintype.equivFin n).symm
   have : ∑ i : n, x i = ∑ i : Fin (Fintype.card n), x (σ i) := by
     apply Fintype.sum_equiv σ.symm
-    intro i
-    simp only [Equiv.apply_symm_apply]
+    grind
   rw [this]
   have : ∑ i : n, (x i : Matrix (Σ i, s i) (Σ i, s i) R) = ∑ i : Fin (Fintype.card n), x (σ i) := by
     simp_rw [IsBlockDiagonal.coe_sum_aux]
     apply Fintype.sum_equiv σ.symm
-    intro i
-    simp only [Equiv.apply_symm_apply]
+    grind
   rw [this]
 
 end IsBlockDiagonal
@@ -351,16 +348,7 @@ def singleBlockDiagonal {k : Type _} [DecidableEq k] {s : k → Type _}
   ⟨single ⟨i, j⟩ ⟨i, l⟩ α, by
     simp only [Matrix.IsBlockDiagonal, blockDiag'_apply, blockDiagonal'_apply,
       Matrix.blockDiagonal'_ext, dite_eq_iff']
-    intro a b c d
-    constructor
-    · intro h
-      congr
-      simp only [cast_heq]
-    · intro h
-      symm
-      apply single_apply_of_ne
-      rintro ⟨⟨rfl, h2⟩, ⟨rfl, h4⟩⟩
-      contradiction⟩
+    grind⟩
 
 theorem includeBlock_conjTranspose {R k : Type _} [CommSemiring R] [StarRing R] [DecidableEq k]
     {s : k → Type _} {i : k}
@@ -521,8 +509,7 @@ def semiring {k : Type _} [Fintype k] [DecidableEq k] {s : k → Type _}
   mul_one x := by ext; simp only [IsBlockDiagonal.coe_mul, IsBlockDiagonal.coe_one, mul_one]
   natCast n := n • 1
   natCast_zero := by
-    ext
-    simp only [IsBlockDiagonal.coe_zero, zero_smul]
+    grind
   natCast_succ a := by
     ext
     simp only [IsBlockDiagonal.coe_nsmul, IsBlockDiagonal.coe_one, IsBlockDiagonal.coe_add,

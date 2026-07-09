@@ -69,8 +69,7 @@ private lemma foldl_bor_eq_list_any {α : Type} (l : List α) (p : α → Bool) 
     refine ⟨fun ⟨i, hi⟩ => ⟨l.get i, List.get_mem l i, hi⟩, fun ⟨a, ha, hp⟩ => ?_⟩
     obtain ⟨i, rfl⟩ := List.mem_iff_get.mp ha
     exact ⟨i, hp⟩
-  cases h1 : Fin.foldl l.length (fun acc i => acc || p (l.get i)) false <;>
-    cases h2 : l.any p <;> simp_all
+  grind <;> simp_all
 
 private lemma foldl_band_eq_list_all {α : Type} (l : List α) (p : α → Bool) :
     Fin.foldl l.length (fun acc (i : Fin l.length) => acc && p (l.get i)) true = l.all p := by
@@ -80,8 +79,7 @@ private lemma foldl_band_eq_list_all {α : Type} (l : List α) (p : α → Bool)
     refine ⟨fun h a ha => ?_, fun h i => h (l.get i) (List.get_mem l i)⟩
     obtain ⟨i, rfl⟩ := List.mem_iff_get.mp ha
     exact h i
-  cases h1 : Fin.foldl l.length (fun acc i => acc && p (l.get i)) true <;>
-    cases h2 : l.all p <;> simp_all
+  grind <;> simp_all
 
 /-! ## CNF circuit embedding -/
 
@@ -260,9 +258,7 @@ theorem DNF.term_mentions_all (φ : DNF N)
     simp only [DNF.eval, List.any_eq_true]
     exact ⟨term, hterm, hsat'⟩
   -- But f flips, so f x ≠ f (flip x i)
-  have := hflip x i
-  rw [← hcomp, ← hcomp, hx_true, hx'_true] at this
-  simp at this
+  grind
 
 /-- If a term mentions all N variables, it is satisfied by at most one assignment. -/
 theorem full_term_unique {term : List (Literal N)}
@@ -291,28 +287,18 @@ theorem card_true_of_flip_sensitive {N : Nat} (hN : 1 ≤ N)
   set flip0 : BitString N → BitString N := fun x => Function.update x ⟨0, hN'⟩ (!x ⟨0, hN'⟩)
   -- flip0 is self-inverse
   have flip0_inv : ∀ x, flip0 (flip0 x) = x := by
-    intro x; ext j; simp only [flip0]
-    by_cases h : j = ⟨0, hN'⟩
-    · subst h; simp
-    · simp [Function.update_of_ne h]
+    grind
   -- flip0 maps true-set to false-set
   have flip0_tf : ∀ x, f x = true → f (flip0 x) = false := by
     intro x hx; have := hflip x ⟨0, hN'⟩; rw [hx] at this; simpa using this
   -- Bijection from S_true to S_false
   have hcard_eq : S_true.card = S_false.card := by
     apply Finset.card_bij (fun x _ => flip0 x)
-    · intro x hx
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and, S_true, S_false] at hx ⊢
-      exact flip0_tf x hx
+    · grind
     · intro a₁ h₁ a₂ h₂ heq
       have := congr_arg flip0 heq
       rwa [flip0_inv, flip0_inv] at this
-    · intro b hb
-      refine ⟨flip0 b, ?_, flip0_inv b⟩
-      simp only [S_true, S_false, Finset.mem_filter, Finset.mem_univ, true_and] at hb ⊢
-      -- f b = false, need f (flip0 b) = true
-      have h1 := hflip b ⟨0, hN'⟩
-      rwa [hb, Bool.not_false] at h1
+    · grind
   -- |S_true| + |S_false| = 2^N
   have hcard_total : S_true.card + S_false.card = 2 ^ N := by
     have h := Finset.card_filter_add_card_filter_not (s := Finset.univ)
@@ -320,9 +306,7 @@ theorem card_true_of_flip_sensitive {N : Nat} (hN : 1 ≤ N)
     simp only [Finset.card_univ] at h
     rw [show Fintype.card (BitString N) = 2 ^ N from by
       rw [Fintype.card_fun, Fintype.card_bool, Fintype.card_fin]] at h
-    convert h using 2
-    simp only [S_false]
-    congr 1; ext x; cases f x <;> simp
+    grind
   -- 2 * S_true.card = 2^N, so S_true.card = 2^{N-1}
   have : 2 ^ N = 2 * 2 ^ (N - 1) := by
     cases N with
@@ -364,8 +348,7 @@ theorem DNF.flip_complexity_lb (φ : DNF N) (hN : 1 ≤ N)
     intro x hx
     simp only [Finset.coe_filter, Finset.mem_univ, Set.mem_setOf, true_and] at hx
     simp only [Finset.coe_range, Set.mem_Iio, DNF.complexity]
-    rw [List.findIdx_lt_length]
-    exact hfind x hx
+    grind
   · -- InjOn: two true assignments with same findIdx must be equal
     intro x₁ hx₁ x₂ hx₂ heq
     simp only [Finset.coe_filter, Finset.mem_univ, Set.mem_setOf, true_and] at hx₁ hx₂

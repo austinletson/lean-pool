@@ -56,8 +56,7 @@ theorem fdBoundary_H_avoids_interior (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_re : 
       simp only [add_re, mul_re, ofReal_re, ofReal_im,
         I_re, I_im, div_ofNat, one_re]
       norm_num
-    rw [habs] at hre
-    have := abs_lt.mp hp_re; linarith
+    grind
   · push Not at h1
     by_cases h3 : t ≤ 3
     · have hnorm : ‖fdBoundaryH H t‖ = 1 := by
@@ -74,8 +73,7 @@ theorem fdBoundary_H_avoids_interior (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_re : 
           simp only [add_re, neg_re, mul_re, ofReal_re,
             ofReal_im, I_re, I_im, div_ofNat, one_re]
           norm_num
-        rw [habs] at hre
-        have := abs_lt.mp hp_re; linarith
+        grind
       · push Not at h4
         have him : (fdBoundaryH H t).im = H := by
           rw [fdBoundary_H_eq_seg5_H h4,
@@ -269,9 +267,7 @@ private lemma fdBoundary_H_piecewise_homotopic (p : ℂ) (hp_norm : ‖p‖ > 1)
     ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · exact fdHomot_continuous heightCutoff H
   · intro t _; simp only [zero_mul, add_zero]
-  · intro t _
-    change fdBoundaryH (heightCutoff + 1 * (H - heightCutoff)) t = fdBoundaryH H t
-    congr 1; ring
+  · grind
   · intro s _; exact fdBoundary_H_closed _
   · intro t ht s hs
     exact fdBoundary_H_avoids_interior p hp_norm hp_re hp_im_pos
@@ -362,8 +358,7 @@ theorem gWN_fdBoundary_H_eq_neg_one_of_strictInterior
         ((continuous_const.add ((continuous_ofReal.comp (by fun_prop :
           Continuous (fun s => (1 - s) * Hmid + s * p.im))).mul continuous_const)).comp
           continuous_snd)
-    · intro t _; change fdBoundaryH H t - zPath 0 = fdBoundaryH H t - q
-      congr 1; simp only [zPath, q]; push_cast; ring
+    · grind
     · intro t _; change fdBoundaryH H t - zPath 1 = fdBoundaryH H t - p
       congr 1; simp only [zPath]; push_cast; ring_nf; exact Complex.re_add_im p
     · intro s _; simp only [sub_left_inj]; exact fdBoundary_H_closed H
@@ -396,8 +391,7 @@ theorem gWN_fdBoundary_H_eq_neg_one_of_strictInterior
         have ht_not_part : r.1 ∉ fdBoundaryHPartition := by
           simp only [fdBoundaryFullPartition, fdBoundaryHPartition,
             Finset.mem_insert, Finset.mem_singleton] at hfree ⊢
-          push Not; have := hfree r.1 hr.1; push Not at this
-          exact ⟨this.2.1, this.2.2.2.1, this.2.2.2.2.1⟩
+          grind
         have hd := fdBoundary_H_differentiableAt_off_partition H r.1 ht_not_part
         simp only [Function.comp_def]
         erw [show (fun t' => fdBoundaryH H t' - zPath r.2) =

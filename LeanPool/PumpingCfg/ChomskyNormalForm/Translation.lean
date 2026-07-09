@@ -57,9 +57,7 @@ variable {g : ContextFreeGrammar T}
 lemma newTerminalRules_terminal_output {r : ContextFreeRule T g.NT} :
     ∀ r' ∈ newTerminalRules r, ∃ t, r'.output = [Symbol.terminal t] := by
   simp only [newTerminalRules, List.mem_filterMap, forall_exists_index, and_imp]
-  intro r' s hs
-  split <;> intro hr' <;> simp only [reduceCtorEq, Option.some.injEq] at hr'
-  simp [← hr']
+  grind
 
 variable [DecidableEq T] [DecidableEq g.NT]
 
@@ -77,10 +75,7 @@ lemma restrictTerminals_nonUnit_output (hrₒ : ∀ r ∈ g.rules, NonUnit r.out
       rightEmbed_string_nonUnit (hrₒ _ hrg)
     aesop
   | inr hr' =>
-    obtain ⟨s, ⟨_, hsr⟩⟩ := hr'
-    cases s <;> simp only [reduceCtorEq, Option.some.injEq] at hsr
-    rw [← hsr]
-    trivial
+    grind
 
 lemma restrictTerminals_not_empty_output (hne : ∀ r ∈ g.rules, r.output ≠ []) :
     ∀ r' ∈ g.restrictTerminals.rules, r'.output ≠ [] := by
@@ -94,10 +89,7 @@ lemma restrictTerminals_not_empty_output (hne : ∀ r ∈ g.rules, r.output ≠ 
   | inl =>
     aesop
   | inr hr' =>
-    obtain ⟨s, ⟨_, hsr⟩⟩ := hr'
-    cases s <;> simp only [reduceCtorEq, Option.some.injEq] at hsr
-    rw [← hsr]
-    simp
+    grind
 
 lemma restrictTerminals_terminal_or_nonterminals :
     ∀ r ∈ g.restrictTerminals.rules, (∃ t, r.output = [Symbol.terminal t])
@@ -112,8 +104,7 @@ lemma restrictTerminals_terminal_or_nonterminals :
   split <;> intro h
   · cases h with
     | inl hr =>
-      rw [hr]
-      simp
+      grind
     | inr hr =>
       left
       exact newTerminalRules_terminal_output r' hr
@@ -140,13 +131,7 @@ lemma eliminateUnitRules_not_empty_output (hne : ∀ r ∈ g.rules, r.output ≠
   rw [← hg]
   simp only [List.mem_filterMap, Finset.mem_toList, Option.ite_none_right_eq_some,
     forall_exists_index, and_imp]
-  intro _ hrg _
-  split
-  · simp
-  · simp only [Option.some.injEq]
-    intro hr
-    rw [← hr]
-    apply hne _ hrg
+  grind
 
 lemma eliminateEmpty_not_empty_output : ∀ r ∈ g.eliminateEmpty.rules, r.output ≠ [] := by
   simp only [eliminateEmpty]
@@ -160,16 +145,7 @@ lemma eliminateUnitRules_output_nonUnit :
       NonUnit r'.output by exact h
   simp only [computeUnitPairRules, List.mem_toFinset,
     List.mem_flatten, List.mem_map, Finset.mem_toList, Prod.exists, forall_exists_index, and_imp]
-  intro r l n₁ n₂ _ hl hrl
-  rw [← hl] at hrl
-  simp only [List.mem_filterMap, Finset.mem_toList, Option.ite_none_right_eq_some] at hrl
-  obtain ⟨_, _, _, hr⟩ := hrl
-  split at hr
-  · contradiction
-  · simp only [Option.some_inj] at hr
-    rw [← hr]
-    unfold NonUnit
-    split <;> tauto
+  grind
 
 theorem toCNF_correct : g.language \ {[]} = g.toCNF.language := by
   letI : DecidableEq g.eliminateEmpty.NT := inferInstanceAs (DecidableEq g.NT)

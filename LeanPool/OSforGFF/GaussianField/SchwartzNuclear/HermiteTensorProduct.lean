@@ -152,9 +152,7 @@ private theorem hermiteCoeff_rapid_decay (f : SchwartzMap ℝ ℝ) (k : ℕ) :
     have h2_pos : (0 : ℝ) < (1 + ↑m) ^ (2 : ℝ) := rpow_pos_of_pos h1m 2
     have hle : |hermiteCoeff1D m f| * (1 + ↑m) ^ k ≤ C * S / (1 + ↑m) ^ (2 : ℝ) := by
       rw [le_div_iff₀ h2_pos]
-      calc |hermiteCoeff1D m f| * (1 + ↑m) ^ k * (1 + ↑m) ^ (2 : ℝ)
-          = |hermiteCoeff1D m f| * ((1 + ↑m) ^ (k : ℕ) * (1 + ↑m) ^ (2 : ℝ)) := by ring
-        _ ≤ C * S := h_bd
+      grind
     rwa [div_eq_mul_inv, ← rpow_neg h1m.le] at hle
   -- ∑ C * S * (1+m)^{-2} converges
   have h_sum : Summable (fun m : ℕ => C * S * (1 + (m : ℝ)) ^ ((-2) : ℝ)) :=
@@ -395,8 +393,7 @@ private theorem rapidDecay_hasSum_generic {E : Type*} [NormedAddCommGroup E] [No
             ContDiff.sum (fun i _ => contDiff_const.mul (h_contDiff i l))
           have hcoe_r : (⇑r : E → ℝ) = fun y =>
               (∑' n, a.val n * b n y) - ∑ i ∈ s, G i y := by
-            ext y; simp only [hr_def, sub_apply, hg_apply]
-            exact congrArg ((∑' n, a.val n * b n y) - ·) (hsum_coe y)
+            grind
           rw [hcoe_r]
           set h_sum := fun y => ∑ i ∈ s, G i y with h_sum_def
           have h_neg_cd : ContDiff ℝ l (-h_sum) := hg_cd.neg
@@ -679,8 +676,7 @@ lemma multiIndexEquiv_growth (d : ℕ) :
       have h4 : Nat.pair m a + 1 ≤ (m + a + 1) ^ 2 := by omega
       have h5 : ((Nat.pair m a + 1 : ℕ) : ℝ) ≤ (((m + a + 1) ^ 2 : ℕ) : ℝ) :=
         Nat.cast_le.mpr h4
-      simp only [Nat.cast_add, Nat.cast_one, Nat.cast_pow] at h5
-      linarith
+      grind
     have h_ih := hbound₁ β
     have h_one_abs : (1 : ℝ) ≤ 1 + (MultiIndex.abs α : ℝ) :=
       le_add_of_nonneg_right (Nat.cast_nonneg _)
@@ -792,8 +788,7 @@ private lemma hermiteFunction_schwartz_seminorm_bound (n k m : ℕ) :
   refine ⟨SchwartzMap.seminorm ℝ k m φ, apply_nonneg _ _, fun t => ?_⟩
   have hle := SchwartzMap.le_seminorm ℝ k m φ t
   rw [Real.norm_eq_abs] at hle
-  rwa [show iteratedFDeriv ℝ m (⇑φ) t = iteratedFDeriv ℝ m (hermiteFunction n) t from
-    congr_arg (iteratedFDeriv ℝ m · t) hcoe.symm] at hle
+  grind
 
 -- The projection ‖EuclideanSpace.proj i‖ ≤ 1.
 private lemma euclidean_proj_norm_le_one (d : ℕ) (i : Fin d) :
@@ -1397,8 +1392,7 @@ private lemma hermiteCoeffNd_injective_succ (d' : ℕ)
   -- Step 3: f is zero everywhere
   ext x
   have h_zero : ∀ y t, (schwartzSlice d' f y) t = 0 := by
-    intro y t
-    exact congr_fun (congrArg SchwartzMap.toFun (h_slice y)) t
+    grind
   have h_val := h_zero (euclideanInit (d' + 1) x) (x (Fin.last (d' + 1)))
   rw [schwartz_slice_eq] at h_val
   rw [zero_apply]

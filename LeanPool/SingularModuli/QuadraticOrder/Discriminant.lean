@@ -64,8 +64,6 @@ lemma tau_sub_tauConj_sq_of_valid_disc
   -- reduce to: d^2 - 4 * ((d^2 - d) / 4) = d
   -- equivalently: 4 ∣ (d^2 - d), so 4 * ((d^2-d)/4) = d^2 - d
   have h4dvd := dvd_four_of_valid_disc hd
-  have hcancel : (4 : ℤ) * ((d ^ 2 - d) / 4) = d ^ 2 - d :=
-    Int.mul_ediv_cancel' h4dvd
-  linarith
+  grind
 
 end QuadraticOrder

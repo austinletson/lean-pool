@@ -108,8 +108,7 @@ lemma gff_generating_sum_factorization (m : ℝ) [Fact (0 < m)] (f g : TestFunct
   have h_exp : Complex.exp (-(1/2 : ℂ) * (a + 2 * b + c)) =
       Complex.exp (-(1/2 : ℂ) * a) * Complex.exp (-(1/2 : ℂ) * c) * Complex.exp (-b) := by
     rw [← Complex.exp_add, ← Complex.exp_add]
-    congr 1
-    ring
+    grind
   exact h_exp
 
 /-! ## Cross Covariance Decay -/
@@ -357,8 +356,7 @@ theorem schwartz_cross_covariance_decay_real (m : ℝ) [Fact (0 < m)]
     intro ha_in
     have := hR_bound ha_in
     simp only [Metric.mem_ball, dist_zero_right] at this
-    have : ‖a‖ ≤ R := le_of_lt this
-    linarith [lt_of_le_of_lt (le_max_left R 1) ha]
+    grind
   -- Apply the decay bound from cocompact membership
   have h_int_bound := hK_compl ha_not_in_K
   simp only [Set.mem_setOf_eq, dist_zero_right] at h_int_bound

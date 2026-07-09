@@ -63,10 +63,7 @@ private def supportPatternEmbedding {t j : ℕ} (hj : 2 ≤ j) :
     {S // S ∈ (((Finset.univ : Finset (Fin t)).powersetCard j).val)} ↪ SupportPattern t where
   toFun := fun S =>
     ⟨S.1, by
-      have hmem : S.1 ∈ (Finset.univ : Finset (Fin t)).powersetCard j := by
-        simp
-      have hcard : S.1.card = j := (Finset.mem_powersetCard.mp hmem).2
-      omega
+      grind
     ⟩
   inj' := by
     intro a b h
@@ -209,13 +206,9 @@ private lemma sum_choose_antidiag (n z : ℕ) (hz : z ≤ n) :
     rw [← show n + 1 - z = n - z + 1 from by omega, Nat.choose_symm (by omega : z ≤ n + 1)]
   rw [hchoose_eq] at hockey; rw [← hockey]
   apply Finset.sum_nbij (fun r => n - r)
-  · intro r hr
-    have : r ≤ z := by simp [Finset.mem_range] at hr; omega
-    exact Finset.mem_Icc.mpr ⟨by omega, by omega⟩
+  · grind
   · intro r₁ hr₁ r₂ hr₂ h
-    have h1 : r₁ ≤ z := by simp at hr₁; omega
-    have h2 : r₂ ≤ z := by simp at hr₂; omega
-    dsimp at h; omega
+    grind
   · intro m hm
     simp only [Set.mem_image, Finset.mem_coe]
     have hm' := hm; rw [Finset.mem_coe, Finset.mem_Icc] at hm'
@@ -285,13 +278,7 @@ private lemma full_sum_product_identity (n z M : ℕ) (hz : 1 ≤ z) (hzn : z �
   -- Cancel C(n,z): Σ * (n+1-z) = M * (n+1)
   have h1 : (Finset.range (z + 1)).sum (fun r => Nat.choose z r * (M / Nat.choose n r)) *
       (n + 1 - z) * Nat.choose n z = M * (n + 1) * Nat.choose n z := by
-    calc _ = (Finset.range (z + 1)).sum (fun r => Nat.choose z r * (M / Nat.choose n r)) *
-            Nat.choose n z * (n + 1 - z) := by ring
-      _ = M * Nat.choose (n + 1) z * (n + 1 - z) := by rw [hsum]
-      _ = M * (Nat.choose (n + 1) z * (n + 1 - z)) := by ring
-      _ = M * ((n + 1) * Nat.choose n z) := by
-            rw [show (n + 1 - 1 : ℕ) = n from by omega] at hcms; rw [hcms]
-      _ = M * (n + 1) * Nat.choose n z := by ring
+    grind
   exact Nat.eq_of_mul_eq_mul_right hcnz_pos h1
 
 /-- Counting bound: the number of j-subsets of T that intersect I in exactly 1 element
@@ -307,10 +294,7 @@ private lemma good_subsets_le {t : ℕ} (j : ℕ)
     have hSmem := Finset.mem_filter.mp hS
     have hSI := hSmem.2
     have hne : (S ∩ I).Nonempty := Finset.card_pos.mp (by omega)
-    obtain ⟨x, hx⟩ := hne
-    rw [Finset.mem_biUnion]
-    exact ⟨x, (Finset.mem_inter.mp hx).2,
-      Finset.mem_filter.mpr ⟨hS, (Finset.mem_inter.mp hx).1⟩⟩
+    grind
   -- Each fiber has card ≤ C(|T\I|, j-1) via injection S ↦ S.erase i
   have h_fib : ∀ i ∈ I,
       (goodSet.filter fun S => i ∈ S).card ≤ Nat.choose ((T \ I).card) (j - 1) := by
@@ -343,8 +327,7 @@ private lemma good_subsets_le {t : ℕ} (j : ℕ)
         · exact hST (Finset.mem_of_mem_erase hv)
         · intro hvI
           have : v ∈ S ∩ I := Finset.mem_inter.mpr ⟨Finset.mem_of_mem_erase hv, hvI⟩
-          rw [hSI_eq, Finset.mem_singleton] at this
-          exact absurd this (Finset.ne_of_mem_erase hv)
+          grind
       · -- |S.erase i| = j - 1
         rw [Finset.card_erase_of_mem hiS, hScard]
     · -- InjOn: S₁.erase i = S₂.erase i → S₁ = S₂
@@ -416,9 +399,7 @@ private lemma layer_filter_card_bound {t : ℕ} (j : ℕ) (hj : 2 ≤ j)
   rw [spoc_filter_card hj Q]
   have h_sub : ((Finset.univ.powersetCard j).filter Q) ⊆
       (T.powersetCard j).filter (fun S => (S ∩ I).card = 1) := by
-    intro S hS
-    simp only [Finset.mem_filter, Finset.mem_powersetCard, hQ_def] at hS ⊢
-    exact ⟨⟨hS.2.1, hS.1.2⟩, hS.2.2⟩
+    grind
   calc c * ((Finset.univ.powersetCard j).filter Q).card
       ≤ c * ((T.powersetCard j).filter (fun S => (S ∩ I).card = 1)).card :=
         Nat.mul_le_mul_left c (Finset.card_le_card h_sub)
@@ -572,16 +553,11 @@ private lemma s2_two_mul (m : ℕ) : s2 (2 * m) = s2 m := by
   | succ n =>
     have h : 2 * (n + 1) = (2 * n + 1) + 1 := by omega
     conv_lhs => rw [h]; unfold s2
-    have hmod : (2 * n + 2) % 2 = 0 := by omega
-    have hdiv : (2 * n + 2) / 2 = n + 1 := by omega
-    rw [hmod, hdiv]
-    simp
+    grind
 
 private lemma s2_two_mul_add_one (m : ℕ) : s2 (2 * m + 1) = 1 + s2 m := by
   conv_lhs => unfold s2
-  have hmod : (2 * m + 1) % 2 = 1 := by omega
-  have hdiv : (2 * m + 1) / 2 = m := by omega
-  rw [hmod, hdiv]
+  grind
 
 private lemma k_two_mul (m : ℕ) (hm : 1 ≤ m) : k (2 * m) = m + 2 * k m := by
   cases m with
@@ -589,10 +565,7 @@ private lemma k_two_mul (m : ℕ) (hm : 1 ≤ m) : k (2 * m) = m + 2 * k m := by
   | succ n =>
     have h : 2 * (n + 1) = 2 * n + 2 := by ring
     conv_lhs => rw [h]; unfold k
-    have hdiv1 : (2 * n + 2) / 2 = n + 1 := by omega
-    have hdiv2 : (2 * n + 3) / 2 = n + 1 := by omega
-    rw [hdiv1, hdiv2]
-    simp [two_mul, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
+    grind
 
 private lemma k_two_mul_add_one (m : ℕ) (hm : 1 ≤ m) :
     k (2 * m + 1) = m + k m + k (m + 1) := by
@@ -601,9 +574,7 @@ private lemma k_two_mul_add_one (m : ℕ) (hm : 1 ≤ m) :
   | succ n =>
     have h : 2 * (n + 1) + 1 = (2 * n + 1) + 2 := by omega
     conv_lhs => rw [h]; unfold k
-    have hdiv1 : (2 * n + 3) / 2 = n + 1 := by omega
-    have hdiv2 : (2 * n + 4) / 2 = n + 2 := by omega
-    rw [hdiv1, hdiv2]
+    grind
 
 -- Helper to avoid .sum vs ∑ notation mismatch
 private lemma sum_range_succ' (f : ℕ → ℕ) (n : ℕ) :
@@ -712,18 +683,14 @@ private theorem exactWitnessSup_singleton_lower (n : ℕ) (hn : 1 ≤ n) :
 private lemma harmonic_sub_one_eq_sum_Icc (t : ℕ) (ht : 2 ≤ t) :
     (((harmonic t : ℚ) : ℝ) - 1) = ∑ j ∈ Finset.Icc 2 t, (j : ℝ)⁻¹ := by
   have hIcc : Finset.Icc 1 t = insert 1 (Finset.Icc 2 t) := by
-    ext j
-    simp [Finset.mem_Icc]
-    omega
+    grind
   calc
     (((harmonic t : ℚ) : ℝ) - 1)
         = (∑ j ∈ Finset.Icc 1 t, (j : ℝ)⁻¹) - 1 := by
             rw [harmonic_eq_sum_Icc, Rat.cast_sum]
             simp_rw [Rat.cast_inv, Rat.cast_natCast]
     _ = (1 : ℝ) + ∑ j ∈ Finset.Icc 2 t, (j : ℝ)⁻¹ - 1 := by
-            rw [hIcc, Finset.sum_insert]
-            · simp
-            · simp
+            grind
     _ = ∑ j ∈ Finset.Icc 2 t, (j : ℝ)⁻¹ := by ring
 
 private lemma M_ne_zero (t : ℕ) (_ht : 2 ≤ t) : M t ≠ 0 := by
@@ -758,9 +725,7 @@ private lemma lubellCard_real (t : ℕ) (ht : 2 ≤ t) :
               have hchoose_nat :
                   t * Nat.choose (t - 1) (j - 1) = Nat.choose t j * j := by
                 have h := Nat.add_one_mul_choose_eq (t - 1) (j - 1)
-                have ht_sub : t - 1 + 1 = t := by omega
-                have hj_sub : j - 1 + 1 = j := by omega
-                simpa [ht_sub, hj_sub] using h
+                grind
               have hchoose :
                   (t : ℝ) * (Nat.choose (t - 1) (j - 1) : ℝ) =
                     (Nat.choose t j : ℝ) * j := by
@@ -790,11 +755,7 @@ private lemma fixedTCoeff_eq_log_ratio (t : ℕ) (ht : 2 ≤ t) :
   have hlogt_ne : Real.log (t : ℝ) ≠ 0 :=
     Real.log_ne_zero_of_pos_of_ne_one (by positivity) ht_ne_one
   rw [fixedTCoeff, Real.logb]
-  calc
-    ((((harmonic t : ℚ) : ℝ) - 1) / (Real.log (t : ℝ) / Real.log 2))
-        = ((((harmonic t : ℚ) : ℝ) - 1) * Real.log 2) / Real.log (t : ℝ) := by
-            field_simp [hlog2_ne, hlogt_ne]
-    _ = Real.log 2 * ((((harmonic t : ℚ) : ℝ) - 1)) / Real.log (t : ℝ) := by ring
+  grind
 
 private lemma fixedTCoeff_mul_logb_eq (t : ℕ) (ht : 2 ≤ t) (x : ℕ) :
     fixedTCoeff t * (x : ℝ) * Real.logb 2 (x : ℝ) =
@@ -832,10 +793,7 @@ private lemma log_le_harmonic (t : ℕ) (ht : 2 ≤ t) :
     simpa [Rat.cast_add, Rat.cast_inv, Rat.cast_natCast] using
       congrArg (fun q : ℚ => (q : ℝ)) hsuccq
   have hnonneg : 0 ≤ (t : ℝ)⁻¹ := by positivity
-  calc
-    Real.log (t : ℝ) ≤ ((harmonic (t - 1) : ℚ) : ℝ) := hmain
-    _ ≤ ((harmonic (t - 1) : ℚ) : ℝ) + (t : ℝ)⁻¹ := by linarith
-    _ = ((harmonic t : ℚ) : ℝ) := by rw [hsucc]
+  grind
 
 private lemma fixedTCoeff_lower (t : ℕ) (ht : 2 ≤ t) :
     Real.log 2 * (1 - 1 / Real.log (t : ℝ)) ≤ fixedTCoeff t := by
@@ -1003,9 +961,7 @@ private lemma lubellPart_sum_mul_log (t n : ℕ) (ht : 2 ≤ t) (hn : 1 ≤ n) :
           field_simp [ht_ne]
         simpa using h)
       (by
-        intro i hi
-        change 0 ≤ (lubellPart t n i : ℝ)
-        positivity)
+        grind)
   have havg :
       (∑ i ∈ (Finset.univ : Finset (Fin t)), (1 : ℝ) / t * (lubellPart t n i : ℝ)) =
         (n : ℝ) / t := by
@@ -1035,9 +991,7 @@ private lemma lubellPart_sum_mul_log (t n : ℕ) (ht : 2 ≤ t) (hn : 1 ≤ n) :
     _ = ((Finset.univ : Finset (Fin t)).sum
           fun i => (lubellPart t n i : ℝ) * Real.log (lubellPart t n i : ℝ)) := by
           rw [Finset.mul_sum]
-          apply Finset.sum_congr rfl
-          intro i hi
-          field_simp [ht_ne]
+          grind
 
 private lemma lubell_bonus_lower (t n : ℕ) (ht : 2 ≤ t) :
     (lubellQ t n : ℝ) * ((((lubellFrame t).card : ℕ) : ℝ)) ≥
@@ -1052,9 +1006,7 @@ private lemma lubell_bonus_lower (t n : ℕ) (ht : 2 ≤ t) :
         (lubellQ t n : ℝ) * (((t * M t : ℕ) : ℝ) * b) + (lubellR t n : ℝ) * b := by
     have hnat : (n : ℝ) = (t * (lubellQ t n * M t) : ℕ) + lubellR t n := by
       exact_mod_cast lubell_decomp t n
-    rw [hnat]
-    norm_num
-    ring
+    grind
   have hrle :
       (lubellR t n : ℝ) * b ≤ ((t * M t : ℕ) : ℝ) * b := by
     have hb_nonneg : 0 ≤ b := by
@@ -1160,20 +1112,13 @@ private theorem fixed_t_bound_exact (t : ℕ) (ht : 2 ≤ t) :
             gcongr
           have hcoef_le :
               fixedTCoeff t * (N : ℝ) * Real.logb 2 (N : ℝ) ≤ C := by
-            dsimp [C]
-            nlinarith [hB_nonneg]
+            grind
           have hbase :
               fixedTCoeff t * (n : ℝ) * Real.logb 2 (n : ℝ) ≤ C * ((n : ℝ) - 1) := by
             have htmp :
                 fixedTCoeff t * (n : ℝ) * Real.logb 2 (n : ℝ) ≤
                   (fixedTCoeff t * (N : ℝ) * Real.logb 2 (N : ℝ)) * ((n : ℝ) - 1) := by
-              calc
-                fixedTCoeff t * (n : ℝ) * Real.logb 2 (n : ℝ)
-                    ≤ fixedTCoeff t * (n : ℝ) * Real.logb 2 (N : ℝ) := hstep1
-                _ ≤ fixedTCoeff t * ((N : ℝ) * ((n : ℝ) - 1)) *
-                    Real.logb 2 (N : ℝ) := hstep2
-                _ = (fixedTCoeff t * (N : ℝ) * Real.logb 2 (N : ℝ)) * ((n : ℝ) - 1) := by
-                      ring
+              grind
             have hn1_nonneg : 0 ≤ (n : ℝ) - 1 := sub_nonneg.mpr (by exact_mod_cast hn)
             exact le_mul_of_le_mul_of_nonneg_right htmp hcoef_le hn1_nonneg
           linarith
@@ -1283,8 +1228,7 @@ private theorem fixed_t_bound_exact (t : ℕ) (ht : 2 ≤ t) :
           exact le_of_eq_of_le (id (Eq.symm hrewrite)) hmul
         have hbonus := lubell_bonus_lower t n ht
         have hC_ge_B : B ≤ C := by
-          dsimp [C]
-          nlinarith [hcoeff_term_nonneg]
+          grind
         have hCt : B ≤ C * ((t : ℝ) - 1) := by
           have hC_nonneg : 0 ≤ C := hC_pos.le
           have ht1 : (1 : ℝ) ≤ (t : ℝ) - 1 := by
@@ -1307,11 +1251,7 @@ theorem fixed_t_bound (t : ℕ) (ht : 2 ≤ t) :
   refine ⟨C, hC_pos, ?_⟩
   intro n hn
   have hsup : (exactWitnessSup n : ℝ) ≤ H n := by exact_mod_cast exactWitnessSup_le_H n hn
-  calc
-    (H n : ℝ) ≥ exactWitnessSup n := hsup
-    _ ≥ fixedTCoeff t * (n : ℝ) * Real.logb 2 (n : ℝ) - C * ((n : ℝ) - 1) := hC n hn
-    _ ≥ fixedTCoeff t * (n : ℝ) * Real.logb 2 (n : ℝ) - C * (n : ℝ) := by
-          nlinarith [hC_pos]
+  grind
 
 private lemma s2_add_pow_two (k m : ℕ) (hm : m < 2 ^ k) :
     s2 (2 ^ k + m) = 1 + s2 m := by
@@ -1392,8 +1332,7 @@ private lemma digitSumPrefix_pow_two_real {k : ℕ} (hk : 1 ≤ k) :
   calc
     (digitSumPrefix (2 ^ k) : ℝ) = (k : ℝ) * (2 ^ (k - 1) : ℝ) := by exact_mod_cast hnat
     _ = (2 ^ k : ℝ) * ((k : ℝ) / 2) := by
-          rw [hpow]
-          ring
+          grind
 
 private theorem digitSumPrefix_upper (n : ℕ) (hn : 1 ≤ n) :
     (digitSumPrefix n : ℝ) ≤ (n : ℝ) * (((Nat.log 2 n : ℕ) : ℝ) / 2 + 1) := by
@@ -1501,30 +1440,9 @@ private lemma card_degreeOneSubsets_eq
       rcases hAe with ⟨B, hB, rfl⟩
       refine mem_filter.mpr ?_
       refine ⟨?_, ?_⟩
-      · refine mem_powersetCard.mpr ?_
-        refine ⟨?_, ?_⟩
-        · intro x hx
-          rcases mem_insert.mp hx with rfl | hx
-          · exact (mem_filter.mp he).1
-          · exact (mem_filter.mp ((mem_powersetCard.mp hB).1 hx)).1
-        · have he_not_mem : e ∉ B := by
-            intro heB
-            exact (mem_filter.mp ((mem_powersetCard.mp hB).1 heB)).2 ((mem_filter.mp he).2)
-          have hBcard : B.card = r - 1 := (mem_powersetCard.mp hB).2
-          have : r - 1 + 1 = r := by omega
-          simp [he_not_mem, hBcard, this]
+      · grind
       · have hfilter_insert : (insert e B).filter (fun e' => v ∈ e') = {e} := by
-          ext x
-          constructor
-          · intro hx
-            rcases mem_insert.mp (mem_filter.mp hx).1 with rfl | hxB
-            · simp
-            · exact False.elim
-                ((mem_filter.mp ((mem_powersetCard.mp hB).1 hxB)).2 (mem_filter.mp hx).2)
-          · intro hx
-            rw [mem_singleton] at hx
-            subst hx
-            exact mem_filter.mpr ⟨mem_insert_self _ _, (mem_filter.mp he).2⟩
+          grind
         rw [degree, hfilter_insert]
         simp
     · intro hA
@@ -1542,15 +1460,11 @@ private lemma card_degreeOneSubsets_eq
         · intro hvx
           have hx_filter : x ∈ A.filter fun e => v ∈ e :=
             mem_filter.mpr ⟨(mem_erase.mp hx).2, hvx⟩
-          rw [he_singleton] at hx_filter
-          exact (mem_erase.mp hx).1 (by simpa using hx_filter)
+          grind
       have hBcard : (A.erase e).card = r - 1 := by
-        have hAcard' : A.card = r := (mem_powersetCard.mp hAcard).2
-        rw [Finset.card_erase_of_mem heA, hAcard']
+        grind
       have hinsert : insert e (A.erase e) = A := insert_erase heA
-      refine mem_biUnion.mpr ⟨e, ?_, ?_⟩
-      · exact mem_filter.mpr ⟨(mem_powersetCard.mp hAcard).1 heA, hev⟩
-      · exact mem_image.mpr ⟨A.erase e, mem_powersetCard.mpr ⟨hBsub_non, hBcard⟩, hinsert⟩
+      grind
   rw [← hpieces]
   rw [card_biUnion]
   · calc
@@ -1560,17 +1474,14 @@ private lemma card_degreeOneSubsets_eq
               intro e he
               symm
               refine Finset.card_bij (fun B hB => insert e B) ?_ ?_ ?_
-              · intro B hB
-                exact mem_image.mpr ⟨B, hB, rfl⟩
+              · grind
               · intro B1 hB1 B2 hB2 hEq
                 have he_not_mem1 : e ∉ B1 := fun heB =>
                   (mem_filter.mp ((mem_powersetCard.mp hB1).1 heB)).2 ((mem_filter.mp he).2)
                 have he_not_mem2 : e ∉ B2 := fun heB =>
                   (mem_filter.mp ((mem_powersetCard.mp hB2).1 heB)).2 ((mem_filter.mp he).2)
                 simpa [he_not_mem1, he_not_mem2] using congrArg (fun s => s.erase e) hEq
-              · intro C hC
-                rcases mem_image.mp hC with ⟨B, hB, rfl⟩
-                exact ⟨B, hB, rfl⟩
+              · grind
       _ = inc.card * (non.powersetCard (r - 1)).card := by
               rw [Finset.sum_const_nat (m := (non.powersetCard (r - 1)).card) (fun _ _ => rfl)]
       _ = (edges.filter fun e => v ∈ e).card *
@@ -1586,9 +1497,7 @@ private lemma card_degreeOneSubsets_eq
     have he1_not_B2 : e1 ∉ B2 := fun he => (mem_filter.mp ((mem_powersetCard.mp hB2).1 he)).2 hv1
     have : e1 = e2 := by
       have he1_mem : e1 ∈ insert e2 B2 := by simp [hEq]
-      rcases mem_insert.mp he1_mem with h | h
-      · exact h
-      · exact False.elim (he1_not_B2 h)
+      grind
     exact hne this
 
 private lemma degree_pos_of_mem_vertexSet {edges : Finset (Finset ℕ)} {v : ℕ}
@@ -1655,9 +1564,7 @@ private lemma degree_weighted_sum (m k : ℕ) (hm : 1 ≤ m) (hk : 1 ≤ k) (hkm
     have hrden_nat : 0 < Nat.choose (m - 1) (r - 1) := Nat.choose_pos (by omega : r - 1 ≤ m - 1)
     have hrden : (Nat.choose (m - 1) (r - 1) : ℚ) ≠ 0 := by exact_mod_cast hrden_nat.ne'
     have hcross := choose_cross_identity m k r hk hkm hr1 hrm
-    field_simp [hden, hrden]
-    ring_nf
-    simpa [mul_comm, mul_left_comm, mul_assoc] using hcross.symm
+    grind
   calc
     ∑ r ∈ Icc 1 m,
         (((k : ℚ) * Nat.choose (m - k) (r - 1)) / Nat.choose (m - 1) (r - 1))
@@ -1692,8 +1599,7 @@ private lemma degree_weighted_sum (m k : ℕ) (hm : 1 ≤ m) (hk : 1 ≤ k) (hkm
               ∑ j ∈ Ico (k - 1) m, (Nat.choose j (k - 1) : ℚ)
                 = ∑ i ∈ range (m - k + 1), (Nat.choose (i + (k - 1)) (k - 1) : ℚ) := by
               rw [Finset.sum_Ico_eq_sum_range]
-              have hlen : m - (k - 1) = m - k + 1 := by omega
-              simp [hlen, Nat.add_comm]
+              grind
           have hshift :
               ∑ i ∈ range (m - k + 1),
                 (Nat.choose (i + (k - 1)) (k - 1) : ℚ) = Nat.choose m k := by
@@ -1712,9 +1618,7 @@ private lemma degree_weighted_sum (m k : ℕ) (hm : 1 ≤ m) (hk : 1 ≤ k) (hkm
             simpa [hm', hk'] using Nat.add_one_mul_choose_eq (m - 1) (k - 1)
           have hchoose : ((m : ℚ) * Nat.choose (m - 1) (k - 1)) = Nat.choose m k * k := by
             exact_mod_cast hchooseNat
-          field_simp [hden]
-          ring_nf
-          simpa [mul_comm, mul_left_comm, mul_assoc] using hchoose.symm
+          grind
 
 private theorem vertex_card_le_harmonic
     (edges : Finset (Finset ℕ)) (n : ℕ) (hm : 1 ≤ edges.card)
@@ -1761,13 +1665,7 @@ private theorem vertex_card_le_harmonic
                 ((Nat.choose m r : ℚ) / Nat.choose (m - 1) (r - 1)) = m / r := by
               field_simp [hrden, show (r : ℚ) ≠ 0 by exact_mod_cast Nat.ne_of_gt hr1]
               simpa [mul_comm, mul_left_comm, mul_assoc] using hchoose.symm
-            calc
-              (Nat.choose m r : ℚ) * ((n : ℚ) / Nat.choose (m - 1) (r - 1))
-                  = (n : ℚ) *
-                      (((Nat.choose m r : ℚ) / Nat.choose (m - 1) (r - 1))) := by
-                        ring
-              _ = (n : ℚ) * (m / r) := by rw [hratio]
-              _ = (n : ℚ) * m / r := by ring
+            grind
   have hW_upper : W ≤ (n : ℚ) * m * harmonic m := by
     dsimp [W]
     calc
@@ -1803,9 +1701,7 @@ private theorem vertex_card_le_harmonic
                 refine sum_congr rfl ?_
                 intro A hA
                 rw [hucov A, div_eq_mul_inv, Finset.sum_mul]
-                refine sum_congr rfl ?_
-                intro v hv
-                split_ifs <;> simp [div_eq_mul_inv]
+                grind
       _ = ∑ v ∈ vertexSet edges,
               ∑ A ∈ edges.powersetCard r,
                 (if degree A v = 1 then ((1 : ℚ) / den) else 0) := by
@@ -1884,8 +1780,7 @@ private theorem vertexSet_card_le_harmonic_of_noLargePartition
     have hnonneg : (0 : ℚ) ≤ (n : ℚ) * harmonic n := mul_nonneg (by positivity) hharm_nonneg
     simpa [hVempty] using hnonneg
   · have hCpos : 1 ≤ C.card := by
-      rcases Finset.nonempty_iff_ne_empty.mpr hCempty with ⟨e, he⟩
-      exact Finset.card_pos.mpr ⟨e, he⟩
+      grind
     have hpartC : NoLargePartition C n := by
       intro P hP
       have hPe : P ⊆ edges := fun e he => hCsub (hP he)
@@ -1913,12 +1808,7 @@ private lemma le_two_pow (n : ℕ) : n ≤ 2 ^ n := by
   | zero =>
       simp
   | succ n ih =>
-      calc
-        n + 1 ≤ 2 ^ n + 1 := Nat.add_le_add_right ih 1
-        _ ≤ 2 ^ n + 2 ^ n := by
-              lia
-        _ = 2 ^ (n + 1) := by
-              rw [Nat.pow_succ, Nat.mul_comm, two_mul]
+      grind
 
 private lemma k_pow_two_real {m : ℕ} (hm : 1 ≤ m) :
     (k (2 ^ m) : ℝ) = (2 ^ m : ℝ) * ((m : ℝ) / 2 + 1) := by
@@ -2006,16 +1896,13 @@ theorem asymptotic_lower_bound :
     let t : ℕ := max N 2
     have ht : 2 ≤ t := by simp [t]
     have htlog : 1 / ε < Real.log (t : ℝ) := by
-      apply hN
-      exact Nat.le_max_left N 2
+      grind
     have hlogt_pos : 0 < Real.log (t : ℝ) := Real.log_pos (by exact_mod_cast ht)
     have hinv : 1 / Real.log (t : ℝ) < ε := (one_div_lt hε_pos hlogt_pos).1 htlog
     have hyhalf : y / 2 < fixedTCoeff t := by
       calc
         y / 2 = Real.log 2 * (1 - ε) := by
-                  dsimp [ε]
-                  field_simp [hlog2_ne]
-                  ring
+                  grind
         _ < Real.log 2 * (1 - 1 / Real.log (t : ℝ)) := by
               exact mul_lt_mul_of_pos_left (by linarith [hinv]) hlog2_pos
         _ ≤ fixedTCoeff t := fixedTCoeff_lower t ht

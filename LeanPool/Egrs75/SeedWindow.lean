@@ -72,8 +72,7 @@ theorem walk_hits {δ w₁ w₂ start : ℝ} (hδ0 : 0 < δ) (hδw : δ < w₂ -
     by_contra h
     have h0 : t = 0 := by omega
     rw [h0] at ht
-    push_cast at ht
-    linarith
+    grind
   have hprev : ¬ w₁ < start + ((t - 1 : ℕ) : ℝ) * δ := by
     rw [htdef]
     exact Nat.find_min hex (by omega)
@@ -85,8 +84,7 @@ theorem walk_hits {δ w₁ w₂ start : ℝ} (hδ0 : 0 < δ) (hδw : δ < w₂ -
   refine ⟨t, ht1, ht, ?_⟩
   have hstep : start + (t : ℝ) * δ = (start + ((t - 1 : ℕ) : ℝ) * δ) + δ := by
     rw [hcast]; ring
-  rw [hstep]
-  linarith
+  grind
 
 /-! ## The small nonzero step: Dirichlet + irrationality -/
 
@@ -134,9 +132,7 @@ theorem exists_small_step {p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hpq : p ≠
     push Not at hneg
     have hjle : j ≤ -1 := by omega
     have hjR : (j : ℝ) ≤ -1 := by exact_mod_cast hjle
-    have h1 : (1 : ℝ) ≤ (k : ℝ) * θ - (j : ℝ) := by linarith
-    have h2 : (1 : ℝ) ≤ |(k : ℝ) * θ - (j : ℝ)| := le_trans h1 (le_abs_self _)
-    linarith [le_trans happ hhalf]
+    grind
   -- the step
   have hkt : ((k.toNat : ℕ) : ℝ) = (k : ℝ) := by
     exact_mod_cast congrArg (Int.cast : ℤ → ℝ) (Int.toNat_of_nonneg hk0.le)
@@ -145,8 +141,7 @@ theorem exists_small_step {p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hpq : p ≠
   have ha1 : 1 ≤ k.toNat := by omega
   have hδeq : (k.toNat : ℝ) * Real.log p - (j.toNat : ℝ) * Real.log q
       = ((k : ℝ) * θ - (j : ℝ)) * Real.log q := by
-    rw [hkt, hjt, hθdef]
-    field_simp
+    grind
   refine ⟨k.toNat, j.toNat, ha1, ?_, ?_, ?_⟩
   · -- nonzero
     rw [hδeq]
@@ -154,8 +149,7 @@ theorem exists_small_step {p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hpq : p ≠
     rcases mul_eq_zero.mp h with h1 | h2
     · -- kθ = j ⟹ θ = j/k rational
       have hθval : θ = (j : ℝ) / (k : ℝ) := by
-        rw [eq_div_iff (ne_of_gt hkR)]
-        linarith
+        grind
       exact hθirr ⟨(j : ℚ) / (k : ℚ), by rw [hθval]; push_cast; ring⟩
     · exact absurd h2 (ne_of_gt hM)
   · -- |δ| < ε
@@ -250,9 +244,7 @@ theorem seed_window {p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hq3 : 3 ≤ q)
       have htb : t ≤ t * b := Nat.le_mul_of_pos_right t (by omega)
       have hid : ((α₀ + t * a : ℕ) : ℝ) * Real.log p - ((t * b : ℕ) : ℝ) * Real.log q
           = -(-((α₀ : ℝ) * Real.log p) + (t : ℝ) * (-δ)) := by
-        push_cast
-        rw [hδdef]
-        ring
+        grind
       refine ⟨α₀ + t * a, t * b, by omega, by omega, ?_, ?_⟩
       · rw [hid]; linarith
       · rw [hid]; linarith
@@ -270,9 +262,7 @@ theorem seed_window {p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hq3 : 3 ≤ q)
         (Nat.mul_ne_zero (by omega) (by omega))
       have hid : ((t * a : ℕ) : ℝ) * Real.log p - ((t * b + β₀ : ℕ) : ℝ) * Real.log q
           = -((β₀ : ℝ) * Real.log q) + (t : ℝ) * δ := by
-        push_cast
-        rw [hδdef]
-        ring
+        grind
       refine ⟨t * a, t * b + β₀, by omega, by omega, ?_, ?_⟩
       · rw [hid]; exact hlo
       · rw [hid]; exact hhi
@@ -291,14 +281,11 @@ theorem seed_window {p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hq3 : 3 ≤ q)
     rw [hee]
     have h1 : Real.log (c₁ * (q : ℝ) ^ βe) < Real.log ((p : ℝ) ^ α) := by
       rw [Real.log_mul (ne_of_gt hc₁pos) (by positivity), Real.log_pow, Real.log_pow]
-      have hlogq : Real.log ((q : ℝ) ^ βe) = (βe : ℝ) * Real.log q := Real.log_pow _ _
-      linarith [hγlo]
+      grind
     have h2 : c₁ * (q : ℝ) ^ βe < (p : ℝ) ^ α :=
       lt_of_log_lt (by positivity) (by positivity) h1
     have h3 : (((q - 1) / 2 * q ^ βe : ℕ) : ℝ) < ((p ^ α : ℕ) : ℝ) := by
-      push_cast
-      rw [hc₁def] at h2
-      linarith
+      grind
     exact_mod_cast h3
   · -- right bound
     rw [hee]
@@ -308,19 +295,13 @@ theorem seed_window {p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hq3 : 3 ≤ q)
     have h2 : (p : ℝ) ^ α < c₂ * (q : ℝ) ^ βe :=
       lt_of_log_lt (by positivity) (by positivity) h1
     have hsplit : (q : ℝ) ^ βe = (q : ℝ) ^ (βe - 3 + 1) * (q : ℝ) ^ 2 := by
-      rw [← pow_add]
-      congr 1
-      omega
+      grind
     have h3 : c₂ * (q : ℝ) ^ βe
         = c₁ * (q : ℝ) ^ βe + (q : ℝ) ^ (βe - 3 + 1) / 4 := by
-      rw [hc₂def, hsplit]
-      have hq2 : (q : ℝ) ^ 2 ≠ 0 := by positivity
-      field_simp
+      grind
     have h4 : 4 * ((p ^ α : ℕ) : ℝ)
         < 4 * (((q - 1) / 2 * q ^ βe : ℕ) : ℝ) + ((q ^ (βe - 3 + 1) : ℕ) : ℝ) := by
-      push_cast
-      rw [hc₁def] at h3
-      nlinarith [h2, h3]
+      grind
     exact_mod_cast h4
 
 end Egrs75.SeedWindow

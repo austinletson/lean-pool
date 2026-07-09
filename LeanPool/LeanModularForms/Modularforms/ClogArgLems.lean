@@ -45,16 +45,12 @@ lemma arg_pow_aux (n : ℕ) (x : ℂ) (hx : x ≠ 0) (hna : |arg x| < π / n) :
         · have hnal := hna.1
           rw [← neg_div] at hnal
           rw [div_lt_iff₀' ] at hnal
-          · rw [Nat.cast_add, add_mul] at hnal
-            simpa only [gt_iff_lt, Nat.cast_one, one_mul] using hnal
-          · norm_cast
-            omega
+          · grind
+          · grind
         · have hnal := hna.2
           rw [lt_div_iff₀', Nat.cast_add] at hnal
-          · rw [add_mul] at hnal
-            simpa only [ge_iff_le, Nat.cast_one, one_mul] using hnal.le
-          · norm_cast
-            omega
+          · grind
+          · grind
       apply lt_trans hna
       gcongr
       exact (lt_add_one n)
@@ -108,8 +104,7 @@ lemma arg_pow2 (n : ℕ) (f : ℍ → ℂ) (hf : Tendsto f atImInfty (𝓝 0)) :
       use {r : ℝ | 1 ≤ r}
       refine ⟨?_, ?_⟩
       · use 1
-        intro b hb
-        aesop
+        grind
       simp only [preimage_setOf_eq, subset_refl]
     · have hpi : 0 < π / n := div_pos Real.pi_pos (by exact_mod_cast Nat.pos_of_ne_zero hn0)
       have hA1 := h3 (π / n) hpi

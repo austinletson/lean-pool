@@ -156,8 +156,7 @@ theorem prepend_univ (σ : Str) : prepend σ Set.univ = cone σ := by
   ext w
   simp only [mem_prepend, Set.mem_univ, true_and, mem_cone]
   constructor
-  · rintro ⟨τ, rfl⟩
-    exact List.prefix_append σ τ
+  · grind
   · rintro ⟨t, ht⟩
     exact ⟨t, ht.symm⟩
 
@@ -210,9 +209,7 @@ def sigmaElt (σ : Str) (x : B.Element) : B.Element where
     have hZmem : B.mem (prepend σ (X₁ ∩ X₂)) := memB_prepend σ (x.sub hXinter)
     exact ⟨B.inter_mem hY₁ hY₂ hZmem hsub, X₁ ∩ X₂, hXinter, hsub⟩
   up_mem := by
-    intro X Y hX hY hXY
-    obtain ⟨_, X', hX', hsub'⟩ := hX
-    exact ⟨hY, X', hX', hsub'.trans hXY⟩
+    grind
 
 /-- **`σ⊥` really is `σ` applied to `⊥`.** `sigmaElt σ ⊥ = sigmaBot σ`, justifying
 the `σ⊥`

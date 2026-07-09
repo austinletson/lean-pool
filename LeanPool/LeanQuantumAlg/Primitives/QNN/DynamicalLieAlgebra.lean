@@ -107,8 +107,7 @@ theorem IsControllable.mono {gens gens' : Set (Matrix (Fin N) (Fin N) ℂ)}
   have hmono : dynamicalLieAlgebra gens ≤ dynamicalLieAlgebra gens' :=
     LieSubalgebra.lieSpan_le.mpr (hsub.trans LieSubalgebra.subset_lieSpan)
   rw [IsControllable] at hc ⊢
-  rw [hc] at hmono
-  exact top_le_iff.mp hmono
+  grind
 
 /-! ### Classification: the abelian (mutually commuting) case -/
 

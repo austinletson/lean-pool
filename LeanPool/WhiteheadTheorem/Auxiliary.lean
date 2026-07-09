@@ -81,8 +81,7 @@ lemma Real.range_bddAbove_of_finite_domain {ι : Type*} (f : ι → ℝ) [Finite
   · exact ⟨0, fun y hy ↦ (IsEmpty.exists_iff.mp hy).elim⟩
   · obtain ⟨i, hi⟩ := Finite.exists_max f
     exact ⟨f i, fun y hy ↦ by
-      obtain ⟨j, hj⟩ := Set.mem_range.mp hy
-      rw [← hj]; exact hi j⟩
+      grind⟩
 
 lemma Real.forall_le_of_iSup_le_of_finite_domain {ι : Type*} {f : ι → ℝ} {a : ℝ}
     [Finite ι] (hf : ⨆ i, f i ≤ a) : ∀ (i : ι), f i ≤ a :=
@@ -105,16 +104,12 @@ lemma Real.exists_eq_of_iSup_eq_of_finite_domain {ι : Type*} {f : ι → ℝ} {
   have iSup_lt_iff : ⨆ i ∈ (Set.univ : Set ι), f i < a ↔ ∀ i ∈ Set.univ, f i < a := by
     apply Set.Finite.ciSup_lt_iff Set.finite_univ
     rw [Real.sSup_empty]   -- The supremum `sSup ∅` is defined to be 0 for `ℝ`
-    simp only [Set.mem_univ, true_and]
-    exact hfz
+    grind
   have lt_iSup_iff : a < ⨆ i, f i ↔ ∃ i, a < f i :=
     lt_ciSup_iff (range_bddAbove_of_finite_domain f)
   by_contra nex; simp only [not_exists] at nex
   have : ∀ (i : ι), f i < a := fun i ↦ by
-    obtain h | h | h := lt_trichotomy (f i) a
-    · exact h
-    · exfalso; exact nex i h
-    · exfalso; exact ne_of_lt (lt_iSup_iff.mpr ⟨i, h⟩) hf.symm
+    grind
   replace : ∀ i ∈ Set.univ, f i < a := fun i _ ↦ this i
   replace := iSup_lt_iff.mpr this
   rw [(by simp only [Set.mem_univ, ciSup_unique] : ⨆ i ∈ Set.univ, f i = ⨆ i, f i)] at this

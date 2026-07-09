@@ -408,8 +408,7 @@ private lemma sum_map_triple_second
   have preimage_eq : ∀ b : β,
       (fun ω => (f ω, g ω, h ω))⁻¹' {(a, b, c)}
         = g ⁻¹' {b} ∩ ((fun ω => (f ω, h ω))⁻¹' {(a, c)}) := by
-    intro b; ext ω; simp only [Set.mem_preimage, Set.mem_singleton_iff, Prod.mk.injEq,
-      Set.mem_inter_iff]; tauto
+    grind
   simp_rw [preimage_eq]
   simp_rw [show ∀ b : β, μ.real (g ⁻¹' {b} ∩ (fun ω => (f ω, h ω))⁻¹' {(a, c)})
       = (μ.restrict ((fun ω => (f ω, h ω))⁻¹' {(a, c)})).real (g ⁻¹' {b}) from
@@ -443,8 +442,7 @@ private lemma sum_map_triple_third
   have preimage_eq : ∀ c : γ,
       (fun ω => (f ω, g ω, h ω))⁻¹' {(a, b, c)}
         = h ⁻¹' {c} ∩ ((fun ω => (f ω, g ω))⁻¹' {(a, b)}) := by
-    intro c; ext ω; simp only [Set.mem_preimage, Set.mem_singleton_iff, Prod.mk.injEq,
-      Set.mem_inter_iff]; tauto
+    grind
   simp_rw [preimage_eq]
   simp_rw [show ∀ c : γ, μ.real (h ⁻¹' {c} ∩ (fun ω => (f ω, g ω))⁻¹' {(a, b)})
       = (μ.restrict ((fun ω => (f ω, g ω))⁻¹' {(a, b)})).real (h ⁻¹' {c}) from
@@ -469,9 +467,7 @@ private lemma measureReal_map_pair_le_map_fst
   rw [map_measureReal_apply (hf.prodMk hg) (measurableSet_singleton _),
       map_measureReal_apply hf (measurableSet_singleton _)]
   apply measureReal_mono _ (measure_ne_top _ _)
-  intro ω hω
-  simp only [Set.mem_preimage, Set.mem_singleton_iff, Prod.mk.injEq] at hω ⊢
-  exact hω.1
+  grind
 
 /--
 **Marginal bound (pair, second).** The pair mass is bounded by the second projection.
@@ -487,9 +483,7 @@ private lemma measureReal_map_pair_le_map_snd
   rw [map_measureReal_apply (hf.prodMk hg) (measurableSet_singleton _),
       map_measureReal_apply hg (measurableSet_singleton _)]
   apply measureReal_mono _ (measure_ne_top _ _)
-  intro ω hω
-  simp only [Set.mem_preimage, Set.mem_singleton_iff, Prod.mk.injEq] at hω ⊢
-  exact hω.2
+  grind
 
 /-- **Marginal bound (triple, forget third).** `p(a, b, c) ≤ p(a, b)`. -/
 private lemma measureReal_map_triple_le_map_pair_12
@@ -505,9 +499,7 @@ private lemma measureReal_map_triple_le_map_pair_12
   rw [map_measureReal_apply (hf.prodMk (hg.prodMk hh)) (measurableSet_singleton _),
       map_measureReal_apply (hf.prodMk hg) (measurableSet_singleton _)]
   apply measureReal_mono _ (measure_ne_top _ _)
-  intro ω hω
-  simp only [Set.mem_preimage, Set.mem_singleton_iff, Prod.mk.injEq] at hω ⊢
-  exact ⟨hω.1, hω.2.1⟩
+  grind
 
 /-- **Marginal bound (triple, forget second).** `p(a, b, c) ≤ p(a, c)`. -/
 private lemma measureReal_map_triple_le_map_pair_13
@@ -523,9 +515,7 @@ private lemma measureReal_map_triple_le_map_pair_13
   rw [map_measureReal_apply (hf.prodMk (hg.prodMk hh)) (measurableSet_singleton _),
       map_measureReal_apply (hf.prodMk hh) (measurableSet_singleton _)]
   apply measureReal_mono _ (measure_ne_top _ _)
-  intro ω hω
-  simp only [Set.mem_preimage, Set.mem_singleton_iff, Prod.mk.injEq] at hω ⊢
-  exact ⟨hω.1, hω.2.2⟩
+  grind
 
 /--
 **IndepFun product formula.** If `f, g` are independent under `μ`, the joint singleton
@@ -615,10 +605,7 @@ private lemma sum_filter_map_real_eq_map_comp
   rw [hUnion]
   refine (measureReal_biUnion_finset ?_ ?_).symm
   · rintro t₁ - t₂ - hne
-    rw [Function.onFun, Set.disjoint_left]
-    intro ω hω₁ hω₂
-    simp only [Set.mem_preimage, Set.mem_singleton_iff] at hω₁ hω₂
-    exact hne (hω₁.symm.trans hω₂)
+    grind
   · exact fun _ _ => hF (measurableSet_singleton _)
 
 /-! ### Marginal structure of `ptilde`
@@ -658,9 +645,7 @@ private lemma ptilde_fibre_sum
   change ∑ x, ∑ y, Fx x * Fy y / c = c
   simp_rw [div_eq_mul_inv, ← Finset.sum_mul]
   rw [← Finset.sum_mul_sum, hSumFx, hSumFy]
-  by_cases hc : c = 0
-  · simp [hc]
-  · field_simp
+  grind
 
 omit [Fintype S₁] [Fintype S₃] [Fintype S₄] in
 /--
@@ -956,17 +941,11 @@ private lemma condIndepFun_map_triple_real_singleton
     -- Translate to target form.
     have h_T_eq : (fun ω => (f ω, g ω, h ω)) ⁻¹' {(a, b, c)}
         = h ⁻¹' {c} ∩ (f ⁻¹' {a} ∩ g ⁻¹' {b}) := by
-      ext ω
-      simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_inter_iff, Prod.mk.injEq]
-      tauto
+      grind
     have h_A_eq : (fun ω => (f ω, h ω)) ⁻¹' {(a, c)} = h ⁻¹' {c} ∩ f ⁻¹' {a} := by
-      ext ω
-      simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_inter_iff, Prod.mk.injEq]
-      tauto
+      grind
     have h_B_eq : (fun ω => (g ω, h ω)) ⁻¹' {(b, c)} = h ⁻¹' {c} ∩ g ⁻¹' {b} := by
-      ext ω
-      simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_inter_iff, Prod.mk.injEq]
-      tauto
+      grind
     rw [map_measureReal_apply (hf.prodMk (hg.prodMk hh)) (measurableSet_singleton _),
         map_measureReal_apply (hf.prodMk hh) (measurableSet_singleton _),
         map_measureReal_apply (hg.prodMk hh) (measurableSet_singleton _),
@@ -1058,28 +1037,7 @@ private lemma phat_sum_eq_one
           y, z)} : Set _))]
       rw [hphat_zero, zero_mul, hXYZ_zero, zero_mul, zero_mul]
     · -- pZ > 0: multiply both sides by pZ and use h_phat_mul, h_helper.
-      have h_muled : (phat X Y Z U μ (x, y, z, u)
-          * ((μ.map U).real {u} * (μ.map X).real {x} * (μ.map Y).real {y})) * (μ.map Z).real {z}
-        = ((μ.map (fun ω => (X ω, Y ω, Z ω))).real {(x, y, z)}
-            * (μ.map (fun ω => (X ω, U ω))).real {(x, u)}
-            * (μ.map (fun ω => (Y ω, U ω))).real {(y, u)}) * (μ.map Z).real {z} := by
-        have h_lhs : (phat X Y Z U μ (x, y, z, u)
-            * ((μ.map U).real {u} * (μ.map X).real {x} * (μ.map Y).real {y})) * (μ.map
-              Z).real {z}
-          = phat X Y Z U μ (x, y, z, u)
-            * ((μ.map Z).real {z} * (μ.map U).real {u} * (μ.map X).real {x} * (μ.map
-              Y).real {y}) := by
-          ring
-        rw [h_lhs, h_phat_mul x y z u]
-        have h_rhs : ((μ.map (fun ω => (X ω, Y ω, Z ω))).real {(x, y, z)}
-            * (μ.map (fun ω => (X ω, U ω))).real {(x, u)}
-            * (μ.map (fun ω => (Y ω, U ω))).real {(y, u)}) * (μ.map Z).real {z}
-          = ((μ.map (fun ω => (X ω, Y ω, Z ω))).real {(x, y, z)} * (μ.map Z).real {z})
-            * ((μ.map (fun ω => (X ω, U ω))).real {(x, u)} * (μ.map (fun ω => (Y ω,
-              U ω))).real {(y, u)}) := by
-          ring
-        rw [h_rhs, h_helper]; ring
-      exact mul_right_cancel₀ hZ_zero h_muled
+      grind
   -- **Sum over z:** `∑ z, phat(x, y, z, u) = pXU(x, u) * pYU(y, u) / pU(u)`.
   have h_indep_pair : ∀ x y, (μ.map (fun ω => (X ω, Y ω))).real {(x, y)}
       = (μ.map X).real {x} * (μ.map Y).real {y} :=
@@ -1128,18 +1086,7 @@ private lemma phat_sum_eq_one
         intro z; unfold phat; simp [hY_zero]
       rw [Finset.sum_congr rfl (fun z _ => h_phat_zero z), Finset.sum_const_zero, hYU_zero,
         mul_zero, zero_div]
-    have h_denom_ne : (μ.map U).real {u} * (μ.map X).real {x} * (μ.map Y).real {y} ≠ 0 := by
-      intro heq; simp only [mul_eq_zero] at heq
-      rcases heq with (h | h) | h
-      exacts [hU_zero h, hX_zero h, hY_zero h]
-    have h' : ∑ z, phat X Y Z U μ (x, y, z, u)
-            = (μ.map (fun ω => (X ω, U ω))).real {(x, u)}
-              * (μ.map (fun ω => (Y ω, U ω))).real {(y, u)}
-              * ((μ.map X).real {x} * (μ.map Y).real {y})
-              / ((μ.map U).real {u} * (μ.map X).real {x} * (μ.map Y).real {y}) := by
-      rw [eq_div_iff h_denom_ne]; exact h
-    rw [h']
-    field_simp
+    grind
   let e : S₄ × S₁ × S₂ × S₃ ≃ S₁ × S₂ × S₃ × S₄ :=
     { toFun := fun ⟨u, x, y, z⟩ => (x, y, z, u)
       invFun := fun ⟨x, y, z, u⟩ => (u, x, y, z)
@@ -1501,13 +1448,10 @@ private lemma ptilde_filter_sum_eq_reindex
         (fun t => proj t = c), ptilde X Y Z U μ t)
       = ∑ d : δ, ptilde X Y Z U μ (embed d) := by
   refine (Finset.sum_nbij' embed extract ?_ ?_ ?_ ?_ ?_).symm
-  · intro d _
-    exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, h_proj_embed d⟩
+  · grind
   · intro _ _; exact Finset.mem_univ _
   · intro d _; exact h_extract_embed d
-  · intro t ht
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at ht
-    exact h_embed_extract t ht
+  · grind
   · intro _ _; rfl
 
 /-!
@@ -2025,20 +1969,9 @@ private lemma theorem2_delta_le_zero
     have kill : (μ.map (fun ω => (X ω, Z ω, U ω))).real {(x, z, u)} = 0
               ∨ (μ.map (fun ω => (Y ω, Z ω, U ω))).real {(y, z, u)} = 0
               ∨ (μ.map (fun ω => (Z ω, U ω))).real {(z, u)} = 0 := by
-      rcases hphat with (((h1 | h2) | h3) | h4) | (((h5 | h6) | h7) | h8)
-      · left; exact le_antisymm (h_XZU_le_XZ.trans h1.le) hXZU_nn
-      · left; exact le_antisymm (h_XZU_le_XU.trans h2.le) hXZU_nn
-      · right; left; exact le_antisymm (h_YZU_le_YZ.trans h3.le) hYZU_nn
-      · right; left; exact le_antisymm (h_YZU_le_YU.trans h4.le) hYZU_nn
-      · right; right; exact le_antisymm (h_ZU_le_Z.trans h5.le) hZU_nn
-      · right; right; exact le_antisymm (h_ZU_le_U.trans h6.le) hZU_nn
-      · left; exact le_antisymm (h_XZU_le_X.trans h7.le) hXZU_nn
-      · right; left; exact le_antisymm (h_YZU_le_Y.trans h8.le) hYZU_nn
+      grind
     simp only [ptilde]
-    rcases kill with hXZU | hYZU | hZU
-    · simp [hXZU]
-    · simp [hYZU]
-    · simp [hZU]
+    grind
   -- `Real.sum_mul_log_div_leq` is Mathlib's log-sum inequality for
   -- probability-weighted sums: for nonneg `a, b` with `b = 0 → a = 0`
   -- (absolute continuity), it gives the usual KL-divergence nonnegativity.

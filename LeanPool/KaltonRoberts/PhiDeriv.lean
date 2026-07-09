@@ -35,9 +35,7 @@ theorem hasDerivAt_binEntropy (x : ℝ) (hx : 0 < x) (hx1 : x < 1) :
   · rfl
   · ext y
     simp [Pi.mul_apply, Pi.sub_apply, id_eq]
-  · simp [id_eq]
-    field_simp [hx.ne', sub_ne_zero.mpr hx1.ne']
-    ring
+  · grind
 
 theorem hasDerivAt_h_entropy_second (θ x : ℝ) (hx : 0 < x) (hxθ : x < θ) :
     HasDerivAt (fun x => θ * Real.log θ - x * Real.log x - (θ - x) * Real.log (θ - x))
@@ -53,9 +51,7 @@ theorem hasDerivAt_h_entropy_second (θ x : ℝ) (hx : 0 < x) (hxθ : x < θ) :
   · rfl
   · ext y
     simp [Pi.mul_apply, Pi.sub_apply, id_eq]
-  · simp [id_eq]
-    field_simp [hx.ne', sub_ne_zero.mpr hxθ.ne']
-    ring
+  · grind
 
 theorem hasDerivAt_neg_entropy_scaled (r x : ℝ) (hx : 0 < x) (hx1 : x < 1) :
     HasDerivAt (fun x => r * x * Real.log x + r * (1 - x) * Real.log (1 - x))
@@ -73,8 +69,7 @@ theorem hasDerivAt_neg_entropy_scaled (r x : ℝ) (hx : 0 < x) (hx1 : x < 1) :
   · ext y
     simp [Pi.mul_apply, Pi.add_apply, id_eq]
   · simp [id_eq]
-    field_simp [hx.ne', sub_ne_zero.mpr hx1.ne']
-    ring
+    grind
 
 /-! ## Second derivatives -/
 
@@ -219,8 +214,7 @@ theorem hasDerivAt_Phi_second (r θ x : ℝ) (hx : 0 < x) (hxθ : x < θ) (hx1 :
   · ext y
     simp [Pi.add_apply]
   · unfold Phi''
-    field_simp [hx.ne', sub_ne_zero.mpr hx1.ne', sub_ne_zero.mpr hxθ.ne']
-    ring
+    grind
 
 /-! ## Generic ConvexOn for Phi -/
 
@@ -241,8 +235,7 @@ theorem convexOn_Phi_of_Phi''_nonneg {r θ δ α : ℝ}
           · exact ContinuousOn.sub continuousOn_const
               (ContinuousOn.mul continuousOn_id
                 (Real.continuousOn_log.mono (by
-                  intro x hx
-                  exact ne_of_gt (by linarith [hx.1]))))
+                  grind)))
           · exact ContinuousOn.mul (continuousOn_const.sub continuousOn_id)
               (ContinuousOn.log (continuousOn_const.sub continuousOn_id) fun x hx => by
                 linarith [hx.1, hx.2])
@@ -250,8 +243,7 @@ theorem convexOn_Phi_of_Phi''_nonneg {r θ δ α : ℝ}
           · exact ContinuousOn.sub continuousOn_const
               (ContinuousOn.mul continuousOn_id
                 (Real.continuousOn_log.mono (by
-                  intro x hx
-                  exact ne_of_gt (by linarith [hx.1]))))
+                  grind)))
           · exact ContinuousOn.mul (continuousOn_const.sub continuousOn_id)
               (ContinuousOn.log (continuousOn_const.sub continuousOn_id) fun x hx => by
                 linarith [hx.1, hx.2])

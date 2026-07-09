@@ -40,20 +40,15 @@ instance instFiniteCanonical (d m : ℕ) :
       simp only
       apply Finset.card_eq_zero.mp
       rcases Nat.eq_zero_or_pos d with hd0 | hdpos
-      · have hd1 : d - 1 = 0 := by omega
-        rw [hd1] at hcard; exact hcard
+      · grind
       · have hm0 : m = 0 := by
           rcases Nat.eq_zero_or_pos m with h | h
           · exact h
           · exfalso; have : 0 < d * m := Nat.mul_pos hdpos h; omega
         have hLC0 := hLC 0 hdpos
         have hfilter : (S.filter (fun i => i.val / m ≤ 0)) = S := by
-          apply Finset.filter_true_of_mem
-          intro i _
-          have hdiv : i.val / m = 0 := (congrArg (i.val / ·) hm0).trans (Nat.div_zero i.val)
-          rw [hdiv]
-        rw [hfilter] at hLC0
-        exact Nat.le_zero.mp hLC0
+          grind
+        grind
     exact Finite.of_injective (fun _ => (0 : Unit)) (by
       intro a b _; exact Subtype.ext ((hsub a).trans (hsub b).symm))
   · haveI : NeZero (d * m) := ⟨hpos.ne'⟩
@@ -116,8 +111,7 @@ lemma level_add {d m : ℕ} (hd : 0 < d) (hm : 0 < m) (t : ℕ) (i : ZMod (d * m
   have hmod2 : (a * m + r) % (d * m) = (a % d) * m + r := by
     have hdecomp : a * m + r = ((a % d) * m + r) + (a / d) * (d * m) := by
       have hh : a = (a / d) * d + a % d := (Nat.div_add_mod' a d).symm
-      calc a * m + r = ((a / d) * d + a % d) * m + r := by rw [← hh]
-        _ = ((a % d) * m + r) + (a / d) * (d * m) := by ring
+      grind
     rw [hdecomp, Nat.add_mul_mod_self_right]
     exact Nat.mod_eq_of_lt hbound
   rw [hmod2]
@@ -148,18 +142,12 @@ lemma prefix_cnt {d m : ℕ} (S : Finset (ZMod (d * m))) (j : ℕ) :
     (f := fun i => i.val / m) (s := S.filter (fun i => i.val / m ≤ j))
     (t := Finset.range (j + 1))
     (by intro i hi
-        rw [Finset.mem_coe, Finset.mem_filter] at hi
-        change i.val / m ∈ Finset.range (j + 1)
-        exact Finset.mem_range.mpr (by omega))]
+        grind)]
   apply Finset.sum_congr rfl
   intro l hl
   rw [Finset.mem_range] at hl
   congr 1
-  ext i
-  simp only [Finset.mem_filter]
-  constructor
-  · rintro ⟨⟨hiS, _⟩, hil⟩; exact ⟨hiS, hil⟩
-  · rintro ⟨hiS, hil⟩; exact ⟨⟨hiS, by omega⟩, hil⟩
+  grind
 
 /-! ## Part 3: the rotation `rhoPow` and the count-shift. -/
 
@@ -212,10 +200,7 @@ lemma rhoPow_add {d m : ℕ} (t u : ℕ) (S : Finset (ZMod (d * m))) :
   congr 1
   ext x
   simp only [Function.Embedding.trans_apply, Equiv.coe_toEmbedding, Equiv.coe_addRight]
-  rw [add_assoc]
-  congr 1
-  push_cast
-  ring
+  grind
 
 /-- `rhoPow 0 S = S`. -/
 @[simp] lemma rhoPow_zero {d m : ℕ} (S : Finset (ZMod (d * m))) : rhoPow 0 S = S := by
@@ -262,16 +247,7 @@ lemma cnt_rhoPow {d m : ℕ} (hd : 0 < d) (hm : 0 < m) (t : ℕ) (S : Finset (ZM
     rw [add_assoc, h0, add_zero]
   have hcancel_st : ∀ x : ZMod (d * m),
       x + (((d - t % d) * m : ℕ) : ZMod (d * m)) + ((t * m : ℕ) : ZMod (d * m)) = x := by
-    intro x
-    rw [shift_cast t]; push_cast
-    have h0 : ((d - t % d : ℕ) : ZMod (d * m)) * m + ((t % d : ℕ) : ZMod (d * m)) * m = 0 := by
-      rw [← add_mul]
-      have he : (((d - t % d : ℕ) : ZMod (d * m)) + ((t % d : ℕ) : ZMod (d * m)))
-          = ((d : ℕ) : ZMod (d * m)) := by
-        rw [← Nat.cast_add]; congr 1; omega
-      rw [he, show ((d : ℕ) : ZMod (d * m)) * m = ((d * m : ℕ) : ZMod (d * m)) by push_cast; ring,
-        ZMod.natCast_self]
-    rw [add_assoc, h0, add_zero]
+    grind
   apply Finset.card_nbij'
     (i := fun x => x + (((d - t % d) * m : ℕ) : ZMod (d * m)))
     (j := fun y => y + ((t * m : ℕ) : ZMod (d * m)))
@@ -337,10 +313,7 @@ lemma Q_bSeq_d {d m : ℕ} (hd : 0 < d) (hm : 0 < m) (S : Finset (ZMod (d * m)))
 lemma Q_bSeq_d_one {d m : ℕ} (hd : 0 < d) (hm : 0 < m) (S : Finset (ZMod (d * m)))
     (hcard : S.card = d - 1) : Q (bSeq S) d = 1 := by
   rw [Q_bSeq_d hd hm S, hcard]
-  have h1 : ((d - 1 : ℕ) : ℤ) = (d : ℤ) - 1 := by
-    have hle : 1 ≤ d := hd
-    rw [Nat.cast_sub hle, Nat.cast_one]
-  rw [h1]; ring
+  grind
 
 /-- The integer partial sum `Q (bSeq S) k = k - (∑_{l<k} aP S l)`. -/
 lemma Q_bSeq_eq {d m : ℕ} (S : Finset (ZMod (d * m))) (k : ℕ) :
@@ -381,8 +354,7 @@ lemma sum_shift_window (f : ℕ → ℤ) (e j : ℕ) :
   have hIco : ∑ l ∈ Finset.range (j + 1), f (l + e)
       = ∑ l ∈ Finset.Ico e (e + (j + 1)), f l := by
     rw [Finset.sum_Ico_eq_sum_range]
-    apply Finset.sum_congr (by congr 1; omega)
-    intro l _; rw [Nat.add_comm e l]
+    grind
   have hcons : (∑ l ∈ Finset.Ico 0 e, f l) + (∑ l ∈ Finset.Ico e (e + (j + 1)), f l)
       = ∑ l ∈ Finset.Ico 0 (e + (j + 1)), f l :=
     Finset.sum_Ico_consecutive f (Nat.zero_le e) (by omega : e ≤ e + (j + 1))
@@ -414,8 +386,7 @@ lemma lc_index_iff {d m : ℕ} (hd : 0 < d) (hm : 0 < m) (t : ℕ) (ht : t < d)
       have := Q_bSeq_eq S (e + (j + 1)); linarith,
       show ∑ l ∈ Finset.range e, (aP S l : ℤ) = (e : ℤ) - Q (bSeq S) e from by
       have := Q_bSeq_eq S e; linarith]
-  push_cast
-  constructor <;> intro h <;> linarith
+  grind
 
 /-- Cross-equality relating `Q b e` to `Q b c` where `c = e % d` and `e ≤ d`
     (so `e = c`, or `e = d` with `c = 0`). -/
@@ -464,15 +435,9 @@ lemma lc_iff_good {d m : ℕ} (hd : 0 < d) (hm : 0 < m) (S : Finset (ZMod (d * m
     -- s = c + (s - c), with s - c = j + 1, j < d - 1 hence j < d
     obtain ⟨w, hw⟩ : ∃ w, s = c + (w + 1) := ⟨s - c - 1, by omega⟩
     have hwd : w < d := by
-      have hcd : c < d := Nat.mod_lt _ hd
-      omega
+      grind
     have hcross := Q_e_c_cross hd hm S hcard t ht (w + 1)
-    have he_lt := h w hwd
-    rw [hw]
-    -- from he_lt : Q b e < Q b (e + (w+1)); cross : Q b e + Q b (c+(w+1)) = Q b c + Q b (e+(w+1))
-    have : Q (bSeq S) e + Q (bSeq S) (c + (w + 1))
-        = Q (bSeq S) c + Q (bSeq S) (e + (w + 1)) := hcross
-    linarith
+    grind
   · -- backward: from Good at c, prove ∀ j < d (e-form)
     intro h j hj
     rcases Nat.lt_or_ge j (d - 1) with hjlt | hjge
@@ -480,9 +445,7 @@ lemma lc_iff_good {d m : ℕ} (hd : 0 < d) (hm : 0 < m) (S : Finset (ZMod (d * m
       have hcd : c < d := Nat.mod_lt _ hd
       have hgs := h (c + (j + 1)) (by omega) (by omega)
       have hcross := Q_e_c_cross hd hm S hcard t ht (j + 1)
-      have : Q (bSeq S) e + Q (bSeq S) (c + (j + 1))
-          = Q (bSeq S) c + Q (bSeq S) (e + (j + 1)) := hcross
-      linarith
+      grind
     · -- j = d - 1 : automatic from periodicity, Q b (e + d) = Q b e + 1
       have hjeq : j = d - 1 := by omega
       subst hjeq
@@ -526,8 +489,7 @@ theorem canonical_unique {d m : ℕ} (hd : 0 < d) (hm : 0 < m) (S : Finset (ZMod
     have hgood_idx : (d - t) % d = i0 := hi0uniq ((d - t) % d) ⟨sigma_lt hd t, htLC⟩
     -- t = σ ((d-t)%d) = σ i0 = (d - i0) % d
     have := sigma_invol hd htd
-    rw [hgood_idx] at this
-    omega
+    grind
 
 /-! ## Part 8: the bijection `{(d-1)-subsets} ≃ {canonical} × Fin d`. -/
 
@@ -540,16 +502,14 @@ lemma canIdx_spec {d m : ℕ} (hd : 0 < d) (hm : 0 < m) (S : Finset (ZMod (d * m
     (hcard : S.card = d - 1) :
     canIdx hd hm S < d ∧ LevelCanonical d m (rhoPow (canIdx hd hm S) S) := by
   unfold canIdx
-  rw [dif_pos hcard]
-  exact (canonical_unique hd hm S hcard).choose_spec.1
+  grind
 
 /-- Uniqueness characterization of `canIdx`. -/
 lemma canIdx_eq {d m : ℕ} (hd : 0 < d) (hm : 0 < m) (S : Finset (ZMod (d * m)))
     (hcard : S.card = d - 1) {t : ℕ} (htd : t < d) (htLC : LevelCanonical d m (rhoPow t S)) :
     t = canIdx hd hm S := by
   unfold canIdx
-  rw [dif_pos hcard]
-  exact (canonical_unique hd hm S hcard).choose_spec.2 t ⟨htd, htLC⟩
+  grind
 
 /-- For a canonical `(d-1)`-subset, the canonical index is `0`. -/
 lemma canIdx_of_canonical {d m : ℕ} (hd : 0 < d) (hm : 0 < m) (c : Finset (ZMod (d * m)))
@@ -629,9 +589,7 @@ noncomputable def equivCanFin (hd : 0 < d) (hm : 0 < m) : Asub d m ≃ Csub d m 
           rw [this, Nat.mod_self]
       rw [← rhoPow_mod, hmod0, rhoPow_zero]
     · -- second component: canIdx T = s (as Fin d)
-      apply Fin.ext
-      simp only
-      exact hcanT.symm
+      grind
 
 /-! ## Part 9: the final count. -/
 
@@ -649,10 +607,7 @@ theorem card_levelCanonical_mul (d m : ℕ) (hd : 0 < d) (hm : 0 < m) :
     unfold Asub
     rw [card_kSubsets (d * m) (d - 1)]
   -- combine
-  rw [hA] at hbij
-  -- hbij : C(d*m,d-1) = card Csub * d
-  rw [Nat.mul_comm d _]
-  exact hbij.symm
+  grind
 
 /-- **COROLLARY.** `#{canonical (d-1)-subsets} = C(d*m, d-1) / d`. -/
 theorem card_levelCanonical (d m : ℕ) (hd : 0 < d) (hm : 0 < m) :

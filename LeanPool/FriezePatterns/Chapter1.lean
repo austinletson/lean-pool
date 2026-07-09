@@ -44,8 +44,7 @@ lemma pattern_nContinuant1 (F : Type*) [Field F] (f : ℕ × ℕ → F) (n : ℕ
     intro _ m
     have h₀ : f (0, m) = 0 := pattern_n.topBordZeros n m
     have h₁ : f (1, m) = 1 := pattern_n.topBordOnes n m
-    rw [h₀, h₁]
-    simp
+    grind
   | succ k ih =>
     intro h m
     have h' : 1 ≤ k + 1 ∧ k + 1 ≤ n := by omega
@@ -77,10 +76,7 @@ lemma pattern_nContinuant1 (F : Type*) [Field F] (f : ℕ × ℕ → F) (n : ℕ
               - f (k + 1, m) * f (k + 1, m + 1) := by
               rw [add_comm_sub, sub_self, add_zero]
         _ = (f (k + 2, m) * f (2, m + k + 1) - f (k + 1, m)) * f (k + 1, m + 1) := by rw [← sub_mul]
-    change f (k + 1 + 2, m) = f (2, m + (k + 1)) * f (k + 1 + 1, m) - f (k + 1, m)
-    have hgoal : f (k + 3, m) = f (2, m + (k + 1)) * f (k + 2, m) - f (k + 1, m) :=
-      mul_right_cancel₀ h₂ (by rw [h₃]; ring_nf)
-    convert hgoal using 2
+    grind
 
 -- The second continuant lemma is proved like the first
 lemma pattern_nContinuant2 (F : Type*) [Field F] (f : ℕ × ℕ → F) (n : ℕ) [nzPattern_n F f n] :
@@ -93,12 +89,7 @@ lemma pattern_nContinuant2 (F : Type*) [Field F] (f : ℕ × ℕ → F) (n : ℕ
       intro i h m
       have key : n - i - 1 ≤ n - 1 := by omega
       have key2 : n - (n - i - 1) - 1 = i := by omega
-      have key3 : n - (n - i - 1) = i + 1 := by omega
-      calc f (i, m + 2)
-          = f (n - (n - i - 1) - 1, m + 2) := by rw [key2]
-        _ = f (n - 1, m + 2) * f (n - (n - i - 1), m + 1) - f (n - (n - i - 1) + 1, m) := by
-              rw [pattern_nContinuant2flipped (n - i - 1) key]
-        _ = f (n - 1, m + 2) * f (i + 1, m + 1) - f (i + 2, m) := by rw [key3]
+      grind
     -- Have proved sufficiency of the flipped version
     intro i h
     induction i with
@@ -156,8 +147,7 @@ lemma pattern_nContinuant2 (F : Type*) [Field F] (f : ℕ × ℕ → F) (n : ℕ
               - f (n - (k + 1) - 1 + 2, m) * f (n - (k + 1) - 1 + 2, m + 1)
               * (f (n - (k + 1) - 1 + 2, m + 1))⁻¹ := by rw [a₁₁, a₁]
         _ = f (n - 1, m + 2) * f (n - (k + 1), m + 1) - f (n - (k + 1) - 1 + 2, m) := by
-              rw [mul_inv_cancel_right₀ h₂ (f (n - 1, m + 2) * f (n - (k + 1), m + 1)),
-                mul_inv_cancel_right₀ h₂ (f (n - (k + 1) - 1 + 2, m))]
+              grind
         _ = f (n - 1, m + 2) * f (n - (k + 1), m + 1) - f (n - (k + 1) + 1, m) := by rw [a₁₂]
   · -- Have proved it in the case 1 ≤ n; now do n = 0
     have n_eq_zero : n = 0 := by linarith
@@ -192,15 +182,11 @@ theorem glideSymm (F : Type*) [Field F] (f : ℕ × ℕ → F) (n : ℕ) [nzPatt
         @pattern_n.topBordOnes F _ f n _ (m + i + 1)] at key
       exact (sub_eq_zero.mp key.symm).symm
     have h₃ : f (i + 1, m) = f (n - i, m + i + 1) := by
-      have := ih₂ (by linarith) m
-      simpa [add_assoc] using this.symm
+      grind
     have h₅ : f (n - i - 1, m + i + 2) =
         f (n - 1, m + i + 2) * f (n - i, m + i + 1) - f (n + 1 - i, m + i) := by
       have key := pattern_nContinuant2 F f n (n - i - 1) (by omega) (m + i)
-      rw [key]
-      have e₁ : n - i - 1 + 1 = n - i := by omega
-      have e₂ : n - i - 1 + 2 = n + 1 - i := by omega
-      rw [e₁, e₂]
+      grind
     have e₃ : n + 1 - i - 2 = n - i - 1 := by omega
     rw [e₃]
     symm
@@ -215,11 +201,7 @@ theorem translationInvariance (F : Type*) [Field F] (f : ℕ × ℕ → F) (n : 
   intro i ileq m
   have key := glideSymm F f n i ileq m
   have key2 := glideSymm F f n (n + 1 - i) (Nat.sub_le (n + 1) i) (m + i)
-  have hsub : n + 1 - (n + 1 - i) = i := by omega
-  rw [hsub] at key2
-  rw [← key, ← key2, add_assoc]
-  congr 2
-  omega
+  grind
 
 -- A stronger version of the translation invariance - may be useful
 lemma strongTranslationInvariance (F : Type*) [Field F] (f : ℕ × ℕ → F) (n : ℕ)
@@ -261,10 +243,7 @@ lemma imageFinite (F : Type*) [Field F] (f : ℕ × ℕ → F) (n : ℕ) [nzPatt
           · push Not at hm
             specialize ih (m - (n + 1)) (by omega)
             have key := translationInvariance F f n i (by linarith) (m - (n + 1))
-            have hsum : m - (n + 1) + n + 1 = m := by omega
-            rw [hsum] at key
-            rw [← key] at hx
-            exact ih hx
+            grind
       · -- if i > n, then f (i, n) = 0, so we can use (0, 0)
         refine ⟨⟨0, 0⟩, ⟨by simp, ?_⟩⟩
         rw [@pattern_n.topBordZeros F _ f n _ 0, ← hx,

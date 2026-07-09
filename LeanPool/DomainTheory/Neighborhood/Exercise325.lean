@@ -53,12 +53,7 @@ def sierpinski : NeighborhoodSystem Unit where
   master := Set.univ
   master_mem := Or.inl rfl
   inter_mem := by
-    intro X Y Z hX hY hZ _
-    rcases hX with rfl | rfl
-    · rcases hY with rfl | rfl
-      · left; rw [Set.univ_inter]
-      · right; rw [Set.univ_inter]
-    · right; rw [Set.empty_inter]
+    grind
   sub_master := fun _ => Set.subset_univ _
 
 variable {α : Type*} (V : NeighborhoodSystem α)
@@ -79,15 +74,7 @@ def mapOfOpen (U : Set V.Element) : ApproximableMap V sierpinski where
     · exact Or.inr rfl
   master_rel := ⟨V.master_mem, Or.inl rfl⟩
   inter_right := by
-    rintro X Y Y' ⟨hX, hY⟩ ⟨_, hY'⟩
-    refine ⟨hX, ?_⟩
-    rcases hY with rfl | ⟨rfl, hsub⟩
-    · rcases hY' with rfl | ⟨rfl, hsub'⟩
-      · left; rw [Set.univ_inter]
-      · right; rw [Set.univ_inter]; exact ⟨rfl, hsub'⟩
-    · rcases hY' with rfl | ⟨rfl, _⟩
-      · right; rw [Set.inter_univ]; exact ⟨rfl, hsub⟩
-      · right; rw [Set.inter_self]; exact ⟨rfl, hsub⟩
+    grind
   mono := by
     rintro X X' Y Y' ⟨hX, hY⟩ hX'X hYY' hX' hY'
     refine ⟨hX', ?_⟩
@@ -114,8 +101,7 @@ theorem mapOfOpen_rel_empty (U : Set V.Element) (X : Set α) :
     rcases h with h | ⟨_, h⟩
     · exact absurd h Set.empty_ne_univ
     · exact h
-  · rintro ⟨hX, h⟩
-    exact ⟨hX, Or.inr ⟨rfl, h⟩⟩
+  · grind
 
 /-! ### From an approximable map `𝒟 → 𝒪` to an open set. -/
 

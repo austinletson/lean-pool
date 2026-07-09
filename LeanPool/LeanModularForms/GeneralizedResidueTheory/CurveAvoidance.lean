@@ -102,6 +102,4 @@ theorem curve_sub_in_slitPlane {γ : ℝ → ℂ} {a b : ℝ} {z₀ : ℂ}
     ∀ t ∈ Icc a b, γ t - z₀ ∈ slitPlane := by
   intro t ht
   rw [Complex.mem_slitPlane_iff]
-  rcases hpos t ht with him | hre
-  · right; exact him.ne'
-  · left; exact hre
+  grind

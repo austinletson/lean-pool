@@ -45,11 +45,7 @@ theorem help_I_pre' : ∀ (p k c l: UInt64),
   c + (l - x) ≠ p + (l - x) := by
   intros p k c l h_I
   unfold iPre' at h_I
-  rcases h_I with ⟨h_pk, h_kc, -⟩
-  by_contra heq
-  rw [UInt64.add_cancel_right_iff] at heq
-  rw [heq] at h_kc
-  exact UInt64.lt_asymm h_pk h_kc
+  grind
 
 theorem help_I_pre'' : ∀ (p k c l: UInt64),
   iPre' p k c l →
@@ -57,11 +53,7 @@ theorem help_I_pre'' : ∀ (p k c l: UInt64),
   c + (l - x) ≠ k + (l - x) := by
   intros p k c l h_I
   unfold iPre' at h_I
-  rcases h_I with ⟨-, h_kc, -⟩
-  by_contra heq
-  rw [UInt64.add_cancel_right_iff] at heq
-  rw [heq] at h_kc
-  exact UInt64.lt_irrefl k h_kc
+  grind
 
 
 theorem help_I_pre''' : ∀ (p k c l i x: UInt64),
@@ -82,8 +74,7 @@ theorem help_I_pre''' : ∀ (p k c l i x: UInt64),
         simp only [Nat.add_le_add_iff_left]
         rw [UInt64.toNat_sub_of_le _ _ hxLeL, ← Nat.add_le_add_iff_right (n := x.toNat)]
         simp
-  rw [neq] at this
-  apply UInt64.lt_asymm <;> try assumption
+  grind
 
 
 theorem help_I_pre'''' : ∀ (p k c l i x: UInt64),
@@ -105,8 +96,7 @@ theorem help_I_pre'''' : ∀ (p k c l i x: UInt64),
       simp only [Nat.add_le_add_iff_left]
       rw [UInt64.toNat_sub_of_le _ _ hxLeL, ← Nat.add_le_add_iff_right (n := x.toNat)]
       simp
-  rw [neq] at this
-  exact UInt64.lt_irrefl (p + i) this
+  grind
 
 
 
@@ -115,10 +105,7 @@ theorem help_I_pre''''' : ∀ (p k c l i x: UInt64),
   i.toNat < (l - x).toNat →
   x ≤ l →
   (c + (l - x) ≠ c + i) := by
-  intros p k c l i x _ hlx hxLeL
-  simp only [ne_eq, UInt64.add_right_inj]
-  push Not
-  grind only
+  grind
 
 
 /-- The One-Time-Pad program, parameterised by the plaintext `p`, key `k`,
@@ -195,15 +182,11 @@ theorem sw_otp : ∀ (p k c l : UInt64),
           rw [t_update_neq]
           · rw [t_update_neq]
             · rw [t_update_neq]
-              · rw [←h_x3] at h_i
-                rw [←h_x3] at v
-                apply h_I
-                exact v
+              · grind
               · exact help_I_pre''' p k c l i x h_I_pre' v (h_x3 ▸ h_x3LtL)
             · exact help_I_pre'''' p k c l i x h_I_pre' v (h_x3 ▸ h_x3LtL)
           · apply help_I_pre''''' (p:=p) (k:=k) <;> try assumption
-            rw [←h_x3]
-            exact h_x3LtL
+            grind
         | inr v =>
           rw [h_x3] at h_x0 h_x1 h_x2
           rw [v]
@@ -212,22 +195,15 @@ theorem sw_otp : ∀ (p k c l : UInt64),
           rw [←h_x7]
           rw [t_update_neq]
           · rw [t_update_neq]
-            · rw [←h_x5, ←h_x6]
-              exact h_x7
+            · grind
             · rw [h_x2, h_x1]
               simp only [ne_eq, UInt64.add_left_inj]
               intros neq
               unfold iPre' at h_I_pre'
-              rcases h_I_pre' with ⟨_, h_kc, _⟩
-              rw [←neq] at h_kc
-              exact UInt64.lt_irrefl c h_kc
+              grind
           · rw [h_x0, h_x2]
             unfold iPre' at h_I_pre'
-            rcases h_I_pre' with ⟨h_pk, h_kc, _⟩
-            simp only [ne_eq, UInt64.add_left_inj]
-            intros neq
-            rw [←neq] at h_pk
-            exact UInt64.lt_irrefl c (UInt64.lt_trans h_pk h_kc)
+            grind
       · repeat (constructor; try assumption)
         · rw [h_x0, h_x5, h_x0]
           rw [t_update_neq]
@@ -235,9 +211,7 @@ theorem sw_otp : ∀ (p k c l : UInt64),
           intros neq
           simp only [UInt64.add_left_inj] at neq
           unfold iPre' at h_I_pre'
-          rcases h_I_pre' with ⟨pk, kc, _⟩
-          rw [neq] at kc
-          exact UInt64.lt_asymm pk kc
+          grind
         · constructor
           · rw [h_x2, h_x3]
             rw [t_update_neq]
@@ -246,9 +220,7 @@ theorem sw_otp : ∀ (p k c l : UInt64),
               simp only [ne_eq, UInt64.add_left_inj]
               intros neq
               unfold iPre' at h_I_pre'
-              rcases h_I_pre' with ⟨pk, kc, _⟩
-              rw [←neq] at kc
-              apply UInt64.lt_irrefl c kc
+              grind
           · repeat (constructor <;> try assumption)
 
 
@@ -346,14 +318,7 @@ theorem inc_otp_1 : ∀ (p k c l : UInt64),
         show (1 : UInt64) ≠ 0 by decide, show (1 : UInt64) ≠ 2 by decide,
         show (1 : UInt64) ≠ 3 by decide, show (1 : UInt64) ≠ 5 by decide,
         show (1 : UInt64) ≠ 6 by decide, show (1 : UInt64) ≠ 7 by decide] at *
-      repeat (constructor <;> try assumption)
-      · rw [h_x1, h_x3]
-        apply UInt64.add_sub_assoc
-        · rw [←h_x3]
-          exact h_x3LtL
-        · rw [←h_x3]
-          simpa only [gt_iff_lt] using h_cond
-      · repeat (constructor <;> try assumption)
+      grind
 
 theorem inc_otp_2 {x} : ∀ (p k c l : UInt64),
 (otpCode p k c l)
@@ -399,14 +364,7 @@ theorem inc_otp_2 {x} : ∀ (p k c l : UInt64),
         show (2 : UInt64) ≠ 0 by decide, show (2 : UInt64) ≠ 1 by decide,
         show (2 : UInt64) ≠ 3 by decide, show (2 : UInt64) ≠ 5 by decide,
         show (2 : UInt64) ≠ 6 by decide, show (2 : UInt64) ≠ 7 by decide] at *
-      repeat (constructor <;> try assumption)
-      · rw [h_x2, h_x3]
-        apply UInt64.add_sub_assoc
-        · rw [←h_x3]
-          exact h_x3LtL
-        · rw [←h_x3]
-          simpa only [gt_iff_lt] using h_cond
-      · repeat (constructor <;> try assumption)
+      grind
 
 
 theorem dec_otp : ∀ (p k c l : UInt64),
@@ -452,13 +410,8 @@ theorem dec_otp : ∀ (p k c l : UInt64),
       · intros i h_I'
         have: i ≤ l - TMap.get s.registers 3  := by
           grind
-        specialize h_I i this
-        exact h_I
-      · repeat (constructor <;> try assumption)
-        · grind only
-        · repeat (constructor <;> try assumption)
-          rw [←h_x3]
-          grind
+        grind
+      · grind
 
 
 
@@ -532,17 +485,7 @@ theorem j_otp : ∀ (p k c l : UInt64),
                     st.pc = 4)
               s' ∧
             s'.pc ∉ {n | (n ≠ 4)}) := by
-            intros h
-            rcases h with ⟨s', ⟨h_weak, pre⟩⟩
-            simp only [
-              MState.getMemoryAt_def, MState.getRegisterAt_def,
-              ne_eq,
-              Bool.not_eq_true, Set.mem_setOf_eq, Decidable.not_not] at pre
-            rcases pre with ⟨⟨⟨h_var, h_I⟩, h_terminated, _⟩, _⟩
-            simp only [ne_eq, MState.getRegisterAt_def, MState.getMemoryAt_def, Bool.not_eq_true,
-              Set.mem_setOf_eq, Decidable.not_not]
-            simp at h_weak
-            exists s'
+            grind
     apply this
     clear this
     apply specification_Jump' (pc := 13) (newPc := 4) (label := ".loop")
@@ -582,7 +525,6 @@ theorem beqz_otp : ∀ (p k c l : UInt64),
   rw [←h_code']
   have: ({n | n ≤ 4} ∪ {n | n > 5}) = {n:UInt64| n ≠ 4 + 1} := by
     ext a
-    simp only [gt_iff_lt, Set.mem_union, Set.mem_setOf_eq, UInt64.reduceAdd, ne_eq]
     grind
   rw [this]
   apply specification_JumpEqZero_false (pc := 4) (reg := 3) (label := "finish")
@@ -592,5 +534,4 @@ theorem beqz_otp : ∀ (p k c l : UInt64),
   · simpCurrInstr
   · assumption
   · repeat (constructor <;> try assumption)
-    apply UInt64.gt_zero_neq_zero
-    exact h_cond
+    grind

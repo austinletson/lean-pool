@@ -106,10 +106,7 @@ def IsClassicalRoot {n : ℕ} (x : Space n) : Prop :=
 
 theorem eq_single_of_eq_zero {n : ℕ} {x : Space n} {i : Fin n} (h : ∀ k, k ≠ i → x k = 0) :
     x = Pi.single i (x i) := by
-  funext k
-  rcases eq_or_ne k i with rfl | hk
-  · rw [Pi.single_eq_same]
-  · rw [Pi.single_eq_of_ne hk, h k hk]
+  grind
 
 theorem eq_single_add_single_of_eq_zero {n : ℕ} {x : Space n} {i j : Fin n} (hij : i ≠ j)
     (h : ∀ k, k ≠ i → k ≠ j → x k = 0) :
@@ -147,14 +144,11 @@ theorem isClassicalRoot_of_isReflective {n : ℕ} {x : Space n}
       Int.le_of_dvd (abs_pos.mpr (mul_ne_zero two_ne_zero h0)) ((dvd_abs _ _).mpr (hqdvd k))
     have h3 : |x k| * |x k| ≤ 2 * |x k| := by
       rw [abs_mul_abs_self]
-      calc x k * x k ≤ ∑ m, x m * x m := hsq_le k
-        _ ≤ |2 * x k| := h2
-        _ = 2 * |x k| := by rw [abs_mul]; norm_num
+      grind
     have h4 : |x k| ≤ 2 := by
       rw [mul_comm (2 : ℤ)] at h3
       exact le_of_mul_le_mul_left h3 (zero_lt_one.trans_le h1)
-    have h5 := abs_le.mp h4
-    omega
+    grind
   have hex : ∃ i, x i ≠ 0 := by
     by_contra h
     push Not at h
@@ -174,9 +168,7 @@ theorem isClassicalRoot_of_isReflective {n : ℕ} {x : Space n}
     have hsplit : x i * x i + ∑ k ∈ Finset.univ.erase i, x k * x k = ∑ k, x k * x k :=
       Finset.add_sum_erase Finset.univ (fun k => x k * x k) (Finset.mem_univ i)
     have htail : ∑ k ∈ Finset.univ.erase i, x k * x k = 0 := by
-      have hnn : 0 ≤ ∑ k ∈ Finset.univ.erase i, x k * x k :=
-        Finset.sum_nonneg fun k _ => hterm k
-      omega
+      grind
     have hxeq : x = Pi.single i (x i) :=
       eq_single_of_eq_zero fun k hk =>
         hzero _ htail k (Finset.mem_erase.mpr ⟨hk, Finset.mem_univ k⟩)
@@ -185,10 +177,7 @@ theorem isClassicalRoot_of_isReflective {n : ℕ} {x : Space n}
     push Not at hbig
     obtain ⟨i, hi⟩ := hex
     have hsmall : ∀ k, x k ≠ 0 → x k = 1 ∨ x k = -1 := by
-      intro k hk
-      have h1 := hcoord k
-      have h2 := hbig k
-      tauto
+      grind
     have hxi : x i * x i = 1 := by rcases hsmall i hi with h | h <;> rw [h] <;> norm_num
     have habs : |2 * x i| = 2 := by rcases hsmall i hi with h | h <;> rw [h] <;> norm_num
     have hle : (∑ k, x k * x k) ≤ 2 := by
@@ -245,8 +234,7 @@ theorem isReflective_of_isClassicalRoot {n : ℕ} {x : Space n} (hx : IsClassica
       rw [map_add, LinearMap.add_apply, dotProduct_single_left_eq, dotProduct_single_left_eq]
     have hBxx : dotProduct n (Pi.single i a + Pi.single j b) (Pi.single i a + Pi.single j b)
         = a * a + b * b := by
-      rw [hBy, Pi.add_apply, Pi.add_apply, Pi.single_eq_same, Pi.single_eq_same,
-        Pi.single_eq_of_ne hij, Pi.single_eq_of_ne (Ne.symm hij), add_zero, zero_add]
+      grind
     refine ⟨?_, fun y => ?_⟩
     · rw [hBxx]
       rcases ha with rfl | rfl <;> rcases hb with rfl | rfl <;>

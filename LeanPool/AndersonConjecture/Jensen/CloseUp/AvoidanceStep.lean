@@ -61,8 +61,7 @@ private def close_up_avoidance_step_proof
       change (a : T) * t = 0
       rw [ha_zero, zero_mul]
     have hc_s' : (c : T) ∈ Ideal.map R.carrier.subtype (span (↑s' : Set R.carrier)) := by
-      rw [← huv, hu_zero, zero_add]
-      exact hv
+      grind
     obtain ⟨S, hAext, hle, hmem⟩ := ih R hR_card s' hs'_card c hc_s'
     exact ⟨S, hAext, hle, Ideal.map_mono (Ideal.span_mono
       (Set.subset_insert a ↑s')) hmem⟩
@@ -141,8 +140,7 @@ private def close_up_avoidance_step_proof
             rw [Set.mem_iUnion] at h
             obtain ⟨hr, hPmem⟩ := h
             exact fun heq => hM_not_assoc (r : T) hr (heq ▸ hPmem.1)
-          · rw [Set.mem_singleton_iff.mp h]
-            exact fun h => hM_ne_bot h.symm
+          · grind
         have hD_root_countable : ∀ (f : Polynomial R.carrier), f ≠ 0 →
             ((fun x => x - t) '' {x : T | Polynomial.aeval x f = 0}).Countable := by
           intro f hf
@@ -294,10 +292,8 @@ private def close_up_avoidance_step_proof
           · rw [Set.mem_iUnion] at h
             obtain ⟨r, h⟩ := h
             rw [Set.mem_iUnion] at h
-            obtain ⟨_, hPmem⟩ := h
-            exact hPmem.2 hle
-          · rw [Set.mem_singleton_iff.mp h] at hle
-            exact hI_bot (le_antisymm hle bot_le)
+            grind
+          · grind
         -- I_s' ⊄ P for ALL associated primes (not just C_good ones).
         -- This follows from h_no_common: if I_s' ≤ P with P∩R ≠ ⊥,
         -- then P∩R = span{q_P} for some prime q_P, so q_P | all of s',
@@ -353,8 +349,7 @@ private def close_up_avoidance_step_proof
             have := Set.add_mem_add (⊥ : Ideal T).zero_mem
               (show δ ∈ ({δ} : Set T) from rfl)
             rwa [zero_add] at this
-          exact absurd h_absurd
-            (hδ_avoid ⊥ (Set.mem_union_right _ rfl) δ hδ_in_D)
+          grind
         have ht'_avoid : ∀ (r : R.carrier), (r : T) ≠ 0 →
             ∀ P ∈ associatedPrimes T (T ⧸ span {(r : T)}),
             (t + δ) ∉ (P : Set T) := by
@@ -378,8 +373,7 @@ private def close_up_avoidance_step_proof
           have h_c_eq : (↑c : T) = (↑a : T) * t + v := by
             rw [← huv, ht_eq]
             simp
-          rw [h_c_eq]
-          ring
+          grind
         -- Adjoin t+δ to R → S₁
         obtain ⟨S₁, hAext₁, ht'_S₁⟩ :=
           adjoin_transcendental_isNSubring R (t + δ) ht'_trans
@@ -430,8 +424,7 @@ private def close_up_avoidance_step_proof
                     liftQ P (Ideal.Quotient.mk P (t + δ)) ∈ P := by
                   rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, hliftQ]
                   exact sub_self _
-                convert hmem using 1
-                ring
+                grind
               -- δ ∈ P + {liftQ - t}, contradicting avoidance
               open scoped Pointwise in
               exact absurd

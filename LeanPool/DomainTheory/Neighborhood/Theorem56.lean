@@ -325,8 +325,7 @@ theorem muRec_climb (m : ℕ) :
     obtain ⟨j, hj⟩ := h 0 (Nat.succ_pos k)
     rw [Nat.add_zero] at hj
     have key := ih (n + 1) (fun i hi => by
-      obtain ⟨j', hj'⟩ := h (i + 1) (by omega)
-      exact ⟨j', by rw [show n + 1 + i = n + (i + 1) by omega]; exact hj'⟩)
+      grind)
     rw [muRec_step f hj, key, show n + 1 + k = n + (k + 1) by omega]
 
 /-- **Capstone (μ-scheme correctness).** If `n₀` is the *least* zero of `f(·, m̂)`

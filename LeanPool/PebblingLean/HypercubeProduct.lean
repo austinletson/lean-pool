@@ -208,11 +208,7 @@ theorem hasSolvableAtMostSize_split_product_of_linear_demand_cost
       (∑ z : HypercubeVertex m, if E z = 0 then 0 else K * E z) =
         K * Pebbling.size E := by
     rw [Pebbling.size, Finset.mul_sum]
-    refine Finset.sum_congr rfl ?_
-    intro z _hz
-    by_cases hEz : E z = 0
-    · simp [hEz]
-    · simp [hEz]
+    grind
   simpa [hsum] using hprod
 
 /-- If the second factor is `T`-solvable with `T ≥ 1`, it may be used as the
@@ -399,8 +395,7 @@ theorem hasHighDemandDistribution_split_product_of_highDemand_variable
     intro z
     by_cases hz : E z = 0
     · simp [F, hz, Pebbling.solvableAtLeast_zero]
-    · have hspec := Classical.choose_spec (hfiber (E z) (hEmin z hz))
-      simpa [F, hz] using hspec.2.1
+    · grind
   have hprod_solvable :
       Pebbling.Solvable
         (Graph.cartesianProduct (graph a) (graph m)) Dprod := by
@@ -414,8 +409,7 @@ theorem hasHighDemandDistribution_split_product_of_highDemand_variable
     intro z
     by_cases hz : E z = 0
     · simp [F, hz]
-    · have hspec := Classical.choose_spec (hfiber (E z) (hEmin z hz))
-      simpa [F, hz] using hspec.1
+    · grind
   have hprod_size :
       Pebbling.size Dprod ≤
         ∑ z : HypercubeVertex m, if E z = 0 then 0 else E z * K := by
@@ -424,11 +418,7 @@ theorem hasHighDemandDistribution_split_product_of_highDemand_variable
       (∑ z : HypercubeVertex m, if E z = 0 then 0 else E z * K) =
         Pebbling.size E * K := by
     rw [Pebbling.size, Finset.sum_mul]
-    refine Finset.sum_congr rfl ?_
-    intro z _hz
-    by_cases hz : E z = 0
-    · simp [hz]
-    · simp [hz]
+    grind
   have hcompressed : Pebbling.size E * K ≤ costBound * K :=
     Nat.mul_le_mul_right K hEsize
   have hDsize : Pebbling.size D ≤ costBound * K := by

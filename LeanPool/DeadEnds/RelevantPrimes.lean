@@ -68,9 +68,7 @@ lemma relevantNotInS_gt_b (b X : ℕ) (S : Finset Nat.Primes) (y : ℕ)
   have hq_not_in_S : q ∉ S := by
     simp only [relevantNotInS, Finset.mem_filter] at hq
     aesop
-  by_cases hqy : (q : ℕ) ≤ y
-  · exact absurd (hy q hqy) hq_not_in_S
-  · omega
+  grind
 
 lemma prime_sq_bound_from_N_dvd (b X N : ℕ) (hb : 2 ≤ b) (q : Nat.Primes)
     (hN : N ∈ Finset.Icc 1 X) (hdvd : (q : ℕ) ^ 2 ∣ N) : (q : ℕ) < Nat.sqrt (b * X + b) + 1 := by
@@ -167,9 +165,7 @@ lemma sum_expand (c : ℝ) (X : ℕ) (Q : Finset Nat.Primes) :
     = c * X * (∑ q ∈ Q, 1 / (((q : ℕ) : ℝ) ^ 2)) + c * Q.card := by
   have hsplit : (∑ q ∈ Q, (c * ((X : ℝ) / ((q : ℕ) : ℝ) ^ 2 + 1))) =
       ∑ q ∈ Q, (c * X * (1 / (((q : ℕ) : ℝ) ^ 2)) + c) := by
-    refine Finset.sum_congr rfl fun q _ => ?_
-    rw [div_eq_mul_one_div]
-    ring
+    grind
   rw [hsplit, Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_const, nsmul_eq_mul]
   ring
 

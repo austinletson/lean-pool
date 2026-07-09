@@ -50,8 +50,7 @@ lemma _root_.ProbabilityTheory.Kernel.iIndepFun.finsets {J : Type*} [Finite J]
   apply iIndepSets.iIndep
   · intro j
     rw [← measurable_iff_comap_le, measurable_pi_iff]
-    intro ω
-    simpa [F] using hf_meas ω
+    grind
   · exact fun i ↦ IsPiSystem.comap isPiSystem_pi (F i)
   · intro j
     change MeasurableSpace.comap _ (M j) = _
@@ -71,8 +70,7 @@ lemma _root_.ProbabilityTheory.Kernel.iIndepFun.finsets {J : Type*} [Finite J]
       exact Ej_eq ⟨j, hj⟩
     rw [Finset.prod_subtype s (p := fun j ↦ j ∈ s)]
     · apply Finset.prod_congr rfl
-      intro j _
-      rw [Ej_eq j]
+      intro j grind
     simp only [implies_true]
   set E'' := fun (i:ι) ↦ ⋂ (j:s) (h: i ∈ S j), E' j ⟨i, h⟩
   set h_disjoint' :
@@ -82,12 +80,7 @@ lemma _root_.ProbabilityTheory.Kernel.iIndepFun.finsets {J : Type*} [Finite J]
   have Einter_eq : ⋂ (j:s), ⋂ (i : S j), E' j i = ⋂ i ∈ t, E'' i := by
     ext x
     simp only [Set.mem_iInter, Subtype.forall, E'']
-    constructor
-    · intro h i _ j hj hi
-      exact h j hj i hi
-    intro h j hj i hi
-    have hit : i ∈ t := by simpa [t] using ⟨j, hj, hi⟩
-    exact h i hit j hj hi
+    grind
   have Ej_mes (j : s) : ∀ᵐ (a : α) ∂μ, (κ a) (⋂ (i : S j), E' j i) = ∏ i : S j,
     (κ a) (E' j i) := by
     convert Kernel.iIndepFun.meas_biInter hf_Indep (S := S j)

@@ -88,9 +88,7 @@ instance : IsClosed (Simplex S) := by
     {x | (∀ s, 0 ≤ x.ofLp s) ∧ (∑ s, x.ofLp s = 1)} := by
     ext1
     exact ⟨fun h => ⟨h.nonneg, h.rowsum⟩, fun h => ⟨h.1, h.2⟩⟩
-  unfold Simplex
-  rw [this]
-  exact h
+  grind
 
 instance : CompleteSpace (Simplex S) := IsClosed.completeSpace_coe
 
@@ -322,15 +320,13 @@ theorem smat_minorizable_with_large_pow
       have hcard1 : (1 : ℝ) ≤ Fintype.card S := by
         exact_mod_cast Nat.one_le_iff_ne_zero.mpr Fintype.card_ne_zero
       have hcoll : δ' * Fintype.card S * ν j = δ' := by
-        rw [show ν j = 1 / Fintype.card S from rfl]
-        field_simp
+        grind
       have hδ'le : δ' ≤ δ := by
         have hδ0 : 0 ≤ δ := hδrange.1.le
         have h1 : δ * 1 / 2 * 1 / Fintype.card S ≤ δ * 1 / 2 * 1 :=
           div_le_self (by positivity) hcard1
         nlinarith [hδ0]
-      rw [ge_iff_le, hcoll]
-      linarith
+      grind
 
 end minorization
 
@@ -356,12 +352,7 @@ theorem smat_nonexpansive_in_l1 (Q : Matrix S S ℝ) [RowStochastic Q] :
   have hnorm : (‖WithLp.toLp 1 (x ᵥ* Q - y ᵥ* Q)‖₊ : ℝ) = ∑ j, |∑ i, (x i - y i) * Q i j| := by
     rw [coe_nnnorm]
     have h1 := l1_norm_eq_sum (WithLp.toLp 1 (x ᵥ* Q - y ᵥ* Q))
-    simp only [Pi.sub_apply] at h1
-    convert h1 using 2 with j
-    congr 1
-    have := congrFun hxy j
-    simp at this
-    exact this.symm
+    grind
   have hnorm2 : (‖WithLp.toLp 1 (x - y)‖₊ : ℝ) = ∑ i, |x i - y i| := by
     rw [coe_nnnorm]
     have := l1_norm_eq_sum (WithLp.toLp 1 (x - y))
@@ -385,8 +376,7 @@ theorem smat_nonexpansive_in_l1 (Q : Matrix S S ℝ) [RowStochastic Q] :
       apply sum_congr rfl
       · intro i _; simp [(hQ i).rowsum]
   refine (NNReal.coe_le_coe.mp ?_)
-  rw [hnorm, hnorm2]
-  linarith
+  grind
 
 theorem smat_pow_nonexpansive_in_l1 [DecidableEq S] (Q : Matrix S S ℝ) [RowStochastic Q] :
     ∀ n (x y : S → ℝ),
@@ -561,9 +551,7 @@ theorem pos_of_stationary
     have hterm : ∀ i ∈ Finset.univ, 0 ≤ μ i * (P ^ n) i s := fun i _ =>
       mul_nonneg (hμ.nonneg i) ((RowStochastic.stochastic (P := P ^ n) i).nonneg s)
     have := (Finset.sum_eq_zero_iff_of_nonneg hterm).mp hsum s' (Finset.mem_univ s')
-    rcases mul_eq_zero.mp this with h0 | h0
-    · exact h0
-    · exact absurd h0 (ne_of_gt hn)
+    grind
   have := hμ.rowsum
   simp_rw [hμ0] at this
   simp at this
@@ -601,9 +589,7 @@ lemma cesaro_average_is_svec
             intro k _
             exact (svec_mul_smat_is_svec x₀ (P ^ k)).rowsum
         _ = n + 1 := by simp
-    rw [hsum, mul_comm]
-    apply mul_inv_cancel₀
-    linarith
+    grind
 
 lemma cesaro_average_almost_invariant
   (x₀ : S → ℝ) [StochasticVec x₀] (P : Matrix S S ℝ) [RowStochastic P]
@@ -630,10 +616,7 @@ lemma cesaro_average_almost_invariant
         rw [Finset.sum_sub_distrib, Matrix.sum_vecMul]
       _ = ‖WithLp.toLp 1 ((n + 1 : ℝ)⁻¹ • (∑ k ∈ Finset.range (n + 1),
           (x₀ ᵥ* P ^ (k + 1) - x₀ ᵥ* P ^ k)))‖ := by
-        congr 3
-        apply Finset.sum_congr rfl
-        intro k _
-        exact hstep k
+        grind
       _ = ‖WithLp.toLp 1 ((n + 1 : ℝ)⁻¹ • (x₀ ᵥ* P ^ (n + 1) - x₀ ᵥ* P ^ 0))‖ := by
         congr 2
         rw [← Finset.sum_range_sub (f := fun k => x₀ ᵥ* P ^ k)]
@@ -715,8 +698,7 @@ theorem stationary_distribution_exists (P : Matrix S S ℝ) [RowStochastic P]
         refine ⟨N, ?_⟩
         intro n hnge
         have hnkn : 0 < (nk n + 1 : ℝ) := by
-          have : (0 : ℝ) ≤ nk n := Nat.cast_nonneg _
-          linarith
+          grind
         have hpos : (0 : ℝ) < 2 / (nk n + 1) := div_pos two_pos hnkn
         change dist (2 / ((nk n : ℝ) + 1)) 0 < ε
         rw [Real.dist_eq, sub_zero, abs_of_pos hpos]
@@ -747,8 +729,7 @@ theorem stationary_distribution_exists (P : Matrix S S ℝ) [RowStochastic P]
     have he : ‖f μ - μ‖ = 0 :=
       tendsto_nhds_unique (continuous_norm.tendsto _|>.comp hc) hd
     have : f μ = μ := by rwa [norm_eq_zero, sub_eq_zero] at he
-    simp only [f] at this
-    exact (WithLp.toLp_injective 1).eq_iff.mp this
+    grind
 
 theorem stationary_distribution_uniquely_exists
   (P : Matrix S S ℝ) [RowStochastic P] [Aperiodic P] [Irreducible P]
@@ -766,9 +747,7 @@ theorem stationary_distribution_uniquely_exists
     exact (WithLp.toLp_injective 1).eq_iff.mpr (multi_step_stationary σ P N).stationary
   have hμfixed := fixedPoint_unique hf (fixed μ hμ hμstationary)
   have hνfixed := fixedPoint_unique hf (fixed ν hν hνstationary)
-  have := hνfixed.trans hμfixed.symm
-  simp only [Subtype.mk.injEq] at this
-  exact (WithLp.toLp_injective 1).eq_iff.mp this
+  grind
 
 /-- Geometric convergence to stationarity in total variation/L¹ distance. -/
 class GeometricMixing
@@ -871,10 +850,8 @@ instance (P : Matrix S S ℝ) [RowStochastic P] [Aperiodic P] [Irreducible P]
         have hpow : ((K : ℝ) ^ (1 / (N : ℝ))) ^ n = (K : ℝ) ^ ((n : ℝ) / N) := by
           rw [← Real.rpow_natCast ((K : ℝ) ^ (1 / (N : ℝ))) n,
             ← Real.rpow_mul (NNReal.coe_nonneg K)]
-          congr 1
-          field_simp
-        rw [hsub, hpow]
-        ring
+          grind
+        grind
 
 end stationary_distribution
 

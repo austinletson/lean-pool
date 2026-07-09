@@ -103,11 +103,7 @@ lemma E₂_sub_one_isBigO_exp : (fun z : ℍ => E₂ z - 1) =O[atImInfty]
       rw [show (2 : ℂ) * ↑π * Complex.I * z = Complex.I * (2 * π * z) by ring]
       simp [Complex.I_re, Complex.I_im, mul_comm]
     rw [Complex.norm_exp, hre]
-  calc 24 * ‖∑' n : ℕ+, ↑n * q ^ (n : ℕ) / (1 - q ^ (n : ℕ))‖
-      ≤ 24 * (‖q‖ / (1 - ‖q‖) ^ 3) := by gcongr
-    _ ≤ 24 * (8 * ‖q‖) := by gcongr
-    _ = 192 * ‖q‖ := by ring
-    _ = 192 * Real.exp (-(2 * π) * z.im) := by rw [hq_eq_exp]; ring_nf
+  grind
 
 /-- E₂ → 1 at i∞. -/
 lemma E₂_tendsto_one_atImInfty : Filter.Tendsto E₂ atImInfty (nhds 1) := by
@@ -267,11 +263,7 @@ lemma qexp_deriv_bound_of_coeff_bound {a : ℕ+ → ℂ} {k : ℕ}
       ring
     use fun n => 2 * π * (n : ℝ)^(k + 1) * rexp (-2 * π * ↑n * k_min.im)
     constructor
-    · apply hconv.of_nonneg_of_le
-      · intro n; positivity
-      · intro n
-        have h1 : -2 * π * ↑↑n * k_min.im = -(2 * π * k_min.im) * ↑↑n := by ring
-        simp only [h1]; exact le_refl _
+    · grind
     · intro n ⟨z, hz_mem⟩
       have hz_im : k_min.im ≤ z.im := hk_min_le hz_mem
       have hn_pos : (0 : ℝ) < n := by exact_mod_cast n.pos

@@ -256,14 +256,7 @@ private lemma leftEdge_norm_le_of_near_crossing (H : ℝ) (s : ℂ) (hs_re : s.r
 /-- From `t` in the open-interval `uIoc a b` minus its endpoints, get strict bounds. -/
 private lemma mem_Ioo_of_uIoc_sdiff_endpoints {a b t : ℝ} (hab : a ≤ b)
     (ht_ne : t ∈ ({a, b} : Set ℝ)ᶜ) (ht_mem : t ∈ Set.uIoc a b) : a < t ∧ t < b := by
-  rw [Set.uIoc_of_le hab] at ht_mem
-  refine ⟨?_, ?_⟩
-  · rcases eq_or_lt_of_le (le_of_lt ht_mem.1) with h | h
-    · exact absurd (by simp only [mem_insert_iff, mem_singleton_iff]; left; linarith) ht_ne
-    · exact h
-  · rcases eq_or_lt_of_le ht_mem.2 with h | h
-    · exact absurd (by simp only [mem_insert_iff, mem_singleton_iff]; right; linarith) ht_ne
-    · exact h
+  grind
 
 private lemma ae_endpoints_compl (a b : ℝ) : ({a, b} : Set ℝ)ᶜ ∈ ae volume :=
   mem_ae_iff.mpr (by rw [compl_compl]; exact (Set.toFinite ({a, b} : Set ℝ)).measure_zero volume)
@@ -284,18 +277,14 @@ private lemma leftEdge_ae_seg_eq (g h₀ h_arc h₃ h₅ : ℝ → ℂ)
     (∀ᵐ t ∂volume, t ∈ Set.uIoc 4 5 → deriv h₅ t / h₅ t = deriv g t / g t) := by
   refine ⟨?_, ?_, ?_, ?_⟩
   · filter_upwards [ae_endpoints_compl 0 1] with t ht_ne ht_mem
-    obtain ⟨ht0, ht1⟩ := mem_Ioo_of_uIoc_sdiff_endpoints (by norm_num) ht_ne ht_mem
-    rw [hg_h₀ t (le_of_lt ht1), hderiv_01 t ⟨ht0, ht1⟩]
+    grind
   · filter_upwards [ae_endpoints_compl 1 3] with t ht_ne ht_mem
-    obtain ⟨ht1, ht3⟩ := mem_Ioo_of_uIoc_sdiff_endpoints (by norm_num) ht_ne ht_mem
-    rw [hg_arc t ht1 ht3, hderiv_arc t ⟨ht1, ht3⟩]
+    grind
   · intro a b ha_ge hab hb4
     filter_upwards [ae_endpoints_compl a b] with t ht_ne ht_mem
-    obtain ⟨ht_gt_a, ht_lt_b⟩ := mem_Ioo_of_uIoc_sdiff_endpoints (le_of_lt hab) ht_ne ht_mem
-    rw [hg_h₃ t (by linarith) (by linarith), hderiv_3 t ⟨by linarith, by linarith⟩]
+    grind
   · filter_upwards [ae_endpoints_compl 4 5] with t ht_ne ht_mem
-    obtain ⟨ht4, ht5⟩ := mem_Ioo_of_uIoc_sdiff_endpoints (by norm_num) ht_ne ht_mem
-    rw [hg_h₅ t ht4, hderiv_5 t ⟨ht4, ht5⟩]
+    grind
 
 private lemma leftEdge_norm_gt_left (H : ℝ) (s : ℂ) (hs_re : s.re = -1 / 2)
     (hs_norm : ‖s‖ > 1) (hs_im : s.im < H)
@@ -361,8 +350,7 @@ private lemma leftEdge_h_far (H : ℝ) (_hH_sqrt : Real.sqrt 3 / 2 < H)
     rcases eq_or_lt_of_le ht_mem.1 with h_t0 | h_t0
     · -- t = 0: use min_dist bound directly (seg1 case)
       have : min (min (‖s‖ - 1) 1) (H - s.im) ≤ ‖fdBoundaryH H t - s‖ :=
-        leftEdge_min_dist_from_non_seg4 H s hs_re hs_norm hs_im t (by linarith [h_left,
-          hεα_lt_t₀m3]) (by linarith [h_left, hεα_lt_4mt₀])
+        leftEdge_min_dist_from_non_seg4 H s hs_re hs_norm hs_im t (by grind) (by linarith [h_left, hεα_lt_4mt₀])
       linarith [hε_lt_d]
     · apply leftEdge_norm_gt_left H s hs_re hs_norm hs_im α hα_pos hα_def t₀ ht₀_lt4 ht₀_mul ε
         hε_pos (ε / α) hδ_pos rfl hεα_lt_t₀m3 hε_lt_d t ⟨h_t0, le_of_lt h_left⟩
@@ -370,11 +358,7 @@ private lemma leftEdge_h_far (H : ℝ) (_hH_sqrt : Real.sqrt 3 / 2 < H)
   · -- h_right : t₀ - ε/α ≤ t, h_abs : ε/α < |t₀ - t|
     -- Derive t > t₀ + ε/α (strict): since t ≥ t₀ - ε/α and |t₀ - t| > ε/α
     have ht_gt : t₀ + ε / α < t := by
-      rcases le_or_gt t₀ t with h | h
-      · -- t ≥ t₀, so |t₀ - t| = t - t₀ > ε/α
-        rw [abs_of_nonpos (by linarith)] at h_abs; linarith
-      · -- t < t₀, so |t₀ - t| = t₀ - t ≤ ε/α (from h_right), but h_abs says > ε/α
-        rw [abs_of_pos (by linarith)] at h_abs; linarith
+      grind
     apply leftEdge_norm_gt_right H s hs_re hs_norm hs_im α hα_pos hα_def t₀ ht₀_gt3 ht₀_lt4
       ht₀_mul ε hε_pos (ε / α) hδ_pos rfl hεα_lt_4mt₀ hε_lt_d t ⟨ht_gt, ht_mem.2⟩
 
@@ -403,15 +387,7 @@ private lemma leftEdge_h_near (H : ℝ) (_hH_sqrt : Real.sqrt 3 / 2 < H)
     rw [fdBoundary_H_eq_seg4_H (by linarith [hεα_lt_t₀m3]) (by linarith [hεα_lt_4mt₀]),
         leftEdge_h₃_eq hs_re]
     simp only [norm_mul, Complex.norm_real, Complex.norm_I, mul_one, Real.norm_eq_abs]
-    have hea : ε / α * α = ε := div_mul_cancel₀ ε (ne_of_gt hα_pos)
-    have hα_eq : H - Real.sqrt 3 / 2 = α := hα_def.symm
-    have key : Real.sqrt 3 / 2 + (t₀ - ε / α - 3) * α - s.im = -(ε / α) * α := by
-      have expand : (t₀ - ε / α - 3) * α = (t₀ - 3) * α - ε / α * α := by ring
-      linarith [ht₀_mul]
-    have : Real.sqrt 3 / 2 + (t₀ - ε / α - 3) * (H - Real.sqrt 3 / 2) - s.im = -(ε / α) * α := by
-      rw [hα_eq]; exact key
-    rw [this, show (-(ε / α) * α) = -ε from by linarith [neg_mul (ε / α) α, hea],
-      abs_neg, abs_of_pos hε_pos]
+    grind
   · exact leftEdge_norm_le_of_near_crossing H s hs_re α hα_pos hα_def t₀ ht₀_gt3 ht₀_mul ε
       (ε / α) hδ_def hεα_lt_t₀m3 hεα_lt_4mt₀ t ⟨h_lt, ht_upper⟩
 
@@ -612,9 +588,7 @@ private lemma leftEdge_ftc_telescope (H : ℝ) (_hH_sqrt : Real.sqrt 3 / 2 < H)
       ∫ t in (t₀ + δ)..(5 : ℝ), deriv g t / g t :=
     intervalIntegral.integral_congr_ae (ae_of_all _ (fun t _ => (h_congr t).symm))
   -- Return the triple: (hint_left, hint_right, ftc_eq)
-  exact ⟨hint_left, hint_right, by
-    rw [h_int_eq_left, h_int_eq_right, h_left_sum, h_right_sum]
-    linear_combination h_telescope⟩
+  grind
 
 private lemma leftEdge_winding_aux (H : ℝ) (hH_sqrt : Real.sqrt 3 / 2 < H)
     (s : ℂ) (hs_re : s.re = -1 / 2) (hs_norm : ‖s‖ > 1)
@@ -714,8 +688,6 @@ theorem gWN_fdBoundary_H_eq_neg_half_of_leftEdge (H : ℝ) (hH_sqrt : Real.sqrt 
   have h_tendsto := leftEdge_winding_aux H hH_sqrt s hs_re hs_norm hs_im_lower hs_im
   have hd : ∀ t, deriv (fun u => fdBoundaryH H u - s) t = deriv (fdBoundaryH H) t :=
     fun t => deriv_sub_const (f := fdBoundaryH H) _
-  simp_rw [hd]
-  convert h_tendsto using 3
-  simp [sub_zero, gt_iff_lt]
+  grind
 
 end

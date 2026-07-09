@@ -130,12 +130,7 @@ lemma entropyNat_of_rational_counts
       rw [hp a, Real.log_div (by exact_mod_cast Nat.ne_of_gt (hpos a)) hN_ne]; ring
     rw [Finset.sum_congr rfl fun a _ => hterm a, Finset.sum_sub_distrib, ← Finset.sum_mul,
       prob_sum_eq_one p, one_mul]
-  calc
-    H p = K H * Real.log (N : ℝ) - ∑ a, p a * (K H * Real.log (n a : ℝ)) := h_main
-    _ = K H * Real.log (N : ℝ) - K H * (∑ a, p a * Real.log (n a : ℝ)) := by
-          rw [hsum_scale]
-    _ = -K H * ((∑ a, p a * Real.log (n a : ℝ)) - Real.log (N : ℝ)) := by ring
-    _ = -K H * (∑ a, p a * Real.log (p a)) := by rw [hlogp]
+  grind
 
 /-- First-stage split used in the `(1/2, 1/3, 1/6)` worked decomposition. -/
 def workedP : ProbDist Bool :=
@@ -162,8 +157,7 @@ def workedQ : (b : Bool) → ProbDist (workedFib b)
       constructor
       · intro i
         by_cases hi : i = 0
-        · simp only [hi, ↓reduceIte]
-          positivity
+        · grind
         · simp only [hi, ↓reduceIte]
           norm_num
       · norm_num [Fin.sum_univ_two]

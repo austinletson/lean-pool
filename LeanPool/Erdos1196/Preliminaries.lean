@@ -52,19 +52,12 @@ private lemma tailCutoffCoeff_partialSum {y n : ℕ} (hy0 : 1 ≤ y) (hy : y ≤
       mertensPartialSum n - mertensPartialSum (y - 1) := by
   have hfilter :
       (Finset.Icc 0 n).filter (fun q => y ≤ q) = Finset.Icc y n := by
-    ext q
-    simp
-    omega
+    grind
   have hunion : Finset.Icc 0 n = Finset.Icc 0 (y - 1) ∪ Finset.Icc y n := by
-    ext q
-    simp
-    omega
+    grind
   have hdisj : Disjoint (Finset.Icc 0 (y - 1)) (Finset.Icc y n) := by
     refine Finset.disjoint_left.mpr ?_
-    intro q hq0 hqy
-    rcases Finset.mem_Icc.mp hq0 with ⟨_, hq0u⟩
-    rcases Finset.mem_Icc.mp hqy with ⟨hqyl, _⟩
-    omega
+    grind
   calc
     (Finset.Icc 0 n).sum (tailCutoffCoeff y)
         = ((Finset.Icc 0 n).filter (fun q => y ≤ q)).sum (fun q => Λ q / (q : ℝ)) := by
@@ -263,8 +256,7 @@ private lemma abs_mertensPartialSum_floor_sub_log_le {C : ℝ} {t : ℝ}
     |mertensPartialSum ⌊t⌋₊ - Real.log t|
       ≤ |mertensPartialSum ⌊t⌋₊ - Real.log ((⌊t⌋₊ : ℕ) : ℝ)| +
           |Real.log ((⌊t⌋₊ : ℕ) : ℝ) - Real.log t| := by
-            simpa [sub_eq_add_neg, add_comm, add_left_comm, add_assoc] using
-              abs_sub_le (mertensPartialSum ⌊t⌋₊) (Real.log ((⌊t⌋₊ : ℕ) : ℝ)) (Real.log t)
+            grind
     _ ≤ C + Real.log 2 := add_le_add (hC hfloor) (abs_log_floor_sub_log_le_log_two ht)
 
 /-- Consecutive logarithms differ by at most `log 2` once the index is at least `2`. -/
@@ -299,10 +291,7 @@ private lemma abs_mertensPartialSum_pred_sub_log_le {C : ℝ}
       le_trans (abs_nonneg _) (hC (u := 2) (by decide : 2 ≤ 2))
     have hlog2_nonneg : 0 ≤ Real.log 2 := by positivity
     have h₁ : mertensPartialSum 1 = 0 := by simp [mertensPartialSum]
-    rw [show (2 - 1 : ℕ) = 1 by decide, h₁, zero_sub]
-    norm_num
-    rw [abs_of_nonneg hlog2_nonneg]
-    linarith
+    grind
   · have hpred : 2 ≤ y - 1 := by omega
     calc
       |mertensPartialSum (y - 1) - Real.log (y : ℝ)|
@@ -449,17 +438,7 @@ private lemma abs_mertensTail_floor_error_le {C : ℝ}
     le_trans (by exact_mod_cast hy) ht
   have hfloor := abs_mertensPartialSum_floor_sub_log_le hC ht2
   have hpred := abs_mertensPartialSum_pred_sub_log_le hC hy
-  calc
-    |(mertensPartialSum ⌊t⌋₊ - mertensPartialSum (y - 1)) -
-        (Real.log t - Real.log (y : ℝ))|
-      = |(mertensPartialSum ⌊t⌋₊ - Real.log t) -
-          (mertensPartialSum (y - 1) - Real.log (y : ℝ))| := by ring_nf
-    _ ≤ |mertensPartialSum ⌊t⌋₊ - Real.log t| +
-          |mertensPartialSum (y - 1) - Real.log (y : ℝ)| :=
-            abs_sub (mertensPartialSum ⌊t⌋₊ - Real.log t)
-                  (mertensPartialSum (y - 1) - Real.log ↑y)
-    _ ≤ 2 * (C + Real.log 2) := by
-          linarith
+  grind
 
 /--
 The explicit derivative factor in the tail kernel is strongly measurable on the admissible tail.
@@ -528,17 +507,12 @@ private lemma integrableOn_Ioi_deriv_tailKernel_mul_log_sub_log {m y : ℕ}
             have habs_factor :
                 |(-2 / (t * Real.log ((m : ℝ) * t) ^ 3))| =
                   2 / (t * Real.log ((m : ℝ) * t) ^ 3) := by
-              have hneg :
-                  -2 / (t * Real.log ((m : ℝ) * t) ^ 3) =
-                    -(2 / (t * Real.log ((m : ℝ) * t) ^ 3)) := by ring
-              rw [hneg, abs_neg, abs_of_nonneg hfactor_nonneg]
+              grind
             rw [Real.norm_eq_abs, abs_mul, habs_factor, abs_of_nonneg hdiff_nonneg]
       _ ≤ (2 / (t * Real.log ((m : ℝ) * t) ^ 3)) * Real.log ((m : ℝ) * t) :=
             mul_le_mul_of_nonneg_left hdiff_le hfactor_nonneg
       _ = 2 / (t * Real.log ((m : ℝ) * t) ^ 2) := by
-            have ht_ne : t ≠ 0 := ht_pos.ne'
-            have hlog_ne : Real.log ((m : ℝ) * t) ≠ 0 := hlog_pos.ne'
-            field_simp [ht_ne, hlog_ne]
+            grind
   rw [IntegrableOn]
   refine (Integrable.mono' hmajor hmeas hbound).congr hdom.symm
 
@@ -654,9 +628,7 @@ lemma tailEstimate :
         (fun t =>
           deriv (tailKernel m) t * (Real.log t - Real.log (y : ℝ)) +
             deriv (tailKernel m) t * E t) := by
-    funext t
-    simp [A, E]
-    ring
+    grind
   have hEbound :
       ∀ᵐ t ∂(MeasureTheory.volume.restrict (Set.Ioi (y : ℝ))),
         |E t| ≤ 2 * (C₀ + Real.log 2) := by
@@ -750,8 +722,7 @@ lemma tailEstimate :
           norm_num [Nat.cast_mul]
         rw [if_pos hyq, tailCutoffCoeff, if_pos hyq]
         unfold tailKernel
-        rw [hcast]
-        field_simp
+        grind
       · simp [tailCutoffCoeff, hyq]
     calc
       tailSum m y = ∑' q : ℕ, coeff q := by simp [tailSum, hcoeff_eq]

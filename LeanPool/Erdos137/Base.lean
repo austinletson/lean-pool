@@ -43,10 +43,7 @@ noncomputable section
 lemma F_add (a b n : ℕ) : F (a + b) n = F a n * F b (n + a) := by
   unfold F
   rw [Finset.prod_range_add]
-  congr 1
-  apply Finset.prod_congr rfl
-  intro i _
-  ring_nf
+  grind
 
 /-- `F a n` divides `F (a + b) n`. -/
 lemma F_dvd_F_add (a b n : ℕ) : F a n ∣ F (a + b) n := by
@@ -204,8 +201,7 @@ lemma P_le_4_pow (k : ℕ) : P k ≤ 4 ^ k := by
   have hsub : Nat.primesBelow k ⊆ {p ∈ Finset.range (k + 1) | p.Prime} := by
     intro p hp
     rw [Nat.mem_primesBelow] at hp
-    simp only [Finset.mem_filter, Finset.mem_range]
-    exact ⟨by omega, hp.2⟩
+    grind
   have hdvd : P k ∣ primorial k := by
     unfold P primorial
     exact Finset.prod_dvd_prod_of_subset _ _ _ hsub
@@ -303,10 +299,7 @@ lemma div_le_factorization_F {k n p : ℕ} (hn : 1 ≤ n) (hp : p.Prime) :
   -- Relate #D to the Ioc count of multiples.
   have hbij : #D = #{x ∈ Finset.Ioc (n - 1) (n - 1 + k) | p ∣ x} := by
     apply Finset.card_bij (fun i _ => n + i)
-    · intro i hi
-      rw [hD, Finset.mem_filter, Finset.mem_range] at hi
-      simp only [Finset.mem_filter, Finset.mem_Ioc]
-      exact ⟨⟨by omega, by omega⟩, hi.2⟩
+    · grind
     · intro i hi j hj h; omega
     · intro x hx
       simp only [Finset.mem_filter, Finset.mem_Ioc] at hx

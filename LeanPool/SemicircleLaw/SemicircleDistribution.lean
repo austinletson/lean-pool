@@ -101,21 +101,12 @@ lemma support_semicirclePDFReal_subset (μ : ℝ) (v : ℝ≥0) :
   apply hx
   unfold semicirclePDFReal
   have h_abs : 2 * √v ≤ |x - μ| := by
-    rcases not_and_or.mp (mt mem_Icc.mpr hxI) with h | h
-    · push Not at h
-      have h2 : 0 ≤ μ - x := by linarith [Real.sqrt_nonneg (v : ℝ)]
-      rw [show |x - μ| = μ - x by rw [abs_sub_comm]; exact abs_of_nonneg h2]
-      linarith
-    · push Not at h
-      have h2 : 0 ≤ x - μ := by linarith [Real.sqrt_nonneg (v : ℝ)]
-      rw [abs_of_nonneg h2]
-      linarith
+    grind
   have h_sq : 4 * (v : ℝ) ≤ (x - μ) ^ 2 := by
     have h_sq_abs : (2 * √v) ^ 2 ≤ |x - μ| ^ 2 := pow_le_pow_left₀ (by positivity) h_abs 2
     rw [mul_pow, Real.sq_sqrt (NNReal.coe_nonneg v), sq_abs] at h_sq_abs
     linarith
-  have h_nonpos : 4 * (v : ℝ) - (x - μ) ^ 2 ≤ 0 := by linarith
-  rw [Real.sqrt_eq_zero_of_nonpos h_nonpos, mul_zero]
+  grind
 
 /-- The semicircle pdf is integrable. -/
 @[fun_prop]
@@ -137,8 +128,7 @@ lemma sqrt_semicircle_affine (v : ℝ≥0) {y : ℝ} (hy : y ∈ Icc (-1 : ℝ) 
   calc
     √(4 * (v : ℝ) - (2 * √(v : ℝ) * y) ^ 2)
         = √((4 * (v : ℝ)) * (1 - y ^ 2)) := by
-          congr 1
-          nlinarith [Real.sq_sqrt hv_nonneg]
+          grind
     _ = √(4 * (v : ℝ)) * √(1 - y ^ 2) := by
           rw [Real.sqrt_mul (mul_nonneg (by norm_num) hv_nonneg) (1 - y ^ 2)]
     _ = 2 * √(v : ℝ) * √(1 - y ^ 2) := by
@@ -177,11 +167,7 @@ lemma integral_sqrt_semicircle_interval (μ : ℝ) {v : ℝ≥0} (hv : v ≠ 0) 
     _ = c * (c * ∫ y in (-1 : ℝ)..1, √(1 - y ^ 2)) := by rw [intervalIntegral.integral_const_mul]
     _ = 2 * π * (v : ℝ) := by
           rw [integral_sqrt_one_sub_sq]
-          dsimp [c]
-          calc
-            2 * √(v : ℝ) * (2 * √(v : ℝ) * (π / 2)) =
-                2 * π * (√(v : ℝ)) ^ 2 := by ring
-            _ = 2 * π * (v : ℝ) := by rw [Real.sq_sqrt hv_nonneg]
+          grind
 
 /-- The semicircle distribution pdf integrates to 1 when the variance is nonzero. -/
 lemma integral_semicirclePDFReal_eq_one (μ : ℝ) {v : ℝ≥0} (hv : v ≠ 0) :
@@ -291,8 +277,7 @@ lemma semicirclePDFReal_inv_mul {μ : ℝ} {v : ℝ≥0} {c : ℝ} (hc : c ≠ 0
   have h_sqrt₁ :
       √(4 * (v : ℝ) - (c⁻¹ * x - μ) ^ 2)
         = √(4 * (v : ℝ) - (c⁻¹) ^ 2 * (x - c * μ) ^ 2) := by
-    rw [h_arg]
-    ring_nf
+    grind
   have h_sqrt₂ :
       √(4 * (v : ℝ) - (c⁻¹) ^ 2 * (x - c * μ) ^ 2)
         = |c⁻¹| * √(4 * (c ^ 2 * v) - (x - c * μ) ^ 2) := by
@@ -301,11 +286,7 @@ lemma semicirclePDFReal_inv_mul {μ : ℝ} {v : ℝ≥0} {c : ℝ} (hc : c ≠ 0
           = (c⁻¹) ^ 2 * (4 * (c ^ 2 * v) - (x - c * μ) ^ 2) := by
       field_simp [hc]
     rw [h_factor, ← sq_abs, Real.sqrt_mul (sq_nonneg _) _, Real.sqrt_sq (abs_nonneg _)]
-  rw [h_sqrt₁, h_sqrt₂]
-  have h_abs_inv : |c⁻¹| = |c|⁻¹ := abs_inv c
-  rw [h_abs_inv]
-  field_simp [hc, abs_ne_zero.mpr hc]
-  rw [sq_abs]
+  grind
 
 /-- Scaling the input rescales both the mean and variance parameters of the density. -/
 lemma semicirclePDFReal_mul {μ : ℝ} {v : ℝ≥0} {c : ℝ} (hc : c ≠ 0) (x : ℝ) :
@@ -440,10 +421,7 @@ lemma semicircleReal_map_const_mul (c : ℝ) :
   simp only [e, Homeomorph.mulLeft₀, Equiv.mulLeft₀_symm_apply,
     Homeomorph.toMeasurableEquiv_coe, Homeomorph.homeomorph_mk_coe_symm,
     semicirclePDFReal_inv_mul hc]
-  congr with x
-  suffices |c⁻¹| * |c| = 1 by rw [← mul_assoc, this, one_mul]
-  rw [abs_inv, inv_mul_cancel₀]
-  rwa [ne_eq, abs_eq_zero]
+  grind
 
 /-- The map of a semicircle distribution by multiplication by a constant is semicircular. -/
 lemma semicircleReal_map_mul_const (c : ℝ) :
@@ -543,15 +521,7 @@ lemma ae_abs_id_le_semicircleReal :
   rw [semicircleReal_of_var_ne_zero μ hv, ae_withDensity_iff (measurable_semicirclePDF μ v)]
   filter_upwards [] with x hx
   have hxI := support_semicirclePDF_subset μ v hx
-  have hx_abs_sub : |x - μ| ≤ 2 * √(v : ℝ) := by
-    rw [abs_sub_le_iff]
-    constructor <;> linarith [hxI.1, hxI.2]
-  calc
-    |id x| = |x| := rfl
-    _ = |(x - μ) + μ| := by ring_nf
-    _ ≤ |x - μ| + |μ| := abs_add_le _ _
-    _ ≤ 2 * √(v : ℝ) + |μ| := by linarith
-    _ = |μ| + 2 * √(v : ℝ) := by ring
+  grind
 
 /-- All finite moments of a real semicircle distribution are finite. -/
 lemma memLp_id_semicircleReal (p : ℝ≥0) : MemLp id p (semicircleReal μ v) := by
@@ -586,8 +556,7 @@ lemma support_semicirclePDF (hv : v ≠ 0) :
     have h_lt : (x - μ) ^ 2 < (2 * √(v : ℝ)) ^ 2 := by
       rw [mul_pow, Real.sq_sqrt hv_nonneg]; linarith
     have h_abs : |x - μ| < 2 * √(v : ℝ) := abs_lt_of_sq_lt_sq h_lt (by positivity)
-    rw [abs_lt] at h_abs
-    exact ⟨by linarith [h_abs.1], by linarith [h_abs.2]⟩
+    grind
   · intro ⟨h1, h2⟩
     have h_abs : |x - μ| < 2 * √(v : ℝ) := by
       rw [abs_lt]; exact ⟨by linarith, by linarith⟩
@@ -632,15 +601,11 @@ lemma integral_cos_pow_even (n : ℕ) : (∫ x in (0)..π, Real.cos x ^ (2 * n))
     set B := ∫ (x : ℝ) in (0)..π, Real.cos x ^ (2 * n)
     have c2 : A = (2 * n + 1) * B - (2 * n + 1) * A := by
       have c21 := c1 (2 * n)
-      simpa [A, B, Nat.cast_mul, Nat.cast_ofNat, two_mul, add_comm, add_left_comm, add_assoc,
-        mul_comm, mul_left_comm, mul_assoc] using c21
+      grind
     have c3 : ((2 * n + 2) : ℝ) * A = ((2 * n + 1) : ℝ) * B := by linarith
     have c5 : ∫ (x : ℝ) in (0)..π, Real.cos x ^ (2 * (n + 1))
         = (2 * n + 1) / (2 * n + 2) * ∫ (x : ℝ) in (0)..π, Real.cos x ^ (2 * n) := by
-      have hAB : A = (2 * (n : ℝ) + 1) / (2 * (n : ℝ) + 2) * B := by
-        rw [div_mul_eq_mul_div, eq_div_iff (by positivity : (2 * (n : ℝ) + 2) ≠ 0)]
-        linarith [c3]
-      simpa [A, B, show 2 * (n + 1) = 2 * n + 2 from by ring] using hAB
+      grind
     rw [c5]
     change (2 * (n : ℝ) + 1) / (2 * (n : ℝ) + 2) * B = _
     rw [ih, Finset.prod_range_succ]
@@ -743,12 +708,8 @@ lemma integral_even_pow_mul_sqrt_eq_cos_diff (n : ℕ) :
     have c5002 : ∫ (x : ℝ) in (-1)..1, 2 ^ (2 * n + 1) * x ^ (2 * n) * √(1 - x ^ 2)
         = 2 ^ (2 * n + 1) * ∫ (x : ℝ) in (-1)..1, x ^ (2 * n) * √(1 - x ^ 2) := by
       rw [← intervalIntegral.integral_const_mul]
-      apply intervalIntegral.integral_congr
-      intro x _; dsimp only; ring
-    have c5003 : ∫ (x : ℝ) in (-2)..2, x ^ (2 * n) * √(4 - x ^ 2)
-        = 2 * ∫ (x : ℝ) in (-1)..1, (2 * x) ^ (2 * n) * √(4 - (2 * x) ^ 2) := by
-      rw [c5000]; ring
-    rw [c5003, c5001, c5002]; ring
+      grind
+    grind
   rw [c50]
   have c51 : ∫ (x : ℝ) in (-1)..1, x ^ (2 * n) * √(1 - x ^ 2)
       = (∫ (x : ℝ) in (0)..π, Real.cos x ^ (2 * n))
@@ -782,11 +743,8 @@ lemma integral_even_pow_mul_sqrt_eq_cos_diff (n : ℕ) :
         have hsin : Real.sin x ≥ 0 := by
           refine Real.sin_nonneg_of_mem_Icc ?_
           rwa [← uIcc_of_le Real.pi_nonneg]
-        simp only
-        rw [c51010, abs_of_nonneg hsin]; ring
-      rw [c5101A] at c5100
-      simp only [g]
-      linarith [c5100]
+        grind
+      grind
     have c511 : ∫ (x : ℝ) in (0)..π, (Real.sin x) ^ 2 * (Real.cos x) ^ (2 * n)
         = ∫ (x : ℝ) in (0)..π, (1 - (Real.cos x) ^ 2) * (Real.cos x) ^ (2 * n) := by
       apply intervalIntegral.integral_congr
@@ -834,9 +792,7 @@ lemma integral_id_semicircleReal : ∫ x, x ∂semicircleReal μ v = μ := by
         ∫ y, -(1 / (2 * π * (v : ℝ)) * √(4 * (v : ℝ) - y ^ 2) * y) := by
       conv_lhs => rw [← integral_neg_eq_self
         (fun y => 1 / (2 * π * (v : ℝ)) * √(4 * (v : ℝ) - y ^ 2) * y)]
-      apply integral_congr_ae
-      filter_upwards [] with y
-      rw [neg_sq]; ring
+      grind
     rw [integral_neg] at h_odd
     linarith
   rw [h_symm, zero_add]
@@ -905,9 +861,7 @@ lemma wallis_prod_diff_eq_catalan (n : ℕ) :
     push_cast; ring
   rw [hcat]
   have h2 : (2 : ℝ) ^ (2 * n) ≠ 0 := by positivity
-  have hn1 : ((n : ℝ) + 1) ≠ 0 := by positivity
-  rw [pow_succ]
-  field_simp
+  grind
 
 /-- The centered `2 * n`-th power integral against the semicircle measure, rewritten as a
 weighted integral of the unnormalized kernel over its centered support interval. -/
@@ -938,10 +892,7 @@ lemma integral_centered_pow_semicircleReal (μ : ℝ) (v : ℝ≥0) (n : ℕ) (h
   -- Unfold the kernel and pull out the constant.
   simp only [smul_eq_mul, semicirclePDFReal, add_sub_cancel_right]
   rw [← intervalIntegral.integral_const_mul]
-  apply intervalIntegral.integral_congr
-  intro x _
-  simp only
-  ring
+  grind
 
 /-- The `2 * n`-th central moment of the semicircle distribution equals `v ^ n` times the `n`-th
 Catalan number. -/

@@ -65,8 +65,7 @@ theorem hOut_append (σ t : Str) : hOut σ <+: hOut (σ ++ t) := by
   | nil => simp
   | cons b s ih =>
     simp only [List.cons_append, hOut_cons]
-    obtain ⟨u, hu⟩ := ih
-    exact ⟨u, by rw [List.cons_append, List.cons_append, hu]⟩
+    grind
 
 /-- **Prefix-monotonicity of `hOut`.** `σ <+: σ' → hOut σ <+: hOut σ'`. -/
 theorem hOut_mono {σ σ' : Str} (h : σ <+: σ') : hOut σ <+: hOut σ' := by
@@ -100,8 +99,7 @@ theorem kOut_append (σ t : Str) : kOut σ <+: kOut (σ ++ t) := by
   | case2 _ => simp
   | case3 b c t' ih =>
     simp only [List.cons_append, kOut_cons]
-    obtain ⟨u, hu⟩ := ih
-    exact ⟨u, by rw [List.cons_append, hu]⟩
+    grind
 
 /-- **Prefix-monotonicity of `kOut`.** `σ <+: σ' → kOut σ <+: kOut σ'`. -/
 theorem kOut_mono {σ σ' : Str} (h : σ <+: σ') : kOut σ <+: kOut σ' := by
@@ -170,8 +168,7 @@ theorem toElementMap_hMap_cone (σ : Str) :
   constructor
   · rintro ⟨ρ, hcone, hYmem, hsub⟩
     have : σ = ρ := cone_injective hcone
-    subst this
-    exact ⟨hYmem, hsub⟩
+    grind
   · rintro ⟨hYmem, hsub⟩
     exact ⟨σ, rfl, hYmem, hsub⟩
 
@@ -185,8 +182,7 @@ theorem toElementMap_kMap_cone (σ : Str) :
   constructor
   · rintro ⟨ρ, hcone, hYmem, hsub⟩
     have : σ = ρ := cone_injective hcone
-    subst this
-    exact ⟨hYmem, hsub⟩
+    grind
   · rintro ⟨hYmem, hsub⟩
     exact ⟨σ, rfl, hYmem, hsub⟩
 

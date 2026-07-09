@@ -51,9 +51,7 @@ theorem Set.countable_setOf_isolated_points'
       have h4 : r ⟨t₁, ht₁⟩ ≤ |t₁ - t₂| := by rw [abs_sub_comm]; exact h4'
       have h5' :=
         hr_sep ⟨t₂, ht₂⟩ t₁ ht₁ h_ne'
-      have h5 : r ⟨t₂, ht₂⟩ ≤ |t₂ - t₁| := by rw [abs_sub_comm]; exact h5'
-      rw [abs_sub_comm] at h5
-      linarith [hr_pos ⟨t₁, ht₁⟩, hr_pos ⟨t₂, ht₂⟩]
+      grind
     exact Set.countable_coe_iff.mp <|
       Pairwise.countable_of_isOpen_disjoint h_disj (fun _ => Metric.isOpen_ball)
         (fun t => ⟨t.val, Metric.mem_ball_self (by linarith [hr_pos t])⟩)
@@ -92,12 +90,7 @@ theorem preimage_singleton_measure_zero_of_deriv_ne_zero
         Set.inter_subset_right).countable
     · have h_iso : ∀ t ∈ S \ ↑P, ∃ ε > 0,
           ∀ s ∈ S \ ↑P, s ≠ t → |s - t| ≥ ε := by
-        intro t ⟨ht_S, ht_nP⟩
-        obtain ⟨ε, hε_pos, h_sep⟩ :=
-          h_isolated t ht_S ht_nP
-        exact ⟨ε, hε_pos,
-          fun s ⟨hs_S, _⟩ hs_ne =>
-            h_sep s hs_S hs_ne⟩
+        grind
       exact Set.countable_setOf_isolated_points' h_iso
   exact h_countable.measure_zero _
 

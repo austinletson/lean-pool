@@ -120,13 +120,11 @@ lemma bodySystem_contains_iff' (x : BodySystemObj T) {z} (y : ExtensionsAt z) :
 @[congr] --simp needs this
 lemma res_val_congr (x y : BodySystemObj T) (h : x = y)
   (h' : m = n) : (x.res m).val = (y.res n).val := by
-  subst h h'
-  rfl
+  grind
 @[congr] --how can this help if it is proven with congr?
 lemma res_val'_congr (x y : BodySystemObj T) (h : x = y)
   (h' : m = n) : resEq.val' (x.res m) = resEq.val' (y.res n) := by
-  subst h h'
-  rfl
+  grind
 lemma containsTree.map {x : BodySystemObj S} {y}
   (h : x.containsTree y) (f : S ⟶ T) :
   (BodySystemObj.ofObj (bodySystem.map f x.toObj)).containsTree (f y) := by
@@ -163,8 +161,7 @@ lemma eval_valT'_congr' (S S' : ResStrategy T p k) (h : S = S')
 lemma eval_val_congr' (S S' : ResStrategy T p k) (h : S = S')
   (x x' : T) (h' : x = x') hp hl :
   (S x hp hl).val = (S' x' (by subst h'; exact hp) (by subst h'; exact hl)).val := by
-  subst h h'
-  rfl
+  grind
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
 def res (h : m ≤ k) (S : ResStrategy T p k) : ResStrategy T p m :=
   fun x hp hl ↦ S x hp (by omega)
@@ -268,8 +265,7 @@ lemma strategy_body (f : Strategy T p) : y ∈ body f.pre.subtree ↔ y ∈ body
   rw [preStrategy_body]
   simp only [Set.mem_singleton_iff]
   constructor
-  · rintro ⟨hy, h⟩
-    exact ⟨hy, fun x hp hx ↦ congrArg Subtype.val (h x hp hx)⟩
+  · grind
   · rintro ⟨hy, h⟩
     exact ⟨hy, fun x hp hx ↦ Subtype.ext (h x hp hx)⟩
 end «Section2»

@@ -349,9 +349,7 @@ def basisVec (m : ℕ) : RapidDecaySeq where
   val n := if n = m then 1 else 0
   rapid_decay k := by
     apply summable_of_ne_finset_zero (s := {m})
-    intro n hn
-    simp only [Finset.mem_singleton] at hn
-    simp [hn]
+    grind
 
 @[simp] theorem basisVec_val_self (m : ℕ) : (basisVec m).val m = 1 := by
   simp [basisVec]
@@ -408,9 +406,7 @@ private theorem sum_smul_basisVec_val (a : RapidDecaySeq) (s : Finset ℕ) (n : 
   | insert m _ hm ih =>
     rw [Finset.sum_insert hm, add_val, ih]
     simp only [smul_val, basisVec, mul_ite, mul_one, mul_zero, Finset.mem_insert]
-    by_cases h : n = m
-    · subst h; simp [show n ∉ _ from hm]
-    · simp [h]
+    grind
 
 theorem hasSum_basisVec (a : RapidDecaySeq) :
     HasSum (fun m => a.val m • basisVec m) a := by
@@ -648,9 +644,7 @@ theorem _root_.GaussianField.DyninMityaginSpace.ofRapidDecayEquiv_hasBiorthogona
 theorem nat_pair_bound (n m : ℕ) : Nat.pair n m ≤ (n + m + 1) ^ 2 := by
   have hpair : Nat.pair n m ≤ (max n m + 1) ^ 2 :=
     Nat.le_of_lt (Nat.pair_lt_max_add_one_sq n m)
-  have hmax : max n m + 1 ≤ n + m + 1 := by
-    exact Nat.succ_le_succ (max_le (Nat.le_add_right n m) (Nat.le_add_left m n))
-  exact hpair.trans (Nat.pow_le_pow_left hmax 2)
+  grind
 
 /-- Converse bound: each component of `Nat.unpair` is bounded by the pair index. -/
 theorem nat_unpair_le (p : ℕ) : (Nat.unpair p).1 ≤ p ∧ (Nat.unpair p).2 ≤ p :=
@@ -1215,9 +1209,7 @@ private lemma lift_norm_bound
                   (pow_le_pow_left₀ h1j hj_le S₂) (le_of_lt hD₂))
                 (by positivity) (by positivity)
       _ = K * (|a.val m| * (1 + (m : ℝ)) ^ N) := by
-          change |a.val m| * (C * (D₁ * (1 + ↑m) ^ S₁) * (D₂ * (1 + ↑m) ^ S₂)) =
-            C * D₁ * D₂ * (|a.val m| * (1 + ↑m) ^ (S₁ + S₂))
-          rw [pow_add]; ring
+          grind
   have hg_summ : Summable (fun m => K * (|a.val m| * (1 + (m : ℝ)) ^ N)) :=
     (a.rapid_decay N).mul_left K
   have hnorm_summ : Summable (fun m => ‖a.val m • B (DyninMityaginSpace.basis (Nat.unpair m).1)
@@ -1333,11 +1325,7 @@ theorem lift_pure
     change ‖(B.flip e₂) x‖ ≤
       C * (s₂.sup DyninMityaginSpace.p) e₂ * (s₁.sup DyninMityaginSpace.p) x
     rw [LinearMap.flip_apply]
-    calc ‖(B x) e₂‖
-        ≤ C * (s₁.sup DyninMityaginSpace.p) x *
-          (s₂.sup DyninMityaginSpace.p) e₂ := hB x e₂
-      _ = C * (s₂.sup DyninMityaginSpace.p) e₂ *
-          (s₁.sup DyninMityaginSpace.p) x := by ring
+    grind
   -- Step 3: Inner HasSum: ∑ₖ c₂(k)(e₂) • B(ψ₁(n))(ψ₂(k)) → B(ψ₁(n))(e₂)
   have h_inner : ∀ n, HasSum (fun k => c₂ k e₂ • B (ψ₁ n) (ψ₂ k))
       (B (ψ₁ n) e₂) := by
@@ -1504,9 +1492,7 @@ theorem _root_.GaussianField.NuclearTensorProduct.basisVec_eq_pure
         apply h
         rw [← Nat.pair_unpair n, ← Nat.pair_unpair m, h₁, h₂]
       · simp only [h₂, if_false]
-    · by_cases h₂ : (Nat.unpair n).2 = (Nat.unpair m).2
-      · simp only [h₁, h₂, if_false, if_true]
-      · simp only [h₁, h₂, if_false]
+    · grind
 
 end NuclearTensorProduct
 

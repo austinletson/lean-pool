@@ -30,9 +30,7 @@ lemma relabel_compose_uniform_eq_uniform_mul (n m : ℕ+) :
     = uniformPNat (n * m) := by
   ext x
   simp [relabelProb, composeProb, uniformPNat, sigmaConstFinEquivFinMul]
-  have hn : (n : ℝ) ≠ 0 := by exact_mod_cast Nat.ne_of_gt n.2
-  have hm : (m : ℝ) ≠ 0 := by exact_mod_cast Nat.ne_of_gt m.2
-  field_simp [hn, hm]
+  grind
 
 lemma Apos_mul
     (H : {α : Type} → [Fintype α] → ProbDist α → ℝ)
@@ -64,8 +62,7 @@ lemma Apos_one_zero
     (hH : ShannonEntropyAxioms H) :
     Apos H 1 = 0 := by
   have h11 := Apos_mul H hH 1 1
-  have : Apos H 1 = Apos H 1 + Apos H 1 := by simpa using h11
-  linarith
+  grind
 
 lemma Apos_pow
     (H : {α : Type} → [Fintype α] → ProbDist α → ℝ)
@@ -204,16 +201,7 @@ lemma Apos_ratio_logb_close
         _ = ((m + 1 : ℕ) : ℝ) := by
           rw [Real.logb_pow, Real.logb_self_eq_one hs_real, mul_one]
     exact (le_div_iff₀ hn_pos).2 (by simpa [nR, mul_comm, mul_left_comm, mul_assoc] using hmul)
-  have hwidth :
-      (((m + 1 : ℕ) : ℝ) / nR) - ((m : ℝ) / nR) = 1 / nR := by
-    field_simp [show nR ≠ 0 from hn_ne]
-    norm_num
-  have habs :
-      |ratioA - ratioL|
-        ≤ (((m + 1 : ℕ) : ℝ) / nR) - ((m : ℝ) / nR) :=
-    abs_sub_le_of_mem_interval hA_left hA_right hL_left hL_right
-  have habs' : |ratioA - ratioL| ≤ 1 / nR := habs.trans_eq hwidth
-  simpa [ratioA, ratioL, nR] using habs'
+  grind
 
 lemma Apos_ratio_eq_logb
     (H : {α : Type} → [Fintype α] → ProbDist α → ℝ)

@@ -123,8 +123,7 @@ theorem exists_perm_fixing_base_of_baseOrbit (k : DirIdx) (w w' : BaseOrbit k) :
     ⟨fun j => ⟨z.1.1 j.1, baseOrbit_freeCoord_outside (u := z) j⟩, by
       intro a b hab
       apply Subtype.ext
-      have : z.1.1 a.1 = z.1.1 b.1 := by simpa using congrArg Subtype.val hab
-      exact z.1.2 this⟩
+      grind⟩
   let cutoff : SymN := ⟨3, by decide⟩
   let baseSet : Set SymN := Set.Iio cutoff
   let availEquiv : AvailFrom3 ≃ ↥(SubMulAction.ofFixingSubgroup G baseSet) := by
@@ -134,8 +133,7 @@ theorem exists_perm_fixing_base_of_baseOrbit (k : DirIdx) (w w' : BaseOrbit k) :
             exact not_lt.2 x.2⟩
         invFun := fun x => ⟨x.1, by
             have hx : x.1 ∉ baseSet := x.2
-            have hx' : ¬ x.1 < cutoff := by simpa [baseSet] using hx
-            exact show (3 : Nat) ≤ x.1 from not_lt.1 hx'⟩
+            grind⟩
         left_inv := by intro x; rfl
         right_inv := by intro x; rfl }
   let m : Nat := Fintype.card (FreeCol k)
@@ -211,10 +209,7 @@ theorem exists_perm_of_dirMask_eq {u v u' v' : V} (h : dirMask u v = dirMask u' 
   have hw' : dirMask baseVertex w' = dirMask u' v' := by
     simpa [w', hσ2] using dirMask_smul (σ := σ2) (u := u') (v := v')
   have hbase : dirMask baseVertex w = dirMask baseVertex w' := by
-    calc
-      dirMask baseVertex w = dirMask u v := hw
-      _ = dirMask u' v' := by simp [h]
-      _ = dirMask baseVertex w' := by simpa using hw'.symm
+    grind
   -- Choose the orbit index `k` for the common mask.
   let k : DirIdx := dirIdxOfDirMask baseVertex w
   have hk : dirMask baseVertex w = maskAt k := by simp [k, maskAt_dirIdxOfDirMask]

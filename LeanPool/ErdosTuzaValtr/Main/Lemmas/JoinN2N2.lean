@@ -38,9 +38,7 @@ theorem Config.join_n2_n2_case_ff (S : Finset α) (n : ℕ) (a x b : α) (c1 c2 
     exact h_in c (by simp)
   have hc2' : C.NCup (n + 2) (x :: (c3 ++ [c])) := by rw [← eq_c2]; exact hc2
   have hc_last : c ∈ (x :: (c3 ++ [c])).getLast? := by
-    rw [List.getLast?_cons_of_ne_nil (by simp), List.getLast?_append_of_ne_nil _ (by simp),
-      List.getLast?_singleton]
-    rfl
+    grind
   have hxc : x < c := hc2'.head_lt_getLast x c (by simp) hc_last
   by_cases haxc : C.Cup3 a x c
   · apply ncup_is_ngon (by omega)
@@ -58,35 +56,24 @@ theorem Config.join_n2_n2_case_ff (S : Finset α) (n : ℕ) (a x b : α) (c1 c2 
       exact hbc2.extend_left sab a_in_S hab bc2_in (by simp)
     have key_in : (a :: (c3 ++ [c])).In S := by
       rw [List.cons_in]
-      refine ⟨a_in_S, ?_⟩
-      have h_in := bc2_in
-      rw [eq_c2] at h_in
-      exact h_in
+      grind
     refine ⟨[a, x, c], a :: (c3 ++ [c]), ⟨⟨?_, ?_, ?_, ?_, ?_, ?_⟩, ?_⟩, ?_, key_in⟩
     · simp
     · refine ⟨?_, ?_⟩
-      · rw [List.isChain_cons_cons, List.isChain_cons_cons]
-        exact ⟨hax, hxc, List.isChain_singleton c⟩
+      · grind
       · rw [show ([a, x, c] : List α) = [] ++ a :: x :: c :: [] by simp, List.chain3'_append_cons3]
         exact ⟨List.chain3'_pair a x, haxc, List.chain3'_pair x c⟩
     · simp
     · exact key
     · rw [List.head?_cons, List.head?_cons]
-    · have hc_last2 : c ∈ (a :: (c3 ++ [c])).getLast? := by
-        rw [List.getLast?_cons_of_ne_nil (by simp), List.getLast?_append_of_ne_nil _ (by simp),
-          List.getLast?_singleton]
-        rfl
-      rw [Option.mem_def] at hc_last2
-      rw [hc_last2]
-      rfl
+    · grind
     · rw [show a :: (c3 ++ [c]) = a :: c3 ++ [c] by simp, List.length_append, List.length_cons,
         List.length_singleton, List.length_cons, List.length_cons, List.length_cons,
         List.length_nil]
       have hlen : (b :: c2).length = (c3 ++ [c]).length := by rw [eq_c2]
       rw [List.length_cons, List.length_append, List.length_singleton] at hlen
       have := hc2'.2
-      rw [List.length_cons, List.length_append, List.length_singleton] at this
-      omega
+      grind
     · rw [List.cons_in, List.cons_in, List.cons_in]
       exact ⟨a_in_S, x_in_S, c_in_S, List.nil_in⟩
 

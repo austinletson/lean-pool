@@ -140,16 +140,12 @@ noncomputable def rootS (a b : ℕ) (f : ι) : ι :=
 
 lemma rootS_mem_containersS {a b : ℕ} {f : ι} (hf : f ∈ Sstrict fam a b) :
     rootS fam a b f ∈ containersS fam a b f := by
-  unfold rootS; rw [dif_pos hf]
-  exact (Finset.exists_max_image (containersS fam a b f) (fun g => fam.hi g - fam.lo g)
-    (containersS_nonempty fam hf)).choose_spec.1
+  unfold rootS; grind
 
 lemma rootS_max {a b : ℕ} {f : ι} (hf : f ∈ Sstrict fam a b) :
     ∀ g ∈ containersS fam a b f,
       fam.hi g - fam.lo g ≤ fam.hi (rootS fam a b f) - fam.lo (rootS fam a b f) := by
-  unfold rootS; rw [dif_pos hf]
-  exact (Finset.exists_max_image (containersS fam a b f) (fun g => fam.hi g - fam.lo g)
-    (containersS_nonempty fam hf)).choose_spec.2
+  unfold rootS; grind
 
 variable {a b : ℕ}
 
@@ -253,15 +249,12 @@ lemma fiber_eq_contained {r : ι} (hr : r ∈ Roots fam a b) :
   · rintro ⟨hgS, hgr⟩
     have hgSmem : g ∈ Sstrict fam a b := by rw [mem_Sstrict]; exact hgS
     have hcont := rootS_contains fam hgSmem
-    rw [hgr] at hcont
-    exact ⟨hgS.1.1, hcont.1, hcont.2⟩
+    grind
   · rintro ⟨hgE, hglo, hghi⟩
     have hgwin : a ≤ fam.lo g ∧ fam.hi g ≤ b := ⟨le_trans hra hglo, le_trans hghi hrb⟩
     have hglh := fam.lh g hgE
     have hgstrict : fam.lo g ≠ a ∨ fam.hi g ≠ b := by
-      rcases hrs with h | h
-      · left; omega
-      · right; omega
+      grind
     have hgS : g ∈ Sstrict fam a b := by
       rw [mem_Sstrict]; exact ⟨⟨hgE, hgwin.1, hgwin.2⟩, hgstrict⟩
     refine ⟨⟨⟨hgE, hgwin.1, hgwin.2⟩, hgstrict⟩, ?_⟩
@@ -299,11 +292,7 @@ lemma Sstrict_eq_filter_not :
   apply Finset.filter_congr
   intro e _
   unfold IsStrict
-  constructor
-  · rintro (h | h) ⟨h1, h2⟩ <;> [exact h h1; exact h h2]
-  · intro h
-    rw [not_and_or] at h
-    exact h
+  grind
 
 /-- `N = #topEdges + #Sstrict`. -/
 lemma N_split : N fam a b = (topEdges fam a b).card + (Sstrict fam a b).card := by
@@ -379,10 +368,7 @@ lemma crux (hab : a < b) (htop : (topEdges fam a b).Nonempty) :
   have hcover : ∀ t, a < t → t ≤ b → ∃ r ∈ Roots fam a b, fam.lo r < t ∧ t ≤ fam.hi r := by
     intro t ht1 ht2
     have htmem : t ∈ Finset.Ioc a b := by rw [Finset.mem_Ioc]; exact ⟨ht1, ht2⟩
-    rw [← hbu, Finset.mem_biUnion] at htmem
-    obtain ⟨r, hr, htr⟩ := htmem
-    rw [Finset.mem_Ioc] at htr
-    exact ⟨r, hr, htr.1, htr.2⟩
+    grind
   have scan : ∀ t, a < t → t ≤ b → ∀ r ∈ Roots fam a b,
       fam.lo r < t → t ≤ fam.hi r → fam.col e0 < fam.col r := by
     intro t
@@ -406,18 +392,14 @@ lemma crux (hab : a < b) (htop : (topEdges fam a b).Nonempty) :
       · have htea : t = a + 1 := by omega
         have hrloa : fam.lo r = a := by omega
         have hrhib : fam.hi r < b := by
-          rcases hrs with h | h
-          · exact absurd hrloa h
-          · omega
+          grind
         have hbl := fam.bLeft e0 he0E r hrE (by rw [he0lo, hrloa]) (by rw [he0hi]; exact hrhib)
         exact hbl
   obtain ⟨rb, hrb, hrblo, hrbhi⟩ := hcover b (by omega) (le_refl b)
   obtain ⟨hrbE, hrba, hrbb, hrbs⟩ := root_self_props fam hrb
   have hrbhib : fam.hi rb = b := by omega
   have hrbloa : a < fam.lo rb := by
-    rcases hrbs with h | h
-    · omega
-    · exact absurd hrbhib h
+    grind
   have hscan := scan b (by omega) (le_refl b) rb hrb hrblo hrbhi
   have hbr := fam.bRight e0 he0E rb hrbE (by rw [he0hi, hrbhib]) (by rw [he0lo]; exact hrbloa)
   omega
@@ -436,8 +418,7 @@ theorem master (a b : ℕ) : N fam a b ≤ b - a := by
         have hwlt : fam.hi r - fam.lo r < w := by
           rw [mem_Roots] at hr
           have := rootS_width_lt fam hr.1
-          rw [hr.2] at this
-          omega
+          grind
         exact ih (fam.hi r - fam.lo r) hwlt (fam.lo r) (fam.hi r) rfl
       rcases Finset.eq_empty_or_nonempty (topEdges fam a b) with htop | htop
       · rw [htop, Finset.card_empty]
@@ -631,11 +612,7 @@ lemma no_alt [NeZero (d * m)] {P : Finset (Finset (ZMod (d * m)))} (hP : Portrai
 lemma eq_imp_sameHost {P : Finset (Finset (ZMod (d * m)))} (hP : Portrait d m P)
     {x y : ZMod (d * m)} (hx : x ∈ T P) (hy : y ∈ T P) (hxy : x = y) :
     hostSet P x hx = hostSet P y hy := by
-  by_contra hne
-  have hdisj := hP.2.1 _ (hostSet_mem hx) _ (hostSet_mem hy) hne
-  have hmemx : x ∈ hostSet P x hx := mem_hostSet hx
-  have hmemy : x ∈ hostSet P y hy := hxy ▸ mem_hostSet hy
-  exact (Finset.disjoint_left.mp hdisj hmemx) hmemy
+  grind
 
 /-- If predecessors coincide as points the survivors share a host. -/
 lemma predEq_imp_sameHost {P : Finset (Finset (ZMod (d * m)))} (hP : Portrait d m P)

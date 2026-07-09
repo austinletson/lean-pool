@@ -196,22 +196,17 @@ theorem five_le_card_image_of_strictAnti_chain {N : ℕ} (f : ℕ → ℝ) {q₀
   have a14 : f q₄ < f q₁ := lt_trans h34 a13
   have a24 : f q₄ < f q₂ := lt_trans h34 h23
   have e1 : f q₀ ∉ ({f q₁, f q₂, f q₃, f q₄} : Finset ℝ) := by
-    simp only [Finset.mem_insert, Finset.mem_singleton, not_or]
-    exact ⟨ne_of_gt h01, ne_of_gt a02, ne_of_gt a03, ne_of_gt a04⟩
+    grind
   have e2 : f q₁ ∉ ({f q₂, f q₃, f q₄} : Finset ℝ) := by
-    simp only [Finset.mem_insert, Finset.mem_singleton, not_or]
-    exact ⟨ne_of_gt h12, ne_of_gt a13, ne_of_gt a14⟩
+    grind
   have e3 : f q₂ ∉ ({f q₃, f q₄} : Finset ℝ) := by
     simp only [Finset.mem_insert, Finset.mem_singleton, not_or]; exact ⟨ne_of_gt h23, ne_of_gt a24⟩
   have e4 : f q₃ ∉ ({f q₄} : Finset ℝ) := by
     simp only [Finset.mem_singleton]; exact ne_of_gt h34
   have hcard : ({f q₀, f q₁, f q₂, f q₃, f q₄} : Finset ℝ).card = 5 := by
-    rw [Finset.card_insert_of_notMem e1, Finset.card_insert_of_notMem e2,
-      Finset.card_insert_of_notMem e3, Finset.card_insert_of_notMem e4, Finset.card_singleton]
+    grind
   have hsub : ({f q₀, f q₁, f q₂, f q₃, f q₄} : Finset ℝ) ⊆ (Finset.range (N + 1)).image f := by
-    intro x hx
-    simp only [Finset.mem_insert, Finset.mem_singleton] at hx
-    rcases hx with rfl | rfl | rfl | rfl | rfl <;> exact Finset.mem_image_of_mem f ‹_›
+    grind
   calc 5 = _ := hcard.symm
     _ ≤ _ := Finset.card_le_card hsub
 
@@ -369,14 +364,7 @@ theorem transport (s : ℝ) (hs0 : 0 ≤ s) (m n : ℤ) (Km Kn : ℝ)
   have hd2 := deltaN_sub_le astar (aprt s) n
   rw [eucl_aprt s hs0, hm] at hd1
   rw [eucl_aprt' s hs0, hn] at hd2
-  have hexp : 29 * ((|(m : ℝ)| + |(n : ℝ)|) * s) = 29 * (|(m : ℝ)| * s) + 29 * (|(n : ℝ)| * s) := by
-    ring
-  rw [hexp] at hgap
-  obtain ⟨U, hUdef⟩ : ∃ U, |(m : ℝ)| * s = U := ⟨_, rfl⟩
-  obtain ⟨V, hVdef⟩ : ∃ V, |(n : ℝ)| * s = V := ⟨_, rfl⟩
-  rw [hUdef] at hd1 hgap
-  rw [hVdef] at hd2 hgap
-  linarith [hd1, hd2, hgap]
+  grind
 
 /-- Bundles `transport` + `gap_ok` for the perturbed witness: a defect comparison transports from
 `α*` once `s` is small. -/

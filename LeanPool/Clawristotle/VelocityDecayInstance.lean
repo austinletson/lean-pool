@@ -30,8 +30,7 @@ lemma lorentz_component_bound (E₀ B₀ : Fin 3 → ℝ) :
   fin_cases i <;> simp [ Fin.sum_univ_succ ] <;> ring_nf
   · have h_triangle :
           |E₀ 0 + (v 1 * B₀ 2 - v 2 * B₀ 1)| ≤ |E₀ 0| + |v 1 * B₀ 2| + |v 2 * B₀ 1| := by
-      cases abs_cases (E₀ 0 + (v 1 * B₀ 2 - v 2 * B₀ 1) ) <;>
-        cases abs_cases (E₀ 0) <;>
+      grind <;>
         cases abs_cases (v 1 * B₀ 2) <;>
         cases abs_cases (v 2 * B₀ 1) <;> linarith
     have h_triangle2 :
@@ -64,8 +63,7 @@ lemma lorentz_component_bound (E₀ B₀ : Fin 3 → ℝ) :
   · have h_triangle :
         abs (E₀ 2 + (v 0 * B₀ 1 - v 1 * B₀ 0)) ≤
           abs (E₀ 2) + abs (v 0 * B₀ 1) + abs (v 1 * B₀ 0) := by
-      cases abs_cases (E₀ 2 + (v 0 * B₀ 1 - v 1 * B₀ 0) ) <;>
-        cases abs_cases (E₀ 2) <;>
+      grind <;>
         cases abs_cases (v 0 * B₀ 1) <;>
         cases abs_cases (v 1 * B₀ 0) <;> linarith
     norm_num [ abs_mul ] at *

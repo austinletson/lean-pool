@@ -136,9 +136,7 @@ lemma cF_ratio_tendsto_one :
     rw [show (1 : ℂ) = 1 / 1 from by ring]
     exact (tendsto_deriv_cF_Delta.mono_left nhdsWithin_le_nhds).div
       cF_Delta_div_q_tendsto one_ne_zero
-  refine h1.congr' ?_
-  filter_upwards [self_mem_nhdsWithin] with q hq
-  simp only [mem_compl_iff, mem_singleton_iff] at hq; field_simp
+  grind
 
 /-! ## phi0 is bounded at Im -> infinity
 

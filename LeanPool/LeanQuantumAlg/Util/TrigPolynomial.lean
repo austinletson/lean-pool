@@ -202,9 +202,7 @@ theorem exp_I_real_inj {a b : ℝ}
   have harg : Complex.I * ((Real.pi / (a - b) * a : ℝ) : ℂ)
             - Complex.I * ((Real.pi / (a - b) * b : ℝ) : ℂ) = (Real.pi : ℂ) * Complex.I := by
     rw [← mul_sub, ← Complex.ofReal_sub]
-    have hpi : Real.pi / (a - b) * a - Real.pi / (a - b) * b = Real.pi := by
-      rw [← mul_sub, div_mul_cancel₀ _ hc]
-    rw [hpi]; ring
+    grind
   rw [harg, Complex.exp_pi_mul_I] at e1
   norm_num at e1
 
@@ -288,9 +286,7 @@ theorem TrigPolynomial.coeffAt_conj (f : TrigPolynomial k) (ω : Fin k → ℝ) 
     (f.conj).coeffAt ω = (starRingEnd ℂ) (f.coeffAt (-ω)) := by
   have hmem : ω ∈ (f.conj).freqs ↔ -ω ∈ f.freqs := by
     simp only [TrigPolynomial.conj, Finset.mem_image]
-    constructor
-    · rintro ⟨a, ha, rfl⟩; rwa [neg_neg]
-    · intro h; exact ⟨-ω, h, neg_neg ω⟩
+    grind
   unfold TrigPolynomial.coeffAt
   by_cases h : -ω ∈ f.freqs
   · rw [if_pos (hmem.mpr h), if_pos h]; rfl

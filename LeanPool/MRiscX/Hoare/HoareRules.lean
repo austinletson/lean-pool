@@ -96,31 +96,7 @@ theorem WL_TO_BL : ∀ (c : Code) (P Q : Assertion) (l : UInt64) (L_w L_b L : Se
   specialize H1 HCode
   rcases H1 with ⟨n', ⟨H1', H2', H3', H4'⟩⟩
   unfold weak
-  exists s'
-  constructor
-  · intros _
-    exists n'
-    try repeat (constructor <;> try assumption)
-    · apply HSPost
-      exact H2
-    · intros n'' Hn''
-      specialize H4' n'' Hn''
-      apply MState.runNSteps_diff <;> try assumption
-      simp only [Set.union_subset_iff, Set.sdiff_subset_iff, Set.subset_union_right, true_and]
-      constructor
-      · intros hx h
-        apply Set.mem_union_right
-        exact Set.mem_union_left L_b h
-      · intros hx h
-        apply Set.mem_union_left
-        apply HLSubL_w.left h
-  · constructor
-    · exact H2
-    · simp only [Set.mem_union, not_or]
-      constructor
-      · exact H3
-      · apply HSPost
-        exact H2
+  grind
 
 
 
@@ -177,10 +153,7 @@ theorem S_SEQ {L_b'' : Set UInt64} :
           rw [def_L_b'']
           apply MState.run_n_plus_m_intersect <;> assumption
   · constructor <;> try assumption
-    · rw [def_L_b'']
-      simp only [Set.mem_inter_iff, not_and]
-      intros _
-      exact HSecondPc
+    · grind
 
 
 /--
@@ -218,8 +191,7 @@ theorem PRE_STR : ∀(c : Code) (P1 P2 Q : Assertion) (L_w L_b : Set UInt64) (l 
   := by
   intros c P1 P2 Q L_w L_b l HTaut
   unfold hoareTripleUp
-  intros H HInter HEmpty s HCode H_pc pre
-  exact H HInter HEmpty s HCode H_pc (HTaut s HCode ⟨H_pc, pre⟩)
+  grind
 
 
 /--
@@ -313,16 +285,9 @@ theorem S_LOOP {α : Type} [Preorder α] [WellFoundedLT α] :
   unfold hoareTripleUp
   intros h_inter h_nonempty s h_code h_pc hI
   have h_inter' : ({l} ∪ L_w) ∩ L_b = ∅ := by
-    rw [Set.union_inter_distrib_right]
-    simp only [Set.union_empty_iff, Set.singleton_inter_eq_empty]
-    constructor
-    · exact h_l_not_mem_Lb
-    · exact h_inter
+    grind
   have h_nonempty' : ({l} ∪ L_w) ≠ ∅ := by
-    rw [← Set.nonempty_iff_ne_empty, Set.union_nonempty]
-    right
-    rw [Set.nonempty_iff_ne_empty]
-    exact h_nonempty
+    grind
   let P : α → Prop :=
     fun v =>
       ∀ s : MState,
@@ -357,20 +322,7 @@ theorem S_LOOP {α : Type} [Preorder α] [WellFoundedLT α] :
         · apply MState.runNSteps_add <;> try assumption
         · intro n hn
           apply MState.run_n_plus_m_pc_not_in_set (set := (L_w ∪ L_b)) <;> try assumption
-          intro n' hn'
-          rcases hn' with ⟨hn'le, hn'le_m⟩
-          rw [Nat.le_iff_lt_or_eq] at hn'le_m
-          cases hn'le_m with
-          | inl hlt =>
-              specialize hsafe n' ⟨hn'le, hlt⟩
-              simp only [Set.mem_union] at hsafe
-              push Not at hsafe
-              rcases hsafe with ⟨⟨-, hnotLw⟩, hnotLb⟩
-              simpa only [Set.mem_union, not_or] using ⟨hnotLw, hnotLb⟩
-          | inr heq =>
-              simp only [Set.mem_union, not_or]
-              rw [heq, hrun, hpc']
-              exact ⟨h_l_not_mem_Lw, h_l_not_mem_Lb⟩
+          grind
       exact ⟨s'', hweak, hQ'', hnotinLb''⟩
     · -- Guard false: discharge with the exit rule.
       exact h_false h_inter h_nonempty s h_code h_pc ⟨hC, hI⟩

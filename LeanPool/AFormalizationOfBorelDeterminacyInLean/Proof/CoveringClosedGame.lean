@@ -575,8 +575,7 @@ lemma T'_snd_medium' (x : gameTree hyp) (h : x.val.length = 2 * k + 1) :
     change (List.map Prod.fst (x.val ++ [a.val])).getLast? = some a.val.1
     have hmap : List.map Prod.fst (x.val ++ [a.val]) = x.val.map Prod.fst ++ [a.val.1] :=
       List.map_append ..
-    rw [hmap]
-    exact List.getLast?_append_of_ne_nil _ (by simp)
+    grind
   exact Option.some.inj (hleft.symm.trans (hlast.trans hright))
 lemma extensionsAt_ext_fst {x : (game hyp).tree} (a b : ExtensionsAt x)
   (hx : 2 * k + 2 ≤ x.val.length) (h : a.val.1 = b.val.1) : a = b := by
@@ -620,8 +619,7 @@ lemma getTree_lost
         have hdrop : List.drop (Stream'.take (2 * k + 2) a).length
               (List.map Prod.fst (Stream'.take (2 * k + 2 + n) a)) =
             List.drop (2 * k + 2) (List.map Prod.fst (Stream'.take (2 * k + 2 + n) a)) := by
-          congr
-          exact Stream'.length_take (2 * k + 2) a
+          grind
         exact hdrop ▸ by
           convert hm using 1
           · conv => simp [hax, Stream'.take_take, Nat.add_comm]
@@ -687,8 +685,7 @@ lemma LosingCondition.not_lost_short {x : (game hyp).tree} (hxl : 2 * k + 2 ≤ 
     constructor
     · rcases hs.1 with ⟨t, rfl⟩
       exact ⟨t, rfl⟩
-    · rcases hs.2 with ⟨b, hb, rfl⟩
-      exact ⟨b.prop, ⟨b, hb, rfl⟩⟩
+    · grind
   have hUz := Game.WonPosition.extend z (G := G) (p := Player.one.residual u) (x := u) hU
   rw [Player.residual_residual] at hUz
   rw [← hze] at hUz
@@ -725,8 +722,7 @@ lemma extensionsAt_eq_of_lost
       (List.map Prod.fst (x.val ++ [c.val])).getLast? = some c.val.1 := fun c => by
     have hmap : List.map Prod.fst (x.val ++ [c.val]) = x.val.map Prod.fst ++ [c.val.1] :=
       List.map_append ..
-    rw [hmap]
-    exact List.getLast?_append_of_ne_nil _ (by simp)
+    grind
   have hshortA : (List.map Prod.fst (x.val ++ [a.val])).length ≤ u.length := by
     rw [hextlen a, hulen]; omega
   have hshortB : (List.map Prod.fst (x.val ++ [b.val])).length ≤ u.length := by
@@ -740,12 +736,10 @@ lemma extensionsAt_eq_of_lost
     rw [hextlen a, hextlen b]
   rcases List.prefix_or_prefix_of_prefix ha.1 hb.1 with h | h
   · have he := congrArg List.getLast? (h.eq_of_length hlenEq)
-    rw [hlast a, hlast b] at he
-    exact Option.some.inj he
+    grind
   · symm
     have he := congrArg List.getLast? (h.eq_of_length hlenEq.symm)
-    rw [hlast b, hlast a] at he
-    exact Option.some.inj he
+    grind
 
 end «Section1»
 end GaleStewartGame.BorelDet

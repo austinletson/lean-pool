@@ -93,8 +93,7 @@ lemma smulOrbit_card (g : P.Δ) (β : P.Δ) :
     Finset.card_univ using 2
   · rfl
   · apply heq_of_eq
-    congr 1
-    exact Subsingleton.elim _ _
+    grind
 
 /-- The cardinality of a smul orbit cast to `ℤ` equals `HeckeCosetDeg`. -/
 lemma smulOrbit_card_intCast (D : HeckeCoset P) (β : P.Δ) :

@@ -92,13 +92,7 @@ def ball (n : ℕ) (φ : ℕ → ℕ) : ℕ := n.rec 1 (fun n ih => (φ n).pos.a
   | zero => simp [ball]
   | succ n ih =>
     simp only [ball, and_pos_iff, pos_pos_iff, Nat.lt_succ_iff] at *
-    simp only [ih]; exact ⟨
-    by
-      rintro ⟨hn, hp⟩ m hm
-      rcases lt_or_eq_of_le hm with (hm | rfl)
-      · exact hp _ hm
-      · exact hn,
-    by intro h; exact ⟨h n (Nat.le_refl n), fun m hm => h m (le_of_lt hm)⟩⟩
+    grind
 
 @[simp] lemma ball_eq_zero_iff {φ : ℕ → ℕ} {n : ℕ} : ball n φ = 0 ↔ ∃ m < n, φ m = 0 := by
   simpa[-ball_pos_iff] using not_iff_not.mpr (ball_pos_iff (φ := φ) (n := n))
@@ -388,17 +382,7 @@ lemma sub {n} (i j : Fin n) : Arith₁ (fun v => v.get i - v.get j) := by
     simp only [head_cons, get_cons_succ, or_pos_iff, isEqNat_pos_iff, and_pos_iff,
       isLtNat_pos_iff, Bool.decide_or, Bool.decide_and, PFun.coe_val, eq_some_iff, mem_rfind,
       mem_some_iff, F]
-    constructor
-    · symm; simp only [Bool.or_eq_true, decide_eq_true_eq, Bool.and_eq_true]
-      have : v.get i < v.get j ∨ v.get j ≤ v.get i := Nat.lt_or_ge _ _
-      rcases this with (hv | hv)
-      · right; exact ⟨hv, Nat.sub_eq_zero_of_le (Nat.le_of_lt hv)⟩
-      · left; exact Nat.sub_add_cancel hv
-    · intro m hm; symm
-      simp only [Bool.or_eq_false_eq_eq_false_and_eq_false,
-        decide_eq_false_iff_not, Bool.and_eq_false_eq_eq_false_or_eq_false, not_lt]
-      have : m + v.get j < v.get i := add_lt_of_lt_sub hm
-      exact ⟨ne_of_lt this, by left; exact le_trans le_add_self (le_of_lt this)⟩
+    grind
 
 protected lemma pair {n} (i j : Fin n) : Arith₁ (fun v => (v.get i).pair (v.get j)) := by
   have := if_pos (lt i j)
@@ -461,8 +445,7 @@ lemma dvd (i j : Fin n) : Arith₁ (fun v => isDvdNat (v.get i) (v.get j)) := by
             contradiction)
       refine ⟨k,
         ⟨by symm; simp only [Bool.or_eq_true, decide_eq_true_eq]; left; simp[hk, mul_comm],
-         by intro m hm; symm; simp[mul_comm m, Ne.symm (hkm m hm),
-           le_of_lt (lt_of_lt_of_le hm hkvj)]⟩,
+         by grind⟩,
         by simp[isLeNat, hkvj]⟩
     · simp only [hv, ↓reduceIte]
       exact ⟨v.get j + 1, ⟨by symm; simp, by
@@ -524,13 +507,9 @@ lemma ball {φ : List.Vector ℕ n → ℕ → ℕ} (hp : @Arith₁ (n + 1) (fun
     by_cases H : ∀ m < v.get i, 0 < φ v m
     · exact ⟨v.get i,
         ⟨by
-          symm
-          simp only [Std.le_refl, decide_true, Bool.or_true],
+          grind,
         by
-          intro m hm
-          symm
-          simp only [Bool.or_eq_false_iff, decide_eq_false_iff_not, not_le, hm, and_true]
-          exact Nat.ne_zero_of_lt (H m hm)⟩,
+          grind⟩,
         by
           simp only [isEqNat, ↓reduceIte]
           symm
@@ -538,9 +517,7 @@ lemma ball {φ : List.Vector ℕ n → ℕ → ℕ} (hp : @Arith₁ (n + 1) (fun
     · have : ∃ x < List.Vector.get v i, φ v x = 0 ∧ ∀ y < x, φ v y ≠ 0 := by
         simp only [not_forall, not_lt, nonpos_iff_eq_zero] at H
         rcases least_number _ H with ⟨x, hx, hxl⟩
-        exact ⟨x, hx.1, hx.2, by
-          intro y hy; have : y < v.get i → φ v y ≠ 0 := by simpa using hxl y hy
-          exact this (lt_trans hy hx.1)⟩
+        grind
       rcases this with ⟨x, hx, hpx, hlx⟩
       exact ⟨x, ⟨by symm; simp[hpx], by intro m hm; symm; simp[hlx m hm, lt_trans hm hx]⟩, by
         have hne : x ≠ v.get i := ne_of_lt hx
@@ -585,8 +562,7 @@ lemma beta_eq_rec (f : List.Vector ℕ n → ℕ) (g : List.Vector ℕ (n + 2) �
   induction m with
   | zero => simp [h0]
   | succ m ih =>
-    simp only
-    rw [hs m (Nat.lt_add_one m), ←ih (fun i hi => hs i (Nat.lt_succ_of_lt hi))]
+    grind
 
 lemma prec {n f g} (hf : @Arith₁ n f) (hg : @Arith₁ (n + 2) g) :
     @Arith₁ (n + 1) (fun v => v.head.rec (f v.tail) fun y IH => g (y ::ᵥ IH ::ᵥ v.tail)) := by
@@ -619,9 +595,7 @@ lemma prec {n f g} (hf : @Arith₁ n f) (hg : @Arith₁ (n + 2) g) :
       g (i ::ᵥ z.beta i ::ᵥ v.tail) by
       rcases least_number _ this with ⟨z, ⟨hz0, hzs⟩, hzm⟩
       exact ⟨z, ⟨by
-        symm
-        simp only [hz0, decide_true, Bool.true_and]
-        exact decide_eq_true hzs,
+        grind,
         by intro m hm; symm; simpa[imp_iff_not_or, not_or] using hzm m hm⟩,
         beta_eq_rec f g hz0 hzs⟩
     let l : List ℕ := recSequence f g v.head v.tail

@@ -188,8 +188,7 @@ theorem reaches_single_edge [DecidableEq V] {G : Graph V} {u v : V}
     single_eq_twoPoint_right_zero (v := v) (2 * k) huv
   have hfinish : single v k = twoPoint u v 0 k :=
     single_eq_twoPoint_left_zero (u := u) k huv
-  rw [hstart, hfinish]
-  simpa [Nat.zero_add] using hreach
+  grind
 
 /-- Direct delivery along a walk. -/
 theorem canReachAtLeast_single_of_walk [DecidableEq V] {G : Graph V} {u target : V}
@@ -207,9 +206,7 @@ theorem canReachAtLeast_single_of_walk [DecidableEq V] {G : Graph V} {u target :
       have hfirst : Reaches G (single _ (2 * k)) (single _ k) :=
         reaches_single_edge (G := G) huv k
       have hpow : T * 2 ^ (tail.length + 1) = 2 * k := by
-        dsimp [k]
-        rw [Nat.pow_succ]
-        ac_rfl
+        grind
       rcases ih with ⟨Dfinish, htail, htarget⟩
       exact ⟨Dfinish, by
         simpa [hpow, Reaches] using Relation.ReflTransGen.trans hfirst htail, htarget⟩
@@ -238,10 +235,7 @@ theorem move_add_right [DecidableEq V] {G : Graph V} {D E A : Pebbling V}
     by_cases hxu : x = u
     · subst x
       simp only [moveDistribution_apply_from, Pi.add_apply]
-      calc
-        D u + A u - 2 = A u + D u - 2 := by rw [Nat.add_comm]
-        _ = A u + (D u - 2) := Nat.add_sub_assoc hD (A u)
-        _ = D u - 2 + A u := by rw [Nat.add_comm]
+      grind
     · by_cases hxv : x = v
       · subst x
         have hvu : v ≠ u := fun h => huv h.symm
@@ -276,11 +270,9 @@ theorem canReachAtLeast_add [DecidableEq V] {G : Graph V} {D₁ D₂ : Pebbling 
   have hsecond₀ : Reaches G (D₂ + E₁) (E₂ + E₁) :=
     reaches_add_right hreach₂
   have hstart : D₂ + E₁ = E₁ + D₂ := by
-    funext v
-    exact Nat.add_comm (D₂ v) (E₁ v)
+    grind
   have hfinish : E₂ + E₁ = E₁ + E₂ := by
-    funext v
-    exact Nat.add_comm (E₂ v) (E₁ v)
+    grind
   have hsecond : Reaches G (E₁ + D₂) (E₁ + E₂) := by
     simpa [hstart, hfinish] using hsecond₀
   refine ⟨E₁ + E₂, Relation.ReflTransGen.trans hfirst hsecond, ?_⟩

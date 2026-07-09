@@ -64,8 +64,7 @@ lemma quality_ge_of_liminf (f : ℕ → Fin n → ℤ) (s : Set ℕ)
     ext
     simp [and_comm]
   refine key.image (injs.mono fun _ m ↦ m.2) |>.mono fun a ma ↦ ?_
-  obtain ⟨i, li, rfl⟩ := ma
-  exact ⟨ms _ li.2, hN₀ _ li.1⟩
+  grind
 
 open Filter in
 /-- A specialisation of `quality_ge_of_liminf` to `s = univ`. -/

@@ -76,9 +76,7 @@ theorem OrtIdem_imply_MatUnits' {n : ℕ} (hn : 0 < n)
     ∃ mat_units : hasMatrixUnits R n, mat_units.es ⟨0, hn⟩ ⟨0, hn⟩ = diag_es ⟨0, hn⟩ := by
   let es := fun i j => (col_es i) * (row_es j)
   let diag_sum_eq_one : ∑ i, es i i = 1 := by
-    calc ∑ i, es i i = ∑ i, col_es i * row_es i := rfl
-      _ = ∑ i, diag_es i := by simp_rw [comp2]
-      _ = 1 := sum_eq_one
+    grind
   let delta : ∀ i j k l, es i j * es k l = (if j = k then es i l else 0) := by
     intro i j k l
     split_ifs with h
@@ -90,11 +88,7 @@ theorem OrtIdem_imply_MatUnits' {n : ℕ} (hn : 0 < n)
             rw [hr]; noncomm_ring
           _ = diag_es i * r * diag_es ⟨0, hn⟩ := by rw [idem ⟨0, hn⟩]
           _ = col_es i := by rw [hr]
-      calc
-        (col_es i * row_es k) * (col_es k * row_es l) =
-            col_es i * (row_es k * col_es k) * row_es l := by noncomm_ring
-        _ = col_es i * diag_es ⟨0, hn⟩ * row_es l := by rw [comp1 k]
-        _ = col_es i * row_es l := by rw [col_mul_diag]
+      grind
     · obtain ⟨r, hr⟩ := row_in j
       obtain ⟨s, hs⟩ := col_in k
       calc
@@ -225,10 +219,7 @@ theorem ring_to_matrix_ring_multiplicative (a b : R) :
       rw [Finset.sum_mul]
     _ = ∑ j_1 : Fin n, es ⟨0, hn⟩ i * a * es j_1 ⟨0, hn⟩ *
           (es ⟨0, hn⟩ j_1 * b * es j ⟨0, hn⟩) := by
-      apply Finset.sum_congr
-      · simp
-      · intro x hx
-        rw [mul_assoc, mul_assoc, mul_assoc, mul_assoc, mul_assoc, mul_assoc]
+      grind
   symm
   rw [_lift_sum]
 
@@ -255,11 +246,8 @@ theorem corner_matrix_zero_equiv (a : R) :
       exact Fintype.sum_eq_zero (fun a ↦ 0) (congrFun rfl)
     rw [← Finset.sum_mul Finset.univ] at hs
     rw [mu.diag_sum_eq_one] at hs
-    simp only [one_mul] at hs
-    exact hs
-  · intro h
-    rw [h]
-    simp only [mul_zero, zero_mul, implies_true]
+    grind
+  · grind
 
 -- same as previous but in a more applicable form
 theorem corner_matrix_zero_crit (a : R) :
@@ -275,12 +263,10 @@ theorem corner_matrix_zero_crit (a : R) :
     simp only [mul_zero, zero_mul]
   have h'' : (mu.es i ⟨0, hn⟩ * mu.es ⟨0, hn⟩ i) * a *
         (mu.es j ⟨0, hn⟩ * mu.es ⟨0, hn⟩ j) = 0 := by
-    rw [← h']
-    repeat rw [mul_assoc]
+    grind
   simp only [mu.mul_ij_kl_eq_kron_delta_jk_mul_es_il i ⟨0, hn⟩ ⟨0, hn⟩ i] at h''
   simp only [mu.mul_ij_kl_eq_kron_delta_jk_mul_es_il j ⟨0, hn⟩ ⟨0, hn⟩ j] at h''
-  simp only [↓reduceIte] at h''
-  exact h''
+  grind
 
 -- the actual definition of the homomorphism
 /-- The ring homomorphism from `R` to the matrix ring over its `e₀₀` corner ring. -/
@@ -322,9 +308,7 @@ lemma e0k_left_mul_sum {k : Fin n} {f : Fin n → R} :
       es ⟨0, hn⟩ k * (es i ⟨0, hn⟩ * f i) = if k = i then es ⟨0, hn⟩ ⟨0, hn⟩ * f k else 0 := by
     intro i
     rw [← mul_assoc, mu.mul_ij_kl_eq_kron_delta_jk_mul_es_il ⟨0, hn⟩ k i ⟨0, hn⟩]
-    split_ifs with h
-    · simp only [h]
-    · simp only [zero_mul]
+    grind
   simp only [hif]
   exact Fintype.sum_ite_eq k fun _ ↦ es ⟨0, hn⟩ ⟨0, hn⟩ * f k
 
@@ -337,9 +321,7 @@ lemma right_mul_sum_e0k {k : Fin n} {f : Fin n → R} :
         if i = k then f k * mu.es ⟨0, hn⟩ ⟨0, hn⟩ else 0 := by
     intro i
     rw [mul_assoc, mu.mul_ij_kl_eq_kron_delta_jk_mul_es_il ⟨0, hn⟩ i k ⟨0, hn⟩]
-    split_ifs with h
-    · simp only [h]
-    · simp only [mul_zero]
+    grind
   simp only [hif]
   exact Fintype.sum_ite_eq' k fun _ ↦ f k * es ⟨0, hn⟩ ⟨0, hn⟩
 

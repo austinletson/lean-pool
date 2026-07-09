@@ -68,9 +68,7 @@ noncomputable def bestDenomAux (hr : RecordsContinue r) : ℕ → {q : ℕ // 1 
   | 0 => ⟨1, le_refl 1⟩
   | (n + 1) =>
     ⟨Nat.find (hr (bestDenomAux hr n).1 (bestDenomAux hr n).2), by
-      have h := (Nat.find_spec (hr (bestDenomAux hr n).1 (bestDenomAux hr n).2)).1
-      have := (bestDenomAux hr n).2
-      omega⟩
+      grind⟩
 
 /-- **The best-approximation denominators** `qₙ` (Shutov's Sequence 2): the record minima of the
 cost `r`. `q₀ = 1`; `qₙ₊₁` is the *smallest* `q > qₙ` with `r q < r qₙ`. -/
@@ -133,9 +131,7 @@ theorem strictMono_bracket (f : ℕ → ℕ) (hf : StrictMono f) {N : ℕ} (hN :
     omega
   have hspec : N < f (Nat.find hex) := Nat.find_spec hex
   have hpos : 0 < Nat.find hex := by
-    rcases Nat.eq_zero_or_pos (Nat.find hex) with h | h
-    · rw [h] at hspec; omega
-    · exact h
+    grind
   obtain ⟨m, hm⟩ : ∃ m, Nat.find hex = m + 1 := ⟨Nat.find hex - 1, by omega⟩
   refine ⟨m, ?_, hm ▸ hspec⟩
   by_contra hc
@@ -189,8 +185,7 @@ theorem index_bound_doubling (q : ℕ → ℤ) (hmono : StrictMono q) (K : ℕ)
   rw [not_le] at hcon
   have hle : m + 1 + K ≤ n := by omega
   have h2 : q (m + 1 + K) ≤ q n := hmono.monotone hle
-  have h3 : 2 * q (m + 1) ≤ q (m + 1 + K) := hgrowth (m + 1)
-  linarith [hnN, hNm, h2, h3]
+  grind
 
 /-- **The gap-count bound, doubling form.** `g ≤ K + 1` from Chevallier's Lemma conclusion and the
 doubling growth inequality `2qₙ ≤ qₙ₊ₖ`. For the sup norm with `K = 2^d` (orthant pigeonhole) this

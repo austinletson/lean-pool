@@ -93,9 +93,7 @@ theorem one_le_CLean_sum :
     positivity
   have hsingle : f 0 ≤ ∑ j ∈ Finset.range N0, f j :=
     Finset.single_le_sum hnonneg hmem
-  have hf0 : f 0 = 1 := by
-    simp [f]
-  simpa [f, hf0] using hsingle
+  grind
 
 theorem CLean_pos : 0 < CLean := by
   rw [CLean_eq_paper_formula]

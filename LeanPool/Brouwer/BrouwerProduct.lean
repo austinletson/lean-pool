@@ -61,9 +61,7 @@ lemma index_split_existence (k : Fin (totalCard card)) : ∃ (p : Σ i, Fin (car
       simp only [prefix_sum_inclusive, totalCard]
       rw [Finset.filter_true_of_mem (fun j _ => Finset.le_max' _ _ (Finset.mem_univ j))]
       rfl
-    change k.val < prefix_sum_inclusive i_max
-    rw [h_sum_eq_total]
-    exact k.is_lt
+    grind
   let i₀ := @WellFounded.min I (· < ·) wellFounded_lt S s_nonempty
   have i₀_in_S : i₀ ∈ S := WellFounded.min_mem wellFounded_lt S s_nonempty
   have i₀_is_min : ∀ j < i₀, j ∉ S := fun j hlt => by
@@ -75,12 +73,8 @@ lemma index_split_existence (k : Fin (totalCard card)) : ∃ (p : Σ i, Fin (car
     have : (∑ j ∈ Finset.univ.filter (· ≤ i₀), (card j : ℕ)) =
             (∑ j ∈ Finset.univ.filter (· < i₀), (card j : ℕ)) + (card i₀ : ℕ) := by
       have h_split : Finset.univ.filter (· ≤ i₀) = Finset.univ.filter (· < i₀) ∪ {i₀} := by
-        ext j
-        simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_union,
-          Finset.mem_singleton]
-        exact le_iff_lt_or_eq
-      have h_disj : Disjoint (Finset.univ.filter (· < i₀)) {i₀} := by simp
-      rw [h_split, Finset.sum_union h_disj, Finset.sum_singleton]
+        grind
+      grind
     rwa [this] at i₀_in_S
   have h_le : prefixSum card i₀ ≤ k.val := by
     by_cases h_i₀_is_min : i₀ = (Finset.univ.min' Finset.univ_nonempty)
@@ -109,8 +103,7 @@ lemma index_split_existence (k : Fin (totalCard card)) : ∃ (p : Σ i, Fin (car
         exact (Finset.mem_filter.mp h_mem).2
       have j₀_notin_S : j₀ ∉ S := i₀_is_min j₀ j₀_lt_i₀
       have j₀_ineq : prefix_sum_inclusive j₀ ≤ k.val := by
-        simp only [S, Set.mem_setOf_eq] at j₀_notin_S
-        exact le_of_not_gt j₀_notin_S
+        grind
       have : prefixSum card i₀ = prefix_sum_inclusive j₀ := by
         simp only [prefixSum, prefix_sum_inclusive]
         congr 1
@@ -119,8 +112,7 @@ lemma index_split_existence (k : Fin (totalCard card)) : ∃ (p : Σ i, Fin (car
         apply Iff.intro
         · intro h_x_lt_i₀
           exact ⟨Finset.mem_univ x, Finset.le_max' pred_set x (Finset.mem_filter.mpr h_x_lt_i₀)⟩
-        · intro h_x_le_j₀
-          exact ⟨Finset.mem_univ x, lt_of_le_of_lt h_x_le_j₀.2 j₀_lt_i₀⟩
+        · grind
       exact this ▸ j₀_ineq
   use { fst := i₀, snd := ⟨k.val - prefixSum card i₀, by
     rw [Nat.sub_lt_iff_lt_add h_le]; rwa [add_comm]⟩ }
@@ -148,12 +140,8 @@ noncomputable def indexCombine (p : Σ i, Fin (card i)) : Fin (totalCard card) :
       have h_eq : (Finset.univ.filter (· ≤ p.1)).sum (fun j => (card j : ℕ)) =
                    (Finset.univ.filter (· < p.1)).sum (fun j => (card j : ℕ)) + (card p.1 : ℕ) := by
         have h_split : Finset.univ.filter (· ≤ p.1) = Finset.univ.filter (· < p.1) ∪ {p.1} := by
-          ext j
-          simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_union,
-            Finset.mem_singleton]
-          exact le_iff_lt_or_eq
-        have h_disj : Disjoint (Finset.univ.filter (· < p.1)) {p.1} := by simp
-        rw [h_split, Finset.sum_union h_disj, Finset.sum_singleton]
+          grind
+        grind
       rw [← h_eq]
       exact Finset.sum_le_sum_of_subset_of_nonneg h_subset (fun _ _ _ => by positivity)
     exact lt_of_lt_of_le h1 h2⟩
@@ -171,19 +159,13 @@ lemma index_split_combine_inverse (p : Σ i, Fin (card i)) : indexSplit card (in
         prefixSum card a + (card a : ℕ) ≤ prefixSum card b := by
       intro a b hlt
       have h_subset : (Finset.univ.filter (· ≤ a)) ⊆ (Finset.univ.filter (· < b)) := by
-        intro x hx
-        rcases Finset.mem_filter.mp hx with ⟨hxU, hxle⟩
-        exact Finset.mem_filter.mpr ⟨hxU, lt_of_le_of_lt hxle hlt⟩
+        grind
       have h_eq_a : (Finset.univ.filter (· ≤ a)).sum (fun j => (card j : ℕ)) =
           (Finset.univ.filter (· < a)).sum (fun j => (card j : ℕ)) + (card a : ℕ) := by
         have h_split : Finset.univ.filter (· ≤ a) =
             Finset.univ.filter (· < a) ∪ {a} := by
-          ext j
-          simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_union,
-            Finset.mem_singleton]
-          exact le_iff_lt_or_eq
-        have h_disj : Disjoint (Finset.univ.filter (· < a)) {a} := by simp
-        rw [h_split, Finset.sum_union h_disj, Finset.sum_singleton]
+          grind
+        grind
       have h_le : (Finset.univ.filter (· ≤ a)).sum (fun j => (card j : ℕ)) ≤
           (Finset.univ.filter (· < b)).sum (fun j => (card j : ℕ)) :=
         Finset.sum_le_sum_of_subset_of_nonneg h_subset (by
@@ -194,15 +176,9 @@ lemma index_split_combine_inverse (p : Σ i, Fin (card i)) : indexSplit card (in
     have hk_lt : k.val < prefixSum card i + (card i : ℕ) := by
       simp [k, indexCombine, add_lt_add_iff_left]
     have hnot_lt1 : ¬ (indexSplit card k).1 < i := by
-      intro hlt
-      have hmono := prefix_sum_mono_lt hlt
-      have : k.val < prefixSum card i := Nat.lt_of_lt_of_le hspec.2.1 hmono
-      exact (not_lt_of_ge hk_le) this
+      grind
     have hnot_lt2 : ¬ i < (indexSplit card k).1 := by
-      intro hlt
-      have hmono := prefix_sum_mono_lt hlt
-      have : k.val < prefixSum card (indexSplit card k).1 := Nat.lt_of_lt_of_le hk_lt hmono
-      exact (not_lt_of_ge hspec.1) this
+      grind
     have hi : (indexSplit card k).1 = i :=
       le_antisymm (le_of_not_gt hnot_lt2) (le_of_not_gt hnot_lt1)
     have hj_spec : (indexSplit card k).2.val = k.val - prefixSum card (indexSplit card k).1 :=
@@ -216,9 +192,7 @@ lemma index_split_combine_inverse (p : Σ i, Fin (card i)) : indexSplit card (in
       have hi' : i' = i := by simpa [hsplit] using hi
       subst hi'
       have hj' : j' = j := by
-        apply Fin.ext
-        rw [hsplit] at hj_val
-        exact hj_val
+        grind
       simpa [hsplit] using hj'
 
 /-- `indexCombine` is a left inverse to `indexSplit`. -/
@@ -255,9 +229,7 @@ noncomputable def zUniform : BigSimplex card :=
     · intro _
       apply div_nonneg
       · norm_num
-      · have : 0 < (totalCard card : ℝ) := by
-          norm_cast; exact PNat.pos (totalCard card)
-        exact le_of_lt this
+      · grind
     · have hpos : 0 < (totalCard card : ℝ) := by
         norm_cast; exact PNat.pos (totalCard card)
       have hcard : (Fintype.card (Fin (totalCard card)) : ℝ) = (totalCard card : ℝ) := by
@@ -284,8 +256,7 @@ noncomputable def pushTowardsZ (x : BigSimplex card) : BigSimplex card :=
       have h_def_nonneg : 0 ≤ deficit card x := by
         unfold deficit
         apply Finset.sum_nonneg
-        intro i _
-        exact le_max_left _ _
+        grind
       have hden_pos : 0 < (1 : ℝ) + deficit card x :=
         add_pos_of_pos_of_nonneg (by norm_num) h_def_nonneg
       have ht_nonneg : 0 ≤ tPush card x := by
@@ -336,8 +307,7 @@ lemma blockSum_nonneg (i : I) (x : BigSimplex card) : 0 ≤ blockSum card i x :=
 lemma deficit_nonneg (x : BigSimplex card) : 0 ≤ deficit card x := by
   unfold deficit
   apply Finset.sum_nonneg
-  intro i _
-  exact le_max_left _ _
+  grind
 
 /-- `tPush card x` is always in `[0, 1]`. -/
 lemma tPush_mem_Icc (x : BigSimplex card) : tPush card x ∈ Set.Icc (0 : ℝ) 1 := by
@@ -373,9 +343,7 @@ lemma blockSum_pushTowardsZ_pos (i : I) (x : BigSimplex card) :
           0 ≤ max 0 (blockWeight card i' - blockSum card i' x) := fun i' _ => le_max_left _ _
       simpa [deficit] using Finset.single_le_sum hnonneg (by simp)
     have h_bw_le_sum : blockWeight card i ≤ blockSum card i x := by
-      have h_term_zero : max 0 (blockWeight card i - blockSum card i x) = 0 :=
-        le_antisymm (h_term_le_sum.trans (le_of_eq h_def0)) (le_max_left _ _)
-      simpa [sub_nonpos] using (max_eq_left_iff.1 h_term_zero)
+      grind
     have : 0 < blockSum card i x := lt_of_lt_of_le h_bw_pos h_bw_le_sum
     simpa [ht0] using this
   · have htpos : 0 < tPush card x := lt_of_le_of_ne h_t_nonneg (Ne.symm ht0)
@@ -400,8 +368,7 @@ noncomputable def projectToProduct (x : BigSimplex card) : ProductSimplices card
              = (∑ j : Fin (card i), y.1 (indexCombine card ⟨i, j⟩)) * s⁻¹ := by
          simp [div_eq_mul_inv, Finset.sum_mul]
         have hsum : (∑ j : Fin (card i), y.1 (indexCombine card ⟨i, j⟩)) = s := rfl
-        rw [h, hsum]
-        field_simp
+        grind
     ⟩ : stdSimplex ℝ (Fin (card i)))
 
 /-- Embedding of the product of simplices into the big simplex. -/

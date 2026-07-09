@@ -458,10 +458,7 @@ private lemma chebyshev_seven_twelfths_bound
       {ω | ↑k / 12 ≤ |S ω - ∫ ω, S ω ∂μ|} := by
     intro ω hω
     simp only [Set.mem_compl_iff, Set.mem_setOf_eq, not_le] at hω
-    simp only [Set.mem_setOf_eq]
-    have hgap : ∫ ω, S ω ∂μ - S ω ≥ ↑k / 12 := by linarith
-    calc ↑k / 12 ≤ ∫ ω, S ω ∂μ - S ω := hgap
-      _ ≤ |S ω - ∫ ω, S ω ∂μ| := by rw [abs_sub_comm]; exact le_abs_self _
+    grind
   -- Step 18: μ{S ≥ 7k/12}ᶜ ≤ ofReal δ
   have hcompl_le : μ {ω | (7 : ℝ) * ↑k / 12 ≤ S ω}ᶜ ≤ ENNReal.ofReal δ :=
     le_trans (μ.mono hcompl_sub) hbad_le
@@ -522,8 +519,7 @@ private lemma majority_error_le_seven_rate_of_good_fraction
   have hG_ae : AEMeasurable G D := hG_meas.aemeasurable
   let threshold : ENNReal := (2 * good.card - k : ℕ)
   have hklt : k < 2 * good.card := by
-    have : (7 : ℕ) * k ≤ 12 * good.card := hgoodfrac
-    omega
+    grind
   have hden_pos_nat : 0 < 2 * good.card - k := Nat.sub_pos_of_lt hklt
   have hmajority_sub :
       {x : X | boosted_majority k (fun j => hs j x) ≠ c x}
@@ -540,44 +536,29 @@ private lemma majority_error_le_seven_rate_of_good_fraction
       cases hcx : c x with
       | false =>
         have hmaj : boosted_majority k (fun j => hs j x) = true := by
-          by_contra h
-          simp [Bool.not_eq_true] at h
-          simp [h, hcx] at hx
+          grind
         change decide (k < 2 * (Finset.univ.filter (fun j : Fin k => hs j x)).card) =
           true at hmaj
         have hmaj_lt : k < 2 * (Finset.univ.filter (fun j : Fin k => hs j x = true)).card := by
-          have hmaj_bool : k < 2 * (Finset.univ.filter (fun j : Fin k => hs j x)).card :=
-            of_decide_eq_true hmaj
-          rwa [hfilt_id] at hmaj_bool
+          grind
         have hfilt_ne : (Finset.univ.filter (fun j : Fin k => hs j x ≠ c x))
             = (Finset.univ.filter (fun j : Fin k => hs j x = true)) := by
           ext j; simp [hcx]
-        rw [hwrongAll_def, hfilt_ne]
-        omega
+        grind
       | true =>
         have hmaj : boosted_majority k (fun j => hs j x) = false := by
-          by_contra h
-          simp [Bool.not_eq_false] at h
-          simp [h, hcx] at hx
+          grind
         change decide (k < 2 * (Finset.univ.filter (fun j : Fin k => hs j x)).card) =
           false at hmaj
         have hmaj_le : 2 * (Finset.univ.filter (fun j : Fin k => hs j x = true)).card ≤ k := by
-          have hmaj_not : ¬ k < 2 * (Finset.univ.filter (fun j : Fin k => hs j x)).card :=
-            decide_eq_false_iff_not.mp hmaj
-          have hmaj_bool : 2 * (Finset.univ.filter (fun j : Fin k => hs j x)).card ≤ k := by
-            omega
-          rwa [hfilt_id] at hmaj_bool
+          grind
         have hfilt_ne : (Finset.univ.filter (fun j : Fin k => hs j x ≠ c x))
             = (Finset.univ.filter (fun j : Fin k => hs j x = false)) := by
           ext j; simp [hcx]
         have hcomp2 := Finset.card_filter_add_card_filter_not (s := (Finset.univ : Finset (Fin k)))
           (fun j => hs j x = true)
         simp only [Finset.card_univ, Fintype.card_fin] at hcomp2
-        have hfilt_false : (Finset.univ.filter (fun j : Fin k => ¬hs j x = true)).card
-            = (Finset.univ.filter (fun j : Fin k => hs j x = false)).card := by
-          congr 1; ext j; simp [Bool.not_eq_true]
-        rw [hwrongAll_def, hfilt_ne]
-        omega
+        grind
     have hwrong_split : wrongAll ≤ wrongGood + (k - good.card) := by
       -- Every wrong voter in univ is either in good or not in good
       -- wrongAll = #{j ∈ univ | wrong}, wrongGood = #{j ∈ good | wrong}
@@ -590,9 +571,7 @@ private lemma majority_error_le_seven_rate_of_good_fraction
       have hunion : Finset.univ.filter (fun j : Fin k => hs j x ≠ c x)
           = (good.filter (fun j => hs j x ≠ c x)) ∪
             ((Finset.univ \ good).filter (fun j => hs j x ≠ c x)) := by
-        ext j
-        simp [Finset.mem_filter, Finset.mem_union, Finset.mem_sdiff]
-        tauto
+        grind
       have hdisj : Disjoint (good.filter (fun j => hs j x ≠ c x))
           ((Finset.univ \ good).filter (fun j => hs j x ≠ c x)) := by
         apply Finset.disjoint_filter_filter
@@ -842,12 +821,7 @@ private theorem boost_two_thirds_to_pac (X : Type u) [MeasurableSpace X]
     (goodBlockEvent L D c rate (n + 1) n) hevents_meas hindep hprob
   -- Step 3c: Rate bound
   have h7rate : 7 * max (rate n) 0 ≤ ε := by
-    have : max (rate n) 0 ≤ ε / 7 := by
-      rcases le_or_gt 0 (rate n) with h | h
-      · simp [max_eq_left h]; linarith
-      · rw [max_eq_right (le_of_lt h)]
-        positivity
-    linarith
+    grind
   -- Step 3d: hlearn_unfold (P3c: congrArg ladder via boosted_majority cast)
   have hlearn_unfold : ∀ (ω : Fin ((n + 1) * n) → X) (x : X),
       L'.learn (fun i => (ω i, c (ω i))) x =
@@ -970,17 +944,7 @@ private theorem threshold_not_shatter_pair {S : Finset ℕ} (hcard : 2 ≤ S.car
     -- h1 : decide (a ≤ n) = if a = a then false else true
     -- h2 : decide (b ≤ n) = if b = a then false else true
     -- Manually reduce the if-then-else
-    have : (⟨a, ha⟩ : ↥S).val = a := rfl
-    have : (⟨b, hb⟩ : ↥S).val = b := rfl
-    -- The coercion from ↥S to ℕ gives a (resp. b), so the condition is a = a (resp. b = a)
-    have hca : decide (a ≤ n) = false := by
-      convert h1 using 1; simp
-    have hcb : decide (b ≤ n) = true := by
-      convert h2 using 1
-      simp only [show (b : ℕ) ≠ a from Ne.symm hab, ite_false]
-    simp only [decide_eq_false_iff_not, not_le] at hca
-    simp only [decide_eq_true_eq] at hcb
-    omega
+    grind
   · -- b < a: labeling (b ↦ false, a ↦ true) is impossible
     obtain ⟨c, ⟨n, rfl⟩, hc⟩ := hshat (fun s =>
       if (s : ℕ) = b then false else true)
@@ -989,9 +953,7 @@ private theorem threshold_not_shatter_pair {S : Finset ℕ} (hcard : 2 ≤ S.car
     have hca : decide (a ≤ n) = true := by
       convert hc ⟨a, ha⟩ using 1
       simp only [show (a : ℕ) ≠ b from hab, ite_false]
-    simp only [decide_eq_false_iff_not, not_le] at hcb
-    simp only [decide_eq_true_eq] at hca
-    omega
+    grind
 
 /-- VCDim of threshold class on ℕ is finite (≤ 1). -/
 private theorem vcdim_threshold_finite : VCDim ℕ thresholdClass < ⊤ := by
@@ -1173,19 +1135,10 @@ theorem ex_not_implies_pac :
       -- (T.observe (tmap x hxfin)).1 = x, and tmap x hxfin ≤ t
       -- So ∃ i ∈ range(t+1), (T.observe i).1 = x
       -- Learner returns true for x
-      change (((List.range (t + 1)).map T.toDataStream.observe).any
-        (fun p => decide (p.1 = x))) = true
-      rw [List.any_map, List.any_eq_true]
-      exact ⟨tmap x hxfin,
-        List.mem_range.mpr (Nat.lt_succ_of_le htx_le),
-        by simp [htmap x hxfin]⟩
+      grind
     | false =>
       -- x not in support, never appears in T
-      simp only [List.any_map, Bool.not_eq_true, List.any_eq_false,
-        List.mem_range, Function.comp_def]
-      intro i _
-      simp only [decide_eq_false_iff_not]
-      exact fun h => never_seen x (by simp [hcxb]) i h
+      grind
   · -- ¬PACLearnable: VCDim = ⊤, then apply vcdim_infinite_not_pac
     apply vcdim_infinite_not_pac
     -- Show VCDim ℕ C = ⊤ where C = { f | Set.Finite { n | f n = true } }
@@ -1200,14 +1153,9 @@ theorem ex_not_implies_pac :
       · -- c ∈ C: { x | c x = true } is finite (subset of Finset.range (n+1))
         change Set.Finite { x | (if h : x ∈ Finset.range (n + 1) then f ⟨x, h⟩ else false) = true }
         apply Set.Finite.subset (Finset.range (n + 1)).finite_toSet
-        intro x hx
-        simp only [Set.mem_setOf_eq] at hx
-        simp only [Finset.mem_coe]
-        by_contra hx'
-        simp [hx'] at hx
+        grind
       · -- ∀ x : ↥S, c x = f x
-        intro ⟨x, hx⟩
-        simp [hx]
+        grind
     · -- n < (Finset.range (n+1)).card as WithTop ℕ
       simp only [Finset.card_range]
       exact WithTop.coe_lt_coe.mpr (Nat.lt_succ_self n)

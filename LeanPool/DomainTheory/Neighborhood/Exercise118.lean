@@ -50,9 +50,7 @@ theorem appendSeq_mem {α : Type*} {C : Set (Set α)} {X1 : ℕ → Set α} {n1 
     ∀ i, i < n1 + n2 → appendSeq X1 n1 X2 i ∈ C := by
   intro i hi
   simp only [appendSeq]
-  by_cases h : i < n1
-  · rw [if_pos h]; exact h1 i h
-  · rw [if_neg h]; exact h2 (i - n1) (by omega)
+  grind
 
 namespace NeighborhoodSystem
 
@@ -94,8 +92,7 @@ theorem interUpTo_appendSeq (X1 : ℕ → Set α) (n1 : ℕ) (X2 : ℕ → Set �
     rw [Nat.add_succ, interUpTo_succ, ih]
     have happ : appendSeq X1 n1 X2 (n1 + j) = X2 j := by
       simp only [appendSeq, if_neg (by omega : ¬ n1 + j < n1)]
-      congr 1
-      omega
+      grind
     rw [happ, interUpTo_succ, Set.inter_assoc]
 
 /-! ### Finite consistency. -/
@@ -154,8 +151,7 @@ def leastFilter (C : Set (Set α)) (hCsub : ∀ X ∈ C, V.mem X)
       exact Set.inter_subset_inter hX1sub hX2sub
     exact ⟨V.inter_mem hXmem hYmem hintermem hsub, n1 + n2, appendSeq X1 n1 X2, hmemC, hsub⟩
   up_mem := by
-    rintro X Y ⟨_, n, Xs, hXC, hsub⟩ hY hXY
-    exact ⟨hY, n, Xs, hXC, hsub.trans hXY⟩
+    grind
 
 /-- `C ⊆ leastFilter C`: every member of `C` is in the least filter. -/
 theorem subset_leastFilter (C : Set (Set α)) (hCsub : ∀ X ∈ C, V.mem X)

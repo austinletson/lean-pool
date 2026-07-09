@@ -70,9 +70,7 @@ theorem permutationMap_orderTwo (i : B) : cs.permutationMap i ∘ cs.permutation
   apply Prod.ext
   · simp[conjOfReflection, mul_assoc]
   · rw [← cs.eta_eq_eta_of_simpleConj i t]
-    ring_nf
-    rw [show (2 : ZMod 2) = 0 by decide]
-    simp
+    grind
 
 lemma leftInvSeq_repeats : ∀ (k : ℕ) (h : k < M i j),
     (cs.leftInvSeq (alternatingWord i j (2 * M i j)))[M i j + k]'(by
@@ -93,13 +91,9 @@ lemma leftInvSeq_repeats : ∀ (k : ℕ) (h : k < M i j),
   simp only [Nat.not_even_bit1, ↓reduceIte, mul_right_inj]
   have two_gt_0 : 2 > 0 := by linarith
   have h_exp : (2 * k + 1) / 2 = k := by
-    rw[add_comm]
-    rw[Nat.add_mul_div_left 1 k two_gt_0]
-    simp
+    grind
   have h_exp' : (2 * ((M i j) + k) + 1) / 2 = (M i j) + k := by
-    rw[add_comm]
-    rw[Nat.add_mul_div_left 1 ((M i j)+k) two_gt_0]
-    simp
+    grind
   rw[h_exp, h_exp']
   rw[NatPowAssoc.npow_add]
   simp
@@ -127,9 +121,7 @@ lemma nReflectionOccurrences_even_braidWord (t : cs.Reflection) :
       cs.leftInvSeq (alternatingWord i j (2 * M i j)) =
         List.take (M i j) (cs.leftInvSeq (alternatingWord i j (2 * M i j))) ++
           List.take (M i j) (cs.leftInvSeq (alternatingWord i j (2 * M i j))) from by
-    rw[this]
-    simp
-    ring_nf
+    grind
   have m_le_two_m : M i j ≤ 2 * M i j := by linarith
   have length_eq :
       (cs.leftInvSeq (alternatingWord i j (2 * M i j))).length =
@@ -141,24 +133,13 @@ lemma nReflectionOccurrences_even_braidWord (t : cs.Reflection) :
   apply List.ext_getElem length_eq
   intro k hk hk'
   by_cases h : k < M i j
-  · have :
-        k <
-          (List.take (M.M i j)
-            (cs.leftInvSeq (alternatingWord i j (2 * M.M i j)))).length := by
-      simp[h, m_le_two_m]
-    rw[List.getElem_append_left this]
-    rw[List.getElem_take']
-    exact h
+  · grind
   · have h_k_le : k - M i j < M i j := by
-      have hk_bound : k < 2 * M i j := by
-        simpa using hk
-      have h_ge : M i j ≤ k := Nat.le_of_not_gt h
-      omega
+      grind
     have :
         (List.take (M.M i j)
           (cs.leftInvSeq (alternatingWord i j (2 * M.M i j)))).length ≤ k := by
-      simp[m_le_two_m]
-      linarith
+      grind
     rw[List.getElem_append_right this]
     rw[List.getElem_take]
     have take_length :
@@ -167,9 +148,7 @@ lemma nReflectionOccurrences_even_braidWord (t : cs.Reflection) :
       simp[m_le_two_m]
     simp only [take_length]
     rw[← leftInvSeq_repeats' cs (k - M i j) h_k_le]
-    have : M.M i j + (k - M.M i j) = k := by
-      exact Nat.add_sub_of_le (Nat.le_of_not_gt h)
-    simp[this]
+    grind
 
 lemma parityReflectionOccurrences_braidWord (t : cs.Reflection) :
   reflectionMemLeftInvSeqParity cs (alternatingWord i j (2 * M i j)) t = 0 := by
@@ -382,10 +361,7 @@ lemma odd_iff_parity_eq_one (n : ℕ) : Odd n ↔ (n : ZMod 2) = 1 := by
   simpa [eq_comm] using (ZMod.natCast_eq_one_iff_odd (n := n)).symm
 
 lemma gt_one_of_odd (n : ℕ) : Odd n → n > 0 := by
-  intro h
-  rcases h with ⟨m, rfl⟩
-  suffices m ≥ 0 from by linarith
-  exact Nat.zero_le m
+  grind
 
 lemma isInLeftInvSeq_of_parityReflectionOccurrences_eq_one
     (l : List B) (t : cs.Reflection)
@@ -470,17 +446,14 @@ lemma permutationMap_lift_of_reflection (t : cs.Reflection) : ∀ (z : ZMod 2),
             cs.simple i =
               cs.simple i * cs.wordProd l * cs.simple p * (cs.wordProd l)⁻¹ *
                 cs.simple i := by
-          rw [h']
-          simp
+          grind
         rw [if_pos first_eq]
         have : cs.simple i = cs.wordProd l * cs.simple p * (cs.wordProd l)⁻¹ := by
           apply (mul_right_inj (cs.simple i)).mpr at h'
           simp only[mul_assoc, mul_one] at h'
           rw[← h']
           simp[mul_assoc]
-        rw [if_pos this]
-        simp[ZMod]
-        rfl
+        grind
       · have first_ne :
             ¬cs.simple i =
               cs.simple i * cs.wordProd l * cs.simple p * (cs.wordProd l)⁻¹ *
@@ -494,8 +467,7 @@ lemma permutationMap_lift_of_reflection (t : cs.Reflection) : ∀ (z : ZMod 2),
           apply h'
           have hmul := congrArg (fun x => cs.simple i * x) h''
           simpa [mul_assoc, cs.simple_mul_simple_self] using hmul.symm
-        rw [if_neg first_ne, if_neg second_ne]
-        simp
+        grind
 
 lemma isLeftInversion_iff_parityReflectionOccurrences_eq_one (l : List B) (t : cs.Reflection) :
   cs.IsLeftInversion (cs.wordProd l) t.1 ↔ reflectionMemLeftInvSeqParity cs l t = 1 := by

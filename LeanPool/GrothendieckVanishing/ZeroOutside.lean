@@ -403,10 +403,7 @@ theorem openHom_val_app_generator {X : TopCat.{u}} {V U : Opens X} (h : V ≤ U)
     NatTrans.comp_app, ConcreteCategory.comp_apply,
     ← (CategoryTheory.toSheafify _ (Presheaf.constZ.zeroOutside U)).naturality_apply
       (homOfLE h).op (Presheaf.zeroOutside.generator U)]
-  exact congrArg
-    (fun s ↦ (ConcreteCategory.hom
-      ((CategoryTheory.toSheafify _ (Presheaf.constZ.zeroOutside U)).app (op V))) s)
-    hpresheaf
+  grind
 
 end zeroOutsideInt
 

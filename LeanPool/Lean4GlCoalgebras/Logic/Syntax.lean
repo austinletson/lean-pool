@@ -373,12 +373,10 @@ lemma FL_mon {φ ψ : SplitFormula} (ψ_sub_φ : ψ ∈ FL φ) : FL ψ ⊆ FL φ
       exact Finset.mem_map.mpr
         ⟨χ, Formula.FL_mon (in_FL_of_in_FL_SplitFormula_left ψ_sub_φ) χ_in, rfl⟩
     · have is_left := in_FL_SplitFormula_left ψ_sub_φ
-      change false = true at is_left
-      cases is_left
+      grind
   · rcases ψ with ψ | ψ
     · have is_right := in_FL_SplitFormula_right ψ_sub_φ
-      change false = true at is_right
-      cases is_right
+      grind
     · rw [FL_SplitFormula_right_eq_FL_Formula_map φ, FL_SplitFormula_right_eq_FL_Formula_map ψ]
       intro x x_in
       rcases Finset.mem_map.mp x_in with ⟨χ, χ_in, rfl⟩
@@ -543,8 +541,7 @@ lemma in_single_voc (m n : Nat) (φ ψ : Formula) :
     case atom k =>
       intro hψ hn m_in
       by_cases hk : k = n
-      · subst k
-        exact mp (by simpa only [if_true] using m_in)
+      · grind
       · by_cases hm : m = n
         · subst m
           exact (Ne.symm hk) (by
@@ -572,15 +569,13 @@ lemma not_in_single_voc (n : Nat) (φ ψ : Formula) :
 lemma not_in_single_top_voc (n : ℕ) (φ : Formula) : n ∉ (single n ⊤ φ).vocab := by
   apply in_single_voc n n ⊤ φ
   · simpa only [Formula.instTop, Formula.vocab] using Finset.notMem_empty n
-  · intro h
-    exact False.elim (h rfl)
+  · grind
   · simpa only [Formula.instTop, Formula.vocab] using Finset.notMem_empty n
 
 lemma not_in_single_bot_voc (n : ℕ) (φ : Formula) : n ∉ (single n ⊥ φ).vocab := by
   apply in_single_voc n n ⊥ φ
   · simpa only [Formula.instBot, Formula.vocab] using Finset.notMem_empty n
-  · intro h
-    exact False.elim (h rfl)
+  · grind
   · simpa only [Formula.instBot, Formula.vocab] using Finset.notMem_empty n
 
 lemma in_single_voc' {m n : ℕ} {φ ψ : Formula} :

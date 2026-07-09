@@ -115,9 +115,7 @@ theorem dot_zero_right (x : BitVec n) : dot x (0 : BitVec n) = 0 := by
 /-- The `𝔽₂` dot product is symmetric. -/
 theorem dot_comm (x y : BitVec n) : dot x y = dot y x := by
   unfold dot
-  refine Finset.sum_congr rfl ?_
-  intro i _
-  rw [mul_comm]
+  grind
 
 /-- Right additivity of the `𝔽₂` dot product. -/
 theorem dot_add_right (x y z : BitVec n) :

@@ -296,9 +296,7 @@ by
           rw [B11, hy_eq]
           rwa [h_lenY_eq_lenX]
         have h_X_empty' : ¬∃ x < len X, x ∈ X := by
-          refine not_exists_of_forall_not ?_
-          intro x hx
-          apply h_X_empty x hx.left hx.right
+          grind
         apply h_X_empty'
         obtain ⟨wit, h_wit⟩ := ex_elt_of_len_pos (X := X) (by
           rw [h_lenY_eq_lenX] at h
@@ -333,17 +331,9 @@ by
           | inr h =>
             -- first, obtain hypothesis for last y of Y
             have len_Y_ne_zero : (len Y : num) ≠ 0 := by
-              intro h'
-              rw [h'] at h
-              apply not_lt_zero h
+              grind
             have len_Y_pos : 0 < (len Y : num) := by
-              cases (eq_zero_or_pos (len Y : num)) with
-              | inl h =>
-                exfalso
-                apply len_Y_ne_zero
-                exact h
-              | inr h =>
-                exact h
+              grind
             obtain ⟨y, hy_in, hy_eq⟩ := ex_elt_of_len_pos len_Y_pos
             clear len_Y_ne_zero len_Y_pos h_lenX
             rename_i h_lenY_lt_lenX
@@ -361,18 +351,7 @@ by
               rw [le_iff_eq_or_lt] at h_y2
               cases h_y2 with
               | inl h_y2 =>
-                rw [h_y2]
-                apply (h_Y.right (len Y) h_lenY_lt_lenX).mp
-                · apply h
-                  intro y3 hy3
-                  rw [le_iff_eq_or_lt] at hy3
-                  cases hy3 with
-                  | inl hy3 =>
-                    rwa [hy3]
-                  | inr hy3 =>
-                    apply (h_Y.right y h_y_lt_lenX).mp hy_in
-                    rwa [B11, hy_eq]
-                · rfl
+                grind
               | inr h_y2 =>
                 clear h
                 apply (h_Y.right y h_y_lt_lenX).mp hy_in
@@ -391,13 +370,9 @@ by
         · exact h_zX
   · have Y_empty : len Y = (0 : num) := by
       have h1 := B9 (num := num) (len Y)
-      rw [le_iff_eq_or_lt] at h1
-      cases h1 with
-      | inl h1 => exact h1.symm
-      | inr h1 => exfalso; apply h; exact h1
+      grind
     constructor
-    · rw [Y_empty]
-      exact h_lenX
+    · grind
     · constructor
       · -- len Y ∈ X
         false_or_by_contra
@@ -446,15 +421,7 @@ by
     lt_of_le_of_ne (B9 _) (len_ne_zero_of_in h_z_in_Y).symm
   obtain ⟨y0, h_y0⟩ := xmin h_Y_pos
   have h_y0_ne_zero : y0 ≠ 0 := by
-    have h_0_notin_Y : 0 ∉ Y := by
-      rw [h_Y]
-      · rw [@not_not]
-        exact h_base
-      · exact lt_of_le_of_lt (B9 z) (lt_succ z)
-    intro contr
-    apply h_0_notin_Y
-    rw [<-contr]
-    exact h_y0.2.1
+    grind
   obtain ⟨x0, h_x0⟩ := B12 h_y0_ne_zero
   have h_x0_in : x0 ∈ X := by
     apply not_not.mp
@@ -462,27 +429,8 @@ by
     · apply h_y0.2.2
       rw [<- h_x0.2]
       exact lt_succ x0
-    · apply lt_of_lt_of_le _ h_Y_le
-      apply lt_trans _ h_y0.1
-      rw [<- h_x0.2]
-      exact lt_succ x0
-  have h_succ_x0_notin : x0 + 1 ∉ X := by
-    rw [h_x0.2]
-    rw [<- h_Y]
-    · exact h_y0.2.1
-    · apply lt_of_lt_of_le _ h_Y_le
-      exact h_y0.1
-  apply h_succ_x0_notin
-  apply h_y
-  · have aux : y0 < z + 1 := by
-      apply lt_of_lt_of_le _ h_Y_le
-      apply L1
-      exact h_y0.2.1
-    rw [<- B11] at aux
-    apply lt_of_lt_of_le _ aux
-    rw [<- h_x0.2]
-    apply lt_succ
-  · exact h_x0_in
+    · grind
+  grind
 
 
 theorem ind_of_comp (P : num -> Prop) :
@@ -602,12 +550,7 @@ by
     exact c_lt.1
   intro j
   by_cases j = i
-  · rename_i hji
-    intro _ hcj
-    rw [hji]
-    cases ixy with
-    | inl ix => left; exact ix
-    | inr iy => right; exact iy
+  · grind
   · rename_i hji
     intro hlt hcj
     exact cprev j (lt_of_le_of_ne (by rw [B11]; exact hlt) hji) hcj
@@ -624,9 +567,7 @@ by
   refine ⟨lt_succ i, h_X, h_Y, ?_⟩
   intro j hj hi
   rw [<- B11] at hj
-  exfalso
-  apply not_lt_self i
-  exact lt_of_lt_of_le hi hj
+  grind
 
 -- Exercise V.4.18
 lemma carry_rec : ∀ {X Y : str}, ∀ {i : num},
@@ -642,11 +583,7 @@ lemma carry_rec : ∀ {X Y : str}, ∀ {i : num},
       by_cases h_pos : i = pos
       · rw [h_pos]
         unfold Maj
-        right; right
-        rw [<- or_and_right]
-        constructor
-        · exact em' (Carry pos X Y)
-        · constructor <;> assumption
+        grind
       · rw [<- B11] at lt
         have hlt : pos < i := lt_of_le_of_ne lt (Ne.symm h_pos)
         clear h_pos lt
@@ -717,8 +654,7 @@ lemma lt_add_left_of_mem_right {Y : str} {a : num} {i : num} (h : i ∈ Y) :
 lemma xor3_split {P Q R : Prop} :
     Xor (Xor P Q) R <->
       (P ∧ ¬Q ∧ ¬R) ∨ (¬ P ∧ Q ∧ ¬ R) ∨ (¬ P ∧ ¬ Q ∧ R) ∨ (P ∧ Q ∧ R) := by
-  unfold Xor
-  tauto
+  grind
 
 
 
@@ -733,14 +669,12 @@ lemma carry_lt_add_len :
   have h_len_Y_pos : (0 : num) < len Y := len_pos_of_exists h_kY
   have h_pred_or : pred_i ∈ X ∨ pred_i ∈ Y := by
     by_cases h_k_eq_pred : k = pred_i
-    · subst h_k_eq_pred
-      exact Or.inl h_kX
+    · grind
     · have h_pred_lt_i : pred_i < i := by
         simpa [hpred_i_eq] using (lt_succ pred_i)
       have h_k_le_pred : k ≤ pred_i := by
         rwa [B11, hpred_i_eq]
-      have h_k_lt_pred : k < pred_i := lt_of_le_of_ne h_k_le_pred h_k_eq_pred
-      exact h_kprop pred_i h_pred_lt_i h_k_lt_pred
+      grind
   rcases h_pred_or with h_predX | h_predY
   · have h_i_le_lenX : i ≤ len X := by
       rw [<- hpred_i_eq, B11]

@@ -222,8 +222,7 @@ lemma factorization_iso_is_unique_set : {X Y : Type u} → (f : X ⟶ Y) → (im
   intro X Y f im left p right q fact i comm_left _
   apply Iso.ext
   apply (left_map_in_left_class_set f).left_cancellation
-  exact comm_left.trans
-    (factorization_iso_set_hom_comm_left f im left p right q fact).symm
+  grind
 
 /- The (Epi,Mono) factorization system on Set -/
 /-- Imported FactorizationSystems declaration. -/

@@ -134,23 +134,17 @@ private lemma Iio_inter_Iio_eq {a b : Rand} (hab : a ≤ b) :
 /-- `Iio b \ Iio a = Ico a b` for `a ≤ b`. -/
 private lemma Iio_diff_Iio_eq {a b : Rand} (_hab : a ≤ b) :
     (Set.Iio b \ Set.Iio a : Set Rand) = Set.Ico a b := by
-  ext c
-  simp only [Set.mem_sdiff, Set.mem_Iio, Set.mem_Ico, not_lt]
-  exact ⟨fun h => ⟨h.2, h.1⟩, fun h => ⟨h.2, h.1⟩⟩
+  grind
 
 /-- `Ico a b ∩ Iio c = Ico a c` for `c ≤ b`. -/
 private lemma Ico_inter_Iio_eq {a b c : Rand} (hcb : c ≤ b) :
     (Set.Ico a b ∩ Set.Iio c : Set Rand) = Set.Ico a c := by
-  ext x
-  simp only [Set.mem_inter_iff, Set.mem_Ico, Set.mem_Iio]
-  exact ⟨fun h => ⟨h.1.1, h.2⟩, fun h => ⟨⟨h.1, lt_of_lt_of_le h.2 hcb⟩, h.2⟩⟩
+  grind
 
 /-- `Ico a b \ Iio c = Ico c b` for `a ≤ c`. -/
 private lemma Ico_diff_Iio_eq {a b c : Rand} (hac : a ≤ c) :
     (Set.Ico a b \ Set.Iio c : Set Rand) = Set.Ico c b := by
-  ext x
-  simp only [Set.mem_sdiff, Set.mem_Ico, Set.mem_Iio, not_lt]
-  exact ⟨fun h => ⟨h.2, h.1.2⟩, fun h => ⟨⟨le_trans hac h.1, h.2⟩, h.1⟩⟩
+  grind
 
 /-- Imported auxiliary declaration for the 2-coloring one-round formalization. -/
 noncomputable def constAboveT : ℝ≥0∞ :=
@@ -195,8 +189,7 @@ private lemma ofReal_affine_linear {x T : ℝ} (hx0 : 0 ≤ x) (h1x0 : 0 ≤ 1 -
   rw [← ENNReal.ofReal_mul hx0, ← ENNReal.ofReal_mul h1x0,
     ← ENNReal.ofReal_add (mul_nonneg hx0 hT0) (mul_nonneg h1x0 h1T0),
     ← ENNReal.ofReal_add (mul_nonneg hA0 hx0) h1T0]
-  congr 1
-  ring
+  grind
 
 lemma gCt_eq_linear (c : Rand) :
     gCt c =
@@ -463,18 +456,13 @@ lemma lintegral_triangle_Iio (B : Rand) (f : Rand → ℝ≥0∞) (hf : Measurab
     have :
         (∫⁻ c : Rand, ∫⁻ b : Rand, F b c ∂μ ∂μ) =
           ∫⁻ c : Rand, (Set.Iio B).indicator (fun c => f c * μ (Set.Ioo c B)) c ∂μ := by
-      refine MeasureTheory.lintegral_congr fun c => ?_
-      simpa using congrArg (fun g => g c) hinner
+      grind
     rw [this]
     exact
       (MeasureTheory.lintegral_indicator (μ := μ) (by simp)
         (f := fun c => f c * μ (Set.Ioo c B)))
   -- Put it together.
-  calc
-    (∫⁻ b in Set.Iio B, ∫⁻ c in Set.Iio b, f c ∂μ ∂μ) =
-        ∫⁻ b : Rand, ∫⁻ c : Rand, F b c ∂μ ∂μ := hL
-    _ = ∫⁻ c : Rand, ∫⁻ b : Rand, F b c ∂μ ∂μ := hswap
-    _ = ∫⁻ c in Set.Iio B, f c * μ (Set.Ioo c B) ∂μ := hR
+  grind
 
 lemma lintegral_innerBC_Iio_one_of_t_lt_b {b : Rand} (hb : t < b) :
     (∫⁻ c in (Set.Iio (1 : Rand) : Set Rand), innerBC b c ∂μ) =
@@ -711,16 +699,7 @@ lemma lintegral_b_t2_t :
     have hA :
         (∫⁻ c in (Set.Iio (1 : Rand) : Set Rand), innerBC b c ∂μ) =
           (∫⁻ c in Set.Iio t, innerBC b c ∂μ) + 0 := by
-      have hAB :
-          (∫⁻ c in Set.Iio t, innerBC b c ∂μ) +
-              ∫⁻ c in Set.Ico t (1 : Rand), innerBC b c ∂μ =
-            ∫⁻ c in (Set.Iio (1 : Rand) : Set Rand), innerBC b c ∂μ := by
-        simpa [hAint, hAdiff] using hsplit
-      -- The `Ico t 1` part is zero.
-      have hIco0 : (∫⁻ c in Set.Ico t (1 : Rand), innerBC b c ∂μ) = 0 := by
-        -- rewrite the set and use `hzero`
-        simpa [hAdiff] using hzero
-      simpa [hIco0, add_comm] using hAB.symm
+      grind
     simp [hA, h_t]
   -- Finally, integrate over `b ∈ [t2,t)` (constant function).
   have hs : MeasurableSet (Set.Ico t2 t : Set Rand) := by simp
@@ -812,8 +791,7 @@ lemma lintegral_gCt_Iio_t1 :
   -- Rewrite the products and sum as a single `ofReal`, then do real arithmetic.
   have hnonneg1 : 0 ≤ (1 / 4 : ℝ) * (((t1 : ℝ) ^ 2 - (0 : ℝ) ^ 2) / 2) := by
     have ht1sq : 0 ≤ ((t1 : ℝ) ^ 2) := sq_nonneg _
-    have : 0 ≤ (((t1 : ℝ) ^ 2 - (0 : ℝ) ^ 2) / 2) := by nlinarith
-    exact mul_nonneg (by norm_num) this
+    grind
   rw [← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 1 / 4), ← ENNReal.ofReal_mul hb0,
     ← ENNReal.ofReal_add hnonneg1 (mul_nonneg hb0 hb0)]
   simp only [t1]

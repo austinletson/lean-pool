@@ -173,11 +173,7 @@ lemma Γ2_reduce_col (a c : ℤ) (ha : Odd a) (hc : Even c) (ha0 : a ≠ 0) :
       split_ifs <;> cases abs_cases a <;> cases ha <;> exact abs_le.mpr ⟨by grind, by grind⟩
   obtain ⟨m, hm⟩ := hm
   refine ⟨m, ?_⟩
-  norm_num [abs_le] at *
-  cases abs_cases a <;> cases abs_cases (c + 2 * m * a) <;>
-    nlinarith [Int.ediv_mul_cancel (show 2 ∣ c from even_iff_two_dvd.mp hc),
-      Int.ediv_mul_cancel (show 2 ∣ |a| - 1 from even_iff_two_dvd.mp
-        (by cases abs_cases a <;> simp [*, parity_simps]))]
+  grind
 
 /-- The `(0, 0)` entry of any element of `Γ(2)` is odd. -/
 private lemma Γ2_odd_00 (A : Γ 2) : Odd (A.val.val 0 0) := by
@@ -209,9 +205,7 @@ lemma Γ2_descent (A : Γ 2) (h : A.1 1 0 ≠ 0) :
   simp only [Subgroup.coe_mul, SubgroupClass.coe_zpow, SpecialLinearGroup.coe_mul,
     α_zpow_val, β_zpow_val, Matrix.mul_apply, Fin.sum_univ_two, Matrix.of_apply,
     Matrix.cons_val_zero, Matrix.cons_val_one] at hn hm ⊢
-  convert hm.trans hn using 2
-  · rfl
-  · ring
+  grind
 
 theorem Γ2_generate : (⊤ : Subgroup (Γ 2)) = Subgroup.closure {α, β, negI} := by
   refine le_antisymm ?_ le_top
@@ -268,8 +262,7 @@ theorem slashaction_generators'
     (f : ℍ → ℂ) {G : Subgroup SL(2, ℤ)} (s : Set G) (hG : ⊤ = Subgroup.closure s) (k : ℤ) :
     (∀ γ : G, f ∣[k] γ.1 = f) ↔ (∀ γ ∈ s, f ∣[k] γ.1 = f) := by
   constructor <;> intro h
-  · intro γ _
-    exact h _
+  · intro γ grind
   · intro ⟨γ, hγ⟩
     -- key idea: this lemma allows induction on the "words" of the group
     apply Subgroup.closure_induction (G := G) (p := fun γ _ ↦ f ∣[k] γ.1 = f) (k := s) ?_ ?_
@@ -279,8 +272,7 @@ theorem slashaction_generators'
       rw [← hf, ← SlashAction.slash_mul]
       simp [hf]
     · simp [← hG]
-    · intro γ hγ
-      exact h γ hγ
+    · grind
     · exact SlashAction.slash_one k f
 
 theorem slashaction_generators_SL2Z
@@ -288,8 +280,7 @@ theorem slashaction_generators_SL2Z
     (∀ γ : SL(2, ℤ), f ∣[k] γ = f) := by
   intro γ
   refine (slashaction_generators f ⊤ _ SL2Z_generate k).mpr ?_ ⟨γ, by simp⟩
-  intro γ hγ
-  rcases hγ with (rfl | rfl | rfl | _) <;> assumption
+  grind
 
 theorem slashaction_generators_GL2R
     (f : ℍ → ℂ) (k : ℤ) (hS : f ∣[k] S = f) (hT : f ∣[k] T = f) :
@@ -301,8 +292,7 @@ theorem slashaction_generators_GL2R
   rw [←hA₂]
   change f ∣[k] A = f
   refine (slashaction_generators f ⊤ _ SL2Z_generate k).mpr ?_ ⟨A, by simp⟩
-  intro γ hγ
-  rcases hγ with (rfl | rfl | rfl | _) <;> assumption
+  grind
 
 theorem slashaction_generators_Γ2
     (f : ℍ → ℂ) (k : ℤ) (hα : f ∣[k] α.1 = f) (hβ : f ∣[k] β.1 = f) (hnegI : f ∣[k] negI.1 = f) :
@@ -313,7 +303,6 @@ theorem slashaction_generators_Γ2
   rw [←hA₂]
   change f ∣[k] A = f
   refine (slashaction_generators' f {α, β, negI} Γ2_generate k).mpr ?_ ⟨_, hA₁⟩
-  intro γ hγ
-  rcases hγ with (rfl | rfl | rfl | _) <;> assumption
+  grind
 
 end slashaction_generators

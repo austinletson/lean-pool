@@ -47,9 +47,7 @@ theorem case1_bound (M D' : ℝ) (_hD' : 0 ≤ D')
     (h1 : M ≤ A₁ - 1 / 2 * D')
     (h2 : M ≤ 15 + 7 / 3 * D') :
     M ≤ (7 / 3 * A₁ + 1 / 2 * 15) / (7 / 3 + 1 / 2) := by
-  have h17 : (7 : ℝ) / 3 + 1 / 2 > 0 := by norm_num
-  rw [le_div_iff₀ h17]
-  nlinarith
+  grind
 
 /-- In Case 1, the balanced bound equals `C₁`.
 **Reference**: Equation (14) in Section 5 of
@@ -75,9 +73,7 @@ theorem case2_bound (M Y : ℝ) (_hY : 0 ≤ Y)
     (h1 : M ≤ A₂ - 2 / 5 * Y)
     (h2 : M ≤ 47 / 3 + 11 / 6 * Y) :
     M ≤ (11 / 6 * A₂ + 2 / 5 * (47 / 3)) / (11 / 6 + 2 / 5) := by
-  have h17 : (11 : ℝ) / 6 + 2 / 5 > 0 := by norm_num
-  rw [le_div_iff₀ h17]
-  nlinarith
+  grind
 
 /-- In Case 2, the balanced bound equals `C₂`.
 **Reference**: Equation (17) in Section 5 of
@@ -167,11 +163,7 @@ lemma exists_additive_approx (U : Type*) [Finite U]
         specialize h_bounded
         have := h_bounded.choose_spec n {i}
         simp_all +decide only [ge_iff_le, additiveFunction, Finset.sum_singleton]
-        exact abs_le.mpr
-          ⟨by
-            cases abs_cases (f {i}) <;> linarith [abs_le.mp this],
-            by
-            cases abs_cases (f {i}) <;> linarith [abs_le.mp this]⟩
+        grind
       have := h_compact.isSeqCompact fun n =>
         show a_n n ∈ Set.pi Set.univ fun i =>
             Set.Icc
@@ -265,12 +257,8 @@ theorem boolean_KR_bound_C₂_delta (α : Type*) [BooleanAlgebra α]
       · exact hf.1
       · intro A B hAB
         have hle : |f A + f B - f (A ⊔ B)| ≤ (0 : ℝ) := hf.2 A B hAB
-        have habs : |f A + f B - f (A ⊔ B)| = 0 :=
-          le_antisymm hle (abs_nonneg _)
-        have hz : f A + f B - f (A ⊔ B) = 0 := abs_eq_zero.mp habs
-        linarith
-    · intro A
-      simp
+        grind
+    · grind
   · have hΔpos : 0 < Δ := lt_of_le_of_ne hΔ (Ne.symm hΔ0)
     let g : α → ℝ := fun A => Δ⁻¹ * f A
     have hg : IsApproxAdditiveBA g 1 := by
@@ -284,8 +272,7 @@ theorem boolean_KR_bound_C₂_delta (α : Type*) [BooleanAlgebra α]
           have hrewrite :
               g A + g B - g (A ⊔ B) =
                 Δ⁻¹ * (f A + f B - f (A ⊔ B)) := by
-            simp [g]
-            ring
+            grind
           rw [hrewrite, abs_mul, abs_of_pos (inv_pos.mpr hΔpos)]
         rw [hscale]
         calc
@@ -304,8 +291,7 @@ theorem boolean_KR_bound_C₂_delta (α : Type*) [BooleanAlgebra α]
     · intro A
       have hclose := hνclose A
       have hrewrite : f A - μ A = Δ * (g A - ν A) := by
-        simp [g, μ]
-        field_simp [hΔpos.ne']
+        grind
       rw [hrewrite, abs_mul, abs_of_nonneg hΔ]
       calc
         Δ * |g A - ν A| ≤ Δ * (C₂ : ℝ) :=

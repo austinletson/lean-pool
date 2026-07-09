@@ -109,9 +109,7 @@ theorem muVal_lt_of {q : ℕ} (hq3 : 3 ≤ q) {n n' : ℕ} (hbad : 0 < badCountQ
   rcases h with hzero | ⟨hbad', hcase⟩
   · have hmn' : muVal q hq3 n' = 0 := by
       simp only [muVal, dif_neg (by omega : ¬ 0 < badCountQ q n')]
-    have hpos : 0 < leastGoodAbove hq3 hbad * q :=
-      Nat.mul_pos (by omega) (by omega)
-    rw [hmn, hmn']; omega
+    grind
   · have hmn' : muVal q hq3 n'
         = leastGoodAbove hq3 hbad' * q
           + ((q - 1) / 2 - n' / q ^ (leastGoodAbove hq3 hbad') % q) := by
@@ -164,9 +162,7 @@ theorem egrs_move {p q : ℕ} (hp : p.Prime) (_hq : q.Prime)
   have hqi1 : 1 ≤ q ^ i := Nat.one_le_pow _ _ (by omega)
   have hT2 : q ^ i + 1 ≤ 2 * T := by
     have h2 : 2 * ((q - 1) / 2 * geomQ q i) = (q - 1) * geomQ q i := by
-      calc 2 * ((q - 1) / 2 * geomQ q i)
-          = 2 * ((q - 1) / 2) * geomQ q i := by ring
-        _ = (q - 1) * geomQ q i := by rw [hB2]
+      grind
     omega
   have hmun : muVal q hq3 n = i * q + ((q - 1) / 2 - n / q ^ i % q) := by
     simp only [muVal, dif_pos hbad, ← hidef]
@@ -192,9 +188,7 @@ theorem egrs_move {p q : ℕ} (hp : p.Prime) (_hq : q.Prime)
       MoveDigits.add_div_pow_eq hq1 n U i hclo hchi
     have hfl' : N < (n + U) / q ^ i * q ^ i := by
       rw [hdiv_i]
-      have hmono : n / q ^ i * q ^ i ≤ (n / q ^ i + 1) * q ^ i :=
-        Nat.mul_le_mul_right _ (by omega)
-      omega
+      grind
     refine ⟨n + U, hpn', hfl', ?_⟩
     rcases Nat.eq_zero_or_pos (badCountQ q (n + U)) with hz | hbad'
     · -- terminal: fully good, μ' = 0 < μ
@@ -218,12 +212,8 @@ theorem egrs_move {p q : ℕ} (hp : p.Prime) (_hq : q.Prime)
       have hgoodk : ∀ idx, k ≤ idx → (n + U) / q ^ idx % q ≤ (q - 1) / 2 := by
         intro idx hidx
         rcases Nat.lt_trichotomy idx i with hlt | heqi | hgt
-        · rcases Nat.eq_or_lt_of_le hidx with heqk | hgtk
-          · rw [hlow idx hlt, ← heqk]
-            exact le_of_lt hkstrict
-          · rw [hlow idx hlt, hkbet idx hgtk hlt]
-        · subst heqi
-          rw [hdig_i]; omega
+        · grind
+        · grind
         · rw [hhigh idx hgt]
           exact digit_good_above_top hq1 hbad (by omega)
       have htb' : topBadIndex q (n + U) < k :=
@@ -273,8 +263,7 @@ theorem egrs_move {p q : ℕ} (hp : p.Prime) (_hq : q.Prime)
             = leastGoodAbove hq3 hbad' * q
               + ((q - 1) / 2 - (n - S) / q ^ (leastGoodAbove hq3 hbad') % q) := by
           simp only [muVal, dif_pos hbad']
-        rw [h1, hmun, heq']
-        rw [hfrozen i (le_refl i)]
+        grind
       · -- index dropped: μ strictly drops
         left
         exact muVal_lt_of hq3 hbad (Or.inr ⟨hbad', Or.inl (by omega)⟩)
@@ -316,9 +305,7 @@ theorem align_mu {p q : ℕ} (hq3 : 3 ≤ q) (N : ℕ)
           N < n' / q ^ (leastGoodAbove hq3 hbad') * q ^ (leastGoodAbove hq3 hbad') := by
         intro hbad'
         have hmle : muVal q hq3 n' ≤ muVal q hq3 n := by
-          rcases hdrop with h | ⟨h, _⟩
-          · exact le_of_lt h
-          · exact le_of_eq h
+          grind
         have hile : leastGoodAbove hq3 hbad' ≤ leastGoodAbove hq3 hbad := by
           by_contra hcon
           push Not at hcon
@@ -330,15 +317,10 @@ theorem align_mu {p q : ℕ} (hq3 : 3 ≤ q) (N : ℕ)
             simp only [muVal, dif_pos hbad]
           have h3 : (leastGoodAbove hq3 hbad + 1) * q ≤ leastGoodAbove hq3 hbad' * q :=
             Nat.mul_le_mul_right _ (by omega)
-          have h4 : (leastGoodAbove hq3 hbad + 1) * q
-              = leastGoodAbove hq3 hbad * q + q := by ring
-          have h5 : (q - 1) / 2 - n / q ^ (leastGoodAbove hq3 hbad) % q < q := by omega
-          omega
+          grind
         exact lt_of_lt_of_le hfl'
           (MoveDigits.div_mul_pow_mono (by omega) n' hile)
-      rcases hdrop with hlt | ⟨heq, hltn⟩
-      · exact ihk (muVal q hq3 n') (by omega) n' rfl hpn' hNn' hfl''
-      · exact ihn n' hltn (by omega) hpn' hNn' hfl''
+      grind
 
 /-! ## The seeded finish: Diophantine seed + μ-induction + single move -/
 
@@ -375,17 +357,13 @@ theorem align_finish_mu {p q : ℕ} (hp : p.Prime) (hq : q.Prime)
   have hpow13 : q ^ (e + 1) ≤ q ^ (e + 3) := Nat.pow_le_pow_right (by omega) (by omega)
   have hpow12 : q ^ (e + 1) ≤ q ^ (e + 2) := Nat.pow_le_pow_right (by omega) (by omega)
   have hupper : p ^ α < ((q - 1) / 2 + 1) * q ^ (e + 3) := by
-    have hexp : ((q - 1) / 2 + 1) * q ^ (e + 3)
-        = (q - 1) / 2 * q ^ (e + 3) + q ^ (e + 3) := by ring
-    omega
+    grind
   have hdiv3 : p ^ α / q ^ (e + 3) = (q - 1) / 2 :=
     Nat.div_eq_of_lt_le (le_of_lt hlo) hupper
   have hsplit23 : q ^ (e + 3) = q ^ (e + 2) * q := pow_succ q (e + 2)
   have hdiv2 : p ^ α / q ^ (e + 2) = (q - 1) / 2 * q := by
     apply Nat.div_eq_of_lt_le
-    · have hexp2 : (q - 1) / 2 * q * q ^ (e + 2) = (q - 1) / 2 * q ^ (e + 3) := by
-        rw [hsplit23]; ring
-      omega
+    · grind
     · have hexp3 : ((q - 1) / 2 * q + 1) * q ^ (e + 2)
           = (q - 1) / 2 * q ^ (e + 3) + q ^ (e + 2) := by
         rw [hsplit23]; ring
@@ -393,9 +371,7 @@ theorem align_finish_mu {p q : ℕ} (hp : p.Prime) (hq : q.Prime)
   have hsmall : p ^ α < q ^ (e + 4) := by
     have h1 : ((q - 1) / 2 + 1) * q ^ (e + 3) ≤ q * q ^ (e + 3) :=
       Nat.mul_le_mul_right _ (by omega)
-    have h2 : q ^ (e + 4) = q ^ (e + 3) * q := pow_succ q (e + 3)
-    have h3 : q * q ^ (e + 3) = q ^ (e + 3) * q := Nat.mul_comm _ _
-    omega
+    grind
   have hgood2 : ∀ idx, e + 2 ≤ idx → p ^ α / q ^ idx % q ≤ (q - 1) / 2 := by
     intro idx hidx
     rcases Nat.lt_or_ge idx (e + 3) with h2 | h3

@@ -62,34 +62,17 @@ variable {S : Type*} [Monoid S]
 
 /-- Associativity of the pointwise product (membership proof, choice-free). -/
 theorem smul_assoc (a b c : Set S) : a * b * c = a * (b * c) := by
-  ext s; simp only [Set.mem_mul]
-  constructor
-  · rintro ⟨u, ⟨p, hp, q, hq, rfl⟩, w, hw, rfl⟩
-    exact ⟨p, hp, q * w, ⟨q, hq, w, hw, rfl⟩, by rw [mul_assoc]⟩
-  · rintro ⟨p, hp, u, ⟨q, hq, w, hw, rfl⟩, rfl⟩
-    exact ⟨p * q, ⟨p, hp, q, hq, rfl⟩, w, hw, by rw [mul_assoc]⟩
+  grind
 
 /-- Right distributivity `(a ∪ b)·c = a·c ∪ b·c` (choice-free). -/
 theorem sunion_mul (a b c : Set S) : (a ∪ b) * c = a * c ∪ b * c := by
   ext s; simp only [Set.mem_mul, Set.mem_union]
-  constructor
-  · rintro ⟨u, (hu | hu), w, hw, rfl⟩
-    · exact Or.inl ⟨u, hu, w, hw, rfl⟩
-    · exact Or.inr ⟨u, hu, w, hw, rfl⟩
-  · rintro (⟨u, hu, w, hw, rfl⟩ | ⟨u, hu, w, hw, rfl⟩)
-    · exact ⟨u, Or.inl hu, w, hw, rfl⟩
-    · exact ⟨u, Or.inr hu, w, hw, rfl⟩
+  grind
 
 /-- Left distributivity `a·(b ∪ c) = a·b ∪ a·c` (choice-free). -/
 theorem smul_union (a b c : Set S) : a * (b ∪ c) = a * b ∪ a * c := by
   ext s; simp only [Set.mem_mul, Set.mem_union]
-  constructor
-  · rintro ⟨u, hu, w, (hw | hw), rfl⟩
-    · exact Or.inl ⟨u, hu, w, hw, rfl⟩
-    · exact Or.inr ⟨u, hu, w, hw, rfl⟩
-  · rintro (⟨u, hu, w, hw, rfl⟩ | ⟨u, hu, w, hw, rfl⟩)
-    · exact ⟨u, hu, w, Or.inl hw, rfl⟩
-    · exact ⟨u, hu, w, Or.inr hw, rfl⟩
+  grind
 
 /-! ### The star `z* = ⋃ₙ zⁿ`, by explicit recursion -/
 
@@ -186,9 +169,7 @@ theorem mem_kpow_singleton (e s : S) (n : ℕ) : s ∈ kpow ({e} : Set S) n ↔ 
   | succ m ih =>
       rw [kpow_succ, pow_succ', Set.mem_mul]
       constructor
-      · rintro ⟨a, ha, t, ht, rfl⟩
-        rw [Set.mem_singleton_iff] at ha
-        rw [(ih t).mp ht, ha]
+      · grind
       · rintro rfl
         exact ⟨e, Set.mem_singleton_iff.mpr rfl, e ^ m, (ih (e ^ m)).mpr rfl, rfl⟩
 
@@ -243,8 +224,7 @@ theorem parkY_eq (a b c d : Set S) :
     parkY a b c d = b * parkX a b c d ∪ a * parkY a b c d ∪ d := by
   have hfix : a * parkY a b c d ∪ (b * parkX a b c d ∪ d) = parkY a b c d :=
     star_mul_isFixed a (b * parkX a b c d ∪ d)
-  conv_lhs => rw [← hfix]
-  simp only [Set.union_assoc, Set.union_comm]
+  grind
 
 /-- **Exercise 5.15(2), existence.** `(x₀, y₀)` solves David Park's system. -/
 theorem park_solves (a b c d : Set S) :
@@ -263,23 +243,17 @@ theorem park_least (a b c d : Set S) {x y : Set S}
     (hx : x = a * x ∪ b * y ∪ c) (hy : y = b * x ∪ a * y ∪ d) :
     parkX a b c d ⊆ x ∧ parkY a b c d ⊆ y := by
   have hax : a * x ⊆ x := by
-    calc a * x ⊆ a * x ∪ b * y ∪ c := Set.subset_union_left.trans Set.subset_union_left
-      _ = x := hx.symm
+    grind
   have hby : b * y ⊆ x := by
-    calc b * y ⊆ a * x ∪ b * y ∪ c := Set.subset_union_right.trans Set.subset_union_left
-      _ = x := hx.symm
+    grind
   have hcx : c ⊆ x := by
-    calc c ⊆ a * x ∪ b * y ∪ c := Set.subset_union_right
-      _ = x := hx.symm
+    grind
   have hay : a * y ⊆ y := by
-    calc a * y ⊆ b * x ∪ a * y ∪ d := Set.subset_union_right.trans Set.subset_union_left
-      _ = y := hy.symm
+    grind
   have hbx : b * x ⊆ y := by
-    calc b * x ⊆ b * x ∪ a * y ∪ d := Set.subset_union_left.trans Set.subset_union_left
-      _ = y := hy.symm
+    grind
   have hdy : d ⊆ y := by
-    calc d ⊆ b * x ∪ a * y ∪ d := Set.subset_union_right
-      _ = y := hy.symm
+    grind
   -- The eliminated `y`: `a*·(b·x ∪ d) ⊆ y`.
   have hpre : a * y ∪ (b * x ∪ d) ⊆ y := Set.union_subset hay (Set.union_subset hbx hdy)
   have hyy : star a * (b * x ∪ d) ⊆ y := by

@@ -22,22 +22,12 @@ protected abbrev qrel (p q : ZFInt × ZFInt') : Prop := p.1 * q.2 = p.2 * q.1
 protected theorem qrel_eq : Equivalence ZFSet.qrel where
   refl x := ZFInt.mul_comm x.1 x.2
   symm h := by
-    unfold ZFSet.qrel at h ⊢
-    rw [ZFInt.mul_comm, ←h, ZFInt.mul_comm]
+    grind
   trans := by
     rintro ⟨p, q, hq⟩ ⟨u, v, hv⟩ ⟨s, t, ht⟩ hpq huv
     dsimp [ZFSet.qrel] at hpq huv ⊢
     have : p * t * u * v = q * s * u * v := by
-      suffices p * v * u * t = q * u * s * v by
-        rw [
-          mul_assoc, mul_assoc,
-          mul_comm t, mul_comm u,
-          ←mul_assoc, ←mul_assoc,
-          this,
-          mul_assoc, mul_assoc,
-          mul_comm u, mul_assoc, mul_comm v,
-          ←mul_assoc, ←mul_assoc]
-      rw [hpq, mul_assoc, huv, mul_comm v s, ← mul_assoc]
+      grind
     conv at this =>
       conv => lhs; rw [mul_assoc]
       conv => rhs; rw [mul_assoc]
@@ -118,20 +108,7 @@ noncomputable abbrev add (n m : ZFRat) : ZFRat :=
     fun ⟨x₁, x₂, hx₂⟩ ⟨y₁, y₂, hy₂⟩ ⟨u₁, u₂, hu₂⟩ ⟨v₁, v₂, hv₂⟩ hxu hyv ↦ sound (by
       have h1 : x₁ * u₂ = x₂ * u₁ := hxu
       have h2 : y₁ * v₂ = y₂ * v₁ := hyv
-      simp only [ZFSet.qrel]
-      conv_lhs =>
-        rw [right_distrib]
-        conv =>
-          lhs
-          rw [
-            ←mul_assoc, mul_assoc x₁, mul_comm y₂, ←mul_assoc,
-            h1, mul_assoc x₂, mul_comm u₁, ←mul_assoc, mul_assoc (x₂ * y₂)]
-        conv =>
-          rhs
-          rw [
-            mul_comm u₂, ←mul_assoc, mul_assoc x₂, h2,
-            ←mul_assoc, mul_assoc, mul_comm v₁, ←mul_assoc, mul_assoc (x₂ * y₂)]
-      rw [←left_distrib])
+      grind)
 
 protected noncomputable instance : Add ZFRat := ⟨ZFRat.add⟩
 theorem add_eq (n m : ZFInt × ZFInt') :
@@ -183,8 +160,7 @@ theorem neg_eq (n : ZFInt × ZFInt') : -mk n = mk (-n.1, n.2) := rfl
 theorem neg_neg (n : ZFRat) : -(-n) = n := by
   induction n using Quotient.ind
   apply sound
-  rw [_root_.neg_neg]
-  exact eq.mp rfl
+  grind
 
 theorem neg_zero : -(0 : ZFRat) = 0 := rfl
 
@@ -311,9 +287,7 @@ noncomputable abbrev mul (n m : ZFRat) : ZFRat :=
     fun ⟨a, b, hb⟩ ⟨c, d, hd⟩ ⟨e, f, hf⟩ ⟨i, j, hi⟩ h h' ↦ by
       apply sound
       unfold_projs at h h'
-      simp only [ZFSet.qrel] at h h' ⊢
-      ac_change (a * f) * (c * j) = (b * e) * (d * i)
-      rw [h, h']
+      grind
 
 noncomputable instance : Mul ZFRat := ⟨ZFRat.mul⟩
 theorem mul_eq (n m : ZFInt × ZFInt') :
@@ -485,8 +459,7 @@ noncomputable instance : DivisionRing ZFRat where
     by_cases hb : b = 0
     · subst b
       dsimp [HDiv.hDiv, Div.div, div, Inv.inv]
-      iterate 2 rw [dite_cond_eq_false (eq_false (fun a ↦ a rfl))]
-      rw [mul_zero]
+      grind
     · rw [div_eq_mul_inv hb, ←inv_eq]
   qsmul := qsmul
   nnqsmul := nnqsmul

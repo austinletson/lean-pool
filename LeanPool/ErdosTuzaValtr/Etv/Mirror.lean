@@ -34,11 +34,7 @@ theorem Mirror.hasLaced {n : ℕ} {S : Finset α} (p q : α) :
     repeat' rw [List.Mirror_in] at h
     simp only [List.Mirror_getLast, Option.mem_def, Option.map_eq_some_iff,
       EmbeddingLike.apply_eq_iff_eq, exists_eq_right, List.Mirror_head] at h
-    rcases h with ⟨hIn, ⟨eq_ab, h⟩⟩
-    rw [add_comm] at eq_ab
-    refine ⟨(by tauto), eq_ab, ?_⟩
-    simp only [Option.mem_def]
-    tauto
+    grind
   · intro h; rcases h with ⟨a, b, cp, c, cq, hcp, hc, hcq, h⟩
     use b, a, cq.Mirror, c.Mirror, cp.Mirror
     refine ⟨?_, ?_, ?_, ?_⟩ <;> try rw [Mirror.ncup] <;> tauto

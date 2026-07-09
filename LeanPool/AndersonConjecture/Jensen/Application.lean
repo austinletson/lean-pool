@@ -47,8 +47,7 @@ lemma mk_mem_maxIdeal (f : MvPowerSeries (Fin 3) ℂ)
       _ = 1 := u.val_inv
   have h0 : MvPowerSeries.constantCoeff (f * g - 1) = 0 :=
     conjI_ccf_zero _ hmul
-  simp only [map_sub, map_mul, map_one, hf, zero_mul, zero_sub] at h0
-  exact one_ne_zero (neg_eq_zero.mp h0)
+  grind
 
 lemma coeff_conjI_zero_of_deg_le_one
     (m : Fin 3 →₀ ℕ)
@@ -112,8 +111,7 @@ lemma mk_X1_ne_zero :
       = 1 := by
     simp [coeff_X]
   have h2 := coeff_conjI_zero_of_deg_le_one _ (fun _ => le_refl _) _ hf
-  rw [h1] at h2
-  exact one_ne_zero h2
+  grind
 
 lemma T_smulRegular_of_ne_zero (a : T) (ha : a ≠ 0) :
     IsSMulRegular T a := by
@@ -160,8 +158,7 @@ lemma coeff_lhs (f : MvPowerSeries (Fin 3) ℂ) (d : Fin 3 →₀ ℕ) :
   by_cases hle : Finsupp.single (1 : Fin 3) 1 ≤ d
   · have hd1 : d 1 ≠ 0 := by
       have := hle 1
-      simp [Finsupp.single_eq_same] at this
-      omega
+      grind
     simp only [hle, ite_true, one_mul, hd1, ite_false, sub_eq_zero]
     change f d = shiftX1'App f (d - Finsupp.single 1 1)
     simp only [shiftX1'App]
@@ -170,12 +167,7 @@ lemma coeff_lhs (f : MvPowerSeries (Fin 3) ℂ) (d : Fin 3 →₀ ℕ) :
       by_contra h
       apply hle
       intro i
-      simp only [Finsupp.single_apply]
-      by_cases hi : i = 1
-      · subst hi
-        simp
-        omega
-      · simp [show (1 : Fin 3) ≠ i from fun h => hi h.symm]
+      grind
     simp [hle, hd1]
 
 /-- RHS coefficient: (X₀² · divR'App f)(d) = f(d) when d₀≥2 and d₁=0, else 0. -/
@@ -189,8 +181,7 @@ lemma coeff_rhs (f : MvPowerSeries (Fin 3) ℂ) (d : Fin 3 →₀ ℕ) :
   by_cases hle : Finsupp.single (0 : Fin 3) 2 ≤ d
   · have hd0 : 2 ≤ d 0 := by
       have := hle 0
-      simp only [Finsupp.single_eq_same] at this
-      exact this
+      grind
     simp only [hle, ite_true, one_mul]
     by_cases hd1 : d 1 = 0
     · simp only [hd0, hd1, true_and, ite_true]
@@ -215,11 +206,7 @@ lemma coeff_rhs (f : MvPowerSeries (Fin 3) ℂ) (d : Fin 3 →₀ ℕ) :
       intro h
       apply hle
       intro i
-      simp only [Finsupp.single_apply]
-      by_cases hi : i = 0
-      · subst hi
-        simpa only [Fin.isValue, ↓reduceIte] using h
-      · simp [show (0 : Fin 3) ≠ i from fun h => hi h.symm]
+      grind
     simp [hle, hd0]
 
 /-- Coefficient of the generator at a monomial with a₀ < 2 and a₁ = 0. -/
@@ -228,11 +215,7 @@ lemma coeff_gen_zero (a : Fin 3 →₀ ℕ) (ha0 : a 0 < 2) (ha1 : a 1 = 0) :
   simp only [map_sub, sub_eq_zero]
   have hX0sq : coeff a ((X (0 : Fin 3) : MvPowerSeries (Fin 3) ℂ) ^ 2) = 0 := by
     rw [MvPowerSeries.coeff_X_pow]
-    simp only [Fin.isValue, ite_eq_right_iff, one_ne_zero, imp_false]
-    intro h
-    subst h
-    simp only [Finsupp.single_eq_same] at ha0
-    omega
+    grind
   have hX1X2 : coeff a ((X (1 : Fin 3) : MvPowerSeries (Fin 3) ℂ) * X 2) = 0 := by
     rw [show (X (1 : Fin 3) : MvPowerSeries (Fin 3) ℂ) =
       MvPowerSeries.monomial (R := ℂ) (Finsupp.single 1 1) 1 from rfl]
@@ -240,8 +223,7 @@ lemma coeff_gen_zero (a : Fin 3 →₀ ℕ) (ha0 : a 0 < 2) (ha1 : a 1 = 0) :
     split_ifs with hle
     · exfalso
       have := hle 1
-      simp [Finsupp.single_eq_same] at this
-      omega
+      grind
     · rfl
   rw [hX0sq, hX1X2]
 
@@ -279,9 +261,7 @@ lemma coeff_f_vanish (f g : MvPowerSeries (Fin 3) ℂ)
   have hnle1 : ¬ Finsupp.single (1 : Fin 3) 1 ≤ e := by
     intro h
     have h1 := h 1
-    simp only [Finsupp.single_apply, ite_true] at h1
-    rw [he1] at h1
-    omega
+    grind
   have hlhs : coeff e (X 2 * f - X 1 * g) = coeff d f := by
     rw [map_sub]
     rw [show (X (2 : Fin 3) : MvPowerSeries (Fin 3) ℂ) =
@@ -295,9 +275,7 @@ lemma coeff_f_vanish (f g : MvPowerSeries (Fin 3) ℂ)
     simp [he_def, add_tsub_cancel_right]
   have hrhs : coeff e ((X (0 : Fin 3) ^ 2 - X 1 * X 2) * k) = 0 :=
     coeff_gen_mul_zero k e (he0 ▸ hd0) he1
-  have he := congr_arg (coeff e) hk
-  rw [hlhs, hrhs] at he
-  exact he
+  grind
 
 /-- The coefficient identity: when X₂f − X₁g ∈ conjI, the "X₁=0 restriction" of f
     is divisible by X₀², yielding f − X₁·(shift) = X₀²·(quotient).

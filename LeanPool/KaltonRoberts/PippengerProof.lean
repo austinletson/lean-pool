@@ -123,15 +123,9 @@ theorem card_perm_constrained_step (n s t : ℕ) (hs : s < t) (ht : t ≤ n) :
           · subst j
             simpa [Equiv.swap_apply_def, k] using hσ.2.1
           · have hj_small : (j : ℕ) < s := by
-              have hj_ne : (j : ℕ) ≠ s := by
-                intro h
-                exact hj_boundary (Fin.ext (by simpa [hk_value] using h))
-              omega
+              grind
             have hji : j ≠ i := by
-              intro h
-              have h_value : (j : ℕ) = (i : ℕ) :=
-                congrArg (fun x : Fin n => (x : ℕ)) h
-              omega
+              grind
             simpa [Equiv.swap_apply_def, hji, hj_boundary] using hσ.2.2 j hj_small
         · aesop;
         · intro σ hσ
@@ -145,15 +139,9 @@ theorem card_perm_constrained_step (n s t : ℕ) (hs : s < t) (ht : t ≤ n) :
               simpa [Equiv.swap_apply_def, k] using hσ.2 k hk_lt
             · intro j hj_small
               have hji : j ≠ i := by
-                intro h
-                have h_value : (j : ℕ) = (i : ℕ) :=
-                  congrArg (fun x : Fin n => (x : ℕ)) h
-                omega
+                grind
               have hjk : j ≠ k := by
-                intro h
-                have h_value : (j : ℕ) = s := by
-                  simpa [hk_value] using congrArg (fun x : Fin n => (x : ℕ)) h
-                omega
+                grind
               have hj_succ : (j : ℕ) < s + 1 := by omega
               simpa [Equiv.swap_apply_def, hji, hjk] using hσ.2 j hj_succ
           · simp [mul_assoc]
@@ -161,8 +149,7 @@ theorem card_perm_constrained_step (n s t : ℕ) (hs : s < t) (ht : t ≤ n) :
     rw [Finset.sum_congr rfl fun x hx => h_swap_card x <| Finset.mem_filter.mp hx |>.2]
     rw [show (Finset.univ.filter fun x : Fin n => s ≤ (x : ℕ)) =
         Finset.Ici ⟨s, by linarith⟩ by
-      ext x
-      simp [Fin.le_def]]
+      grind]
     simp [Nat.mul_comm]
   exact h_card_perm.symm
 
@@ -294,8 +281,7 @@ theorem choose_ge_exp_h_entropy_div (n k : ℕ) (hk : 0 < k) (hkn : k < n) :
               ?_
             ];
           · rw [show n - j = (n - (j + 1)) + 1 by
-              rw [tsub_add_eq_add_tsub (by linarith [Finset.mem_range.mp hj])]
-              simp +decide]
+              grind]
             ring
           · rw [eq_div_iff] <;> norm_cast
             rw [Int.subNatNat_of_le (by linarith [Finset.mem_range.mp hj])]
@@ -347,8 +333,7 @@ theorem choose_ge_exp_h_entropy_div (n k : ℕ) (hk : 0 < k) (hkn : k < n) :
         field_simp;
         rw [eq_div_iff (sub_ne_zero_of_ne <| by norm_cast; linarith)]
         rw [show n - j = n - (j + 1) + 1 by
-          rw [tsub_add_eq_add_tsub (by linarith [Finset.mem_Ico.mp hj])]
-          simp +decide]
+          grind]
         push_cast [Nat.factorial_succ]
         ring_nf
         rw [ Nat.cast_sub ( by linarith [ Finset.mem_Ico.mp hj ] ) ]; push_cast; ring;
@@ -385,10 +370,8 @@ theorem choose_ge_exp_h_entropy_div (n k : ℕ) (hk : 0 < k) (hkn : k < n) :
         grind +revert;
       · induction j with
         | zero =>
-          norm_num at *
-          linarith
+          grind
         | succ j ih =>
-          norm_num at *
           grind
     have := Finset.sum_le_sum max_term
     simp_all +decide only [
@@ -494,9 +477,7 @@ theorem sum_Icc_one_pow_le_geom (D : ℕ) (q : ℝ) (hq0 : 0 ≤ q) (hq1 : q < 1
         rw [Finset.sum_range_succ]
         by_cases hD : 1 ≤ D + 1
         · rw [Finset.sum_Icc_succ_top hD, ih]
-        · have hD0 : D = 0 := by omega
-          subst D
-          simp
+        · grind
   rw [hEq]
   exact geom_sum_le D q hq0 hq1
 
@@ -515,15 +496,10 @@ theorem bad_sum_split
       ∑ x ∈ s.filter (fun m => m ≤ D), T x
           ≤ ∑ x ∈ s.filter (fun m => m ≤ D), q ^ x := by
             apply Finset.sum_le_sum
-            intro m hm
-            exact hsmall m (Finset.mem_of_mem_filter m hm) (Finset.mem_filter.mp hm).2
+            grind
       _ ≤ ∑ x ∈ Finset.Icc 1 D, q ^ x := by
             apply Finset.sum_le_sum_of_subset_of_nonneg
-            · intro m hm
-              have hs : m ∈ s := Finset.mem_of_mem_filter m hm
-              have hmD : m ≤ D := (Finset.mem_filter.mp hm).2
-              rcases Finset.mem_Icc.mp hs with ⟨hm1, _⟩
-              exact Finset.mem_Icc.mpr ⟨hm1, hmD⟩
+            · grind
             · intro m hmD hnot
               positivity
       _ ≤ q / (1 - q) := sum_Icc_one_pow_le_geom D q hq0 hq1
@@ -531,10 +507,7 @@ theorem bad_sum_split
       ∑ x ∈ s.filter (fun m => ¬m ≤ D), T x
           ≤ ∑ x ∈ s.filter (fun m => ¬m ≤ D), B := by
             apply Finset.sum_le_sum
-            intro m hm
-            have hs : m ∈ s := Finset.mem_of_mem_filter m hm
-            have hDm : D < m := Nat.lt_of_not_ge (Finset.mem_filter.mp hm).2
-            exact hmid m hs hDm
+            grind
       _ = ((s.filter (fun m => ¬m ≤ D)).card : ℝ) * B := by simp
       _ ≤ (N : ℝ) * B := by
             apply mul_le_mul_of_nonneg_right _ hB0
@@ -574,8 +547,7 @@ theorem exp_decay_beats_poly_const (C η : ℝ) (hη : 0 < η) :
   have h_ev : ∀ᶠ N : ℕ in Filter.atTop,
       C * ((N : ℝ) ^ 2 * Real.exp (-η * N)) < 1 / 2 :=
     h_lim.eventually (gt_mem_nhds (show (0 : ℝ) < 1 / 2 by norm_num))
-  filter_upwards [h_ev] with N hN
-  simpa [mul_assoc] using hN
+  grind
 
 /-! ## Entropy bounds for Pippenger bad events -/
 
@@ -634,14 +606,12 @@ theorem choose_ratio_le_pow (a b k : ℕ) (hab : a ≤ b) (hk : k ≤ a) :
     have h := Nat.descFactorial_eq_factorial_mul_choose a k
     have h' : (a.descFactorial k : ℝ) = (k.factorial : ℝ) * (a.choose k : ℝ) := by
       exact_mod_cast h
-    rw [h']
-    field_simp [hfac_pos.ne']
+    grind
   have hchooseB : (b.choose k : ℝ) = (b.descFactorial k : ℝ) / (k.factorial : ℝ) := by
     have h := Nat.descFactorial_eq_factorial_mul_choose b k
     have h' : (b.descFactorial k : ℝ) = (k.factorial : ℝ) * (b.choose k : ℝ) := by
       exact_mod_cast h
-    rw [h']
-    field_simp [hfac_pos.ne']
+    grind
   rw [hchooseA, hchooseB]
   field_simp [hfac_pos.ne']
   exact hdesc
@@ -783,40 +753,25 @@ theorem pippenger_entropy_exponent_eq_phi
       exact div_ne_zero (mul_ne_zero hr_ne hx_ne) hθ_ne
     have hb_ne : (r : ℝ) * x ≠ 0 := mul_ne_zero hr_ne hx_ne
     have hab_ne : (r : ℝ) * x / θ - (r : ℝ) * x ≠ 0 := by
-      have hpos : 0 < (r : ℝ) * x / θ - (r : ℝ) * x := by
-        have : 1 < 1 / θ := by
-          rw [one_lt_div hθ0]
-          exact hθ1
-        have hcoef : 0 < 1 / θ - 1 := by linarith
-        have hrx : 0 < (r : ℝ) * x := mul_pos hr_posR hx_pos
-        have heq : (r : ℝ) * x / θ - (r : ℝ) * x =
-            (r : ℝ) * x * (1 / θ - 1) := by ring
-        rw [heq]
-        exact mul_pos hrx hcoef
-      exact ne_of_gt hpos
+      grind
     have h := h_entropy_scale_nat N (c * m) (r * m)
       ((r : ℝ) * x / θ) ((r : ℝ) * x) hn_ne ha_ne hb_ne hab_ne
       (by
-        rw [Nat.cast_mul, hcθ, hx]
-        field_simp [hn_ne, hθ_ne]
-        ring)
+        grind)
       (by
-        rw [Nat.cast_mul, show (N : ℝ) = n by rw [hn], hx]
-        field_simp [hn_ne])
+        grind)
     simpa [hn, hx] using h
   have hRent :
       hEntropy ((r * N : ℕ) : ℝ) ((r * m : ℕ) : ℝ) =
         n * hEntropy (r : ℝ) ((r : ℝ) * x) := by
     have hb_ne : (r : ℝ) * x ≠ 0 := mul_ne_zero hr_ne hx_ne
     have hab_ne : (r : ℝ) - (r : ℝ) * x ≠ 0 := by
-      have hpos : 0 < (r : ℝ) - (r : ℝ) * x := by nlinarith [hr_posR, hx_lt_one]
-      exact ne_of_gt hpos
+      grind
     have h := h_entropy_scale_nat N (r * N) (r * m)
       (r : ℝ) ((r : ℝ) * x) hn_ne hr_ne hb_ne hab_ne
       (by rw [Nat.cast_mul]; ring)
       (by
-        rw [Nat.cast_mul, show (N : ℝ) = n by rw [hn], hx]
-        field_simp [hn_ne])
+        grind)
     simpa [hn, hx] using h
   rw [hNent, hLent, hCent, hRent]
   unfold Phi
@@ -924,8 +879,7 @@ theorem exists_perm_set_to_initial {n : ℕ} (A : Finset (Fin n)) :
       generalize_proofs at *;
       have hy : (g.symm ⟨x.val - B.card, by
           exact tsub_lt_tsub_iff_right (le_of_not_gt hx) |>.2 (Fin.is_lt x)⟩ : Fin n) ∉ B := by
-        exact (Finset.mem_sdiff.mp (g.symm ⟨x.val - B.card, by
-          exact tsub_lt_tsub_iff_right (le_of_not_gt hx) |>.2 (Fin.is_lt x)⟩).property).2
+        grind
       simp +decide [hy, Fin.ext_iff]
       omega⟩;
   grind
@@ -1058,9 +1012,7 @@ theorem first_moment_principle_indexed {n : ℕ} {ι : Type*}
           (Finset.univ : Finset (Equiv.Perm (Fin n)))) := by
     intro σ hσ
     specialize hsum σ
-    rcases hsum with ⟨i, hiI, hσi⟩
-    exact Finset.mem_biUnion.mpr
-      ⟨i, hiI, Finset.mem_filter.mpr ⟨Finset.mem_univ σ, hσi⟩⟩
+    grind
   have := Finset.card_mono h_union
   simp_all +decide only [
     subset_iff,
@@ -1110,8 +1062,7 @@ theorem desc_factorial_ratio_eq_choose_ratio
     have h := Nat.factorial_mul_descFactorial hkM
     have h' : ((M - k).factorial : ℝ) * (M.descFactorial k : ℝ) = (M.factorial : ℝ) := by
       exact_mod_cast h
-    rw [hdescM] at h'
-    rw [← h']
+    grind
   rw [hdescA, hfacM]
   have hfact_pos : (0 : ℝ) < (k.factorial : ℝ) := by exact_mod_cast Nat.factorial_pos k
   have htail_pos : (0 : ℝ) < ((M - k).factorial : ℝ) := by
@@ -1191,9 +1142,7 @@ theorem good_matching_exists_of_ratio_sum_lt_one
           intro S hS
           have hScard : S.card = m := (Finset.mem_powersetCard.mp hS).2
           refine Finset.sum_congr rfl ?_
-          intro T hT
-          have hTcard : T.card = m := (Finset.mem_powersetCard.mp hT).2
-          simp [hleft_card, hright_card, hScard, hTcard, M, mul_comm]
+          grind
       _ = (N.choose m : ℝ) * (L.choose m : ℝ) *
             (((c * m).descFactorial (r * m) * (r * N - r * m).factorial : ℝ) /
               (r * N).factorial) := by
@@ -1219,8 +1168,7 @@ theorem good_matching_exists_of_ratio_sum_lt_one
       (∑ i ∈ triples,
         ((rightSet i.2.2).card.descFactorial (leftSet i.2.1).card *
             (M - (leftSet i.2.1).card).factorial : ℝ) / M.factorial) < 1 := by
-    rw [hsum_index_eq_desc, hdesc_eq_choose]
-    simpa [M, Nat.mul_comm, mul_assoc] using hsum
+    grind
   have hpairs : ∀ i ∈ triples,
       (leftSet i.2.1).card ≤ (rightSet i.2.2).card ∧ (rightSet i.2.2).card ≤ M := by
     intro i hi
@@ -1229,9 +1177,7 @@ theorem good_matching_exists_of_ratio_sum_lt_one
     have hScard : i.2.1.card = i.1 := (Finset.mem_powersetCard.mp hS).2
     have hTcard : i.2.2.card = i.1 := (Finset.mem_powersetCard.mp hT).2
     have hmL : i.1 ≤ L := by
-      have hsub := (Finset.mem_powersetCard.mp hT).1
-      have hcard_le := Finset.card_le_card hsub
-      simpa [hTcard] using hcard_le
+      grind
     constructor
     · rw [hleft_card, hright_card, hScard, hTcard]
       simpa [Nat.mul_comm] using Nat.mul_le_mul_right i.1 hc.le
@@ -1245,8 +1191,7 @@ theorem good_matching_exists_of_ratio_sum_lt_one
   refine ⟨fun v e => (σ (v, e)).1, right_coverage_of_equiv hcpos σ, ?_⟩
   intro S hS
   by_cases hS0 : S.card = 0
-  · rw [hS0]
-    exact Nat.zero_le _
+  · grind
   by_contra hnot
   have hlt : (S.biUnion (fun v => Finset.univ.image (fun e => (σ (v, e)).1))).card < S.card :=
     Nat.lt_of_not_ge hnot
@@ -1270,10 +1215,7 @@ theorem good_matching_exists_of_ratio_sum_lt_one
     rcases Finset.mem_image.mp ha with ⟨x, hx, rfl⟩
     rcases Finset.mem_product.mp hx with ⟨hxS, _hxe⟩
     have hxT : (σ x).1 ∈ T := by
-      apply hneigh_subset
-      dsimp [neigh]
-      exact Finset.mem_biUnion.mpr
-        ⟨x.1, hxS, Finset.mem_image.mpr ⟨x.2, Finset.mem_univ x.2, rfl⟩⟩
+      grind
     dsimp [rightSet]
     exact Finset.mem_image.mpr
       ⟨σ x, Finset.mem_product.mpr ⟨hxT, Finset.mem_univ (σ x).2⟩, by

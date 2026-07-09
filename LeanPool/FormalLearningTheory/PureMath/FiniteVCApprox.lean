@@ -109,10 +109,7 @@ theorem expectation_approx_of_tv {H : Type*} [Fintype H]
           (if f h then (1 : ℝ) else 0)| :=
         Finset.abs_sum_le_sum_abs _ _
     _ ≤ ∑ h : H, |μ.prob h - ν.prob h| := by
-        apply Finset.sum_le_sum; intro h _
-        rw [abs_mul]
-        apply mul_le_of_le_one_right (abs_nonneg _)
-        split_ifs <;> simp
+        apply Finset.sum_le_sum; grind
     _ = tvDistance μ ν := rfl
     _ ≤ δ := hδ
 

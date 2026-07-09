@@ -181,10 +181,8 @@ theorem embTuple_inter {i : Bool} (X X' : Fin n → Set Str) :
   constructor
   · rintro ⟨⟨j, a, rfl, ha⟩, ⟨j', a', heq, ha'⟩⟩
     obtain ⟨-, hjj, rfl⟩ := slotPre_inj heq
-    obtain rfl : j = j' := Fin.ext hjj
-    exact ⟨j, a, rfl, ha, ha'⟩
-  · rintro ⟨j, a, rfl, ha, ha'⟩
-    exact ⟨⟨j, a, rfl, ha⟩, ⟨j, a, rfl, ha'⟩⟩
+    grind
+  · grind
 
 theorem embTuple_inter_ne {i i' : Bool} (h : i ≠ i') (X X' : Fin n → Set Str) :
     embTuple i X ∩ embTuple i' X' = ∅ := by
@@ -199,8 +197,7 @@ theorem embTuple_subset {i : Bool} {X X' : Fin n → Set Str} :
   · intro h j a ha
     obtain ⟨j', a', heq, ha'⟩ := h ⟨j, a, rfl, ha⟩
     obtain ⟨-, hjj, rfl⟩ := slotPre_inj heq
-    obtain rfl : j = j' := Fin.ext hjj
-    exact ha'
+    grind
   · rintro h w ⟨j, a, rfl, ha⟩
     exact ⟨j, a, rfl, h j ha⟩
 
@@ -301,9 +298,7 @@ theorem memA_inter (hn : 0 < n) :
           have hZsub := embTuple_subset.mp hsub
           exact MemA.tuple i' (fun j => ih j (hX' j) (hZW j) (hZsub j))
       · rw [embTuple_inter_ne hii] at hsub ⊢
-        exfalso
-        obtain ⟨z, hz⟩ := memA_nonempty hn hZ
-        exact Set.notMem_empty z (hsub hz)
+        grind
 
 /-- **Scott's domain `A`** packaged as a neighbourhood system over `{0,1}*` (needs
 `0 < n`). -/

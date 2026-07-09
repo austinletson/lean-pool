@@ -91,8 +91,7 @@ theorem isAlmostHermitian_iff (x : Matrix n n ℂ) : x.IsAlmostHermitian ↔ (x 
       exact Complex.cpow_nat_inv_pow α two_ne_zero
     rcases this with ⟨β, hβ⟩
     have hβ' : β ≠ 0 := by
-      rw [ne_eq, ← sq_eq_zero_iff, hβ]
-      exact hα'
+      grind
     have hβ'' : β⁻¹ = conj β := by
       rw [← mul_left_inj' hβ', inv_mul_cancel₀ hβ', ← Complex.normSq_eq_conj_mul_self]
       norm_cast
@@ -154,8 +153,7 @@ theorem isDiagonal_eq {R : Type _} [Zero R] [DecidableEq n] (A : Matrix n n R) :
     by_cases H : i = j
     · simp_rw [H, of_apply, if_true, diag]
     · rw [of_apply, h _ _ H, ite_eq_right_iff]
-      intros
-      contradiction
+      grind
   · rintro h i j hij
     specialize h i j
     simp_rw [of_apply, hij, if_false] at h

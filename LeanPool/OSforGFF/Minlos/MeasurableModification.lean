@@ -207,8 +207,7 @@ private lemma extensionFun_eq (d : ℕ → E) (hd : DenseRange d)
         rw [Finsupp.sum_add_index (fun i => by simp) (fun i => by simp [add_mul]),
           Finsupp.sum_single_index (by simp), Finsupp.sum_single_index (by simp)]
         ring
-      rw [h1] at hql_c hbd_c
-      rwa [(hql_c.trans h2).symm]
+      grind
     -- Use the bound to prove ContinuousWithinAt
     change Filter.Tendsto ω (nhdsWithin (d n) (Set.range d)) (nhds (ω (d n)))
     rw [Metric.tendsto_nhds]
@@ -379,8 +378,7 @@ private lemma extensionFun_map_add (d : ℕ → E) (hd : DenseRange d)
       have h_ω_sum : ω (d m + d n) = ω (d m) + ω (d n) := hql_c.trans h2
       calc |ω (d k) - ω (d m + d n)|
           = |ω (d k - (d m + d n))| := by
-              have := hql_c'.trans h2'  -- ω(dk-(dm+dn)) = ω(dk) - ω(dm) - ω(dn)
-              rw [h_ω_sum]; congr 1; linarith
+              grind
         _ ≤ (C : ℝ) * (s.sup p) (d k - (d m + d n)) := hbd_c'
         _ ≤ ((C : ℝ) + 1) * (s.sup p) (d k - (d m + d n)) := by
             apply mul_le_mul_of_nonneg_right (by linarith) (apply_nonneg _ _)
@@ -467,8 +465,7 @@ private lemma extensionFun_map_smul (d : ℕ → E) (hd : DenseRange d)
       calc |ω (d m) - ω ((q : ℝ) • d n)|
           = |ω (d m) - (q : ℝ) * ω (d n)| := by rw [h_ω_qn]
         _ = |ω (d m - (q : ℝ) • d n)| := by
-              have := hql_c'.trans h2'  -- ω(dm - q•dn) = ω(dm) - q*ω(dn)
-              congr 1; linarith
+              grind
         _ ≤ (C : ℝ) * (s.sup p) (d m - (q : ℝ) • d n) := hbd_c'
         _ ≤ ((C : ℝ) + 1) * (s.sup p) (d m - (q : ℝ) • d n) := by
             apply mul_le_mul_of_nonneg_right (by linarith) (apply_nonneg _ _)
@@ -805,9 +802,7 @@ theorem qLinearPaths_ae [SeparableSpace E] [IsHilbertNuclear E] [Nonempty E]
       funext ω'; congr 2; exact_mod_cast (h_sum_ω ω').symm]
   -- Apply ae_eq_zero_of_charfun_eq_one
   have := ae_eq_zero_of_charfun_eq_one hX_meas hX_cf
-  filter_upwards [this] with ω hω
-  -- X(ω) = 0 means ω(y) = ∑ cᵢ * ω(dᵢ)
-  linarith [show X ω = 0 from hω]
+  grind
 
 /-- **Minlos concentration** — see `Minlos.MinlosConcentration`. -/
 private lemma boundedPaths_tail_bound [SeparableSpace E] [IsHilbertNuclear E] [Nonempty E]
@@ -992,8 +987,7 @@ theorem projection_ae_eq [SeparableSpace E] [IsHilbertNuclear E] [Nonempty E]
       h_Pω_cont.continuousAt.tendsto.comp hφ
     have h_ω_tendsto : Filter.Tendsto (fun k => ω (d (φ k)))
         Filter.atTop (nhds ((measurableProjection ω : E →L[ℝ] ℝ) f)) := by
-      convert h_Pω_tendsto using 1
-      ext k; exact (h_eq_dense k).symm
+      grind
     exact Filter.Tendsto.sub h_ω_tendsto tendsto_const_nhds
   -- Step 8: Apply DCT + CF convergence to show ∫ exp(it Z) = 1
   have hZ_cf : ∀ t : ℝ, ∫ ω, exp (I * ↑(t * Z ω)) ∂ν = 1 := by
@@ -1031,8 +1025,7 @@ theorem projection_ae_eq [SeparableSpace E] [IsHilbertNuclear E] [Nonempty E]
     exact tendsto_nhds_unique h_dct h_cf_lim
   -- Step 9: Apply ae_eq_zero_of_charfun_eq_one to get Z = 0 a.e.
   have hZ_zero := ae_eq_zero_of_charfun_eq_one hZ_meas hZ_cf
-  filter_upwards [hZ_zero] with ω hω
-  linarith
+  grind
 
 /-! ## Derived Properties -/
 

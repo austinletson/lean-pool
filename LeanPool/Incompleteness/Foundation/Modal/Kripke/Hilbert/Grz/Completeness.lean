@@ -48,10 +48,7 @@ macro_rules | `(tactic| trivial) => `(tactic|
   )
 
 lemma mem_left (h : ψ ∈ φ.subformulas) : ψ ∈ φ.subformulasGrz := by
-  unfold subformulasGrz;
-  simp only [Finset.mem_union];
-  left;
-  tauto;
+  grind
 
 
 
@@ -87,24 +84,11 @@ lemma reflexive : Std.Refl (miniCanonicalFrame φ).Rel :=
 
 lemma transitive : IsTrans (miniCanonicalFrame φ).World (miniCanonicalFrame φ).Rel := by
   constructor
-  rintro X Y Z ⟨RXY₁, RXY₂⟩ ⟨RYZ₁, RYZ₂⟩;
-  constructor;
-  · rintro ψ hq₁ hq₂;
-    exact RYZ₁ ψ hq₁ <| RXY₁ ψ hq₁ hq₂;
-  · intro h;
-    have eXY : X = Y := RXY₂ <| by
-      intro ψ hs hq;
-      exact h ψ hs <| RYZ₁ ψ hs hq;
-    have eYZ : Y = Z := RYZ₂ <| by
-      intro ψ hs hq;
-      exact RXY₁ ψ hs <| h ψ hs hq;
-    subst_vars;
-    tauto;
+  grind
 
 lemma antisymm : Std.Antisymm (miniCanonicalFrame φ).Rel := by
   constructor
-  rintro X Y ⟨_, h₁⟩ ⟨h₂, _⟩;
-  exact h₁ h₂;
+  grind
 
 end miniCanonicalFrame
 
@@ -146,8 +130,7 @@ lemma truthlemma_lemma2
     apply FormulaFinset.intro_union_consistent;
     rintro Γ₁ Γ₂ ⟨hΓ₁, hΓ₂⟩;
     replace hΓ₂ : ∀ χ ∈ Γ₂, χ = □(ψ ==> □ψ) ∨ χ = -ψ := by
-      intro χ hr;
-      simpa using hΓ₂ χ hr;
+      grind
     by_contra hC;
     have : Γ₁ ⊢[(Hilbert.Grz)]! ⋀Γ₂ ==> ⊥ := and_imply_iff_imply_imply'!.mp hC;
     have : Γ₁ ⊢[(Hilbert.Grz)]! (□(ψ ==> □ψ) ⋏ -ψ) ==> ⊥ := imp_trans''! (by
@@ -214,8 +197,7 @@ lemma truthlemma_lemma3 : (Hilbert.Grz) ⊢! (φ ⋏ □(φ ==> □φ)) ==> □�
     LogicalConnective.Prop.arrow_eq, imp_false, not_forall, not_exists, not_not] at hF;
   obtain ⟨V, x, ⟨⟨h₁, h₂⟩, ⟨y, ⟨Rxy, h₃⟩⟩⟩⟩ := hF;
   have := h₂ x (F_refl.refl x);
-  have := (this h₁) _ Rxy;
-  contradiction;
+  grind
 
 lemma truthlemma {X : (miniCanonicalModel φ).World} (q_sub : ψ ∈ φ.subformulas) :
   Satisfies (miniCanonicalModel φ) X ψ ↔ ψ ∈ X := by
@@ -303,11 +285,7 @@ lemma truthlemma {X : (miniCanonicalModel φ).World} (q_sub : ψ ∈ φ.subformu
           apply hY.2;
           simp;
       · intro _;
-        simp only [Satisfies]; push Not;
-        use X;
-        constructor;
-        · exact miniCanonicalFrame.reflexive.refl X;
-        · exact ih (by aesop) |>.not.mpr w;
+        simp only [Satisfies]; grind
     · intro h Y RXY;
       apply ih (subformulas.mem_box q_sub) |>.mpr;
       have : ↑Y *⊢[(Hilbert.Grz)]! □ψ ==> ψ := Context.of! <| axiomT!;

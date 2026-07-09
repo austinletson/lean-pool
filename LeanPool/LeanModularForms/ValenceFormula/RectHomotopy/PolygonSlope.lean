@@ -446,13 +446,7 @@ lemma fdPolygon_deriv_bounded :
               rw [heq, fdPolygon_deriv_seg5]; simp only [norm_one]; norm_num
             · push Not at h_seg5
               by_cases h_zero : t = 0
-              · have heq : deriv fdPolygon t = deriv fdPolygonSeg1 t := by
-                  apply Filter.EventuallyEq.deriv_eq; rw [h_zero]
-                  filter_upwards [Iio_mem_nhds (by norm_num : (0 : ℝ) < 1)] with s hs
-                  simp only [fdPolygon, show s ≤ 1 from le_of_lt hs, if_true, fdPolygonSeg1]
-                rw [heq, fdPolygon_deriv_seg1]; simp only
-                rw [Complex.norm_mul, norm_neg, Complex.norm_I, mul_one,
-                  HHeight_sub_sqrt3_half, norm_one]; norm_num
+              · grind
               · by_cases h_five : t = 5
                 · have heq : deriv fdPolygon t = deriv fdPolygonSeg5 t := by
                     apply Filter.EventuallyEq.deriv_eq; rw [h_five]
@@ -467,16 +461,7 @@ lemma fdPolygon_deriv_bounded :
                   have ht_le4 : t ≤ 4 := by grind
                   have ht_ge1 : t ≥ 1 := h_seg1
                   have ht_in : t ∈ ({1, 2, 3, 4} : Finset ℝ) := by
-                    simp only [Finset.mem_insert, Finset.mem_singleton]
-                    by_cases ht2 : t < 2
-                    · left; exact le_antisymm (h_seg2 ht2) ht_ge1
-                    · push Not at ht2
-                      by_cases ht3 : t < 3
-                      · right; left; exact le_antisymm (h_seg3 ht3) ht2
-                      · push Not at ht3
-                        by_cases ht4 : t < 4
-                        · right; right; left; exact le_antisymm (h_seg4 ht4) ht3
-                        · push Not at ht4; right; right; right; exact le_antisymm ht_le4 ht4
+                    grind
                   exact fdPolygon_not_differentiableAt_partition t ht_in h
   · simp only [deriv_zero_of_not_differentiableAt h, norm_zero]; norm_num
 

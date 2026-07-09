@@ -186,8 +186,7 @@ def matrix.unitIsoHom :
             intro j
             simp [single, of_apply, hi]
           have hzero1 : ∀ j : ι, single default default (1 : R) i j • x j = 0 := by
-            intro j
-            simp [single, of_apply, hi]
+            grind
           simp [hzeroR, hzero1] }
   naturality {X Y} f := by
     simp only [Functor.id_obj, Functor.comp_map, Functor.id_map]
@@ -221,9 +220,7 @@ def matrix.unitIsoInv :
         · subst h
           simp only [true_and, Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte]
         · apply Finset.sum_eq_zero
-          intro j _
-          rw [if_neg]
-          tauto
+          grind
       map_add' := by
         rintro (x : X) (y : X)
         refine Subtype.ext ?_
@@ -239,8 +236,7 @@ def matrix.unitIsoInv :
         simp only [Function.update, eq_rec_constant, Pi.zero_apply, dite_eq_ite, smul_ite,
           smul_zero, Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte]
         split_ifs with h
-        · subst h
-          simp only [single_apply_same]
+        · grind
         · rw [single_apply_of_row_ne, zero_smul]
           exact Ne.symm h }
   naturality {X Y} f := by
@@ -250,9 +246,7 @@ def matrix.unitIsoInv :
     change Function.update (0 : ι → Y) default (f x) i =
       f (Function.update (0 : ι → X) default x i)
     simp only [Function.update, eq_rec_constant, Pi.zero_apply, dite_eq_ite]
-    split_ifs with h
-    · rfl
-    · rw [map_zero]
+    grind
 
 /-- The natural isomorphism from `toModuleCatOverMatrix ⋙ fromModuleCatOverMatrix`
 to the identity. -/
@@ -278,9 +272,7 @@ def matrix.unitIso :
       · subst h
         simp only [true_and, Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte]
       · apply Finset.sum_eq_zero
-        intro j _
-        rw [if_neg]
-        tauto
+        grind
     · symm
       apply Finset.sum_eq_zero
       intro j _

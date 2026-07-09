@@ -200,8 +200,7 @@ theorem hoeffding_one_sided {X : Type u} [MeasurableSpace X]
           simp only [hind_def, zeroOneLoss, Set.mem_Icc]
           split <;> norm_num
         have h_g_bound : ∀ x : X, g x ∈ Set.Icc (p - 1) ((p - 1) + 1) := fun x => by
-          simp only [hg_def, Set.mem_Icc]
-          constructor <;> linarith [(h_ind_bound x).1, (h_ind_bound x).2]
+          grind
         have h_ind_meas : Measurable indicator := by
           simp only [hind_def, zeroOneLoss]
           exact Measurable.ite (by convert hmeas.compl using 1; ext x; simp)
@@ -339,9 +338,7 @@ theorem symmetrization_step {X : Type u} [MeasurableSpace X]
         EmpiricalError X Bool h_star
         (fun i => (xs i, c (xs i))) (zeroOneLoss Bool) ≥ ε / 2} with hS_ghost_def
     have h_ghost_sub_B : S_ghost ⊆ Prod.mk xs ⁻¹' B := by
-      intro xs' hxs'
-      simp only [Set.mem_preimage, Set.mem_setOf_eq, hB_def]
-      exact ⟨h_star, h_star_in_C, hxs'⟩
+      grind
     have h_B_sub_B' : Prod.mk xs ⁻¹' B ⊆ Prod.mk xs ⁻¹' B' :=
       Set.preimage_mono (MeasureTheory.subset_toMeasurable _ _)
     calc (1 : ℝ≥0∞) / 2
@@ -352,8 +349,7 @@ theorem symmetrization_step {X : Type u} [MeasurableSpace X]
           have h_emp_nonneg := empiricalError_zeroOne_nonneg h_star hm (fun i => (xs i, c (xs i)))
           by_cases hε1 : ε ≤ 1
           case neg =>
-            push Not at hε1
-            linarith
+            grind
           case pos =>
           have hε2_pos : (0 : ℝ) < ε / 2 := by linarith
           have hε2_le_one : ε / 2 ≤ 1 := by linarith
@@ -384,10 +380,7 @@ theorem symmetrization_step {X : Type u} [MeasurableSpace X]
               _ ≤ (μ H_set + μ H_setᶜ) - μ H_set := tsub_le_tsub_right h_total (μ H_set)
               _ = μ H_setᶜ := ENNReal.add_sub_cancel_left h_H_ne_top
           have h_compl_sub : H_setᶜ ⊆ S_ghost := by
-            intro xs' hxs'
-            simp only [Set.mem_compl_iff, hH_set_def, Set.mem_setOf_eq, not_le] at hxs'
-            simp only [hS_ghost_def, Set.mem_setOf_eq, ge_iff_le]
-            linarith
+            grind
           exact h_compl_ge.trans (MeasureTheory.measure_mono h_compl_sub)
       _ ≤ μ (Prod.mk xs ⁻¹' B') :=
           MeasureTheory.measure_mono (h_ghost_sub_B.trans h_B_sub_B')
@@ -491,9 +484,7 @@ theorem per_hypothesis_gap_bound {X : Type u} [MeasurableSpace X]
           simp only [hind_def, zeroOneLoss, Set.mem_Icc]
           split <;> norm_num
         have h_g_bound : ∀ pair : X × X, g pair ∈ Set.Icc (-1 : ℝ) 1 := fun pair => by
-          simp only [hg_def, Set.mem_Icc]
-          constructor <;> linarith [(h_ind_bound pair.1).1, (h_ind_bound pair.1).2,
-            (h_ind_bound pair.2).1, (h_ind_bound pair.2).2]
+          grind
         have h_int_g : ∫ pair, g pair ∂ν = 0 := by
           have h_g_int : Integrable g ν :=
             hν_def ▸ Integrable.of_mem_Icc (-1) 1
@@ -567,10 +558,8 @@ theorem restriction_pattern_count {X : Type u} [MeasurableSpace X] [Infinite X]
     constructor
     · rintro ⟨h, hC, hp⟩
       refine ⟨fun i => h (z i), ⟨h, hC, fun i => rfl⟩, ?_⟩
-      funext i; simp only [hp i]
-      cases h (z i) <;> cases c (z i) <;> rfl
-    · rintro ⟨f, ⟨h, hC, hf⟩, rfl⟩
-      exact ⟨h, hC, fun i => by simp only [hf i]; cases h (z i) <;> cases c (z i) <;> rfl⟩
+      grind
+    · grind
   rw [hP_eq, Set.ncard_image_of_injective R hψ_inj]
   let S₀ : Finset X := Finset.univ.image z
   have hS₀_card : S₀.card ≤ n :=
@@ -1050,9 +1039,7 @@ theorem double_sample_pattern_bound {X : Type u} [MeasurableSpace X] [Infinite X
   by_cases hC : C = ∅
   · -- Event is empty when C is empty
     have hE_empty : E = ∅ := by
-      ext p; simp only [hE_def, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
-      intro ⟨h_hyp, h_in_C, _⟩
-      rw [hC] at h_in_C; exact h_in_C
+      grind
     rw [hE_empty, MeasureTheory.measure_empty]; exact bot_le
   · -- C is nonempty
     by_cases hε2 : 2 < ε
@@ -1136,8 +1123,7 @@ theorem hoeffding_one_sided_upper {X : Type u} [MeasurableSpace X]
           simp only [hind_def, zeroOneLoss, Set.mem_Icc]
           split <;> norm_num
         have h_g_bound : ∀ x : X, g x ∈ Set.Icc (-p) ((-p) + 1) := fun x => by
-          simp only [hg_def, Set.mem_Icc]
-          constructor <;> linarith [(h_ind_bound x).1, (h_ind_bound x).2]
+          grind
         have h_ind_meas : Measurable indicator := by
           simp only [hind_def, zeroOneLoss]
           exact Measurable.ite (by convert hmeas.compl using 1; ext x; simp)
@@ -1205,9 +1191,7 @@ theorem symmetrization_step_lower {X : Type u} [MeasurableSpace X]
         EmpiricalError X Bool h_star
         (fun i => (xs' i, c (xs' i))) (zeroOneLoss Bool) ≥ ε / 2} with hS_ghost_def
     have h_ghost_sub_B : S_ghost ⊆ Prod.mk xs ⁻¹' B := by
-      intro xs' hxs'
-      simp only [Set.mem_preimage, Set.mem_setOf_eq, hB_def]
-      exact ⟨h_star, h_star_in_C, hxs'⟩
+      grind
     have h_B_sub_B' : Prod.mk xs ⁻¹' B ⊆ Prod.mk xs ⁻¹' B' :=
       Set.preimage_mono (MeasureTheory.subset_toMeasurable _ _)
     calc (1 : ℝ≥0∞) / 2
@@ -1222,8 +1206,7 @@ theorem symmetrization_step_lower {X : Type u} [MeasurableSpace X]
           have h_emp_le_one := empiricalError_zeroOne_le_one h_star hm (fun i => (xs i, c (xs i)))
           by_cases hε1 : ε ≤ 1
           case neg =>
-            push Not at hε1
-            linarith
+            grind
           case pos =>
           have hε2_pos : (0 : ℝ) < ε / 2 := by linarith
           have hε2_le_one : ε / 2 ≤ 1 := by linarith
@@ -1254,10 +1237,7 @@ theorem symmetrization_step_lower {X : Type u} [MeasurableSpace X]
               _ ≤ (μ H_set + μ H_setᶜ) - μ H_set := tsub_le_tsub_right h_total (μ H_set)
               _ = μ H_setᶜ := ENNReal.add_sub_cancel_left h_H_ne_top
           have h_compl_sub : H_setᶜ ⊆ S_ghost := by
-            intro xs' hxs'
-            simp only [Set.mem_compl_iff, hH_set_def, Set.mem_setOf_eq, not_le] at hxs'
-            simp only [hS_ghost_def, Set.mem_setOf_eq, ge_iff_le]
-            linarith
+            grind
           exact h_compl_ge.trans (MeasureTheory.measure_mono h_compl_sub)
       _ ≤ μ (Prod.mk xs ⁻¹' B') :=
           MeasureTheory.measure_mono (h_ghost_sub_B.trans h_B_sub_B')
@@ -1395,15 +1375,7 @@ theorem symmetrization_uc_bound {X : Type u} [MeasurableSpace X] [Infinite X]
        EmpiricalError X Bool h (fun i => (xs i, c (xs i))) (zeroOneLoss Bool)| ≥ ε}
       ⊆ upper ∪ lower := by
     intro xs ⟨h, hC, hgap⟩
-    simp only [Set.mem_union]
-    by_cases h_pos : TrueErrorReal X h c D -
-        EmpiricalError X Bool h (fun i => (xs i, c (xs i))) (zeroOneLoss Bool) ≥ 0
-    · exact Or.inl ⟨h, hC, by rwa [abs_of_nonneg h_pos] at hgap⟩
-    · push Not at h_pos
-      have hgap' : -(TrueErrorReal X h c D -
-          EmpiricalError X Bool h (fun i => (xs i, c (xs i))) (zeroOneLoss Bool)) ≥ ε := by
-        rwa [abs_of_neg h_pos] at hgap
-      exact Or.inr ⟨h, hC, by linarith⟩
+    grind
   calc μ {xs | ∃ h ∈ C, |TrueErrorReal X h c D -
         EmpiricalError X Bool h (fun i => (xs i, c (xs i))) (zeroOneLoss Bool)| ≥ ε}
       ≤ μ (upper ∪ lower) := MeasureTheory.measure_mono h_abs_sub
@@ -1492,11 +1464,7 @@ private lemma growth_exp_le_delta_large_v {X : Type u} [MeasurableSpace X]
     have ht_pow_pos := pow_pos ht_pos (v + 1)
     have hdiv : 4 * (2 : ℝ) ^ (2 * m) * ↑((v + 1).factorial) / t ^ (v + 1) ≤ δ := by
       exact div_le_of_le_mul₀ (le_of_lt ht_pow_pos) (le_of_lt hδ) hchain2
-    have hrewrite : 4 * (2 : ℝ) ^ (2 * m) *
-        (↑((v + 1).factorial) / t ^ (v + 1)) =
-        4 * (2 : ℝ) ^ (2 * m) * ↑((v + 1).factorial) / t ^ (v + 1) := by
-      rw [mul_div_assoc']
-    linarith [hchain1, hrewrite, hdiv]
+    grind
   rw [ht_def]
   have hm_delta_expand :
       (16 * Real.exp 1 * (↑v + 1)) ^ (v + 1) ≤ ↑m * δ * (ε ^ 2) ^ (v + 1) := by
@@ -1593,10 +1561,7 @@ theorem growth_exp_le_delta {X : Type u} [MeasurableSpace X]
       have hK_pos : 0 < K := by rw [hK_def]; positivity
       have hgf_factor : (Real.exp 1 * ↑(2 * m) / ↑v) ^ v = K ^ v * t ^ v := by
         have : Real.exp 1 * ↑(2 * m) / ↑v = K * t := by
-          rw [h2m_eq, hK_def, ht_def]
-          have hv_ne : (↑v : ℝ) ≠ 0 := ne_of_gt hv_pos
-          have hε2_ne : ε ^ 2 ≠ 0 := ne_of_gt hε2
-          field_simp
+          grind
         rw [this, mul_pow]
       have hB_eq : 16 * Real.exp 1 * (↑v + 1) / ε ^ 2 = K * ↑v * (↑v + 1) := by
         rw [hK_def]; field_simp
@@ -1616,9 +1581,7 @@ theorem growth_exp_le_delta {X : Type u} [MeasurableSpace X]
         have : K * (↑v * ε ^ 2) = 16 * Real.exp 1 := by
           rw [hK_def]
           field_simp
-        calc K * ε ^ 2 * ↑v ^ (v + 1)
-            = K * (↑v * ε ^ 2) * ↑v ^ v := by rw [pow_succ]; ring
-          _ = 16 * Real.exp 1 * ↑v ^ v := by rw [this]
+        grind
       have hstepA : 32 * ↑((v + 1).factorial) ≤
           K * ε ^ 2 * ↑v ^ (v + 1) * (↑v + 1) ^ (v + 1) := by nlinarith [hkey, hKeps]
       have hstepB : K * ε ^ 2 * ↑v ^ (v + 1) * (↑v + 1) ^ (v + 1) * K ^ v ≤
@@ -1673,8 +1636,7 @@ theorem growth_exp_le_delta {X : Type u} [MeasurableSpace X]
           mul_le_mul_of_nonneg_left he_ge_2 (by norm_num)
         have hright : (16 : ℝ) * 2 * 2 ≤ (16 * Real.exp 1) * (↑v + 1) :=
           mul_le_mul hleft hv1_ge_2 (by norm_num) (by positivity)
-        calc (2 : ℝ) ≤ 16 * 2 * 2 := by norm_num
-          _ ≤ 16 * Real.exp 1 * (↑v + 1) := by simpa [mul_assoc] using hright
+        grind
       have hε2_ge_two : (2 : ℝ) ≤ ε ^ 2 :=
         (lt_of_le_of_lt hbase_ge_two hcase).le
       exact le_trans hε2_ge_two
@@ -1793,16 +1755,14 @@ theorem vcdim_finite_imp_uc' (X : Type u) [MeasurableSpace X]
              EmpiricalError X Bool h (fun i => (xs i, c (xs i)))
                (zeroOneLoss Bool)| ≥ ε' }
         have hBad_sub_Bad' : Bad ⊆ Bad' := by
-          intro xs hxs; obtain ⟨h', hh', hgap⟩ := hxs
-          exact ⟨h', hh', le_trans (by linarith [hε'_le_ε]) hgap⟩
+          grind
         have hBad'_sub : Bad' ⊆ ⋃ h ∈ Cf, { xs : Fin m → X |
             |TrueErrorReal X h c D -
              EmpiricalError X Bool h (fun i => (xs i, c (xs i)))
                (zeroOneLoss Bool)| ≥ ε' } := by
           intro xs hxs
           simp only [Set.mem_iUnion, Set.mem_setOf_eq] at hxs ⊢
-          obtain ⟨h', hh'C, hh'gap⟩ := hxs
-          exact ⟨h', (hCf_mem h').mpr hh'C, hh'gap⟩
+          grind
         have hper_hyp : ∀ h' ∈ Cf, μ { xs : Fin m → X |
             |TrueErrorReal X h' c D -
              EmpiricalError X Bool h' (fun i => (xs i, c (xs i)))
@@ -1819,17 +1779,7 @@ theorem vcdim_finite_imp_uc' (X : Type u) [MeasurableSpace X]
                 (zeroOneLoss Bool) ≥ TrueErrorReal X h' c D + ε' } := by
             intro xs hxs
             simp only [Set.mem_setOf_eq, Set.mem_union] at hxs ⊢
-            rcases le_or_gt (EmpiricalError X Bool h' (fun i => (xs i, c (xs i)))
-                (zeroOneLoss Bool)) (TrueErrorReal X h' c D - ε') with h_le | h_gt
-            · left; exact h_le
-            · right
-              set d := TrueErrorReal X h' c D -
-                EmpiricalError X Bool h' (fun i => (xs i, c (xs i))) (zeroOneLoss Bool)
-              have hd_neg : d ≤ 0 := by
-                by_contra hpos
-                push Not at hpos
-                exact absurd (hxs.trans_eq (abs_of_pos hpos)) (by linarith)
-              linarith [hxs.trans_eq (abs_of_nonpos hd_neg)]
+            grind
           calc μ { xs | |TrueErrorReal X h' c D -
                 EmpiricalError X Bool h' (fun i => (xs i, c (xs i)))
                   (zeroOneLoss Bool)| ≥ ε' }
@@ -1912,8 +1862,7 @@ theorem vcdim_finite_imp_uc' (X : Type u) [MeasurableSpace X]
           ≤ ∑ i ∈ Finset.range (v₀ + 1), Nat.choose n i := hv₀ n hn₀
         _ ≤ ∑ i ∈ Finset.range (v + 1), Nat.choose n i := by
             apply Finset.sum_le_sum_of_subset
-            apply Finset.range_mono
-            omega
+            grind
     use Nat.ceil ((16 * Real.exp 1 * (↑v + 1) / ε ^ 2) ^ (v + 1) / δ)
     intro D hD c m hm
     by_cases hδ1 : 1 ≤ δ

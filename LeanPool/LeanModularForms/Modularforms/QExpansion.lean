@@ -69,8 +69,7 @@ lemma tendsto_int (a : ℤ → ℂ) (ha : Summable fun n : ℤ ↦ ‖a n‖ * r
     (fun z : ℍ ↦ (∑' n : ℕ, (a n * cexp (2 * π * I * z * n)
       + a (-(n + 1 : ℤ)) * cexp (2 * π * I * z * (-(n + 1) : ℤ))))) atImInfty (𝓝 (a 0)) := by
     have := tendsto_nat (fun n ↦ a n) ?_
-    · apply this.congr
-      exact fun _ ↦ tsum_congr (by simpa using fun _ ↦ ha' _ (by omega))
+    · grind
     · exact (summable_int_iff_summable_nat_and_neg.mp ha).left
   apply this.congr'
   rw [EventuallyEq, eventually_atImInfty]
@@ -82,8 +81,7 @@ lemma tendsto_int (a : ℤ → ℂ) (ha : Summable fun n : ℤ ↦ ‖a n‖ * r
   · ext n
     rw [norm_mul, mul_right_comm _ I, mul_right_comm _ I, norm_exp_mul_I]
     simp
-    ring_nf
-    simp
+    grind
   · apply ha.of_nonneg_of_le (fun _ ↦ by positivity) fun b ↦ ?_
     by_cases hb : 0 ≤ b
     · gcongr

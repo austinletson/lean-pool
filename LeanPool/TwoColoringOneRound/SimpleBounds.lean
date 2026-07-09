@@ -157,8 +157,7 @@ lemma pEvent_inter_cell_of_good {w : Fin 4 → Color} (hw : good w) :
   classical
   ext x
   constructor
-  · intro hx
-    exact hx.2
+  · grind
   · intro hxC
     have hxW : ∀ i, threshold (x i) = w i := (mem_cell_iff_threshold_eq x w).1 hxC
     have hxE : x ∈ ClassicalAlgorithm.pEvent simpleUpperAlg := by
@@ -181,8 +180,7 @@ lemma pEvent_inter_cell_of_not_good {w : Fin 4 → Color} (hw : ¬ good w) :
         simpa [ClassicalAlgorithm.pEvent, simpleUpperAlg] using hxE
       simpa [good, hxW 0, hxW 1, hxW 2, hxW 3] using this
     exact (hw hw').elim
-  · intro hx
-    exact hx.elim
+  · grind
 
 theorem p_simpleUpperAlg : ClassicalAlgorithm.p simpleUpperAlg = (1 / 4 : ENNReal) := by
   classical
@@ -200,8 +198,7 @@ theorem p_simpleUpperAlg : ClassicalAlgorithm.p simpleUpperAlg = (1 / 4 : ENNRea
       have hxC : x ∈ cell w := (mem_cell_iff_threshold_eq x w).2 (fun _ => rfl)
       refine Set.mem_iUnion.2 ⟨w, ?_⟩
       refine Set.mem_iUnion.2 ?_
-      refine ⟨by simp [all], ?_⟩
-      exact ⟨hx, hxC⟩
+      grind
     · intro hx
       rcases Set.mem_iUnion.1 hx with ⟨w, hx⟩
       rcases Set.mem_iUnion.1 hx with ⟨_, hx⟩
@@ -216,9 +213,7 @@ theorem p_simpleUpperAlg : ClassicalAlgorithm.p simpleUpperAlg = (1 / 4 : ENNRea
     intro x hx1 hx2
     have hw1 : ∀ i, threshold (x i) = w1 i := (mem_cell_iff_threshold_eq x w1).1 hx1.2
     have hw2 : ∀ i, threshold (x i) = w2 i := (mem_cell_iff_threshold_eq x w2).1 hx2.2
-    apply hne
-    funext i
-    exact (hw1 i).symm.trans (hw2 i)
+    grind
   have hmeas (w : Fin 4 → Color) :
       MeasurableSet (ClassicalAlgorithm.pEvent simpleUpperAlg ∩ cell w) :=
     (ClassicalAlgorithm.measurableSet_pEvent simpleUpperAlg).inter (measurableSet_cell w)
@@ -257,9 +252,7 @@ theorem p_simpleUpperAlg : ClassicalAlgorithm.p simpleUpperAlg = (1 / 4 : ENNRea
       all.sum (fun w =>
           (volume : Measure (Samples 4)) (ClassicalAlgorithm.pEvent simpleUpperAlg ∩ cell w)) =
           all.sum (fun w => if good w then (1 / 16 : ENNReal) else 0) := by
-            refine Finset.sum_congr rfl ?_
-            intro w _
-            simp [hterm w]
+            grind
       _ = goodSet.sum (fun _ => (1 / 16 : ENNReal)) := by
             symm
             simpa [goodSet] using
@@ -293,14 +286,7 @@ lemma exists_monochromatic_edge (c : Fin 5 → Color) : ∃ i : Fin 5, c i = c (
   by_contra h
   have h' : ∀ i : Fin 5, c i ≠ c (i + 1) := by simpa [not_exists] using h
   have h01 : c 0 ≠ c 1 := by simpa using h' 0
-  have h12 : c 1 ≠ c 2 := by simpa using h' 1
-  have hc2 : c 2 = c 0 := eq_of_ne_of_ne h01 h12
-  have h23 : c 2 ≠ c 3 := by simpa using h' 2
-  have hc3 : c 3 = c 1 := by simpa [hc2] using eq_of_ne_of_ne h12 h23
-  have h34 : c 3 ≠ c 4 := by simpa using h' 3
-  have h14 : c 1 ≠ c 4 := by simpa [hc3] using h34
-  have hc4 : c 4 = c 0 := eq_of_ne_of_ne h01 h14
-  exact (h' 4) (by simp [hc4])
+  grind
 
 /-- Imported auxiliary declaration for the 2-coloring one-round formalization. -/
 noncomputable def nodeColor (alg : ClassicalAlgorithm) (x : Samples 5) (i : Fin 5) : Color :=
@@ -428,12 +414,7 @@ theorem no_algorithm_p_lt_one_fifth :
     simp [hedge, tsum_fintype, Finset.sum_const, nsmul_eq_mul]
   have hone : (volume : Measure (Samples 5)) Set.univ = (1 : ENNReal) := by simp
   have hineq : (1 : ENNReal) ≤ (5 : ENNReal) * ClassicalAlgorithm.p alg := by
-    have hle' :
-        (1 : ENNReal) ≤ ∑' i : Fin 5, (volume : Measure (Samples 5)) (edgeEvent alg i) := by
-      calc
-        (1 : ENNReal) = (volume : Measure (Samples 5)) Set.univ := hone.symm
-        _ ≤ ∑' i : Fin 5, (volume : Measure (Samples 5)) (edgeEvent alg i) := hle
-    rwa [hsum] at hle'
+    grind
   have hbound : (1 / 5 : ENNReal) ≤ ClassicalAlgorithm.p alg := by
     have hineq' : (1 : ENNReal) ≤ ClassicalAlgorithm.p alg * (5 : ENNReal) := by
       simpa [mul_comm, mul_left_comm, mul_assoc] using hineq

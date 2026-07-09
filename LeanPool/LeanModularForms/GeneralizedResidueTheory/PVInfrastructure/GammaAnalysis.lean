@@ -94,14 +94,7 @@ lemma integrand_times_t_tendsto_one
         (t - t₀)⁻¹ • (γ t - γ t₀) from fun t => by rw [Algebra.smul_def]; simp [mul_comm]]
       exact h_slope
     have h_recip := h_slope'.inv₀ hL
-    have h_inv_eq : ∀ t : ℝ, ((γ t - γ t₀) * (↑(t - t₀) : ℂ)⁻¹)⁻¹ =
-        (↑(t - t₀) : ℂ) * (γ t - γ t₀)⁻¹ := fun t => by
-      by_cases h : γ t - γ t₀ = 0
-      · simp [h]
-      · by_cases ht : (t : ℂ) - t₀ = 0
-        · simp [ht]
-        · field_simp
-    simp only [h_inv_eq] at h_recip; exact h_recip
+    grind
   have h_prod :
       Tendsto
         (fun t => (↑(t - t₀) : ℂ) *
@@ -109,8 +102,7 @@ lemma integrand_times_t_tendsto_one
         (𝓝[≠] t₀) (𝓝 (L⁻¹ * L)) :=
     Tendsto.mul h_ratio_tendsto
       (h_deriv_tendsto.mono_left nhdsWithin_le_nhds)
-  simp only [inv_mul_cancel₀ hL] at h_prod
-  exact h_prod
+  grind
 
 /-- Asymptotic control:
 ‖(γ-γ₀)⁻¹ * γ' - (t-t₀)⁻¹‖ ≤ ε / |t-t₀|. -/
@@ -204,9 +196,7 @@ lemma no_return_of_inj_continuous
     ((hγ_cont.mono Set.inter_subset_left).sub continuousOn_const).norm
   have hf_pos : ∀ t ∈ S, (0 : ℝ) < ‖γ t - γ t₀‖ := fun t ⟨ht_Icc, ht_dist⟩ => by
     rw [norm_pos_iff, sub_ne_zero]
-    intro h_eq
-    have h_t_eq := h_inj t ht_Icc h_eq
-    subst h_t_eq; simp only [Set.mem_setOf_eq, sub_self, abs_zero] at ht_dist; linarith
+    grind
   obtain ⟨ρ, hρ_pos, hρ_le⟩ := hS_compact.exists_forall_le' hf_cont hf_pos
   exact ⟨ρ, hρ_pos, fun t ht h_dist => hρ_le t ⟨ht, h_dist⟩⟩
 

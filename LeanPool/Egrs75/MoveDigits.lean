@@ -69,8 +69,7 @@ theorem add_carry_decomp {q : ℕ} (hq : 1 ≤ q) (n U i : ℕ)
     n + U = (n % q ^ i + U - q ^ i) + q ^ i * (n / q ^ i + 1) := by
   have hqi : 0 < q ^ i := pow_pos (by omega) i
   have hsplit : n = n % q ^ i + q ^ i * (n / q ^ i) := (Nat.mod_add_div n (q ^ i)).symm
-  have hmul : q ^ i * (n / q ^ i + 1) = q ^ i * (n / q ^ i) + q ^ i := by ring
-  omega
+  grind
 
 /-- Under a single carry (`q^i ≤ T+U < 2q^i`), the block above `i` increments:
 `(n+U)/q^i = n/q^i + 1`. -/
@@ -159,8 +158,7 @@ theorem topBad_lt_of_good_from {q n x : ℕ} (hq : 1 < q) (hbad : 0 < badCountQ 
   have hmem := topBadIndex_mem hq hbad
   rw [mem_badIndexSet_iff' hq] at hmem
   unfold BadAt digitAt at hmem
-  have := hgood _ hcon
-  omega
+  grind
 
 /-! ## THE STAIRCASE (EGRS75 p.85, case (c))
 
@@ -177,10 +175,7 @@ theorem staircase {q : ℕ} (hq3 : 3 ≤ q) (hqo : Odd q) :
   intro i
   induction i with
   | zero =>
-    intro R hR
-    exfalso
-    simp only [pow_zero] at hR
-    omega
+    grind
   | succ i ih =>
     intro R hR
     have hq1 : 1 < q := by omega
@@ -191,27 +186,20 @@ theorem staircase {q : ℕ} (hq3 : 3 ≤ q) (hqo : Odd q) :
     have hRlt : R < q ^ (i + 1) := by omega
     have hdlt : R / q ^ i < q := by
       rw [Nat.div_lt_iff_lt_mul hqi]
-      have hcomm : q * q ^ i = q ^ i * q := Nat.mul_comm _ _
-      omega
+      grind
     have hdmod : R / q ^ i % q = R / q ^ i := Nat.mod_eq_of_lt hdlt
     rcases Nat.lt_trichotomy (R / q ^ i) ((q - 1) / 2) with hlt | heq | hgt
     · -- top digit of the window strictly good: it is the barrier.
-      exact ⟨i, Nat.lt_succ_self i, by rw [hdmod]; exact hlt,
-        fun t ht1 ht2 => by omega⟩
+      grind
     · -- top digit exactly B: recurse into the low block.
       have hsplit : R = R % q ^ i + q ^ i * (R / q ^ i) :=
         (Nat.mod_add_div R (q ^ i)).symm
       have hlow2 : 2 * (R % q ^ i) + 3 ≤ q ^ i := by
         have h1 : q ^ i * (q - 1) + q ^ i = q ^ i * q := by
           have hq' : q - 1 + 1 = q := by omega
-          calc q ^ i * (q - 1) + q ^ i = q ^ i * ((q - 1) + 1) := by ring
-            _ = q ^ i * q := by rw [hq']
+          grind
         have h2 : 2 * R = 2 * (R % q ^ i) + q ^ i * (q - 1) := by
-          calc 2 * R = 2 * (R % q ^ i + q ^ i * (R / q ^ i)) := by
-                conv_lhs => rw [hsplit]
-            _ = 2 * (R % q ^ i) + q ^ i * (2 * (R / q ^ i)) := by ring
-            _ = 2 * (R % q ^ i) + q ^ i * (2 * ((q - 1) / 2)) := by rw [heq]
-            _ = 2 * (R % q ^ i) + q ^ i * (q - 1) := by rw [hB2]
+          grind
         omega
       obtain ⟨k, hk, hkstrict, hkbet⟩ := ih (R % q ^ i) hlow2
       have hlowdig : ∀ t, t < i → R / q ^ t % q = (R % q ^ i) / q ^ t % q := by
@@ -219,18 +207,8 @@ theorem staircase {q : ℕ} (hq3 : 3 ≤ q) (hqo : Odd q) :
         have hlow := digitAt_add_low (p := q) (by omega) (k := i)
           (u := R % q ^ i) (h := R / q ^ i) (i := t) ht
         unfold digitAt at hlow
-        calc R / q ^ t % q
-            = (R % q ^ i + q ^ i * (R / q ^ i)) / q ^ t % q := by
-              conv_lhs => rw [hsplit]
-          _ = (R % q ^ i) / q ^ t % q := hlow
-      refine ⟨k, by omega, ?_, ?_⟩
-      · rw [hlowdig k hk]; exact hkstrict
-      · intro t ht1 ht2
-        rcases Nat.lt_or_ge t i with hti | hti
-        · rw [hlowdig t hti]; exact hkbet t ht1 hti
-        · have hteq : t = i := by omega
-          subst hteq
-          rw [hdmod]; exact heq
+        grind
+      grind
     · -- top digit > B: impossible below the all-B ceiling.
       exfalso
       have h1 : ((q - 1) / 2 + 1) * q ^ i ≤ R / q ^ i * q ^ i :=

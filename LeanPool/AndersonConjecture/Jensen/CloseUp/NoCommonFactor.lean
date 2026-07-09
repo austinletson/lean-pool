@@ -92,10 +92,7 @@ include T in theorem no_common_I_not_le_assoc
     have h_le_one : s'.card ≤ 1 :=
       Finset.card_le_one.mpr fun x hx y hy => by
         rw [hall_zero x hx, hall_zero y hy]
-    have h_ge_two : 2 ≤ s'.card := by
-      rw [hs'_def, Finset.card_erase_of_mem ha_mem, hs_eq]
-      omega
-    omega
+    grind
   · haveI : (P.comap R.carrier.subtype).IsPrime :=
       hP_mem.isPrime.comap R.carrier.subtype
     obtain ⟨q, hq_prime, hq_Q⟩ :=
@@ -219,8 +216,7 @@ private def close_up_aux_no_common_nonzero_proof
         rw [Set.mem_iUnion] at h
         obtain ⟨hr, hPmem⟩ := h
         exact fun heq => hM_not_assoc (r : T) hr (heq ▸ hPmem)
-      · rw [Set.mem_singleton_iff.mp h]
-        exact fun h => hM_ne_bot h.symm
+      · grind
     have hCD_bound'' : Cardinal.mk (↑C × ↑D) <
         Cardinal.mk (IsLocalRing.ResidueField T) ∨
         (C.Countable ∧ D.Countable) := by
@@ -294,8 +290,7 @@ private def close_up_aux_no_common_nonzero_proof
         obtain ⟨hr_ne, hP_mem⟩ := h
         exact no_common_I_not_le_assoc hs_eq ha_mem s' hs'_def
           hno_common_prime hI_s'_bot r hr_ne P hP_mem hle
-      · rw [Set.mem_singleton_iff.mp h] at hle
-        exact hI_s'_bot (le_antisymm hle bot_le)
+      · grind
     let C_main : Set (Ideal T) := ⋃ (r : R.carrier), ⋃ (_ : (r : T) ≠ 0),
       (associatedPrimes T (T ⧸ span {(r : T)}))
     have hC_eq_main : C = C_main ∪ {⊥} := rfl
@@ -342,11 +337,7 @@ private def close_up_aux_no_common_nonzero_proof
             apply Set.Finite.countable
             apply Set.Finite.image
             haveI : P.IsPrime := by
-              rw [Set.mem_iUnion] at hPC
-              obtain ⟨r, hPC'⟩ := hPC
-              rw [Set.mem_iUnion] at hPC'
-              obtain ⟨_, hPmem⟩ := hPC'
-              exact hPmem.isPrime
+              grind
             haveI : IsDomain (T ⧸ P) := Ideal.Quotient.isDomain P
             letI : DecidableEq (T ⧸ P) := Classical.decEq _
             apply Set.Finite.subset (f.map (φ P)).roots.toFinset.finite_toSet
@@ -445,11 +436,7 @@ private def close_up_aux_no_common_nonzero_proof
                           by_cases hfne : Polynomial.map (φ P) f = 0
                           · exact Set.Countable.to_subtype (by simp [hfne])
                           · haveI : P.IsPrime := by
-                              rw [Set.mem_iUnion] at hP
-                              obtain ⟨r, hP'⟩ := hP
-                              rw [Set.mem_iUnion] at hP'
-                              obtain ⟨_, hPmem⟩ := hP'
-                              exact hPmem.isPrime
+                              grind
                             haveI : IsDomain (T ⧸ P) := Ideal.Quotient.isDomain P
                             exact (Set.Finite.subset
                               ((Polynomial.rootSet_finite
@@ -463,15 +450,7 @@ private def close_up_aux_no_common_nonzero_proof
                   _ = Cardinal.mk R.carrier := Cardinal.mul_aleph0_eq hR_inf
             exact (mul_le_mul' hCmain_le (ciSup_le' h_inner)).trans
               (Cardinal.mul_eq_self hR_inf).le
-          calc Cardinal.mk D_mod
-              ≤ Cardinal.mk ↑(⋃ P ∈ C_main, ⋃ (f : Polynomial R.carrier),
-                  ⋃ (_ : Polynomial.map (φ P) f ≠ 0),
-                    (fun α => liftQ P α - t) ''
-                      {α | (Polynomial.map (φ P) f).IsRoot α}) := by
-                apply Cardinal.mk_le_mk_of_subset
-                intro x hx
-                exact hx
-            _ ≤ Cardinal.mk R.carrier := h_biUnion
+          grind
         have hD'_le : Cardinal.mk D' ≤ Cardinal.mk R.carrier := by
           calc Cardinal.mk D'
               ≤ Cardinal.mk D + Cardinal.mk D_mod := Cardinal.mk_union_le _ _
@@ -516,10 +495,7 @@ private def close_up_aux_no_common_nonzero_proof
         rw [hrw]
         exact Submodule.sub_mem _ hv (Ideal.mul_mem_right _ _ hδ_mem)
       have hsub : R.carrier.subtype a = (↑a : T) := rfl
-      rw [hsub] at ht_eq
-      have h_c_eq : (↑c : T) = (↑a : T) * t + v := by rw [← huv, ht_eq]
-      rw [h_c_eq]
-      ring
+      grind
     · -- Modular transcendence: f(t+δ) ∈ P implies all coefficients lie in P∩R
       intro P hP_prime hP_ht hPR_ne f hf_in i
       by_contra h_neg
@@ -575,8 +551,7 @@ private def close_up_aux_no_common_nonzero_proof
   let s₁ : Finset S₁.carrier := s'.image liftR₁
   have hs₁_eq : s₁ = s'.image liftR₁ := rfl
   have hs₁_card : s₁.card ≤ n'' + 1 + 1 := by
-    change (s'.image liftR₁).card ≤ _
-    exact Finset.card_image_le.trans hs'_card
+    grind
   have hcomp : S₁.carrier.subtype.comp liftR₁ = R.carrier.subtype :=
     RingHom.ext fun _ => rfl
   have hrem₁_span : (rem₁ : T) ∈
@@ -703,8 +678,7 @@ include T in theorem close_up_aux_no_common
         rw [ht_eq]
         change (a : T) * t = 0
         rw [ha_zero, zero_mul]
-      rw [← huv, hu_zero, zero_add]
-      exact hv
+      grind
     obtain ⟨S, hAext, hle, hmem⟩ := ih R hR_card s' hs'_card c hc_s'
     exact ⟨S, hAext, hle,
       Ideal.map_mono (Ideal.span_mono (Finset.coe_subset.mpr

@@ -309,11 +309,7 @@ private abbrev curvAbsorbAssemblyProof
     change curvatureError (↑P) π f η ρ x₁ n = _
     unfold curvatureError normalDisp
     rw [hx'n1_eq]
-    simp only []
-    -- After clearing lets: LHS is in terms of x'n, hn, π, (↑P)
-    -- RHS is P hn - (π(x'n+hn) - π x'n)
-    -- These are equal by algebra (↑P and P are definitionally equal)
-    abel
+    grind
   -- ── ‖wn‖ ≤ Cw·√Ln (via auxVar_recursion) ──
   have hwn_eq : (wn : E) = (1 - sa) • (sn.v - P sn.v) +
       sm • en - Real.sqrt η • (gn - P gn) := by
@@ -365,9 +361,7 @@ private abbrev curvAbsorbAssemblyProof
     have h2 : ‖ξn‖ ^ 2 ≤ (ε₁ * (Ch * Real.sqrt Ln)) ^ 2 :=
       sq_le_sq' (by linarith [norm_nonneg ξn]) h1
     have h3 : (ε₁ * (Ch * Real.sqrt Ln)) ^ 2 = ε₁ ^ 2 * Ch ^ 2 * Ln := by
-      calc (ε₁ * (Ch * Real.sqrt Ln)) ^ 2
-          = ε₁ ^ 2 * Ch ^ 2 * (Real.sqrt Ln * Real.sqrt Ln) := by ring
-        _ = ε₁ ^ 2 * Ch ^ 2 * Ln := by rw [hsqrt_sq]
+      grind
     have h4 : ε₁ ^ 2 ≤ ε₁ := by
       calc ε₁ ^ 2 = ε₁ * ε₁ := sq ε₁
         _ ≤ ε₁ * 1 := mul_le_mul_of_nonneg_left hε₁_le1 (le_of_lt hε₁_pos)
@@ -388,9 +382,7 @@ private abbrev curvAbsorbAssemblyProof
           _ ≤ ε₁ * (Ch * Real.sqrt Ln) := by gcongr
       have h3 : (Cw * Real.sqrt Ln) * (ε₁ * (Ch * Real.sqrt Ln)) =
           ε₁ * Cw * Ch * Ln := by
-        calc (Cw * Real.sqrt Ln) * (ε₁ * (Ch * Real.sqrt Ln))
-            = ε₁ * Cw * Ch * (Real.sqrt Ln * Real.sqrt Ln) := by ring
-          _ = ε₁ * Cw * Ch * Ln := by rw [hsqrt_sq]
+        grind
       have h4 : sm * (‖wn‖ * ‖ξn‖) ≤ sm * (ε₁ * Cw * Ch * Ln) :=
         mul_le_mul_of_nonneg_left (le_trans h2 (le_of_eq h3)) hsm_nn
       calc sm * @inner ℝ _ _ wn ξn
@@ -414,9 +406,7 @@ private abbrev curvAbsorbAssemblyProof
     have h2 : ‖gn‖ * (ε₁ * ‖en‖) ≤ (Cg * Real.sqrt Ln) * (ε₁ * (Ce * Real.sqrt Ln)) := by
       gcongr
     have h3 : (Cg * Real.sqrt Ln) * (ε₁ * (Ce * Real.sqrt Ln)) = ε₁ * Cg * Ce * Ln := by
-      calc (Cg * Real.sqrt Ln) * (ε₁ * (Ce * Real.sqrt Ln))
-          = ε₁ * Cg * Ce * (Real.sqrt Ln * Real.sqrt Ln) := by ring
-        _ = ε₁ * Cg * Ce * Ln := by rw [hsqrt_sq]
+      grind
     calc sa * |@inner ℝ _ _ gn (P en)|
         ≤ sa * (ε₁ * Cg * Ce * Ln) :=
           mul_le_mul_of_nonneg_left (by linarith) (le_of_lt hsa_pos)
@@ -430,8 +420,7 @@ private abbrev curvAbsorbAssemblyProof
     _ ≤ ε₁ * K * Ln :=
         mul_le_mul_of_nonneg_right
           (mul_le_mul_of_nonneg_left
-            (by change sm * Cw * Ch + sm ^ 2 / 2 * Ch ^ 2 + sa * Cg * Ce ≤
-                  sm * Cw * Ch + sm ^ 2 / 2 * Ch ^ 2 + sa * Cg * Ce + 1; linarith)
+            (by grind)
             (le_of_lt hε₁_pos))
           hLn_nn
     _ ≤ θ * sa * Ln :=
@@ -768,9 +757,7 @@ private abbrev curvAbsorbAssemblyGenProof
     have h2 : ‖ξn‖ ^ 2 ≤ (ε₁ * (Ch * Real.sqrt Ln)) ^ 2 :=
       sq_le_sq' (by linarith [norm_nonneg ξn]) h1
     have h3 : (ε₁ * (Ch * Real.sqrt Ln)) ^ 2 = ε₁ ^ 2 * Ch ^ 2 * Ln := by
-      calc (ε₁ * (Ch * Real.sqrt Ln)) ^ 2
-          = ε₁ ^ 2 * Ch ^ 2 * (Real.sqrt Ln * Real.sqrt Ln) := by ring
-        _ = ε₁ ^ 2 * Ch ^ 2 * Ln := by rw [hsqrt_sq]
+      grind
     have h4 : ε₁ ^ 2 ≤ ε₁ := by
       calc ε₁ ^ 2 = ε₁ * ε₁ := sq ε₁
         _ ≤ ε₁ * 1 := mul_le_mul_of_nonneg_left hε₁_le1 (le_of_lt hε₁_pos)
@@ -791,9 +778,7 @@ private abbrev curvAbsorbAssemblyGenProof
           _ ≤ ε₁ * (Ch * Real.sqrt Ln) := by gcongr
       have h3 : (Cw * Real.sqrt Ln) * (ε₁ * (Ch * Real.sqrt Ln)) =
           ε₁ * Cw * Ch * Ln := by
-        calc (Cw * Real.sqrt Ln) * (ε₁ * (Ch * Real.sqrt Ln))
-            = ε₁ * Cw * Ch * (Real.sqrt Ln * Real.sqrt Ln) := by ring
-          _ = ε₁ * Cw * Ch * Ln := by rw [hsqrt_sq]
+        grind
       have h4 : sm * (‖wn‖ * ‖ξn‖) ≤ sm * (ε₁ * Cw * Ch * Ln) :=
         mul_le_mul_of_nonneg_left (le_trans h2 (le_of_eq h3)) hsm_nn
       calc sm * @inner ℝ _ _ wn ξn
@@ -817,9 +802,7 @@ private abbrev curvAbsorbAssemblyGenProof
     have h2 : ‖gn‖ * (ε₁ * ‖en‖) ≤ (Cg * Real.sqrt Ln) * (ε₁ * (Ce * Real.sqrt Ln)) := by
       gcongr
     have h3 : (Cg * Real.sqrt Ln) * (ε₁ * (Ce * Real.sqrt Ln)) = ε₁ * Cg * Ce * Ln := by
-      calc (Cg * Real.sqrt Ln) * (ε₁ * (Ce * Real.sqrt Ln))
-          = ε₁ * Cg * Ce * (Real.sqrt Ln * Real.sqrt Ln) := by ring
-        _ = ε₁ * Cg * Ce * Ln := by rw [hsqrt_sq]
+      grind
     calc sa * |@inner ℝ _ _ gn (P en)|
         ≤ sa * (ε₁ * Cg * Ce * Ln) :=
           mul_le_mul_of_nonneg_left (by linarith) (le_of_lt hsa_pos)
@@ -833,8 +816,7 @@ private abbrev curvAbsorbAssemblyGenProof
     _ ≤ ε₁ * K * Ln :=
         mul_le_mul_of_nonneg_right
           (mul_le_mul_of_nonneg_left
-            (by change sm * Cw * Ch + sm ^ 2 / 2 * Ch ^ 2 + sa * Cg * Ce ≤
-                  sm * Cw * Ch + sm ^ 2 / 2 * Ch ^ 2 + sa * Cg * Ce + 1; linarith)
+            (by grind)
             (le_of_lt hε₁_pos))
           hLn_nn
     _ ≤ θ * sa * Ln :=

@@ -121,8 +121,7 @@ def prodPresentation (P₀ : ComputablePresentation V₀) (P₁ : ComputablePres
     simp only [prodEnum_apply, unpair_pair_fst, unpair_pair_snd, prodNbhd_inter,
       prodNbhd_subset_iff]
     constructor
-    · rintro ⟨k, hk0, hk1⟩
-      exact ⟨⟨k.unpair.1, hk0⟩, ⟨k.unpair.2, hk1⟩⟩
+    · grind
     · rintro ⟨⟨k0, hk0⟩, ⟨k1, hk1⟩⟩
       exact ⟨Nat.pair k0 k1, by simpa only [unpair_pair_fst] using hk0,
         by simpa only [unpair_pair_snd] using hk1⟩
@@ -238,11 +237,7 @@ master. -/
 /-- Choice-free three-way split of a tag `n ∈ {0, 1, ≥2}` (via `Nat.decEq`, not
 classical `em`). -/
 theorem tag_trichotomy (n : ℕ) : n = 0 ∨ n = 1 ∨ (n ≠ 0 ∧ n ≠ 1) := by
-  rcases Nat.decEq n 0 with h | h
-  · rcases Nat.decEq n 1 with h' | h'
-    · exact Or.inr (Or.inr ⟨h, h'⟩)
-    · exact Or.inr (Or.inl h')
-  · exact Or.inl h
+  grind
 
 section Sum
 
@@ -320,12 +315,7 @@ theorem sumEnum_eq_iff (x y : ℕ) :
     rcases tag_trichotomy y.unpair.1 with hy | hy | ⟨hy0, hy1⟩
   · -- x0 y0
     rw [sumEnum_zero hx, sumEnum_zero hy, inj₀_eq_iff]
-    constructor
-    · intro he; exact Or.inr (Or.inl ⟨⟨hx, hy⟩, he⟩)
-    · rintro (⟨⟨e1, e2⟩, _⟩ | ⟨_, he⟩ | ⟨⟨e1, e2⟩, _⟩)
-      · exfalso; omega
-      · exact he
-      · exfalso; omega
+    grind
   · -- x0 y1
     rw [sumEnum_zero hx, sumEnum_one hy]
     constructor
@@ -343,12 +333,7 @@ theorem sumEnum_eq_iff (x y : ℕ) :
     · rintro (⟨⟨e1, e2⟩, _⟩ | ⟨⟨e1, e2⟩, _⟩ | ⟨⟨e1, e2⟩, _⟩) <;> exfalso <;> omega
   · -- x1 y1
     rw [sumEnum_one hx, sumEnum_one hy, inj₁_eq_iff]
-    constructor
-    · intro he; exact Or.inr (Or.inr ⟨⟨hx, hy⟩, he⟩)
-    · rintro (⟨⟨e1, e2⟩, _⟩ | ⟨⟨e1, e2⟩, _⟩ | ⟨_, he⟩)
-      · exfalso; omega
-      · exfalso; omega
-      · exact he
+    grind
   · -- x1 yM
     rw [sumEnum_one hx, sumEnum_master hy0 hy1]
     constructor
@@ -490,39 +475,24 @@ theorem sumPresentation_interEq_computable :
     · rw [sumEnum_zero hna, sumEnum_zero hnb, inj₀_inter]
       rcases tag_trichotomy t.unpair.2.unpair.2.unpair.1 with hnc | hnc | ⟨hnc0, hnc1⟩
       · rw [sumEnum_zero hnc, inj₀_eq_iff]
-        constructor
-        · intro h; exact Or.inr (Or.inr (Or.inl ⟨⟨⟨hna, hnb⟩, hnc⟩, h⟩))
-        · rintro (⟨⟨e1, _⟩, _⟩ | ⟨⟨e1, _⟩, _⟩ | ⟨⟨⟨_, _⟩, _⟩, h⟩ | ⟨⟨⟨e1, _⟩, _⟩, _⟩)
-          · exfalso; omega
-          · exfalso; omega
-          · exact h
-          · exfalso; omega
+        grind
       · rw [sumEnum_one hnc]
         constructor
         · intro h; exact absurd h (inj₀_ne_inj₁_of_nonempty (h₁ _ (P₁.mem_X _)))
-        · rintro (⟨⟨e1, _⟩, _⟩ | ⟨⟨e1, _⟩, _⟩ | ⟨⟨⟨_, _⟩, e3⟩, _⟩ |
-          ⟨⟨⟨e1, _⟩, _⟩, _⟩) <;> exfalso <;> omega
+        · grind <;> omega
       · rw [sumEnum_master hnc0 hnc1]
         constructor
         · intro h; exact absurd h inj₀_ne_sumMaster
-        · rintro (⟨⟨e1, _⟩, _⟩ | ⟨⟨e1, _⟩, _⟩ | ⟨⟨⟨_, _⟩, e3⟩, _⟩ |
-          ⟨⟨⟨e1, _⟩, _⟩, _⟩) <;> exfalso <;> omega
+        · grind <;> omega
     · rw [sumEnum_zero hna, sumEnum_one hnb, inj₀_inter_inj₁]
       constructor
       · intro h
         obtain ⟨x, hx⟩ := sumEnum_nonempty (h₀ := h₀) (h₁ := h₁) t.unpair.2.unpair.2
         rw [← h] at hx
         exact absurd hx (Set.notMem_empty x)
-      · rintro (⟨⟨e1, _⟩, _⟩ | ⟨⟨_, e2⟩, _⟩ | ⟨⟨⟨_, e2⟩, _⟩, _⟩ |
-        ⟨⟨⟨e1, _⟩, _⟩, _⟩) <;> exfalso <;> omega
+      · grind <;> omega
     · rw [sumEnum_master hnb0 hnb1, sumEnum_inter_sumMaster]
-      constructor
-      · intro h; exact Or.inr (Or.inl ⟨⟨hnb0, hnb1⟩, h⟩)
-      · rintro (⟨⟨e1, _⟩, _⟩ | ⟨_, h⟩ | ⟨⟨⟨_, e2⟩, _⟩, _⟩ | ⟨⟨⟨e1, _⟩, _⟩, _⟩)
-        · exfalso; omega
-        · exact h
-        · exfalso; omega
-        · exfalso; omega
+      grind
   · rcases tag_trichotomy t.unpair.2.unpair.1.unpair.1 with hnb | hnb | ⟨hnb0, hnb1⟩
     · rw [sumEnum_one hna, sumEnum_zero hnb, Set.inter_comm, inj₀_inter_inj₁]
       constructor
@@ -530,36 +500,21 @@ theorem sumPresentation_interEq_computable :
         obtain ⟨x, hx⟩ := sumEnum_nonempty (h₀ := h₀) (h₁ := h₁) t.unpair.2.unpair.2
         rw [← h] at hx
         exact absurd hx (Set.notMem_empty x)
-      · rintro (⟨⟨_, e2⟩, _⟩ | ⟨⟨e1, _⟩, _⟩ | ⟨⟨⟨e1, _⟩, _⟩, _⟩ |
-        ⟨⟨⟨_, e2⟩, _⟩, _⟩) <;> exfalso <;> omega
+      · grind <;> omega
     · rw [sumEnum_one hna, sumEnum_one hnb, inj₁_inter]
       rcases tag_trichotomy t.unpair.2.unpair.2.unpair.1 with hnc | hnc | ⟨hnc0, hnc1⟩
       · rw [sumEnum_zero hnc]
         constructor
         · intro h; exact (inj₀_eq_inj₁_elim (h₀ _ (P₀.mem_X _)) h.symm).elim
-        · rintro (⟨⟨_, e2⟩, _⟩ | ⟨⟨_, e2⟩, _⟩ | ⟨⟨⟨e1, _⟩, _⟩, _⟩ |
-          ⟨⟨⟨_, _⟩, e3⟩, _⟩) <;> exfalso <;> omega
+        · grind <;> omega
       · rw [sumEnum_one hnc, inj₁_eq_iff]
-        constructor
-        · intro h; exact Or.inr (Or.inr (Or.inr ⟨⟨⟨hna, hnb⟩, hnc⟩, h⟩))
-        · rintro (⟨⟨_, e2⟩, _⟩ | ⟨⟨_, e2⟩, _⟩ | ⟨⟨⟨e1, _⟩, _⟩, _⟩ | ⟨⟨⟨_, _⟩, _⟩, h⟩)
-          · exfalso; omega
-          · exfalso; omega
-          · exfalso; omega
-          · exact h
+        grind
       · rw [sumEnum_master hnc0 hnc1]
         constructor
         · intro h; exact absurd h inj₁_ne_sumMaster
-        · rintro (⟨⟨_, e2⟩, _⟩ | ⟨⟨_, e2⟩, _⟩ | ⟨⟨⟨e1, _⟩, _⟩, _⟩ |
-          ⟨⟨⟨_, _⟩, e3⟩, _⟩) <;> exfalso <;> omega
+        · grind <;> omega
     · rw [sumEnum_master hnb0 hnb1, sumEnum_inter_sumMaster]
-      constructor
-      · intro h; exact Or.inr (Or.inl ⟨⟨hnb0, hnb1⟩, h⟩)
-      · rintro (⟨⟨_, e2⟩, _⟩ | ⟨_, h⟩ | ⟨⟨⟨_, e2⟩, _⟩, _⟩ | ⟨⟨⟨_, e2⟩, _⟩, _⟩)
-        · exfalso; omega
-        · exact h
-        · exfalso; omega
-        · exfalso; omega
+      grind
   · rw [sumEnum_master hna0 hna1, sumMaster_inter_sumEnum]
     constructor
     · intro h; exact Or.inl ⟨⟨hna0, hna1⟩, h⟩
@@ -891,8 +846,7 @@ theorem outMap₀_isComputable (P₀ : ComputablePresentation V₀) (P₁ : Comp
   · constructor
     · rintro ⟨_, _, hsub⟩
       rw [sumEnum_one hn, leftPart_inj₁ V₀ (h₁ _ (P₁.mem_X _))] at hsub
-      refine Or.inr ⟨by omega, ?_⟩
-      rw [hk0]; exact hsub
+      grind
     · rintro (⟨e1, _⟩ | ⟨_, hsub⟩)
       · exfalso; omega
       · refine ⟨sumEnum_mem _, P₀.mem_X _, ?_⟩
@@ -900,8 +854,7 @@ theorem outMap₀_isComputable (P₀ : ComputablePresentation V₀) (P₁ : Comp
   · constructor
     · rintro ⟨_, _, hsub⟩
       rw [sumEnum_master hn0 hn1, leftPart_sumMaster] at hsub
-      refine Or.inr ⟨hn0, ?_⟩
-      rw [hk0]; exact hsub
+      grind
     · rintro (⟨e1, _⟩ | ⟨_, hsub⟩)
       · exfalso; omega
       · refine ⟨sumEnum_mem _, P₀.mem_X _, ?_⟩
@@ -929,8 +882,7 @@ theorem outMap₁_isComputable (P₀ : ComputablePresentation V₀) (P₁ : Comp
   · constructor
     · rintro ⟨_, _, hsub⟩
       rw [sumEnum_zero hn, rightPart_inj₀ V₁ (h₀ _ (P₀.mem_X _))] at hsub
-      refine Or.inr ⟨by omega, ?_⟩
-      rw [hk1]; exact hsub
+      grind
     · rintro (⟨e1, _⟩ | ⟨_, hsub⟩)
       · exfalso; omega
       · refine ⟨sumEnum_mem _, P₁.mem_X _, ?_⟩
@@ -946,8 +898,7 @@ theorem outMap₁_isComputable (P₀ : ComputablePresentation V₀) (P₁ : Comp
   · constructor
     · rintro ⟨_, _, hsub⟩
       rw [sumEnum_master hn0 hn1, rightPart_sumMaster] at hsub
-      refine Or.inr ⟨hn1, ?_⟩
-      rw [hk1]; exact hsub
+      grind
     · rintro (⟨e1, _⟩ | ⟨_, hsub⟩)
       · exfalso; omega
       · refine ⟨sumEnum_mem _, P₁.mem_X _, ?_⟩
@@ -1019,9 +970,7 @@ theorem sumMap_isComputable {V₀' : NeighborhoodSystem α'} {V₁' : Neighborho
         · rw [sumEnum_one hm] at hWY
           exact absurd hWY.symm (inj₀_ne_inj₁_of_nonempty (h₁' _ (Q₁.mem_X _)))
         · rw [sumEnum_master h0 h1] at hWY; exact absurd hWY.symm inj₀_ne_sumMaster
-      obtain ⟨ha0, hX⟩ := ha; obtain ⟨hb0, hY⟩ := hb
-      subst hX; subst hY
-      exact ⟨⟨ha0, hb0⟩, hfXY⟩
+      grind
     · right; right
       have ha : s.unpair.1.unpair.1 = 1 ∧ Y = P₁.X s.unpair.1.unpair.2 := by
         rcases tag_trichotomy s.unpair.1.unpair.1 with hn | hn | ⟨h0, h1⟩
@@ -1035,9 +984,7 @@ theorem sumMap_isComputable {V₀' : NeighborhoodSystem α'} {V₁' : Neighborho
           exact (inj₀_eq_inj₁_elim (h₀' _ (Q₀.mem_X _)) hWY').elim
         · rw [sumEnum_one hm] at hWY'; exact ⟨hm, (inj₁_eq_iff.mp hWY').symm⟩
         · rw [sumEnum_master h0 h1] at hWY'; exact absurd hWY'.symm inj₁_ne_sumMaster
-      obtain ⟨ha1, hYeq⟩ := ha; obtain ⟨hb1, hY'eq⟩ := hb
-      subst hYeq; subst hY'eq
-      exact ⟨⟨ha1, hb1⟩, hgYY⟩
+      grind
   · rintro (⟨hm0, hm1⟩ | ⟨⟨hn0, hm0⟩, hfXY⟩ | ⟨⟨hn1, hm1⟩, hgYY⟩)
     · exact ⟨sumEnum_mem _, sumEnum_mem _, Or.inl (sumEnum_master hm0 hm1)⟩
     · exact ⟨sumEnum_mem _, sumEnum_mem _,

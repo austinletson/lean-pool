@@ -51,10 +51,7 @@ private lemma parametrization_not_C_two_dvd_second {n : ℕ} {f g h : IntPoly n}
   have hEval : intPolyEval g a = 2 * intPolyEval q a := by
     rw [hq]
     simp [intPolyEval]
-  have hodd : (3 : ℤ) = 2 * intPolyEval q a := by
-    rw [← hgval]
-    exact hEval
-  omega
+  grind
 
 /-- Frisch--Vaserstein's obstruction: no finite-variable triple of integer-coefficient
 polynomials parametrizes all Pythagorean triples. -/
@@ -64,21 +61,13 @@ theorem no_int_poly_parametrization :
   let two : IntPoly n := 2
   have hId : f ^ 2 + g ^ 2 = h ^ 2 := intPolyParametrizes_identity hp
   have htwo_ne : two ≠ 0 := by
-    dsimp [two]
-    norm_num
+    grind
   have htwo_prime : Prime two := by
     dsimp [two]
     simpa using ((MvPolynomial.prime_C_iff (σ := Fin n) (R := ℤ) (r := (2 : ℤ))).2
       (by norm_num : Prime (2 : ℤ)))
   have hfac : (h - f - g) * (h + f + g) = two * (-(f * g)) := by
-    dsimp [two]
-    calc
-      (h - f - g) * (h + f + g) =
-          h ^ 2 - (f ^ 2 + g ^ 2) - (2 : IntPoly n) * (f * g) := by
-        ring
-      _ = (2 : IntPoly n) * (-(f * g)) := by
-        rw [← hId]
-        ring
+    grind
   have hfac_dvd : two ∣ (h - f - g) * (h + f + g) := by
     refine ⟨-(f * g), ?_⟩
     exact hfac
@@ -87,12 +76,7 @@ theorem no_int_poly_parametrization :
     have hleft' : two ∣ h - f - g := ⟨r, hr⟩
     have hright : two ∣ h + f + g := by
       refine ⟨r + f + g, ?_⟩
-      calc
-        h + f + g = (h - f - g) + two * (f + g) := by
-          dsimp [two]
-          ring
-        _ = two * r + two * (f + g) := by rw [hr]
-        _ = two * (r + f + g) := by ring
+      grind
     have hfour : two * two ∣ (h - f - g) * (h + f + g) :=
       mul_dvd_mul hleft' hright
     have hfour' : two * two ∣ two * (-(f * g)) := by
@@ -100,18 +84,12 @@ theorem no_int_poly_parametrization :
     have hdivneg : two ∣ -(f * g) := (mul_dvd_mul_iff_left htwo_ne).mp hfour'
     rcases hdivneg with ⟨s, hs⟩
     refine ⟨-s, ?_⟩
-    rw [← neg_neg (f * g), hs]
-    ring
+    grind
   have hfg_of_right (hright : two ∣ h + f + g) : two ∣ f * g := by
     rcases hright with ⟨r, hr⟩
     have hleft : two ∣ h - f - g := by
       refine ⟨r - f - g, ?_⟩
-      calc
-        h - f - g = (h + f + g) - two * (f + g) := by
-          dsimp [two]
-          ring
-        _ = two * r - two * (f + g) := by rw [hr]
-        _ = two * (r - f - g) := by ring
+      grind
     exact hfg_of_left hleft
   have hfg : two ∣ f * g := by
     rcases htwo_prime.dvd_or_dvd hfac_dvd with hleft | hright
@@ -127,10 +105,7 @@ theorem no_int_poly_parametrization :
     have hEval : intPolyEval f a = 2 * intPolyEval q a := by
       rw [hq]
       simp [intPolyEval, two]
-    have hodd : (3 : ℤ) = 2 * intPolyEval q a := by
-      rw [← hfval]
-      exact hEval
-    omega
+    grind
   have hnotg : ¬ two ∣ g := by
     dsimp [two]
     exact parametrization_not_C_two_dvd_second hp

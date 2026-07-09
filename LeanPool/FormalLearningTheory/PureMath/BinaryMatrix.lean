@@ -54,29 +54,14 @@ theorem shatters_iff {m n : ℕ} (M : BinaryMatrix m n) (S : Finset (Fin n)) :
     refine ⟨Finset.univ.filter (fun j => M i j = true), ?_, ?_⟩
     · simp only [toFinsetFamily, mem_image, mem_univ, true_and]
       exact ⟨i, rfl⟩
-    · ext j
-      simp only [mem_inter, mem_filter, mem_univ, true_and]
-      constructor
-      · rintro ⟨hj, hMij⟩
-        exact (hi j hj).mp hMij
-      · intro hjt
-        have hjS := ht hjt
-        exact ⟨hjS, (hi j hjS).mpr hjt⟩
+    · grind
   · -- Backward: Mathlib's → our definition
     intro hS t ht
     obtain ⟨u, hu, hut⟩ := hS ht
     simp only [toFinsetFamily, mem_image, mem_univ, true_and] at hu
     obtain ⟨i, rfl⟩ := hu
     refine ⟨i, fun j hj => ?_⟩
-    constructor
-    · intro hMij
-      have : j ∈ S ∩ Finset.univ.filter (fun j => M i j = true) := by
-        simp only [mem_inter, mem_filter, mem_univ, true_and]; exact ⟨hj, hMij⟩
-      rwa [hut] at this
-    · intro hjt
-      have : j ∈ S ∩ Finset.univ.filter (fun j => M i j = true) := by rw [hut]; exact hjt
-      simp only [mem_inter, mem_filter, mem_univ, true_and] at this
-      exact this.2
+    grind
 
 /-- Two `Bool`-valued functions on `Fin n` that agree on which indices are `true`
     (as witnessed by equal `univ.filter`) are equal. -/
@@ -93,8 +78,7 @@ theorem bool_fun_eq_of_filter_eq {n : ℕ} (f g : Fin n → Bool)
   · exfalso
     have : j ∈ Finset.univ.filter (fun j => g j = true) := by simp [hg]
     rw [← h] at this; simp [hf] at this
-  · simp only [Bool.not_eq_true] at hf hg
-    rw [hf, hg]
+  · grind
 
 /-- **Sauer-Shelah lemma for binary matrices**: the number of distinct rows in the
     Finset family is bounded by the sum of binomial coefficients up to the VC dimension. -/
@@ -157,10 +141,7 @@ theorem transpose_shatters_imp_shatters {m n : ℕ} (M : BinaryMatrix m n)
     have hemb_mem : (embed b).val ∈ S := (embed b).property
     by_cases hbk : b k = true
     · -- b k = true, so embed b ∈ T_k k
-      have hmem : (embed b).val ∈ T_k k := by
-        simp only [T_k, Finset.mem_filter]
-        exact ⟨hemb_mem, ⟨b, rfl, hbk⟩⟩
-      rw [(hc k _ hemb_mem).mpr hmem, hbk]
+      grind
     · -- b k = false, so embed b ∉ T_k k
       simp only [Bool.not_eq_true] at hbk
       have hmem : (embed b).val ∉ T_k k := by
@@ -170,9 +151,7 @@ theorem transpose_shatters_imp_shatters {m n : ℕ} (M : BinaryMatrix m n)
         have : embed b' = embed b := by
           exact Subtype.val_injective (by rw [hb'eq])
         have := hembed_inj this
-        rw [this] at hb'k
-        rw [hbk] at hb'k
-        exact Bool.noConfusion hb'k
+        grind
       rw [Bool.eq_false_iff.mpr (mt (hc k _ hemb_mem).mp hmem), hbk]
   -- Build T = {c 0, c 1, ..., c d}
   let T : Finset (Fin n) := Finset.univ.image c
@@ -184,13 +163,7 @@ theorem transpose_shatters_imp_shatters {m n : ℕ} (M : BinaryMatrix m n)
     let b0 : Fin (d + 1) → Bool := fun i => i == j
     have h1 : M (embed b0).val (c j) = true := by
       rw [hM_embed b0 j]; simp [b0]
-    have h2 : M (embed b0).val (c k) = false := by
-      rw [hM_embed b0 k]; simp only [b0]
-      cases hkj : (k == j)
-      · rfl
-      · exact absurd (beq_iff_eq.mp hkj).symm hjk_ne
-    rw [hjk] at h1
-    exact Bool.noConfusion (h1 ▸ h2)
+    grind
   have hT_card : T.card = d + 1 := by
     simp only [T, card_image_of_injective _ hc_inj, card_univ, Fintype.card_fin]
   -- M shatters T
@@ -201,11 +174,7 @@ theorem transpose_shatters_imp_shatters {m n : ℕ} (M : BinaryMatrix m n)
     -- The row embed(g) witnesses t
     refine ⟨(embed g).val, fun j hj => ?_⟩
     -- j ∈ T means j = c k for some k
-    simp only [T] at hj
-    rw [Finset.mem_image] at hj
-    obtain ⟨k, _, rfl⟩ := hj
-    rw [hM_embed g k]
-    simp only [g, decide_eq_true_eq]
+    grind
   exact ⟨T, hT_card, hT_shatters⟩
 
 /-- **Assouad's dual VC bound (matrix form)**: if `M` has VC dimension ≤ `d`,

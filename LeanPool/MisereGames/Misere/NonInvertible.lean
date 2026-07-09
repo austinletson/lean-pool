@@ -129,8 +129,7 @@ theorem not_misereGE_of_isEnd_left_not_isEnd_left {A : GameForm → Prop} {g h :
                  Set.mem_union, Set.mem_image, Set.mem_range, Subtype.exists, exists_prop,
                  exists_exists_and_eq_and]
       constructor
-      · apply Or.inr
-        use gl
+      · grind
       · exact not_winsGoingFirst_of_misereOutcome_P (misereOutcome_add_adjoint_eq_P gl)
   intro h5
   have h6 : MisereOutcome (g + t) ≥ Outcome.P :=

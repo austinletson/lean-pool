@@ -68,8 +68,7 @@ noncomputable def chainToWalk (l : List (Lattice R)) (hl : l ≠ []) (hc : l.IsB
       have p : BTgraph.Adj ⟦L₁⟧ ⟦L₂⟧ := by
         apply isNeighbour_of_isStandardNeighbour
         have := hc.isStandardNeighbour
-        rw [List.isChain_cons_cons] at this
-        exact this.1
+        grind
       let q : BTgraph.Walk ⟦L₂⟧ ⟦(L₁ :: L₂ :: l).getLast hl⟧ :=
         chainToWalk (L₂ :: l) (by simp) (isChain_of_cons_isChain (List.cons_ne_nil L₂ l) hc)
       q.cons p
@@ -94,9 +93,7 @@ lemma isSimpleChain_of_isTrail_aux {x y : Vertices R} (p : BTgraph.Walk x y)
         SimpleGraph.Walk.edges_nil, List.not_mem_nil, not_false_eq_true, and_self,
         SimpleGraph.Walk.edges_cons, List.mem_singleton, Sym2.eq, Sym2.rel_iff', Prod.mk.injEq,
         Prod.swap_prod_mk, and_true, not_or, not_and, true_and] at hp
-      apply hp.right
-      rw [← hfirst, ← hthird]
-      exact this
+      grind
   | .cons' _ v₂ _ adj (.cons' _ v₁ _ adj' <| .cons' _ _ _ adj'' q),
       (L₁ :: L₂ :: L₃ :: l) =>
       simp only [List.map_cons, SimpleGraph.Walk.support_cons] at hl
@@ -153,8 +150,7 @@ lemma length_eq_inv_of_isStandard {x y : Vertices R} {p : BTgraph.Walk x y} (h :
     | L :: l =>
     rw [List.map_cons] at hleq
     have hx := p.cons_tail_support
-    rw [← hleq] at hx
-    exact (List.cons.inj hx).1
+    grind
   subst this
   have : y = ⟦l.getLast hl.ne_nil⟧ := by
     have hmap_ne_nil : List.map (fun L ↦ (⟦L⟧ : Vertices R)) l ≠ [] := by

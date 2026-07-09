@@ -59,8 +59,7 @@ private lemma eventually_notMem_partition_of_eventually_ne
   have hcl : IsClosed ((↑γ.toPiecewiseC1Curve.partition \ {p} : Set ℝ)) :=
     (γ.toPiecewiseC1Curve.partition.finite_toSet.subset sdiff_subset).isClosed
   have hmem : p ∉ (↑γ.toPiecewiseC1Curve.partition \ {p} : Set ℝ) := by
-    simp only [Set.mem_sdiff, Finset.mem_coe, Set.mem_singleton_iff, not_and, not_not,
-      implies_true]
+    grind
   have h1 : ∀ᶠ t in l, t ∈ (↑γ.toPiecewiseC1Curve.partition \ {p} : Set ℝ)ᶜ :=
     hl (hcl.isOpen_compl.mem_nhds hmem)
   exact (h1.and hne).mono fun t ⟨ht_compl, ht_ne⟩ ht_part => ht_compl ⟨ht_part, ht_ne⟩
@@ -218,18 +217,14 @@ theorem PiecewiseC1Immersion.crossing_isolated_nhds
       · have hle : t₀ ≤ γ.a := not_lt.mp hap
         apply Filter.Eventually.mono
           (eventually_nhdsWithin_of_forall (fun t (ht : t < t₀) => ht))
-        intro t ht; right
-        simp only [mem_Icc, not_and_or, not_le]
-        left; linarith
+        grind
     · by_cases hpb : t₀ < γ.b
       · exact (γ.eventually_ne_right_of_partition z₀ t₀ hpart ht₀.1 hpb hcross).mono
           (fun t ht => Or.inl ht)
       · have hle : γ.b ≤ t₀ := not_lt.mp hpb
         apply Filter.Eventually.mono
           (eventually_nhdsWithin_of_forall (fun t (ht : t₀ < t) => ht))
-        intro t ht; right
-        simp only [mem_Icc, not_and_or, not_le]
-        right; linarith
+        grind
   · exact (γ.eventually_ne_at_smooth_crossing z₀ t₀ ht₀ hcross hpart).mono
       (fun t ht => Or.inl ht)
 
@@ -242,15 +237,13 @@ theorem PiecewiseC1Immersion.crossing_not_accPt
   rw [accPt_iff_frequently_nhdsNE, Filter.not_frequently]
   exact (γ.crossing_isolated_nhds z₀ t₀ ht₀ hcross).mono
     (fun t ht ht_mem => by
-      simp only [mem_setOf_eq] at ht_mem
-      exact ht.elim (fun h => h ht_mem.2) (fun h => h ht_mem.1))
+      grind)
 
 /-- The crossing set is closed. -/
 theorem crossing_set_isClosed (γ : PiecewiseC1Immersion) (z₀ : ℂ) :
     IsClosed {t ∈ Icc γ.a γ.b | γ.toFun t = z₀} := by
   have : {t ∈ Icc γ.a γ.b | γ.toFun t = z₀} = Icc γ.a γ.b ∩ γ.toFun ⁻¹' {z₀} := by
-    ext t; simp only [Set.mem_sep_iff, Set.mem_inter_iff, Set.mem_preimage,
-      Set.mem_singleton_iff]
+    grind
   rw [this]
   exact γ.continuous_toFun.preimage_isClosed_of_isClosed isClosed_Icc isClosed_singleton
 
@@ -290,28 +283,20 @@ theorem exists_isolated_crossing_interval
   have ha'_lt : a' < t₀ := by linarith
   have ht₀_lt_b' : t₀ < b' := by linarith
   have hl_lt_a' : l < a' := by
-    have : l ≤ max l γ.a := le_max_left _ _
-    linarith
+    grind
   have hb'_lt_u : b' < u := by
-    have : min u γ.b ≤ u := min_le_left _ _
-    linarith
+    grind
   have ha_le_a' : γ.a ≤ a' := by
-    have : γ.a ≤ max l γ.a := le_max_right _ _
-    linarith
+    grind
   have hb'_le_b : b' ≤ γ.b := by
-    have : min u γ.b ≤ γ.b := min_le_right _ _
-    linarith
+    grind
   refine ⟨a', b', ha'_lt, ht₀_lt_b', ?_, ?_, ?_⟩
-  · intro t ht
-    exact ⟨le_trans ha_le_a' ht.1, le_trans ht.2 hb'_le_b⟩
+  · grind
   · intro t ht hγt
     by_contra h_ne
     have ht_Ioo_lu : t ∈ Ioo l u :=
       ⟨lt_of_lt_of_le hl_lt_a' ht.1, lt_of_le_of_lt ht.2 hb'_lt_u⟩
-    have := h_Ioo ht_Ioo_lu h_ne
-    rcases this with h_ne_z₀ | h_not_Icc
-    · exact h_ne_z₀ hγt
-    · exact h_not_Icc ⟨le_trans ha_le_a' ht.1, le_trans ht.2 hb'_le_b⟩
+    grind
   · intro t ht ht_part
     have ht_Icc : t ∈ Icc γ.a γ.b :=
       ⟨le_trans ha_le_a' (Ioo_subset_Icc_self ht).1,
@@ -431,10 +416,7 @@ theorem cpv_integrand_intervalIntegrable
                   t ht_Ioo ht_notP).continuousWithinAt
             · have ht_ab := h_sub ht_Icc
               have : t = γ.a ∨ t = γ.b := by
-                simp only [Set.mem_Ioo, not_and, not_lt] at ht_Ioo
-                rcases ht_ab.1.lt_or_eq with h | h
-                · right; exact le_antisymm ht_ab.2 (ht_Ioo h)
-                · left; exact h.symm
+                grind
               rcases this with rfl | rfl
               · exact absurd γ.toPiecewiseC1Curve.endpoints_in_partition.1 ht_notP
               · exact absurd γ.toPiecewiseC1Curve.endpoints_in_partition.2 ht_notP
@@ -456,11 +438,7 @@ theorem cpv_integrand_intervalIntegrable
         S.piecewise (fun t => (γ.toFun t - z₀)⁻¹ * deriv γ.toFun t) (fun _ => 0) := by
       filter_upwards [ae_restrict_mem isClosed_Icc.measurableSet] with t ht
       simp only [hg_def, piecewise]
-      split_ifs with h1 h2 h2
-      · rfl
-      · exfalso; exact h2 ⟨h1, ht⟩
-      · exfalso; exact h1 h2.1
-      · rfl
+      grind
     exact (h_pw.mono_measure Measure.restrict_le_self).congr h_eq_ae.symm
   have hf_int : IntegrableOn g (Icc c d) volume :=
     IntegrableOn.of_bound
@@ -505,9 +483,7 @@ private theorem cpv_exists_on_subinterval
     exact absurd hmem (Finset.card_eq_zero.mp (Nat.le_zero.mp h_card) ▸ Finset.notMem_empty t)
   | succ n ih =>
     by_cases h_empty : h_fin_cd.toFinset = ∅
-    · apply cpv_avoidance_sub γ z₀ c d hcd h_sub
-      intro t ht hγt
-      exact absurd (h_fin_cd.mem_toFinset.mpr ⟨ht, hγt⟩) (h_empty ▸ Finset.notMem_empty t)
+    · grind
     · obtain ⟨t₁, ht₁_mem⟩ := Finset.nonempty_of_ne_empty h_empty
       have ht₁_Icc : t₁ ∈ Icc c d := (h_fin_cd.mem_toFinset.mp ht₁_mem).1
       have hγt₁ : γ.toFun t₁ = z₀ := (h_fin_cd.mem_toFinset.mp ht₁_mem).2
@@ -578,9 +554,7 @@ private theorem cpv_exists_on_subinterval
           intro heq; subst heq
           exact ht₁_not_cα (h_fin_cα.mem_toFinset.mp ht_mem)
         have h_le := Finset.card_le_card h_sub_finset
-        have h_erase_card : (h_fin_cd.toFinset.erase t₁).card < h_fin_cd.toFinset.card :=
-          Finset.card_erase_lt_of_mem ht₁_mem
-        omega
+        grind
       have h_card_βd : h_fin_βd.toFinset.card ≤ n := by
         have h_sub_finset : h_fin_βd.toFinset ⊆ h_fin_cd.toFinset.erase t₁ := by
           intro t ht_mem
@@ -592,9 +566,7 @@ private theorem cpv_exists_on_subinterval
           intro heq; subst heq
           exact ht₁_not_βd (h_fin_βd.mem_toFinset.mp ht_mem)
         have h_le := Finset.card_le_card h_sub_finset
-        have h_erase_card : (h_fin_cd.toFinset.erase t₁).card < h_fin_cd.toFinset.card :=
-          Finset.card_erase_lt_of_mem ht₁_mem
-        omega
+        grind
       have h_Ioo_cα_cd : Ioo c α ⊆ Ioo c d := fun t ht =>
         ⟨ht.1, lt_of_lt_of_le ht.2 (hαβ_sub_cd (left_mem_Icc.mpr hαβ_lt.le)).2⟩
       have h_Ioo_βd_cd : Ioo β d ⊆ Ioo c d := fun t ht =>

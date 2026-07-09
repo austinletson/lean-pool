@@ -227,8 +227,7 @@ theorem homOp_apply_filter (g : StrictMap (T.obj D).sys (T.obj E).sys) :
     exact key X Z
   have hL := toStrictFilter_toStrictMap
     ((homOp T D E j k hj hk).toElementMap (toStrictFilter g))
-  rw [hmap] at hL
-  exact hL.symm
+  grind
 
 end HomOp
 

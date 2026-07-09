@@ -431,8 +431,7 @@ theorem Matrix.IsHermitian.posSemidefDecomposition'
     (posSemidefDecomposition_posSemidef_left_right hx).1
   obtain ⟨β, hβ⟩ := (Matrix.posSemidef_iff (x₋)).mp
     (posSemidefDecomposition_posSemidef_left_right hx).2
-  use α, β
-  rw [hα, hβ]
+  grind
 
 theorem PiMat.IsSelfAdjoint.posSemidefDecomposition {k : Type*} {n : k → Type*}
   [Π i, Fintype (n i)]
@@ -585,9 +584,7 @@ theorem LinearMap.isPosMap_iff_star_mul_self_nonneg {A K : Type*}
   {F : Type*} [FunLike F A K] {f : F} :
   LinearMap.IsPosMap f ↔ ∀ a : A, 0 ≤ f (star a * a) := by
   refine ⟨fun h a => h (star_mul_self_nonneg _), fun h a => ?_⟩
-  · rw [hA]
-    rintro ⟨b, rfl⟩
-    exact h _
+  · grind
 
 theorem LinearMap.isPosMap_iff_comp_starAlgEquiv
   {K A B : Type*}
@@ -860,8 +857,7 @@ theorem isStarNormal_iff_selfAdjointDecomposition_commute
       complex_decomposition_mul_decomposition,
       selfAdjointDecompositionLeft_isSelfAdjoint, selfAdjointDecompositionRight_isSelfAdjoint,
       mul_neg, sub_neg_eq_add, mul_neg, sub_eq_add_neg]
-    simp only [pow_two]
-    rfl
+    grind
   have h₂ : star p * p = (a ^ 2 + b ^ 2) + Complex.I • (a * b - b * a) := by
     rw [h, star_add]
     nth_rw 2 [star_smul]
@@ -903,8 +899,7 @@ theorem IsIdempotentElem.isSelfAdjoint_iff_isStarNormal
     { simp only [isStarNormal_iff, commute_iff_eq, star_sub, star_one,
         mul_sub, sub_mul, mul_one, one_mul]
       simp only [sub_eq_add_neg, add_assoc, neg_add, neg_neg]
-      rw [(isStarNormal_iff _).mp h]
-      rw [← add_assoc, add_add_add_comm, add_assoc] }
+      grind
     have := (ContinuousLinearMap.IsStarNormal.norm_eq_adjoint _).mp h
     have :=
       calc
@@ -1001,8 +996,7 @@ theorem LinearMap.exists_scalar_isometry_iff_preserves_ortho_of_ne_zero
     fun i j => by
       simp only [inner_add_left, inner_sub_right,
         orthonormal_iff_ite.mp (e.orthonormal)]
-      simp only [↓reduceIte, eq_comm]
-      ring
+      grind
     have h' : ∀ i j, ⟪T (e i), T (e j)⟫_𝕜 =
         if i = j then ((‖T (e i)‖ ^ 2) : 𝕜) else 0 :=
     fun i j => by
@@ -1019,11 +1013,7 @@ theorem LinearMap.exists_scalar_isometry_iff_preserves_ortho_of_ne_zero
     simp only [← RCLike.ofReal_pow, RCLike.ofReal_inj,
       sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)] at this'
     have hα : ∀ i, α = ‖T (e i)‖ := fun i => by
-      by_cases hi : i = ⟨0, hV⟩
-      · rw [hi]
-      · specialize this' ⟨0, hV⟩ i
-        simp only [hi, eq_comm, false_or, not_false_iff, true_and] at this'
-        simp only [α, this']
+      grind
     have : ∀ x, ‖T x‖ = α * ‖x‖ :=
     fun x => by
       simp_rw [hα ⟨0, hV⟩]
@@ -1044,16 +1034,9 @@ theorem LinearMap.exists_scalar_isometry_iff_preserves_ortho_of_ne_zero
         simp_rw [h, zero_mul, norm_eq_zero] at this
         ext x
         simp only [LinearMap.zero_apply, this]
-      · intro h
-        simp only [h, LinearMap.zero_apply, norm_zero, @eq_comm _ (0 : ℝ),
-          mul_eq_zero, norm_eq_zero] at this
-        obtain ⟨x, hx⟩ : ∃ x : V, x ≠ 0 := by exact exists_ne 0
-        specialize this x
-        simp only [hx, or_false] at this
-        exact this
+      · grind
     simp only [hT, iff_false, ← ne_eq] at hα'
-    have hα'' : (α : 𝕜) ≠ 0 := by simp only [ne_eq, algebraMap.coe_eq_zero_iff, hα',
-      not_false_iff]
+    have hα'' : (α : 𝕜) ≠ 0 := by grind
     use ((Units.mk0 α hα'')⁻¹ : 𝕜ˣ)
     rw [isometry_iff_norm]
     intro x

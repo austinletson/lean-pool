@@ -79,8 +79,7 @@ lemma minReplaySet_contains_log {l : Set es.Event} : l ⊆ minReplaySet es l := 
 lemma minReplaySet_closed {l : Set es.Event} {x y : es.Event}
     (hy : y ≤ x) (hx : x ∈ minReplaySet es l) : y ∈ minReplaySet es l := by
   simp only [minReplaySet, downset, Set.mem_iUnion, Set.mem_setOf_eq, exists_prop] at hx ⊢
-  obtain ⟨e, he, hxe⟩ := hx
-  exact ⟨e, he, le_trans hy hxe⟩
+  grind
 
 /-- The maximum replay set contains the minimum replay set. -/
 lemma minReplaySet_subset_maxReplaySet {l : Set es.Event} :

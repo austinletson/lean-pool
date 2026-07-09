@@ -33,9 +33,7 @@ lemma left_eqToHom_iff_heq {W X Y : C} (f : W ⟶ X) (g : Y ⟶ X) (h : W = Y) :
   f = eqToHom h ≫ g ↔ HEq f g := by cases h; simp
 lemma congr_comp {a b b' c d : C} (f : c ⟶ d) {g : b ⟶ c} {g' : b' ⟶ c} {h : a ⟶ b} {h' : a ⟶ b'}
   (H : h ≫ g = h' ≫ g') : h ≫ g ≫ f = h' ≫ g' ≫ f := by
-  replace H := congr_fun (congr_arg CategoryStruct.comp H) f
-  conv at H => simp
-  exact H
+  grind
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
 def recComp m n {F : ℕ → C} (f : ∀ n, F (n + 1) ⟶ F n) : F (m + n) ⟶ F m := by
   induction n with
@@ -86,8 +84,7 @@ def recCompOfLE {m n} (h : m ≤ n) {F : ℕ → C} (f : ∀ n, F (n + 1) ⟶ F 
     apply (IsIso.eq_inv_comp _).mp
     · simp only [inv_eqToHom, eqToHom_trans_assoc]
       apply (left_eqToHom_iff_heq _ _ _).mpr
-      · congr
-        omega
+      · grind
       · omega
 @[simp] lemma recComp.eq_one m n {F : ℕ → C} (f : ∀ n, F (n + 1) ⟶ F n) (h : n = 1) :
   eqToHom (by rw [h]) ≫ recComp m n f = f m := by subst h; simp [recComp]
@@ -113,9 +110,7 @@ noncomputable def natFreeCat : (ℕᵒᵖ ⥤ C) ≃ ((O : ℕ → C) × (∀ n,
       congr 1
       · simp [Nat.add_sub_sub_of_le, leOfHom h1.unop, leOfHom h2.unop,
           leOfHom (h1 ≫ h2).unop]
-      · apply heq_eqToHom
-        all_goals
-          simp [leOfHom (h1 ≫ h2).unop]
+      · grind
       · congr
         simp [Nat.add_sub_sub_of_le, leOfHom h1.unop, leOfHom h2.unop]
   }

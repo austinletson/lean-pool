@@ -449,8 +449,7 @@ private lemma ftc_logDeriv_telescope_rho (H : ℝ) (hH : Real.sqrt 3 / 2 < H)
   have hh₁_slit : ∀ t ∈ Icc (1 : ℝ) (3 - δ_L), h₁ t ∈ slitPlane := by
     intro t ⟨ht1, ht3⟩
     rcases eq_or_lt_of_le ht1 with rfl | ht1'
-    · rw [← hg1_1]
-      exact fdBoundary_H_sub_rho_slitPlane H hH ⟨by norm_num, by linarith⟩ (by linarith)
+    · grind
     · rw [← hg_eq_h₁ t ht1' (by linarith)]
       exact fdBoundary_H_sub_rho_slitPlane H hH ⟨by linarith, by linarith⟩ (by linarith)
   have hh₂_slit : ∀ t ∈ Icc (3 + δ_R) (4 : ℝ), h₂ t ∈ slitPlane := by
@@ -460,8 +459,7 @@ private lemma ftc_logDeriv_telescope_rho (H : ℝ) (hH : Real.sqrt 3 / 2 < H)
   have hh₃_slit : ∀ t ∈ Icc (4 : ℝ) 5, h₃ t ∈ slitPlane := by
     intro t ⟨ht4, ht5⟩
     rcases eq_or_lt_of_le ht4 with rfl | ht4'
-    · rw [← hg4_3]
-      exact fdBoundary_H_sub_rho_slitPlane H hH ⟨by norm_num, by norm_num⟩ (by norm_num)
+    · grind
     · rw [← hg_eq_h₃ t ht4']
       exact fdBoundary_H_sub_rho_slitPlane H hH ⟨by linarith, ht5⟩ (by linarith)
   have piece₀ := ftc_log_piece (by norm_num : (0 : ℝ) ≤ 1)
@@ -481,8 +479,7 @@ private lemma ftc_logDeriv_telescope_rho (H : ℝ) (hH : Real.sqrt 3 / 2 < H)
   have hg_closed : g 0 = g 5 := by
     change fdBoundaryH H 0 - ρ = fdBoundaryH H 5 - ρ
     rw [fdBoundary_H_closed H]
-  rw [hg_closed]
-  ring
+  grind
 
 private lemma norm_le_middle_rho (H : ℝ) (hH : Real.sqrt 3 / 2 < H)
     {ε δ_L δ_R : ℝ} (hε : 0 < ε) (hδ_L_pos : 0 < δ_L) (hδ_L_lt_one : δ_L < 1)
@@ -830,15 +827,7 @@ theorem pv_integral_at_rho_tendsto (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
     h_far_left h_far_right h_near
     (E := fun ε => Complex.log (g (3 - δ_L ε)) - Complex.log (g (3 + δ_R ε)))
     h_ftc_api hint_left hint_right h_limit
-  have h_eq : (fun ε => ∫ t in (0 : ℝ)..5,
-      if ‖fdBoundaryH H t - ellipticPointRho‖ > ε
-      then (fdBoundaryH H t - ellipticPointRho)⁻¹ *
-           deriv (fun s => fdBoundaryH H s - ellipticPointRho) t
-      else 0) = (fun ε => ∫ t in (0 : ℝ)..5,
-      if ‖g t - 0‖ > ε then (g t - 0)⁻¹ * deriv g t else 0) := by
-    funext ε; congr 1; funext t; simp only [hg_def, sub_zero]
-  rw [h_eq]
-  exact h_tendsto
+  grind
 
 /-- `generalizedWindingNumber' (fdBoundaryH H) 0 5 ρ = -1/6`. -/
 theorem gWN_fdBoundary_H_at_rho (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :

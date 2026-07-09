@@ -362,8 +362,7 @@ noncomputable instance : LinearOrder M where
 theorem le_of_eq :
   ∀ {x y : M}, x = y -> x ≤ y :=
 by
-  intro x y hxy
-  rw [hxy]
+  grind
 
 theorem zero_if_sum_zero :
   ∀ {x y : M}, x + y = 0 -> x = 0 ∧ y = 0 := by
@@ -492,8 +491,7 @@ by
       rw [hx] at hass
       rw [idelta0.zero_mul] at hass
       rw [mul_eq_zero_iff_left] at hass
-      · apply hz
-        exact hass
+      · grind
       · apply @B1 M
     rcases pred_exists hx with ⟨xp, _, hxp_eq⟩
     rw [hxp_eq] at hass
@@ -506,8 +504,7 @@ by
         _ = xp * z + 1 * z := hass
         _ = xp * z + z := by rw [one_mul z]
     change y + 1 = x
-    rw [hxp_eq]
-    rw [hind xp z ⟨hass_cancel, hz⟩]
+    grind
 
 
 end IDelta0Model

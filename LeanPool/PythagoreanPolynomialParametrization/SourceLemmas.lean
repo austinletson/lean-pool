@@ -59,32 +59,18 @@ theorem pythagoreanTriple_two_integer_polynomial_families (x y z : ℤ) :
     rcases hxy with hxy | hxy
     · rcases hxy with ⟨hx, hy⟩
       rcases hz with hz | hz
-      · refine ⟨m, n, k, Or.inl ⟨?_, ?_, ?_⟩⟩
-        · simpa using hx
-        · rw [hy]
-          ring
-        · simpa using hz
+      · grind
       · refine ⟨-n, m, -k, Or.inl ⟨?_, ?_, ?_⟩⟩
-        · rw [hx]
-          ring
-        · rw [hy]
-          ring
-        · rw [hz]
-          ring
+        · grind
+        · grind
+        · grind
     · rcases hxy with ⟨hx, hy⟩
       rcases hz with hz | hz
-      · refine ⟨m, n, k, Or.inr ⟨?_, ?_, ?_⟩⟩
-        · rw [hx]
-          ring
-        · simpa using hy
-        · simpa using hz
+      · grind
       · refine ⟨-n, m, -k, Or.inr ⟨?_, ?_, ?_⟩⟩
-        · rw [hx]
-          ring
-        · rw [hy]
-          ring
-        · rw [hz]
-          ring
+        · grind
+        · grind
+        · grind
   · rintro ⟨a, b, c, (⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩)⟩
     · simp [IsPythagoreanTriple]
       ring
@@ -163,9 +149,7 @@ theorem TMap_integral_iff_parity (a b c : ℤ) :
       · exact Int.even_mul.mpr (Or.inl hc)
       · exact Int.even_mul.mpr (Or.inr ((even_sq_sub_sq_iff_even_sub a b).mpr hab))
     have hsum : Even (c * (a ^ 2 + b ^ 2)) := by
-      rcases hpar with hc | hab
-      · exact Int.even_mul.mpr (Or.inl hc)
-      · exact Int.even_mul.mpr (Or.inr (even_sq_add_sq_of_even_sub hab))
+      grind
     rcases (rat_half_int_iff_even (c * (a ^ 2 - b ^ 2))).mpr hdiff with ⟨x, hx⟩
     rcases (rat_half_int_iff_even (c * (a ^ 2 + b ^ 2))).mpr hsum with ⟨z, hz⟩
     refine ⟨x, c * a * b, z, ?_⟩
@@ -189,8 +173,7 @@ theorem parity_condition_parametrized (a b c : ℤ) :
       refine ⟨x, a, b, 0, ?_, ?_, ?_⟩
       · ring
       · ring
-      · rw [hx]
-        ring
+      · grind
     · rcases hab with ⟨t, ht⟩
       refine ⟨c, t, b + t, 1, ?_, ?_, ?_⟩
       · nlinarith
@@ -203,13 +186,11 @@ theorem parity_condition_parametrized (a b c : ℤ) :
       have h2mw : Even ((2 : ℤ) - w) := by
         exact Int.even_sub.mpr (by simp [hw])
       have hmul : Even (x * ((2 : ℤ) - w)) := Int.even_mul.mpr (Or.inr h2mw)
-      convert hmul using 1
-      ring
+      grind
     · right
       rcases hw with ⟨k, hk⟩
       rw [ha, hb, hk]
-      use (k + 1) * y + k * z
-      ring
+      grind
 
 /-- Source proof handoff lemma for the positive remark: the restricted positive
 parameters are parametrized by `(y + (1+w)z, y, x + (1-w)^2 x)`. -/
@@ -226,18 +207,14 @@ theorem positive_T_parameters_parametrized (a b c : ℤ) :
     rcases hpar with hcEven | habEven
     · rcases hcEven with ⟨x, hx⟩
       have hxpos : 0 < x := by
-        rw [hx] at hcpos
-        nlinarith
+        grind
       refine ⟨x, b, a - b, 0, hxpos, hb, ?_, by norm_num, ?_, rfl, ?_⟩
       · nlinarith
       · ring
-      · rw [hx]
-        ring
+      · grind
     · rcases habEven with ⟨z, hz⟩
       have hzpos : 0 < z := by
-        have hdiffpos : 0 < a - b := by nlinarith
-        rw [hz] at hdiffpos
-        nlinarith
+        grind
       refine ⟨c, b, z, 1, hcpos, hb, hzpos, by norm_num, ?_, rfl, ?_⟩
       · nlinarith [hz]
       · ring
@@ -245,29 +222,24 @@ theorem positive_T_parameters_parametrized (a b c : ℤ) :
     have hw1pos : 0 < (1 : ℤ) + w := by nlinarith
     have hprodpos : 0 < ((1 : ℤ) + w) * z := mul_pos hw1pos hzpos
     refine ⟨?_, ?_, ?_, ?_, ?_⟩
-    · rw [haeq]
-      nlinarith
-    · rw [hbeq]
-      exact hypos
+    · grind
+    · grind
     · rw [hceq]
       have hsq_nonneg : 0 ≤ ((1 : ℤ) - w) ^ 2 := sq_nonneg ((1 : ℤ) - w)
       have hmul_nonneg : 0 ≤ ((1 : ℤ) - w) ^ 2 * x :=
         mul_nonneg hsq_nonneg (le_of_lt hxpos)
       nlinarith
-    · rw [haeq, hbeq]
-      nlinarith
+    · grind
     · dsimp [PaperParityCondition]
       rcases Int.even_or_odd w with hw | hw
       · left
         rcases hw with ⟨k, hk⟩
         rw [hceq, hk]
-        use x * (1 - 2 * k + 2 * k ^ 2)
-        ring
+        grind
       · right
         rcases hw with ⟨k, hk⟩
         rw [haeq, hbeq, hk]
-        use (k + 1) * z
-        ring
+        grind
 
 /-- Lagrange four-square handoff: every nonnegative integer is a sum of four squares. -/
 theorem int_nonneg_iff_four_squares (n : ℤ) :
@@ -275,10 +247,7 @@ theorem int_nonneg_iff_four_squares (n : ℤ) :
   constructor
   · intro hn
     rcases Nat.sum_four_squares n.toNat with ⟨a, b, c, d, hsum⟩
-    refine ⟨a, b, c, d, ?_⟩
-    have hn' : (n.toNat : ℤ) = n := Int.toNat_of_nonneg hn
-    rw [← hn']
-    exact_mod_cast hsum.symm
+    grind
   · rintro ⟨a, b, c, d, rfl⟩
     nlinarith [sq_nonneg a, sq_nonneg b, sq_nonneg c, sq_nonneg d]
 
@@ -290,8 +259,7 @@ theorem int_positive_iff_four_squares_add_one (n : ℤ) :
   · intro hn
     have hn' : 0 ≤ n - 1 := by nlinarith
     rcases (int_nonneg_iff_four_squares (n - 1)).mp hn' with ⟨a, b, c, d, hsum⟩
-    refine ⟨a, b, c, d, ?_⟩
-    nlinarith
+    grind
   · rintro ⟨a, b, c, d, rfl⟩
     nlinarith [sq_nonneg a, sq_nonneg b, sq_nonneg c, sq_nonneg d]
 

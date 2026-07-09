@@ -376,8 +376,7 @@ lemma QuantumGraph.zero_le_degree_le_norm_one_sq_of_gns
       Complex.zero_le_real, inv_nonneg, pow_two_nonneg]
   rw [← ge_iff_le, ← Complex.ofReal_pow]
   calc ((‖(1 : A)‖ ^ 2 : ℝ) : ℂ) = ((‖(1 : A)‖ ^ 2) ^ 2 / ‖(1 : A)‖ ^ 2 : ℝ) := by
-        rw [pow_two, pow_two, mul_div_assoc, div_self, mul_one]
-        norm_num
+        grind
     _ = ((‖(1 : A)‖ ^ 4 / ‖(1 : A)‖ ^ 2 : ℝ) : ℂ) := by simp [← pow_mul]
     _ ≥ (⟪1, f 1⟫_ℂ / (‖(1 : A)‖ ^ 2 : ℝ) : ℂ) := by
           rw [QuantumSet.innerOne_map_one_isReal_ofReal h.isReal, ← Complex.ofReal_div, ge_iff_le,
@@ -461,8 +460,7 @@ theorem QuantumGraph.toSubset_isRegular_iff
   nth_rw 3 [eq_comm]
   nth_rw 4 [eq_comm]
   simp_rw [← AlgEquiv.symm_apply_eq, map_smul, map_one]
-  nth_rw 1 [eq_comm]
-  nth_rw 2 [eq_comm]
+  grind
 
 lemma QuantumGraph.zero_le_degree_le_norm_one_sq
   {A : Type*} [starAlgebra A] [QuantumSet A] [Nontrivial A]

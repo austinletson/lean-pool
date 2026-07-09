@@ -158,8 +158,7 @@ lemma proj_compatible (n : ℕ) {Y : Type*} [TopologicalSpace Y]
     let q : ∂𝔻 n := ⟨ (2 / (2 - y)) • x, by
       simp only [mem_sphere_iff_norm, sub_zero, norm_smul, norm_div, RCLike.norm_ofNat,
         Real.norm_eq_abs]
-      rw [this, abs_of_pos (by linarith), div_mul_eq_mul_div, div_eq_iff (by linarith)]
-      rw [mul_sub, mul_one, ← mul_comm_div, div_self (by norm_num), one_mul, one_mul] ⟩
+      grind ⟩
     conv in midProj n _ => equals diskBoundaryIncl n q =>
       unfold diskBoundaryIncl midProj midProjToFun
       simp only [Fin.isValue, ContinuousMap.coe_mk]
@@ -169,12 +168,8 @@ lemma proj_compatible (n : ℕ) {Y : Type*} [TopologicalSpace Y]
       dsimp only [Int.ofNat_eq_natCast, ContinuousMap.prod_eval, ContinuousMap.coe_mk]
       conv => rhs; change (q, ⟨0, by norm_num, by norm_num⟩)
       congr 2
-      · congr 2
-        rw [this, div_eq_div_iff (by linarith) (by linarith)]
-        rw [one_mul, mul_sub, mul_one, ← mul_comm_div, div_self (by norm_num), one_mul]
-      · rw [this, ← eq_sub_iff_add_eq, zero_sub, div_eq_iff (by linarith), mul_sub, mul_one]
-        rw [mul_div, mul_div_right_comm, neg_div_self (by norm_num), ← neg_eq_neg_one_mul]
-        rw [sub_neg_eq_add, add_comm]; rfl
+      · grind
+      · grind
     change (f ∘ diskBoundaryIncl n) q = (H ∘ (·, 0)) q
     rw [hf]
 
@@ -234,8 +229,7 @@ lemma homotopyExtension_wall_commutes (n : ℕ) {Y : Type*} [TopologicalSpace Y]
   have hq : ⟨q, ⟨y, hy⟩⟩ ∈ closedCover n 1 := by
     change ‖x‖ ≥ 1 - y / 2
     rw [mem_sphere_zero_iff_norm.mp hx]
-    obtain ⟨_, _⟩ := hy
-    linarith
+    grind
   conv_rhs => equals (proj n f H 1) ⟨⟨q, ⟨y, hy⟩⟩, hq⟩ => apply ContinuousMap.liftCoverClosed_coe'
   change H _ = (H.comp (rimProj n)) ⟨(q, ⟨y, hy⟩), hq⟩
   rw [ContinuousMap.comp_apply]

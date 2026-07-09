@@ -78,43 +78,12 @@ theorem sep_empty_iff {A : ZFSet} {P : ZFSet → Prop} : A.sep P = ∅ ↔ (A = 
 theorem insert_prod {A B x : ZFSet} : (insert x A).prod B = A.prod B ∪ ({x} : ZFSet).prod B := by
   ext1 z
   simp only [mem_prod, mem_insert_iff, exists_eq_or_imp, mem_union, mem_singleton, exists_eq_left]
-  constructor
-  · rintro (⟨b, bB, rfl⟩ | ⟨a, aA, b, bB, rfl⟩)
-    · simp only [pair_inj, exists_eq_right_right', true_and, exists_eq_right']
-      right
-      exact bB
-    · simp only [pair_inj, exists_eq_right_right']
-      left
-      exact ⟨aA, bB⟩
-  · rintro (⟨a, aA, b, bB, rfl⟩ | ⟨b, bB, rfl⟩)
-    · simp only [pair_inj, exists_eq_right_right']
-      right
-      exact ⟨aA, bB⟩
-    · simp only [pair_inj, true_and, exists_eq_right', exists_eq_right_right']
-      left
-      exact bB
+  grind
 
 theorem prod_insert {A B x : ZFSet} : A.prod (insert x B) = A.prod B ∪ A.prod {x} := by
   ext1 z
   simp only [mem_prod, mem_insert_iff, exists_eq_or_imp, mem_union, mem_singleton, exists_eq_left]
-  constructor
-  · rintro ⟨a, aA, rfl | ⟨b, bB, rfl⟩⟩
-    · simp only [pair_inj, exists_eq_right_right', and_true, exists_eq_right']
-      right
-      exact aA
-    · simp only [pair_inj, exists_eq_right_right', existsAndEq, true_and]
-      left
-      exact ⟨aA, bB⟩
-  · rintro (⟨a, aA, b, bB, rfl⟩ | ⟨a, aA, rfl⟩)
-    · simp only [pair_inj, exists_eq_right_right']
-      exists a, aA
-      rw [eq_self, and_true, true_and]
-      right
-      exact bB
-    · simp only [pair_inj, and_true, exists_eq_right_right']
-      exists a, aA
-      left
-      rfl
+  grind
 
 lemma prod_nonempty {x y : ZFSet} : x ≠ ∅ → y ≠ ∅ → ZFSet.prod x y ≠ ∅ := by
   classical
@@ -199,8 +168,7 @@ theorem epsilon_mem {y : ZFSet} (hy : y ≠ ∅) : ε y ∈ y := by
 theorem insert_mem {x y : ZFSet} (h : x ∈ y) : insert x y = y := by
   ext1
   rw [mem_insert_iff, or_iff_right_iff_imp]
-  rintro rfl
-  trivial
+  grind
 
 theorem eq_of_subset_subset {A B : ZFSet} (hAB : A ⊆ B) (hBA : B ⊆ A) : A = B := by
   ext1 x

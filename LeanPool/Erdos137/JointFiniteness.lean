@@ -157,13 +157,7 @@ def BlockRadLB : Prop :=
 `2/3` and `(3-1)/3` agree, and the guard `3 ≤ k` matches `g ≤ k`). -/
 lemma blockRadLB_iff : BlockRadLB ↔ BlockRadLBg 3 := by
   unfold BlockRadLB BlockRadLBg
-  constructor
-  · intro h k n hk hn
-    have := h k n hk hn
-    rwa [show (((3 : ℕ) : ℝ) - 1) / ((3 : ℕ) : ℝ) = (2 : ℝ) / 3 by norm_num]
-  · intro h k n hk hn
-    have := h k n hk hn
-    rwa [show (((3 : ℕ) : ℝ) - 1) / ((3 : ℕ) : ℝ) = (2 : ℝ) / 3 by norm_num] at this
+  grind
 
 /-- **Headline.** Under the block radical lower bound `BlockRadLB` (the genuine abc input, the
 ONLY hypothesis), for `k ≥ 3` and `n > k^6` the product `F k n` is **not powerful**. The overlap

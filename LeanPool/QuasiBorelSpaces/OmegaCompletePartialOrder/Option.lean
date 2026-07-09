@@ -101,8 +101,7 @@ lemma ωScottContinuous_elim
         simp only [hfx, Option.elim_some, hgx]
         refine hh.monotone (⟨?_, ?_⟩ : (x, z) ≤ (y, w))
         · simp only [hxy]
-        · simp only [hfx, hgx, Option.some_le_some] at this
-          simp only [this]
+        · grind
   · simp only [hf.map_ωSup, ωSup]
     let c' := c.map ⟨f, hf.monotone⟩
     change (Option.map ωSup (Chain.Option.distrib c')).elim ⊥ (h (ωSup c)) = _

@@ -32,14 +32,12 @@ abbrev Inconsistent (𝓢 : S) (Φ : FormulaFinset α) : Prop := ¬(Consistent �
 
 omit [DecidableEq α] in
 lemma iff_theory_consistent_formulae_consistent {Φ : FormulaFinset α} :
-    FormulaSet.Consistent 𝓢 Φ ↔ FormulaFinset.Consistent 𝓢 Φ := by classical
-  simp [Consistent, FormulaSet.Consistent]
+    FormulaSet.Consistent 𝓢 Φ ↔ FormulaFinset.Consistent 𝓢 Φ := by grind
 
 omit [DecidableEq α] in
 lemma iff_inconsistent_inconsistent {Φ : FormulaFinset α} :
     FormulaSet.Inconsistent 𝓢 Φ ↔ FormulaFinset.Inconsistent 𝓢 Φ := by
-  classical
-  simp [Inconsistent, FormulaSet.Inconsistent]
+  grind
 
 section «lp_section_1»
 
@@ -101,8 +99,7 @@ lemma intro_triunion_consistent
   : FormulaFinset.Consistent 𝓢 (P₁ ∪ P₂ ∪ P₃) := by
   rw [←iff_theory_consistent_formulae_consistent];
   convert FormulaSet.intro_triunion_consistent h;
-  ext;
-  simp only [Finset.coe_union, Set.mem_union, Finset.mem_coe, or_assoc]
+  grind
 
 end «lp_section_1»
 
@@ -134,8 +131,7 @@ lemma next_consistent [Entailment.Classical 𝓢]
     have h₂ : ↑Φ *⊢[𝓢]! ∼-φ :=
       @FormulaFinset.neg_provable_iff_insert_not_consistent α _ (𝓢 := 𝓢) _ _ (Φ := Φ)
         (-φ) |>.mp <| by
-      unfold FormulaFinset.Inconsistent;
-      simpa using hC;
+      grind
     have : ↑Φ *⊢[𝓢]! ⊥ := neg_complement_derive_bot h₁ h₂;
     contradiction;
 
@@ -167,12 +163,7 @@ lemma either {l : List (Formula α)} (hp : φ ∈ l) : φ ∈ Φ[l] ∨ -φ ∈ 
   | cons ψ qs ih =>
     simp only [List.mem_cons] at hp;
     simp only [enum, next];
-    rcases hp with (rfl | hp);
-    · split <;> simp [Finset.mem_insert];
-    · split <;> {
-        simp only [Finset.mem_insert];
-        rcases (ih hp) with (_ | _) <;> tauto;
-      }
+    grind
 
 lemma subset {l : List (Formula α)} {φ : Formula α} (h : φ ∈ Φ[l])
   : φ ∈ Φ ∨ φ ∈ l ∨ (∃ ψ ∈ l, -ψ = φ)  := by
@@ -182,10 +173,7 @@ lemma subset {l : List (Formula α)} {φ : Formula α} (h : φ ∈ Φ[l])
     simp_all;
   | cons ψ qs ih =>
     simp_all only [enum, next, List.mem_cons, exists_eq_or_imp];
-    split at h <;>
-    · rcases Finset.mem_insert.mp h with (rfl | h)
-      · tauto;
-      · rcases ih h <;> tauto;
+    grind
 
 end existsConsistentComplementaryClosed
 
@@ -205,10 +193,7 @@ lemma existsConsistentComplementaryClosed
     rcases subset hp with (h | h | ⟨ψ, hq₁, hq₂⟩);
     · replace h := h_sub h;
       simp only [complementary, Finset.mem_union, Finset.mem_image] at h;
-      rcases h with (_ | ⟨a, b, rfl⟩);
-      · tauto;
-      · right;
-        use a;
+      grind
     · left;
       exact Finset.mem_toList.mp h;
     · right;
@@ -255,9 +240,7 @@ lemma mem_compl_of_not_mem (hs : ψ ∈ Ψ) : ψ ∉ X → -ψ ∈ X := by
 lemma mem_of_not_mem_compl (hs : ψ ∈ Ψ) : -ψ ∉ X → ψ ∈ X := Not.imp_symm (mem_compl_of_not_mem hs)
 
 lemma equality_def : X₁ = X₂ ↔ X₁.1 = X₂.1 := by
-  constructor;
-  · intro h; cases h; rfl;
-  · intro h; cases X₁; cases X₂; simp_all;
+  grind
 
 variable [Entailment.Classical 𝓢]
 
@@ -354,8 +337,7 @@ instance : Finite (ComplementClosedConsistentFinset 𝓢 Ψ) := by
     ⟨X, by simpa using X.closed.subset⟩
   have hf : Function.Injective f := by
     intro X₁ X₂ h;
-    apply equality_def.mpr;
-    simpa [f] using h;
+    grind
   exact Finite.of_injective f hf;
 
 end ComplementClosedConsistentFinset

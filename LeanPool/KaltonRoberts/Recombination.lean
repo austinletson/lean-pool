@@ -88,8 +88,7 @@ theorem approx_additive_finset_partition_lower
         have happrox := hf.2 (Finset.biUnion Finset.univ (pieces ∘ Fin.castSucc))
           (pieces (Fin.last (n + 1))) hdisjoint
         linarith [abs_le.mp happrox]
-      linarith! [ih (fun i => pieces i.castSucc) fun i j hij =>
-        hpw _ _ (by simpa [Fin.ext_iff] using hij)]
+      grind
 
 /-- If `f` is `1`-additive and `pieces : Fin n → Finset U` are pairwise disjoint
 with union `A`, then `∑ f(pieces) ≤ f(A) + (n - 1)`. -/
@@ -180,9 +179,7 @@ theorem hall_matching_from_expansion
     calc s.card = S.card := hS_card.symm
       _ ≤ (S.biUnion (fun v => edgeNeighbors edge v)).card := hexp_S
       _ = (s.biUnion (fun x => edgeNeighbors edge x.val)).card := by
-          congr 1; ext w; simp only [Finset.mem_biUnion, Finset.mem_image, hS_def]
-          exact ⟨fun ⟨_, ⟨a, ha, rfl⟩, hw⟩ => ⟨a, ha, hw⟩,
-                 fun ⟨a, ha, hw⟩ => ⟨_, ⟨a, ha, rfl⟩, hw⟩⟩
+          congr 1; grind
   rw [Finset.all_card_le_biUnion_card_iff_exists_injective] at hall_cond
   exact hall_cond
 
@@ -416,8 +413,7 @@ lemma recombination_source_target_ineq
       · erw [ Finset.sum_filter, Finset.sum_product ];
       · congr! 2;
         ext; simp [targetSet];
-        exact ⟨ fun ⟨ a, b, h ⟩ => ⟨ a, b, by split_ifs at h <;> tauto ⟩, fun ⟨ a, b, h₁, h₂ ⟩ => ⟨
-          a, b, by rw [ if_pos h₁ ]; exact h₂ ⟩ ⟩;
+        grind
       · obtain ⟨ v, e, rfl ⟩ := hcov w; exact ⟨ ⟨ v, e ⟩, Finset.mem_filter.mpr ⟨
         Finset.mem_product.mpr ⟨ Finset.mem_univ _, Finset.mem_univ _ ⟩, rfl ⟩ ⟩;
       · rintro ⟨v₁, e₁⟩ ⟨v₂, e₂⟩ h₁ h₂ hne
@@ -461,11 +457,7 @@ lemma recombination_source_target_ineq
                 ⟨v₂, hv₂⟩ := by
           rw [← hmatch₁, ← hmatch₂, h₁_edge, h₂_edge]
         have hsource := perItemMatch_injective edge C threshold hexp hfreq i h_eq
-        have hv : v₁ = v₂ := congrArg Subtype.val hsource
-        subst v₂
-        have he : e₁ = e₂ := by
-          simpa using hlabel₁.symm.trans hlabel₂
-        exact hne (by ext <;> simp [he])
+        grind
     refine le_trans ( Finset.sum_le_sum fun w _ => h_target_sum_upper w ) ?_;
     simp +decide only [
       sum_add_distrib,

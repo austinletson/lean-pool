@@ -73,10 +73,7 @@ lemma sum_W_eq_S1 (n : ℕ) (hn : n ≥ 1) (W : ZMod (q n) → ℝ)
     · intro x hx; rw [ Nat.mod_eq_of_lt ]
       · simp_all only [ge_iff_le]
       exact lt_of_le_of_lt ( Finset.mem_Icc.mp hx |>.2 ) ( q_bound n hn )
-    · intro a ha b hb hab
-      rw [ ZMod.natCast_eq_natCast_iff ]
-      simp_all only [ge_iff_le]
-      exact hab
+    · grind
     · intro b hb
       refine ⟨ b, hb, Nat.mod_eq_of_lt ?_ ⟩
       exact lt_of_le_of_lt ( Finset.mem_Icc.mp hb |>.2 ) ( q_bound n hn )
@@ -141,8 +138,7 @@ lemma plancherel_theorem_custom (n : ℕ) (f g : ZMod (q n) → ℂ) :
               Int.cast_sub, ZMod.intCast_cast, ZMod.cast_id', id_eq, Int.cast_neg, Int.cast_mul,
               Int.cast_natCast, CharP.cast_eq_zero, mul_zero, neg_zero]
             exact hxy <| sub_eq_zero.mp hk
-          · exact Finset.prod_ne_zero_iff.mpr fun p hp =>
-              Nat.Prime.ne_zero <| Finset.mem_filter.mp hp |>.2.2
+          · grind
         have hz_pow : ∑ h ∈ Finset.range (q n), z ^ h = 0 := by
           rw [geom_sum_eq] <;> norm_num [hz]
           rw [← Complex.exp_nat_mul, mul_comm, Complex.exp_eq_one_iff.mpr ⟨-(x.val - y.val), by
@@ -212,8 +208,7 @@ lemma plancherel_hit_expansion (n : ℕ) (hn : n ≥ 1) (W : ZMod (q n) → ℝ)
     unfold sum2; norm_num [Finset.sum_mul _ _ _]; ring_nf
     convert sum_W_eq_S1 n hn (fun x => W x * ∑ i, g n i x) _ using 1
     · norm_cast
-    · intro x a
-      simp_all only [ge_iff_le, not_false_eq_true, zero_mul]
+    · grind
   · simp +decide only [wHat, one_div, neg_mul, Nat.cast_mul, ZMod.natCast_val,
     Finset.mul_sum _ _ _, gHat, map_sum, map_mul, map_inv₀, map_natCast, Complex.conj_ofReal,
     Finset.sum_mul]
@@ -279,8 +274,7 @@ private lemma dirac_comb_nonzero_sum_simplified (n : ℕ) (i : Fin (w n)) (k : F
       have h_prime' := Finset.mem_filter.mp h_in_P
       exact Finset.dvd_prod_of_mem _ (Finset.mem_filter.mpr ⟨
         Finset.mem_range.mpr (by
-          have h_range := Finset.mem_range.mp h_prime'.1
-          aesop),
+          grind),
         by
           exact ⟨h_prime'.2.1, h_prime'.2.2⟩⟩)
     · have h_in_P := p_mem_P_n n i
@@ -308,32 +302,15 @@ private lemma dirac_comb_nonzero_sum_final (n : ℕ) (i : Fin (w n)) (k : Fin (p
           x ≡ krafftResidue n i [MOD p n i] ∨ x ≡ p n i - krafftResidue n i [MOD p n i] := by
           simp +decide [← ZMod.natCast_eq_natCast_iff, Nat.cast_sub
             (show krafftResidue n i ≤ p n i from Nat.div_le_of_le_mul <| by
-              linarith [show p n i ≥ 5 from by
-                have h_prime : p n i ∈ primeWindow n := by
-                  exact Finset.mem_sort ( α := ℕ ) ( · ≤ · ) |>.1 ( List.get_mem _ _ )
-                exact (Finset.mem_filter.mp h_prime).right.left ] ) ]
+              grind ) ]
         simp_all +decide only [Finset.mem_range, Nat.ModEq, Nat.mod_eq_of_lt]
         rw [ Nat.mod_eq_of_lt ]
         exact Nat.div_lt_of_lt_mul <| by
-          linarith [ show p n i ≥ 5 from by
-            have h_prime : p n i ∈ primeWindow n :=
-              Finset.mem_sort ( α := ℕ ) ( · ≤ · ) |>.1 ( List.get_mem _ _ )
-            exact Finset.mem_filter.mp h_prime |>.2.1 ]
+          grind
       have h_sub : {krafftResidue n i, (p n i - krafftResidue n i) % p n i} ⊆
           Finset.range (p n i) := ?_
       · rw [← Finset.sum_subset h_sub]
-        · refine Finset.sum_congr rfl fun x hx => ?_
-          simp +zetaDelta only [Finset.mem_range, Finset.mem_insert, Finset.mem_singleton, neg_mul,
-            ite_mul, one_mul, zero_mul, ite_eq_left_iff, not_or, and_imp] at *
-          exact fun h₁ h₂ => False.elim <| h₁ <| by
-            specialize h_sum_final x (by
-              exact hx.elim
-                (fun hx => hx.symm ▸ Nat.div_lt_of_lt_mul (by
-                  linarith [Nat.Prime.two_le (show Nat.Prime (p n i) from by grind)]))
-                fun hx => hx.symm ▸ Nat.mod_lt _ (Nat.Prime.pos (show Nat.Prime (p n i) from by
-                  have h_in_P := p_mem_P_n n i
-                  exact p_prime n i)))
-            simp_all [or_self, iff_true]
+        · grind
         · grind
       · simp +decide only [Finset.insert_subset_iff, Finset.mem_range, Finset.singleton_subset_iff]
         exact ⟨Nat.div_lt_of_lt_mul <| by
@@ -348,9 +325,7 @@ private lemma dirac_comb_nonzero_sum_final (n : ℕ) (i : Fin (w n)) (k : Fin (p
       · rw [ Nat.cast_sub ( show krafftResidue n i ≤ p n i from _ ) ]
         · ring_nf
           have hp : p n i ≠ 0 := by
-            have h_in_P := p_mem_P_n n i
-            have h_prime := Finset.mem_filter.mp h_in_P
-            exact Nat.ne_of_gt ((p_prime n i).pos)
+            grind
           norm_num [hp]
           exact Complex.exp_eq_exp_iff_exists_int.mpr ⟨-k, by push_cast; ring⟩
         · have h_ge_5 : p n i ≥ 5 := by
@@ -358,25 +333,16 @@ private lemma dirac_comb_nonzero_sum_final (n : ℕ) (i : Fin (w n)) (k : Fin (p
             exact p_ge_5 n i
           exact Nat.div_le_of_le_mul <| by linarith [h_ge_5]
       · refine Nat.sub_lt ?_ ?_
-        · have h_in_P := p_mem_P_n n i
-          have h_prime := Finset.mem_filter.mp h_in_P
-          exact (p_prime n i).pos
+        · grind
         · have h_ge_5 : p n i ≥ 5 := by
             have h_in_P := p_mem_P_n n i
             exact p_ge_5 n i
           exact Nat.div_pos (by linarith [h_ge_5]) (by norm_num)
     · rw [ Nat.mod_eq_of_lt ]
       · unfold krafftResidue
-        have h_pi_ge_5 : 5 ≤ p n i := by
-          have h_prime_ge_5 : ∀ i : Fin (w n), 5 ≤ p n i := by
-            intro i
-            have h_in_P := p_mem_P_n n i
-            exact p_ge_5 n i
-          exact h_prime_ge_5 i
-        omega
+        grind
       · refine Nat.sub_lt ?_ ?_
-        · have h_in_P := p_mem_P_n n i
-          exact (p_prime n i).pos
+        · grind
         · have h_in_P := p_mem_P_n n i
           have h_ge_5 : 5 ≤ p n i := p_ge_5 n i
           apply Nat.div_pos
@@ -425,10 +391,8 @@ lemma dirac_comb_nonzero (n : ℕ) (i : Fin (w n)) (k : Fin (p n i)) :
         · have h_in_P := p_mem_P_n n i
           have h_prime := Finset.mem_filter.mp h_in_P
           apply Finset.dvd_prod_of_mem
-          apply Finset.mem_filter.mpr
-          exact ⟨Finset.mem_range.mpr (by aesop), h_prime.2⟩
-        · have h_in_P := p_mem_P_n n i
-          exact p_ne_zero n i
+          grind
+        · grind
       · refine lt_of_lt_of_le (mul_lt_mul_of_pos_right k.is_lt (Nat.div_pos ?_ ?_)) ?_
         · apply Nat.le_of_dvd
           · exact Finset.prod_pos fun p hp => Nat.Prime.pos (Finset.mem_filter.mp hp).2.2
@@ -444,10 +408,8 @@ lemma dirac_comb_nonzero (n : ℕ) (i : Fin (w n)) (k : Fin (p n i)) :
       · have h_in_P := p_mem_P_n n i
         have h_prime := Finset.mem_filter.mp h_in_P
         apply Finset.dvd_prod_of_mem
-        apply Finset.mem_filter.mpr
-        exact ⟨Finset.mem_range.mpr (by aesop), h_prime.2⟩
-    · have h_in_P := p_mem_P_n n i
-      exact (p_prime n i).pos
+        grind
+    · grind
     · exact Nat.mul_div_le _ _
 
 /--
@@ -481,9 +443,7 @@ private lemma dirac_comb_zero_geo_series (n : ℕ) (i : Fin (w n)) (h : ZMod (q 
         have h_in_P := p_mem_P_n n i
         have h_div : p n i ∣ q n := by
           apply Finset.dvd_prod_of_mem
-          exact Finset.mem_filter.mpr ⟨Finset.mem_range.mpr <| by
-            linarith [p_lt_range n i],
-            Finset.mem_filter.mp h_in_P |>.2⟩
+          grind
         rwa [Nat.div_mul_cancel h_div]
       use ⟨k % p n i, by
         have h_in_P := p_mem_P_n n i
@@ -502,18 +462,13 @@ private lemma dirac_comb_zero_geo_series (n : ℕ) (i : Fin (w n)) (h : ZMod (q 
         · have h_in_P := p_mem_P_n n i
           have h_prime := Finset.mem_filter.mp h_in_P
           apply Finset.dvd_prod_of_mem
-          apply Finset.mem_filter.mpr
-          constructor
-          · apply Finset.mem_range.mpr
-            linarith [Finset.mem_range.mp h_prime.1, show p n i ≤ 6 * n + 1 from by grind]
-          · exact h_prime.2
+          grind
     rw [ Ne.eq_def, Complex.exp_eq_one_iff ]
     field_simp
     exact fun ⟨k, hk⟩ => h_not_div <| Int.natCast_dvd_natCast.mp <| ⟨-k, by
       push_cast [← @Int.cast_inj ℂ]
       have h_qn_pos : 0 < q n := by
-        apply Finset.prod_pos
-        exact fun p hp => Nat.Prime.pos <| Finset.mem_filter.mp hp |>.2.2
+        grind
       rw [neg_div', div_eq_iff <| Nat.cast_ne_zero.mpr <| by linarith [h_qn_pos]] at *
       linear_combination hk.symm⟩
   have h_geo_series : ∑ m ∈ Finset.range M,
@@ -526,11 +481,7 @@ private lemma dirac_comb_zero_geo_series (n : ℕ) (i : Fin (w n)) (h : ZMod (q 
         · have h_in_P := p_mem_P_n n i
           have h_prime := Finset.mem_filter.mp h_in_P
           apply Finset.dvd_prod_of_mem
-          apply Finset.mem_filter.mpr
-          constructor
-          · apply Finset.mem_range.mpr
-            linarith [Finset.mem_range.mp h_prime.1]
-          · exact h_prime.2
+          grind
         · have h_in_P : p n i ∈ primeWindow n := by
             exact mem_P_n_iff_exists_index n _ |>.2 ⟨i, rfl⟩
           exact p_ne_zero n i
@@ -632,8 +583,7 @@ lemma dirac_comb_zero (n : ℕ) (i : Fin (w n)) (h : ZMod (q n))
     exact Or.inl ( by rw [ Finset.sum_filter ]; congr; ext; aesop )
   · rw [Finset.sum_eq_zero]
     · norm_num
-    · intro x hx
-      exact h_factor x <| Finset.mem_range.mp <| Finset.mem_filter.mp hx |>.1
+    · grind
 
 /--
 The Resonant Sieve Equation
@@ -657,8 +607,7 @@ private lemma resonant_sieve_split (n : ℕ) (W : ZMod (q n) → ℝ) :
         h = (((k : ℕ) * (q n / p n i) : ℕ) : ZMod (q n)) := by
     intro h hh; contrapose! hh; simp_all only [Finset.mem_range, Nat.cast_mul, ne_eq]
     convert dirac_comb_zero n i h _
-    intro k
-    simp_all only [Nat.cast_mul, ne_eq, Fin.is_lt, not_false_eq_true]
+    grind
   rw [← Finset.sum_subset (Finset.subset_univ (Finset.image
     (fun k : ℕ => (k * (q n / p n i) : ℕ) : ℕ → ZMod (q n))
     (Finset.range (p n i))))]
@@ -687,9 +636,7 @@ private lemma resonant_sieve_split (n : ℕ) (W : ZMod (q n) → ℝ) :
     exact h_ha ▸ h_hb ▸ h_eq
   · simp +zetaDelta only [ne_eq, Finset.mem_range, Nat.cast_mul, Finset.mem_univ,
     Finset.mem_image, not_exists, not_and, mul_eq_zero, map_eq_zero, forall_const] at *
-    exact fun x hx => Or.inr <| Classical.not_not.1 fun hx' => by
-      obtain ⟨k, hk₁, hk₂⟩ := h_split x hx'
-      exact hx k hk₁ <| hk₂.symm
+    grind
 
 private lemma resonant_sieve_simplify (n : ℕ) (W : ZMod (q n) → ℝ) :
     ∀ i : Fin (w n),
@@ -770,10 +717,8 @@ lemma exact_krafft_cosine (n : ℕ) (i : Fin (w n)) :
         exact ⟨h_prime.1, h_prime.2.eq_two_or_odd.resolve_left (by linarith), fun h => by
           have := Nat.dvd_of_mod_eq_zero h
           rw [h_prime.2.dvd_iff_eq] at this <;> linarith⟩
-      generalize_proofs at *
-      exact if h : p n i % 6 = 1 then Or.inl ⟨h_prime.1, h⟩ else Or.inr ⟨h_prime.1, by omega⟩
-    generalize_proofs at *
-    omega
+      grind
+    grind
   obtain h | h := h_prime_cases i <;> rw [h] <;> ring_nf <;> norm_num [sub_eq_add_neg]
   · rcases k : krafftResidue n i with (_ | k) <;> push_cast [k] <;> ring_nf <;> norm_num at *
     · have h_in_P := p_mem_P_n n i
@@ -782,10 +727,7 @@ lemma exact_krafft_cosine (n : ℕ) (i : Fin (w n)) :
     · rw [← Real.cos_sub_pi]; ring_nf
       convert Real.cos_periodic _ using 2
       nlinarith [Real.pi_pos, mul_inv_cancel₀ (by linarith : (5 : ℝ) + ↑‹ℕ› * 6 ≠ 0)]
-  · rw [← Real.cos_pi_sub]; congr
-    have h_nz : (1 + krafftResidue n i * 6 : ℝ) ≠ 0 := by
-      linarith [show (krafftResidue n i : ℝ) ≥ 0 by positivity]
-    nlinarith [Real.pi_pos, mul_inv_cancel₀ h_nz]
+  · rw [← Real.cos_pi_sub]; grind
 
 /--
 The Third Harmonic Extraction
@@ -821,8 +763,7 @@ lemma third_harmonic_extraction (n : ℕ) (hn : n ≥ 1) (W : ZMod (q n) → ℝ
     norm_num +zetaDelta at *
     have h_in_P := p_mem_P_n n i
     have := Finset.mem_filter.mp h_in_P
-    norm_num at this
-    interval_cases p n i <;> norm_num at *
+    grind
 
 
 /-- Sum of reciprocals of primes in the sieve window -/
@@ -867,8 +808,7 @@ lemma resonance_lt_mainTerm (n : ℕ) (hn : primeWindow n ≠ ∅) :
   · norm_num [ div_eq_mul_inv, Finset.mul_sum _ _ _ ]
     ring_nf!
     unfold resonanceCapacity resonanceStrength
-    norm_num [ div_eq_mul_inv, mul_comm, mul_left_comm ]
-    congr 1; ext; ring
+    grind
   · unfold mainTerm hSpec
     norm_num [ div_eq_mul_inv, mul_comm, Finset.mul_sum _ _ _ ]
 

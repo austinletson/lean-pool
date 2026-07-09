@@ -104,8 +104,7 @@ theorem prefix_comparable_of_mem {σ τ : Str} (y : B.Element)
   · exact Or.inl (cone_subset_cone.mp h)
   · exfalso
     have hmem : ρ ∈ cone ρ := mem_cone.mpr List.prefix_rfl
-    rw [← hρ, h] at hmem
-    simp at hmem
+    grind
 
 /-- **Exercise 1.13 (total elements).** Each infinite path `p` gives a *total*
 (maximal) element

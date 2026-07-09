@@ -121,35 +121,16 @@ lemma coprod {A B X Y : TopCat.{u}} {i : A ⟶ X} {j : B ⟶ Y}
     · apply Limits.Sigma.hom_ext
       intro c
       have h0 := (l c).curriedH_apply_zero
-      change Limits.Sigma.ι (fun _ ↦ X) c ≫ H ≫ PathSpace.eval₀ Y = _
-      rw [← Category.assoc, hιH, h0]
+      grind
     · apply Limits.Sigma.hom_ext
       intro c
       have h1 := (l c).curriedH_apply_one
       have hιL : Limits.Sigma.ι (fun _ ↦ X) c ≫ L = (l c).l := Limits.Sigma.ι_desc _ _
-      change Limits.Sigma.ι (fun _ ↦ X) c ≫ H ≫ PathSpace.eval₁ Y =
-        Limits.Sigma.ι (fun _ ↦ X) c ≫ L ≫ j
-      rw [← Category.assoc, hιH, h1, ← Category.assoc, hιL]
+      grind
     · apply Limits.Sigma.hom_ext
       intro c
       have hp := (l c).curriedH_prop t
-      change Limits.Sigma.ι (fun _ ↦ A) c ≫ (Limits.Sigma.map fun _ ↦ i) ≫
-          H ≫ PathSpace.evalAt Y t =
-        Limits.Sigma.ι (fun _ ↦ A) c ≫ (Limits.Sigma.map fun _ ↦ i) ≫ F
-      rw [show Limits.Sigma.ι (fun _ ↦ A) c ≫ (Limits.Sigma.map fun _ : cells ↦ i) ≫
-            H ≫ PathSpace.evalAt Y t =
-          (Limits.Sigma.ι (fun _ ↦ A) c ≫ Limits.Sigma.map fun _ ↦ i) ≫ H ≫ PathSpace.evalAt Y t
-        from (Category.assoc _ _ _).symm]
-      rw [hmap]
-      rw [show (i ≫ Limits.Sigma.ι (fun _ ↦ X) c) ≫ H ≫ PathSpace.evalAt Y t =
-          i ≫ (Limits.Sigma.ι (fun _ ↦ X) c ≫ H) ≫ PathSpace.evalAt Y t by
-        rw [Category.assoc, Category.assoc]]
-      rw [hιH]
-      rw [show Limits.Sigma.ι (fun _ ↦ A) c ≫ (Limits.Sigma.map fun _ : cells ↦ i) ≫ F =
-          (Limits.Sigma.ι (fun _ ↦ A) c ≫ Limits.Sigma.map fun _ ↦ i) ≫ F
-        from (Category.assoc _ _ _).symm]
-      rw [hmap, Category.assoc]
-      exact hp
+      grind
 
 /--
 Suppose the left square in the diagram below is a pushout square.

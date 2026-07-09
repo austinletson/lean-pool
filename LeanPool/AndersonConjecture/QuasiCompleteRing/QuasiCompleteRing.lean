@@ -280,8 +280,7 @@ lemma not_wqc_exists_maximal_zero_contraction
         rw [Submodule.mem_sSup_of_directed ⟨y, hyc⟩ hchain.directedOn] at hfr
         obtain ⟨J, hJc, hfr'⟩ := hfr
         have hmem : r ∈ Ideal.comap f J := Ideal.mem_comap.mpr hfr'
-        rw [(hcS hJc).2] at hmem
-        exact hmem)
+        grind)
     A₀ ⟨hA₀ne, hA₀zero⟩
   exact ⟨A, hAmax.1.1, hAmax.1.2, fun B hAB hcontra =>
     lt_irrefl A (lt_of_lt_of_le hAB
@@ -580,9 +579,7 @@ theorem dim1_qc_iff_wqc
         rwa [sub_sub_cancel] at this
       have hBN_eq : B N = ⨅ n, B n := le_antisymm
         (le_iInf fun n => by
-          rcases le_or_gt N n with hle | hlt
-          · exact (hstab n hle) ▸ le_refl _
-          · exact hB_anti hlt.le)
+          grind)
         (iInf_le _ N)
       have hBN_bot : B N = ⊥ := hBN_eq.trans hBinf
       refine ⟨N, fun x hx => ?_⟩

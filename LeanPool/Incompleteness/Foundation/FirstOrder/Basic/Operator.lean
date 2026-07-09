@@ -263,8 +263,7 @@ end «lp_section_2»
     constructor
     · intro h
       exact h.2 (by simp [bvar])
-    · intro h
-      exact ⟨fun _ => h, fun _ => h⟩
+    · grind
 
 namespace GoedelNumber
 
@@ -325,8 +324,7 @@ lemma val_operator {k} (o : Operator L k) (v) :
     val s e ε (o.operator v) = o.val (fun x => (v x).val s e ε) := by
   rw [Operator.operator, val_substs, val_emb, Operator.val]
   congr
-  funext x
-  exact Empty.elim x
+  grind
 
 @[simp 1100] lemma val_const (o : Const L) :
     val s e ε o.const = o.val ![] := by simp [Operator.const, val_operator, Matrix.empty_eq]

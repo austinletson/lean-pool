@@ -166,8 +166,7 @@ lemma le_three_iff_eq_zero_or_one_or_two_or_three : a ≤ 3 ↔ a = 0 ∨ a = 1 
    by rintro (rfl | rfl | rfl | rfl) <;> simp [←two_add_one_eq_three]⟩
 
 lemma two_mul_two_eq_four : 2 * 2 = (4 : M) := by
-  rw [←one_add_one_eq_two, mul_add, add_mul, mul_one, ←add_assoc,
-    one_add_one_eq_two, two_add_one_eq_three, three_add_one_eq_four]
+  grind
 
 lemma two_pow_two_eq_four : 2 ^ 2 = (4 : M) := by simp [sq, two_mul_two_eq_four]
 

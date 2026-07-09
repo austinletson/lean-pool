@@ -59,12 +59,10 @@ theorem iSup_eigenspace_orthogonal_eq_bot_of_isCompactOperator_of_isSelfAdjoint
     have hTx : T x = 0 := by
       by_contra hTx0
       have hx_ne : x ≠ 0 := by
-        intro hx0
-        exact hTx0 (by simp [hx0])
+        grind
       have hnx : 0 < ‖x‖ := norm_pos_iff.2 hx_ne
       have hntx : 0 < ‖T x‖ := norm_pos_iff.2 (by
-        intro h
-        exact hTx0 h)
+        grind)
       -- Use the approximation estimate with `ε = ‖T x‖ / (2 * ‖x‖)`.
       set ε : ℝ := ‖T x‖ / (2 * ‖x‖) with hεdef
       have hε : 0 < ε := by
@@ -112,8 +110,7 @@ theorem iSup_eigenspace_orthogonal_eq_bot_of_isCompactOperator_of_isSelfAdjoint
         have hmul : (‖T x‖ / (2 * ‖x‖)) * ‖x‖ = ‖T x‖ / 2 := by
           field_simp [hxne']
         simpa [hmul] using this
-      have hlt : ‖T x‖ / 2 < ‖T x‖ := by nlinarith [hntx]
-      exact (not_lt_of_ge hnorm' hlt)
+      grind
     -- Now `x ∈ ker t` and `x ∈ (ker t)ᗮ`, so `x = 0`.
     have hxker : x ∈ LinearMap.ker t := by
       simpa [t] using hTx
@@ -178,8 +175,7 @@ theorem exists_hilbertBasis_hasEigenvector_of_isCompactOperator_of_isSelfAdjoint
       · subst hμ
         have hv' : Orthonormal 𝕜 (b μi) := (b μi).orthonormal
         have hij' : vi ≠ vj := by
-          intro h
-          exact hij (by simp [h])
+          grind
         -- Orthonormality within one eigenspace.
         have : inner 𝕜 (b μi vi : t.eigenspace μi) (b μi vj : t.eigenspace μi) = 0 :=
           hv'.2 hij'
@@ -252,8 +248,7 @@ theorem exists_hilbertBasis_hasEigenvector_of_isCompactOperator_of_isSelfAdjoint
         -- Now package the pointwise orthogonality.
         have hx_inf : x ∈ ⨅ μ : 𝕜, (t.eigenspace μ)ᗮ := by
           refine (Submodule.mem_iInf (p := fun μ : 𝕜 => (t.eigenspace μ)ᗮ) (x := x)).2 ?_
-          intro μ
-          exact hx_each μ
+          grind
         simpa [Submodule.iInf_orthogonal] using hx_inf
       have hx0 : x = 0 := by
         have hxbot : x ∈ (⊥ : Submodule 𝕜 E) := by
@@ -287,9 +282,6 @@ theorem exists_hilbertBasis_hasEigenvector_of_isCompactOperator_of_isSelfAdjoint
       (HilbertBasis.coe_mkOfOrthogonalEqBot hv_orthonormal hv_span_orth)
   -- Conclude.
   refine (Module.End.hasEigenvector_iff.mpr ?_)
-  refine ⟨?_, ?_⟩
-  · rw [hb']
-    exact hmem
-  · simpa [hb'] using hne0
+  grind
 end
 end CompactSelfAdjoint

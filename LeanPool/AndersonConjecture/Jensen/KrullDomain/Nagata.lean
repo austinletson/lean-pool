@@ -75,10 +75,7 @@ theorem prime_of_image_prime (p : R₀) (hp : Prime p) (q : R₀)
   obtain ⟨⟨c, ⟨_, n, rfl⟩⟩, hc⟩ := IsLocalization.surj (Submonoid.powers p) z
   have key : x * p ^ n = q * c := by
     apply hinj
-    rw [map_mul, map_mul, map_pow]
-    calc algebraMap R₀ _ x * (algebraMap R₀ _ p) ^ n
-        = algebraMap R₀ _ q * (z * (algebraMap R₀ _ p) ^ n) := by rw [hz, mul_assoc]
-      _ = algebraMap R₀ _ q * algebraMap R₀ _ c := by rw [← map_pow, hc]
+    grind
   exact dvd_of_dvd_mul_prime_pow hp hpq n ⟨c, key⟩
 
 /-- Nagata's criterion: if p is prime in R and R[p⁻¹] is a UFD, then R is a UFD.

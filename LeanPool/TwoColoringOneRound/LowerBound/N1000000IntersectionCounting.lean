@@ -140,8 +140,7 @@ structure-constant formula from `N1000000StructureConstants`.
 private lemma not_mem_baseSet_of_ge_three {x : SymN} (hx : 3 ≤ x.1) : x ∉ baseSet := by
   intro hxmem
   have hmem : x = s0 ∨ x = s1 ∨ x = s2 := by simpa [baseSet] using hxmem
-  have hxlt : x.1 < 3 := by rcases hmem with rfl | rfl | rfl <;> decide
-  exact (Nat.not_lt_of_ge hx hxlt).elim
+  grind
 
 private lemma sym_mem_baseSet_of_lt_three {x : SymN} (hx : x.1 < 3) : x ∈ baseSet := by
   have hx3 : x.1 = 0 ∨ x.1 = 1 ∨ x.1 = 2 := by omega
@@ -193,8 +192,7 @@ private lemma u_coord_mem_usedSet {k : DirIdx} (u : BaseOrbit k) (j : Fin 3) :
       simpa using (base_eq_of_colMatch (k := k) (u := u) (j := j) (i := i) (h := hi))
     have hmem : baseVertex.1 i ∈ baseSet := by
       fin_cases i <;> simp [baseVertex, baseTuple, baseSet, s0, s1, s2]
-    have : u.1.1 j ∈ baseSet := by simpa [hEq] using hmem
-    exact Finset.mem_union_left _ this
+    grind
 
 private lemma availFor_ne_u_coord {k : DirIdx} (u : BaseOrbit k) (x : AvailFor u) (j : Fin 3) :
     x.1 ≠ u.1.1 j := by
@@ -279,8 +277,7 @@ private lemma consistent_of_inter {k : DirIdx} (u : BaseOrbit k) (a d : DirIdx) 
               have hwge : 3 ≤ (w.1.1 j).1 := by
                 exact baseOrbit_freeCoord_outside (u := ⟨w.1, hbase⟩) ⟨j, hcol⟩
               have hlt : (baseVertex.1 i).1 < 3 := by fin_cases i <;> decide
-              have : (w.1.1 j).1 < 3 := by simpa [hvbase] using hlt
-              exact (Nat.not_lt_of_ge hwge this).elim
+              grind
   -- Combine the three coordinate facts into `consistent = true`.
   simpa [consistent] using
     (⟨⟨hAt ⟨0, by decide⟩, hAt ⟨1, by decide⟩⟩, hAt ⟨2, by decide⟩⟩ :
@@ -293,8 +290,7 @@ abbrev AvailFrom3 := N1000000OrbitCounting.AvailFrom3
 
 private lemma availFor_ge_three {k : DirIdx} (u : BaseOrbit k) (x : AvailFor u) : 3 ≤ x.1.1 := by
   have hx : x.1 ∉ baseSet := by
-    intro hxMem
-    exact x.2 (by simp [hxMem])
+    grind
   exact ge_three_of_not_mem_baseSet (x := x.1) hx
 
 private theorem rowMatch_maskAt_inj (d : DirIdx) {i₁ i₂ j : Fin 3} :
@@ -325,8 +321,7 @@ noncomputable def encodeInter {k : DirIdx} (u : BaseOrbit k) (a d : DirIdx) (w :
   · intro j₁ j₂ hEq
     apply Subtype.ext
     -- Equality in `AvailFor u` implies equality in `SymN`.
-    have hVal : w.1.1 j₁.1 = w.1.1 j₂.1 := by simpa using congrArg Subtype.val hEq
-    exact w.1.2 hVal
+    grind
 
 /-- Imported auxiliary declaration for the 2-coloring one-round formalization. -/
 noncomputable def gOfEmbeddingVal {k : DirIdx} (u : BaseOrbit k) (a d : DirIdx)
@@ -359,9 +354,7 @@ theorem gOfEmbeddingVal_val_of_rowMatch_some {k : DirIdx} (u : BaseOrbit k) (a d
   have hchoose : Classical.choose ((Option.ne_none_iff_exists').1 hne) = l :=
     Option.some_injective _ (hspec.symm.trans hrow)
   dsimp [gOfEmbeddingVal]
-  rw [dif_neg hne]
-  -- Only the first component matters; avoid simplifying proof fields.
-  simp [hchoose]
+  grind
 
 theorem gOfEmbeddingVal_val_of_rowMatch_none {k : DirIdx} (u : BaseOrbit k) (a d : DirIdx)
     (hcons : consistent (maskAt k) (maskAt a) (maskAt d) = true)
@@ -478,19 +471,7 @@ noncomputable def decodeInter {k : DirIdx} (u : BaseOrbit k) (a d : DirIdx)
                 eq_of_dirMask_rowMatch (u := baseVertex) (v := u.1) (d := k)
                   (h := u.2) (i := ib) (j := l) hk
               simp [hv0, hubase]
-        by_cases hj : j = l
-        · subst hj
-          simp [hvEq]
-        · have hne : v.1 i ≠ u.1.1 j := by
-            intro hEq
-            have : u.1.1 l = u.1.1 j := by
-              calc
-                u.1.1 l = v.1 i := by simp [hvEq]
-                _ = u.1.1 j := hEq
-            have : l = j := u.1.2 this
-            exact hj this.symm
-          have hj' : l ≠ j := by simpa [eq_comm] using hj
-          simp [hj', hne]
+        grind
     | none =>
         have hneAll : ∀ j' : Fin 3, v.1 i ≠ u.1.1 j' := by
           intro j'
@@ -521,8 +502,7 @@ noncomputable def decodeInter {k : DirIdx} (u : BaseOrbit k) (a d : DirIdx)
                 ne_of_dirMask_rowMatch_none (u := baseVertex) (v := u.1) (d := k)
                   (h := u.2) (i := ib) hkNone j'
               simpa [hv0, eq_comm] using hne
-        have : decide (v.1 i = u.1.1 j) = false := (decide_eq_false_iff_not).2 (hneAll j)
-        simp [this]
+        grind
   have hvRel : dirMask v u.1 = maskAt d := by
     classical
     apply Nat.eq_of_testBit_eq
@@ -531,11 +511,9 @@ noncomputable def decodeInter {k : DirIdx} (u : BaseOrbit k) (a d : DirIdx)
     · let iNat : Nat := t / 3
       let jNat : Nat := t % 3
       have hi : iNat < 3 := by
-        have : t < 3 * 3 := by simpa using ht
-        simpa [iNat] using (Nat.div_lt_of_lt_mul this)
+        grind
       have hj : jNat < 3 := by
-        have : 0 < 3 := by decide
-        simpa [jNat] using Nat.mod_lt t this
+        grind
       let i : Fin 3 := ⟨iNat, hi⟩
       let j : Fin 3 := ⟨jNat, hj⟩
       have htDecomp : i.1 * 3 + j.1 = t := by
@@ -547,16 +525,7 @@ noncomputable def decodeInter {k : DirIdx} (u : BaseOrbit k) (a d : DirIdx)
           (maskAt d).testBit (i.1 * 3 + j.1) = decide (rowMatch (maskAt d) i = some j) := by
         simpa using (maskAt_testBit_eq_decide_rowMatch (d := d) (i := i) (j := j))
       -- Prove `decide (v_i = u_j)` matches `rowMatch`.
-      have hDec :
-          decide (v.1 i = u.1.1 j) = decide (rowMatch (maskAt d) i = some j) :=
-        hDecide i j
-      calc
-        Nat.testBit (dirMask v u.1) t
-            = Nat.testBit (dirMask v u.1) (i.1 * 3 + j.1) := by simp [htDecomp]
-        _ = decide (v.1 i = u.1.1 j) := by simp [hL]
-        _ = decide (rowMatch (maskAt d) i = some j) := hDec
-        _ = Nat.testBit (maskAt d) (i.1 * 3 + j.1) := by simp [hR]
-        _ = Nat.testBit (maskAt d) t := by simp [htDecomp]
+      grind
     · -- `t ≥ 9`: both sides are `< 2^9`.
       have h9t : 9 ≤ t := Nat.le_of_not_gt ht
       have hPow : (2 : Nat) ^ 9 ≤ (2 : Nat) ^ t :=

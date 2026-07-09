@@ -261,9 +261,7 @@ theorem ofGameForm_tombstoneFree (g : GameForm) : TombstoneFree (ofGameForm g) :
   | mk g ih =>
     unfold ofGameForm
     apply ofSetsWithTombs_ff_TombstoneFree
-    intro p gp ⟨h3, h4⟩
-    rw [<-h4]
-    exact ih p h3 (Subtype.coe_prop h3)
+    grind
 
 @[simp]
 theorem not_hasTombstone_ofGameForm (g : GameForm) (p : Player)
@@ -389,10 +387,7 @@ private theorem add_eq' (x y : AugmentedForm) : x + y =
       (fun p => (· + y) '' moves p x ∪ (x + ·) '' moves p y)
       (fun p => (x.hasTombstone p ∧ EndLike p y) ∨ (y.hasTombstone p ∧ EndLike p x)) := by
   rw [add_eq]
-  congr 1
-  all_goals
-  · ext p
-    cases p <;> rfl
+  grind
 
 private theorem hasTombstone_add' {x y : AugmentedForm} {p : Player} :
     (x + y).hasTombstone p ↔
@@ -497,14 +492,12 @@ theorem ofGameForm_add (g h : GameForm) : ofGameForm (g + h) = ofGameForm g + of
       <;> rw [<-h4]
     · use (x + h)
       constructor
-      · apply Or.inl
-        use x
+      · grind
       · rw [<-h6]
         exact ofGameForm_add x h
     · use (g + x)
       constructor
-      · apply Or.inr
-        use x
+      · grind
       · rw [<-h6]
         exact ofGameForm_add g x
 termination_by (g, h)

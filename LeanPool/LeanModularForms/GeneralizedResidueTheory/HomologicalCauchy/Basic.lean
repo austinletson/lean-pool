@@ -75,13 +75,10 @@ private lemma partition_filter_card_lt_left (P : Finset ℝ) {a' b' c : ℝ}
       < (P.filter (fun t => a' < t ∧ t < b')).card := by
   apply Finset.card_lt_card
   constructor
-  · intro t ht
-    simp only [Finset.mem_filter] at ht ⊢
-    exact ⟨ht.1, ht.2.1, lt_trans ht.2.2 hcb⟩
+  · grind
   · intro hsub
     have hcmem := hsub (Finset.mem_filter.mpr ⟨hc_part, hac, hcb⟩)
-    simp only [Finset.mem_filter] at hcmem
-    exact lt_irrefl c hcmem.2.2
+    grind
 
 private lemma partition_filter_card_lt_right (P : Finset ℝ) {a' b' c : ℝ}
     (hc_part : c ∈ P) (hac : a' < c) (hcb : c < b') :
@@ -89,13 +86,10 @@ private lemma partition_filter_card_lt_right (P : Finset ℝ) {a' b' c : ℝ}
       < (P.filter (fun t => a' < t ∧ t < b')).card := by
   apply Finset.card_lt_card
   constructor
-  · intro t ht
-    simp only [Finset.mem_filter] at ht ⊢
-    exact ⟨ht.1, lt_trans hac ht.2.1, ht.2.2⟩
+  · grind
   · intro hsub
     have hcmem := hsub (Finset.mem_filter.mpr ⟨hc_part, hac, hcb⟩)
-    simp only [Finset.mem_filter] at hcmem
-    exact lt_irrefl c hcmem.2.1
+    grind
 
 private lemma ftc_inductive_step {F : ℂ → ℂ} {f : ℂ → ℂ}
     (γ : PiecewiseC1Curve) (m : ℕ) (a' b' c : ℝ)

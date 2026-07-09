@@ -152,8 +152,7 @@ theorem continuous_id : continuous (@id (Set α)) := by
     · rw [eq_toSet_fromList]
       constructor
   case mpr =>
-    rintro ⟨y, yS, xy⟩
-    exact yS xy
+    grind
 
 /-- A constant map is continuous. -/
 theorem continuous_const (T : Set α) : continuous (fun (_ : Set α) => T) := by

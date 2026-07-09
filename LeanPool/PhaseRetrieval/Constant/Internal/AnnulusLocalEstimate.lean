@@ -45,11 +45,9 @@ private lemma freqBlock_pairwiseDisjoint :
   intro n hn₁ hn₂
   rcases Nat.lt_or_gt_of_ne hne with h | h
   · have : (ℓ₁ + 1) ^ 2 ≤ ℓ₂ ^ 2 := by nlinarith
-    have := Nat.pos_of_ne_zero (show (ℓ₁ + 1) ^ 2 ≠ 0 by positivity)
-    omega
+    grind
   · have : (ℓ₂ + 1) ^ 2 ≤ ℓ₁ ^ 2 := by nlinarith
-    have := Nat.pos_of_ne_zero (show (ℓ₂ + 1) ^ 2 ≠ 0 by positivity)
-    omega
+    grind
 
 /-- Collapse inner sum over blocks to membership in biUnion. -/
 private lemma sum_ite_mem_biUnion (S : Finset ℕ) (n : ℕ) (c : ℂ) :
@@ -75,8 +73,7 @@ private lemma sum_odd_sq (a b : ℕ) (h : a ≤ b) :
   | succ n ih =>
     by_cases ha' : a ≤ n
     · rw [Finset.sum_Icc_succ_top (by omega)]
-      have := ih ha'
-      nlinarith [show (n + 2) ^ 2 = (n + 1) ^ 2 + 2 * (n + 1) + 1 from by ring]
+      grind
     · have : a = n + 1 := by omega
       subst this; simp; ring
 
@@ -146,11 +143,7 @@ private lemma localPoly_eq_fourierSum {D : ℕ} (_hD : 1 ≤ D) (a : Fin D → �
       a k * (↑r : ℂ) ^ (k.val + 1) else 0) = localFourierCoeff a j r (k.val + 1)
     from fun k => by
       unfold localFourierCoeff
-      split_ifs with h1 h2 h2
-      · congr 1
-      · exact absurd ⟨h1, by omega, by omega⟩ h2
-      · exact absurd h2.1 h1
-      · rfl]
+      grind]
   -- Step 2: Reindex from Fin D to activeFreqSet via Icc 1 D
   set f : ℕ → ℂ := fun n =>
     localFourierCoeff a j r n * fourier (n : ℤ) t
@@ -256,10 +249,7 @@ private lemma annulus_low_freq {D : ℕ} (hD : 1 ≤ D) (a : Fin D → ℂ)
       show P = fun _ => 0
       conv_lhs => rw [show P = fun t =>
         localPoly a 5 j (↑r * (fourier 1 t : ℂ)) from rfl, hP_eq]
-      ext t
-      show ∑ n ∈ activeFreqSet D j, _ = 0
-      rw [show activeFreqSet D j = E from rfl, hE_empty]
-      simp
+      grind
     simp only [hP_zero, circleNormSq, norm_zero, zero_pow, ne_eq,
       OfNat.ofNat_ne_zero, not_false_eq_true, integral_zero]
     apply mul_nonneg (by norm_num) (integral_nonneg (fun t => sq_nonneg _))
@@ -321,11 +311,8 @@ private lemma sum_Icc_eq_sum_Fin {α : Type*} [AddCommMonoid α]
     ∑ m : Fin L, f (N + m.val) := by
   symm
   apply Finset.sum_nbij (fun (m : Fin L) => N + m.val)
-  · intro ⟨m, hm⟩ _
-    exact Finset.mem_Icc.mpr
-      ⟨Nat.le_add_right N m, by omega⟩
-  · intro a _ b _ (h : N + a.val = N + b.val)
-    exact Fin.ext (by omega)
+  · grind
+  · intro a grind
   · intro n hn
     obtain ⟨hlo, hhi⟩ := Finset.mem_Icc.mp hn
     exact ⟨⟨n - N, by omega⟩, Finset.mem_univ _,

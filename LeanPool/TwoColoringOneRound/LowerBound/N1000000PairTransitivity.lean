@@ -102,23 +102,17 @@ lemma dirMask_testBit (u v : V) (i j : Fin 3) :
 lemma dirMask_lt (u v : V) : dirMask u v < (1 <<< 9) := by
   -- Each row is a `3`-bit number, hence `< 2^3 = 8`.
   have hu01 : u.1 i0 ≠ u.1 i1 := by
-    intro hEq
-    exact (by decide : (i0 : Fin 3) ≠ i1) (u.2 hEq)
+    grind
   have hu02 : u.1 i0 ≠ u.1 i2 := by
-    intro hEq
-    exact (by decide : (i0 : Fin 3) ≠ i2) (u.2 hEq)
+    grind
   have hu12 : u.1 i1 ≠ u.1 i2 := by
-    intro hEq
-    exact (by decide : (i1 : Fin 3) ≠ i2) (u.2 hEq)
+    grind
   have hv01 : v.1 i0 ≠ v.1 i1 := by
-    intro hEq
-    exact (by decide : (i0 : Fin 3) ≠ i1) (v.2 hEq)
+    grind
   have hv02 : v.1 i0 ≠ v.1 i2 := by
-    intro hEq
-    exact (by decide : (i0 : Fin 3) ≠ i2) (v.2 hEq)
+    grind
   have hv12 : v.1 i1 ≠ v.1 i2 := by
-    intro hEq
-    exact (by decide : (i1 : Fin 3) ≠ i2) (v.2 hEq)
+    grind
   have hv10 : v.1 i1 ≠ v.1 i0 := by simpa [eq_comm] using hv01
   have hv20 : v.1 i2 ≠ v.1 i0 := by simpa [eq_comm] using hv02
   have hv21 : v.1 i2 ≠ v.1 i1 := by simpa [eq_comm] using hv12

@@ -116,8 +116,7 @@ theorem LinearMap.commutes_of_isIdempotentElem {E 𝕜 : Type _} [RCLike 𝕜] [
     simp_rw [h', comp_add, ← comp_assoc, ← mul_eq_comp, hq.eq]
   simp_rw [two_smul, comp_add, add_right_inj] at H'
   have H'' : q.comp p = p.comp q := by
-    simp_rw [H']
-    exact H.symm
+    grind
   rw [← H'', and_self_iff, ← smul_right_inj (two_ne_zero' 𝕜), h', ← H'', two_smul]
 
 /-- given idempotent operators $p,q$,
@@ -212,8 +211,7 @@ lemma subtype_compL_ker [InnerProductSpace 𝕜 E] (U : Submodule 𝕜 E)
   ext x
   change U.subtypeL (f x) = 0 ↔ f x = 0
   refine ⟨fun h => Subtype.ext h, fun h => ?_⟩
-  rw [h]
-  simp
+  grind
 
 
 lemma orthogonalProjection.isOrthogonalProjection [InnerProductSpace 𝕜 E]
@@ -237,10 +235,7 @@ theorem IsIdempotentElem.isCompl_range_ker {V R : Type _} [Semiring R] [AddCommG
     · rcases h'.2 with ⟨y, hy⟩
       rw [← hy, ← IsIdempotentElem.eq h, Module.End.mul_apply, hy]
       exact h'.1
-    · rw [h', map_zero]
-      simp only [true_and]
-      use x
-      simp only [h', map_zero]
+    · grind
   · suffices ∀ x : V, ∃ v : ker T, ∃ w : range T, x = v + w
       by
       rw [codisjoint_iff, ← Submodule.add_eq_sup]

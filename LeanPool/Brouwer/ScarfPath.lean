@@ -116,8 +116,7 @@ omit [Inhabited T] [Fintype T] [Fintype I] [DecidableEq T] [DecidableEq I] in
 lemma not_room_of_door {τ : Finset T} {D : Finset I}
     (hDoor : IST.isDoor τ D) :
     ¬ IST.isRoom τ D := by
-  intro hRoom
-  have := hDoor.2; have := hRoom.2; omega
+  grind
 
 omit [Inhabited T] [Fintype T] [Fintype I] [DecidableEq T] in
 lemma not_colorful_of_door {c : T → I} {τ : Finset T} {D : Finset I}
@@ -176,10 +175,7 @@ theorem GiDegree_internalDoor {c : T → I} {i : I} {τ : Finset T} {D : Finset 
       rcases hEdge with hBad | hGood
       · exact False.elim (not_GiRoomVertex_of_door hInternal.1 hBad.1)
       · obtain hCases := hUnique w.1 w.2 (IST.isRoom_of_Door hGood.2.2) hGood.2.2
-        rw [Finset.mem_insert, Finset.mem_singleton]
-        rcases hCases with hLeft | hRight
-        · exact Or.inl (Prod.ext hLeft.1 hLeft.2)
-        · exact Or.inr (Prod.ext hRight.1 hRight.2)
+        grind
     · intro hw
       rw [Finset.mem_insert, Finset.mem_singleton] at hw
       apply (mem_GiNeighbors).2
@@ -207,13 +203,11 @@ theorem GiDegree_typedNCRoom {c : T → I} {i : I} {σ : Finset T} {C : Finset I
       · have hwDoor : w ∈ IST.NCdoors c σ C := by
           change IST.isNearlyColorful c w.1 w.2 ∧ IST.isDoorof w.1 w.2 σ C
           exact ⟨IST.NC_of_TNC hGood.2.1.2, hGood.2.2⟩
-        rw [hDoors] at hwDoor
-        simpa using hwDoor
+        grind
       · exact False.elim (not_GiDoorVertex_of_room hRoom hBad.2.1)
     · intro hw
       have hwDoor : w ∈ IST.NCdoors c σ C := by
-        rw [hDoors]
-        simpa using hw
+        grind
       change IST.isNearlyColorful c w.1 w.2 ∧ IST.isDoorof w.1 w.2 σ C at hwDoor
       let hTypedDoor := IST.isTypedNC_of_isNearlyColorful_of_isDoorof_isTypedNC
         hwDoor.1 hwDoor.2 hTyped
@@ -267,19 +261,12 @@ theorem GiDegree_outsideDoor {c : T → I} {i : I} {τ : Finset T} {D : Finset I
             rw [Finset.mem_singleton]
             apply Prod.ext
             · have hwσ : w.1 = ({x} : Finset T) := by
-                rw [← hInsert]
-                rfl
+                grind
               have hxMax : x = xMax := by
                 have hAbove : ∀ y : T, (IST i).le y x := by
                   intro y
                   obtain ⟨j, hj, hle⟩ := hCell y
-                  have hji : j = i := by
-                    rw [← hDEq] at hj
-                    exact Finset.mem_singleton.mp hj
-                  subst hji
-                  apply hle
-                  rw [hwσ]
-                  simp
+                  grind
                 have hx_le_max : (IST i).le x xMax :=
                   @Finset.le_max' T (IST i) Finset.univ x (Finset.mem_univ x)
                 have hmax_le_x : (IST i).le xMax x := hAbove xMax
@@ -291,8 +278,7 @@ theorem GiDegree_outsideDoor {c : T → I} {i : I} {τ : Finset T} {D : Finset I
             have hσEmpty : w.1 = Finset.empty := by
               simpa using hτEq.symm
             have hNonempty := IST.sigma_nonempty_of_room hRoomW
-            rw [hσEmpty] at hNonempty
-            exact Finset.not_nonempty_empty hNonempty
+            grind
     · intro hw
       rw [Finset.mem_singleton] at hw
       rw [hw]
@@ -327,18 +313,7 @@ theorem GiDegree_colorfulRoom {c : T → I} {i : I} {σ : Finset T} {C : Finset 
             (σ.erase x).image c = (σ.image c).erase (c x) :=
           image_erase_eq_erase_image_of_unique σ c hxσ hxUnique
         rw [hImgErase, ← hColorful.2, hcx]
-        ext j
-        constructor
-        · intro hj
-          rcases Finset.mem_sdiff.mp hj with ⟨hjC, hjNotErase⟩
-          by_cases hji : j = i
-          · simp [hji]
-          · have hjErase : j ∈ (σ.image c).erase i := Finset.mem_erase.mpr ⟨hji, hjC⟩
-            exact False.elim (hjNotErase hjErase)
-        · intro hj
-          have hji : j = i := Finset.mem_singleton.mp hj
-          subst hji
-          exact Finset.mem_sdiff.mpr ⟨hiImage, by simp⟩
+        grind
     have hNeighbors :
         GiNeighbors (IST := IST) c i (σ, C) = ({door} : Finset (GiCell T I)) := by
       ext w
@@ -351,8 +326,7 @@ theorem GiDegree_colorfulRoom {c : T → I} {i : I} {σ : Finset T} {C : Finset 
           cases hDoorofW with
           | idoor _ _ y hyNot hInsert hDEq =>
               have hyσ : y ∈ σ := by
-                rw [← hInsert]
-                exact Finset.mem_insert_self y w.1
+                grind
               have hwσ : w.1 = σ.erase y := by
                 rw [← Finset.erase_insert hyNot, hInsert]
               have hcyNotErase : c y ∉ (σ.erase y).image c := by
@@ -368,19 +342,13 @@ theorem GiDegree_colorfulRoom {c : T → I} {i : I} {σ : Finset T} {C : Finset 
               have hcyi : c y = i := by
                 rw [hTypedW.2] at hcyDiff
                 exact Finset.mem_singleton.mp hcyDiff
-              have hyx : y = x := hInj hyσ hxσ (hcyi.trans hcx.symm)
-              rw [Finset.mem_singleton]
-              apply Prod.ext
-              · rw [hwσ, hyx]
-              · exact hDEq
+              grind
           | odoor _ _ j _ hτEq _ =>
               exfalso
               have hiDiff : i ∈ w.2 \ w.1.image c := by
                 rw [hTypedW.2]
                 simp
-              have hiNotImage : i ∉ w.1.image c := (Finset.mem_sdiff.mp hiDiff).2
-              rw [hτEq] at hiNotImage
-              exact hiNotImage hiImage
+              grind
         · exact False.elim (not_GiDoorVertex_of_room hRoom hBad.2.1)
       · intro hw
         rw [Finset.mem_singleton] at hw
@@ -402,11 +370,7 @@ theorem GiDegree_colorfulRoom {c : T → I} {i : I} {σ : Finset T} {C : Finset 
       · rw [← hColorful.2]
         ext j
         constructor
-        · intro hj
-          rcases Finset.mem_sdiff.mp hj with ⟨hjInsert, hjNotImage⟩
-          rcases Finset.mem_insert.mp hjInsert with hji | hjImage
-          · simp [hji]
-          · exact False.elim (hjNotImage hjImage)
+        · grind
         · intro hj
           have hji : j = i := Finset.mem_singleton.mp hj
           rw [hji]
@@ -428,10 +392,7 @@ theorem GiDegree_colorfulRoom {c : T → I} {i : I} {σ : Finset T} {C : Finset 
               have hiDiff : i ∈ w.2 \ w.1.image c := by
                 rw [hTypedW.2]
                 simp
-              have hiC' : i ∈ C := by
-                rw [hDEq] at hiDiff
-                exact (Finset.mem_sdiff.mp hiDiff).1
-              exact hiC hiC'
+              grind
           | odoor _ _ j hjNotC hτEq hDEq =>
               have hjDiff : j ∈ w.2 \ w.1.image c := by
                 rw [hDEq, hτEq]
@@ -442,10 +403,7 @@ theorem GiDegree_colorfulRoom {c : T → I} {i : I} {σ : Finset T} {C : Finset 
               have hji : j = i := by
                 rw [hTypedW.2] at hjDiff
                 exact Finset.mem_singleton.mp hjDiff
-              rw [Finset.mem_singleton]
-              apply Prod.ext
-              · exact hτEq
-              · rw [hDEq, hji]
+              grind
         · exact False.elim (not_GiDoorVertex_of_room hRoom hBad.2.1)
       · intro hw
         rw [Finset.mem_singleton] at hw
@@ -599,16 +557,9 @@ theorem exists_maximal_component_path_of_degree_le_two
     intro y hy
     simp only [SimpleGraph.Walk.support_nil, List.mem_cons, List.not_mem_nil, or_false,
       Set.setOf_eq_eq_singleton, Set.mem_singleton_iff] at hy
-    rw [hy]
-    exact hxcomp
+    grind
   obtain ⟨n, ⟨hn_mem, hn_max⟩⟩ := hfinite.exists_maximal ⟨0, hnonempty⟩
-  rcases hn_mem with ⟨u, v, p, hp, hp_sub, hp_len⟩
-  refine ⟨u, v, p, hp, hp_sub, ?_⟩
-  intro u' v' p' hp' hp'_sub
-  have hp'_len_mem : p'.length ∈ lengths :=
-    ⟨u', v', p', hp', hp'_sub, rfl⟩
-  have := hn_max hp'_len_mem
-  omega
+  grind
 
 /--
 Generic graph-theoretic step 2a: in a graph of degree at most two, a maximal
@@ -638,10 +589,7 @@ theorem maximal_component_path_no_escape_of_degree_le_two
     have hp' : p'.IsPath := (SimpleGraph.Walk.cons_isPath_iff hxy.symm p).2 ⟨hp, hyNot⟩
     have hp'_sub : {z : α | z ∈ p'.support} ⊆ component.supp := by
       intro z hz
-      simp only [SimpleGraph.Walk.support_cons, List.mem_cons, Set.mem_setOf_eq, p'] at hz
-      rcases hz with rfl | hz
-      · exact hycomp
-      · exact hp_sub hz
+      grind
     have hle := hmax y v p' hp' hp'_sub
     simp [p'] at hle
   by_cases hxv : x = v
@@ -652,9 +600,7 @@ theorem maximal_component_path_no_escape_of_degree_le_two
       intro z hz
       simp only [SimpleGraph.Walk.support_concat, List.mem_append, List.mem_cons,
         List.not_mem_nil, or_false, Set.mem_setOf_eq, p'] at hz
-      rcases hz with hz | rfl
-      · exact hp_sub hz
-      · exact hycomp
+      grind
     have hle := hmax u y p' hp' hp'_sub
     simp [p'] at hle
   obtain ⟨q, r, hqPath, hrPath,
@@ -684,10 +630,7 @@ theorem maximal_component_path_no_escape_of_degree_le_two
     intro z hz
     rw [Finset.mem_insert, Finset.mem_insert, Finset.mem_singleton] at hz
     rw [SimpleGraph.mem_neighborFinset]
-    rcases hz with rfl | rfl | rfl
-    · exact haAdj
-    · exact hbAdj
-    · exact hxy
+    grind
   have hTripleCard : ({a, b, y} : Finset α).card = 3 :=
     Finset.card_eq_three.2 ⟨a, b, y, hab, hay, hby, rfl⟩
   have hThreeLe : 3 ≤ G.degree x := by
@@ -713,8 +656,7 @@ theorem component_path_support_eq_component_of_no_escape
     {x : α | x ∈ p.support} = component.supp := by
   ext z
   constructor
-  · intro hz
-    exact hp_sub hz
+  · grind
   · intro hzcomp
     by_contra hzNot
     have huSupport : u ∈ p.support := p.start_mem_support
@@ -752,8 +694,7 @@ theorem component_cycle_of_maximal_path_closes
       rcases hx with rfl | hx
       · exact p.end_mem_support
       · exact hx
-    · intro hx
-      simpa only [SimpleGraph.Walk.support_cons, List.mem_cons, Set.mem_setOf_eq] using Or.inr hx
+    · grind
 
 /-- A path whose support is exactly a component represents that component as a path. -/
 theorem component_path_of_support_eq_component

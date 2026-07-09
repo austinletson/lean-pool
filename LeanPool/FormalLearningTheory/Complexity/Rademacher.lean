@@ -57,10 +57,7 @@ private def flipAt {m : ℕ} (i : Fin m) (σ : SignVector m) : SignVector m :=
 
 private theorem flipAt_involutive {m : ℕ} (i : Fin m) : Function.Involutive (flipAt i) := by
   intro σ; ext k; unfold flipAt
-  simp only [Function.update_apply]
-  split
-  · next h => subst h; simp [Bool.not_not]
-  · rfl
+  grind
 
 private theorem flipAt_boolToSign {m : ℕ} (i : Fin m) (σ : SignVector m) :
     boolToSign (flipAt i σ i) = -boolToSign (σ i) := by
@@ -157,8 +154,7 @@ theorem empiricalRademacherComplexity_le_one (X : Type u)
         exact le_trans (le_abs_self _) (rademacherCorrelation_abs_le_one hm h σ xs)
     · rw [Set.not_nonempty_iff_eq_empty] at hC
       have : { r : ℝ | ∃ h ∈ C, r = rademacherCorrelation h σ xs } = ∅ := by
-        ext r; simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
-        rintro ⟨h, hh, _⟩; simp [hC] at hh
+        grind
       rw [this, Real.sSup_empty]; exact zero_le_one
   have h_sum_le : ∑ σ : SignVector m,
       sSup { r : ℝ | ∃ h ∈ C, r = rademacherCorrelation h σ xs } ≤
@@ -213,8 +209,7 @@ private theorem empRad_nonneg {X : Type u} (C : ConceptClass X Bool) {m : ℕ}
     · rw [Set.not_nonempty_iff_eq_empty] at hC
       apply Finset.sum_nonneg; intro σ _
       have : { r : ℝ | ∃ h ∈ C, r = rademacherCorrelation h σ xs } = ∅ := by
-        ext r; simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
-        rintro ⟨h, hh, _⟩; simp [hC] at hh
+        grind
       rw [this, Real.sSup_empty]
 
 theorem rademacherComplexity_le_one (X : Type u) [MeasurableSpace X]
@@ -391,9 +386,7 @@ theorem rademacher_mgf_bound {m : ℕ} (hm : 0 < m) (a : Fin m → ℝ) (c : ℝ
     have h_sum_eq : ∑ b : Bool, Real.exp (t * a i * boolToSign b / ↑m) =
         Real.exp u + Real.exp (-u) := by
       simp only [Fintype.sum_bool, boolToSign, ↓reduceIte, Bool.false_eq_true]
-      congr 1
-      · congr 1; rw [hu_def]; ring
-      · congr 1; rw [hu_def]; ring
+      grind
     rw [h_sum_eq]
     -- (1 / 2) * (exp(u) + exp(-u)) = cosh(u) ≤ exp(u²/2)
     have h_eq_cosh : (1 / 2 : ℝ) * (Real.exp u + Real.exp (-u)) = Real.cosh u := by
@@ -558,8 +551,7 @@ theorem finite_massart_lemma {m : ℕ} (_hm : 0 < m) {N : ℕ} (hN : 0 < N)
     -- h_bd : E_max ≤ t₀ * σ² / 2 = (E_max / σ²) * σ² / 2 = E_max / 2
     have : t₀ * σ_param ^ 2 / 2 = E_max / 2 := by
       rw [ht₀_def]; field_simp
-    rw [this] at h_bd
-    linarith
+    grind
   · -- N ≥ 2 case: log N > 0
     have hlog_pos : 0 < Real.log ↑N := lt_of_le_of_ne hlog_N_nonneg (Ne.symm hlog)
     have hsqrt_pos : 0 < Real.sqrt (2 * Real.log ↑N) :=
@@ -571,38 +563,7 @@ theorem finite_massart_lemma {m : ℕ} (_hm : 0 < m) {N : ℕ} (hN : 0 < N)
     -- Show: log N / t₀ + t₀ * σ² / 2 = σ * √(2 log N)
     suffices h_eq : Real.log ↑N / t₀ + t₀ * σ_param ^ 2 / 2 =
         σ_param * Real.sqrt (2 * Real.log ↑N) from le_trans h_bd (le_of_eq h_eq)
-    have hσ_ne : σ_param ≠ 0 := ne_of_gt hσ
-    have hsqrt_ne : Real.sqrt (2 * Real.log ↑N) ≠ 0 := ne_of_gt hsqrt_pos
-    have hsq : Real.sqrt (2 * Real.log ↑N) ^ 2 = 2 * Real.log ↑N := Real.sq_sqrt h2log_nonneg
-    -- Both terms equal σ * √(2 log N) / 2, so their sum = σ * √(2 log N)
-    -- Direct computation after unfolding t₀
-    change Real.log ↑N / t₀ + t₀ * σ_param ^ 2 / 2 = σ_param * Real.sqrt (2 * Real.log ↑N)
-    have ht₀_ne : t₀ ≠ 0 := ne_of_gt ht₀_pos
-    -- Rewrite as: (2 * log N + t₀² * σ²) / (2 * t₀) = σ * √(2 log N)
-    -- where t₀ = √(2 log N) / σ, so t₀² = 2 log N / σ²
-    -- thus 2 * log N + (2 log N / σ²) * σ² = 2 * log N + 2 * log N = 4 * log N... wait that's wrong
-    -- Actually: log N / t₀ + t₀ * σ² / 2
-    -- = log N * σ / √(2 log N) + √(2 log N) * σ / 2
-    -- Key: log N / √(2 log N) = √(2 log N) / 2 (since √(2 log N)² = 2 log N)
-    -- So = σ * √(2 log N) / 2 + σ * √(2 log N) / 2 = σ * √(2 log N). ✓
-    -- Prove via: multiply both sides by 2 * √(2 log N)
-    have hsqrt_ne : Real.sqrt (2 * Real.log ↑N) ≠ 0 := ne_of_gt hsqrt_pos
-    have h_mul_self : Real.sqrt (2 * Real.log ↑N) * Real.sqrt (2 * Real.log ↑N) =
-        2 * Real.log ↑N := Real.mul_self_sqrt h2log_nonneg
-    -- Step 1: log N / t₀ = log N * σ / √(2 log N) = σ * √(2 log N) / 2
-    have h1 : Real.log ↑N / t₀ = σ_param * Real.sqrt (2 * Real.log ↑N) / 2 := by
-      simp only [t₀]
-      rw [div_div_eq_mul_div]
-      -- Goal: log N * σ / √(2 log N) = σ * √(2 log N) / 2
-      rw [div_eq_div_iff hsqrt_ne two_ne_zero]
-      nlinarith
-    -- Step 2: t₀ * σ² / 2 = σ * √(2 log N) / 2
-    have h2 : t₀ * σ_param ^ 2 / 2 = σ_param * Real.sqrt (2 * Real.log ↑N) / 2 := by
-      simp only [t₀]
-      rw [div_mul_eq_mul_div, div_div]
-      rw [div_eq_div_iff (mul_ne_zero hσ_ne two_ne_zero) two_ne_zero]
-      ring
-    rw [h1, h2]; ring
+    grind
 
 /-! ### Helper lemmas for Sauer-Shelah exponential bound -/
 
@@ -631,8 +592,7 @@ private theorem ncard_restrictions_le_sum_choose_set {X : Type u}
     intro f g hfg
     funext x
     have := Finset.ext_iff.mp hfg x
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at this
-    cases hf : f x <;> cases hg : g x <;> simp_all
+    grind
   have h1 : R_fin.card = AA.card := by
     rw [hAA_def]; exact (Finset.card_image_of_injective _ h_inj).symm
   -- Step 2: AA.card ≤ AA.shatterer.card (Mathlib: card_le_card_shatterer)
@@ -688,29 +648,12 @@ private theorem ncard_restrictions_le_sum_choose_set {X : Type u}
       have h1 : (⟨y', hy'S⟩ : ↥S) ∈ T ∩ Finset.univ.filter (fun x => f x = true) ↔
           f ⟨y', hy'S⟩ = true := by
         simp [Finset.mem_inter, Finset.mem_filter, hy'T]
-      have h2 : (⟨y', hy'S⟩ : ↥S) ∈ t_sub ↔ g' ⟨y', hy'S⟩ = true := by
-        simp [t_sub, Finset.mem_filter, hy'T]
-      constructor
-      · intro hf_true
-        have hmem : (⟨y', hy'S⟩ : ↥S) ∈ T ∩ Finset.univ.filter (fun x => f x = true) :=
-          h1.mpr hf_true
-        have hmem2 : (⟨y', hy'S⟩ : ↥S) ∈ t_sub := hTA ▸ hmem
-        exact h2.mp hmem2
-      · intro hg_true
-        have hmem : (⟨y', hy'S⟩ : ↥S) ∈ t_sub := h2.mpr hg_true
-        have hmem2 : (⟨y', hy'S⟩ : ↥S) ∈ T ∩ Finset.univ.filter (fun x => f x = true) :=
-          hTA ▸ hmem
-        exact h1.mp hmem2
+      grind
     -- g' ⟨y', hy'S⟩ = g ⟨y', hyTval⟩ since y' ∈ Tval
     have h_g'_eq : g' ⟨y', hy'S⟩ = g ⟨y', hyTval⟩ := by
       simp only [g', dif_pos hyTval]
     -- Combine: c y' = f ⟨y',hy'S⟩ and f = true ↔ g = true
-    rw [hcf_y]
-    have : f ⟨y', hy'S⟩ = g ⟨y', hyTval⟩ := by
-      rw [← h_g'_eq]
-      cases hf : f ⟨y', hy'S⟩ <;> cases hg : g' ⟨y', hy'S⟩ <;>
-        simp_all only [Bool.false_eq_true, true_iff, iff_true]
-    exact this
+    grind
   -- Step 5: Fintype.card ↥S = S.card
   have h5 : Fintype.card ↥S = S.card := Fintype.card_coe S
   -- Combine
@@ -775,9 +718,7 @@ theorem sum_choose_le_exp_pow (d m : ℕ) (hd : 0 < d) (hdm : d ≤ m) :
       (1 + t) ^ m := by
     rw [h_binom']
     apply Finset.sum_le_sum_of_subset_of_nonneg
-    · intro i hi
-      simp only [Finset.mem_range] at hi ⊢
-      omega
+    · grind
     · intro i _ _
       exact mul_nonneg (Nat.cast_nonneg _) (pow_nonneg (le_of_lt ht_pos) _)
   -- Step 3: (1 + t)^m ≤ e^d
@@ -858,8 +799,7 @@ private theorem conceptClass_nonempty_of_vcdim_eq_pos {X : Type u}
     · apply iSup₂_le; intro S hS
       exfalso; unfold Shatters at hS
       have := hS (fun _ => true)
-      obtain ⟨c, hcC, _⟩ := this
-      rw [hC_empty] at hcC; exact hcC
+      grind
     · exact bot_le
   rw [this] at hd
   have : d = 0 := by
@@ -920,8 +860,7 @@ theorem vcdim_bounds_rademacher_quantitative (X : Type u) [MeasurableSpace X]
         Finset.univ.filter (fun p => ∃ h ∈ C, ∀ i, h (xs i) = p i)
     have hdpats_ne : dpats.Nonempty := by
       refine ⟨fun i => h₀ (xs i), ?_⟩
-      simp only [dpats, Finset.mem_filter, Finset.mem_univ, true_and]
-      exact ⟨h₀, hh₀, fun _ => rfl⟩
+      grind
     -- rademacherCorrelation h σ xs = corr_pat (fun i => h(xs i)) σ
     -- where corr_pat p σ = (1/m) ∑ boolToSign(σ i) * boolToSign(p i)
     -- For each σ: sSup { corr(h,σ,xs) | h ∈ C } ≤ dpats.sup' (corr_pat(·, σ))
@@ -933,9 +872,7 @@ theorem vcdim_bounds_rademacher_quantitative (X : Type u) [MeasurableSpace X]
       intro h σ; unfold rademacherCorrelation
       rw [dif_neg (Nat.pos_iff_ne_zero.mp hm)]
     have h_mem_dpats : ∀ h ∈ C, (fun i => h (xs i)) ∈ dpats := by
-      intro h hh
-      simp only [dpats, Finset.mem_filter, Finset.mem_univ, true_and]
-      exact ⟨h, hh, fun _ => rfl⟩
+      grind
     have h_ssup_le_sup' : ∀ σ : SignVector m,
         sSup { r : ℝ | ∃ h ∈ C, r = rademacherCorrelation h σ xs } ≤
         dpats.sup' hdpats_ne (cf σ) := by
@@ -1005,10 +942,7 @@ theorem vcdim_bounds_rademacher_quantitative (X : Type u) [MeasurableSpace X]
       --       = (1/m) * ∑ boolToSign(p i) * boolToSign(sv i) (by mul_comm)
       have h_Z_rewrite : ∀ sv, Z j sv =
           (1 / (m : ℝ)) * ∑ i, (fun i => boolToSign (p i)) i * boolToSign (sv i) := by
-        intro sv
-        change cf sv p = _
-        simp only [cf]
-        congr 1; apply Finset.sum_congr rfl; intro i _; ring
+        grind
       -- Rewrite LHS to match h_bound
       have h_lhs_eq : ∀ sv, Real.exp (t * Z j sv) =
           Real.exp
@@ -1017,12 +951,7 @@ theorem vcdim_bounds_rademacher_quantitative (X : Type u) [MeasurableSpace X]
         intro sv; rw [h_Z_rewrite]
       simp_rw [h_lhs_eq]
       -- RHS: σ_param² = 1/m, so t²·σ_param²/2 = t²·1²/(2m)
-      have h_rhs_eq : t ^ 2 * σ_param ^ 2 / 2 = t ^ 2 * 1 ^ 2 / (2 * ↑m) := by
-        rw [one_pow, mul_one, show σ_param = 1 / Real.sqrt ↑m from rfl]
-        rw [one_div, inv_pow, Real.sq_sqrt (le_of_lt hm_pos)]
-        ring
-      rw [h_rhs_eq]
-      exact h_bound
+      grind
     -- Apply finite_massart_lemma
     haveI : Nonempty (Fin N) := Fin.pos_iff_nonempty.mp hN_pos
     have h_massart := finite_massart_lemma hm hN_pos Z σ_param hσ_pos h_mgf_Z
@@ -1034,9 +963,7 @@ theorem vcdim_bounds_rademacher_quantitative (X : Type u) [MeasurableSpace X]
       set R := { f : ↥S → Bool | ∃ c ∈ C, ∀ x : ↥S, c ↑x = f x }
       -- dpats maps into R via the restriction map
       have h_dpats_mem : ∀ p ∈ dpats, ∃ c ∈ C, ∀ i, c (xs i) = p i := by
-        intro p hp
-        have := Finset.mem_filter.mp hp
-        exact this.2
+        grind
       have h_inj_card : N ≤ R.toFinset.card := by
         -- Map: p ↦ (fun x => p (choose_index x))
         -- where for x ∈ S, choose_index x is some i with xs i = x
@@ -1048,11 +975,7 @@ theorem vcdim_bounds_rademacher_quantitative (X : Type u) [MeasurableSpace X]
             obtain ⟨c, hcC, hc_agree⟩ := h_dpats_mem p hp
             have : (fun (x : ↥S) => p ((Finset.mem_image.mp x.prop).choose)) ∈ R := by
               exact ⟨c, hcC, fun ⟨x, hx⟩ => by
-                have hcs := (Finset.mem_image.mp hx).choose_spec
-                -- hcs.2 : xs(choose) = x, so c x = c(xs(choose)) = p(choose)
-                change c x = p ((Finset.mem_image.mp hx).choose)
-                conv_lhs => rw [← hcs.2]
-                exact hc_agree _⟩
+                grind⟩
             exact Set.mem_toFinset.mpr this)
           -- injective on dpats
           (fun p₁ hp₁ p₂ hp₂ heq => by
@@ -1064,13 +987,7 @@ theorem vcdim_bounds_rademacher_quantitative (X : Type u) [MeasurableSpace X]
             have h_at := congr_fun heq ⟨xs i, hxi_in⟩
             -- p₁ i = c₁(xs i) and p₁(choose) = c₁(xs(choose)) = c₁(xs i)
             -- Similarly for p₂. And h_at says p₁(choose) = p₂(choose).
-            rw [← hc₁ i, ← hc₂ i]
-            -- c₁(xs i) = c₁(xs(choose)) by hcs.2 : xs(choose) = xs i
-            rw [← hcs.2]
-            -- Need: c₁(xs(choose)) = c₂(xs(choose))
-            -- = p₁(choose) by hc₁, = p₂(choose) by h_at, = c₂(xs(choose)) by hc₂
-            rw [hc₁, hc₂]
-            exact h_at)
+            grind)
       have h_ncard_le := ncard_restrictions_le_sum_choose_set C S d hd
       have hS_card_le : S.card ≤ m := by
         calc (Finset.univ.image xs).card ≤ Finset.univ.card := Finset.card_image_le
@@ -1130,22 +1047,14 @@ private theorem empRad_eq_one_of_injective_in_shattered {X : Type u}
   intro σ
   set S := Finset.univ.image xs with hS_def
   have hS_sub : S ⊆ T := by
-    intro x hx
-    simp only [hS_def, Finset.mem_image, Finset.mem_univ, true_and] at hx
-    obtain ⟨i, rfl⟩ := hx
-    exact h_range i
+    grind
   have hS_shat : Shatters X C S := shatters_subset C T S hS_sub hT
   let f : ↥S → Bool := fun ⟨x, hx⟩ => σ (Finset.mem_image.mp hx).choose
   obtain ⟨c, hcC, hc_agree⟩ := hS_shat f
   refine ⟨c, hcC, fun i => ?_⟩
   have hxs_in_S : xs i ∈ S := Finset.mem_image.mpr ⟨i, Finset.mem_univ _, rfl⟩
   have h_agree_i := hc_agree ⟨xs i, hxs_in_S⟩
-  change c (xs i) = σ i
-  rw [h_agree_i]
-  change σ (Finset.mem_image.mp hxs_in_S).choose = σ i
-  congr 1
-  apply h_inj
-  exact (Finset.mem_image.mp hxs_in_S).choose_spec.2
+  grind
 
 private theorem uniform_injective_tuple_measure_half
     {α : Type*} [Fintype α] [MeasurableSpace α] [MeasurableSingletonClass α]
@@ -1202,17 +1111,7 @@ private theorem uniform_injective_tuple_measure_half
     have hcyl : ∀ t : α, {ys : Fin m → α | ys i = t ∧ ys j = t} =
         Set.pi Set.univ (fun k => if k = i then {t} else if k = j then {t} else Set.univ) := by
       intro t; ext ys
-      simp only [Set.mem_setOf_eq, Set.mem_pi, Set.mem_univ, true_implies]
-      constructor
-      · intro ⟨h1, h2⟩ k
-        split_ifs with hki hkj
-        · exact hki ▸ h1
-        · exact hkj ▸ h2
-        · trivial
-      · intro h
-        constructor
-        · simpa using h i
-        · simpa [Ne.symm hij] using h j
+      grind
     have hfiber_bound : ∀ t : α,
         μ_sub {ys : Fin m → α | ys i = t ∧ ys j = t} ≤ (1 / (n : ENNReal)) ^ 2 := by
       intro t
@@ -1230,8 +1129,7 @@ private theorem uniform_injective_tuple_measure_half
       calc ∏ k : Fin m, D_sub (if k = i then {t} else if k = j then {t} else Set.univ)
           ≤ ∏ k : Fin m,
               (if k = i ∨ k = j then 1 / (n : ENNReal) else 1) := by
-            apply Finset.prod_le_prod'
-            intro k _; exact (hfact_eq k) ▸ (hfact_le k)
+            grind
         _ = (1 / (n : ENNReal)) ^ 2 := by
             have hprod_ij : ∏ k : Fin m,
                 (if k = i ∨ k = j then 1 / (n : ENNReal) else 1) =
@@ -1243,12 +1141,8 @@ private theorem uniform_injective_tuple_measure_half
               rw [← Finset.mul_prod_erase _ _ hj_in]
               have hrest_eq : ∏ k ∈ ((Finset.univ : Finset (Fin m)).erase i).erase j,
                   (if k = i ∨ k = j then 1 / (n : ENNReal) else 1) = 1 := by
-                apply Finset.prod_eq_one; intro k hk
-                have hk_ne_j : k ≠ j := (Finset.mem_erase.mp hk).1
-                have hk_ne_i : k ≠ i := (Finset.mem_erase.mp (Finset.mem_erase.mp hk).2).1
-                simp [hk_ne_i, hk_ne_j]
-              rw [hrest_eq, mul_one]
-              simp [hij, hij.symm]
+                apply Finset.prod_eq_one; grind
+              grind
             rw [hprod_ij, sq]
     calc μ_sub Cij
         ≤ ∑ t : α, μ_sub {ys : Fin m → α | ys i = t ∧ ys j = t} := by
@@ -1427,9 +1321,7 @@ theorem rademacher_lower_bound_on_shattered (X : Type u) [MeasurableSpace X]
     -- φ '' s ⊆ {xs | ∀ i, xs i ∈ T} which is finite, so φ '' s is finite, hence measurable.
     apply Set.Finite.measurableSet
     apply (Set.Finite.pi' (fun _ => T.finite_toSet)).subset
-    intro xs hxs
-    obtain ⟨ys, _, rfl⟩ := hxs
-    exact fun i => (ys i).property
+    grind
   -- μ = μ_sub.map φ via pi_map_pi.
   have hμ_eq : μ = μ_sub.map φ := by
     simp only [μ, μ_sub, D, φ]
@@ -1503,15 +1395,11 @@ private theorem vcdim_zero_concepts_agree (X : Type u) (C : ConceptClass X Bool)
     -- f maps the unique element of {x} to some Bool value
     -- h₁ and h₂ disagree on x, so one of them matches f
     by_cases hf : f ⟨x, Finset.mem_singleton_self x⟩ = h₁ x
-    · refine ⟨h₁, hh₁, fun ⟨y, hy⟩ => ?_⟩
-      have hyx := Finset.mem_singleton.mp hy
-      subst hyx; exact hf.symm
+    · grind
     · have hf2 : f ⟨x, Finset.mem_singleton_self x⟩ = h₂ x := by
         have : h₁ x ≠ h₂ x := hne
         cases hv1 : h₁ x <;> cases hv2 : h₂ x <;> simp_all
-      refine ⟨h₂, hh₂, fun ⟨y, hy⟩ => ?_⟩
-      have hyx := Finset.mem_singleton.mp hy
-      subst hyx; exact hf2.symm
+      grind
   -- But this gives VCDim ≥ 1, contradicting VCDim = 0
   have h1le : (1 : WithTop ℕ) ≤ VCDim X C := by
     unfold VCDim
@@ -1591,8 +1479,7 @@ private theorem vcdim_zero_rademacher_le_inv_sqrt (X : Type u) [MeasurableSpace 
           sSup { r : ℝ | ∃ h ∈ C, r = rademacherCorrelation h σ xs } = 0 := by
         intro σ
         have : { r : ℝ | ∃ h ∈ C, r = rademacherCorrelation h σ xs } = ∅ := by
-          ext r; simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
-          rintro ⟨h, hh, _⟩; simp [hC] at hh
+          grind
         rw [this, Real.sSup_empty]
       simp [h_ssup_zero]
     unfold RademacherComplexity
@@ -1624,8 +1511,7 @@ private theorem analytical_log_sqrt_bound (d m : ℕ) (ε : ℝ)
   have he_pos : (0 : ℝ) < Real.exp 1 := Real.exp_pos 1
   have h_rewrite : 2 * ↑d * Real.log (Real.exp 1 * ↑m / ↑d) / ↑m =
       2 * Real.log (Real.exp 1 * t) / t := by
-    rw [ht_def]
-    field_simp
+    grind
   rw [h_rewrite]
   -- log(et) = 1 + log(t) ≤ 1 + 2√t (using log(t) ≤ 2√t for t ≥ 1)
   have het_pos : (0 : ℝ) < Real.exp 1 * t := by positivity
@@ -1674,10 +1560,7 @@ private theorem analytical_log_sqrt_bound (d m : ℕ) (ε : ℝ)
       apply div_le_div_of_nonneg_right _ (le_of_lt ht_pos)
       nlinarith [h_log_t_bound, Real.sqrt_nonneg t]
     have h_sq : 4 * Real.sqrt t / t = 4 / Real.sqrt t := by
-      rw [div_eq_div_iff (ne_of_gt ht_pos) (ne_of_gt (Real.sqrt_pos.mpr ht_pos))]
-      -- Goal: 4 * √t * √t = 4 * t
-      rw [show 4 * Real.sqrt t * Real.sqrt t = 4 * (Real.sqrt t * Real.sqrt t) by ring]
-      rw [Real.mul_self_sqrt (le_of_lt ht_pos)]
+      grind
     linarith [this, h_sq.symm.le]
   -- Need: 2/t + 4/√t < ε².
   -- From t > 32/ε⁴: 2/t < ε⁴/16 and 4/√t < 4ε²/√32 = ε²/√2.
@@ -1697,8 +1580,7 @@ private theorem analytical_log_sqrt_bound (d m : ℕ) (ε : ℝ)
     rw [Real.lt_sqrt (by positivity)]
     calc (4 * Real.sqrt 2 / ε ^ 2) ^ 2
         = 32 / ε ^ 4 := by
-          rw [div_pow, mul_pow, sq (Real.sqrt 2), Real.mul_self_sqrt (by norm_num : (0:ℝ) ≤ 2)]
-          ring
+          grind
       _ < t := h_t_large
   have h_4_over_sqrt : 4 / Real.sqrt t < ε ^ 2 / Real.sqrt 2 := by
     rw [div_lt_div_iff₀ (Real.sqrt_pos.mpr ht_pos) (Real.sqrt_pos.mpr (by norm_num : (0:ℝ) < 2))]
@@ -1804,9 +1686,7 @@ theorem vcdim_finite_imp_rademacher_vanishing (X : Type u) [MeasurableSpace X]
             apply Real.sqrt_lt_sqrt
             · apply div_nonneg
               · apply mul_nonneg
-                · apply mul_nonneg
-                  · norm_num
-                  · exact Nat.cast_nonneg d
+                · grind
                 · exact Real.log_nonneg (by
                     rw [le_div_iff₀ (Nat.cast_pos.mpr hd_pos')]
                     have hd_r : (0 : ℝ) < d := Nat.cast_pos.mpr hd_pos'

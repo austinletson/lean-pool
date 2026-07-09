@@ -94,9 +94,7 @@ lemma mem_polarDual {X : Set E} {v : E} :
     · rw [hx0, inner_zero_left]
       exact zero_le_one
     specialize h (SetLike.coe <| pointDual ⟨ x, hx0 ⟩) ?_
-    · apply Set.mem_image_of_mem
-      apply Set.mem_image_of_mem
-      rwa [Set.mem_preimage]
+    · grind
     rwa [mem_pointDual] at h
   · -- 2.
     intro h Hi_s hHi_s
@@ -120,8 +118,7 @@ lemma polarDual_comm_half (X Y : Set E) :
   rw [real_inner_comm]
   specialize h x hx
   rw [mem_polarDual] at h
-  specialize h y hy
-  exact h
+  grind
 
 lemma polarDual_comm (X Y : Set E) :
   X ⊆ polarDual Y ↔ Y ⊆ polarDual X := by
@@ -157,10 +154,7 @@ lemma polarDual_empty : polarDual (∅ : Set E) = Set.univ := by
 
 lemma polarDual_zero : polarDual ({0} : Set E) = Set.univ := by
   rw [polarDual]
-  have : (@Subtype.val E fun p => p ≠ 0) ⁻¹' {0} = ∅ := by
-    rw [Set.preimage_singleton_eq_empty]
-    simp only [ne_eq, Subtype.range_coe_subtype, Set.mem_setOf_eq, not_true, not_false_eq_true]
-  rw [this, Set.image_empty, Set.image_empty, Set.sInter_empty]
+  grind
 
 lemma compact_polarDual_iff [FiniteDimensional ℝ E] {X : Set E} (hXcl : IsClosed X) :
   0 ∈ interior (polarDual X) ↔ IsCompact X := by

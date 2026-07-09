@@ -58,8 +58,7 @@ theorem mul_ne_zero_imply_set_ne_zero (I J : Ideal R) (h : I * J ≠ ⊥) :
     not_subset.mp ((not_iff_not.mpr Ideal.span_eq_bot).mp h)
   obtain ⟨z, ⟨⟨x, ⟨hx, ⟨y, ⟨hy, hz⟩⟩⟩⟩, hnz⟩⟩ := hnzz
   refine ⟨x, hx, y, hy, ?_⟩
-  simp only at hz
-  rwa [hz]
+  grind
 
 -- if I*I is nonzero, then there is y in I, such that Iy is nonzero
 theorem ideal_sq_ne_bot_imply_subideal_ne_bot (I : Ideal R) (h : I * I ≠ ⊥) :
@@ -74,18 +73,14 @@ theorem ideal_sq_ne_bot_imply_subideal_ne_bot2 (I : Ideal R) (h : I * I ≠ ⊥)
     ∃ y ∈ I, y ≠ 0 ∧ subIdeal I y ≠ ⊥ := by
   obtain ⟨x, hx, y, hy, hxy⟩ := mul_ne_zero_imply_set_ne_zero I I h
   refine ⟨y, hy, ?_, ?_⟩
-  · intro hc
-    apply hxy
-    rw [hc]
-    simp
+  · grind
   · refine (Submodule.ne_bot_iff (subIdeal I y)).mpr ?_
     refine ⟨x * y, ⟨x, hx, rfl⟩, hxy⟩
 
 -- if I <= J and not I < J, then I = J
 theorem le_and_not_lt_eq (I J : Ideal R) (h1 : I ≤ J) (h2 : ¬ (I < J)) : I = J := by
   rw [lt_iff_le_and_ne] at h2
-  push Not at h2
-  exact h2 h1
+  grind
 
 -- if I is an atom, then there exists a nonzero element y in I, such that subIdeal I y = I
 theorem minimal_ideal_I_sq_nonzero_exists_el (hI : IsAtom I) (hII : I * I ≠ ⊥) :
@@ -114,13 +109,7 @@ theorem minimal_ideal_I_sq_nonzero_exists_els2 (hI : IsAtom I) (hII : I * I ≠ 
   refine ⟨y, hy, ynz, hI, ?_⟩
   rw [← hI] at hy
   obtain ⟨e, ⟨he, hey⟩⟩ := hy
-  refine ⟨e, he, ?_, hey⟩
-  by_contra hez
-  have yz : y = 0 := by
-    calc y = e * y := hey
-      _ = 0 * y := by rw [hez]
-      _ = 0 := by noncomm_ring
-  contradiction
+  grind
 
 theorem minimal_ideal_I_sq_nonzero_exists_els (hI : IsAtom I) (hII : I * I ≠ ⊥) :
     ∃ y : R, y ∈ I ∧ subIdeal I y = I ∧ ∃ e ∈ I, y = e * y := by
@@ -187,8 +176,7 @@ theorem minimal_ideal_I_sq_nonzero_exists_idem (h_atom_I : IsAtom I) (hII : I * 
     refine ⟨e, he, ?_⟩
     intro hcon
     obtain ⟨_, hey0⟩ := hcon
-    rw [hye] at hey0
-    exact ynz hey0
+    grind
   have h_ann_sub : elemAnn I y < I :=
     strict_contain (elemAnn I y) I (elem_ann_le_ideal I y) hneq
   have ann_zero : elemAnn I y = ⊥ := h_atom_I.2 (elemAnn I y) h_ann_sub
@@ -224,9 +212,7 @@ theorem corner_ring_div (h_atom_I : IsAtom I) (e : R) (e_in_I : e ∈ I) (henz :
     have hsubI : leftIdealOfElement (e * r * e) ≤ I := by
       rintro x ⟨y, hy⟩
       have hx : x = (y * e * r) * e := by
-        calc
-          x = y * (e * r * e) := hy
-          _ = (y * e * r) * e := by noncomm_ring
+        grind
       rw [hx]
       exact Ideal.mul_mem_left I (y * e * r) e_in_I
     have hnz : leftIdealOfElement (e * r * e) ≠ ⊥ := by

@@ -193,8 +193,7 @@ lemma induction_on_level {n : ℕ} {p : (x : Hollom) → x ∈ level n → Prop}
     (h : ∀ x y, p h(x, y, n) (by simp)) :
     ∀ {x : Hollom}, (h : x ∈ level n) → p x h := by
   simp +contextual only [«forall», toHollom_mem_level_iff, Prod.forall]
-  rintro x y _ rfl
-  exact h _ _
+  grind
 
 /--
 For each `n`, there is an order embedding from ℕ × ℕ (which has the product order) to the Hollom
@@ -313,8 +312,7 @@ theorem scattered {f : ℚ → Hollom} (hf : StrictMono f) : False := by
   obtain ⟨x, y, hgxy, hxy'⟩ : ∃ x y, g x = g y ∧ x ≠ y := by simpa [Function.Injective] using hg''
   -- and wlog `x < y`
   wlog hxy : x < y generalizing x y
-  · simp only [not_lt] at hxy
-    exact this y x hgxy.symm hxy'.symm (lt_of_le_of_ne' hxy hxy')
+  · grind
   -- Now `f '' [x, y]` is infinite, as it is the image of an infinite set of rationals,
   have h₁ : (f '' Set.Icc x y).Infinite := (Set.Icc_infinite hxy).image hf.injective.injOn
   -- but it is contained in `[f x, f y]` by monotonicity
@@ -539,8 +537,7 @@ theorem exists_partition_iff_nonempty_spinalMap
     have hfCid (x : α) (hx : x ∈ C) : f x = x :=
       chain_intersect_antichain hC (hA (F x) (hFS _)) ⟨hGC _ _, hGA _ _⟩ ⟨hx, hFmem _⟩
     have hf (x : α) : IsAntichain (· ≤ ·) (f ⁻¹' {x}) := (hA (F x) (hFS _)).subset <| by
-      rintro y rfl
-      exact hFuniq (f y) (F y) (hFS y) (hGA _ _) ▸ hFmem _
+      grind
     exact ⟨⟨f, fun x ↦ hGC _ _, hfCid, hf⟩⟩
   · rintro ⟨f⟩
     refine ⟨_, (Setoid.ker f).isPartition_classes, ?_⟩
@@ -589,8 +586,7 @@ lemma card_chainBetween {a b c d : ℕ} (hac : a ≤ c) (hbd : b ≤ d) :
     rw [← Finset.Ico_map_sectR, card_map, Nat.card_Ico]
     omega
   · rw [disjoint_left]
-    simp
-    omega
+    grind
 
 lemma chainBetween_subset {a b c d : ℕ} :
     chainBetween a b c d ⊆ Finset.Icc (a, b) (c, d) := by
@@ -729,8 +725,7 @@ lemma apply_eq_of_line_eq_step (f : SpinalMap C) {n xl yl xh yh : ℕ}
     have image_subset : B.image f ⊆ I := by
       rw [← coe_subset, Finset.coe_image]
       exact f_maps.image_subset
-    rw [card_sdiff_of_subset image_subset, cI, card_image_of_injOn f_inj, cB]
-    omega
+    grind
   -- After applying `f`, both `(x + 1, y, n)` and `(x, y + 1, n)` are omitted from the image of `B`
   -- under `f`: this follows from the fact that adding either to `B` would make it still a chain,
   -- and `f` acts injectively on chains.
@@ -848,14 +843,7 @@ lemma square_subset_above (h : (C ∩ level n).Finite) :
     Set.mem_setOf_eq, forall_exists_index, EmbeddingLike.apply_eq_iff_eq, Prod.mk.injEq,
     toHollom_le_toHollom_iff_fixed_right, Set.mem_sdiff, and_true, ← max_add_add_right]
   -- After simplifying, direct calculations show the subset relation as required.
-  rintro k hak hbk _ _ _ f g hkf hkg rfl rfl rfl
-  constructor
-  · rintro c d n hcd rfl
-    specialize hab c d hcd
-    omega
-  · intro hfg
-    specialize hab _ _ hfg
-    omega
+  grind
 
 lemma square_subset_R (h : (C ∩ level n).Finite) :
     ∀ᶠ a in atTop, embed n '' Set.Ici (a, a) ⊆ R n C \ (C ∩ level n) := by
@@ -1036,9 +1024,7 @@ theorem not_S_hits_next (f : SpinalMap C) (hC : IsChain (· ≤ ·) C)
     intro hy
     refine f.incomp_apply ?_ (hx.2 _ hy).symm
     have := R_subset_level hx.1
-    simp only [level_eq, Set.mem_setOf_eq] at this
-    intro h
-    simp [level_eq, h, this] at hy
+    grind
   -- So suppose it is infinite
   case inr h =>
     -- Write `(x, y, n)` for our given point, and set `(a, b, n + 1) := f(x, y, n)`
@@ -1197,8 +1183,7 @@ theorem not_S_mapsTo_previous (hC : IsChain (· ≤ ·) C)
   have line_F_mapsTo : Set.MapsTo (line ∘ f) F (range (2 * a)) := line_mapsTo.comp F_mapsTo
   -- which is a contradiction by cardinality arguments.
   have := card_le_card_of_injOn _ line_F_mapsTo (line_inj.comp F_inj F_mapsTo)
-  simp only [Finset.card_range] at this
-  omega
+  grind
 
 /-- The Hollom partial order has no spinal maps. -/
 theorem no_spinalMap (hC : IsChain (· ≤ ·) C) (f : SpinalMap C) : False := by

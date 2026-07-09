@@ -25,24 +25,7 @@ This file contains the proof of the pumping lemma for context-free grammars
 
 theorem pidgeonhole {α β : Type*} {A : Finset α} {B : Finset β} {f : A → B}
     (hf : f.Injective) : A.card ≤ B.card := by
-  if emptiness : A = ∅ then
-    simp_all
-  else
-    obtain ⟨a₀, ha₀⟩ := Finset.nonempty_iff_ne_empty.mpr emptiness
-    clear emptiness
-    classical
-    let f' : α → β := fun a => f (if ha : a ∈ A then ⟨a, ha⟩ else ⟨a₀, ha₀⟩)
-    apply Finset.card_le_card_of_injOn f'
-    · intro a ha
-      rw [Finset.mem_coe] at ha
-      simp only [f', dif_pos ha]
-      exact (f ⟨a, ha⟩).2
-    · intro a₁ ha₁ a₂ ha₂ haa
-      have haa' : f ⟨a₁, ha₁⟩ = f ⟨a₂, ha₂⟩ := by
-        rw [Finset.mem_coe] at ha₁ ha₂
-        simp only [f', ha₁, ha₂] at haa
-        exact Subtype.ext haa
-      simpa using hf haa'
+  grind
 
 universe uT uN
 
@@ -126,8 +109,7 @@ lemma subtree_repeat_root_height_ind {n : g.NT} {p : parseTree n}
       simp only [hxt, Subtype.mk.injEq] at hxy
       cases hy with
       | inl hyt =>
-        apply Subtype.ext
-        rw [hxt, hyt]
+        grind
       | inr hys =>
         exfalso
         exact was_goal.right n (hxy ▸ y.val.snd) (parseTree.leaf t hnt) (by convert hys; aesop)
@@ -160,29 +142,7 @@ lemma subtree_repeat_root_height_ind {n : g.NT} {p : parseTree n}
           e₁.fst = e₂.fst → e₁ = e₂ := by
         intro e₁ he₁ e₂ he₂ hee
         rw [Finset.mem_insert] at he₁ he₂
-        cases he₁ with
-        | inl he₁ =>
-          cases he₂ with
-          | inl he₂ =>
-            rw [he₁, he₂]
-          | inr he₂ =>
-            exfalso
-            apply hn₀
-            rw [he₁] at hee
-            dsimp only at hee
-            rw [hee]
-            use e₂.snd
-        | inr he₁ =>
-          cases he₂ with
-          | inl he₂ =>
-            exfalso
-            apply hn₀
-            rw [he₂] at hee
-            dsimp only at hee
-            rw [←hee]
-            use e₁.snd
-          | inr he₂ =>
-            exact hs _ he₁ _ he₂ hee
+        grind
       cases hp with
       | inl hcard₁ =>
         have hst₁ : ∀ e ∈ insert ⟨n₀, t₁.node t₂ hnc⟩ s, t₁.IsSubtreeOf e.snd := by
@@ -282,8 +242,7 @@ lemma subtree_repeat_root_height_aux {n : g.NT} {p : parseTree n}
       use ChomskyNormalFormRule.leaf n t
     simp only [Nat.succ_eq_add_one, parseTree.height, add_le_iff_nonpos_left,
       nonpos_iff_eq_zero, Finset.card_eq_zero] at hgp
-    rw [hgp] at hn
-    simp at hn
+    grind
   | node t₁ t₂ hnc ih₁ ih₂ =>
     rw [Nat.le_iff_lt_or_eq] at hgp
     cases hgp with

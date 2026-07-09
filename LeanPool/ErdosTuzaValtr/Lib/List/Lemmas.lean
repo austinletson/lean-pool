@@ -148,11 +148,7 @@ end Mirror
 @[simp]
 theorem List.getLast?_cons_append_cons (a b : α) (l1 l2 : List α) :
     (a :: (l1 ++ b :: l2)).getLast? = (b :: l2).getLast? := by
-  induction l1 generalizing a with
-  | nil => simp only [nil_append, getLast?_cons_cons]
-  | cons c l1 ih =>
-    rw [cons_append, getLast?_cons_cons]
-    exact ih c
+  grind
 
 /-- Split off the head of a list given a witness that `a` is its head. -/
 def List.takeHead' {a : α} : ∀ {l : List α} (_ : a ∈ l.head?), Σ' t, l = a :: t

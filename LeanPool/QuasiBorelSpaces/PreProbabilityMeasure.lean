@@ -374,8 +374,7 @@ instance : QuasiBorelSpace (PreProbabilityMeasure A) where
     rintro ⟨μ, hμ⟩
     use Var.comp hf μ
     simp only [Var.apply_comp]
-    intro r
-    apply hμ
+    grind
   isVar_cases' hix hφ := by
     choose φ hφ using hφ
     use Var.cases hix φ

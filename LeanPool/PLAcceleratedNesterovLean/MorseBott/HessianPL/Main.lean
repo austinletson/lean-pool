@@ -54,8 +54,7 @@ lemma muPL_norm_sq_bound (f : E → ℝ) (μ : ℝ) (x₀ v : E)
   -- Gradient approximation: fderiv ℝ f (x₀ + h) - H h =o[𝓝 0] h
   have hgrad_o : (fun h => fderiv ℝ f (x₀ + h) - H h) =o[𝓝 (0 : E)] fun h => h := by
     have := hasFDerivAt_iff_isLittleO_nhds_zero.mp hhess_deriv
-    simp only [hdf0, sub_zero] at this
-    exact this
+    grind
   -- Compose with ray t ↦ t • v
   have hray_tend : Tendsto (fun t : ℝ => t • v) (𝓝 0) (𝓝 (0 : E)) := by
     rw [show (0 : E) = (0 : ℝ) • v from (zero_smul ℝ v).symm]
@@ -122,9 +121,7 @@ lemma muPL_norm_sq_bound (f : E → ℝ) (μ : ℝ) (x₀ v : E)
   -- Multiply by 2μ: μ·Hvv - gap/2 ≤ (normHv + ε'·‖v‖)²
   -- Since μ·Hvv = gap + normHv²: gap/2 ≤ 2·normHv·ε'·‖v‖ + (ε'·‖v‖)²
   have hv_ne : v ≠ 0 := by
-    intro h
-    have : (H v) v = 0 := by simp only [h, map_zero]
-    linarith [show Hvv = (H v) v from rfl]
+    grind
   have hv_norm_pos : 0 < ‖v‖ := norm_pos_iff.mpr hv_ne
   have h_final : gap / 2 ≤ 2 * normHv * (ε' * ‖v‖) + (ε' * ‖v‖) ^ 2 := by
     have h_combined : t ^ 2 / 2 * Hvv - gap / (4 * μ) * t ^ 2 ≤
@@ -141,10 +138,7 @@ lemma muPL_norm_sq_bound (f : E → ℝ) (μ : ℝ) (x₀ v : E)
     have h_mul_mu : μ * Hvv / 2 - gap / 4 ≤ (normHv + ε' * ‖v‖) ^ 2 / 2 := by
       have := mul_le_mul_of_nonneg_left h_div hμ.le
       linarith [h_eq1, h_eq2]
-    have h_gap_eq : μ * Hvv = gap + normHv ^ 2 := by linarith [hgap_def]
-    have h_expand : (normHv + ε' * ‖v‖) ^ 2 =
-        normHv ^ 2 + 2 * normHv * (ε' * ‖v‖) + (ε' * ‖v‖) ^ 2 := by ring
-    linarith [h_expand]
+    grind
   -- But ε' is too small for this to hold
   have hε'v_bound : ε' * ‖v‖ < gap / (4 * (normHv + 1) * (gap + 1)) := by
     calc ε' * ‖v‖
@@ -157,9 +151,7 @@ lemma muPL_norm_sq_bound (f : E → ℝ) (μ : ℝ) (x₀ v : E)
   have hBlt1 : gap / (4 * (normHv + 1) * (gap + 1)) < 1 := by
     rw [div_lt_one (by positivity : (0:ℝ) < 4 * (normHv + 1) * (gap + 1))]
     have h_prod := mul_nonneg hNHv hgap_pos.le
-    have h_exp : 4 * (normHv + 1) * (gap + 1) =
-        4 * normHv * gap + 4 * normHv + 4 * gap + 4 := by ring
-    linarith
+    grind
   have hδp : (0 : ℝ) < ε' * ‖v‖ := mul_pos hε'_pos hv_norm_pos
   have hδlt1 : ε' * ‖v‖ < 1 := lt_trans hε'v_bound hBlt1
   have hstep1 : (ε' * ‖v‖) ^ 2 < ε' * ‖v‖ := by
@@ -170,11 +162,7 @@ lemma muPL_norm_sq_bound (f : E → ℝ) (μ : ℝ) (x₀ v : E)
     have h1 : 2 * normHv * (ε' * ‖v‖) ≤
         2 * normHv * (gap / (4 * (normHv + 1) * (gap + 1))) :=
       mul_le_mul_of_nonneg_left hε'v_bound.le (by linarith)
-    have h2 : (ε' * ‖v‖) ^ 2 < gap / (4 * (normHv + 1) * (gap + 1)) :=
-      lt_trans hstep1 hε'v_bound
-    linarith [show (2 * normHv + 1) * (gap / (4 * (normHv + 1) * (gap + 1))) =
-        2 * normHv * (gap / (4 * (normHv + 1) * (gap + 1))) +
-        gap / (4 * (normHv + 1) * (gap + 1)) from by ring]
+    grind
   have hstep3 : (2 * normHv + 1) ≤ 2 * (normHv + 1) := by linarith
   have hstep4 : 2 * (normHv + 1) * (gap / (4 * (normHv + 1) * (gap + 1))) =
       gap / (2 * (gap + 1)) := by field_simp; ring
@@ -319,14 +307,10 @@ theorem hessian_coercive_on_orthogonal_of_MuPL_impl (f : E → ℝ) (μ : ℝ) (
       have hsymm := hessian_symmetric f x₀ hf z w₀
       simp only [map_add, add_apply, map_smul,
         smul_apply, smul_eq_mul, hH_def, hc_def, ha_def]
-      rw [hsymm]
-      ring
+      grind
     -- So: c + 2ta + t²Hz z ≥ c + ct²‖z‖², i.e., 2ta + t²(Hz z - c‖z‖²) ≥ 0 for all t
     have hineq : ∀ t : ℝ, 2 * t * a + t ^ 2 * (H z z - c * ‖z‖ ^ 2) ≥ 0 := by
-      intro t
-      have h1 := hRQ t
-      rw [hexpand] at h1
-      linarith
+      grind
     -- If a ≠ 0, choosing t small with sign opposite to a gives contradiction
     -- t(2a + t(Hzz - c‖z‖²)) ≥ 0 for all t
     -- At t = 0: value = 0, derivative in t = 2a ≠ 0
@@ -379,9 +363,7 @@ theorem hessian_coercive_on_orthogonal_of_MuPL_impl (f : E → ℝ) (μ : ℝ) (
         mul_one, real_inner_comm w₀ e_Korth, sub_self]
     -- e = α • w₀ + z + e_K
     have he_full : e = α • w₀ + z + e_K := by
-      simp only [z]
-      rw [he_decomp]
-      abel
+      grind
     -- H(w₀, e_K) = 0: e_K ∈ K = ker(H), by symmetry H(w₀, e_K) = H(e_K, w₀) = 0
     have heK_mem : e_K ∈ K := SetLike.coe_mem (orthogonalProjectionOnto K e)
     have h_ker : H w₀ e_K = 0 := by
@@ -398,8 +380,7 @@ theorem hessian_coercive_on_orthogonal_of_MuPL_impl (f : E → ℝ) (μ : ℝ) (
       have : e_Korth = α • w₀ + z := by simp only [add_sub_cancel, z]
       rw [this]
       simp only [map_add, map_smul, smul_eq_mul]
-      rw [h_foc_z, hc_def]
-      ring
+      grind
     -- H(w₀, e) = H(w₀, e_K) + H(w₀, e_Korth) = 0 + α·c = α·c
     rw [show e = e_K + e_Korth from he_decomp]
     simp only [map_add]

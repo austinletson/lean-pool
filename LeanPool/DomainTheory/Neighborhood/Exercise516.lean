@@ -117,9 +117,7 @@ theorem not_strElem_le_strBot {σ τ : Str} : ¬ strElem σ ≤ strBot τ := by
 /-- A prefix relation descends to tails. -/
 theorem tail_prefix {σ τ : Str} (h : σ <+: τ) : σ.tail <+: τ.tail := by
   obtain ⟨ρ, rfl⟩ := h
-  cases σ with
-  | nil => simp
-  | cons a σ' => exact List.prefix_append σ' ρ
+  grind
 
 /-! ### Determination by finite elements: an equality criterion for maps `C → V`. -/
 
@@ -155,8 +153,7 @@ theorem tail_hsing {σ τ : Str} (h : σ <+: τ) : strBot σ.tail ≤ tailSing �
     cases σ with
     | nil => exact List.nil_prefix
     | cons b σ' =>
-      obtain ⟨rfl, h'⟩ := List.cons_prefix_cons.mp h
-      exact h'
+      grind
 
 /-- **Exercise 5.16 / Example 4.4 — `tail : C → C`.** Built with the head-test
 combinator `liftC`:

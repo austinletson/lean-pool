@@ -126,8 +126,7 @@ theorem height_contradiction
     nlinarith [sq_nonneg z.re, sq_nonneg z.im, sq_abs z.im]
   have hp_zero : f p = 0 := modform_zero_to_uhp f h_im_pos h_zero
   have hp_in_S := hS_complete p hp_fd (orderOfVanishingAt'_ne_zero_of_eq_zero f hf p hp_zero)
-  have h_p_im : (↑p : ℂ).im = z.im := rfl
-  linarith [hH_bound p hp_in_S]
+  grind
 
 omit hf in
 lemma seg4_eq_seg1_minus_one_H (H : ℝ) (s : ℝ) (_hs : s ∈ Icc 0 1) :

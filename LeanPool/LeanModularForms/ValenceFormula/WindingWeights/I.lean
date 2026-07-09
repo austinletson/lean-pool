@@ -319,9 +319,7 @@ private lemma t₀_i_im_eq_zero (hH : 1 < H) :
     Real.sqrt 3 / 2 - 1 + (t₀_i H - 3) * (H - Real.sqrt 3 / 2) = 0 := by
   have h_den_pos := H_sub_sqrt3_div2_pos hH
   unfold t₀_i
-  rw [show 3 + (1 - Real.sqrt 3 / 2) / (H - Real.sqrt 3 / 2) - 3 =
-    (1 - Real.sqrt 3 / 2) / (H - Real.sqrt 3 / 2) from by ring,
-    div_mul_cancel₀ _ (ne_of_gt h_den_pos)]; ring
+  grind
 
 private lemma g_i_at_t₀ (hH : 1 < H) :
     fdBoundaryH H (t₀_i H) - I = -1/2 := by
@@ -652,9 +650,7 @@ private lemma ftc_logDeriv_telescope_i (H : ℝ) (hH : 1 < H) {δ : ℝ} (hδ : 
     rw [hgt₀_val]; exact log_neg_half_branch
   have hg_closed : g 0 = g 5 := by
     change fdBoundaryH H 0 - I = fdBoundaryH H 5 - I; rw [fdBoundary_H_closed H]
-  have h_branch_t₀' : Complex.log (-(g t₀)) = Complex.log (g t₀) - ↑Real.pi * I := by
-    linear_combination h_branch_t₀
-  rw [hg_closed, h_branch_3, h_branch_t₀']; ring
+  grind
 
 -- Helper: for ε < threshold where threshold ≤ min(2sin(π/12), 1),
 -- the map δ(ε) = 12/π · arcsin(ε/2) satisfies δ < 1.
@@ -715,13 +711,7 @@ private lemma i_h_far (H : ℝ) (hH : 1 < H) :
         (by nlinarith [Real.pi_pos])
   · -- t ≥ 2 - δ and δ < |t - 2|, so t > 2 + δ
     have h_gt : 2 + δ < t := by
-      rcases le_or_gt (2 : ℝ) t with h2 | h2
-      · -- t ≥ 2: |t - 2| = t - 2 > δ
-        rw [abs_of_nonneg (by linarith)] at h_abs
-        linarith
-      · -- t < 2: |t - 2| = 2 - t, but 2 - t < δ from h_right, contradiction
-        rw [abs_of_neg (by linarith)] at h_abs
-        linarith
+      grind
     rcases lt_or_ge t 3 with ht3 | ht3
     · change ε < ‖fdBoundaryH H t - I‖
       rw [g_i_norm_arc_right (by linarith) ht3]
@@ -831,9 +821,7 @@ private lemma i_ftc_integrability (H : ℝ) (hH : 1 < H) {ε : ℝ}
     have hd : deriv (fun s => fdBoundaryH H s - I) t = deriv (fdBoundaryH H) t :=
       deriv_sub_const (f := fdBoundaryH H) _
     rw [hd, div_eq_mul_inv, mul_comm]
-  refine ⟨(intervalIntegrable_congr (fun t _ => h_congr t)).mpr hL,
-          (intervalIntegrable_congr (fun t _ => h_congr t)).mpr hR, ?_⟩
-  simp_rw [h_congr]; exact hsum
+  grind
 
 -- Helper: the log-difference E(ε) tends to -(I·π).
 private lemma i_E_tendsto (H : ℝ) (_ : 1 < H) (threshold : ℝ) (hthresh_pos : 0 < threshold)

@@ -308,11 +308,7 @@ theorem restricted_sum_distinct_sizes (A : Fin (k + 1) → Finset (ZMod p))
         have hc_distinct : ∀ i j, i < j → c i ≠ c j :=
           fun i j hij => fun h => h_sizes_distinct i j hij <|
               by
-                linarith [
-                  Nat.sub_add_cancel <| show 1 ≤ Finset.card (A i)
-                    from Finset.card_pos.mpr <| h_nonempty i,
-                  Nat.sub_add_cancel <| show 1 ≤ Finset.card (A j)
-                    from Finset.card_pos.mpr <| h_nonempty j];
+                grind
         apply vandermonde_coeff_nonzero c m;
         · intro i
           exact lt_of_lt_of_le (Nat.sub_lt (Finset.card_pos.mpr (h_nonempty i)) zero_lt_one) (
@@ -399,9 +395,7 @@ theorem restricted_sum_distinct_sizes (A : Fin (k + 1) → Finset (ZMod p))
               have h_f_ge : ∀ i, f i ≥ i + 1 := by
                 intro i; induction i using Fin.inductionOn with
                 | zero =>
-                  simp_all only [ne_eq, mem_image, mem_univ, true_and, Fin.coe_ofNat_eq_mod,
-                      Nat.zero_mod, zero_add, ge_iff_le, m, c]
-                  obtain ⟨a, ha⟩ := hf_image 0; linarith [Finset.card_pos.mpr (h_nonempty a)];
+                  grind
                 | succ i a =>
                   simp_all only [ne_eq, mem_image, mem_univ, true_and, Fin.val_castSucc,
                       ge_iff_le, Order.add_one_le_iff, Fin.val_succ, m, c]
@@ -434,9 +428,7 @@ theorem restricted_sum_distinct_sizes (A : Fin (k + 1) → Finset (ZMod p))
                 rw [h_sum_f_eq_sum_A,
                     Finset.sum_image <| by
                       intros i hi j hj hij
-                      exact le_antisymm
-                        (le_of_not_gt fun hi' => h_sizes_distinct _ _ hi' hij.symm)
-                        (le_of_not_gt fun hj' => h_sizes_distinct _ _ hj' hij)];
+                      grind];
               linarith;
             convert Nat.sub_le_sub_right h_sum_ge_sum_first_k (k + 1) using 1;
             · exact eq_tsub_of_add_eq <|
@@ -483,8 +475,4 @@ theorem restricted_sum_distinct_sizes (A : Fin (k + 1) → Finset (ZMod p))
             show (1 : ℕ) + 1 = 2 from rfl]
         omega
       -- Compare LHSes via h_sum_succ and h_choose_succ.
-      have h_lhs_eq :
-          ∑ i, #(A i) - (k + 2).choose 2 = ∑ i, (#(A i) - 1) - (k + 1).choose 2 := by
-        rw [h_sum_succ, h_choose_succ]
-        omega
-      rwa [h_lhs_eq]
+      grind

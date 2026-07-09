@@ -116,8 +116,7 @@ theorem proposition_2_9_a {ι : Type*} (E : ι → Type*) [∀ i, CompleteLattic
       · rw [hei]; exact Set.mem_Ici.1 (hUsub hz)
       · rw [he, Function.update_of_ne hji]; exact bot_le
   have hle : e i ≤ b i := (hb hcyl) i
-  rw [hei] at hle
-  exact hle
+  grind
 
 /-! ### Proposition 2.9(b): the induced topology of a product is the product
 topology
@@ -228,8 +227,7 @@ theorem wayBelow_finite_support {ι : Type*} {E : ι → Type*} [∀ i, Complete
   obtain ⟨F, rfl⟩ := hd𝒵
   refine ⟨F, fun j hjF => ?_⟩
   have hj := had.le j
-  simp only [hZ, if_neg hjF] at hj
-  exact le_bot_iff.1 hj
+  grind
 
 /-- **Scott 1972, Proposition 2.9(b).** For a family of continuous lattices, the
 Scott topology of
@@ -527,14 +525,7 @@ theorem scottTopology_prop :
           · rwa [eq_false hp]
         rw [hUuniv]; exact isOpen_univ
       · have hUtrue : U = {True} := by
-          ext p
-          rw [Set.mem_singleton_iff]
-          constructor
-          · intro hpU
-            by_cases hp : p
-            · exact eq_true hp
-            · exact absurd (eq_false hp ▸ hpU) hF
-          · intro hp; rw [hp]; exact hT
+          grind
         rw [hUtrue]; exact isOpen_singleton_true
     · have hUempty : U = ∅ := by
         ext p

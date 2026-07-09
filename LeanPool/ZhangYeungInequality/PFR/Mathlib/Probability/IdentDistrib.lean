@@ -87,22 +87,18 @@ protected lemma _root_.ProbabilityTheory.IdentDistrib.cond
       ht.nullMeasurableSet, cond_apply (hg' hs), cond_apply (hf' hs)]
     congr
     · have hfs : (Prod.snd ∘ fun a ↦ (f a, f' a)) ⁻¹' s = f' ⁻¹' s := by
-        ext a
-        rfl
+        grind
       have hgs : (Prod.snd ∘ fun b ↦ (g b, g' b)) ⁻¹' s = g' ⁻¹' s := by
-        ext b
-        rfl
+        grind
       simpa [hfs, hgs, map_apply₀
           (hfg.comp measurable_snd).aemeasurable_fst hs.nullMeasurableSet,
           map_apply₀ (hfg.comp measurable_snd).aemeasurable_snd hs.nullMeasurableSet]
         using congr_fun (congr_arg (⇑) (hfg.comp measurable_snd).map_eq) s
     · rw [inter_comm, inter_comm (g' ⁻¹' _)]
       have hfts : (fun a ↦ (f a, f' a)) ⁻¹' (t ×ˢ s) = f ⁻¹' t ∩ f' ⁻¹' s := by
-        ext a
-        rfl
+        grind
       have hgts : (fun b ↦ (g b, g' b)) ⁻¹' (t ×ˢ s) = g ⁻¹' t ∩ g' ⁻¹' s := by
-        ext b
-        rfl
+        grind
       simpa [hfts, hgts, map_apply₀ hfg.aemeasurable_fst (ht.prod hs).nullMeasurableSet,
           map_apply₀ hfg.aemeasurable_snd (ht.prod hs).nullMeasurableSet]
         using congr_fun (congr_arg (⇑) hfg.map_eq) (t ×ˢ s)

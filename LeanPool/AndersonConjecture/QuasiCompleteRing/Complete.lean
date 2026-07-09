@@ -207,10 +207,7 @@ theorem anderson_complete_isQuasiComplete
       by_cases hpq' : p ≤ q
       · have h1 := ih hpq'
         have h2 : y q - y (q + 1) ∈ (M ^ (k + q + 1) : Ideal R) := by
-          have : y q - y (q + 1) = a q := by rw [hyrec q]
-                                             ring
-          rw [this]
-          exact haM q
+          grind
         have h3 : y p - y (q + 1) = (y p - y q) + (y q - y (q + 1)) := by ring
         rw [h3]
         exact Ideal.add_mem _ h1 (Ideal.pow_le_pow_right (by omega) h2)
@@ -236,9 +233,7 @@ theorem anderson_complete_isQuasiComplete
               exact Submodule.zero_mem _
     | succ n ih =>
       have hstep : f (n + 1) = f n + a n := by
-        change x - y (n + 1) = (x - y n) + a n
-        rw [hyrec n]
-        ring
+        grind
       rw [hstep]
       exact Ideal.add_mem _ ih (Ideal.pow_le_pow_right (by omega) (haM n))
   -- Step 8: L ∈ M^k
@@ -281,8 +276,7 @@ theorem anderson_complete_isQuasiComplete
       rw [SModEq.sub_mem, smul_eq_mul, Ideal.mul_top] at this
       exact this
     -- x - L = y(j) + (f(j) - L) ∈ A(m) ⊔ M^j
-    have hxL_eq : x - L = y j + (f j - L) := by change x - L = y j + ((x - y j) - L)
-                                                ring
+    have hxL_eq : x - L = y j + (f j - L) := by grind
     rw [hxL_eq]
     exact add_mem hyj_Am (Ideal.mem_sup_right hfL)
   -- Conclusion

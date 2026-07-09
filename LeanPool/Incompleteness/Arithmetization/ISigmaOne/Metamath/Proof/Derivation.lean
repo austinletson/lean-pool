@@ -703,8 +703,7 @@ def construction : Fixpoint.Construction V (blueprint pT) where
     · right; right; right; right; right; left; exact ⟨s, p, t, dp, rfl, hp, ht, h, hC hdC⟩
     · right; right; right; right; right; right; left; exact ⟨s, d', rfl, ss, hC hdC⟩
     · right; right; right; right; right; right; right; left; exact ⟨s, d', rfl, ss, hC hdC⟩
-    · right; right; right; right; right; right; right; right; left; exact ⟨s, p, d₁, d₂, rfl,
-      ⟨h₁, hC hd₁C⟩, ⟨h₂, hC hd₂C⟩⟩
+    · grind
     · right; right; right; right; right; right; right; right; right; exact ⟨s, p, h⟩
 
 instance : (construction T).StrongFinite V where

@@ -50,7 +50,6 @@ theorem E₂_differentiableOn :
     apply div_ne_zero
     · exact mul_ne_zero (Complex.ofReal_ne_zero.mpr Real.pi_ne_zero) Complex.I_ne_zero
     · norm_num
-  change logDeriv dedekindEtaFun' z = _ at h
-  rw [h, inv_mul_cancel_left₀ hpi]
+  grind
 
 end

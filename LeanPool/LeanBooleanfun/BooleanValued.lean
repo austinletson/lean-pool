@@ -154,8 +154,7 @@ lemma eq_character_of_eq_sum_degree_one (hn : n > 0)
           exact Finset.mem_erase.mpr ⟨succAbove_ne i₀ i, Finset.mem_univ _⟩
         · intro i hi0 hi1
           simp at hi1
-          simp at hi0
-          contradiction
+          grind
         · intro i _
           simp
       have : ∀ i, 𝓕 g {i} = 𝓕 f {i₀.succAbove i} := by
@@ -201,8 +200,7 @@ lemma eq_character_of_eq_sum_degree_one (hn : n > 0)
               rw [hFi0zero]; simp
             _  = ∑ i ∈ univ.erase i₀, 𝓕 f {i} * (-1)^(update x i₀ 0 i).val +
                   0 * (-1)^(update x i₀ 0 i₀).val := by
-              congr 1; apply sum_congr (by rfl); intro i hi; apply ne_of_mem_erase at hi;
-              rw [update_of_ne hi]
+              grind
             _ = _ := by
               rw [← hFi0zero, sum_erase_add (h := mem_univ i₀), ← hf]
         calc

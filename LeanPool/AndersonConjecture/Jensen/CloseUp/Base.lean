@@ -49,8 +49,7 @@ lemma eq_of_prime_le_prime_height_le_one
       hbot_lt_P hbot_fin
   rw [Ideal.height_bot] at h0
   rw [show (↑(1 : ℕ) : ℕ∞) = 1 from rfl, Order.lt_one_iff] at hP_height
-  rw [hP_height] at h0
-  exact lt_irrefl _ h0
+  grind
 
 theorem close_up_principal
     (R : NSubring T) (y : R.carrier) (hy : Prime y) (c : R.carrier)
@@ -132,8 +131,7 @@ theorem close_up_dvd
       exact ⟨(a : T) * t, by
         rw [show ((p * a : R.carrier) : T) = (p : T) * (a : T) from
           map_mul R.carrier.subtype p a] at ht
-        rw [← mul_assoc]
-        exact ht⟩
+        grind⟩
     have hc_pR : c ∈ Ideal.span {p} := close_up_principal R p hp c hc_p
     rw [Ideal.mem_span_singleton] at hc_pR
     obtain ⟨c', hcc'⟩ := hc_pR

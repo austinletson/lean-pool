@@ -77,8 +77,7 @@ def inj (h : D ◁ E) : ApproximableMap D E where
     exact ⟨hX, E.inter_mem hY hY' (h.sub hX) (Set.subset_inter hXY hXY'),
       Set.subset_inter hXY hXY'⟩
   mono := by
-    rintro X X' Y Y' ⟨_, _, hXY⟩ hX'X hYY' hX' hY'
-    exact ⟨hX', hY', (hX'X.trans hXY).trans hYY'⟩
+    grind
 
 @[simp] theorem inj_rel (h : D ◁ E) {X Y : Set α} :
     (h.inj).rel X Y ↔ D.mem X ∧ E.mem Y ∧ X ⊆ Y := Iff.rfl
@@ -101,8 +100,7 @@ def proj (h : D ◁ E) : ApproximableMap E D where
       E.inter_mem (h.sub hX) (h.sub hX') hY (Set.subset_inter hYX hYX')
     exact ⟨hY, h.inter_closed hX hX' hEinter, Set.subset_inter hYX hYX'⟩
   mono := by
-    rintro Y Y' X X' ⟨_, _, hYX⟩ hY'Y hXX' hY' hX'
-    exact ⟨hY', hX', (hY'Y.trans hYX).trans hXX'⟩
+    grind
 
 @[simp] theorem proj_rel (h : D ◁ E) {Y X : Set α} :
     (h.proj).rel Y X ↔ E.mem Y ∧ D.mem X ∧ Y ⊆ X := Iff.rfl

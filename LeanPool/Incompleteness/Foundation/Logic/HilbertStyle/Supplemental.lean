@@ -1083,11 +1083,9 @@ lemma «imply_left_concat_conj!» : 𝓢 ⊢! ⋀(Γ ++ Δ) ==> ⋀Γ ⋏ ⋀Δ 
   have d := iff_provable_list_conj.mp this;
   apply and₃'!;
   · apply iff_provable_list_conj.mpr;
-    intro φ hp;
-    exact d φ (by simpa only [List.mem_append] using Or.inl hp);
+    grind
   · apply iff_provable_list_conj.mpr;
-    intro φ hp;
-    exact d φ (by simpa only [List.mem_append] using Or.inr hp);
+    grind
 
 @[simp]
 lemma «forthback_conj_remove!» : 𝓢 ⊢! ⋀(Γ.remove φ) ⋏ φ ==> ⋀Γ := by

@@ -179,17 +179,9 @@ lemma dist_twist₂ (b : Basis (Fin 2) K (Fin 2 → K)) {ϖ : R} (hϖ : Irreduci
     · intro i j hij
       aesop
   · rw [dist_twist_monotone]
-    · conv_rhs => rw [← neg_sub]
-      rw [abs_eq_neg_self]
-      omega
+    · grind
     · intro i j hij
-      match i, j with
-      | 0, 0 => rfl
-      | 0, 1 =>
-        change n ≤ m
-        omega
-      | 1, 0 => simp at hij
-      | 1, 1 => rfl
+      grind
 
 lemma dist_ntwist₂ (b : Basis (Fin 2) K (Fin 2 → K)) {ϖ : R} (hϖ : Irreducible ϖ) (n : ℕ) :
     dist (b.toLattice (R := R)) (b.ntwist₂ hϖ n 0).toLattice = n := by

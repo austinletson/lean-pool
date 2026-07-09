@@ -117,8 +117,7 @@ theorem idemFix_incl_preservesDirectedSup (hidem : ∀ x, e (e x) = e x)
   have hne' : (Subtype.val '' S).Nonempty := hS.image _
   rw [hsc hne' hdir']
   congr 1
-  rw [← Set.image_comp]
-  exact Set.image_congr (fun s _ => s.2)
+  grind
 
 theorem idemFix_retr_preservesDirectedSup (hidem : ∀ x, e (e x) = e x)
     (hsc : PreservesDirectedSup e) :
@@ -140,8 +139,7 @@ theorem idemFix_retr_preservesDirectedSup (hidem : ∀ x, e (e x) = e x)
   have hTne' : (e '' T).Nonempty := hT.image _
   rw [hsc hT hTdir, hsc hTne' hTdir']
   congr 1
-  rw [← Set.image_comp]
-  exact Set.image_congr (fun x _ => (hidem x).symm)
+  grind
 
 /-- The fixed-point set of a Scott-continuous idempotent `e` on `L`, with the
 ambient-supremum-corrected complete-lattice structure, is a *retract of `L`*: the

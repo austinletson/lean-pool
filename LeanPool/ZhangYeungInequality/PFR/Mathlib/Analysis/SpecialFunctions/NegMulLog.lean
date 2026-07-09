@@ -49,9 +49,7 @@ lemma sum_mul_log_div_leq {a b : ι → ℝ} (ha : ∀ i ∈ s, 0 ≤ a i) (hb :
   let B := ∑ i ∈ s, b i
   have B_pos : 0 < B := by
     apply Finset.sum_pos' hb
-    simp only [not_forall] at h
-    rcases h with ⟨i, hi, h'i⟩
-    exact ⟨i, hi, lt_of_le_of_ne (hb i hi) (Ne.symm h'i)⟩
+    grind
   suffices - (∑ i ∈ s, a i * log (a i / b i)) / B ≤
         - ((∑ i ∈ s, a i) * log ((∑ i ∈ s, a i) / (∑ i ∈ s, b i))) / B by
     rwa [div_le_div_iff_of_pos_right B_pos, neg_le_neg_iff] at this
@@ -64,16 +62,12 @@ lemma sum_mul_log_div_leq {a b : ι → ℝ} (ha : ∀ i ∈ s, 0 ≤ a i) (hb :
     rw [neg_div, Finset.sum_div]
     congr 1
     apply Finset.sum_congr rfl (fun i hi ↦ ?_)
-    rcases eq_or_lt_of_le (hb i hi) with h'i | h'i
-    · simp [← h'i, habs i hi h'i.symm]
-    · field_simp
+    grind
   have hsum : ∑ i ∈ s, (b i / B) • (a i / b i) = (∑ i ∈ s, a i) / B := by
     simp only [smul_eq_mul]
     rw [Finset.sum_div]
     apply Finset.sum_congr rfl (fun i hi ↦ ?_)
-    rcases eq_or_lt_of_le (hb i hi) with h'i | h'i
-    · simp [← h'i, habs i hi h'i.symm]
-    · field_simp
+    grind
   have hRHS : - ((∑ i ∈ s, a i) * log ((∑ i ∈ s, a i) / (∑ i ∈ s, b i))) / B =
       Real.negMulLog (∑ i ∈ s, (b i / B) • (a i / b i)) := by
     rw [hsum]
@@ -96,8 +90,7 @@ lemma sum_mul_log_div_eq_iff_aux {a b : ι → ℝ} (ha : ∀ i ∈ s,
   have B_pos : 0 < B := Finset.sum_pos hb h's
   suffices ∀ j ∈ s, a j / b j = ∑ i ∈ s, (b i / B) * (a i / b i) by
     refine ⟨∑ i ∈ s, (b i / B) * (a i / b i), fun j hj ↦ ?_⟩
-    specialize this j hj
-    rwa [div_eq_iff (hb j hj).ne'] at this
+    grind
   have A : ∑ i ∈ s, b i / B = 1 := by simp [← Finset.sum_div, B, div_self B_pos.ne']
   have A' : ∀ i ∈ s, 0 < b i / B := fun i hi ↦ div_pos (hb i hi) B_pos
   have A'' : ∀ i ∈ s, 0 ≤ a i / b i := fun i hi ↦ div_nonneg (ha i hi) (hb i hi).le
@@ -105,13 +98,11 @@ lemma sum_mul_log_div_eq_iff_aux {a b : ι → ℝ} (ha : ∀ i ∈ s,
   have : ∑ x ∈ s, b x / B * (a x / b x) = (∑ x ∈ s, a x) / B := by
     rw [Finset.sum_div]
     apply Finset.sum_congr rfl (fun i hi ↦ ?_)
-    have : 0 < b i := hb i hi
-    field_simp
+    grind
   simp only [negMulLog, smul_eq_mul, this, neg_mul, mul_neg, Finset.sum_neg_distrib, neg_inj]
   rw [← mul_div_right_comm, ← heq, Finset.sum_div]
   apply Finset.sum_congr rfl (fun i hi ↦ ?_)
-  have : 0 < b i := hb i hi
-  field_simp
+  grind
 
 /-- If equality holds in the previous bound, then $a_s=r\cdot b_s$ for every $s\in S$,
 for some
@@ -125,33 +116,21 @@ lemma sum_mul_log_div_eq_iff {a b : ι → ℝ} (ha : ∀ i ∈ s, 0 ≤ a i) (h
   let s' : Finset ι := s.filter (fun i ↦ 0 < b i)
   have A : ∑ i ∈ s', a i = ∑ i ∈ s, a i := by
     apply Finset.sum_subset (Finset.filter_subset _ _)
-    intro i hi h'i
-    simp only [Finset.mem_filter, hi, true_and, not_lt] at h'i
-    exact habs i hi (le_antisymm h'i (hb i hi))
+    grind
   have B : ∑ i ∈ s', b i = ∑ i ∈ s, b i := by
     apply Finset.sum_subset (Finset.filter_subset _ _)
-    intro i hi h'i
-    simp only [Finset.mem_filter, hi, true_and, not_lt] at h'i
-    exact le_antisymm h'i (hb i hi)
+    grind
   have C : ∑ i ∈ s', a i * log (a i / b i) =
       (∑ i ∈ s', a i) * log ((∑ i ∈ s', a i) / (∑ i ∈ s', b i)) := by
     convert heq using 1
     · apply Finset.sum_subset (Finset.filter_subset _ _)
-      intro i hi h'i
-      simp only [Finset.mem_filter, hi, true_and, not_lt] at h'i
-      have : b i = 0 := le_antisymm h'i (hb i hi)
-      simp [this]
+      grind
     · simp [A, B]
   obtain ⟨r, hr⟩ : ∃ r, ∀ i ∈ s', a i = r * (b i) := by
     apply sum_mul_log_div_eq_iff_aux (fun i hi ↦ ha i ?_) (fun i hi ↦ ?_) C
-    · simp only [Finset.mem_filter, s'] at hi
-      exact hi.1
-    · simp only [Finset.mem_filter, s'] at hi
-      exact hi.2
+    · grind
+    · grind
   refine ⟨r, fun i hi ↦ ?_⟩
-  rcases eq_or_lt_of_le (hb i hi) with h'i | h'i
-  · simp [← h'i, habs i hi h'i.symm]
-  · apply hr
-    simp [s', hi, h'i]
+  grind
 
 end Real

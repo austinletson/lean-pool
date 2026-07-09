@@ -100,7 +100,6 @@ theorem lemma_star (m : ℕ) (hm : 0 < m) :
     ring_nf
     rw [← Finset.prod_filter_mul_prod_filter_not m.primeFactors
       (fun x => 2 ≤ m.factorization x)]
-    ring_nf
     grind
   · conv_lhs => rw [← Nat.prod_factorization_pow_eq_self hm.ne']
     simp +decide [pow_mul', Finset.prod_pow, Finsupp.prod]
@@ -280,8 +279,7 @@ theorem real_analytic_rearrangement (habc : ABCConjecture) (ε : ℝ) (hε : 0 <
               ((Nat.powerfulPart n * Nat.powerfulPart (n + 1) *
                 Nat.powerfulPart (n + 2)) : ℝ) := by
         rw [le_div_iff₀]
-        · norm_cast at *
-          simp_all +decide only [CanonicallyOrderedAdd.mul_pos]
+        · grind
         · exact h_powerful_pos_real
       convert
         Real.rpow_le_rpow (by positivity) h_bound_step
@@ -331,8 +329,7 @@ theorem real_analytic_rearrangement (habc : ABCConjecture) (ε : ℝ) (hε : 0 <
           (by
             rw [Real.mul_rpow (by positivity) (by positivity), ← Real.rpow_natCast,
               ← Real.rpow_mul (by positivity)]
-            ring_nf
-            norm_num)
+            grind)
     refine le_trans h_bound ?_
     rw [div_le_iff₀ (by positivity)]
     refine le_trans (mul_le_mul_of_nonneg_left h_bound_simplified_step <| by positivity) ?_

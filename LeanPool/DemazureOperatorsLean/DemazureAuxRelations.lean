@@ -61,11 +61,7 @@ lemma transposition_commutes_non_adjacent (i j : Fin n) (h : NonAdjacent i j) :
         Equiv.Perm.Disjoint (Equiv.swap i.castSucc i.succ)
           (Equiv.swap j.castSucc j.succ) := by
       intro k
-      apply or_iff_not_imp_left.mpr
-      intro h
-      rcases Equiv.eq_or_eq_of_swap_apply_ne_self h with h | h
-      · simpa [h] using Equiv.swap_apply_of_ne_of_ne h1 h2
-      · simpa [h] using Equiv.swap_apply_of_ne_of_ne h3 h4
+      grind
     rw[Equiv.Perm.Disjoint.commute h_disjoint]
 
 lemma transposition_commutes_non_adjacent' (i j : Fin n) (h : NonAdjacent i j) :
@@ -163,14 +159,7 @@ lemma transposition_commutes_adjacent {i : Fin n} {j : Fin (n + 1)} (h0 : i < n 
       Equiv.swap ⟨i + 1, h1⟩ ⟨i + 2, h2⟩
         (Equiv.swap ⟨i, h0⟩ ⟨i + 1, h1⟩
           (Equiv.swap ⟨i + 1, h1⟩ ⟨i + 2, h2⟩ j)) := by
-  simp[Equiv.swap_apply_def]
-  by_cases c0 : j = ⟨i, h0⟩
-  · simp[c0]
-  · by_cases c1 : j = ⟨i + 1, h1⟩
-    · simp[c1]
-    · by_cases c2 : j = ⟨i + 2, h2⟩
-      · simp[c2]
-      · simp[c0,c1,c2]
+  grind
 
 lemma transposition_commutes_adjacent' {i : Fin n} (h0 : i < n + 1)
     (h1 : i + 1 < n + 1) (h2 : i + 2 < n + 1) :
@@ -181,8 +170,7 @@ lemma transposition_commutes_adjacent' {i : Fin n} (h0 : i < n + 1)
       Equiv.swap ⟨i + 1, h1⟩ ⟨i + 2, h2⟩ ∘
         (Equiv.swap ⟨i, h0⟩ ⟨i + 1, h1⟩) ∘
           (Equiv.swap ⟨i + 1, h1⟩ ⟨i + 2, h2⟩) := by
-  funext k
-  exact transposition_commutes_adjacent h0 h1 h2
+  grind
 
 lemma swap_variables_commutes_adjacent {i : Fin n} {p : MvPolynomial (Fin (n + 1)) ℂ}
     (h0 : i < n + 1) (h1 : i + 1 < n + 1) (h2 : i + 2 < n + 1) :

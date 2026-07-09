@@ -135,8 +135,7 @@ private lemma not_diffAt_at_one (s : ℝ) (hs : s ∈ Set.Icc (0 : ℝ) 1) :
         have ht'_not_le_1 : ¬(t' ≤ 1) := not_le.mpr ht'.1
         have ht'_le_2 : t' ≤ 2 := le_of_lt ht'.2
         unfold fdBoundaryToPolygonHomotopy
-        simp only [ht'_not_le_1, ite_false, ht'_le_2, ite_true]
-        congr 4; ring
+        grind
       rw [h_at_t', h_at_1]
     have h_iio_subset : Set.Iio (1 : ℝ) ⊆ {1}ᶜ := fun y hy => ne_of_lt hy
     have h_ioi_subset : Set.Ioi (1 : ℝ) ⊆ {1}ᶜ := fun y hy => ne_of_gt hy
@@ -225,8 +224,7 @@ private lemma not_diffAt_at_three (s : ℝ) (hs : s ∈ Set.Icc (0 : ℝ) 1) :
           show ¬(3 : ℝ) ≤ 2 from by norm_num,
           show (3 : ℝ) ≤ 3 from le_refl 3,
           ite_false, ite_true]
-        dsimp only [g]
-        congr 2; congr 1; push_cast; ring
+        grind
       have h_at_t' : fdBoundaryToPolygonHomotopy (t', s) = g t' := by
         simp only [fdBoundaryToPolygonHomotopy,
           not_le.mpr (lt_trans (by norm_num : (1 : ℝ) < 2) ht'.1), ite_false,
@@ -404,8 +402,7 @@ lemma interval_in_segment (p₁ p₂ : ℝ) (_hp : p₁ < p₂)
       constructor
       · by_contra hlt
         have h1_in : (1 : ℝ) ∈ Set.Ioo p₁ p₂ := ⟨not_le.mp hlt, not_le.mp h1⟩
-        have := h_avoid 1 h1_in
-        exact absurd (Finset.mem_insert_self 1 _) this
+        grind
       · exact h2
     · right
       by_cases h3 : p₂ ≤ 3
@@ -413,8 +410,7 @@ lemma interval_in_segment (p₁ p₂ : ℝ) (_hp : p₁ < p₂)
         constructor
         · by_contra hlt
           have h2_in : (2 : ℝ) ∈ Set.Ioo p₁ p₂ := ⟨not_le.mp hlt, not_le.mp h2⟩
-          have := h_avoid 2 h2_in
-          exact absurd (Finset.mem_insert.mpr (Or.inr (Finset.mem_insert_self 2 _))) this
+          grind
         · exact h3
       · right
         by_cases h4 : p₂ ≤ 4
@@ -422,15 +418,11 @@ lemma interval_in_segment (p₁ p₂ : ℝ) (_hp : p₁ < p₂)
           constructor
           · by_contra hlt
             have h3_in : (3 : ℝ) ∈ Set.Ioo p₁ p₂ := ⟨not_le.mp hlt, not_le.mp h3⟩
-            have := h_avoid 3 h3_in
-            exact absurd (Finset.mem_insert.mpr (Or.inr (Finset.mem_insert.mpr
-              (Or.inr (Finset.mem_insert_self 3 _))))) this
+            grind
           · exact h4
         · right
           by_contra hlt
           have h4_in : (4 : ℝ) ∈ Set.Ioo p₁ p₂ := ⟨not_le.mp hlt, not_le.mp h4⟩
-          have := h_avoid 4 h4_in
-          exact absurd (Finset.mem_insert.mpr (Or.inr (Finset.mem_insert.mpr (Or.inr
-            (Finset.mem_insert.mpr (Or.inr (Finset.mem_singleton_self 4))))))) this
+          grind
 
 end RectHomotopyProof

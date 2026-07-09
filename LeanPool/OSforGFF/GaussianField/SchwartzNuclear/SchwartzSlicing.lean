@@ -150,10 +150,7 @@ private lemma euclideanSnoc_norm_sq (d : ℕ)
     ‖(euclideanSnoc (d + 1) y t) (Fin.last (d + 1))‖ ^ 2 from
     Fin.sum_univ_castSucc _]
   rw [hlast, norm_eq_abs, sq_abs]
-  congr 1
-  apply Finset.sum_congr rfl
-  intro j _
-  rw [hcast]
+  grind
 
 /-- The first `d+1` coordinates contribute to the norm:
 `‖y‖ ≤ ‖euclideanSnoc (d+1) y t‖`.

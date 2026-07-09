@@ -259,8 +259,7 @@ lemma circleIntegral_logDeriv_cuspFunction_of_radius (hf : f ≠ 0)
     · ring
     · rw [Nat.succ_sub_one]
       have hgq_ne := hg_nonvan q (Metric.sphere_subset_closedBall hq)
-      field_simp
-      ring
+      grind
   have hR_le : 0 ≤ R := le_of_lt hR_pos
   have hci_inv : CircleIntegrable (fun q => (↑m : ℂ) * q⁻¹) 0 R := by
     apply ContinuousOn.circleIntegrable hR_le

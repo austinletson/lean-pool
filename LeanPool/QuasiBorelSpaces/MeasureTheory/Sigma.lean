@@ -131,8 +131,7 @@ lemma measurable_distrib [Countable I]
           fun_prop
     · fun_prop
   have : (fun x ↦ ⟨x.2.fst, (x.1, x.2.snd)⟩) = (fun x ↦ f (ix x) x) := by
-    ext x : 1
-    simp only [↓reduceDIte, f, ix]
+    grind
   rw [this]
   apply measurable_cases
   · fun_prop

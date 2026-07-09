@@ -86,16 +86,13 @@ theorem cycle_lemma (a : ℕ → ℤ) (hn : 0 < n) (hper : ∀ k, a (k + n) = a 
       · exact hlt3
     · have hsub : t - n + n = t := Nat.sub_add_cancel htn
       have hper' := Q_periodic a hper hsum (t - n)
-      rw [hsub] at hper'
-      have hle : Q a istar ≤ Q a (t - n) := hMle (t - n) (by omega)
-      rw [hper']; omega
+      grind
   -- uniqueness
   refine ⟨istar, ⟨histrange, hGoodStar⟩, ?_⟩
   rintro y ⟨hyn, hyGood⟩
   rcases lt_trichotomy y istar with h | h | h
   · have h1 : Q a y < Q a istar := hyGood istar (by omega) (by omega)
-    have h2 : Q a istar < Q a (y + n) := hGoodStar (y + n) (by omega) (by omega)
-    rw [Q_periodic a hper hsum y] at h2; omega
+    grind
   · exact h
   · have h1 : Q a istar < Q a y := hGoodStar y (by omega) (by omega)
     have h2 : Q a y < Q a (istar + n) := hyGood (istar + n) (by omega) (by omega)

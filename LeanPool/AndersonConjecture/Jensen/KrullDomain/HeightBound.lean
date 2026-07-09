@@ -82,8 +82,7 @@ include T in theorem derive_mod_principal_trans
       (⊥ : Ideal R.carrier) (Ideal.span {p}) Ideal.isPrime_bot hbot_lt hbot_fin
     rw [Ideal.height_bot] at h0
     rw [show (↑(1 : ℕ) : ℕ∞) = 1 from rfl, Order.lt_one_iff] at hspan_ht
-    rw [hspan_ht] at h0
-    exact lt_irrefl _ h0
+    grind
   -- y ∉ P because p ∤ y and (p) = P∩R
   have hy_nP : (↑y : T) ∉ P := by
     intro hyP
@@ -176,8 +175,7 @@ include T in theorem height_bound_wf_descent
         (Ideal.span {p₀}) Ideal.isPrime_bot hbot_lt hbot_fin
     rw [Ideal.height_bot] at h0
     rw [show (↑(1 : ℕ) : ℕ∞) = 1 from rfl, Order.lt_one_iff] at hspan_height
-    rw [hspan_height] at h0
-    exact lt_irrefl _ h0
+    grind
   have hp₀_P : (↑p₀ : T) ∈ P :=
     (hspan_eq ▸ Ideal.mem_span_singleton_self p₀ : p₀ ∈ Ideal.comap R.carrier.subtype P)
   have hp₀_not_unit_T : ¬IsUnit (↑p₀ : T) :=
@@ -232,8 +230,7 @@ include T in theorem height_bound_wf_descent
     have hv_val_eq : (↑v_unit : S_sub).val = v_val := congrArg Subtype.val hv_unit_eq
     have hav_S : a * ↑v_unit = ⟨u_val, hu_S⟩ := Subtype.ext (by
       simp only [Subring.coe_mul]
-      rw [hv_val_eq]
-      exact hav)
+      grind)
     have hav_S2 : a * ↑v_unit = p₀_S * u' := hav_S.trans hu'_eq
     have heq_S : a = p₀_S * u' * ↑v_unit⁻¹ := by
       rw [Units.eq_mul_inv_iff_mul_eq]
@@ -263,17 +260,13 @@ include T in theorem height_bound_wf_descent
   have ha_P : (a : T) ∈ P := hq_lt.le ha_q
   obtain ⟨b, hb_eq⟩ := hdiv_p₀ a ha_P
   have hb_ne_T : (b : T) ≠ 0 := by
-    intro h
-    rw [h, mul_zero] at hb_eq
-    exact ha_ne_T (haw ▸ hb_eq)
+    grind
   have hab : a = p₀_S * b := Subtype.ext hb_eq
   have hb_q : b ∈ q :=
     (hq_prime.mem_or_mem (hab ▸ ha_q)).resolve_left hp₀_nq
   have hdvd : DvdNotUnit (b : T) w :=
     ⟨hb_ne_T, (↑p₀ : T), hp₀_not_unit_T, haw.symm.trans (hb_eq.trans (mul_comm _ _))⟩
-  exact ha_ne (Subtype.ext (by
-    have hb0 := ih (b : T) hdvd b rfl hb_q
-    simp [hb_eq, congrArg Subtype.val hb0]))
+  grind
 
 omit [IsAdicComplete (IsLocalRing.maximalIdeal T) T] in
 /-- Height bound for primes of S_sub: every associated prime P of T/(t)
@@ -332,8 +325,7 @@ private def build_height_bound_proof
       refine ⟨f₁ * C (y₂ ^ n₂) + f₂ * C (y₂ ^ n₁), n₁ + n₂, ?_⟩
       have key : (t₁ + t₂) * (↑y₂ : T) ^ (n₁ + n₂) =
           t₁ * (↑y₂ : T) ^ n₁ * (↑y₂ : T) ^ n₂ +
-          t₂ * (↑y₂ : T) ^ n₂ * (↑y₂ : T) ^ n₁ := by rw [pow_add]
-                                                     ring
+          t₂ * (↑y₂ : T) ^ n₂ * (↑y₂ : T) ^ n₁ := by grind
       rw [key, hf₁, hf₂, map_add, map_mul, map_mul, aeval_C, aeval_C]
       simp only [show algebraMap R.carrier T = R.carrier.subtype from rfl,
         Subring.coe_subtype, map_pow]
@@ -342,19 +334,16 @@ private def build_height_bound_proof
       refine ⟨f₁ * C (y₁ ^ n₂) + f₂ * C (y₁ ^ n₁), n₁ + n₂, ?_⟩
       have key : (t₁ + t₂) * (↑y₁ : T) ^ (n₁ + n₂) =
           t₁ * (↑y₁ : T) ^ n₁ * (↑y₁ : T) ^ n₂ +
-          t₂ * (↑y₁ : T) ^ n₂ * (↑y₁ : T) ^ n₁ := by rw [pow_add]
-                                                     ring
+          t₂ * (↑y₁ : T) ^ n₂ * (↑y₁ : T) ^ n₁ := by grind
       rw [key, hf₁, hf₂, map_add, map_mul, map_mul, aeval_C, aeval_C]
       simp only [show algebraMap R.carrier T = R.carrier.subtype from rfl,
         Subring.coe_subtype, map_pow]
   have hRbar_mul : ∀ t₁ t₂, t₁ ∈ Rbar → t₂ ∈ Rbar → t₁ * t₂ ∈ Rbar :=
     fun t₁ t₂ ⟨h₁₁, h₁₂⟩ ⟨h₂₁, h₂₂⟩ =>
       ⟨(fun x' y' t₁ t₂ ⟨f₁, n₁, hf₁⟩ ⟨f₂, n₂, hf₂⟩ =>
-        ⟨f₁ * f₂, n₁ + n₂, by rw [map_mul, ← hf₁, ← hf₂, pow_add]
-                              ring⟩) x₁ y₂ t₁ t₂ h₁₁ h₂₁,
+        ⟨f₁ * f₂, n₁ + n₂, by grind⟩) x₁ y₂ t₁ t₂ h₁₁ h₂₁,
        (fun x' y' t₁ t₂ ⟨f₁, n₁, hf₁⟩ ⟨f₂, n₂, hf₂⟩ =>
-        ⟨f₁ * f₂, n₁ + n₂, by rw [map_mul, ← hf₁, ← hf₂, pow_add]
-                              ring⟩) x₂ y₁ t₁ t₂ h₁₂ h₂₂⟩
+        ⟨f₁ * f₂, n₁ + n₂, by grind⟩) x₂ y₁ t₁ t₂ h₁₂ h₂₂⟩
   have hS_mem_rep : ∀ s : S_sub,
       ∃ (a b : T), a ∈ Rbar ∧ b ∈ Rbar ∧
         b ∉ IsLocalRing.maximalIdeal T ∧ (s : T) * b = a := by
@@ -394,33 +383,27 @@ private def build_height_bound_proof
   have heval_x₁_Rbar : ∀ f : Polynomial R.carrier, (aeval x₁ f : T) ∈ Rbar := by
     intro f
     induction f using Polynomial.induction_on' with
-    | add f g hf hg => rw [map_add]
-                       exact hRbar_add _ _ hf hg
+    | add f g hf hg => grind
     | monomial n r =>
       rw [Polynomial.aeval_monomial]
       change (algebraMap R.carrier T r) * x₁ ^ n ∈ Rbar
       exact hRbar_mul _ _ (R_le_intersectionSet R x₁ x₂ y₁ y₂ r) (by
         induction n with
-        | zero => simp only [pow_zero]
-                  exact hRbar_one
-        | succ n ih => rw [pow_succ]
-                       exact hRbar_mul _ _ ih hx₁_Rbar)
+        | zero => grind
+        | succ n ih => grind)
   have heval_x₁_S : ∀ f : Polynomial R.carrier, (aeval x₁ f : T) ∈ S_sub :=
     fun f => hRbar_le_S _ (heval_x₁_Rbar f)
   have heval_x₂_Rbar : ∀ f : Polynomial R.carrier, (aeval x₂ f : T) ∈ Rbar := by
     intro f
     induction f using Polynomial.induction_on' with
-    | add f g hf hg => rw [map_add]
-                       exact hRbar_add _ _ hf hg
+    | add f g hf hg => grind
     | monomial n r =>
       rw [Polynomial.aeval_monomial]
       change (algebraMap R.carrier T r) * x₂ ^ n ∈ Rbar
       exact hRbar_mul _ _ (R_le_intersectionSet R x₁ x₂ y₁ y₂ r) (by
         induction n with
-        | zero => simp only [pow_zero]
-                  exact hRbar_one
-        | succ n ih => rw [pow_succ]
-                       exact hRbar_mul _ _ ih hx₂_Rbar)
+        | zero => grind
+        | succ n ih => grind)
   have heval_x₂_S : ∀ f : Polynomial R.carrier, (aeval x₂ f : T) ∈ S_sub :=
     fun f => hRbar_le_S _ (heval_x₂_Rbar f)
   -- Coprimality of y₁, y₂: at least one of them avoids P
@@ -482,8 +465,7 @@ private def build_height_bound_proof
   have hφfs_eq : φ fs = s * ⟨bs * (↑y_elem : T) ^ ns, hbsyn_S⟩ := by
     apply Subtype.ext
     simp only [Subring.coe_mul, hφ_val]
-    rw [← hfs, ← hsb_eq]
-    ring
+    grind
   have hfs_q : fs ∈ J_q := show φ fs ∈ q by
     rw [hφfs_eq]
     exact q.mul_mem_right _ hs_q
@@ -512,8 +494,7 @@ private def build_height_bound_proof
   have hφfx_eq : φ fx = x * ⟨bx * (↑y_elem : T) ^ nx, hbxynx_S⟩ := by
     apply Subtype.ext
     simp only [Subring.coe_mul, hφ_val]
-    rw [← hfx, ← hxb_eq]
-    ring
+    grind
   -- fx ∈ J but fx ∉ J_q, so J_q ⊊ J strictly
   have hfx_nq : fx ∉ J_q := by
     intro hfx_q
@@ -572,8 +553,7 @@ private def build_height_bound_proof
       have hbot : Ideal.under (Polynomial R.carrier) (⊥ : Ideal (Polynomial K)) = ⊥ := by
         simpa [Ideal.under_def] using
           Ideal.comap_bot_of_injective (algebraMap (Polynomial R.carrier) (Polynomial K)) hψ_inj
-      rw [hbot] at hsat
-      exact hJ_q_ne hsat.symm
+      grind
     haveI : Ring.DimensionLEOne (Polynomial K) :=
       Ring.DimensionLEOne.principal_ideal_ring _
     -- In the PID K[X], two nonzero primes with J_q ≤ J forces J_q = J
@@ -586,8 +566,7 @@ private def build_height_bound_proof
       M' (Polynomial K) hJ_prime hJ_disj
     have hJ_q_sat := IsLocalization.under_map_of_isPrime_disjoint
       M' (Polynomial K) hJ_q_prime hJ_q_disj
-    exact absurd (hJ_q_sat.symm.trans (hmap_eq ▸ hJ_sat))
-      (ne_of_lt hJJ_strict)
+    grind
   -- P∩R ≠ ⊥ case: apply the well-founded descent to get a contradiction
   · exact absurd hs_ne (height_bound_wf_descent R x₁ x₂ y₁ y₂ S_sub hR_le hRbar_le_S hinv
         hR_prime_in_S (fun s => hS_mem_rep s) P hP_ht hR_bound hPR_bot hP_le_M
@@ -691,8 +670,7 @@ private def build_intersection_nsubring_proof
       t₁ * t₂ ∈ adjoinLocSetY R x' y' := by
     intro x' y' t₁ t₂ ⟨f₁, n₁, hf₁⟩ ⟨f₂, n₂, hf₂⟩
     exact ⟨f₁ * f₂, n₁ + n₂, by
-      rw [map_mul, ← hf₁, ← hf₂, pow_add]
-      ring⟩
+      grind⟩
   have hALS_add : ∀ (x' : T) (y' : R.carrier) (t₁ t₂ : T),
       t₁ ∈ adjoinLocSetY R x' y' → t₂ ∈ adjoinLocSetY R x' y' →
       t₁ + t₂ ∈ adjoinLocSetY R x' y' := by
@@ -701,8 +679,7 @@ private def build_intersection_nsubring_proof
     have key : (t₁ + t₂) * (↑y' : T) ^ (n₁ + n₂) =
         t₁ * (↑y' : T) ^ n₁ * (↑y' : T) ^ n₂ +
         t₂ * (↑y' : T) ^ n₂ * (↑y' : T) ^ n₁ := by
-      rw [pow_add]
-      ring
+      grind
     rw [key, hf₁, hf₂, map_add, map_mul, map_mul, aeval_C, aeval_C]
     simp only [show algebraMap R.carrier T = R.carrier.subtype from rfl,
       Subring.coe_subtype, map_pow]
@@ -763,9 +740,7 @@ private def build_intersection_nsubring_proof
     rw [Polynomial.aeval_def, eval₂_sub, eval₂_mul, eval₂_C, eval₂_X, eval₂_C,
       show algebraMap R.carrier T = R.carrier.subtype from rfl]
     have hc' : x₁ * (↑y₁ : T) = (↑c : T) - x₂ * (↑y₂ : T) := by
-      have h := hc_eq
-      rw [h]
-      ring
+      grind
     convert hc' using 2 <;> rfl
   have hx₁_Rbar : x₁ ∈ Rbar := ⟨hx₁_A₁, hx₁_A₂⟩
   -- Symmetrically, x₂ ∈ Rbar using x₂ = (c - x₁y₁)/y₂
@@ -777,12 +752,7 @@ private def build_intersection_nsubring_proof
       simp [aeval_def, eval₂_sub, eval₂_mul, eval₂_C, eval₂_X,
         show algebraMap R.carrier T = R.carrier.subtype from rfl]
       ring
-    rw [haeval]
-    have hc' : x₂ * (↑y₂ : T) = (↑c : T) - x₁ * (↑y₁ : T) := by
-      have h := hc_eq
-      rw [h]
-      ring
-    convert hc'
+    grind
   have hx₂_Rbar : x₂ ∈ Rbar := ⟨hx₂_A₁, hx₂_A₂⟩
   have hx₁_S : x₁ ∈ S_sub := hRbar_le_S _ hx₁_Rbar
   have hx₂_S : x₂ ∈ S_sub := hRbar_le_S _ hx₂_Rbar
@@ -797,18 +767,13 @@ private def build_intersection_nsubring_proof
     have hs_mul_inv : s * s_inv = 1 := hs_unit.mul_val_inv
     have hs_inv_mul : s_inv * s = 1 := hs_unit.val_inv_mul
     have ha_notM : a ∉ IsLocalRing.maximalIdeal T := by
-      rw [← hsb_eq]
-      exact hprod_notmem s b hs_notM hb_notM
+      grind
     have hs_inv_carrier : s_inv ∈ S_carrier := by
       refine ⟨b, a, hb_Rbar, ha_Rbar, ha_notM, ?_⟩
-      calc s_inv * a = s_inv * (s * b) := by rw [hsb_eq]
-        _ = (s_inv * s) * b := by ring
-        _ = 1 * b := by rw [hs_inv_mul]
-        _ = b := one_mul b
+      grind
     have hs_inv_S : s_inv ∈ S_sub := by
       change s_inv ∈ (S_sub : Set T)
-      rw [hS_sub_eq]
-      exact hs_inv_carrier
+      grind
     have hmul_one : (⟨s, hs_mem⟩ : S_sub) * ⟨s_inv, hs_inv_S⟩ = 1 :=
       Subtype.ext hs_mul_inv
     exact IsUnit.of_mul_eq_one _ hmul_one
@@ -823,12 +788,10 @@ private def build_intersection_nsubring_proof
         have h_add := (IsLocalRing.maximalIdeal T).add_mem h ham
         have : (↑(1 - a) : T) + (↑a : T) = 1 := by
           simp [sub_add_cancel]
-        rw [this] at h_add
-        exact h_add
+        grind
       exact (IsLocalRing.maximalIdeal T).ne_top_iff_one.mp
         (IsLocalRing.maximalIdeal.isMaximal T).ne_top h1
-    · left
-      exact hinv a ham
+    · grind
   -- WfDvdMonoid for S: divisibility in S embeds into divisibility in T (which is Noetherian)
   haveI : IsDomain S_sub := inferInstance
   haveI : WfDvdMonoid S_sub := by
@@ -863,8 +826,7 @@ private def build_intersection_nsubring_proof
     constructor
     · obtain ⟨f, n, hfn⟩ := ht_A1
       have hpd_eq : (↑p : T) * (d * (↑y₂ : T) ^ n) = aeval x₁ f := by
-        rw [← hfn, htpd]
-        ring
+        grind
       -- If p | y₂, absorb extra y₂ into the polynomial; otherwise use mod-principal transcendence
       by_cases hpy₂ : p ∣ y₂
       · obtain ⟨q, hq⟩ := hpy₂
@@ -873,12 +835,7 @@ private def build_intersection_nsubring_proof
           simp
         refine ⟨f * C q, n + 1, ?_⟩
         have key : d * (↑y₂ : T) ^ (n + 1) = aeval x₁ f * (↑q : T) := by
-          have hpow : (↑y₂ : T) ^ (n + 1) = (↑y₂ : T) ^ n * ((↑p : T) * (↑q : T)) := by
-            rw [pow_succ, hy₂_eq]
-          rw [hpow]
-          have : d * ((↑y₂ : T) ^ n * ((↑p : T) * (↑q : T))) =
-              ((↑p : T) * (d * (↑y₂ : T) ^ n)) * (↑q : T) := by ring
-          rw [this, hpd_eq]
+          grind
         rw [key, map_mul, aeval_C,
           show algebraMap R.carrier T = R.carrier.subtype from rfl, Subring.coe_subtype]
       · suffices hCp_dvd : (C p : Polynomial R.carrier) ∣ f by
@@ -893,8 +850,7 @@ private def build_intersection_nsubring_proof
           (Ideal.mem_span_singleton.mpr ⟨d * (↑y₂ : T) ^ n, hpd_eq.symm⟩)
     · obtain ⟨f, n, hfn⟩ := ht_A2
       have hpd_eq : (↑p : T) * (d * (↑y₁ : T) ^ n) = aeval x₂ f := by
-        rw [← hfn, htpd]
-        ring
+        grind
       by_cases hpy₁ : p ∣ y₁
       · obtain ⟨q, hq⟩ := hpy₁
         have hy₁_eq : (↑y₁ : T) = (↑p : T) * (↑q : T) := by
@@ -902,12 +858,7 @@ private def build_intersection_nsubring_proof
           simp
         refine ⟨f * C q, n + 1, ?_⟩
         have key : d * (↑y₁ : T) ^ (n + 1) = aeval x₂ f * (↑q : T) := by
-          have hpow : (↑y₁ : T) ^ (n + 1) = (↑y₁ : T) ^ n * ((↑p : T) * (↑q : T)) := by
-            rw [pow_succ, hy₁_eq]
-          rw [hpow]
-          have : d * ((↑y₁ : T) ^ n * ((↑p : T) * (↑q : T))) =
-              ((↑p : T) * (d * (↑y₁ : T) ^ n)) * (↑q : T) := by ring
-          rw [this, hpd_eq]
+          grind
         rw [key, map_mul, aeval_C,
           show algebraMap R.carrier T = R.carrier.subtype from rfl, Subring.coe_subtype]
       · suffices hCp_dvd : (C p : Polynomial R.carrier) ∣ f by
@@ -965,25 +916,7 @@ private def build_intersection_nsubring_proof
           (⟨(hS_sub_eq ▸ s.2 : s.val ∈ S_carrier).choose_spec.choose,
             (hS_sub_eq ▸ s.2 : s.val ∈ S_carrier).choose_spec.choose_spec.2.1⟩ : ↥Rbar)) := by
       intro s₁ s₂ heq
-      simp only [Prod.mk.injEq, Subtype.mk.injEq] at heq
-      obtain ⟨ha_eq, hb_eq⟩ := heq
-      have h₁ := (hS_sub_eq ▸ s₁.2 : s₁.val ∈ S_carrier).choose_spec.choose_spec
-      have h₂ := (hS_sub_eq ▸ s₂.2 : s₂.val ∈ S_carrier).choose_spec.choose_spec
-      have key : s₁.val * (hS_sub_eq ▸ s₂.2 : s₂.val ∈ S_carrier).choose_spec.choose =
-                 s₂.val * (hS_sub_eq ▸ s₂.2 : s₂.val ∈ S_carrier).choose_spec.choose := by
-        calc s₁.val * (hS_sub_eq ▸ s₂.2 : s₂.val ∈ S_carrier).choose_spec.choose
-            = s₁.val * (hS_sub_eq ▸ s₁.2 : s₁.val ∈ S_carrier).choose_spec.choose := by rw [← hb_eq]
-          _ = (hS_sub_eq ▸ s₁.2 : s₁.val ∈ S_carrier).choose := h₁.2.2.2
-          _ = (hS_sub_eq ▸ s₂.2 : s₂.val ∈ S_carrier).choose := ha_eq
-          _ = s₂.val * (hS_sub_eq ▸ s₂.2 : s₂.val ∈ S_carrier).choose_spec.choose := h₂.2.2.2.symm
-      have hb_ne : (hS_sub_eq ▸ s₂.2 : s₂.val ∈ S_carrier).choose_spec.choose ≠ (0 : T) := by
-        intro hb0
-        exact h₂.2.2.1 (hb0 ▸ Ideal.zero_mem _)
-      have hsub : (s₁.val - s₂.val) *
-          (hS_sub_eq ▸ s₂.2 : s₂.val ∈ S_carrier).choose_spec.choose = 0 := by
-        rw [sub_mul, key, sub_self]
-      exact Subtype.ext (sub_eq_zero.mp
-        ((mul_eq_zero.mp hsub).resolve_right hb_ne))
+      grind
     calc Cardinal.mk S_sub
         ≤ Cardinal.mk (↥Rbar × ↥Rbar) := Cardinal.mk_le_of_injective hf
       _ = Cardinal.mk ↥Rbar * Cardinal.mk ↥Rbar := (Cardinal.mul_def _ _).symm
@@ -994,14 +927,7 @@ private def build_intersection_nsubring_proof
           Cardinal.mul_eq_self (le_max_left _ _)
   have hcard : Cardinal.mk S_sub ≤
       max Cardinal.aleph0 (Cardinal.mk (IsLocalRing.ResidueField T)) := by
-    calc Cardinal.mk S_sub
-        ≤ max Cardinal.aleph0 (Cardinal.mk R.carrier) := hCard_S
-      _ ≤ max Cardinal.aleph0 (max Cardinal.aleph0
-            (Cardinal.mk (IsLocalRing.ResidueField T))) :=
-        by gcongr
-           exact R.card_le
-      _ = max Cardinal.aleph0
-            (Cardinal.mk (IsLocalRing.ResidueField T)) := by simp
+    grind
   -- The maximal ideal of S is exactly M∩S (S is local with the inherited maximal ideal)
   have hmax_eq : IsLocalRing.maximalIdeal S_sub =
       (IsLocalRing.maximalIdeal T).comap S_sub.subtype := by

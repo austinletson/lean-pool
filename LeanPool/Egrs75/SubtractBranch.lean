@@ -133,21 +133,13 @@ theorem mod_pow_lowPDigitIndex {p n : ℕ} (hp : 1 < p) (hn : n ≠ 0) :
 
 /-- `2 * ((p - 1) / 2) = p - 1` for odd `p`. -/
 theorem two_mul_half_pred {p : ℕ} (hodd : Odd p) : 2 * ((p - 1) / 2) = p - 1 := by
-  obtain ⟨k, hk⟩ := hodd
-  subst hk
-  have : (2 * k + 1 - 1) / 2 = k := by
-    rw [show 2 * k + 1 - 1 = 2 * k by omega, Nat.mul_div_cancel_left k (by norm_num)]
-  omega
+  grind
 
 /-- `2 * ((p^m - 1)/2) = p^m - 1` (odd base ⟹ `p^m` odd ⟹ `p^m - 1` even). -/
 theorem two_mul_half_pred_pow {p : ℕ} (hodd : Odd p) (m : ℕ) :
     2 * ((p ^ m - 1) / 2) = p ^ m - 1 := by
   have hoddpow : Odd (p ^ m) := hodd.pow
-  obtain ⟨k, hk⟩ := hoddpow
-  rw [hk]
-  have : (2 * k + 1 - 1) / 2 = k := by
-    rw [show 2 * k + 1 - 1 = 2 * k by omega, Nat.mul_div_cancel_left k (by norm_num)]
-  omega
+  grind
 
 /-- The recursion for the half-repunit: `(p^(m+1) - 1)/2 = p · ((p^m - 1)/2) + (p-1)/2`.
 -/
@@ -171,8 +163,7 @@ theorem half_pred_pow_succ {p : ℕ} (hp : 2 ≤ p) (hodd : Odd p) (m : ℕ) :
         _ = p ^ (m + 1) := by rw [pow_succ]; ring
     have hmuls : p * (p ^ m - 1) = p ^ (m + 1) - p := by
       rw [Nat.mul_sub, Nat.mul_one, pow_succ]; ring_nf
-    rw [hmuls]
-    omega
+    grind
   omega
 
 /-- **`LowDigits p ((p^m - 1)/2)`** — the half-repunit has every base-`p` digit equal to
@@ -188,9 +179,7 @@ theorem lowDigits_half_pred_pow {p : ℕ} (hp : 3 ≤ p) (hodd : Odd p) (m : ℕ
 
 /-- `(p^m - 1)/2 < p^m` (strict, since `(p^m - 1)/2 ≤ p^m - 1 < p^m`). -/
 theorem half_pred_pow_lt {p : ℕ} (hp : 2 ≤ p) (m : ℕ) : (p ^ m - 1) / 2 < p ^ m := by
-  have h1 : 1 ≤ p ^ m := Nat.one_le_pow _ _ (by omega)
-  have : (p ^ m - 1) / 2 ≤ p ^ m - 1 := Nat.div_le_self _ _
-  omega
+  grind
 
 /-! ## The borrow block `a·p^m - (p^m+1)/2 = (a-1)·p^m + (p^m-1)/2` -/
 
@@ -211,8 +200,7 @@ theorem sub_block_eq {p : ℕ} (hodd : Odd p) {a m : ℕ} (ha : 1 ≤ a) :
   | zero => omega
   | succ b =>
     -- (b+1)*(2k+1) - (k+1) = b*(2k+1) + k
-    have : (b + 1) * (2 * k + 1) = b * (2 * k + 1) + (2 * k + 1) := by ring
-    rw [this]; simp only [Nat.add_sub_cancel]; omega
+    grind
 
 /-- **The borrow block is `LowDigits p`.**  For `1 ≤ a ≤ (p-1)/2`, the block
 `a·p^m - (p^m+1)/2` is `LowDigits p`: it equals `(a-1)·p^m + (p^m-1)/2`, whose digit at
@@ -299,8 +287,7 @@ theorem sub_preserves_lowDigits {p : ℕ} (hp : p.Prime) (hodd : Odd p) {n : ℕ
     rw [lowDigits_iff_digitAt (by omega)] at hpn
     have := hpn m
     unfold digitAt at this
-    rw [← ha] at this
-    exact this
+    grind
   -- low block: n % p^(m+1) = a·p^m
   have hlow : n % p ^ (m + 1) = a * p ^ m := mod_pow_succ_lowPDigitIndex hp1 hn
   -- high block
@@ -324,15 +311,13 @@ theorem sub_preserves_lowDigits {p : ℕ} (hp : p.Prime) (hodd : Odd p) {n : ℕ
   have hSle : (p ^ m + 1) / 2 ≤ a * p ^ m := by
     have hpmpos : 1 ≤ p ^ m := Nat.one_le_pow _ _ (by omega)
     have hS_lt : (p ^ m + 1) / 2 ≤ p ^ m := by
-      have hoddpow : Odd (p ^ m) := hodd.pow
-      obtain ⟨k, hk⟩ := hoddpow; rw [hk]; omega
+      grind
     calc (p ^ m + 1) / 2 ≤ p ^ m := hS_lt
       _ = 1 * p ^ m := by ring
       _ ≤ a * p ^ m := Nat.mul_le_mul_right _ ha1
   -- n - S = (a·p^m - S) + p^(m+1)·Hi
   have hsubeq : n - (p ^ m + 1) / 2 = (a * p ^ m - (p ^ m + 1) / 2) + p ^ (m + 1) * Hi := by
-    rw [hdecomp]
-    omega
+    grind
   rw [hsubeq]
   -- low block LowDigits p and < p^(m+1); assemble via disjoint adder
   have hblowlow : LowDigits p (a * p ^ m - (p ^ m + 1) / 2) := sub_block_lowDigits hp3 hodd ha1 haA

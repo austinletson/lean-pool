@@ -190,8 +190,7 @@ theorem B2_upper_bound (k : ℕ) (hk : 1 ≤ k) (hRadLB : RadLB k) :
       ← Real.rpow_neg ( by positivity : 0 ≤ ( n : ℝ ) ) ]; ring;
     exact Or.inl (by
       rw [← Real.rpow_natCast, ← Real.rpow_add (by positivity)]
-      push_cast
-      ring)
+      grind)
 
 -- Remark (not part of the proof):
 -- ∏_{i=0}^{k-1} B₂(n+i) ≤ B₂(F(n)) up to a factor depending only on k

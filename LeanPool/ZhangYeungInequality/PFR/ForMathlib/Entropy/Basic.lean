@@ -562,8 +562,7 @@ lemma _root_.ProbabilityTheory.condEntropy_of_injective
       have : {a | ¬Y a = y} = (Y ⁻¹' {y})ᶜ := by ext; simp
       rw [this, Set.inter_compl_self, measure_empty, mul_zero]
     filter_upwards [this] with ω hω
-    rw [hω]
-    simp
+    grind
   simp_rw [this]
   congr with y
   rw [entropy_comp_of_injective _ hX (f y) (hf y)]
@@ -700,8 +699,7 @@ lemma _root_.ProbabilityTheory.entropy_comp_le (μ : Measure Ω) [IsZeroOrProbab
   have : H[X; μ] = H[⟨X, f ∘ X⟩; μ] := by
     refine (entropy_comp_of_injective μ hX (fun x ↦ (x, f x)) ?_).symm
     intro x y hxy
-    simp only [Prod.mk.injEq] at hxy
-    exact hxy.1
+    grind
   rw [this, chain_rule _ hX hfX]
   simp only [le_add_iff_nonneg_right]
   exact condEntropy_nonneg X (f ∘ X) μ
@@ -885,10 +883,7 @@ lemma _root_.ProbabilityTheory.iIndepFun.entropy_eq_add {Ω S : Type*} [hΩ:
       let T : Fin m → Finset (Fin (m + 1)) := fun i ↦ {i.castSucc}
       let φ : (i:Fin m) → ((_: T i) → S) → S := fun i x ↦ x ⟨ i.castSucc, by simp [T] ⟩
       convert iIndepFun.finsets_comp T _ h_indep hX φ (by fun_prop)
-      rw [Finset.pairwiseDisjoint_iff]; rintro ⟨ _, _ ⟩ _ ⟨ _, _ ⟩ _ ⟨ ⟨ _, _ ⟩,
-        hij ⟩
-      simp [T] at hij ⊢
-      grind
+      rw [Finset.pairwiseDisjoint_iff]; grind
     _ = _ := by rw [Fin.sum_univ_castSucc]
 
 

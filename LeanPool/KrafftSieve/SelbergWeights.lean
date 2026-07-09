@@ -94,11 +94,9 @@ lemma krafft_algebraic_equivalence (p : ℕ) (hp : p.Prime) (h_ge_5 : p ≥ 5) (
       cases h_mod <;> simp_all +decide only [Int.ModEq, Nat.cast_mul, Nat.cast_ofNat,
         Int.natCast_ediv, Nat.cast_add, Nat.cast_one, Int.reduceNeg]
       · exact Or.inr (Int.modEq_iff_dvd.mpr ⟨-1, by
-          linarith [Nat.mod_add_div (p + 1) 6,
-                    show (p + 1) % 6 = 2 from by norm_num [*, Nat.add_mod]]⟩)
+          grind⟩)
       · exact Or.inl (Int.modEq_iff_dvd.mpr ⟨-1, by
-          linarith [Nat.mod_add_div (p + 1) 6,
-                    show (p + 1) % 6 = 0 from by norm_num [*, Nat.add_mod]]⟩)
+          grind⟩)
     simp_all +decide [← ZMod.intCast_eq_intCast_iff]
     norm_cast at *; aesop
   grind

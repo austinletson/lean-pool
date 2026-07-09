@@ -41,16 +41,11 @@ private lemma norm_integral_le_const_left {r : ℝ → ℂ} {t₀ a b B C : ℝ}
     (hB : ∀ t, 0 < |t - t₀| → |t - t₀| ≤ B → ‖r t‖ ≤ C) :
     ‖∫ t in (t₀ - b)..(t₀ - a), r t‖ ≤ C * (b - a) := by
   have hb : ∀ t ∈ Set.uIoc (t₀ - b) (t₀ - a), ‖r t‖ ≤ C := fun t ht => by
-    have ⟨h1, h2⟩ :=
-      (Set.uIoc_of_le (by linarith : t₀ - b ≤ t₀ - a) ▸ ht : t ∈ Set.Ioc _ _)
-    refine hB t (abs_pos.mpr (by linarith)) ?_
-    rw [abs_of_neg (by linarith : t - t₀ < 0)]
-    linarith
+    grind
   calc ‖∫ t in (t₀ - b)..(t₀ - a), r t‖
       ≤ C * |(t₀ - a) - (t₀ - b)| :=
         intervalIntegral.norm_integral_le_of_norm_le_const hb
-    _ = C * (b - a) := by rw [show (t₀ - a) - (t₀ - b) = b - a by ring,
-        abs_of_pos (by linarith)]
+    _ = C * (b - a) := by grind
 
 /-- Norm bound for an integral over a right annulus segment `(t₀+a)..(t₀+b)`
 where `‖r‖ ≤ C` holds whenever `0 < |t-t₀| ≤ B` and `b ≤ B`. -/
@@ -59,16 +54,11 @@ private lemma norm_integral_le_const_right {r : ℝ → ℂ} {t₀ a b B C : ℝ
     (hB : ∀ t, 0 < |t - t₀| → |t - t₀| ≤ B → ‖r t‖ ≤ C) :
     ‖∫ t in (t₀ + a)..(t₀ + b), r t‖ ≤ C * (b - a) := by
   have hb : ∀ t ∈ Set.uIoc (t₀ + a) (t₀ + b), ‖r t‖ ≤ C := fun t ht => by
-    have ⟨h1, h2⟩ :=
-      (Set.uIoc_of_le (by linarith : t₀ + a ≤ t₀ + b) ▸ ht : t ∈ Set.Ioc _ _)
-    refine hB t (abs_pos.mpr (by linarith)) ?_
-    rw [abs_of_pos (by linarith : t - t₀ > 0)]
-    linarith
+    grind
   calc ‖∫ t in (t₀ + a)..(t₀ + b), r t‖
       ≤ C * |(t₀ + b) - (t₀ + a)| :=
         intervalIntegral.norm_integral_le_of_norm_le_const hb
-    _ = C * (b - a) := by rw [show (t₀ + b) - (t₀ + a) = b - a by ring,
-        abs_of_pos (by linarith)]
+    _ = C * (b - a) := by grind
 
 /-- O(ε) step bound from bounded remainder. -/
 lemma remainder_integral_O_eps {r : ℝ → ℂ} {t₀ ε C : ℝ}
@@ -82,8 +72,7 @@ lemma remainder_integral_O_eps {r : ℝ → ℂ} {t₀ ε C : ℝ}
     (a := ε) (b := 2 * ε) (B := 2 * ε) hε_pos (by linarith) le_rfl hr_bound
   have h_right := norm_integral_le_const_right (r := r) (t₀ := t₀)
     (a := ε) (b := 2 * ε) (B := 2 * ε) hε_pos (by linarith) le_rfl hr_bound
-  rw [show 2 * ε - ε = ε by ring] at h_left h_right
-  linarith
+  grind
 
 /-- Symmetric cancellation of 1/(t-t₀). -/
 lemma integral_inv_symm
@@ -125,8 +114,7 @@ private lemma norm_le_ae_Ioc_of_Ioo {f g : ℝ → ℝ} {lo hi : ℝ}
   have h_compl : ∀ᵐ t, t ∉ ({hi} : Set ℝ) := by
     simp [MeasureTheory.ae_iff]
   filter_upwards [h_compl] with t ht_ne ht_mem
-  refine h t ⟨ht_mem.1, lt_of_le_of_ne ht_mem.2 ?_⟩
-  simpa only [Set.mem_singleton_iff] using ht_ne
+  grind
 
 /-- Remainder annulus bound: O(log ratio). -/
 lemma remainder_annulus_bound {r : ℝ → ℂ}
@@ -148,13 +136,7 @@ lemma remainder_annulus_bound {r : ℝ → ℂ}
     have h_norm_le :
         ∀ t ∈ Set.Ioo (t₀ - c₂) (t₀ - c₁),
           ‖r t‖ ≤ g t := by
-      intro t ⟨ht_lo, ht_hi⟩
-      have h_t_minus : t - t₀ < 0 := by linarith
-      have h_abs : |t - t₀| = t₀ - t := by rw [abs_of_neg h_t_minus]; ring
-      have h_abs_lo : c₁ < |t - t₀| := by rw [h_abs]; linarith
-      have h_abs_hi : |t - t₀| < c₂ := by rw [h_abs]; linarith
-      have h_bound := hr_bound t h_abs_lo h_abs_hi
-      simp only [g]; rwa [h_abs] at h_bound
+      grind
     have h_norm_le_ae :
         ∀ᵐ t, t ∈ Set.Ioc (t₀ - c₂) (t₀ - c₁) →
           ‖r t‖ ≤ g t :=
@@ -194,14 +176,7 @@ lemma remainder_annulus_bound {r : ℝ → ℂ}
     have h_norm_le :
         ∀ t ∈ Set.Ioo (t₀ + c₁) (t₀ + c₂),
           ‖r t‖ ≤ g t := by
-      intro t ⟨ht_lo, ht_hi⟩
-      have h_t_minus : t - t₀ > 0 := by linarith
-      have h_abs : |t - t₀| = t - t₀ :=
-        abs_of_pos h_t_minus
-      have h_abs_lo : c₁ < |t - t₀| := by rw [h_abs]; linarith
-      have h_abs_hi : |t - t₀| < c₂ := by rw [h_abs]; linarith
-      have h_bound := hr_bound t h_abs_lo h_abs_hi
-      simp only [g]; rwa [h_abs] at h_bound
+      grind
     have h_norm_le_ae :
         ∀ᵐ t, t ∈ Set.Ioc (t₀ + c₁) (t₀ + c₂) →
           ‖r t‖ ≤ g t :=
@@ -230,16 +205,10 @@ lemma remainder_annulus_bound {r : ℝ → ℂ}
           intervalIntegral.integral_comp_sub_right
             (fun u => η / u) t₀
             (a := t₀ + c₁) (b := t₀ + c₂)
-        simp only [add_sub_cancel_left] at h
-        exact h
+        grind
       rw [h_subst, integral_const_div_eq_log hc₁_pos hc₂_pos]
     rw [h_g_eq] at h_bound; exact h_bound
-  calc ‖∫ t in (t₀ - c₂)..(t₀ - c₁), r t‖ +
-      ‖∫ t in (t₀ + c₁)..(t₀ + c₂), r t‖
-      ≤ η * Real.log (c₂ / c₁) +
-        η * Real.log (c₂ / c₁) :=
-          add_le_add h_left h_right
-    _ = 2 * η * Real.log (c₂ / c₁) := by ring
+  grind
 
 /-- Scale-dependent η from asymptotic control. -/
 lemma exists_eta_delta {γ : ℝ → ℂ} {t₀ : ℝ}
@@ -284,10 +253,7 @@ lemma error_at_smaller_scale {γ : ℝ → ℂ}
   obtain ⟨δ, hδ_pos, hδ_bound⟩ :=
     exists_eta_delta hL hγ_hasderiv hγ_cont_deriv
       η' hη'
-  refine ⟨δ, hδ_pos,
-    fun ε _hε_pos hε_lt t ht_pos ht_le => ?_⟩
-  exact hδ_bound t ht_pos
-    (lt_of_le_of_lt ht_le hε_lt)
+  grind
 
 /-- Cutoff integral I(ε). -/
 abbrev cutoffIntegral
@@ -365,13 +331,10 @@ lemma summableSubseqAux_pos {γ : ℝ → ℂ}
   induction n with
   | zero =>
     simp only [summableSubseqAux_zero]
-    have h_min_pos : 0 < min δ₀ (δ 0) :=
-      lt_min hδ₀_pos (hδ_pos 0)
-    positivity
+    grind
   | succ m ih =>
     simp only [summableSubseqAux_succ]
-    have h_min_pos : 0 < min (ε m / 2) (δ (m + 1)) := lt_min (by linarith) (hδ_pos (m + 1))
-    positivity
+    grind
 
 lemma summableSubseqAux_halving {γ : ℝ → ℂ}
     {t₀ : ℝ} {L : ℂ} (hL : L ≠ 0)
@@ -416,21 +379,10 @@ lemma summableSubseqAux_lt_delta {γ : ℝ → ℂ}
   induction n with
   | zero =>
     simp only [summableSubseqAux_zero]
-    have h_min_le : min δ₀ (δ 0) ≤ δ 0 :=
-      min_le_right _ _
-    have h_min_pos : 0 < min δ₀ (δ 0) :=
-      lt_min hδ₀_pos (hδ_pos 0)
-    exact lt_of_le_of_lt (div_le_div_of_nonneg_right h_min_le (by norm_num : (0 : ℝ) < 2).le)
-      (half_lt_self (hδ_pos 0))
+    grind
   | succ m _ =>
     simp only [summableSubseqAux_succ]
-    have h_min_le :
-        min (ε m / 2) (δ (m + 1)) ≤ δ (m + 1) :=
-      min_le_right _ _
-    have h_min_pos : 0 < min (ε m / 2) (δ (m + 1)) :=
-      lt_min (by linarith [summableSubseqAux_pos hL hγ_hasderiv hγ_cont_deriv δ₀ hδ₀_pos m])
-        (hδ_pos (m + 1))
-    linarith
+    grind
 
 lemma summableSubseqAux_error_bound {γ : ℝ → ℂ}
     {t₀ : ℝ} {L : ℂ} (hL : L ≠ 0)
@@ -454,8 +406,7 @@ lemma summableSubseqAux_error_bound {γ : ℝ → ℂ}
     hγ_hasderiv hγ_cont_deriv δ₀ hδ₀_pos n
   have hε_lt_δ := summableSubseqAux_lt_delta hL
     hγ_hasderiv hγ_cont_deriv δ₀ hδ₀_pos n
-  exact hδ_bound n ε_n hε_pos hε_lt_δ t ht_pos
-    ht_le
+  grind
 
 lemma exists_summable_subseq {γ : ℝ → ℂ}
     {t₀ : ℝ} {L : ℂ} (hL : L ≠ 0)
@@ -566,8 +517,7 @@ lemma cutoff_integrand_intervalIntegrable
           else 0)‖ ≤ M_deriv / ε := by
     intro t ht_uIoc
     have ht : t ∈ Set.Icc a b := by
-      rw [Set.uIoc_of_le (le_of_lt (hat₀.1.trans hat₀.2))] at ht_uIoc
-      exact Set.Ioc_subset_Icc_self ht_uIoc
+      grind
     by_cases h_in : ε < ‖γ t - γ t₀‖
     · simp only [h_in, ↓reduceIte]
       have h_bound : ‖(γ t - γ t₀)⁻¹‖ ≤ 1 / ε := by
@@ -619,14 +569,7 @@ lemma cutoff_diff_eq_annulus_integral
         ‖γ t - γ t₀‖ ≤ ε₂
       then f t else 0 := by
   rw [← intervalIntegral.integral_sub h_int₁ h_int₂]
-  congr 1; ext t
-  by_cases h1 : ε₁ < ‖γ t - γ t₀‖
-  · by_cases h2 : ε₂ < ‖γ t - γ t₀‖
-    · simp only [h1, h2, ↓reduceIte, sub_self, not_le.mpr h2, and_false]
-    · simp only [h1, h2, ↓reduceIte, sub_zero, not_lt.mp h2, and_self]
-  · by_cases h2 : ε₂ < ‖γ t - γ t₀‖
-    · exact absurd (lt_of_le_of_lt (not_lt.mp h1) (lt_of_le_of_lt h_le h2)) (lt_irrefl _)
-    · simp only [h1, h2, ↓reduceIte, sub_self, false_and]
+  grind
 
 /-- Singular part cancellation via odd symmetry. -/
 lemma pv_singular_cancels
@@ -695,8 +638,7 @@ lemma remainder_dyadic_step {r : ℝ → ℂ}
     div_pos hε₀_pos h_pow1_pos
   have h_lt : ε₀ / 2 ^ (n + 1) < ε₀ / 2 ^ n := by
     have h_pow_lt : (2 : ℝ) ^ n < 2 ^ (n + 1) := by
-      have h : (2 : ℝ) ^ (n + 1) = 2 ^ n * 2 := by ring
-      rw [h]; linarith
+      grind
     exact div_lt_div_of_pos_left hε₀_pos h_pow_pos
       h_pow_lt
   have h_ratio :
@@ -740,8 +682,7 @@ lemma pv_dyadic_step_O_eps {r : ℝ → ℂ}
     (a := ε_n / 2) (b := ε_n) (B := δ₀) hε_n_half_pos (by linarith) hε_n_le_δ₀ hr_bounded
   have h_right := norm_integral_le_const_right (r := r) (t₀ := t₀)
     (a := ε_n / 2) (b := ε_n) (B := δ₀) hε_n_half_pos (by linarith) hε_n_le_δ₀ hr_bounded
-  rw [show ε_n - ε_n / 2 = ε_n / 2 by ring] at h_left h_right
-  linarith
+  grind
 
 /-- Dyadic sequence is Cauchy with bounded remainder. -/
 lemma cauchySeq_pv_dyadic {I : ℝ → ℂ} {δ₀ C : ℝ}
@@ -786,8 +727,7 @@ lemma integrand_bound_on_annulus
   have h_inv_norm : ‖(↑(t - t₀) : ℂ)⁻¹‖ =
       |t - t₀|⁻¹ := by rw [norm_inv, Complex.norm_real, Real.norm_eq_abs]
   have h := norm_sub_norm_le ((γ t - γ t₀)⁻¹ * deriv γ t) (↑(t - t₀))⁻¹
-  rw [h_inv_norm] at h
-  linarith [hr_bounded t ht_pos ht_lt]
+  grind
 
 /-- Annulus localization: γ-annulus points are local. -/
 lemma annulus_implies_t_local
@@ -798,9 +738,7 @@ lemma annulus_implies_t_local
     (t : ℝ) (ht_ab : t ∈ Set.Icc a b)
     (hγ_bound : ‖γ t - γ t₀‖ ≤ ε₁) :
     |t - t₀| < δ₀ ∧ |t - t₀| < δ₁ := by
-  have h := h_localize t ht_ab hγ_bound
-  exact ⟨lt_of_lt_of_le h (min_le_left _ _),
-    lt_of_lt_of_le h (min_le_right _ _)⟩
+  grind
 
 /-- Bracket ε between dyadic points: for ε ∈ (0, δ], find n with δ/2^(n+1) < ε ≤ δ/2^n. -/
 lemma exists_dyadic_bracket {δ ε : ℝ}
@@ -860,8 +798,7 @@ lemma telescoping_sum_bound {X : Type*} [SeminormedAddCommGroup X]
     rw [(sub_add_sub_cancel (I (N + d' + 2)) (I (N + d' + 1)) (I N)).symm]
     have h_step_d' : ‖I (N + d' + 2) - I (N + d' + 1)‖ ≤
         K * δ / 2 ^ (N + d' + 1) := by
-      conv_lhs => rw [show N + d' + 2 = (N + d' + 1) + 1 from by omega]
-      exact h_step (N + d' + 1)
+      grind
     calc ‖(I (N + d' + 2) - I (N + d' + 1)) + (I (N + d' + 1) - I N)‖
         ≤ ‖I (N + d' + 2) - I (N + d' + 1)‖ +
           ‖I (N + d' + 1) - I N‖ := norm_add_le _ _

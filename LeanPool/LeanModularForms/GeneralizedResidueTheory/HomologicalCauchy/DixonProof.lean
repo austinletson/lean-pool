@@ -81,8 +81,7 @@ private lemma dixonH1_dslope_expansion (γ : PiecewiseC1Immersion) (w : ℂ)
   have hne : γ.toFun t ≠ w := hoff t ht
   rw [dslope_of_ne _ (Ne.symm hne), slope_def_field,
     show w - γ.toFun t = -(γ.toFun t - w) from by ring]
-  field_simp [sub_ne_zero.mpr hne]
-  ring
+  grind
 
 private lemma dixonH1_cauchyIntegrand_integrable (hU : IsOpen U)
     (hf : DifferentiableOn ℂ f U) (γ : PiecewiseC1Immersion)
@@ -520,8 +519,7 @@ private theorem dixonH1_F'_aestronglyMeasurable {M_d C_b δ₀ : ℝ}
           (dslope f (γ.toFun t) (w₀ + 1 / (↑n + 1)) - dslope f (γ.toFun t) w₀) *
         deriv γ.toFun t := by
       intro n; simp only [smul_eq_mul]
-      have hn1 : (↑n + 1 : ℂ) ≠ 0 := by norm_cast
-      field_simp [hn1]
+      grind
     simp_rw [hGn_eq]
     exact (hderiv.tendsto_slope_zero.comp h_tendsto_zero).mul_const _
 
@@ -716,9 +714,7 @@ theorem dixonFunction_differentiable (hU : IsOpen U) (hf : DifferentiableOn ℂ 
         rw [Complex.norm_intCast] at h_norm_m
         have h_zero : n1 - n2 = 0 := by
           have key : (|(n1 - n2 : ℤ)| : ℝ) < 1 := by
-            have := h_norm_m
-            simp only [Int.cast_sub] at this
-            linarith [abs_nonneg ((n1 : ℝ) - n2)]
+            grind
           exact_mod_cast Int.abs_lt_one_iff.mp (by exact_mod_cast key)
         exact sub_eq_zero.mp (hm ▸ (by exact_mod_cast h_zero))
       have hwn_Z_w : wn_Z ⟨w, Metric.mem_ball_self hε_pos⟩ = 0 := by
@@ -857,8 +853,7 @@ private lemma dixonFunction_norm_lt_of_large (hU : IsOpen U) (hf : Differentiabl
   have hR_lt : R < ‖w‖ := by
     have hnn : 0 ≤ M_d * (γ.b - γ.a) / (2 * Real.pi) :=
       div_nonneg (mul_nonneg hM_d_nn (by linarith [γ.hab])) Real.two_pi_pos.le
-    linarith [le_max_left (R + M_d * (γ.b - γ.a) / (2 * Real.pi))
-                           (R + M_f * M_d * (γ.b - γ.a) / ε)]
+    grind
   have hwn_eq_zero : generalizedWindingNumber' γ.toFun γ.a γ.b w = 0 :=
     windingNumber_zero_of_large_norm γ hM_d_nn hR hM_d h_null.closed
       (lt_of_le_of_lt (le_max_left _ _) hw)
@@ -977,8 +972,7 @@ theorem contourIntegral_eq_zero_of_nullHomologous (hU : IsOpen U) (hf : Differen
       F (γ.toFun t) / (γ.toFun t - w₀) * deriv γ.toFun t := by
     intro t ht
     have ht_Icc : t ∈ Icc γ.a γ.b := Set.uIcc_of_le hab ▸ ht
-    have hne : γ.toFun t - w₀ ≠ 0 := sub_ne_zero.mpr (hw₀_avoids t ht_Icc)
-    simp only [hF_def, mul_div_assoc, div_self hne, mul_one]
+    grind
   rw [intervalIntegral.integral_congr h_eq]
   have hCIF := cauchyIntegralFormula_nullHomologous hU hF_diff γ h_null w₀ hw₀U hw₀_avoids
   rwa [show F w₀ = 0 from by simp only [hF_def, sub_self, mul_zero], mul_zero] at hCIF

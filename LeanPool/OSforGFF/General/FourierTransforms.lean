@@ -146,17 +146,12 @@ lemma integrable_exponential_decay (μ : ℝ) (hμ : 0 < μ) :
   apply IntegrableOn.union
   · -- On (-∞, 0]: |x| = -x, so exp(-μ|x|) = exp(μx)
     have h1 : ∀ x ∈ Set.Iic (0 : ℝ), Real.exp (-μ * |x|) = Real.exp (μ * x) := by
-      intro x hx
-      simp only [Set.mem_Iic] at hx
-      rw [abs_of_nonpos hx]
-      ring_nf
+      grind
     rw [integrableOn_congr_fun h1 measurableSet_Iic]
     exact integrableOn_exp_mul_Iic hμ 0
   · -- On (0, ∞): |x| = x, so exp(-μ|x|) = exp(-μx)
     have h1 : ∀ x ∈ Set.Ioi (0 : ℝ), Real.exp (-μ * |x|) = Real.exp ((-μ) * x) := by
-      intro x hx
-      simp only [Set.mem_Ioi] at hx
-      rw [abs_of_pos hx]
+      grind
     rw [integrableOn_congr_fun h1 measurableSet_Ioi]
     exact exp_neg_integrableOn_Ioi 0 hμ
 
@@ -192,8 +187,7 @@ lemma ik_add_ne_zero (α : ℝ) (hα : α ≠ 0) (k : ℝ) : Complex.I * k + (α
   have hre : (Complex.I * k + (α : ℂ)).re = 0 := by simp [h]
   simp only [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.ofReal_re,
              Complex.I_im, Complex.ofReal_im, mul_zero, zero_mul, sub_zero] at hre
-  simp only [zero_add] at hre
-  exact hα hre
+  grind
 
 /-- The antiderivative of e^{(ik+α)x} for α ≠ 0.
     This is the indefinite integral: ∫ e^{(ik+α)x} dx = e^{(ik+α)x} / (ik + α)
@@ -223,8 +217,7 @@ lemma antideriv_exp_complex_linear (α : ℝ) (hα : α ≠ 0) (k x : ℝ) :
     by
     exact h_exp_deriv.div_const c
   -- Simplify: (e^{cx} * c)/c = e^{cx}
-  convert h_div using 1
-  field_simp
+  grind
 
 /-- Complex exponential e^{cx} tends to 0 as x → +∞ when Re(c) < 0.
     Proof: ‖e^{cx}‖ = e^{Re(c)·x} → 0 since Re(c) < 0 and x → +∞.
@@ -360,11 +353,7 @@ theorem fourier_exp_decay_positive_halfline (μ : ℝ) (hμ : 0 < μ) (k : ℝ) 
   rw [h_ftc]
   simp only [Complex.ofReal_zero, mul_zero, Complex.exp_zero, zero_sub]
   -- -(1/c) = 1/(μ - ik) since c = ik - μ, so μ - ik = -c
-  have hdenom_ne : (μ : ℂ) - Complex.I * k ≠ 0 := by
-    have h : (μ : ℂ) - Complex.I * k = -c := by simp only [hc_def]; ring
-    rw [h]; exact neg_ne_zero.mpr hc_ne
-  field_simp [hc_ne, hdenom_ne]
-  ring
+  grind
 
 /-- The integral over the negative half-line (-∞, 0]:
     ∫_{-∞}^0 e^{ikx} e^{μx} dx = 1/(μ + ik)
@@ -414,8 +403,7 @@ theorem fourier_exp_decay_negative_halfline (μ : ℝ) (hμ : 0 < μ) (k : ℝ) 
   rw [h_ftc]
   simp only [Complex.ofReal_zero, mul_zero, Complex.exp_zero, sub_zero]
   -- 1/c = 1/(ik + μ) = 1/(μ + ik)
-  congr 1
-  simp only [hc_def]; ring
+  grind
 
 /-- The full integral as sum of half-line integrals.
     This is the key decomposition:
@@ -448,13 +436,7 @@ lemma fourier_exponential_decay_split (μ : ℝ) (hμ : 0 < μ) (k : ℝ) :
     ring_nf
     simp only [Complex.I_sq]
     ring
-  rw [add_comm, div_add_div _ _ hdenom_ne' hdenom_ne]
-  congr 1
-  · ring
-  · rw [mul_comm]
-    ring_nf
-    simp only [Complex.I_sq]
-    ring
+  grind
 
 /-! ### Fourier Transform of Exponential Decay
 
@@ -475,16 +457,13 @@ lemma fourier_exponential_decay' (μ : ℝ) (hμ : 0 < μ) (k : ℝ) :
       ∫ x : ℝ in Set.Iic 0, Complex.exp (Complex.I * k * x) * Real.exp (μ * x) := by
     apply MeasureTheory.setIntegral_congr_fun measurableSet_Iic
     intro x hx
-    simp only [Set.mem_Iic] at hx
-    simp only [abs_of_nonpos hx]
-    ring_nf
+    grind
   -- On Ioi: |x| = x, so e^{-μ|x|} = e^{-μx}
   have h_Ioi : ∫ x : ℝ in Set.Ioi 0, Complex.exp (Complex.I * k * x) * Real.exp (-μ * |x|) =
       ∫ x : ℝ in Set.Ioi 0, Complex.exp (Complex.I * k * x) * Real.exp (-μ * x) := by
     apply MeasureTheory.setIntegral_congr_fun measurableSet_Ioi
     intro x hx
-    simp only [Set.mem_Ioi] at hx
-    simp only [abs_of_pos hx]
+    grind
   -- Integrability on both halves follows from global integrability
   have h_int_full := integrable_exponential_decay_fourier μ hμ k
   have h_int_Iic : IntegrableOn
@@ -607,14 +586,7 @@ lemma integrable_fourierIntegral_expDecayFun (μ : ℝ) (hμ : 0 < μ) :
   -- Show the two real functions are equal
   have h_eq_real : (fun ξ : ℝ => 2 * μ / (4 * π^2 * ξ^2 + μ^2)) =
       (fun ξ => (2 / μ) * (1 + (2 * π / μ * ξ)^2)⁻¹) := by
-    ext ξ
-    have denom_pos : (0 : ℝ) < 4 * π^2 * ξ^2 + μ^2 := by nlinarith [sq_nonneg ξ, sq_nonneg μ,
-      Real.pi_pos]
-    have h1 : (2 * π / μ * ξ)^2 = 4 * π^2 * ξ^2 / μ^2 := by ring
-    rw [h1]
-    have hμsq_pos : (0 : ℝ) < μ^2 := sq_pos_of_pos hμ
-    field_simp
-    ring
+    grind
   -- Now show the complex function is integrable
   have h_int_real : Integrable (fun ξ : ℝ => 2 * μ / (4 * π^2 * ξ^2 + μ^2)) volume := by
     rw [h_eq_real]; exact h_lorentz
@@ -737,24 +709,9 @@ theorem fourier_lorentzian_1d (μ : ℝ) (hμ : 0 < μ) (x : ℝ) :
   -- Rearrange: (μ/π) * ∫ ... = e^{-μ|x|}
   have hμπ_ne : (μ : ℂ) / π ≠ 0 := by
     simp only [ne_eq, div_eq_zero_iff, Complex.ofReal_eq_zero]
-    push Not
-    exact ⟨hμ', hπ⟩
+    grind
   -- Simplify coefficient: (1/2π) * (2μ * I) = (μ/π) * I
-  have h_rearrange : (1 : ℂ) / (2 * π) * (2 * μ * ∫ k : ℝ,
-    Complex.exp (Complex.I * k * x) / (k^2 + μ^2)) =
-                     (μ / π : ℂ) * ∫ k : ℝ, Complex.exp (Complex.I * k * x) / (k^2 + μ^2) := by
-    ring
-  rw [h_rearrange] at hinv
-  -- hinv : (μ/π) * ∫ ... = e^{-μ|x|}
-  -- Divide both sides by (μ/π): ∫ ... = e^{-μ|x|} / (μ/π) = (π/μ) * e^{-μ|x|}
-  have h_solve : ∫ k : ℝ, Complex.exp (Complex.I * k * x) / (k^2 + μ^2) =
-                 (↑(Real.exp (-μ * |x|)) : ℂ) / (μ / π) := by
-    rw [mul_comm] at hinv
-    exact eq_div_of_mul_eq hμπ_ne hinv
-  rw [h_solve]
-  -- Simplify: e^{...} / (μ/π) = e^{...} * (π/μ) = (π/μ) * e^{...}
-  rw [div_div_eq_mul_div]
-  ring
+  grind
 
 /-- The exponential from the Lorentzian Fourier transform factorizes.
     For x, y with x ≥ 0 and y ≤ 0, we have |x - y| = x - y = x + |y|,

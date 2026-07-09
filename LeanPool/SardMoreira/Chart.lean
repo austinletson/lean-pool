@@ -319,9 +319,7 @@ theorem exists_dim_lt_map_nhdsWithin_eq (hs : ¬IsLargeAt k α s a)
     have hleft : ψ.leftFun ψ.pt = 0 := by simp [ψ, hfa₀]
     have hpt : ψ.pt = a := by simp [ψ]
     have htend := ψ.differentiableAt_implicitFunction.continuousAt.tendsto
-    rw [hleft, hpt] at htend
-    rw [show ψ.implicitFunction 0 (ψ.rightFun a) = a from hga] at htend
-    exact htend
+    grind
   have Hmem_target : ∀ᶠ x in 𝓝 (ψ.rightFun a), (0, x) ∈ ψ.toOpenPartialHomeomorph.target := by
     refine (ψ.toOpenPartialHomeomorph.open_target.preimage (by fun_prop)).eventually_mem ?_
     change (0, ψ.rightFun a) ∈ ψ.toOpenPartialHomeomorph.target
@@ -381,9 +379,7 @@ theorem exists_dim_lt_map_nhdsWithin_eq (hs : ¬IsLargeAt k α s a)
     simpa only [← hU_fst x hxU]
   · apply Submodule.finrank_lt
     simpa [SetLike.ext_iff, DFunLike.ext_iff] using hdf
-  · refine ⟨hUmem, ?_⟩
-    change g (ψ.rightFun a) ∈ s
-    simpa [hga] using has
+  · grind
   · simp only
     rw [← map_implicitFunction_chartImplicitData_nhdsWithin_preimage hfka hk hdf _ hf₀ has,
       nhdsWithin_inter_of_mem]
@@ -466,8 +462,7 @@ theorem nonempty_atlas {k : ℕ} (hk : k ≠ 0) (α : I) (s : Set (E × F)) :
     rcases mem_iUnion₂.mp (htu ⟨hx, hxt⟩) with ⟨i, hiu, y, hy, rfl⟩
     rcases mem_iUnion₂.mp ((Ψ i hiu).subset_biUnion_isLargeAt hy) with ⟨g, hgS, z, hz, rfl⟩
     refine mem_iUnion_of_mem i <| mem_iUnion_of_mem hiu <| mem_biUnion hgS ?_
-    apply mem_image_of_mem
-    exact hz
+    grind
 
 end
 

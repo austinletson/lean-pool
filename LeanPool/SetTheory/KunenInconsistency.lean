@@ -174,9 +174,7 @@ decreasing_by exact β.2
 lemma injective_s : Injective s := by
   intro α β s_eq
   wlog lt : α < β
-  · by_cases! eq : α = β
-    · exact eq
-    · exact this s_eq.symm (lt_of_le_of_ne (not_lt.mp lt) eq.symm) |>.symm
+  · grind
   · nth_rw 2 [s] at s_eq
     generalize_proofs hβ at s_eq
     dsimp only at hβ

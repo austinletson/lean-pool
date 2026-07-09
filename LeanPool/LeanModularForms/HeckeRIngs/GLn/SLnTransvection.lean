@@ -91,8 +91,7 @@ private lemma exists_two_nz {m : ℕ} (σ : Matrix.SpecialLinearGroup (Fin (m + 
   simp only [nzCount] at h
   have h1 : 1 < (Finset.univ.filter fun i : Fin (m+1) => σ.1 i 0 ≠ 0).card := by omega
   obtain ⟨i, hi, j, hj, hij⟩ := Finset.one_lt_card.mp h1
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hi hj
-  exact ⟨i, j, hij, hi, hj⟩
+  grind
 
 private lemma col0_euclidean_step {m : ℕ} (σ : Matrix.SpecialLinearGroup (Fin (m + 1)) ℤ)
     (h : 2 ≤ nzCount σ) :
@@ -111,8 +110,7 @@ private lemma col0_euclidean_step {m : ℕ} (σ : Matrix.SpecialLinearGroup (Fin
       have h1 := Int.emod_nonneg (σ.1 i₀ 0) hj₀
       have h2 : σ.1 i₀ 0 % σ.1 j₀ 0 < |σ.1 j₀ 0| := by
         rw [← Int.emod_abs]; exact Int.emod_lt_of_pos _ (abs_pos.mpr hj₀)
-      exact_mod_cast show ((σ.1 i₀ 0 % σ.1 j₀ 0).natAbs : ℤ) < (σ.1 j₀ 0).natAbs from by
-        rw [Int.natAbs_of_nonneg h1, Int.natCast_natAbs]; exact h2
+      grind
     simp only [col0Sum]
     rw [← Finset.add_sum_erase _ _ (Finset.mem_univ i₀),
         ← Finset.add_sum_erase _ _ (Finset.mem_univ i₀)]
@@ -136,8 +134,7 @@ private lemma col0_euclidean_step {m : ℕ} (σ : Matrix.SpecialLinearGroup (Fin
       have h1 := Int.emod_nonneg (σ.1 j₀ 0) hi₀
       have h2 : σ.1 j₀ 0 % σ.1 i₀ 0 < |σ.1 i₀ 0| := by
         rw [← Int.emod_abs]; exact Int.emod_lt_of_pos _ (abs_pos.mpr hi₀)
-      exact_mod_cast show ((σ.1 j₀ 0 % σ.1 i₀ 0).natAbs : ℤ) < (σ.1 i₀ 0).natAbs from by
-        rw [Int.natAbs_of_nonneg h1, Int.natCast_natAbs]; exact h2
+      grind
     simp only [col0Sum]
     rw [← Finset.add_sum_erase _ _ (Finset.mem_univ j₀),
         ← Finset.add_sum_erase _ _ (Finset.mem_univ j₀)]
@@ -204,17 +201,13 @@ private lemma blockLift_entry {m : ℕ} (i j : Fin m) (hij : i ≠ j) (c : ℤ)
 private lemma blockLift_row0 {m : ℕ} (i j : Fin m) (hij : i ≠ j) (c : ℤ)
     (τ : Matrix.SpecialLinearGroup (Fin (m + 1)) ℤ) (b : Fin (m + 1)) :
     (blockLift i j hij c * τ).1 0 b = τ.1 0 b := by
-  rw [blockLift_entry]; split_ifs with h
-  · exact absurd h.symm (Fin.succ_ne_zero i)
-  · rfl
+  rw [blockLift_entry]; grind
 
 private lemma blockLift_col0 {m : ℕ} (i j : Fin m) (hij : i ≠ j) (c : ℤ)
     (τ : Matrix.SpecialLinearGroup (Fin (m + 1)) ℤ)
     (hcol : ∀ k : Fin (m + 1), k ≠ 0 → τ.1 k 0 = 0) (a : Fin (m + 1)) :
     (blockLift i j hij c * τ).1 a 0 = τ.1 a 0 := by
-  rw [blockLift_entry]; split_ifs with ha
-  · subst ha; rw [hcol j.succ (Fin.succ_ne_zero j), mul_zero, add_zero]
-  · rfl
+  rw [blockLift_entry]; grind
 
 private lemma det_lowerRight {m : ℕ} (τ : Matrix.SpecialLinearGroup (Fin (m + 1)) ℤ)
     (h00 : τ.1 0 0 = 1) (h0j : ∀ j : Fin (m + 1), j ≠ 0 → τ.1 0 j = 0) :
@@ -280,8 +273,7 @@ private lemma row0_clear {m : ℕ} (τ : Matrix.SpecialLinearGroup (Fin (m + 1))
         (f := fun (j : Fin (m + 1)) =>
           if (j : ℕ) = 0 then 0 else (σ.1 0 j).natAbs)
         (fun _ _ => Nat.zero_le _) (Finset.mem_univ j)
-    simp only [hzero, show ¬(j : ℕ) = 0 from fun h₀ => hj (Fin.ext h₀), ↓reduceIte] at h_le
-    exact Int.natAbs_eq_zero.mp (Nat.eq_zero_of_le_zero h_le)
+    grind
   · have hpos : 0 < row0Sum σ := by omega
     have ⟨j₀, hj₀_nz⟩ : ∃ j : Fin (m + 1),
         (if (j : ℕ) = 0 then 0 else (σ.1 0 j).natAbs) ≠ 0 := by
@@ -317,11 +309,7 @@ private lemma row0_clear {m : ℕ} (τ : Matrix.SpecialLinearGroup (Fin (m + 1))
           ∑ k ∈ Finset.univ.erase j₀,
           (if (k : ℕ) = 0 then 0 else (σ.1 0 k).natAbs) :=
         Finset.sum_congr rfl fun k hk => h_eq k (Finset.mem_erase.mp hk).1
-      rw [h_rest, hσ'_clear, show (if (j₀ : ℕ) = 0 then 0 else (0 : ℤ).natAbs) = 0 from by
-        simp]
-      simp only [show ¬(j₀ : ℕ) = 0 from fun h₀ => hj₀ (Fin.ext h₀),
-        ↓reduceIte, zero_add]
-      omega
+      grind
     obtain ⟨L', hL'_tv, hL'_00, hL'_0j, hL'_i0⟩ :=
       ihk (row0Sum σ') (by omega) σ' hσ'00 hσ'i0 le_rfl
     refine ⟨E :: L', fun F hF => ?_, ?_, ?_, ?_⟩
@@ -341,9 +329,7 @@ private lemma nzCount_le_one_unique_nonzero {m : ℕ}
     calc 2 = ({i₀, k} : Finset _).card := (Finset.card_pair hk.symm).symm
       _ ≤ (Finset.univ.filter fun i => τ.1 i 0 ≠ 0).card :=
           Finset.card_le_card fun x hx => by
-            simp only [Finset.mem_insert, Finset.mem_singleton] at hx
-            simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-            exact hx.elim (· ▸ hi₀) (· ▸ hne)
+            grind
   linarith
 
 private lemma sole_nonzero_col0_is_unit {m : ℕ} (τ : Matrix.SpecialLinearGroup (Fin (m + 1)) ℤ)
@@ -372,9 +358,7 @@ private lemma block_form_transvec_lift {m : ℕ} (M : Matrix.SpecialLinearGroup 
     apply Subtype.ext; ext a b
     simp only [Matrix.SpecialLinearGroup.coe_one, Matrix.one_apply]
     by_cases ha : a = 0
-    · subst ha; by_cases hb : b = 0
-      · subst hb; exact H00
-      · rw [H0j b hb, if_neg (Ne.symm hb)]
+    · grind
     · by_cases hb : b = 0
       · subst hb; rw [Hi0 a ha, if_neg ha]
       · obtain ⟨a', rfl⟩ := Fin.exists_succ_eq.mpr ha
@@ -419,9 +403,7 @@ private lemma to_block_form {m : ℕ} (τ : Matrix.SpecialLinearGroup (Fin (m + 
     obtain ⟨L₁, hL₁, h₁_00, h₁_i0⟩ := h_col
     obtain ⟨L₂, hL₂, h₂_00, h₂_0j, h₂_i0⟩ :=
       row0_clear (L₁.prod * τ) h₁_00 h₁_i0
-    exact ⟨L₁, L₂, hL₁, hL₂, h₂_00,
-      fun j hj => h₂_0j j hj,
-      fun i hi => h₂_i0 i hi⟩
+    grind
   by_cases hi₀_zero : i₀ = 0
   · subst hi₀_zero
     rcases h_unit with h1 | h_neg1
@@ -460,9 +442,7 @@ private lemma to_block_form {m : ℕ} (τ : Matrix.SpecialLinearGroup (Fin (m + 
           intro i hi
           change (slTransvecG 1 0 h10 1 * σ₂).1 i 0 = 0
           rw [slTransvecG_mul_entry]
-          rcases eq_or_ne i 1 with rfl | hi1
-          · simp [hσ₂_00, hσ₂_10]
-          · simp [hi1, hσ₂_i0 i hi hi1]
+          grind
         have hprod : [slTransvecG 1 0 h10 1, slTransvecG 0 1 h01 (-2),
             slTransvecG 1 0 h10 1].prod * τ = σ₃ := by
           simp only [List.prod_cons, List.prod_nil, mul_one, mul_assoc, σ₃, σ₂, σ₁]
@@ -494,9 +474,7 @@ private lemma to_block_form {m : ℕ} (τ : Matrix.SpecialLinearGroup (Fin (m + 
       intro i hi
       change (slTransvecG i₀ 0 hi₀_zero (-v) * σ₁).1 i 0 = 0
       rw [slTransvecG_mul_entry]
-      rcases eq_or_ne i i₀ with rfl | hne
-      · simp [hσ₁_i₀0, hσ₁_00, add_neg_cancel]
-      · simp [hne, hσ₁_other i hi hne]
+      grind
     have hprod : [slTransvecG i₀ 0 hi₀_zero (-v),
         slTransvecG 0 i₀ hi₀0 v].prod * τ = σ₂ := by
       simp only [List.prod_cons, List.prod_nil, mul_one, mul_assoc, σ₂, σ₁]

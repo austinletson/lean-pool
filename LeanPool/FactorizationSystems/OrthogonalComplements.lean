@@ -199,8 +199,7 @@ def targetLimitConeArrowLimitCone {J : Type u} [Category.{v} J]
         calc
           m = (mapTrivMapArrowTarget Cf.cone.pt s.pt m).right := by rfl
           _ = (Cf.isLimit.lift (coneTargetTrivConeArrow f s)).right := by
-            exact congrArg (fun h : Arrow.mk (Limits.initial.to s.pt) ⟶ Cf.cone.pt => h.right)
-              uniq'}
+            grind}
   }
 
 /- We now proceed to prove that the right orthogonal complement of a class of morphisms is closed

@@ -110,12 +110,9 @@ instance uniqueBoundaryJarOne : Unique (⊔I^1) where
 def homeoNeqLast {n : ℕ} : (I^ Fin n) ≃ₜ I^{ j : Fin (n + 1) // j ≠ Fin.last _ } :=
   Homeomorph.piCongr
     { toFun i := ⟨i.castSucc, by
-        simp only [ne_eq]
-        exact Fin.lt_last_iff_ne_last.mp i.2 ⟩
+        grind ⟩
       invFun i := ⟨i, by
-        have := i.2
-        simp only [ne_eq] at this
-        exact Fin.lt_last_iff_ne_last.mpr this ⟩
+        grind ⟩
       left_inv i := by simp only [Fin.val_castSucc, Fin.eta]
       right_inv i := by simp only [ne_eq, Fin.castSucc_mk, Fin.eta, Subtype.coe_eta] }
     fun _ ↦ Homeomorph.refl _
@@ -203,9 +200,7 @@ lemma mem_boundaryJar_iff_splitAtLast {n : ℕ} {y : I^Fin (n + 1)} :
     · rw [splitAtLast_snd_apply_eq] at hi
       constructor
       · use i.castSucc
-      · intro hyn
-        use i.castSucc
-        exact ⟨Fin.castSucc_lt_last i, hi⟩
+      · grind
 
 /-- An easy corrolary of `mem_boundaryJar_iff_splitAtLast` -/
 lemma splitAtLast_snd_mem_boundary_of_last_neq_zero {n : ℕ} {y : I^Fin (n + 1)}
@@ -422,9 +417,7 @@ def cubeInclToBotOrTop {n : ℕ} (t : unitInterval.zeroOne) : 𝕀 n ⟶ ∂𝕀
           Homeomorph.symm_trans_apply, Homeomorph.prodCongr_symm, Homeomorph.refl_symm,
           Homeomorph.symm_symm, Homeomorph.coe_prodCongr, Homeomorph.refl_apply, Prod.map_apply,
           id_eq, Homeomorph.funSplitAt_symm_apply, ↓reduceDIte]
-        obtain ht | ht := unitInterval.zeroOne.val_eq_zero_or_val_eq_one t
-        · left; simp_all only [Set.Icc.mk_zero]
-        · right; simp_all only [Set.Icc.mk_one] ⟩
+        grind ⟩
       continuous_toFun := by fun_prop }
 
 /-- `botOrTop` -/

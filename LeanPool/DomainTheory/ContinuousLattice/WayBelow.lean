@@ -108,8 +108,7 @@ left). -/
 theorem WayBelow.le_trans {x y z : D} (hxy : x ≤ y) (h : y ≪ z) : x ≪ z := by
   obtain ⟨U, hU, hzU, hsub⟩ := h
   refine ⟨U, hU, hzU, fun w hw => ?_⟩
-  have hyw : y ≤ w := Set.mem_Ici.1 (hsub hw)
-  exact Set.mem_Ici.2 (hxy.trans hyw)
+  grind
 
 /-- **Scott 1972, Proposition 2.2(ii).** `x ≪ z` and `y ≪ z` imply `x ⊔ y ≪ z`. -/
 theorem WayBelow.sup {x y z : D} (hx : x ≪ z) (hy : y ≪ z) : x ⊔ y ≪ z := by

@@ -194,8 +194,7 @@ lemma nonempty_mulEquiv_mulZMod_prime_semidirectProduct_mulZMod_prime
     simp [orderOf_eq_card_of_forall_mem_zpowers hb_generator]
   have hg_exists {φ : P →* A} (hφ : φ ≠ 1) : ∃ g : P, φ g = b := by
     have hb_range : (b : A) ∈ φ.range := by
-      rw [hB φ.range (hR hφ)]
-      exact b.property
+      grind
     exact MonoidHom.mem_range.mp hb_range
   have hg_gen {φ : P →* A} {g : P} (hg : φ g = b) := Subgroup.zpowers_eq_top_of_ne_one
     nat_card_mulZMod (ne_one_of_map (hg.symm ▸ hb)) ▸ Subgroup.mem_top

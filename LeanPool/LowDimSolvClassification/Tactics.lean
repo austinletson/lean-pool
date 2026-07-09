@@ -115,8 +115,7 @@ def eval [SMul R M] [LieRing M] (l : NF R M) : M :=
 @[simp] theorem eval_cons [SMul R M] [LieRing M] (p : R × V M) (l : NF R M) :
     (p ::ᵣ l).eval = p.1 • v p.2 + l.eval := by
   unfold eval cons
-  rw [List.map_cons]
-  rw [List.sum_cons]
+  grind
 
 theorem atom_eq_eval [LieRing M] (x : M) : x = NF.eval [(1,
   Sum.inl x)] := by simp [eval, v]
@@ -124,8 +123,7 @@ theorem atom_eq_evalD [LieRing M] (x y : M) : ⁅x,y⁆ = NF.eval ((1,
   Sum.inr ⟨x,y⟩) ::ᵣ []) := by
   simp only [eval, v]
   dsimp!
-  simp only [one_nsmul]
-  simp only [left_eq_add]
+  grind
 theorem atom_eq_evalD_skew [LieRing M] (x y : M) : ⁅x,y⁆ = NF.eval ((-1,
   Sum.inr ⟨y,x⟩) ::ᵣ []) := by
   simp only [eval, v]
@@ -145,19 +143,13 @@ theorem add_eq_eval₂ [Semiring R] [LieRing M] [Module R M] (r₁ r₂ : R) (x 
     {l₁ l₂ l : NF R M} (h : l₁.eval + l₂.eval = l.eval) :
     ((r₁, x) ::ᵣ l₁).eval + ((r₂, x) ::ᵣ l₂).eval = ((r₁ + r₂, x) ::ᵣ l).eval := by
   simp only [← h, eval_cons, add_smul, add_assoc]
-  congr! 1
-  simp only [← add_assoc]
-  congr! 1
-  rw [add_comm]
+  grind
 
 theorem add_eq_eval₃ [Semiring R] [LieRing M] [Module R M] {a₁ : R × V M} (a₂ : R × V M)
     {l₁ l₂ l : NF R M} (h : (a₁ ::ᵣ l₁).eval + l₂.eval = l.eval) :
     (a₁ ::ᵣ l₁).eval + (a₂ ::ᵣ l₂).eval = (a₂ ::ᵣ l).eval := by
   simp only [eval_cons, ← h]
-  nth_rw 4 [add_comm]
-  simp only [add_assoc]
-  congr! 2
-  rw [add_comm]
+  grind
 
 theorem add_eq_eval {R₁ R₂ : Type*} [LieRing M] [Semiring R] [Module R M]
     [Semiring R₁]
@@ -176,17 +168,13 @@ theorem sub_eq_eval₂ [Ring R] [LieRing M] [Module R M] (r₁ r₂ : R) (x : V 
     (h : l₁.eval - l₂.eval = l.eval) :
     ((r₁, x) ::ᵣ l₁).eval - ((r₂, x) ::ᵣ l₂).eval = ((r₁ - r₂, x) ::ᵣ l).eval := by
   simp only [← h, eval_cons, sub_eq_add_neg, neg_add, add_smul, neg_smul, add_assoc]
-  congr! 1
-  simp only [← add_assoc]
-  congr! 1
-  rw [add_comm]
+  grind
 
 theorem sub_eq_eval₃ [Ring R] [LieRing M] [Module R M] {a₁ : R × V M} (a₂ : R × V M)
     {l₁ l₂ l : NF R M} (h : (a₁ ::ᵣ l₁).eval - l₂.eval = l.eval) :
     (a₁ ::ᵣ l₁).eval - (a₂ ::ᵣ l₂).eval = ((-a₂.1, a₂.2) ::ᵣ l).eval := by
   simp only [eval_cons, neg_smul, neg_add, sub_eq_add_neg, ← h, ← add_assoc]
-  congr! 1
-  rw [add_comm, add_assoc]
+  grind
 
 theorem sub_eq_eval {R₁ R₂ S₁ S₂ : Type*} [LieRing M] [Ring R] [Module R M] [Semiring R₁]
     [Module R₁ M] [Semiring R₂] [Module R₂ M] [Semiring S₁] [Module S₁ M] [Semiring S₂]

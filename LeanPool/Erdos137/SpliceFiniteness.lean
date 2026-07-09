@@ -148,13 +148,7 @@ def BlockRadLB5 : Prop :=
 `4/5` and `(5-1)/5` agree, and the guard `5 ≤ k` matches `g ≤ k`). -/
 lemma blockRadLB5_iff : BlockRadLB5 ↔ BlockRadLBg 5 := by
   unfold BlockRadLB5 BlockRadLBg
-  constructor
-  · intro h k n hk hn
-    have := h k n hk hn
-    rwa [show (((5 : ℕ) : ℝ) - 1) / ((5 : ℕ) : ℝ) = (4 : ℝ) / 5 by norm_num]
-  · intro h k n hk hn
-    have := h k n hk hn
-    rwa [show (((5 : ℕ) : ℝ) - 1) / ((5 : ℕ) : ℝ) = (4 : ℝ) / 5 by norm_num] at this
+  grind
 
 /-- **Smooth-refined master inequality (g = 5).** Under `BlockRadLB5`, for `k ≥ 5` and a powerful
 `F k n` with `n ≥ 1`:  `n^{3k} · L k ^ 5 ≤ (k^{2k})^5 · P k ^ 10`. The `g = 5` instance of
@@ -176,8 +170,7 @@ theorem not_powerful_g5 (hBlock5 : BlockRadLB5) {k n : ℕ}
   have hmaster := master_ineq5 hBlock5 hk hn hPow
   have hcast : (((k ^ (2 * k)) ^ 5 * P k ^ 10 : ℕ) : ℝ) < ((n ^ (3 * k) * L k ^ 5 : ℕ) : ℝ) := by
     exact_mod_cast hthr
-  push_cast at hcast hmaster
-  linarith [hcast, hmaster]
+  grind
 
 /-! ## PART B — the small-`n` (Bertrand) input -/
 
@@ -215,9 +208,7 @@ theorem upper_half_prime_not_powerful {k n : ℕ} (hk : 2 ≤ k) (hn : 1 ≤ n) 
   have h2p : N < 2 * p := by omega
   -- p ≥ n:  p > N/2 = (n+k-1)/2 and n ≤ k give N/2 ≥ n - 1, so p ≥ n.
   have hhalf_ge : n - 1 ≤ N / 2 := by
-    rw [hN]
-    have : 2 * (n - 1) ≤ n + k - 1 := by omega
-    omega
+    grind
   have hpn : n ≤ p := by omega
   -- p is a term:  n ≤ p ≤ n + k - 1, so p = n + i₀ with i₀ < k.
   have hi0lt : p - n < k := by omega
@@ -245,19 +236,14 @@ theorem upper_half_prime_not_powerful {k n : ℕ} (hk : 2 ≤ k) (hn : 1 ≤ n) 
       have hc1 : c = 1 := by
         rcases Nat.lt_or_ge c 2 with hclt2 | hcge2
         · -- c ∈ {0, 1};  c = 0 gives n+i = 0, contradicting n+i > 0.
-          interval_cases c
-          · omega
-          · rfl
+          grind
         · -- c ≥ 2 ⇒ n+i = p*c ≥ 2p, contradiction with n+i < 2p.
           exfalso
           have h2pc : 2 * p ≤ p * c :=
             calc 2 * p = p * 2 := by ring
               _ ≤ p * c := Nat.mul_le_mul_left p hcge2
           omega
-      rw [hc1, mul_one] at hc
-      -- n+i = p = n+i₀ ⇒ i = i₀.
-      have : n + i = n + i₀ := by rw [hc, ← hterm]
-      omega
+      grind
     · intro hcon; exact absurd (Finset.mem_range.mpr hi0lt) hcon
   -- v_p(n+i₀) = v_p(p) = 1.
   have hvterm : (n + i₀).factorization p = 1 := by

@@ -176,9 +176,7 @@ lemma intExpNegPoly_sum_simp (n p : ℕ) (T : ℤ[X]) (a b : Fin n → ℂ) :
   simp_rw [int_exp_neg_mul_poly, mul_sub]
   rw [Finset.sum_sub_distrib, Finset.mul_sum]
   congr 1
-  · refine Finset.sum_congr rfl ?_
-    intro i hi
-    ac_rfl
+  · grind
   · refine Finset.sum_congr rfl ?_
     intro i hi
     rw [mul_assoc, ← mul_assoc (cexp (a i)) (cexp (-a i)) (aeval (a i) (sumDeriv (Fp T p))),

@@ -73,8 +73,7 @@ section Inequalities
 lemma b₂_upper_bound (hx : 2 ≤ x.natAbs) : (10 * (x ^ 2 + 1) ^ 2).natAbs ≤ 20 * x.natAbs ^ 4 := by
   wlog nnx : 0 ≤ x
   · rw [← Int.natAbs_neg] at hx
-    specialize this hx (by lia)
-    rwa [Int.natAbs_neg, neg_sq] at this
+    grind
   lift x to ℕ using nnx
   rw [Int.natAbs_mul, Int.natAbs_pow, Int.natAbs_add_of_nonneg (by positivity) zero_le_one,
     Int.natAbs_natCast, Int.natAbs_pow]
@@ -147,8 +146,7 @@ lemma natAbs_le_redEmb1_reduced {b₁ b₂ : SignType} (h : b₁ ≠ b₂) (hx :
         rw [← pow_mul]
         exact Nat.le_self_pow (by simp) _
       _ ≤ _ := by
-        gcongr
-        lia
+        grind
   · cases b₁ <;> simp [hx]
 
 lemma Y_le_natAbs_redEmb1 {b₁ b₂ b₃ : SignType} (h : b₁ ≠ b₂ ∨ b₁ ≠ b₃) (hx : Y n F ≤ x.natAbs) :
@@ -229,9 +227,7 @@ lemma maxAbs_tup {x : ℕ} (hx : Y n F ≤ x) : maxAbs (tup n F x) = (x + 1) ^ 5
   have y26 : 26 ≤ Y n F := by grind [Y_lower_bound]
   have xb : Y n F ≤ (x : ℤ).natAbs := by rwa [Int.natAbs_natCast]
   have key₁ : Y n F ≤ ((x + 1 : ℤ) ^ 5).natAbs := by
-    refine (xb.trans ?_).trans (b₃_lower_bound (by lia))
-    nth_rw 1 [Int.natAbs_natCast, Int.natAbs_natCast, show x = 1 * x ^ 1 by simp]
-    gcongr <;> lia
+    grind
   have key₂ :
       (VW n F).v + (VW n F).w + ∑ i ∈ range n, primeChain (max 8 (F.sup id)) i < Y n F := by
     rw [← sum_redEmb1_compl (x := x)]

@@ -88,10 +88,7 @@ lemma periodicLift_shift (f : Torus3 → ℝ) (x y : Fin 3 → ℝ)
     congr_fun h i
   simp only at hi
   rw [QuotientAddGroup.eq] at hi ⊢
-  obtain ⟨n, hn⟩ := hi
-  refine ⟨n, ?_⟩
-  simp at hn ⊢
-  linarith
+  grind
 
 /-- fderiv of the lift at two points that map to the same torus point are equal.
     This follows because f(x) = f(x + n) for integer n, so the 1-jets agree. -/
@@ -107,10 +104,7 @@ lemma periodicLift_fderiv_eq (f : Torus3 → ℝ) (x y : Fin 3 → ℝ)
              fderiv ℝ (periodicLift f) (y + (x - y)) := fderiv_comp_add_right (x - y)
   -- y + (x - y) = x
   have h2 : y + (x - y) = x := by ext i; simp [Pi.add_apply, Pi.sub_apply]
-  rw [h2] at h1
-  -- But also fderiv (fun z => f(z + (x-y))) = fderiv f (by hshift)
-  rw [hshift] at h1
-  exact h1.symm
+  grind
 
 -- ============================================================================
 -- Differential operators on T³ via the periodic lift

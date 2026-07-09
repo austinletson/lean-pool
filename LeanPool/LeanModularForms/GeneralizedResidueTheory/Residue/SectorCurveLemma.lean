@@ -261,11 +261,7 @@ private theorem cauchyPV_g_aestronglyMeasurable (r : ℝ) (α : ℝ)
       (sectorCurve_continuousOn r α))).congr (by
     filter_upwards [ae_restrict_mem measurableSet_Ioc] with t ht
     simp only [cauchyPrincipalValueIntegrand', Set.indicator_apply]
-    by_cases h : ‖sectorCurve r α t - 0‖ > ε
-    · rw [if_pos (show t ∈ {t | ε < ‖sectorCurve r α t - 0‖} ∩ Icc 0 3 from
-        ⟨h, Ioc_subset_Icc_self ht⟩), if_pos h]
-    · rw [if_neg (show t ∉ {t | ε < ‖sectorCurve r α t - 0‖} ∩ Icc 0 3 from
-        fun ⟨hm, _⟩ => h hm), if_neg h])
+    grind)
 
 private theorem cauchyPV_g_norm_le (r : ℝ) (α : ℝ)
     (g : ℂ → ℂ) (ε : ℝ) (t : ℝ) :
@@ -291,9 +287,7 @@ private theorem sectorCurve_zero_set_finite (r : ℝ) (hr : 0 < r) (α : ℝ) :
     · rw [sectorCurve_seg3 r α t ⟨le_of_lt h2, ht3⟩] at h0
       simp only [mul_eq_zero, Complex.ofReal_eq_zero] at h0
       exact h0.elim (fun h => by
-        rcases h with h | h
-        · simp [show t = 3 from by linarith]
-        · exact absurd h hr.ne') (fun h => absurd h (Complex.exp_ne_zero _))
+        grind) (fun h => absurd h (Complex.exp_ne_zero _))
 
 private theorem cauchyPV_g_intervalIntegrable (r : ℝ) (hr : 0 < r) (α : ℝ)
     (g : ℂ → ℂ) (hg : AnalyticOnNhd ℂ g (Metric.ball 0 (↑r + 1))) (ε : ℝ) :
@@ -758,13 +752,7 @@ private theorem pv_cutoff_integral_eq_mid (r : ℝ) (hr : 0 < r) (α : ℝ) (n :
   have hg_eq_f_mid : ∀ᵐ x ∂volume, x ∈ Ioc δ (3 - δ) → g x = f x := by
     rw [ae_iff]
     apply measure_mono_null (t := {3 - δ})
-    · intro x hx
-      simp only [mem_setOf_eq] at hx; push Not at hx
-      obtain ⟨hx_ioc, hx_ne⟩ := hx
-      by_contra hne_3δ
-      simp only [mem_singleton_iff] at hne_3δ
-      have hx_ioo : x ∈ Ioo δ (3 - δ) := ⟨hx_ioc.1, lt_of_le_of_ne hx_ioc.2 hne_3δ⟩
-      exact hx_ne (by simp only [g, sub_zero, f]; rw [if_pos (h_norm_gt_mid x hx_ioo)])
+    · grind
     · exact Real.volume_singleton
   have h_01 : ∫ t in (0 : ℝ)..δ, g t = 0 :=
     intervalIntegral.integral_zero_ae (ae_of_all _ (fun t ht =>

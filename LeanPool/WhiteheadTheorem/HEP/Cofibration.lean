@@ -177,8 +177,7 @@ instance HasLiftingProperty.of_colimit_ofSequence_zero :
           ccz.ι.app n ≫ p
       rw [← Category.assoc, hfac]
       rfl
-    rw [uniq_f]
-    exact uniq_desc_p ⟩
+    grind ⟩
 
 
 namespace Functor.ofSequence

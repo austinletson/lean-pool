@@ -61,10 +61,7 @@ theorem unitArc_at_start (θ₁ θ₂ a b : ℝ) :
 theorem unitArc_at_end (θ₁ θ₂ a b : ℝ) (hab : a ≠ b) :
     unitArc θ₁ θ₂ a b b = exp (↑θ₂ * I) := by
   simp only [unitArc]
-  have hba : b - a ≠ 0 := sub_ne_zero.mpr (Ne.symm hab)
-  congr 1
-  field_simp
-  ring
+  grind
 
 /-- The unit arc is continuous. -/
 theorem unitArc_continuous (θ₁ θ₂ a b : ℝ) : Continuous (unitArc θ₁ θ₂ a b) := by
@@ -80,9 +77,7 @@ private lemma unitArc_angle_hasDerivAt (θ₁ θ₂ a b t : ℝ) (_hab : b - a �
   have h1 : HasDerivAt (fun s => (s - a) / (b - a) * (θ₂ - θ₁))
       ((θ₂ - θ₁) / (b - a)) t := by
     have hmul := hd.mul_const (θ₂ - θ₁)
-    convert hmul using 2 <;> first
-      | rfl
-      | ring
+    grind
   simpa using h1.const_add θ₁
 
 /-- Derivative of the unit arc. -/
@@ -115,8 +110,7 @@ theorem exp_sub_norm_sq (θ₁ θ₂ : ℝ) :
   have hc1 := Real.sin_sq_add_cos_sq θ₁
   have hc2 := Real.sin_sq_add_cos_sq θ₂
   rw [Real.cos_sub]
-  nlinarith [sq_nonneg (Real.cos θ₁ - Real.cos θ₂),
-             sq_nonneg (Real.sin θ₁ - Real.sin θ₂)]
+  grind
 
 /-- sin is positive on the open interval (0, π). -/
 theorem sin_pos_of_mem_Ioo_zero_pi {θ : ℝ} (hθ : θ ∈ Ioo 0 π) : 0 < Real.sin θ :=

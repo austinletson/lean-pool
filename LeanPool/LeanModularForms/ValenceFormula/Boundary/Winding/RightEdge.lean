@@ -51,9 +51,7 @@ lemma rightEdge_fdBoundary_eq (H : ℝ) (s : ℂ)
   · simp only [one_div, add_im, inv_im, im_ofNat, neg_zero, normSq_ofNat, zero_div, mul_im, sub_re,
     ofReal_re, mul_re, div_ofNat_re, ofReal_im, sub_im, div_ofNat_im, sub_self, mul_zero, sub_zero,
     I_im, mul_one, zero_mul, add_zero, I_re, zero_add]
-    have h_cancel : (H - s.im) / (H - Real.sqrt 3 / 2) * (H - Real.sqrt 3 / 2) = H - s.im :=
-      div_mul_cancel₀ (H - s.im) (ne_of_gt hden_pos)
-    linarith
+    grind
 
 /-- The right edge parameter `t₀` is the UNIQUE crossing point on `[0, 5]`. -/
 lemma rightEdge_unique_crossing (H : ℝ) (_hH : heightCutoff ≤ H) (s : ℂ)
@@ -71,10 +69,7 @@ lemma rightEdge_unique_crossing (H : ℝ) (_hH : heightCutoff ≤ H) (s : ℂ)
     simp only [one_div, add_im, inv_im, im_ofNat, neg_zero, normSq_ofNat, zero_div, mul_im, sub_re,
       ofReal_re, mul_re, div_ofNat_re, ofReal_im, sub_im, div_ofNat_im, sub_self, mul_zero,
       sub_zero, I_im, mul_one, zero_mul, add_zero, I_re, zero_add] at him
-    change t = (H - s.im) / (H - Real.sqrt 3 / 2)
-    have h_eq : t * (H - Real.sqrt 3 / 2) = H - s.im := by linarith
-    rw [eq_div_iff (ne_of_gt hden_pos)]
-    linarith
+    grind
   · push Not at h1
     by_cases h2 : t ≤ 2
     · simp only [fdBoundaryH, show ¬(t ≤ 1) from not_le.mpr h1, ↓reduceIte, h2] at hs_eq
@@ -297,52 +292,19 @@ private lemma rightEdge_ae_seg_eq (g h₀ h_arc h₃ h₅ : ℝ → ℂ)
     have h_excl : ({b} : Set ℝ)ᶜ ∈ ae volume :=
       mem_ae_iff.mpr (by rw [compl_compl]; exact (Set.toFinite ({b} : Set ℝ)).measure_zero volume)
     filter_upwards [h_excl] with t ht_ne ht
-    rw [Set.uIoc_of_le (le_of_lt hab)] at ht
-    have ht_lt_b : t < b := lt_of_le_of_ne ht.2 (fun h => ht_ne (Set.mem_singleton_iff.mpr h))
-    have ht_lt1 : t < 1 := lt_of_lt_of_le ht_lt_b hb1
-    rw [hg_h₀ t (le_of_lt ht_lt1), hderiv_01 t ⟨by linarith [ht.1], ht_lt1⟩]
+    grind
   · have : ({1, 3} : Set ℝ)ᶜ ∈ ae volume := mem_ae_iff.mpr (by
         rw [compl_compl]; exact (Set.toFinite ({1, 3} : Set ℝ)).measure_zero volume)
     filter_upwards [this] with t ht_ne ht_mem
-    rw [Set.uIoc_of_le (by norm_num : (1 : ℝ) ≤ 3)] at ht_mem
-    have ht1 : 1 < t := by
-      rcases eq_or_lt_of_le (le_of_lt ht_mem.1) with h | h
-      · exfalso; exact ht_ne (Set.mem_insert_iff.mpr (Or.inl (by linarith)))
-      · exact h
-    have ht3 : t < 3 := by
-      rcases eq_or_lt_of_le ht_mem.2 with h | h
-      · exfalso
-        exact ht_ne (Set.mem_insert_iff.mpr (Or.inr (Set.mem_singleton_iff.mpr (by linarith))))
-      · exact h
-    rw [hg_arc t ht1 ht3, hderiv_arc t ⟨ht1, ht3⟩]
+    grind
   · have : ({3, 4} : Set ℝ)ᶜ ∈ ae volume := mem_ae_iff.mpr (by
         rw [compl_compl]; exact (Set.toFinite ({3, 4} : Set ℝ)).measure_zero volume)
     filter_upwards [this] with t ht_ne ht_mem
-    rw [Set.uIoc_of_le (by norm_num : (3 : ℝ) ≤ 4)] at ht_mem
-    have ht3 : 3 < t := by
-      rcases eq_or_lt_of_le (le_of_lt ht_mem.1) with h | h
-      · exfalso; exact ht_ne (Set.mem_insert_iff.mpr (Or.inl (by linarith)))
-      · exact h
-    have ht4 : t < 4 := by
-      rcases eq_or_lt_of_le ht_mem.2 with h | h
-      · exfalso
-        exact ht_ne (Set.mem_insert_iff.mpr (Or.inr (Set.mem_singleton_iff.mpr (by linarith))))
-      · exact h
-    rw [hg_h₃ t ht3 (le_of_lt ht4), hderiv_3 t ⟨ht3, ht4⟩]
+    grind
   · have : ({4, 5} : Set ℝ)ᶜ ∈ ae volume := mem_ae_iff.mpr (by
         rw [compl_compl]; exact (Set.toFinite ({4, 5} : Set ℝ)).measure_zero volume)
     filter_upwards [this] with t ht_ne ht_mem
-    rw [Set.uIoc_of_le (by norm_num : (4 : ℝ) ≤ 5)] at ht_mem
-    have ht4 : 4 < t := by
-      rcases eq_or_lt_of_le (le_of_lt ht_mem.1) with h | h
-      · exfalso; exact ht_ne (Set.mem_insert_iff.mpr (Or.inl (by linarith)))
-      · exact h
-    have ht5 : t < 5 := by
-      rcases eq_or_lt_of_le ht_mem.2 with h | h
-      · exfalso
-        exact ht_ne (Set.mem_insert_iff.mpr (Or.inr (Set.mem_singleton_iff.mpr (by linarith))))
-      · exact h
-    rw [hg_h₅ t ht4, hderiv_5 t ⟨ht4, ht5⟩]
+    grind
 
 /-- `-(fdBoundarySeg4H H t - s) ∈ slitPlane` when `s.re = 1/2`:
 `(s - seg4).re = 1 > 0`. -/
@@ -687,19 +649,7 @@ lemma rightEdge_ftc_telescope (H : ℝ) (_hH_sqrt : Real.sqrt 3 / 2 < H)
   have hint_left_g : IntervalIntegrable
       (fun t => (fdBoundaryH H t - s)⁻¹ * deriv (fdBoundaryH H) t)
       volume 0 (t₀ - δ) := hint₀.congr_ae (ae_of_all _ h_congr)
-  have hint_right_g : IntervalIntegrable
-      (fun t => (fdBoundaryH H t - s)⁻¹ * deriv (fdBoundaryH H) t)
-      volume (t₀ + δ) 5 := hint_right.congr_ae (ae_of_all _ h_congr)
-  have h_int_eq_left :
-      (∫ t in (0 : ℝ)..(t₀ - δ), (fdBoundaryH H t - s)⁻¹ * deriv (fdBoundaryH H) t) =
-      ∫ t in (0 : ℝ)..(t₀ - δ), deriv g t / g t :=
-    intervalIntegral.integral_congr_ae (ae_of_all _ (fun t _ => (h_congr t).symm))
-  have h_int_eq_right :
-      (∫ t in (t₀ + δ)..(5 : ℝ), (fdBoundaryH H t - s)⁻¹ * deriv (fdBoundaryH H) t) =
-      ∫ t in (t₀ + δ)..(5 : ℝ), deriv g t / g t :=
-    intervalIntegral.integral_congr_ae (ae_of_all _ (fun t _ => (h_congr t).symm))
-  refine ⟨hint_left_g, hint_right_g, ?_⟩
-  rw [h_int_eq_left, h_int_eq_right, h_ftc₀, h_right_total, h_telescope]
+  grind
 
 private lemma rightEdge_h_far (H : ℝ) (_hH_sqrt : Real.sqrt 3 / 2 < H)
     (s : ℂ) (hs_re : s.re = 1 / 2) (hs_norm : ‖s‖ > 1) (hs_im : s.im < H)
@@ -738,9 +688,7 @@ private lemma rightEdge_h_far (H : ℝ) (_hH_sqrt : Real.sqrt 3 / 2 < H)
   · -- h_right : t₀ - ε/α ≤ t, h_abs : ε/α < |t₀ - t|
     -- Derive t > t₀ + ε/α
     have ht_gt : t₀ + ε / α < t := by
-      rcases le_or_gt t₀ t with h | h
-      · rw [abs_of_nonpos (by linarith)] at h_abs; linarith
-      · rw [abs_of_pos (by linarith)] at h_abs; linarith
+      grind
     by_cases ht1 : t ≤ 1
     · -- t on seg1, t > t₀ + ε/α
       rw [fdBoundary_H_eq_seg1_H ht1, rightEdge_h₀_eq hs_re]
@@ -880,8 +828,7 @@ theorem gWN_fdBoundary_H_eq_neg_half_of_rightEdge (H : ℝ) (hH_sqrt : Real.sqrt
   have h_tendsto := rightEdge_winding_aux H hH_sqrt s hs_re hs_norm hs_im_lower hs_im
   have hd : ∀ t, deriv (fun t => fdBoundaryH H t - s) t = deriv (fdBoundaryH H) t :=
     fun t => deriv_sub_const (f := fdBoundaryH H) _
-  convert h_tendsto using 1
-  ext ε; congr 1; ext t; simp only [sub_zero, gt_iff_lt, hd]
+  grind
 
 /-! ### SingleCrossingData construction for right edge
 
@@ -913,14 +860,7 @@ def rightEdgeCrossingData (H : ℝ) (hH_sqrt : Real.sqrt 3 / 2 < H)
     let d := min (min (‖s‖ - 1) 1) (H - s.im)
     min d (min (t₀ * α) ((1 - t₀) * α))
   hthresh := by
-    set α := H - Real.sqrt 3 / 2 with hα_def
-    have hα_pos : 0 < α := by change 0 < H - Real.sqrt 3 / 2; linarith
-    set t₀ := (H - s.im) / α
-    have ht₀_pos : 0 < t₀ := div_pos (by linarith) hα_pos
-    have ht₀_lt : t₀ < 1 := by
-      rw [div_lt_one hα_pos]; change H - s.im < H - Real.sqrt 3 / 2; linarith
-    exact lt_min (rightEdge_min_dist_pos s hs_norm hs_im)
-      (lt_min (mul_pos ht₀_pos hα_pos) (mul_pos (by linarith) hα_pos))
+    grind
   hδ_pos := fun ε hε _ => div_pos hε (by change 0 < H - Real.sqrt 3 / 2; linarith)
   hδ_small := by
     set α := H - Real.sqrt 3 / 2 with hα_def

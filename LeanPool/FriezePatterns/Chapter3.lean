@@ -173,14 +173,11 @@ def friezeToFlute (f : ℕ × ℕ → ℚ) (n m : ℕ) (hn : 2 ≤ n) [arith_fp 
         have h₅ : 0 ≤ (f ((n - 2) + 1,m)).num := by
           linarith [Rat.num_pos.mpr
             (@arith_fp.positive f n _ ((n - 2) + 1) m (by omega) (by omega))]
-        zify
-        rw [Int.toNat_of_nonneg h₂, Int.toNat_of_nonneg h₃, Int.toNat_of_nonneg h₄,
-          Int.toNat_of_nonneg h₅, continuant3.num]
+        grind
       -- finish boundary' case if (i + 2) % (n - 1) = 0
       simp[continuant3.num.toNat]
     have i_plus_one_mod_n_sub_one_bd_below : 1 ≤ (i + 1) % (n - 1) := by
-        rw[Nat.one_le_iff_ne_zero]
-        simp[boundary]
+        grind
     have i_mod_n_sub_one_bd_above : (i) % (n - 1) < (n - 1) := Nat.mod_lt (i) (by omega)
     -- These three feed some linarith's below, don't delete
     have i_plus_one_mod_n_sub_one_bd_above : (i + 1) % (n - 1) < (n - 1) :=
@@ -251,9 +248,7 @@ def friezeToFlute (f : ℕ × ℕ → ℚ) (n m : ℕ) (hn : 2 ≤ n) [arith_fp 
       have h₅ : 0 ≤ (f (i % (n - 1) + 1 + 1,m)).num := by
         linarith [Rat.num_pos.mpr
           (@arith_fp.positive f n _ (i % (n - 1) + 1 + 1) m (by omega) (by omega))]
-      zify
-      rw [Int.toNat_of_nonneg h₂, Int.toNat_of_nonneg h₃, Int.toNat_of_nonneg h₄,
-        Int.toNat_of_nonneg h₅, continuant.num]
+      grind
     simp[continuant.num.toNat]
   exact ⟨fluteF f n m, pos, hd, period, div⟩
 
@@ -281,11 +276,7 @@ lemma fluteToFrieze {n : ℕ} (g : flute n) (hn : n ≠ 0) : arith_fp (friezeF g
     | zero => simp [friezeF, hn, g.hd]
     | succ m ih =>
       have : ¬ 1 ≥ n+1 := by omega
-      unfold friezeF; simp only [one_ne_zero, ↓reduceIte, ge_iff_le, this, Nat.add_eq_zero_iff,
-        and_false, Nat.reduceAdd, add_tsub_cancel_right, tsub_self, ih, div_one, add_eq_right,
-        mul_eq_zero]
-      right
-      exact topBordZeros (m+1)
+      unfold friezeF; grind
   have botBordOnes_n : ∀ m, friezeF g (n, m) = 1 := by
     intro m
     induction m with
@@ -297,10 +288,7 @@ lemma fluteToFrieze {n : ℕ} (g : flute n) (hn : n ≠ 0) : arith_fp (friezeF g
       exact this.symm
     | succ m ih =>
       have : ¬ n ≥ n+1 := by omega
-      unfold friezeF; simp only [hn, ↓reduceIte, ge_iff_le, this, Nat.add_eq_zero_iff,
-        one_ne_zero, and_false, add_tsub_cancel_right, ih, div_one, add_eq_right, mul_eq_zero]
-      left
-      exact botBordZeros_n (n+1) m (by rfl)
+      unfold friezeF; grind
   have positive: ∀ i, ∀ m, 1 ≤ i → i ≤ n → friezeF g (i,m) > 0 := by
     intro i m
     induction m generalizing i with
@@ -318,8 +306,7 @@ lemma fluteToFrieze {n : ℕ} (g : flute n) (hn : n ≠ 0) : arith_fp (friezeF g
         by_cases hi : i = 0
         · simp [hi, topBordOnes]
         · by_cases hi' : i = n-1
-          · have : n-1+1 = n := by omega
-            simp [this, hi', botBordOnes_n]
+          · grind
           · specialize ih₂ (by omega) (by omega)
             have : ¬ n ≤ i := by omega
             unfold friezeF
@@ -334,11 +321,7 @@ lemma fluteToFrieze {n : ℕ} (g : flute n) (hn : n ≠ 0) : arith_fp (friezeF g
     conv =>
       enter [1,1,2]
       unfold friezeF
-    have : ¬ n ≤ i := by omega
-    simp +arith [this]
-    have hpos : friezeF g (i+1, m) > 0 := by linarith [positive (i+1) m (by omega) (by omega)]
-    field_simp
-    ring
+    grind
   have non_zero : ∀ i m, 1 ≤ i ∧ i ≤ n → friezeF g (i,m) ≠ 0 :=
     fun i m ⟨hi₁, hi₂⟩ => by linarith [positive i m hi₁ hi₂]
   have : nzPattern_n ℚ (friezeF g) n :=
@@ -370,11 +353,7 @@ lemma fluteToFrieze {n : ℕ} (g : flute n) (hn : n ≠ 0) : arith_fp (friezeF g
         simp only [zero_add] at key
         have hne : friezeF g (m+1, 0) ≠ 0 := by linarith [positive (m+1) 0 (by omega) (by omega)]
         have hfrac : friezeF g (2,m) = k := by
-          have hkey : friezeF g (2, m) * friezeF g (m + 1, 0) =
-              friezeF g (m, 0) + friezeF g (m + 2, 0) := by linarith [key]
-          have : friezeF g (2, m) * friezeF g (m + 1, 0) = ↑k * friezeF g (m + 1, 0) := by
-            rw [hkey, hk]; ring
-          exact mul_right_cancel₀ hne this
+          grind
         rw [hfrac]
         norm_cast
       have : n+1-(n-1)=2 := by omega
@@ -404,9 +383,7 @@ lemma fluteToFrieze {n : ℕ} (g : flute n) (hn : n ≠ 0) : arith_fp (friezeF g
           rw [Rat.sub_eq_add_neg, Rat.add_num_den, Rat.neg_den, Rat.mul_den, ih₁, ih₂, this]
           simp
       have h := translationInvariance ℚ (friezeF g) n 2 (by omega) (m-(n+1))
-      have : m-(n+1)+n+1 = m := by omega
-      rw [this] at h
-      exact h ▸ ih (m-(n+1)) (by omega)
+      grind
     intro i
     induction i using Nat.strong_induction_on with
     | _ i ih =>
@@ -422,8 +399,7 @@ lemma fluteToFrieze {n : ℕ} (g : flute n) (hn : n ≠ 0) : arith_fp (friezeF g
       simp +arith only at key₂
       rw [key₂]
       have h₁ : (friezeF g (2, i+m+1)).den = 1 := by
-        have := key (m+(i+1))
-        convert this using 2; ring_nf
+        grind
       have h₂ := ih (i+1) (by omega) m
       have h₃ := ih (i+2) (by omega) m
       rw [Rat.sub_eq_add_neg, Rat.add_num_den, Rat.neg_den, Rat.mul_den, h₁, h₂, h₃]
@@ -483,8 +459,7 @@ lemma main2 (n : ℕ) (hn : n ≠ 0) :
   rcases Nat.even_or_odd n with ⟨k, hk⟩ | ⟨k, hk⟩
   -- even case
   · have : k > 0 := by
-      by_contra!
-      simp only [nonpos_iff_eq_zero] at this; rw [this] at hk; simp at hk; omega
+      grind
     have : k ≠ 0 := by omega
     let j := k-1
     have hj : n = 2*j+2 := by omega
@@ -509,10 +484,7 @@ lemma main2 (n : ℕ) (hn : n ≠ 0) :
       have h₄ : ¬ j ≥ 2 * j + 1 := by omega
       unfold aEven
       simp [h₄]
-    choose w hw using h₁
-    use w
-    rw [hj]
-    assumption
+    grind
   -- odd case
   · use friezeF (fibFluteOdd k)
     let temp := fluteToFrieze (fibFluteOdd k) (by omega)
@@ -536,10 +508,7 @@ lemma main2 (n : ℕ) (hn : n ≠ 0) :
       have h₅ : 1 + 4 * k - 2 * k = 2 * k + 1 := by omega
       unfold aOdd
       simp [h₂, h₄, h₅]
-    choose w hw using h₁
-    use w
-    rw [hk]
-    assumption
+    grind
 
 theorem main3 (n : ℕ) (hn : n ≠ 0) : ∃ (g : ℕ × ℕ → ℚ) (_ : arith_fp g n),
     ∃ (b : ℕ × ℕ), (∀ (f : ℕ × ℕ → ℚ) (_ : arith_fp f n), ∀ (a : ℕ × ℕ),
@@ -552,6 +521,5 @@ theorem main3 (n : ℕ) (hn : n ≠ 0) : ∃ (g : ℕ × ℕ → ℚ) (_ : arith
     have h : f (i,m) ≤ g b := by
       calc f (i,m) ≤ Nat.fib n := main1 n hn f hf (i,m)
       _ = g b := by rw [hb]
-    intro h'
-    linarith
+    grind
   · exact hb

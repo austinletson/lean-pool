@@ -198,9 +198,7 @@ lemma mem_primeFactors_of_overlapg_pos {g k n p : ℕ} (hn : 1 ≤ n) (h : 1 ≤
     omega
   -- The block range is nonempty (`j ∈ range (k/g)`), so `k/g ≥ 1`, forcing `g ≥ 1`.
   have hg1 : 1 ≤ g := by
-    rcases Nat.eq_zero_or_pos g with hg0 | hg0
-    · exfalso; subst hg0; simp at hj
-    · exact hg0
+    grind
   have hmem : p ∈ (F g (n + g * j)).primeFactors := by
     by_contra hc; simp [hc] at hjne
   have hpprime : p.Prime := (Nat.mem_primeFactors.mp hmem).1
@@ -239,8 +237,7 @@ lemma factorization_Wg {g k n : ℕ} (_hn : 1 ≤ n) (p : ℕ) :
     intro q hq
     have hqprime : q.Prime := (Nat.mem_primeFactors.mp hq).1
     rw [factorization_prime_pow_applyg hqprime]
-    have : q ≠ p := by rintro rfl; exact hp hq
-    simp [this]
+    grind
 
 /-- **Radical-of-product decomposition (generic `g`), exact form.**
 `∏_j rad (F g (n+g·j)) = rad (Bg g k n) * Wg g k n`. Generic form of
@@ -301,8 +298,7 @@ lemma firstHit_mem_Icc (g n p j : ℕ) :
   · simp [hnone]
   · have hr0mem : r0 ∈ (Finset.range g).filter (fun r => p ∣ (n + g * j + r)) :=
       Finset.mem_of_min hr0
-    rw [Finset.mem_filter, Finset.mem_range] at hr0mem
-    simp only [hr0, Option.getD]; omega
+    grind
 
 /-- **Overlap bound (combinatorial core, generic `g`).** `overlapg g k n p ≤ ⌊k/p⌋ + 1` for
 `n ≥ 1`. The `⌊k/g⌋` blocks span `≤ k` consecutive integers, and a prime `p` divides at most
@@ -371,15 +367,9 @@ lemma overlapg_le (hg : 1 ≤ g) {k n p : ℕ} (hn : 1 ≤ n) : overlapg g k n p
         rw [heq] at h1
         -- From `h1`, `h2`:  g·j ≤ g·j' + (g-1) < g·(j'+1)  and  g·j' ≤ g·j + (g-1) < g·(j+1).
         have hjj' : g * j < g * (j' + 1) := by
-          have : g * j ≤ g * j' + (g - 1) := by omega
-          calc g * j ≤ g * j' + (g - 1) := this
-            _ < g * j' + g := by omega
-            _ = g * (j' + 1) := by ring
+          grind
         have hj'j : g * j' < g * (j + 1) := by
-          have : g * j' ≤ g * j + (g - 1) := by omega
-          calc g * j' ≤ g * j + (g - 1) := this
-            _ < g * j + g := by omega
-            _ = g * (j + 1) := by ring
+          grind
         have hlt1 : j < j' + 1 := Nat.lt_of_mul_lt_mul_left hjj'
         have hlt2 : j' < j + 1 := Nat.lt_of_mul_lt_mul_left hj'j
         omega
@@ -489,10 +479,7 @@ theorem master_ineq_g (g : ℕ) (hBlock : BlockRadLBg g) (hg : 3 ≤ g) {k n : �
   have hdiv : Φ ^ (((g : ℝ) - 2) / (g : ℝ)) * (L k : ℝ) ≤ (P k : ℝ) ^ 2 * (k : ℝ) ^ (2 * k) := by
     have h : Φ ^ (((g : ℝ) - 2) / (g : ℝ)) * (L k : ℝ) * Φ
         ≤ (P k : ℝ) ^ 2 * (k : ℝ) ^ (2 * k) * Φ := by
-      calc Φ ^ (((g : ℝ) - 2) / (g : ℝ)) * (L k : ℝ) * Φ
-          = Φ ^ (((g : ℝ) - 2) / (g : ℝ)) * Φ * (L k : ℝ) := by ring
-        _ ≤ Φ * (P k : ℝ) ^ 2 * (k : ℝ) ^ (2 * k) := hstep
-        _ = (P k : ℝ) ^ 2 * (k : ℝ) ^ (2 * k) * Φ := by ring
+      grind
     exact le_of_mul_le_mul_right h hΦpos
   -- Use Φ ≥ n^k:  (n^k)^{(g-2)/g}·L ≤ Φ^{(g-2)/g}·L ≤ P^2·k^{2k}.
   have hFlow : (n : ℝ) ^ k ≤ Φ := by rw [hΦ]; exact_mod_cast pow_le_F (k := k) (n := n)
@@ -527,13 +514,11 @@ theorem master_ineq_g (g : ℕ) (hBlock : BlockRadLBg g) (hg : 3 ≤ g) {k n : �
     congr 1
     -- (↑k) * (↑g - 2) = ↑((g-2)*k)
     rw [Nat.cast_mul, Nat.cast_sub (by omega : 2 ≤ g)]
-    push_cast
-    ring
+    grind
   have hRHS : ((P k : ℝ) ^ 2 * (k : ℝ) ^ (2 * k)) ^ g
       = ((k : ℝ) ^ (2 * k)) ^ g * (P k : ℝ) ^ (2 * g) := by
     rw [mul_pow, ← pow_mul, mul_comm 2 g]; ring
-  rw [hLHS, hRHS] at hpowg
-  exact hpowg
+  grind
 
 /-- The explicit generic `g`-block finiteness bound `Mg g k = (k^{2k})^g · P k^{2g}`. Generic form
 of `Msplice`. -/
@@ -552,8 +537,7 @@ theorem not_powerful_g (g : ℕ) (hBlock : BlockRadLBg g) (hg : 3 ≤ g) {k n : 
   have hcast : ((Mg g k : ℕ) : ℝ) < ((n ^ ((g - 2) * k) * L k ^ g : ℕ) : ℝ) := by
     exact_mod_cast hthr
   rw [Mg] at hcast
-  push_cast at hcast hmaster
-  linarith [hcast, hmaster]
+  grind
 
 /-- **Explicit per-`k` bound (generic `g`).** A powerful `F k n` (with `k ≥ g ≥ 3`, `n ≥ 1`) forces
 `n ≤ Mg g k`. Generic form of `powerful_bound_g5`; the corollary of `not_powerful_g` after the
@@ -684,8 +668,7 @@ theorem master_ineq_crude_g (g : ℕ) (hBlock : BlockRadLBg g) (hg : 3 ≤ g) {k
       ← Real.rpow_natCast (n : ℝ) ((g - 2) * k)]
     congr 1
     rw [Nat.cast_mul, Nat.cast_sub (by omega : 2 ≤ g)]
-    push_cast
-    ring
+    grind
   -- Simplify RHS:  (k^{2k})^g = k^{2gk}.
   have hRHS : ((k : ℝ) ^ (2 * k)) ^ g = (k : ℝ) ^ (2 * g * k) := by
     rw [← pow_mul]; congr 1; ring

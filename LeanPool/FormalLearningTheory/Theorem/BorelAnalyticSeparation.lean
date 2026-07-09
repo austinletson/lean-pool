@@ -102,9 +102,7 @@ theorem singleton_badEvent_eq_preimage_planar
     · -- zeroConcept case: gap must be 0
       exfalso
       unfold EmpiricalError zeroOneLoss zeroConcept at hgap
-      simp only [show (1 : ℕ) ≠ 0 from one_ne_zero, ↓reduceIte, Fin.sum_univ_one,
-        Nat.cast_one, div_one, sub_self] at hgap
-      linarith
+      grind
     · -- singletonConcept a case
       unfold EmpiricalError at hgap
       simp only [show (1 : ℕ) ≠ 0 from one_ne_zero, ↓reduceIte, Fin.sum_univ_one,
@@ -119,29 +117,14 @@ theorem singleton_badEvent_eq_preimage_planar
           unfold zeroOneLoss; split <;> norm_num
         rw [hz] at hgap; linarith
       · -- p.1 0 ≠ p.2 0
-        intro heq
-        by_cases ha2 : p.2 0 = a
-        · have ha1 : p.1 0 = a := heq ▸ ha2
-          have e1 : zeroOneLoss Bool (singletonConcept a (p.2 0)) (zeroConcept (p.2 0)) = 1 := by
-            unfold zeroOneLoss zeroConcept singletonConcept; simp [ha2]
-          have e2 : zeroOneLoss Bool (singletonConcept a (p.1 0)) (zeroConcept (p.1 0)) = 1 := by
-            unfold zeroOneLoss zeroConcept singletonConcept; simp [ha1]
-          rw [e1, e2] at hgap; linarith
-        · have e1 : zeroOneLoss Bool (singletonConcept a (p.2 0)) (zeroConcept (p.2 0)) = 0 := by
-            unfold zeroOneLoss zeroConcept singletonConcept; simp [ha2]
-          have hnn : zeroOneLoss Bool (singletonConcept a (p.1 0)) (zeroConcept (p.1 0)) ≥ 0 := by
-            unfold zeroOneLoss; split <;> norm_num
-          rw [e1] at hgap; linarith
+        grind
   · rintro ⟨hmem, hne⟩
     refine ⟨singletonConcept (p.2 0), Or.inr ⟨p.2 0, hmem, rfl⟩, ?_⟩
     unfold EmpiricalError
     simp only [show (1 : ℕ) ≠ 0 from one_ne_zero, ↓reduceIte, Fin.sum_univ_one,
       Nat.cast_one, div_one]
     unfold zeroOneLoss zeroConcept singletonConcept
-    simp only [↓reduceIte]
-    have h1 : p.1 0 ≠ p.2 0 := hne
-    simp only [h1, ↓reduceIte]
-    norm_num
+    grind
 
 /-! ## Theorem I -/
 
@@ -182,9 +165,7 @@ theorem planarWitnessEvent_not_measurable
   have hpre : (fun y : ℝ => (a, y)) ⁻¹' planarWitnessEvent A = A := by
     ext y
     simp only [Set.mem_preimage, planarWitnessEvent, Set.mem_setOf_eq]
-    constructor
-    · exact fun ⟨hy, _⟩ => hy
-    · exact fun hy => ⟨hy, fun hay => ha (hay ▸ hy)⟩
+    grind
   exact hpre ▸ hv hplanar
 
 /-! ## Theorem K -/

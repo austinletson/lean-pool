@@ -200,8 +200,7 @@ lemma Delta_E4_E6_aux_q_one_term : (qExpansion 1 DeltaE4E6Aux).coeff 1 = 1 := by
         qExpansion 1 ⇑E₆ * qExpansion 1 ⇑E₆) =
         (1728⁻¹ : ℂ) • (qExpansion 1 ⇑(E₄.mul (E₄.mul E₄)) -
         qExpansion 1 ⇑(E₆.mul E₆)) := by
-      congr 1
-      exact congrArg₂ (· - ·) (hmul4b.trans (congrArg _ hmul4a)).symm hmul6.symm
+      grind
     -- Transport through LinearMap application via congr_arg then ▸
     have h_trans := congrArg (PowerSeries.coeff 1) h_arg_eq
     -- Use ▸ which works at the definitional level
@@ -220,9 +219,7 @@ lemma Delta_E4_E6_aux_q_one_term : (qExpansion 1 DeltaE4E6Aux).coeff 1 = 1 := by
         rw [congrArg (PowerSeries.coeff 1) hmul6]
       _ = 1 := by
         rw [PowerSeries.coeff_mul, antidiagonal_one]
-        simp only [Finset.sum_insert (by decide : (1, 0) ∉ ({(0, 1)} : Finset _)),
-          Finset.sum_singleton, he6_0, he6_1]
-        norm_num
+        grind
   simpa [hsub1, hsub2] using hmain
 
 theorem Delta_E4_eqn : Delta = DeltaE4E6Aux := by
@@ -240,8 +237,7 @@ theorem Delta_E4_eqn : Delta = DeltaE4E6Aux := by
     have hsmul : qExpansion 1 ⇑(c • Delta) = qExpansion 1 (c • ⇑Delta) := by rfl
     rw [hsmul, ← Nat.cast_one (R := ℝ), ← hs] at h2
     simp only [Nat.cast_one, map_smul, smul_eq_mul] at h2
-    rw [h1] at h2
-    simpa using h2
+    grind
 
 
 /-- A weight-`k` level-one space with a generator `g` whose `q`-expansion has constant term `1`
@@ -277,9 +273,7 @@ private lemma rank_one_of_qExpansion_coeff_zero_eq_one {k : ℤ} (hk : k < 12)
           _ = (PowerSeries.coeff 0) (qExpansion 1 (((PowerSeries.coeff 0)
                 (qExpansion 1 ⇑f))⁻¹ • ⇑f)) := by simp [hcInv]
           _ = 1 := hnorm0
-      have hnorm' : PowerSeries.constantCoeff (qExpansion 1 (c⁻¹ • ⇑f)) = 1 := by
-        simpa [PowerSeries.constantCoeff] using hnorm
-      simp [map_sub, hg0, hnorm']
+      grind
     have := IsCuspForm_weight_lt_eq_zero k hk (g - c⁻¹• f) hcusp
     have hfc := hf c
     rw [@sub_eq_zero] at this
@@ -319,8 +313,7 @@ f^3 = a^3 E₆, but now this would mean that Δ = 0 or a = 0, which is a contrad
       rw [pow_three]
       simp only [PowerSeries.coeff_zero_eq_constantCoeff, ne_eq, Int.reduceAdd, mul_one,
         map_mul] at *
-      rw [← mul_assoc]
-      exact hh
+      grind
     obtain ⟨c4, hc4⟩ := exists_smul_eq_of_rank_one' weight_four_one_dimensional E4_ne_zero
       (f.mul f)
     have hc4e : c4 = ((qExpansion 1 f).coeff 0)^2 := by
@@ -455,9 +448,7 @@ lemma dim_modforms_lvl_one (k : ℕ) (hk : 3 ≤ (k : ℤ)) (hk2 : Even k) :
   by_cases HK : (3 : ℤ) ≤ (((k : ℤ) - 12))
   · have iH := ihn (k - 12) (by omega) ?_ ?_
     · have hk12 : (((k - 12) : ℕ) : ℤ) = k - 12 := by
-        norm_cast
-        refine Eq.symm (Int.subNatNat_of_le ?_)
-        omega
+        grind
       rw [hk12] at iH
       have : ((k - 12) : ℕ) = (k : ℚ) - 12 := by norm_cast
       rw [iH, this]
@@ -466,23 +457,17 @@ lemma dim_modforms_lvl_one (k : ℕ) (hk : 3 ≤ (k : ℤ)) (hk2 : Even k) :
         simp only [h12k, ↓reduceIte, h12]
         have := floor_lem1 k 12 (by norm_num)
         norm_cast at *
-        apply this
-        omega
+        grind
       · have h12k : ¬ 12 ∣ (k : ℤ) -12 - 2 := by omega
         simp only [h12k, ↓reduceIte, Nat.cast_add, Nat.cast_one, h12]
         have := floor_lem1 k 12 (by norm_num)
         norm_cast at *
-        rw [← add_assoc, this]
-        omega
+        grind
     · omega
-    · refine (Nat.even_sub ?_).mpr ?_
-      · omega
-      simp only [hk2, true_iff]
-      decide
+    · grind
   · simp only [not_le] at HK
     have hkop : k ∈ Finset.filter Even (Finset.Icc 3 14) := by
-      simp only [Finset.mem_filter, Finset.mem_Icc, hk2, and_true]
-      omega
+      grind
     have : Finset.filter Even (Finset.Icc 3 14) = ({4,6,8,10,12, 14} : Finset ℕ) := by decide
     rw [this] at hkop
     fin_cases hkop <;> simp_all only [Nat.ofNat_le_cast, Nat.cast_ite, Nat.cast_add, Nat.cast_one,

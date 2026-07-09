@@ -38,8 +38,7 @@ private theorem sum_Icc_eq_sum_Fin {α : Type*} [AddCommMonoid α]
         constructor
         · rintro ⟨_, _⟩
           exact ⟨x - N, by omega, by omega⟩
-        · rintro ⟨a, ha, rfl⟩
-          omega,
+        · grind,
     Finset.sum_map]
   rfl
 

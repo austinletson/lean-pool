@@ -340,9 +340,7 @@ private lemma card_cycleMonoPairs_eq (f : Coloring9) :
           apply Subtype.ext
           simp
         right_inv := by
-          intro q
-          apply Subtype.ext
-          simp }
+          grind }
   have hreassoc :
       Fintype.card {q : EdgeExtraK // P q}
         = Fintype.card (Σ e : {e : Edge n // Edge.monochromatic f e}, Extra e.1 × Fin 5) := by
@@ -383,8 +381,7 @@ private lemma monoCount_ge_605 (f : Coloring9) : 605 ≤ monoCount f := by
   let inj : Emb5 → CycleMonoPairs f := fun t => ⟨(t, chooseK t), chooseK_spec t⟩
   have hinj : Function.Injective inj := by
     intro t1 t2 h
-    have : (t1, chooseK t1) = (t2, chooseK t2) := congrArg Subtype.val h
-    exact congrArg Prod.fst this
+    grind
   have hcard : Fintype.card Emb5 ≤ Fintype.card (CycleMonoPairs f) :=
     Fintype.card_le_of_injective inj hinj
   have hEmb5 : Fintype.card Emb5 = 15120 := by
@@ -393,8 +390,7 @@ private lemma monoCount_ge_605 (f : Coloring9) : 605 ≤ monoCount f := by
     exact this.trans (by decide : (9 : Nat).descFactorial 5 = 15120)
   have hPairs : Fintype.card (CycleMonoPairs f) = 25 * monoCount f :=
     card_cycleMonoPairs_eq (f := f)
-  have : 15120 ≤ 25 * monoCount f := by simpa [hEmb5, hPairs] using hcard
-  nlinarith
+  grind
 
 /-!
 ### Parity lemma: `monoCount` is even
@@ -418,14 +414,12 @@ private noncomputable def rotEdge : Edge n ≃ Edge n where
   toFun := fun e => ⟨fun i => e.1 (rotIndex i), by
     intro i j hij
     have : rotIndex i = rotIndex j := by
-      apply e.2
-      simpa using hij
+      grind
     exact rotIndex.injective this⟩
   invFun := fun e => ⟨fun i => e.1 (rotIndex⁻¹ i), by
     intro i j hij
     have : rotIndex⁻¹ i = rotIndex⁻¹ j := by
-      apply e.2
-      simpa using hij
+      grind
     exact (Equiv.injective rotIndex⁻¹) this⟩
   left_inv := by
     intro e
@@ -481,10 +475,7 @@ private lemma monoCount_zmod2_eq_edgeCount_zmod2 (f : Coloring9) :
       dsimp [s, p]
       rw [Finset.sum_filter]
     -- put it together
-    calc
-      (monoCount f : ZMod 2) = (s.card : ZMod 2) := by rw [hs]
-      _ = s.sum (fun _ => (1 : ZMod 2)) := hCast
-      _ = ∑ e : Edge n, (if p e then (1 : ZMod 2) else 0) := hsum
+    grind
   calc
     (monoCount f : ZMod 2)
         = ∑ e : Edge n, (if Edge.monochromatic f e then (1 : ZMod 2) else 0) := hmono
@@ -503,12 +494,7 @@ private lemma monoCount_zmod2_eq_edgeCount_zmod2 (f : Coloring9) :
           simp [edgeCount, sum_bit_src_eq_sum_bit_dst (f := f)]
     _ = (edgeCount n : ZMod 2) := by
           -- in characteristic 2, `x + x = 0`
-          have hself :
-              (∑ e : Edge n, bit (f (Edge.src e))) + (∑ e : Edge n, bit (f (Edge.src e))) = 0 := by
-            simpa using
-              (CharTwo.add_self_eq_zero (R := ZMod 2) (x := ∑ e : Edge n, bit (f (Edge.src e))))
-          -- clean up the associativity
-          simp [add_left_comm, add_comm, hself]
+          grind
 
 private lemma edgeCount_9 : edgeCount n = 3024 := by
   classical
@@ -535,12 +521,7 @@ private lemma monoCount_even (f : Coloring9) : Even (monoCount f) := by
 private lemma monoCount_ge_606 (f : Coloring9) : 606 ≤ monoCount f := by
   have h605 : 605 ≤ monoCount f := monoCount_ge_605 (f := f)
   have hEven : Even (monoCount f) := monoCount_even (f := f)
-  by_contra h606
-  have hlt : monoCount f < 606 := Nat.lt_of_not_ge h606
-  have hle : monoCount f ≤ 605 := Nat.le_of_lt_succ (by simpa using hlt)
-  have hm : monoCount f = 605 := le_antisymm hle h605
-  have : Even 605 := by simpa [hm] using hEven
-  exact (by decide : ¬ Even 605) this
+  grind
 
 theorem monoFraction_ge_101_504 (f : Coloring9) : (101 : ℚ) / 504 ≤ monoFraction f := by
   have h606 : (606 : ℚ) ≤ (monoCount f : ℚ) := by exact_mod_cast monoCount_ge_606 (f := f)
@@ -554,8 +535,7 @@ theorem monoFraction_ge_101_504 (f : Coloring9) : (101 : ℚ) / 504 ≤ monoFrac
 
 theorem monoFraction_gt_one_fifth (f : Coloring9) : (1 : ℚ) / 5 < monoFraction f := by
   have h := monoFraction_ge_101_504 (f := f)
-  have hstrict : (1 : ℚ) / 5 < (101 : ℚ) / 504 := by norm_num
-  exact lt_of_lt_of_le hstrict h
+  grind
 
 end N9
 

@@ -195,8 +195,7 @@ noncomputable def allNewVertices {t : ℕ}
   · intro h
     rw [liftBlockEdge, Finset.mem_union] at h
     rcases h with h | h
-    · rcases Finset.mem_image.mp h with ⟨v', hv', hEq⟩
-      lia
+    · grind
     · rcases Finset.mem_image.mp h with ⟨s, hs, hEq⟩
       cases hEq
   · rintro ⟨rfl, hv⟩
@@ -591,8 +590,7 @@ theorem substitution_theorem {t : ℕ}
         · intro hx
           rcases Finset.mem_union.mp hx with hxOld | hxNew
           · rcases Finset.mem_biUnion.mp hxOld with ⟨i, -, hEi⟩
-            rcases Finset.mem_image.mp hEi with ⟨v, hv, hEq⟩
-            cases hEq
+            grind
           · rcases Finset.mem_image.mp hxNew with ⟨s', hs, hEq⟩
             cases hEq
             exact Finset.mem_filter.mpr
@@ -608,8 +606,7 @@ theorem substitution_theorem {t : ℕ}
         cases hEq
     | new s =>
         rcases Finset.mem_biUnion.mp hx with ⟨i, -, hEi⟩
-        rcases Finset.mem_image.mp hEi with ⟨v, hv, hEq⟩
-        cases hEq
+        grind
   have hUniqueEq :
       uniqueCoverage (substitutionHypergraph F blocks) P =
         (oldUniqueVertexUnion F blocks P).card +
@@ -625,10 +622,7 @@ theorem substitution_theorem {t : ℕ}
       simpa using h
     · intro i hi j hj hij
       refine Finset.disjoint_left.mpr ?_
-      intro x hx hy
-      rcases Finset.mem_image.mp hx with ⟨v, hv, rfl⟩
-      rcases Finset.mem_image.mp hy with ⟨w, hw, hEq⟩
-      exact hij (by cases hEq; rfl)
+      grind
   have hOldLe : ∀ i, oldCount i ≤ cap i := by
     intro i
     simpa [oldCount, uniqueCoverage, oldUniqueVerticesOnBlock, selectedOldVertexCount] using
@@ -652,14 +646,7 @@ theorem substitution_theorem {t : ℕ}
           ((((Finset.univ : Finset (Fin t)) \ T) ∪ I)).sum oldCount := by
       symm
       apply Finset.sum_subset (by simp)
-      intro i hiU hiNot
-      have hiT : i ∈ T := by
-        by_contra hiT
-        exact hiNot <| Finset.mem_union.mpr <| Or.inl <|
-          Finset.mem_sdiff.mpr ⟨Finset.mem_univ i, hiT⟩
-      have hiNotI : i ∉ I := by
-        exact fun hiI => hiNot <| Finset.mem_union.mpr <| Or.inr hiI
-      exact hOldZero i (Finset.mem_sdiff.mpr ⟨hiT, hiNotI⟩)
+      grind
     have hDisjCompI : Disjoint ((Finset.univ : Finset (Fin t)) \ T) I :=
       Finset.disjoint_left.mpr fun i hi1 hi2 => (Finset.mem_sdiff.mp hi1).2 (hIT hi2)
     calc
@@ -743,10 +730,7 @@ theorem frame_recurrence {t : ℕ}
           simpa using h
       · intro i hi j hj hij
         refine Finset.disjoint_left.mpr ?_
-        intro x hx hy
-        rcases Finset.mem_image.mp hx with ⟨v, hv, rfl⟩
-        rcases Finset.mem_image.mp hy with ⟨w, hw, hEq⟩
-        exact hij (by cases hEq; rfl)
+        grind
     have hNewCard : (allNewVertices F).card = F.card := by
       rw [allNewVertices, Finset.card_image_of_injective]
       · simp
@@ -761,8 +745,7 @@ theorem frame_recurrence {t : ℕ}
           cases hEq
       | new s =>
           rcases Finset.mem_biUnion.mp hx with ⟨i, -, hEi⟩
-          rcases Finset.mem_image.mp hEi with ⟨v, hv, hEq⟩
-          cases hEq
+          grind
     have hVertexSetEq :
         vertexSet (substitutionHypergraph F blocks) =
           oldVertexUnion F blocks ∪ allNewVertices F := by
@@ -791,8 +774,7 @@ theorem frame_recurrence {t : ℕ}
           · intro hx
             rcases Finset.mem_union.mp hx with hxOld | hxNew
             · rcases Finset.mem_biUnion.mp hxOld with ⟨i, -, hEi⟩
-              rcases Finset.mem_image.mp hEi with ⟨v, hv, hEq⟩
-              cases hEq
+              grind
             · rcases Finset.mem_image.mp hxNew with ⟨s', hs, hEq⟩
               cases hEq
               exact (new_mem_vertexSet_substitution_iff F blocks s).2

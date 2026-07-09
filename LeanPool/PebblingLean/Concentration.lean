@@ -66,8 +66,7 @@ theorem uniformProbabilityReal_le_expect_div_of_event_le [Fintype Ω] [Nonempty 
   have hcard_mul_a_le_sum : (bad.card : ℝ) * a ≤ ∑ ω : Ω, X ω := by
     have hsum_const : (∑ _ω ∈ bad, a) = (bad.card : ℝ) * a := by
       simp [Finset.sum_const, nsmul_eq_mul]
-    rw [← hsum_const]
-    exact hsum_a_le.trans hsum_bad_le_univ
+    grind
   have hcard_pos : 0 < (Fintype.card Ω : ℝ) := by
     exact_mod_cast (Fintype.card_pos_iff.mpr inferInstance)
   have hden_pos : 0 < (Fintype.card Ω : ℝ) * a := mul_pos hcard_pos ha
@@ -147,8 +146,7 @@ theorem exp_neg_mul_le_chord {lam B z : ℝ}
       1 - (1 - Real.exp (-(lam * B))) * (z / B) := by
     simp [w, p]
     ring
-  rw [harg, hrhs] at hconv
-  exact hconv
+  grind
 
 /-- A scalar lower bound for `1 - exp(-x)` that follows from `1 + x ≤ exp x`.
 This is the elementary replacement for the usual Taylor estimate in the
@@ -211,8 +209,7 @@ theorem exp_chord_quadratic_optimized {T gap B mu lam : ℝ}
       gap * T ≤ gap * mu - gap ^ 2 := by
     nlinarith [mul_le_mul_of_nonneg_left hgap_le hgap]
   field_simp [hden_pos.ne', hB.ne', hmu.ne', hBmu_pos.ne']
-  ring_nf
-  nlinarith
+  grind
 
 /-- A convenient way to discharge the hypercube union bound: an exponent at
 least `(n+1) log 2` makes the fixed-target failure probability at most
@@ -239,8 +236,7 @@ theorem exp_neg_le_inv_two_pow_succ_of_log_le (n : ℕ) {exponent : ℝ}
                 (((2 ^ (n + 1) : ℚ) : ℝ) = (2 : ℝ) ^ (n + 1)) := by
               norm_num
             simp only [Rat.cast_div, Rat.cast_one]
-            rw [hcast]
-            rw [one_div]
+            grind
   exact hfirst.trans_eq heq
 
 end FiniteProbability

@@ -113,8 +113,7 @@ theorem proposition_2_6 (f : D × D' → D'') :
         have e2 : (sSup T).2 = y := by rw [Prod.snd_sSup, hsnd, sSup_singleton]
         exact Prod.ext_iff.mpr ⟨e1, e2⟩
       have h := hf hTne hTdir
-      rw [hsupT, hT, Set.image_image] at h
-      simpa using h
+      grind
     · set T : Set (D × D') := (fun y => (x, y)) '' S with hT
       have hTne : T.Nonempty := hS.image _
       have hTdir : DirectedOn (· ≤ ·) T := by
@@ -128,8 +127,7 @@ theorem proposition_2_6 (f : D × D' → D'') :
         have e2 : (sSup T).2 = sSup S := by rw [Prod.snd_sSup, hsnd]
         exact Prod.ext_iff.mpr ⟨e1, e2⟩
       have h := hf hTne hTdir
-      rw [hsupT, hT, Set.image_image] at h
-      simpa using h
+      grind
   · -- separate continuity ⟹ joint continuity (Scott 1972's directedness argument)
     rintro ⟨h1, h2⟩ Sstar hne hdir
     have hmono1 : ∀ y, Monotone fun x => f (x, y) := fun y => preservesDirectedSup_monotone (h1 y)

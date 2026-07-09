@@ -912,8 +912,7 @@ lemma nat_cast_exp (n : ℕ) : (exp n : ℕ) = exp (n : V) := by
   | succ n ih =>
     simp only [Nat.cast_add, Nat.cast_one]
     rw [exp_succ, exp_succ, ←ih]
-    simp only [Nat.cast_mul, mul_eq_mul_right_iff, Nat.cast_eq_zero]
-    exact Or.inl rfl
+    grind
 
 end «lp_section_3»
 

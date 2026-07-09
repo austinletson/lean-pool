@@ -454,13 +454,7 @@ theorem unitSegment_toSegment (L : Segment) : Set.image (segmentTranslation L)
 theorem volume_closed_segment (L : Segment) : (MeasureTheory.volume (closedHull L)) = 0 := by
   rw[←  unitSegment_toSegment L ,segmentTranslation_def]
   rw[ area_translation, area_lin_map, volume_closed_unitSegment]
-  rw[← Matrix.toLin_toMatrix ourBasis ourBasis  ( linearTransformSegment L ) ]
-  rw[LinearMap.det_toLin ourBasis
-    ((LinearMap.toMatrix ourBasis ourBasis) (linearTransformSegment L))]
-  rw[Matrix.det_fin_two]
-  rw[linearTransformSegment_def, basisTransformSegment_def, ourBasis_def ]
-  repeat rw[LinearMap.toMatrix_apply]
-  simp
+  grind
 
 
 -- We also in the end need that the unit square has volume 1. The unit square is equal to the square
@@ -482,9 +476,7 @@ theorem box_equal_to_pare : parallelepiped ourBasisOrtho = closedHull unitSquare
         fin_cases i <;>
           simp only [Fin.isValue, sub_nonneg, sup_le_iff, tsub_le_iff_right,
             add_le_add_iff_left, le_sup_left]
-        · rw [le_sub_iff_add_le, add_sup 0]
-          ring_nf
-          exact le_sup_right
+        · grind
         · exact ⟨h0 0, h1 1⟩
         · refine ⟨h0 1, ?_⟩
           rw [add_comm, add_le_add_iff_left]
@@ -511,14 +503,8 @@ theorem box_equal_to_pare : parallelepiped ourBasisOrtho = closedHull unitSquare
         fin_cases i <;>
           simp only [Fin.zero_eta, Fin.isValue, Pi.one_apply, Fin.mk_one] <;>
             apply le_trans _ (le_of_eq h12)
-        · calc
-            a 1 + a 2 ≤ a 0 + (a 1 + a 2)       := by exact le_add_of_nonneg_left (h11 0)
-                    _ ≤ a 0 + (a 1 + a 2) + a 3 := by exact le_add_of_nonneg_right (h11 3)
-                    _ = a 0 + a 1 + a 2 + a 3   := by ring
-        · calc
-            a 3 + a 2 ≤ a 0 + (a 3 + a 2)       := by exact le_add_of_nonneg_left (h11 0)
-                    _ ≤ a 0 + (a 3 + a 2) + a 1 := by exact le_add_of_nonneg_right (h11 1)
-                    _ = a 0 + a 1 + a 2 + a 3   := by ring
+        · grind
+        · grind
     · rw[← h2]
       simp only [Fin.sum_univ_four, Fin.sum_univ_two, unitSquare]
       rw [ourBasisOrtho_zero, ourBasisOrtho_one]
@@ -668,12 +654,7 @@ theorem closed_triangle_is_union (T : Triangle)
       dsimp
       constructor
       · constructor
-        · intro i
-          -- would have liked if this could have been done without fin_cases
-          -- but it did not seem to work
-          fin_cases i
-          · dsimp; exact h1 1
-          · exact h1 2
+        · grind
         · rw[Fin.sum_univ_two,Fin.sum_univ_three] at *
           linarith
       · dsimp at h3
@@ -690,12 +671,7 @@ theorem closed_triangle_is_union (T : Triangle)
         dsimp
         constructor
         · constructor
-          · intro i
-            -- would have liked if this could have been done without fin_cases
-            -- but it did not seem to work
-            fin_cases i
-            · dsimp; exact h1 2
-            · exact h1 0
+          · grind
           · rw[Fin.sum_univ_two,Fin.sum_univ_three] at *
             linarith
         · dsimp at h3
@@ -712,12 +688,7 @@ theorem closed_triangle_is_union (T : Triangle)
           dsimp
           constructor
           · constructor
-            · intro i
-              -- would have liked if this could have been done without fin_cases
-              -- but it did not seem to work
-              fin_cases i
-              · dsimp; exact h1 0
-              · exact h1 1
+            · grind
             · rw[Fin.sum_univ_two,Fin.sum_univ_three] at *
               linarith
           · dsimp at h3
@@ -731,12 +702,9 @@ theorem closed_triangle_is_union (T : Triangle)
           · constructor
             · intro i
               fin_cases i
-              · specialize h1 0
-                exact lt_of_le_of_ne h1 fun a_1 ↦ ha0 (id (Eq.symm a_1))
-              · specialize h1 1
-                exact lt_of_le_of_ne h1 fun a_1 ↦ ha1 (id (Eq.symm a_1))
-              · specialize h1 2
-                exact lt_of_le_of_ne h1 fun a_1 ↦ ha2 (id (Eq.symm a_1))
+              · grind
+              · grind
+              · grind
             · exact h2
           · exact h3
   · rintro ( hx1| hx2)
@@ -862,14 +830,7 @@ theorem equal_area_cover_implies_triangleArea_n (S : Finset Triangle)
   have h4 : ∑ T ∈ S, |det T|/2 = ∑ _ ∈ S, area := sum_congr rfl h2
   rw [h4, sum_const] at h3
   rw[h2 T hT, ← h3, nsmul_eq_mul]
-  ring_nf
-  rw [mul_assoc,mul_comm,mul_assoc, IsUnit.inv_mul_cancel _, mul_one]
-  simp only [nsmul_eq_mul] at h3
-  apply isUnit_iff_exists.mpr
-  use area
-  constructor
-  · exact h3
-  · rw [mul_comm]; exact h3
+  grind
 
 end Monsky
 end LeanPool

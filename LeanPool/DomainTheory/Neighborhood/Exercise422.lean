@@ -132,8 +132,7 @@ def peanoSub (hzero : ∀ n, zero ≠ succ n) (hinj : Function.Injective succ) :
       · exact ⟨zero_mem_nats zero succ, h0⟩
       · rintro m ⟨hmnat, hms⟩
         exact ⟨succ_mem_nats zero succ hmnat, hstep ⟨m, hmnat⟩ hms⟩
-    obtain ⟨_, hns⟩ := hsub n.2
-    exact hns
+    grind
 
 /-- **Exercise 4.22 (Scott 1981, PRG-19).** *Yes:* whenever `N*` satisfies (i) and
 (ii), there is a

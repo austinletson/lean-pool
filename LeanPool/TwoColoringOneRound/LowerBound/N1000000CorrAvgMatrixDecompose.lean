@@ -66,9 +66,7 @@ noncomputable def repEmb (k : DirIdx) : FreeCol k ↪ AvailFrom3 :=
       have hm_lt : m < n := by
         -- `j.1.1 < 3`, hence `m < 6 ≤ n`.
         have : m < 6 := by
-          have hj : j.1.1 < 3 := j.1.2
-          -- `3 + j < 3 + 3 = 6`
-          exact Nat.add_lt_add_left hj 3
+          grind
         exact lt_of_lt_of_le this (by decide)
       have hm_ge : 3 ≤ (⟨m, hm_lt⟩ : SymN).1 := by
         -- `m = 3 + j` so `3 ≤ m`.
@@ -78,12 +76,7 @@ noncomputable def repEmb (k : DirIdx) : FreeCol k ↪ AvailFrom3 :=
       intro a b hab
       -- Reduce to equality in `Fin 3`.
       apply Subtype.ext
-      apply Fin.ext
-      -- Compare the underlying naturals `3 + a.1.1 = 3 + b.1.1`.
-      have hNat : (3 + a.1.1) = (3 + b.1.1) := by
-        -- `hab` is equality in `AvailFrom3`, so compare underlying `Nat` values.
-        exact congrArg Fin.val (congrArg Subtype.val hab)
-      exact Nat.add_left_cancel hNat⟩
+      grind⟩
 
 /-- Imported auxiliary declaration for the 2-coloring one-round formalization. -/
 noncomputable def repVertex (d : DirIdx) : V :=
@@ -141,23 +134,11 @@ theorem corrAvgMatrix_eq_sum_coeff_A (f : Coloring n) :
         (Finset.univ : Finset DirIdx).sum (fun d => (coeff (f := f) d) * (A d u v))
           = (coeff (f := f) d0) * (A d0 u v) := by
       refine Finset.sum_eq_single d0 (f := fun d => (coeff (f := f) d) * (A d u v)) ?_ ?_
-      · intro d hdMem hdNe
-        -- `A d u v = 0` for `d ≠ d0`
-        calc
-          (coeff (f := f) d) * (A d u v) = (coeff (f := f) d) * 0 := by rw [hAne d hdNe]
-          _ = 0 := by simp
+      · grind
       · intro hdNotMem
         exact False.elim (hdNotMem (Finset.mem_univ d0))
     -- back to the `Fintype` sum and use `A d0 u v = 1`.
-    have hF : (∑ d : DirIdx, (coeff (f := f) d) * (A d u v))
-        = (Finset.univ : Finset DirIdx).sum (fun d => (coeff (f := f) d) * (A d u v)) := by
-      rfl
-    calc
-      (∑ d : DirIdx, (coeff (f := f) d) * (A d u v))
-          = (coeff (f := f) d0) * (A d0 u v) := by simpa [hF] using hSum'
-      _ = coeff (f := f) d0 := by
-            rw [hA0]
-            simp
+    grind
   -- Identify the RHS entrywise and finish.
   have hCoeff : corrAvg f u v = coeff (f := f) d0 := by
     have hSym : corrAvg f u v = corrAvg f v u := corrAvg_symmetric (f := f) u v

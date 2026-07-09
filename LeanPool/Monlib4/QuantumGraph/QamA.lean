@@ -172,11 +172,7 @@ theorem qamA.is_idempotent [hφ : φ.IsFaithfulPosMap] (x : { x : Matrix n n ℂ
     ring
   rw [hrank]
   simp_rw [_root_.map_smul, smul_smul, mul_assoc]
-  have : (‖x.1‖ ^ 2 : ℂ) ≠ 0 :=
-  by simp_rw [ne_eq, sq_eq_zero_iff, Complex.ofReal_eq_zero, norm_eq_zero]; exact x.property
-  have this' := one_div_mul_cancel this
-  simp_rw [Complex.ofReal'_eq_isROrC_ofReal] at this' ⊢
-  simp_rw [this', mul_one]
+  grind
 
 theorem Psi.one [hφ : φ.IsFaithfulPosMap] :
     withMatrixQuantum[φ]
@@ -481,8 +477,7 @@ private theorem qam_A_is_sa_iff_aux4_aux6 [hφ : φ.IsFaithfulPosMap] (x' : { x 
     have hsig : hφ.sig (1 / 2) x ≠ 0 := by
       intro hzero
       rw [sig_eq_iff_eq_sig_inv] at hzero
-      have hzero' : x = 0 := by simpa using hzero
-      exact hx hzero'
+      grind
     have hnum : ‖hφ.sig (1 / 2) x‖ ^ 2 ≠ 0 := by
       simpa [norm_eq_zero] using hsig
     have hden : ‖x‖ ^ 2 ≠ 0 := by
@@ -609,10 +604,7 @@ private theorem qam_A_is_sa_iff_aux5_aux6 [hφ : φ.IsFaithfulPosMap] (x' : { x 
     h.resolve_right this1
   have hβnorm : star β * β ≠ 0 := mul_ne_zero (star_ne_zero.mpr Hβ) Hβ
   have hαone : (((α : NNReal) : ℝ) : ℂ) = 1 := by
-    have hfactor : ((((α : NNReal) : ℝ) : ℂ) - 1) * (star β * β) = 0 := by
-      ring_nf at hscalar ⊢
-      exact hscalar
-    exact sub_eq_zero.mp ((mul_eq_zero.mp hfactor).resolve_right hβnorm)
+    grind
   rw [hαone, one_smul, sig_eq_self_iff_commute] at hα
   exact hα
 
@@ -995,8 +987,7 @@ theorem qamA.isometric_starAlgEquiv_conj [hφ : φ.IsFaithfulPosMap] [Nontrivial
         simp_rw [hU.eq, rpow, PosDef.rpow_one_eq_self, mul_assoc]
       _ = rpow (1 / 2) * U * x.1 * (U⁻¹ : unitaryGroup n ℂ) * rpow (1 / 2) := by
         simp only [rpow, PosDef.rpow_mul_rpow]
-        have : (1 : ℝ) + -(1 / 2 : ℝ) = 1 / 2 := by norm_num
-        rw [this]
+        grind
   have hnorm : ‖(innerAutStarAlg U) x.1‖ = ‖x.1‖ := by
     rw [StarAlgEquiv.IsIsometry, isometry_iff_norm] at hf'
     exact hf' x.1

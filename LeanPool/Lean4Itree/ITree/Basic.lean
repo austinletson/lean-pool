@@ -133,11 +133,7 @@ theorem vis_inj {ε α ρ}
   (h : vis e1 k1 = vis e2 k2) : e1 = e2 ∧ k1 = k2 := by
   simp only [vis, vis'] at h
   have := Sigma.mk.inj (PFunctor.M.mk_inj h)
-  apply And.intro
-  · exact eq_of_heq (shape.vis.inj this.left).right
-  · have := eq_of_heq this.right
-    funext x
-    exact congr (a₁ := x) this rfl
+  grind
 
 theorem tau_inj {ε ρ} {t1 t2 : ITree ε ρ} (h : tau t1 = tau t2) : t1 = t2 := by
   simp only [tau, tau'] at h
@@ -271,16 +267,11 @@ lemma IEqF_inv (sim : ITree ε ρ → ITree ε ρ → Prop) t1 t2 (h : IEqF sim 
   (∃ v, t1 = ret v ∧ t2 = ret v) ∨
   (∃ α, ∃ e : ε α, ∃ k1, ∃ k2, (∀ a : α, sim (k1 a) (k2 a)) ∧ t1 = vis e k1 ∧ t2 = vis e k2) ∨
   (∃ t1', ∃ t2', sim t1' t2' ∧ t1 = tau t1' ∧ t2 = tau t2') := by
-  cases h
-  · exact Or.inl ⟨_, rfl, rfl⟩
-  · next h => exact Or.inr <| Or.inl ⟨_, _, _, _, h, rfl, rfl⟩
-  · next h => exact Or.inr <| Or.inr ⟨_, _, h, rfl, rfl⟩
+  grind
 
 theorem IEqF_monotone sim sim' (hsim : ∀ (t1 t2 : ITree ε ρ), sim t1 t2 → sim' t1 t2) :
   ∀ t1 t2, IEqF sim t1 t2 → IEqF sim' t1 t2 := by
-  intros t1 t2 h
-  cases h <;> constructor <;> intros <;> apply hsim <;> try assumption
-  rename_i h _; apply h
+  grind
 
 /-- Custom equality predicate between ITrees -/
 def IEq (t1 t2 : ITree ε ρ) : Prop :=

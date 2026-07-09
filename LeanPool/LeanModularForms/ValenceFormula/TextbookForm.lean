@@ -233,9 +233,7 @@ private theorem fd'_orbit_rho_eq (p : ℍ) (hp : p ∈ 𝒟) (horb : orb p = orh
     rw [ellipticPointRho'_im, normSq_denom_at_rho, h_cd1, div_one] at this; exact this
   have h_re_eq : (g • ellipticPointRho').re = -1/2 ∨ (g • ellipticPointRho').re = 1/2 := by
     have h_re_abs := abs_re_eq_half_of_smul_rho_in_fd g hp h_cd1
-    rcases le_or_gt (g • ellipticPointRho').re 0 with h_neg | h_pos
-    · left; linarith [abs_of_nonpos h_neg]
-    · right; linarith [abs_of_pos h_pos]
+    grind
   rcases h_re_eq with h_re_left | h_re_right
   · left
     exact UpperHalfPlane.ext_re_im (by linarith [h_re_left, ellipticPointRho'_re])

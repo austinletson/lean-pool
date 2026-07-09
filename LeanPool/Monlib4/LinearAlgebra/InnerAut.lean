@@ -538,9 +538,7 @@ lemma _root_.StarAlgEquiv.eq_innerAut
     (f : Matrix n n 𝕜 ≃⋆ₐ[𝕜] Matrix n n 𝕜) :
     innerAutStarAlg f.ofMatrixUnitary = f := by
   rw [StarAlgEquiv.ofMatrixUnitary]
-  generalize_proofs
-  expose_names
-  exact pf_1
+  grind
 
 /-- Spectral theorem in Monlib's inner-automorphism notation. -/
 theorem _root_.Matrix.IsHermitian.spectral_theorem'' {x : Matrix n n 𝕜}
@@ -557,23 +555,12 @@ theorem _root_.Matrix.diagonal.spectrum {𝕜 n : Type _} [Field 𝕜] [Fintype 
     Set.mem_setOf_eq, funext_iff, Pi.zero_apply, Classical.not_forall]
   intro x
   constructor
-  · rintro ⟨v, ⟨h, ⟨j, hj⟩⟩⟩
-    specialize h j
-    rcases h with (h | h)
-    · exact ⟨j, h⟩
-    · contradiction
+  · grind
   · rintro ⟨i, hi⟩
     let v : n → 𝕜 := fun j => if j = i then 1 else 0
     use v
     simp_rw [v, ite_eq_right_iff, one_ne_zero, imp_false, Classical.not_not]
-    constructor
-    · intro j
-      by_cases h : j = i
-      · left
-        rw [h, hi]
-      · right
-        exact h
-    · use i
+    grind
 
 theorem _root_.Matrix.IsHermitian.spectrum {x : Matrix n n 𝕜}
     (hx : x.IsHermitian) :

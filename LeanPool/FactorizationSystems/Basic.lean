@@ -65,11 +65,9 @@ lemma factorization_iso_is_unique' {L R : MorphismProperty C} (F : Factorization
   (comm₂' : i'.hom ≫ p' = p) : i = i' := by
   let α := F.factorizationIso f E' s' hs' p' hp' fact'
   let c₁ : F.leftMap f ≫ (α.fst ≪≫ i.symm).hom = s := by
-    simp only [Iso.trans_hom, Iso.symm_hom, ← Category.assoc, α.snd.left, ← comm₁]
-    simp
+    grind
   let c₂ : (α.fst ≪≫ i.symm).hom ≫ p = F.rightMap f := by
-    rw [← comm₂]
-    simp only [Iso.trans_hom, Iso.symm_hom, Category.assoc, i.inv_hom_id_assoc, α.snd.right]
+    grind
   let φ := F.factorization_iso_is_unique f E s hs p hp fact (α.fst ≪≫ Iso.symm i) c₁ c₂
   let c₁' : F.leftMap f ≫ (α.fst ≪≫ i'.symm).hom = s := by
     simp only [Iso.trans_hom, Iso.symm_hom, ← Category.assoc, α.snd.left, ← comm₁']
@@ -277,8 +275,7 @@ lemma fact_fact_iso_comm_left : (F : FactorizationSystem L R) → {X Y : C} → 
   have duh : l = F.leftMap f ≫ hom := (F.factorizationIso f E l p r q fact).snd.left.symm
   calc
     l ≫ inv ≫ hom' = F.leftMap f ≫ hom' := by
-      rw [duh]
-      simp [inv, hom, hom']
+      grind
     _ = l' := comm_left'
 
 /- the isomorphisms commutes with right maps -/
@@ -290,16 +287,7 @@ lemma fact_fact_iso_comm_right : (F : FactorizationSystem L R) → {X Y : C} →
   let comm_right := (F.factorizationIso f E l p r q fact).snd.right
   let comm_right' := (F.factorizationIso f E' l' p' r' q' fact').snd.right
   unfold factFactIso
-  simp only [Iso.trans_hom, Iso.symm_hom, Category.assoc]
-  let inv := (F.factorizationIso f E l p r q fact).fst.inv
-  let hom := (F.factorizationIso f E l p r q fact).fst.hom
-  let hom' := (F.factorizationIso f E' l' p' r' q' fact').fst.hom
-  calc
-    inv ≫ hom' ≫ r' = inv ≫ F.rightMap f := by rw [comm_right']
-    _ = inv ≫ hom ≫ r := by rw [comm_right]
-    _ = r := by
-      rw [← Category.assoc, (F.factorizationIso f E l p r q fact).fst.inv_hom_id,
-        Category.id_comp]
+  grind
 
 namespace MorphismProperty
 

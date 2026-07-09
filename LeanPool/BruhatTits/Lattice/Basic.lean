@@ -199,8 +199,7 @@ lemma toGL_toSubmodule {M : Submodule R (ι → K)} [IsLattice M] (b : Basis ι 
       · simp
       · intro x _ hx
         simp [Pi.single_eq_of_ne hx]
-      · intro hi
-        simp at hi
+      · grind
     · simp
     · intro y z _ _ hym hzm
       simpa only [Subtype.val_comp_add, Matrix.mulVec_add] using

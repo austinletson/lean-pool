@@ -57,8 +57,7 @@ private lemma hasDerivAt_fderiv_line_eval' {f : E → ℝ} {x v : E} {t : ℝ}
       one_ne_zero).hasFDerivAt.comp_hasDerivAt
       t (hasDerivAt_line' x v t)
   have h := hΦ.clm_apply (hasDerivAt_const t v)
-  simp only [ContinuousLinearMap.map_zero, add_zero] at h
-  exact h
+  grind
 
 omit [FiniteDimensional ℝ E] in
 private lemma taylor_remainder_bound' {f : E → ℝ} {x v : E}
@@ -255,8 +254,7 @@ lemma gradient_alignment_impl (f : E → ℝ) (μ : ℝ) (x₀ : E) (hμ : 0 < �
         _ = ‖hessian f (x + t • v) - H‖ * ‖v‖ ^ 2 := by ring
         _ ≤ ε * ‖v‖ ^ 2 := by
               gcongr
-              exact hr_hess _ (lt_of_lt_of_le (hseg_R t ht)
-                (le_trans (min_le_right _ _) (le_trans (min_le_right _ _) (min_le_left _ _))))
+              grind
     -- Taylor bound
     have htaylor : f y - f x - fderiv ℝ f x v ≤ ε * ‖v‖ ^ 2 := by
       have : ‖f (x + v) - f x - fderiv ℝ f x v‖ ≤ ε * ‖v‖ ^ 2 :=
@@ -286,10 +284,6 @@ lemma gradient_alignment_impl (f : E → ℝ) (μ : ℝ) (x₀ : E) (hμ : 0 < �
     have h_nonpos : X ≤ 0 := by linarith [h_2X, h_combined]
     have h_nonneg : 0 ≤ (2 * μ)⁻¹ * ‖fderiv ℝ f x‖ ^ 2 := by positivity
     have h_eq : (2 * μ)⁻¹ * ‖fderiv ℝ f x‖ ^ 2 = 0 := le_antisymm h_nonpos h_nonneg
-    have h_sq_zero : ‖fderiv ℝ f x‖ ^ 2 = 0 :=
-      (mul_eq_zero.mp h_eq).resolve_left (by positivity)
-    have h_zero : ‖fderiv ℝ f x‖ = 0 := by
-      rcases sq_eq_zero_iff.mp h_sq_zero with h; exact h
-    linarith
+    grind
 
 end PLAcceleratedNesterovLean

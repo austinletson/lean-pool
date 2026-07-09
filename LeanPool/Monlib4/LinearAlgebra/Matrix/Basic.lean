@@ -63,9 +63,7 @@ theorem vec_ne_zero {R n : Type _} [Semiring R] (a : n → R) :
 /-- Two vectors are equal iff their entries are equal. -/
 theorem ext_vec {𝕜 n : Type _} (α β : n → 𝕜) :
     α = β ↔ ∀ i : n, α i = β i := by
-  refine ⟨fun h i => by rw [h], fun h => ?_⟩
-  ext i
-  exact h i
+  grind
 
 /-- The transpose of `vecMulVec x y` is `vecMulVec y x`. -/
 theorem vecMulVec_transpose {R n : Type _} [CommSemiring R] (x y : n → R) :
@@ -250,9 +248,7 @@ theorem Matrix.single_conjTranspose (i : n) (j : m) (a : R) :
   · simp only [of_apply, h', star_zero, ite_self]
   · simp_rw [← ite_and, of_apply, @and_comm _ (j = x),
       (Ne.ite_eq_right_iff (star_ne_zero.mpr h')).mpr h, star_eq_iff_star_eq, star_zero]
-    symm
-    rw [ite_eq_right_iff]
-    exact fun H => (h H).elim
+    grind
 
 theorem Matrix.single.star_apply (i k : n) (j l : m) (a : R) :
     star (Matrix.single i j a k l) = Matrix.single j i (star a) l k := by
@@ -287,8 +283,7 @@ theorem Matrix.single.mul_apply_basis' {R p q : Type _} [Semiring R] [DecidableE
     [DecidableEq q] (i x : n) (j y : m) (k z : p) (l w : q) :
     Matrix.single k l (Matrix.single i j (1 : R) x y) z w =
       ite (i = x ∧ j = y ∧ k = z ∧ l = w) 1 0 := by
-  simp_rw [Matrix.single.hMul_apply_basis, Matrix.single, ite_and, of_apply, ite_mul,
-    MulZeroClass.zero_mul, one_mul]
+  grind
 
 theorem Matrix.single.hMul_apply {R : Type _} [Fintype n] [Semiring R]
     (i j k l m p : n) :
@@ -324,20 +319,14 @@ theorem Matrix.single.sum_star_hMul_self' {R : Type _} [Fintype n] [Semiring R] 
     · simp [Matrix.star_apply, Matrix.single, Matrix.of_apply]
     · intro b _ hne
       have hcond : ¬(i = b.2 ∧ j = b.1) := by
-        intro h
-        apply hne
-        ext <;> simp [h.1, h.2]
+        grind
       simp [Matrix.star_apply, Matrix.single, Matrix.of_apply, hcond]
-    · intro hnot
-      simp at hnot
+    · grind
   · intro b _ hne
     have hcond : ¬(i = b.1 ∧ j = b.2) := by
-      intro h
-      apply hne
-      ext <;> simp [h.1, h.2]
+      grind
     simp [Matrix.single, Matrix.of_apply, hcond]
-  · intro hnot
-    simp at hnot
+  · grind
 
 theorem Matrix.single.hMul_stdBasisMatrix {R p : Type _} [Semiring R] [DecidableEq p]
     [Fintype m] (i x : n) (j k : m) (l y : p) (a b : R) :
@@ -397,10 +386,8 @@ lemma _root_.Matrix.smul_one_eq_one_iff {𝕜 n : Type*} [DecidableEq n] [Field 
       rw [not_isEmpty_iff] at h
       let i : n := h.some
       specialize h1 i i
-      simp only [↓reduceIte] at h1
-      exact h1
-    · rintro rfl i j
-      rfl
+      grind
+    · grind
 
 /-- A linear equivalence of `R^n` gives an invertible matrix. -/
 @[reducible]

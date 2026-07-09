@@ -99,8 +99,7 @@ def absorbAddHom : L ⊗[K] (K ⊗[k] A) →+ L ⊗[k] A :=
         change (m • (x + y)) ⊗ₜ a = (m • x) ⊗ₜ a + (m • y) ⊗ₜ a
         simp only [smul_add, TensorProduct.add_tmul]
       | add z w hz hw =>
-        simp only [AddMonoidHom.add_apply] at hz hw
-        simp only [map_add, AddMonoidHom.add_apply, hz, hw]
+        grind
   } (fun r l a ↦ by
     induction a using TensorProduct.induction_on with
     | zero => simp only [AddMonoidHom.coe_mk, ZeroHom.coe_mk, map_zero, smul_zero]

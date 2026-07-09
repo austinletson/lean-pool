@@ -58,8 +58,7 @@ namespace Hierarchy
       induction H <;> try
         simp only [LO.ball, LO.bex, reduceCtorEq, Semiformula.and_inj] at hr
       case and =>
-        rcases hr with ⟨rfl, rfl⟩
-        constructor <;> assumption,
+        grind,
    by rintro ⟨hp, hq⟩; exact Hierarchy.and hp hq⟩
 
 @[simp] lemma or_iff {φ ψ : Semiformula L ξ n} :
@@ -69,8 +68,7 @@ namespace Hierarchy
       induction H <;> try
         simp only [LO.ball, LO.bex, reduceCtorEq, Semiformula.or_inj] at hr
       case or =>
-        rcases hr with ⟨rfl, rfl⟩
-        constructor <;> assumption,
+        grind,
       by rintro ⟨hp, hq⟩; exact Hierarchy.or hp hq⟩
 
 @[simp] lemma conj_iff {φ : Fin m → Semiformula L ξ n} :
@@ -214,8 +212,7 @@ lemma neg {φ : Semiformula L ξ n} : Hierarchy Γ s φ → Hierarchy Γ.alt s (
         simp only [LO.ball, LO.bex, reduceCtorEq, Semiformula.all_inj,
           Semiformula.imp_inj, Semiformula.Operator.LT.lt_inj, true_and] at hq
       case ball φ t pt hp ih =>
-        rcases hq with ⟨rfl, rfl⟩
-        assumption
+        grind
       case all hp ih =>
         rcases hq with rfl
         simpa using hp
@@ -237,8 +234,7 @@ lemma neg {φ : Semiformula L ξ n} : Hierarchy Γ s φ → Hierarchy Γ.alt s (
         simp only [LO.ball, LO.bex, reduceCtorEq, Semiformula.ex_inj,
           Semiformula.and_inj, Semiformula.Operator.LT.lt_inj, true_and] at hq
       case bex φ t pt hp ih =>
-        rcases hq with ⟨rfl, rfl⟩
-        assumption
+        grind
       case ex hp ih =>
         rcases hq with rfl
         simpa using hp
@@ -376,8 +372,7 @@ instance : LogicalConnective.Closed (Hierarchy Γ 0 : Semiformula L ξ k → Pro
   not := by simp[neg_iff]
   imply := by
     simp only [Semiformula.imp_eq, or_iff, neg_iff, alt_zero_iff_zero]
-    intro φ ψ hp hq
-    exact ⟨hp, hq⟩
+    grind
 
 lemma of_open {φ : Semiformula L ξ n} : φ.Open → Hierarchy Γ s φ := by
   induction φ using Semiformula.rec'
@@ -387,12 +382,10 @@ lemma of_open {φ : Semiformula L ξ n} : φ.Open → Hierarchy Γ s φ := by
   case hnrel => simp only [nrel, implies_true]
   case hand ihp ihq =>
     simp only [Semiformula.open_and, and_iff, and_imp]
-    intro hp hq
-    exact ⟨ihp hp, ihq hq⟩
+    grind
   case hor ihp ihq =>
     simp only [Semiformula.open_or, or_iff, and_imp]
-    intro hp hq
-    exact ⟨ihp hp, ihq hq⟩
+    grind
   case hall => simp only [Semiformula.not_open_all, IsEmpty.forall_iff]
   case hex => simp only [Semiformula.not_open_ex, IsEmpty.forall_iff]
 

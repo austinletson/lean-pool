@@ -71,10 +71,7 @@ theorem pv_higher_order_term_tendsto_zero
     have h1m : 1 ≤ m := by omega
     refine ⟨-j + (1 - (m : ℤ)) * n_a, ?_⟩
     push_cast [Nat.cast_sub h1m] at hj h_n_a ⊢
-    have h_expand : (1 - (m : ℝ)) * (arg uR - arg uL) =
-        (1 - (m : ℝ)) * _root_.angleAtCrossing γ t₀ ht₀ +
-        (1 - (m : ℝ)) * ((n_a : ℝ) * (2 * Real.pi)) := by rw [h_n_a]; ring
-    linarith
+    grind
   have h_L3 : Tendsto (fun ε => wR ε ^ (1 - (m : ℤ)) - wL ε ^ (1 - (m : ℤ)))
       (𝓝[>] 0) (𝓝 0) :=
     zpow_boundary_diff_tendsto_zero (1 - (m : ℤ)) (by omega) wR wL
@@ -84,8 +81,7 @@ theorem pv_higher_order_term_tendsto_zero
         ((1 : ℂ) - ↑(m : ℤ)))
       (𝓝[>] 0) (𝓝 0) := by
     have h1 := h_L3.neg.div_const ((1 : ℂ) - ↑(m : ℤ))
-    simp only [neg_zero, zero_div] at h1
-    exact Tendsto.congr (fun ε => by ring) h1
+    grind
   exact Tendsto.congr' (h_eq.mono fun ε h => h.symm) h_bdy
 
 /-- CPV integrand of `f` minus CPV integrand of `g` equals CPV integrand of `f - g`,
@@ -122,9 +118,7 @@ private theorem circleIntegral_laurent_term
       circleIntegral.integral_sub_center_inv s hr_ne]
   · simp only [hk, if_false]
     rw [circleIntegral.integral_sub_zpow_of_ne, mul_zero]
-    intro h_neg_eq
-    apply hk
-    omega
+    grind
 
 /-- Helper: circle integral of the Laurent sum equals `a₀ * 2πi`. -/
 private theorem circleIntegral_laurent_sum (s : ℂ) (r : ℝ) (hr_pos : 0 < r)
@@ -163,9 +157,7 @@ private theorem circleIntegral_laurent_sum (s : ℂ) (r : ℝ) (hr_pos : 0 < r)
     from Finset.sum_congr rfl (fun k _ => circleIntegral_laurent_term s r hr_pos (a k) k.val),
     Finset.sum_ite, Finset.sum_const_zero, add_zero]
   have h_filter : Finset.filter (fun k : Fin N => k.val = 0) Finset.univ = {⟨0, hN⟩} := by
-    ext ⟨j, hj⟩
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
-    exact ⟨fun h => Fin.ext h, fun h => congr_arg Fin.val h⟩
+    grind
   rw [h_filter, Finset.sum_singleton]
 
 /-- **Sublemma 1**: The residue of `f` at `s` equals the leading Laurent coefficient `a₀`.
@@ -250,47 +242,12 @@ private lemma ae_eq_indicator_diff_cpv_zpow
   simp only [cauchyPrincipalValueIntegrandOn, Set.indicator, hf_zpow]
   by_cases h1 : ε < ‖γ.toFun t - s‖ <;>
     by_cases h2 : ∀ s' ∈ S0, ε < ‖γ.toFun t - s'‖
-  · have h_not_mem :
-        ¬(t ∈ ({t | ε < ‖γ.toFun t - s‖} \
-          {t | ∀ s' ∈ S0, ε < ‖γ.toFun t - s'‖}) ∩
-          Icc γ.a γ.b) :=
-      fun ⟨⟨_, h_nG⟩, _⟩ => h_nG h2
-    simp only [h_not_mem, ite_false, if_pos h1,
-      if_neg (show ¬∃ s' ∈ S0, ‖γ.toFun t - s'‖ ≤ ε from by push Not; exact h2)]
-    ring
+  · grind
   · push Not at h2
-    obtain ⟨s', hs', hs'_le⟩ := h2
-    have h_mem : t ∈ ({t | ε < ‖γ.toFun t - s‖} \
-        {t | ∀ s' ∈ S0, ε < ‖γ.toFun t - s'‖}) ∩
-        Icc γ.a γ.b :=
-      ⟨⟨h1, fun h_all =>
-        absurd (h_all s' hs') (not_lt.mpr hs'_le)⟩, ht_Icc⟩
-    simp only [h_mem, ite_true, if_pos h1,
-      if_pos (show ∃ s' ∈ S0, ‖γ.toFun t - s'‖ ≤ ε from ⟨s', hs', hs'_le⟩)]
-    ring
-  · push Not at h1
-    have h_not_mem :
-        ¬(t ∈ ({t | ε < ‖γ.toFun t - s‖} \
-          {t | ∀ s' ∈ S0, ε < ‖γ.toFun t - s'‖}) ∩
-          Icc γ.a γ.b) :=
-      fun ⟨⟨h_far, _⟩, _⟩ => absurd h_far (not_lt.mpr h1)
-    simp only [h_not_mem, ite_false,
-      if_neg (show ¬‖γ.toFun t - s‖ > ε from not_lt.mpr h1),
-      if_pos (show ∃ s' ∈ S0, ‖γ.toFun t - s'‖ ≤ ε
-        from ⟨s, hs, h1⟩)]
-    ring
+    grind
+  · grind
   · push Not at h1 h2
-    have h_not_mem :
-        ¬(t ∈ ({t | ε < ‖γ.toFun t - s‖} \
-          {t | ∀ s' ∈ S0, ε < ‖γ.toFun t - s'‖}) ∩
-          Icc γ.a γ.b) :=
-      fun ⟨⟨h_far, _⟩, _⟩ => absurd h_far (not_lt.mpr h1)
-    obtain ⟨s', hs', hs'_le⟩ := h2
-    simp only [h_not_mem, ite_false,
-      if_neg (show ¬‖γ.toFun t - s‖ > ε from not_lt.mpr h1),
-      if_pos (show ∃ s' ∈ S0, ‖γ.toFun t - s'‖ ≤ ε
-        from ⟨s', hs', hs'_le⟩)]
-    ring
+    grind
 
 /-- Helper 2a: The multi-point "good set"
 `{t | ∀ s' ∈ S0, ε < ‖γ(t)-s'‖} ∩ Icc` is measurable. -/
@@ -299,23 +256,16 @@ lemma measurableSet_goodSet_Icc
     MeasurableSet ({t | ∀ s' ∈ S0, ε < ‖γ.toFun t - s'‖} ∩ Icc γ.a γ.b) := by
   have h_eq : {t | ∀ s' ∈ S0, ε < ‖γ.toFun t - s'‖} ∩ Icc γ.a γ.b =
       Icc γ.a γ.b \ ({t | ∃ s' ∈ S0, ‖γ.toFun t - s'‖ ≤ ε} ∩ Icc γ.a γ.b) := by
-    ext t; constructor
-    · intro ⟨h_good, ht⟩; exact ⟨ht, fun ⟨⟨s', hs', h_le⟩, _⟩ =>
-        absurd (h_good s' hs') (not_lt.mpr h_le)⟩
-    · intro ⟨ht, h_not⟩; exact ⟨fun s' hs' => by
-        by_contra h_le; push Not at h_le; exact h_not ⟨⟨s', hs', h_le⟩, ht⟩, ht⟩
+    ext t; grind
   rw [h_eq]; apply MeasurableSet.diff isClosed_Icc.measurableSet
   have h_eq2 : {t | ∃ s' ∈ S0, ‖γ.toFun t - s'‖ ≤ ε} ∩ Icc γ.a γ.b =
       ⋃ s' ∈ S0, ({t | ‖γ.toFun t - s'‖ ≤ ε} ∩ Icc γ.a γ.b) := by
     ext t; simp only [mem_inter_iff, mem_setOf_eq, mem_iUnion, exists_prop]
-    exact ⟨fun ⟨⟨s', hs', h⟩, ht⟩ => ⟨s', hs', h, ht⟩,
-           fun ⟨s', hs', h, ht⟩ => ⟨⟨s', hs', h⟩, ht⟩⟩
+    grind
   rw [h_eq2]; apply Finset.measurableSet_biUnion; intro s' _
   have : {t | ‖γ.toFun t - s'‖ ≤ ε} ∩ Icc γ.a γ.b =
       Icc γ.a γ.b \ ({t | ε < ‖γ.toFun t - s'‖} ∩ Icc γ.a γ.b) := by
-    ext t; simp only [mem_inter_iff, mem_setOf_eq, Set.mem_sdiff, not_and]; constructor
-    · intro ⟨h_le, ht⟩; exact ⟨ht, fun h_gt => absurd h_gt (not_lt.mpr h_le)⟩
-    · intro ⟨ht, h_not⟩; exact ⟨le_of_not_gt (fun h => (h_not h) ht), ht⟩
+    ext t; grind
   rw [this]; exact isClosed_Icc.measurableSet.diff
     (measurableSet_norm_gt_Icc ε
       (γ.toPiecewiseC1Curve.continuous_toFun.sub continuousOn_const))
@@ -480,9 +430,7 @@ private lemma single_cutoff_zpow_intervalIntegrable
       · intro t ⟨ht_Icc, ht_nP⟩
         exact (γ.toPiecewiseC1Curve.deriv_continuous_off_partition
           t (mem_Ioo_of_notMem_partition γ ht_Icc ht_nP) ht_nP).continuousWithinAt
-    exact h_aesm_if.congr (by
-      filter_upwards [ae_restrict_mem measurableSet_Icc] with t _
-      exact (cauchyPrincipalValueIntegrandOn_singleton f_zpow γ.toFun s ε t).symm)
+    grind
   · intro t ht
     rw [cauchyPrincipalValueIntegrandOn_singleton]
     split_ifs with h
@@ -524,8 +472,7 @@ private lemma multi_cutoff_zpow_intervalIntegrable
       simp only [cauchyPrincipalValueIntegrandOn]
       by_cases ht_good : t ∈ GoodSet ∩ Icc γ.a γ.b
       · rw [Set.piecewise_eq_of_mem _ _ _ ht_good]
-        have : ¬∃ s' ∈ S0, ‖γ.toFun t - s'‖ ≤ ε := by push Not; exact ht_good.1
-        rw [if_neg this]
+        grind
       · rw [Set.piecewise_eq_of_notMem _ _ _ ht_good]
         have : ∃ s' ∈ S0, ‖γ.toFun t - s'‖ ≤ ε := by
           by_contra h; push Not at h; exact ht_good ⟨h, ht⟩
@@ -578,8 +525,7 @@ private lemma dct_bound_diff_cpv_zpow
   · rw [if_neg h_multi_cut]
     by_cases h_single_cut : ‖γ.toFun t - s‖ > ε
     · rw [if_pos h_single_cut]; norm_num; positivity
-    · push Not at h_single_cut h_multi_cut
-      exact absurd (h_multi_cut s hs) (not_lt.mpr h_single_cut)
+    · grind
 
 /-- A.e. pointwise limit of the single-multi CPV difference is 0 when `t` does
 not land on any point of `S0`. -/
@@ -604,10 +550,7 @@ private lemma ae_limit_diff_cpv_zpow
   have h_no_near : ¬∃ s' ∈ S0, ‖γ.toFun t - s'‖ ≤ ε := by
     push Not; intro s' hs'
     exact lt_of_lt_of_le hε.2 (Finset.inf'_le _ hs')
-  rw [if_neg h_no_near]
-  have h_far_s : ‖γ.toFun t - s‖ > ε :=
-    lt_of_lt_of_le hε.2 (Finset.inf'_le _ hs)
-  rw [if_pos h_far_s]; ring
+  grind
 
 /-- Reduce the multi-point CPV goal to showing the single-multi difference
 tends to 0, using `Tendsto.sub` and `integral_sub`. -/

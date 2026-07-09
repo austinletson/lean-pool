@@ -32,8 +32,7 @@ lemma tsum_eq_sum_divisors_of_nondivisors_zero {α : Type*} [AddCommMonoid α] [
     {n : ℕ} (hn : 0 < n) (f : ℕ → α) (hf : ∀ q, ¬ q ∣ n → f q = 0) :
     (∑' q : ℕ, f q) = n.divisors.sum f := by
   refine tsum_eq_sum (L := SummationFilter.unconditional ℕ) (s := n.divisors) ?_
-  intro q hq
-  exact hf q (by grind only [= Nat.mem_divisors])
+  grind
 
 /-- If a divisor condition is bundled into the summand, the `tsum` reduces to the finite divisor
 sum with that condition removed. -/
@@ -45,12 +44,10 @@ lemma tsum_eq_sum_divisors_of_dvd_and {α : Type*} [AddCommMonoid α] [Topologic
     (∑' q : ℕ, if q ∣ n ∧ P q then f q else 0) =
         n.divisors.sum (fun q => if q ∣ n ∧ P q then f q else 0) := by
           refine tsum_eq_sum_divisors_of_nondivisors_zero (n := n) hn _ ?_
-          intro q hq
-          simp [hq]
+          grind
     _ = n.divisors.sum (fun q => if P q then f q else 0) := by
           refine Finset.sum_congr rfl ?_
-          intro q hq
-          grind only [= Nat.mem_divisors]
+          grind
 
 /-- Rewriting `R_Y(m)` as `log m` times the tail sum isolates the input from `tailEstimate`. -/
 private lemma ryEqLogMulTailSum (Y m : ℕ) :
@@ -61,9 +58,7 @@ private lemma ryEqLogMulTailSum (Y m : ℕ) :
           Real.log (m : ℝ) *
             (if Y ≤ q then Λ q / ((q : ℝ) * Real.log ((m * q : ℕ) : ℝ) ^ 2) else 0) := by
           refine tsum_congr ?_
-          intro q
-          by_cases hq : Y ≤ q <;>
-            simp [hq, div_eq_mul_inv, mul_assoc, mul_left_comm, mul_comm]
+          grind
     _ = Real.log (m : ℝ) * tailSum m Y := by
           rw [tailSum, tsum_mul_left]
 
@@ -97,8 +92,7 @@ private lemma ryApproximation :
         Real.log ((m * Y : ℕ) : ℝ) = Real.log (m : ℝ) + Real.log (Y : ℝ) := by
       rw [Nat.cast_mul, Real.log_mul]
       all_goals positivity
-    field_simp [hlogMY_ne]
-    linarith
+    grind
   rw [ryEqLogMulTailSum]
   calc
     |Real.log (m : ℝ) * tailSum m Y - (1 - Real.log (Y : ℝ) / Real.log ((m * Y : ℕ) : ℝ))|
@@ -187,21 +181,7 @@ lemma normalizationEstimate {Y : ℕ} (hY : 2 ≤ Y) :
         (∑' n : ℕ, normalizationSmallPrimePart x Y n) +
           (∑' n : ℕ, normalizationFirstEntryPart x Y n) := by
     rw [normalizationConstant_eq_tsum_parts, Summable.tsum_add hsmall.1 hfirst.1]
-  calc
-    |normalizationConstant x Y - 1|
-      = |(∑' n : ℕ, normalizationSmallPrimePart x Y n) +
-          ((∑' n : ℕ, normalizationFirstEntryPart x Y n) - 1)| := by
-            rw [hdecomp]
-            congr 1
-            ring_nf
-    _ ≤ ∑' n : ℕ, normalizationSmallPrimePart x Y n +
-          |(∑' n : ℕ, normalizationFirstEntryPart x Y n) - 1| := by
-            simpa [abs_of_nonneg hsmall_nonneg] using
-              abs_add_le (∑' n : ℕ, normalizationSmallPrimePart x Y n)
-                ((∑' n : ℕ, normalizationFirstEntryPart x Y n) - 1)
-    _ ≤ (2 * S) / Real.log (x : ℝ) + Centry / Real.log (x : ℝ) :=
-          add_le_add hsmall.2 hfirst.2
-    _ = (2 * S + Centry) / Real.log (x : ℝ) := by ring
+  grind
 
 /--
 Reindexing the last-jump recurrence by the parent state shows that only divisors `m ∣ n` can
@@ -283,19 +263,7 @@ lemma lastJumpContribution_eq_of_formula {x Y : ℕ} (hx : 2 ≤ x) {n q : ℕ}
     have hnq2 : 2 ≤ n / q := le_trans hx hxq
     exact (Real.log_pos (by exact_mod_cast (lt_of_lt_of_le (by decide : 1 < 2) hnq2))).ne'
   rw [hvisit, transitionWeight, if_pos hYq, hcast_div]
-  calc
-    (1 / (normalizationConstant x Y * ((n : ℝ) / q) * Real.log ((n : ℝ) / q))) *
-        ((Real.log ((n : ℝ) / q) / (Real.log (((n / q) * q : ℕ) : ℝ)) ^ 2) *
-          (Λ q / (q : ℝ))) =
-        (1 / normalizationConstant x Y) *
-          ((1 / (((n : ℝ) / q) * Real.log ((n : ℝ) / q))) *
-            ((Real.log ((n : ℝ) / q) / (Real.log (n : ℝ)) ^ 2) *
-              (Λ q / (q : ℝ)))) := by
-          grind only [Nat.div_mul_cancel hdvd]
-    _ = (1 / normalizationConstant x Y) *
-          ((1 / ((n : ℝ) * (Real.log (n : ℝ)) ^ 2)) * Λ q) := by
-          congr 1
-          field_simp [hlog_ne, hqR]
+  grind
 
 /--
 The divisor decomposition of `log n` rewrites the explicit target formula as the normalized initial

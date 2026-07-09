@@ -117,7 +117,6 @@ theorem qka_nonempty : Nonempty (QuantumKernelAdvantage (Multiplicative (ZMod 2)
     Finset.filter_eq_empty_iff.mpr (fun x _ => by cases dlogConcept g hg 1 x <;> simp)
   have hz : acc g hg (fun x => !(dlogConcept g hg 1 x)) 1 = 0 := by
     simp only [acc, hfilt, Finset.card_empty, Nat.cast_zero, zero_div]
-  rw [hz] at h
-  norm_num at h
+  grind
 
 end QuantumAlg

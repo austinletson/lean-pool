@@ -26,10 +26,7 @@ lemma add_assoc_bit_bool {A B C D X Y Z : Prop} :
     (Xor A B ↔ Xor C D) ->
       (Xor (Xor (Xor (Xor X Y) C) Z) D ↔
         Xor (Xor X (Xor (Xor Y Z) A)) B) := by
-  intro h
-  by_cases hA : A <;> by_cases hB : B <;> by_cases hC : C <;> by_cases hD : D <;>
-    by_cases hX : X <;> by_cases hY : Y <;> by_cases hZ : Z <;>
-    simp [Xor, hA, hB, hC, hD, hX, hY, hZ] at h ⊢
+  grind
 
 lemma carry_pair_step_bool {A B C D X Y Z : Prop} :
     (A ∧ B ↔ C ∧ D) ->
@@ -79,11 +76,7 @@ lemma carry_pair_assoc : ∀ {X Y Z : str}, ∀ {i : num},
       have h0_xy_z : ¬ Carry (0 : num) (X + Y) Z :=
         (carry_rec (i := (0 : num)) (X := X + Y) (Y := Z)).1
       constructor
-      · constructor
-        · intro h
-          exact False.elim (h0_yz h.1)
-        · intro h
-          exact False.elim (h0_xy h.1)
+      · grind
       · simp [Xor, h0_yz, h0_x_yz, h0_xy, h0_xy_z]
     · intro j h_j
       rcases h_j with ⟨h_j_and, h_j_xor⟩

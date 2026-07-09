@@ -77,8 +77,7 @@ theorem geomQ_golden {q : ℕ} (hq : 1 ≤ q) (i : ℕ) :
   unfold geomQ
   have hx : (q - 1) + 1 = q := by omega
   have h := geom_sum_mul_add (q - 1) i
-  rw [hx] at h
-  rw [mul_comm]; exact h
+  grind
 
 /-- `(q-1)·G q i = q^i - 1` (KERNEL-CLEAN corollary). -/
 theorem geomQ_mul {q : ℕ} (hq : 1 ≤ q) (i : ℕ) :
@@ -121,22 +120,17 @@ theorem cond3_of_tail_small {p q : ℕ} (hq : 3 ≤ q)
     q ^ i < p ^ m := by
   -- `q` odd ⟹ `q - 1` even ⟹ `2·((q-1)/2) = q - 1`.
   have hqhalf : 2 * ((q - 1) / 2) = q - 1 := by
-    obtain ⟨a, ha⟩ := hqo; subst ha
-    have : 2 * a + 1 - 1 = 2 * a := by omega
-    rw [this, Nat.mul_div_cancel_left _ (by norm_num)]
+    grind
   -- `p^m` odd ⟹ `p^m + 1` even ⟹ `2·((p^m+1)/2) = p^m + 1`.
   have hpodd : Odd (p ^ m) := hpo.pow
   have hph : 2 * ((p ^ m + 1) / 2) = p ^ m + 1 := by
-    obtain ⟨a, ha⟩ := hpodd; rw [ha]
-    have : 2 * a + 1 + 1 = 2 * (a + 1) := by omega
-    rw [this, Nat.mul_div_cancel_left _ (by norm_num)]
+    grind
   -- golden: `(q-1)·G i = q^i - 1`, and `1 ≤ q^i`.
   have hgolden : (q - 1) * geomQ q i = q ^ i - 1 := geomQ_mul (by omega) i
   have hqipos : 1 ≤ q ^ i := Nat.one_le_pow _ _ (by omega)
   -- `2T < p^m + 1` ⟹ `2T ≤ p^m`.
   have h2T : 2 * T < p ^ m + 1 := by
-    calc 2 * T < 2 * ((p ^ m + 1) / 2) := by omega
-      _ = p ^ m + 1 := hph
+    grind
   -- `2·((q-1)/2·G i + 1) ≤ 2T`.
   have h2lo : (q - 1) * geomQ q i + 2 ≤ 2 * T := by
     have : 2 * ((q - 1) / 2 * geomQ q i + 1) ≤ 2 * T := by omega
@@ -145,8 +139,7 @@ theorem cond3_of_tail_small {p q : ℕ} (hq : 3 ≤ q)
       _ = 2 * ((q - 1) / 2 * geomQ q i + 1) := by ring
       _ ≤ 2 * T := this
   -- chain: `(q^i - 1) + 2 ≤ 2T ≤ p^m` ⟹ `q^i + 1 ≤ p^m`.
-  rw [hgolden] at h2lo
-  omega
+  grind
 
 /-! ## The least strictly-good base-`q` index above the top bad index (KERNEL-CLEAN)
 
@@ -275,10 +268,7 @@ theorem tailLB_le_mod {q n : ℕ} (hq : 3 ≤ q) (hbad : 0 < badCountQ q n)
     have hmod_succ : n % q ^ (j + 1 + (d + 1))
         = n % q ^ (j + 1 + d) + q ^ (j + 1 + d) * ((q - 1) / 2) := by
       rw [show j + 1 + (d + 1) = (j + 1 + d) + 1 by omega, mod_pow_succ n q (j + 1 + d), hmid]
-    rw [htail_succ, hmod_succ]
-    have hcomm : ((q - 1) / 2) * q ^ (j + 1 + d) = q ^ (j + 1 + d) * ((q - 1) / 2) := by
-      rw [Nat.mul_comm]
-    omega
+    grind
 
 /-- **THE TAIL LOWER BOUND (KERNEL-CLEAN).**  `(q-1)/2 · G q i + 1 ≤ n % q^i`, where
 `i = leastGoodAbove`.  Assembles `tailLB_le_mod` (at `t = i`) with `b_j ≥ B+1` and the
@@ -327,12 +317,7 @@ theorem tail_ge {q n : ℕ} (hq : 3 ≤ q) (hbad : 0 < badCountQ q n) :
   -- assemble: goal  B·(geomQ q i) + 1 ≤ n % q^i.
   rw [hGsplit]
   -- B·(Gj + P + SumMid) + 1 ≤ n % q^i.  Use htailval, hlb, and the products.
-  have hgoalexp : B * (Gj + P + SumMid) + 1 = (B * Gj + 1) + (B * P) + (B * SumMid) := by ring
-  rw [hgoalexp]
-  -- tailLB = bj·P + B·SumMid ≤ n%q^i.  And (B·Gj+1)+B·P ≤ P + B·P ≤ bj·P.
-  have htv : tailLB q n j i = bj * P + B * SumMid := by rw [htailval]
-  rw [htv] at hlb
-  omega
+  grind
 
 /-! ## THE ASSEMBLED CONDITION-(3) WINDOW PRODUCER (KERNEL-CLEAN)
 

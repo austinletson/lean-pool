@@ -52,8 +52,7 @@ private lemma rate_bound_case_small {θ a : ℝ}
     1 - (1 - 2 * θ) * a ≤ Real.exp (-a) := by
   have h_exp_lb : 1 - a + a ^ 2 / 4 ≤ Real.exp (-a) := by
     have h := @Real.one_sub_div_pow_le_exp_neg 2 a (by simp; linarith : a ≤ ↑(2 : ℕ))
-    simp only [Nat.cast_ofNat] at h
-    nlinarith [sq_nonneg (1 - a / 2)]
+    grind
   nlinarith
 
 /-- For θ ≤ 1/4 and a ≥ 2: (1−θ)√(1−θ) ≥ 1/2, so rate ≤ 1−a/2 ≤ 0 ≤ exp(−a). -/
@@ -262,9 +261,7 @@ theorem nesterov_convergence_at_base_point_position_params
       rw [← hdist, dist_eq_norm] at hQG₀
       exact hQG₀
     have hL₀_le_two_gap : L₀ ≤ 2 * (f x₀ - fStar f) := by
-      rw [show L₀ = (f x₀ - fStar f) + μ' / 2 * ‖x₀ - π x₀‖ ^ 2 from
-        (hlyap_eq_psi x₀)]
-      nlinarith
+      grind
     have hsqrt_pos : 0 < Real.sqrt (μ' * η) := Real.sqrt_pos_of_pos (by positivity)
     have hr_pos : 0 < r := by
       simp only [hr_def]
@@ -282,8 +279,7 @@ theorem nesterov_convergence_at_base_point_position_params
       intro k; cases k with
       | zero =>
         change lyapunovOfState P μ' π f η s₀ ≤ 1 * L₀
-        have : L₀ = lyapunovOfState P μ' π f η s₀ := rfl
-        linarith
+        grind
       | succ j => exact h_lyap_decay j
     have h_bound : ∀ k : ℕ,
         f (nesterovSeqGen f η ρ s₀ k).x - fStar f ≤ (L₀ + 1) * r ^ k := by
@@ -304,8 +300,7 @@ theorem nesterov_convergence_at_base_point_position_params
           (Real.exp (-(1 / Real.sqrt (↑L / μ)))) ^ k =
             Real.exp (-(↑k / Real.sqrt (↑L / μ))) := by
         rw [← Real.exp_nat_mul]
-        congr 1
-        ring_nf
+        grind
       calc f (nesterovSeqGen f (1 / ↑L) ρ ⟨x₀, 0⟩ k).x - fStar f
           = f (nesterovSeqGen f η ρ s₀ k).x - fStar f := by
               simp only [hη_def, hs₀_def]
@@ -322,13 +317,11 @@ theorem nesterov_convergence_at_base_point_position_params
             · exact pow_le_pow_left₀ (le_of_lt hr_pos) hr_le_exp k
             · nlinarith
         _ = 2 * Real.exp (-(↑k / Real.sqrt (↑L / μ))) * (f x₀ - fStar f) := by
-            rw [h_exp_pow]
-            ring
+            grind
     · have hseq_eq :
           (fun k => (nesterovSeqGen f (1 / ↑L) ρ ⟨x₀, 0⟩ k).x) =
             fun k => (nesterovSeqGen f η ρ s₀ k).x := by
-        funext k
-        simp only [hη_def, hs₀_def]
+        grind
       rw [hseq_eq]
       exact hasAcceleratedRate_of_geometric_decay f _ ↑L μ (L₀ + 1) r
         (by linarith) hr_pos hr_lt1 hr_le_exp h_bound

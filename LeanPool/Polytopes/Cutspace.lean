@@ -60,8 +60,7 @@ lemma empty_cutSpace (h : ∃ x : E, x ≠ 0) : ∃ (H_ : Set (Halfspace E)), cu
   have h1 := h (Halfspace.mk f (-1)) (by simp)
   have h2 := h (Halfspace.mk (-f) (-1)) (by simp)
   rw [unitSphereDual_neg, neg_apply, neg_le, neg_neg] at h2
-  change f.1 x ≤ -1 at h1
-  linarith
+  grind
 
 lemma hyperplane_cutSpace (f : {f : (StrongDual ℝ E) // norm f = 1}) (c : ℝ) :
   ∃ (H_ : Set (Halfspace E)), cutSpace H_ = {x | f.1 x = c} := by
@@ -74,8 +73,7 @@ lemma hyperplane_cutSpace (f : {f : (StrongDual ℝ E) // norm f = 1}) (c : ℝ)
     have h1 := h (Halfspace.mk f c) (by simp)
     have h2 := h (Halfspace.mk (-f) (-c)) (by simp)
     rw [unitSphereDual_neg, neg_apply, neg_le, neg_neg] at h2
-    change f.1 x ≤ c at h1
-    exact le_antisymm h1 h2
+    grind
   · -- 2.
     intro h Hi hHi
     simp only [Set.mem_singleton_iff, Set.mem_insert_iff] at hHi
@@ -88,19 +86,7 @@ lemma inter_cutSpace (H_1 H_2 : Set (Halfspace E)) :
   cutSpace (H_1 ∪ H_2) = cutSpace H_1 ∩ cutSpace H_2 := by
   ext x
   rw [mem_cutSpace, Set.mem_inter_iff, mem_cutSpace, mem_cutSpace]
-  constructor
-  · -- 1
-    intro h
-    constructor <;> intro Hi_ hH_ <;>
-      exact h Hi_ (by simp only [Set.mem_union, hH_, true_or, or_true])
-  · -- 2
-    intro h Hi hHi
-    rw [Set.mem_union] at hHi
-    rcases hHi with hHi | hHi
-    · -- 2.1
-      exact h.1 Hi hHi
-    · -- 2.2
-      exact h.2 Hi hHi
+  grind
 
 
 /-- The pair of halfspaces whose intersection is the hyperplane orthogonal to `x`. -/
@@ -133,8 +119,7 @@ lemma orthoHyperplane_mem (x : {x : E // x ≠ 0}) :
     rw [mul_eq_zero] at this
     rcases this with h3 | h4
     · rw [inv_eq_zero, norm_eq_zero] at h3
-      exfalso
-      exact x.2 h3
+      grind
     · exact h4
   · -- 2.
     intro h H hH

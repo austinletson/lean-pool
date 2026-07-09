@@ -23,8 +23,7 @@ lemma one_sub_mul_conj_ne_zero (hu : u ∈ 𝔻) (hz : z ∈ 𝔻) : 1 - z * con
 lemma one_sub_mul_conj_add_mul_conj_ne_zero (hu : u ∈ 𝔻) :
     1 - z * conj u + (z - u) * conj u ≠ 0 := by
   have h1 := one_sub_mul_conj_ne_zero hu hu
-  ring_nf
-  simp [h1, mul_comm]
+  grind
 
 lemma normSq_sub_normSq :
     normSq (z - u) - normSq (1 - z * conj u) = (normSq z - 1) * (1 - normSq u) := by
@@ -68,8 +67,7 @@ lemma φ_deriv (hu : u ∈ 𝔻) (hz : z ∈ 𝔻) :
     deriv (φ hu) z = (1 - u * conj u) / ((1 - z * conj u) ^ 2) := by
   have h3 : 1 - z * conj u ≠ 0 := one_sub_mul_conj_ne_zero hu hz
   simp [φ, h3]
-  field_simp
-  ring
+  grind
 
 lemma φ_inv (hu : u ∈ 𝔻) (hz : z ∈ 𝔻) : φ (neg_in_𝔻 hu) (φ hu z) = z :=
   pre_φ_inv hu hz

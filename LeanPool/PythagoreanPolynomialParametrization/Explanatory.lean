@@ -48,18 +48,14 @@ private lemma rat_scaled_num_den_cast_eq (N : ℕ) (q : ℚ) (hdiv : q.den ∣ N
     have h : q.den ≠ 0 := q.den_ne_zero
     exact_mod_cast h
   have hN_eq : (N : ℤ) = (q.den : ℤ) * (m : ℤ) := by
-    have h : (N : ℕ) = q.den * m := hm
-    have h' : (N : ℤ) = ((q.den * m : ℕ) : ℤ) := by exact_mod_cast h
-    rw [h']
-    norm_num [Nat.cast_mul]
+    grind
   have h1 : ((N : ℤ) / (q.den : ℤ) : ℤ) = (m : ℤ) := by
     rw [hN_eq]
     exact Int.mul_ediv_cancel_left m hden_ne_zero
   have h2 : (N : ℚ) = (q.den : ℚ) * (m : ℚ) := by
     have h : (N : ℕ) = q.den * m := hm
     have h' : (N : ℚ) = ((q.den * m : ℕ) : ℚ) := by exact_mod_cast h
-    rw [h']
-    norm_num [Nat.cast_mul]
+    grind
   have h3 : (q.den : ℚ) * q = (q.num : ℚ) := by
     exact_mod_cast Rat.den_mul_eq_num q
   calc
@@ -150,9 +146,7 @@ private lemma ratPolyEval_eq_intPolyEval_on_residue {n : ℕ}
     have h4 :
         bind₁ (fun j => C (D : ℤ) * X j + C (r j)) P =
           bind₁ (fun j => C (r j) + C (D : ℤ) * X j) P := by
-      congr
-      funext j
-      ring
+      grind
     rw [h4]
     have hH' :
         bind₁ (fun j => C (r j) + C (D : ℤ) * X j) P =
@@ -191,8 +185,7 @@ private lemma ratPolyEval_eq_intPolyEval_on_residue {n : ℕ}
     have h1' :
         (eval a P : ℚ) = (eval r P : ℚ) + D * (eval b H : ℚ) := by
       exact_mod_cast h1
-    rw [← h2, h1', h3, hG]
-    ring
+    grind
   exact mul_left_cancel₀ (by positivity : (D : ℚ) ≠ 0) h4
 
 /-- Source-cited result, `pyth.tex` lines 138--141: every set of integer tuples
@@ -264,10 +257,7 @@ theorem single_intValued_parametrization_yields_finite_intPoly_parametrization
       intro j
       have hnonneg : 0 ≤ a j % D_total := Int.emod_nonneg (a j) (by positivity)
       have hlt : a j % D_total < D_total := Int.emod_lt_of_pos (a j) (by positivity)
-      have htoNat : (a j % D_total).toNat = a j % D_total :=
-        Int.toNat_of_nonneg hnonneg
-      simp [r_nat]
-      omega
+      grind
     let r_fin : Fin n → Fin D_total := fun j => ⟨r_nat j, hr_nat j⟩
     let idx : Fin m := e.symm r_fin
     refine ⟨idx, b, ?_⟩
@@ -290,15 +280,13 @@ theorem single_intValued_parametrization_yields_finite_intPoly_parametrization
       rw [Int.mul_ediv_add_emod (a j) D_total]
     have h_key : ratPolyEval (F i) a = (intPolyEval (G idx i) b : ℚ) := by
       have ha' : a = fun j => (D_total : ℤ) * b j + r j := by
-        funext j
-        rw [ha_eq j, hr_eq j]
+        grind
       exact ratPolyEval_eq_intPolyEval_on_residue
         (F := F i) (P := P i) (Q := G idx i) (H := H)
         hD_total_pos (hF_int i) (hP_eval i) r b a ha' hH rfl
     have h_eq : intPolyEval (G idx i) b = v i := by
       have h : (intPolyEval (G idx i) b : ℚ) = (v i : ℚ) := by
-        rw [← h_key]
-        exact ha i
+        grind
       exact_mod_cast h
     exact h_eq
   · rintro ⟨idx, b, hGb⟩
@@ -312,10 +300,7 @@ theorem single_intValued_parametrization_yields_finite_intPoly_parametrization
       exact ratPolyEval_eq_intPolyEval_on_residue
         (F := F i) (P := P i) (Q := G idx i) (H := H)
         hD_total_pos (hF_int i) (hP_eval i) r b a rfl hH rfl
-    have h_eq : ratPolyEval (F i) a = (v i : ℚ) := by
-      rw [h_key]
-      exact_mod_cast hGb i
-    exact h_eq
+    grind
 
 /-! ## The displayed integer-valued factorization example -/
 
@@ -459,11 +444,9 @@ theorem integerValued_polynomial_ring_not_uniqueFactorization :
         rw [hacv]
         norm_num
       have ha_ne : (a.1 : RatPoly 1) ≠ 0 := by
-        intro ha
-        exact hprod_ne (by simp [ha])
+        grind
       have hc_ne : (c.1 : RatPoly 1) ≠ 0 := by
-        intro hc
-        exact hprod_ne (by simp [hc])
+        grind
       have htd :=
         MvPolynomial.totalDegree_mul_of_isDomain
           (f := (a.1 : RatPoly 1)) (g := (c.1 : RatPoly 1)) ha_ne hc_ne
@@ -512,11 +495,7 @@ theorem integerValued_polynomial_ring_not_uniqueFactorization :
       have hIz : IsUnit za ∨ IsUnit zc := by
         have hp : Prime (2 : ℤ) := by norm_num
         exact hp.irreducible.isUnit_or_isUnit hintprod.symm
-      rcases hIz with hzaunit | hzcunit
-      · left
-        exact isUnit_of_val_C_int a za ha_const_z hzaunit
-      · right
-        exact isUnit_of_val_C_int c zc hc_const_z hzcunit
+      grind
   exact hnotprime (UniqueFactorizationMonoid.irreducible_iff_prime.mp hirr)
 
 end LeanPool.PythagoreanPolynomialParametrization

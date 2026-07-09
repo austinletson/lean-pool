@@ -51,10 +51,7 @@ open Domain.Neighborhood NeighborhoodSystem
 
 /-- `{n} ∩ {m} = ∅` for `n ≠ m`. -/
 theorem singleton_disjoint {n m : ℕ} (h : n ≠ m) : ({n} : Set ℕ) ∩ {m} = ∅ := by
-  ext k
-  simp only [Set.mem_inter_iff, Set.mem_singleton_iff, Set.mem_empty_iff_false, iff_false]
-  rintro ⟨rfl, h2⟩
-  exact h h2
+  grind
 
 /-! ## The flat domain `flat`. -/
 
@@ -66,9 +63,7 @@ theorem flatNOD : NestedOrDisjoint flatMem := by
   · exact Or.inl (subset_refl _)
   · exact Or.inr (Or.inl (Set.subset_univ _))
   · exact Or.inl (Set.subset_univ _)
-  · rcases eq_or_ne n m with rfl | h
-    · exact Or.inl (subset_refl _)
-    · exact Or.inr (Or.inr (singleton_disjoint h))
+  · grind
 
 /-- **Exercise 1.15 — the flat domain.** `𝒟 = {ℕ} ∪ {{n}}`. -/
 def flat : NeighborhoodSystem ℕ :=
@@ -133,8 +128,7 @@ theorem flat_atom_maximal (n : ℕ) (y : flat.Element)
     simp at this
   · have hsub : ({m} : Set ℕ) ⊆ {n} :=
       (flat.principal_le_iff (flat_mem_singleton n) (flat_mem_singleton m)).mp hle
-    obtain rfl : m = n := Set.mem_singleton_iff.mp (Set.singleton_subset_iff.mp hsub)
-    rfl
+    grind
 
 /-- **Flat has no strict 3-chain** (`a ⊏ b ⊏ c` is impossible): `⊥` is least and
 atoms are
@@ -172,31 +166,17 @@ def stemMem (X : Set ℕ) : Prop := X = Set.univ ∨ X = {0, 1} ∨ ∃ n, X = {
 
 theorem stemNOD : NestedOrDisjoint stemMem := by
   have pair_single : ∀ m : ℕ, ({m} : Set ℕ) ⊆ {0, 1} ∨ ({0, 1} : Set ℕ) ∩ {m} = ∅ := by
-    intro m
-    by_cases h : m = 0 ∨ m = 1
-    · refine Or.inl ?_
-      rcases h with rfl | rfl <;> intro k hk <;> simp_all
-    · refine Or.inr ?_
-      ext k
-      simp only [Set.mem_inter_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
-        Set.mem_empty_iff_false, iff_false, not_and]
-      rintro (rfl | rfl) rfl <;> simp_all
+    grind
   rintro X Y (rfl | rfl | ⟨n, rfl⟩) (rfl | rfl | ⟨m, rfl⟩)
   · exact Or.inl (subset_refl _)
   · exact Or.inr (Or.inl (Set.subset_univ _))
   · exact Or.inr (Or.inl (Set.subset_univ _))
   · exact Or.inl (Set.subset_univ _)
   · exact Or.inl (subset_refl _)
-  · rcases pair_single m with h | h
-    · exact Or.inr (Or.inl h)
-    · exact Or.inr (Or.inr h)
+  · grind
   · exact Or.inl (Set.subset_univ _)
-  · rcases pair_single n with h | h
-    · exact Or.inl h
-    · exact Or.inr (Or.inr (by rw [Set.inter_comm]; exact h))
-  · rcases eq_or_ne n m with rfl | h
-    · exact Or.inl (subset_refl _)
-    · exact Or.inr (Or.inr (singleton_disjoint h))
+  · grind
+  · grind
 
 /-- **Exercise 1.15 — the stem domain.** `𝒟 = {ℕ, {0,1}} ∪ {{n}}`. -/
 def stem : NeighborhoodSystem ℕ :=
@@ -230,9 +210,7 @@ theorem stem_three_chain : ∃ a b c : stem.Element, a < b ∧ b < c := by
     simp at this
   · refine stem_principal_lt stem_mem_pair stem_mem_zero
       (Set.singleton_subset_iff.mpr (by simp)) ?_
-    intro h
-    have : (1 : ℕ) ∈ ({0} : Set ℕ) := h ▸ (by simp : (1 : ℕ) ∈ ({0, 1} : Set ℕ))
-    simp at this
+    grind
 
 /-! ## Non-isomorphism. -/
 

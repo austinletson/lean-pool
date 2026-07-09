@@ -35,8 +35,7 @@ lemma localValidResidues_card_eq (p : ℕ) (hp : Nat.Prime p) (b : ℕ) (T : Fin
     ((localValidResidues p b T).card : ℝ) = (p : ℝ) ^ 2 * localDensityFactor p b T := by
   have hp2 : ((p ^ 2 : ℕ) : ℝ) ≠ 0 := by exact_mod_cast pow_ne_zero 2 hp.pos.ne'
   simp only [localDensityFactor, localValidResidues]
-  rw [show ((p : ℝ) ^ 2 : ℝ) = (p ^ 2 : ℕ) by norm_cast]
-  field_simp [hp2]
+  grind
 
 lemma prime_sq_coprime (p q : Nat.Primes) (hne : p ≠ q) :
     ((p : ℕ) ^ 2).Coprime ((q : ℕ) ^ 2) := by

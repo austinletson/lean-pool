@@ -145,8 +145,7 @@ private lemma g_rho'_ne_zero (hH : Real.sqrt 3 / 2 < H)
       · rw [fdBoundary_H_at_three_eq_rho] at h_eq
         simp only [ellipticPointRhoPlusOne, ellipticPointRhoPlusOne',
           ellipticPointRho, ellipticPointRho', UpperHalfPlane.coe_mk] at h_eq
-        have : (-1/2 + ↑(Real.sqrt 3) / 2 * I - (1/2 + ↑(Real.sqrt 3) / 2 * I) : ℂ) = -1 := by ring
-        rw [this] at h_eq; exact absurd h_eq (by norm_num)
+        grind
       · rcases le_or_gt t 4 with h4 | h4
         · rw [g_rho'_seg3_value h3' h4] at h_eq
           have hre : (-1 + ↑((t - 3) * (H - Real.sqrt 3 / 2)) * I : ℂ).re = -1 := by
@@ -477,18 +476,14 @@ private lemma ftc_logDeriv_telescope_rho_plus_one (H : ℝ) (hH : Real.sqrt 3 / 
   have hh₁_im_nn : ∀ t ∈ Icc (1 + δ_R) (3 : ℝ), 0 ≤ (h₁ t).im := by
     intro t ⟨ht1, ht3⟩
     rw [← show g t = h₁ t from by
-      rcases eq_or_lt_of_le ht3 with rfl | ht3'
-      · exact hg3_1
-      · exact hg_eq_h₁ t (by linarith) ht3']
+      grind]
     rcases eq_or_lt_of_le ht3 with rfl | ht3'
     · exact g_rho'_im_nonneg hH ⟨by norm_num, by norm_num⟩ (by norm_num)
     · exact g_rho'_im_nonneg hH ⟨by linarith, by linarith⟩ (by linarith)
   have hh₁_ne : ∀ t ∈ Icc (1 + δ_R) (3 : ℝ), h₁ t ≠ 0 := by
     intro t ⟨ht1, ht3⟩
     rw [← show g t = h₁ t from by
-      rcases eq_or_lt_of_le ht3 with rfl | ht3'
-      · exact hg3_1
-      · exact hg_eq_h₁ t (by linarith) ht3']
+      grind]
     rcases eq_or_lt_of_le ht3 with rfl | ht3'
     · exact g_rho'_ne_zero hH ⟨by norm_num, by norm_num⟩ (by norm_num)
     · exact g_rho'_ne_zero hH ⟨by linarith, by linarith⟩ (by linarith)
@@ -502,18 +497,14 @@ private lemma ftc_logDeriv_telescope_rho_plus_one (H : ℝ) (hH : Real.sqrt 3 / 
   have hh₂_im_nn : ∀ t ∈ Icc (3 : ℝ) 4, 0 ≤ (h₂ t).im := by
     intro t ⟨ht3, ht4⟩
     rw [← show g t = h₂ t from by
-      rcases eq_or_lt_of_le ht3 with rfl | ht3'
-      · exact hg3_2
-      · exact hg_eq_h₂ t ht3' ht4]
+      grind]
     rcases eq_or_lt_of_le ht3 with rfl | ht3'
     · exact g_rho'_im_nonneg hH ⟨by norm_num, by norm_num⟩ (by norm_num)
     · exact g_rho'_im_nonneg hH ⟨by linarith, by linarith⟩ (by linarith)
   have hh₂_ne : ∀ t ∈ Icc (3 : ℝ) 4, h₂ t ≠ 0 := by
     intro t ⟨ht3, ht4⟩
     rw [← show g t = h₂ t from by
-      rcases eq_or_lt_of_le ht3 with rfl | ht3'
-      · exact hg3_2
-      · exact hg_eq_h₂ t ht3' ht4]
+      grind]
     rcases eq_or_lt_of_le ht3 with rfl | ht3'
     · exact g_rho'_ne_zero hH ⟨by norm_num, by norm_num⟩ (by norm_num)
     · exact g_rho'_ne_zero hH ⟨by linarith, by linarith⟩ (by linarith)
@@ -540,8 +531,7 @@ private lemma ftc_logDeriv_telescope_rho_plus_one (H : ℝ) (hH : Real.sqrt 3 / 
   have hg_closed : g 0 = g 5 := by
     change fdBoundaryH H 0 - ρ' = fdBoundaryH H 5 - ρ'
     rw [fdBoundary_H_closed H]
-  rw [hg_closed]
-  ring
+  grind
 
 private lemma norm_le_middle_rho_plus_one (H : ℝ) (hH : Real.sqrt 3 / 2 < H)
     {ε δ_L δ_R : ℝ} (hε : 0 < ε)
@@ -738,9 +728,7 @@ theorem pv_integral_at_rho_plus_one_tendsto (H : ℝ) (hH : Real.sqrt 3 / 2 < H)
       simp only [hδR_def]; field_simp
     have h_norm_L : ‖fdBoundaryH H (1 - δ_left ε) - ellipticPointRhoPlusOne‖ = ε := by
       rw [g_rho'_norm_seg0_at hH hδL_pos (le_of_lt hδL_lt_one)]
-      field_simp
-      have : H * 2 - Real.sqrt 3 > 0 := by nlinarith
-      exact div_self (ne_of_gt this)
+      grind
     have h_norm_R : ‖fdBoundaryH H (1 + δ_right ε) - ellipticPointRhoPlusOne‖ = ε := by
       rw [g_rho'_norm_arc hδR_pos (by linarith : δ_right ε < 2), hδR_angle,
           Real.sin_arcsin hε_half_neg hε_half_le]
@@ -764,8 +752,7 @@ theorem pv_integral_at_rho_plus_one_tendsto (H : ℝ) (hH : Real.sqrt 3 / 2 < H)
       rho'_delta_bounds hH_gap hε_pos hε_lt_gap (lt_of_lt_of_le hε_lt (min_le_right _ _))
     obtain ⟨hint_L, _, _⟩ := ftc_logDeriv_telescope_rho_plus_one H hH hδL_pos hδL_lt_one
       hδR_pos hδR_lt_one
-    rw [inv_mul_deriv_eq_logDeriv_sub H ellipticPointRhoPlusOne]
-    exact hint_L
+    grind
   · -- hint_right: integrable on [1 + δ_right ε, 5]
     intro ε hε_pos hε_lt
     have hε_lt_gap : ε < H - Real.sqrt 3 / 2 := lt_of_lt_of_le hε_lt (min_le_left _ _)
@@ -773,8 +760,7 @@ theorem pv_integral_at_rho_plus_one_tendsto (H : ℝ) (hH : Real.sqrt 3 / 2 < H)
       rho'_delta_bounds hH_gap hε_pos hε_lt_gap (lt_of_lt_of_le hε_lt (min_le_right _ _))
     obtain ⟨_, hint_R, _⟩ := ftc_logDeriv_telescope_rho_plus_one H hH hδL_pos hδL_lt_one
       hδR_pos hδR_lt_one
-    rw [inv_mul_deriv_eq_logDeriv_sub H ellipticPointRhoPlusOne]
-    exact hint_R
+    grind
   · -- h_limit: E(ε) → -(I * π/3) as ε → 0⁺
     rw [Metric.tendsto_nhdsWithin_nhds]
     intro r hr
@@ -791,9 +777,7 @@ theorem pv_integral_at_rho_plus_one_tendsto (H : ℝ) (hH : Real.sqrt 3 / 2 < H)
       simp only [hδR_def]; field_simp
     have h_norm_L : ‖fdBoundaryH H (1 - δ_left ε) - ellipticPointRhoPlusOne‖ = ε := by
       rw [g_rho'_norm_seg0_at hH hδL_pos (le_of_lt hδL_lt_one)]
-      field_simp
-      have : H * 2 - Real.sqrt 3 > 0 := by nlinarith
-      exact div_self (ne_of_gt this)
+      grind
     have h_norm_R : ‖fdBoundaryH H (1 + δ_right ε) - ellipticPointRhoPlusOne‖ = ε := by
       rw [g_rho'_norm_arc hδR_pos (by linarith : δ_right ε < 2), hδR_angle,
           Real.sin_arcsin hε_half_neg hε_half_le]

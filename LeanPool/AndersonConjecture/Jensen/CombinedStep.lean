@@ -196,8 +196,7 @@ include T in private theorem close_up_all_mk_next
         Ideal.map (Subring.inclusion (le_trans hle_k hAext'.le)) (Ideal.span ↑gens) := by
       rw [hI_eq, Ideal.map_map]
       congr 1
-    rw [hmm] at hc'
-    exact hc'
+    grind
   · -- c ∉ I·T: vacuously satisfied; Sk is already the desired A-extension
     exact ⟨Sk, ⟨le_refl _, fun r hr => hr, le_max_right _ _⟩, hCk, hle_k,
       fun h => absurd h hcond⟩
@@ -677,8 +676,7 @@ include T in theorem close_up_all_omega
         Prime r → Prime (⟨r.1, hpass_mono h r.2⟩ : (pass b).carrier) := by
       intro a b hab
       induction hab with
-      | refl => intro r hr
-                exact (Subtype.ext rfl : (⟨r.1, _⟩ : (pass a).carrier) = r) ▸ hr
+      | refl => grind
       | @step m hle ih =>
         intro r hr
         exact (hpass_aext m).primes_preserved ⟨r.1, hpass_mono hle r.2⟩ (ih r hr)

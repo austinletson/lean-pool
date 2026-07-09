@@ -57,8 +57,7 @@ namespace AspSet
 theorem ext {A B : AspSet} (hI : A.I = B.I) : A = B := by
   cases A
   cases B
-  cases hI
-  rfl
+  grind
 
 /-- Every inversion box of an abstract ASP set is directed upward. -/
 theorem directed (asps : AspSet) : ∀ u v : ℤ, ⟨u, v⟩ ∈ asps → u < v :=
@@ -262,8 +261,7 @@ private lemma endpointIndicator_eq_post_lt (a k : ℤ) :
     have not_in : k ∉ asps.inset a := fun hk =>
       absurd (asps.directed k a ((mem_inset asps a k).mp hk)) (not_lt_of_ge a_lt_k.le)
     rw [post_lt_swap_iff_mem asps a_lt_k.le]; simp only [← mem_outset]
-    simp only [oneIf, not_k_lt_a, ↓reduceIte, not_in, sub_self,
-      Set.Finite.mem_toFinset, Set.mem_setOf_eq, zero_add]
+    grind
 
 private noncomputable def sigmaIndicator (asps : AspSet) (m n k : ℤ) : ℤ :=
   oneIf (k ∈ Finset.Ico m n)
@@ -312,24 +310,15 @@ private lemma finsum_sigmaIndicator (m_le_n : m ≤ n) :
   let U := Finset.Ico m n ∪
     (asps.inset m ∪ (asps.outset m ∪ (asps.inset n ∪ asps.outset n)))
   have hIco : Finset.Ico m n ⊆ U := by
-    intro k hk
-    simp only [Finset.mem_union, hk, Set.Finite.mem_toFinset, Set.mem_setOf_eq, true_or, U]
+    grind
   have hin_m : asps.inset m ⊆ U := by
-    intro k hk
-    simp only [Finset.mem_union, Finset.mem_Ico, hk, Set.Finite.mem_toFinset,
-      Set.mem_setOf_eq, true_or, or_true, U]
+    grind
   have hout_m : asps.outset m ⊆ U := by
-    intro k hk
-    simp only [Finset.mem_union, Finset.mem_Ico, Set.Finite.mem_toFinset,
-      Set.mem_setOf_eq, hk, true_or, or_true, U]
+    grind
   have hin_n : asps.inset n ⊆ U := by
-    intro k hk
-    simp only [Finset.mem_union, Finset.mem_Ico, Set.Finite.mem_toFinset,
-      Set.mem_setOf_eq, hk, true_or, or_true, U]
+    grind
   have hout_n : asps.outset n ⊆ U := by
-    intro k hk
-    simp only [Finset.mem_union, Finset.mem_Ico, Set.Finite.mem_toFinset,
-      Set.mem_setOf_eq, hk, or_true, U]
+    grind
   rw [finsum_eq_sum_of_support_subset
     (f := fun k : ℤ => sigmaIndicator asps m n k) (s := U)]
   · calc
@@ -356,11 +345,9 @@ private lemma finsum_postIndicator :
   -- Proof written by GPT 5.5.
   let U := asps.post_Ico m n ∪ asps.post_Ico n m
   have hmn : asps.post_Ico m n ⊆ U := by
-    intro k hk
-    simp only [U, Finset.mem_union, hk, true_or]
+    grind
   have hnm : asps.post_Ico n m ⊆ U := by
-    intro k hk
-    simp only [U, Finset.mem_union, hk, or_true]
+    grind
   rw [finsum_eq_sum_of_support_subset
     (f := fun k : ℤ => postIndicator asps m n k) (s := U)]
   · calc
@@ -425,8 +412,7 @@ private lemma σ_diff_of_post_lt (hmn : asps.post_lt m n) :
   · have key := σ_diff_post asps n m χ n_lt_m.le
     have h_swap := post_Ico_swap_eq_empty_of_post_lt asps
       ((post_lt_swap_iff_mem asps n_lt_m.le).mpr nm_I)
-    simp only [h_swap, Finset.card_empty, Nat.cast_zero, zero_sub] at key
-    omega
+    grind
 
 private lemma σ_lt_of_post_lt (hmn : asps.post_lt m n) : asps.σ χ m < asps.σ χ n := by
   -- Proof written by GPT 5.5.
@@ -507,9 +493,7 @@ private lemma func_contiguous (σ_m_lt_n : asps.σ χ m < asps.σ χ n) :
       exact_mod_cast (hIcard.trans card_K.symm).le
   intro k σm_le_k k_lt_σn
   have hk : k ∈ I := Finset.mem_Ico.mpr ⟨σm_le_k, k_lt_σn⟩
-  rw [← K_eq_I] at hk
-  rcases Finset.mem_image.mp hk with ⟨l, _, hl⟩
-  exact ⟨l, hl.symm⟩
+  grind
 
 end σ_diff
 
@@ -568,8 +552,7 @@ private lemma surj_helper_up (m : ℤ) (n : ℕ) :
   ∃ x : ℤ, x ≥ m ∧ asps.recon χ x ≥ asps.recon χ m + n := by
   induction n with
   | zero =>
-    use m
-    simp
+    grind
   | succ n ih =>
   rcases ih with ⟨x, x_ge_m, fx_ge⟩
   obtain ⟨y, y_gt_x, y_not_outset_x⟩ : ∃ y : ℤ, y > x ∧ y ∉ asps.outset x := by
@@ -591,8 +574,7 @@ private lemma surj_helper_down (m : ℤ) (n : ℕ) :
   ∃ x : ℤ, x ≤ m ∧ asps.recon χ x ≤ asps.recon χ m - n := by
   induction n with
   | zero =>
-    use m
-    simp
+    grind
   | succ n ih =>
   rcases ih with ⟨x, x_le_m, fx_le⟩
   obtain ⟨y, y_lt_x, y_not_inset_x⟩ : ∃ y : ℤ, y < x ∧ y ∉ asps.inset x := by
@@ -666,8 +648,7 @@ lemma inset_of_toAspPerm (n : ℤ) : (toAspPerm asps χ).inset n = asps.inset n 
     have := asps.inset_eq_nw χ n
     rw [invSet_of_toAspPerm asps χ]
     simp
-  simp only [h1, ← h2]
-  rfl
+  grind
 
 lemma outset_of_toAspPerm (n : ℤ) : (toAspPerm asps χ).outset n = asps.outset n := by
   ext x
@@ -677,8 +658,7 @@ lemma outset_of_toAspPerm (n : ℤ) : (toAspPerm asps χ).outset n = asps.outset
     have := asps.outset_eq_se χ n
     rw [invSet_of_toAspPerm asps χ]
     simp
-  simp only [h1, ← h2]
-  rfl
+  grind
 
 lemma chi_of_toAspPerm : (toAspPerm asps χ).χ = χ := by
   let σ := toAspPerm asps χ
@@ -692,8 +672,7 @@ lemma chi_of_toAspPerm : (toAspPerm asps χ).χ = χ := by
   have hin : σ.inset 0 = asps.inset 0 := inset_of_toAspPerm asps χ 0
   rw [hout, hin] at h2
   repeat rw [Set.ncard_coe_finset] at h2
-  rw [h1] at h2
-  linarith [h2]
+  grind
 
 end OfAspSet
 

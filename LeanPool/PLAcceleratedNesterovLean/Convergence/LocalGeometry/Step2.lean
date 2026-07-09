@@ -51,8 +51,7 @@ lemma hasDerivAt_quad (c x : ℝ) :
   have h2 : (fun t : ℝ => t * t) = (fun t => t ^ 2) := by ext t; ring
   rw [h2] at h1
   have h3 := h1.const_mul (c / 2)
-  have : c / 2 * (1 * x + x * 1) = c * x := by ring
-  rwa [this] at h3
+  grind
 
 lemma differentiable_sq : Differentiable ℝ (fun (t : ℝ) => t ^ 2) := by
   have : (fun t : ℝ => t ^ 2) = (fun t => t * t) := by ext; ring
@@ -118,8 +117,7 @@ theorem quadratic_growth_from_hessian (φ : ℝ → ℝ) (c : ℝ)
     monotoneOn_of_deriv_nonneg (convex_Icc 0 1) hψ_cont hψ_diff hψ'_nonneg
   have h := hψ_mono (Set.left_mem_Icc.mpr zero_le_one) (Set.right_mem_Icc.mpr zero_le_one)
     zero_le_one
-  simp only [ψ] at h
-  linarith
+  grind
 
 /-- If φ''(t) ≥ c for all t ∈ [0,1] and φ'(0) = 0, then φ'(1) ≥ φ(1) - φ(0) + c/2.
     (Strong aiming from integration by parts.)
@@ -180,8 +178,7 @@ theorem strong_aiming_from_hessian (φ : ℝ → ℝ) (c : ℝ)
     monotoneOn_of_deriv_nonneg (convex_Icc 0 1) hψ_cont hψ_diff hψ'_nonneg
   have h := hψ_mono (Set.left_mem_Icc.mpr zero_le_one) (Set.right_mem_Icc.mpr zero_le_one)
     zero_le_one
-  simp only [ψ] at h
-  linarith [hψ0]
+  grind
 
 /-- The fiber function φ(t) = f(m + t·e) has φ'(t) = ⟨∇f(m+te), e⟩. -/
 theorem fiber_deriv {d : ℕ} (f : E d → ℝ) (m e : E d)

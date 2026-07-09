@@ -98,9 +98,7 @@ private lemma filter_map_neg_inv (p : ℂ) (hp : p ≠ 0)
   exact (tendsto_nhdsWithin_iff.mpr
     ⟨hφ_an.continuousAt.continuousWithinAt,
       by rw [eventually_nhdsWithin_iff]
-         filter_upwards [univ_mem] with z _ hz
-         simp only [mem_compl_iff, mem_singleton_iff] at hz
-         exact fun h => hz (inv_injective (neg_inj.mp h))⟩).eventually hQ
+         filter_upwards [univ_mem] with z grind⟩).eventually hQ
 
 private lemma neg_inv_finite_order_witness (g : ℂ → ℂ) (p : ℂ) (hp : p ≠ 0)
     (n : ℤ) (h : ℂ → ℂ) (hh_an : AnalyticAt ℂ h (-p⁻¹)) (hh_ne : h (-p⁻¹) ≠ 0)

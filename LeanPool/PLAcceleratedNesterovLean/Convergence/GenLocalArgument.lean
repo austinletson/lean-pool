@@ -174,12 +174,7 @@ private abbrev localConvergenceAtBasePointGenProof
       have hπ_diff_at_πm : DifferentiableAt ℝ π (π mstar) := by rwa [hπm]
       have := fderiv_comp mstar hπ_diff_at_πm hπ_diff
       rwa [hπm] at this
-    have h_comp_eq : (fderiv ℝ π mstar).comp (fderiv ℝ π mstar) = fderiv ℝ π mstar := by
-      rw [← h_chain, h_eq]
-    intro x
-    have := ContinuousLinearMap.ext_iff.mp h_comp_eq x
-    simp only [ContinuousLinearMap.comp_apply] at this
-    exact this
+    grind
   have hmu4_le_L : μ_minus ≤ ↑L := by linarith
   have hμη_lt1_pre : μ_minus * η < 1 := by
     change μ_minus * (1 / ↑L) < 1
@@ -304,9 +299,7 @@ private abbrev localConvergenceAtBasePointGenProof
       exact fiber_path_second_deriv f z ξ t hC2at
     have hφ''_lower : ∀ t, 0 ≤ t → t ≤ 1 →
         deriv (deriv φ) t ≥ -ε * ‖ξ‖ ^ 2 := by
-      intro t ht0 ht1
-      rw [hφ''_eq t ht0 ht1]
-      exact hHessLow (z + t • ξ) (hseg' t ht0 ht1) ξ
+      grind
     have hφ_C2at : ∀ t ∈ Set.Icc (0:ℝ) 1, ContDiffAt ℝ 2 φ t := by
       intro t ht
       exact fiber_path_C2at_on_segment f z ξ hTub_sub.isOpen hf_C2_on_U
@@ -426,8 +419,7 @@ private abbrev localConvergenceAtBasePointGenProof
           have := sq_nonneg ‖s.v‖
           linarith [hcoer_here]
         have hKmu : μ_minus * K = C_coer := by
-          change μ_minus * (C_coer / μ_minus) = C_coer
-          field_simp
+          grind
         have h2 : μ_minus * (K * Ln) = C_coer * Ln := by nlinarith
         by_contra h; push Not at h
         linarith [mul_lt_mul_of_pos_left h hmu4_pos]
@@ -488,14 +480,11 @@ private abbrev localConvergenceAtBasePointGenProof
               linarith [mul_le_mul_of_nonneg_left hv'_bound hsqrt_η_nn,
                         mul_le_mul_of_nonneg_left hg_bound hη_nn]
           _ = (Cv' + Real.sqrt η * Cg) * Real.sqrt η * Real.sqrt Ln := by
-              have hη_sq := (Real.mul_self_sqrt hη_nn).symm
-              linear_combination Cg * Real.sqrt Ln * hη_sq
+              grind
           _ ≤ Ch * Real.sqrt η * Real.sqrt Ln := by
               have : 0 ≤ 1 * (Real.sqrt η * Real.sqrt Ln) :=
                 mul_nonneg one_pos.le (mul_nonneg hsqrt_η_nn hsqrt_Ln_nn)
-              change (Cv' + Real.sqrt η * Cg) * Real.sqrt η * Real.sqrt Ln ≤
-                (Cv' + Real.sqrt η * Cg + 1) * Real.sqrt η * Real.sqrt Ln
-              linarith
+              grind
       · -- Velocity bound: ‖√η • s'.v‖ ≤ Cmov * √Ln
         have hsqrt_Ln_nn := Real.sqrt_nonneg Ln
         calc ‖Real.sqrt η • s'.v‖
@@ -505,10 +494,7 @@ private abbrev localConvergenceAtBasePointGenProof
               exact mul_le_mul_of_nonneg_left hv'_bound hsqrt_η_nn
           _ = (Real.sqrt η * Cv') * Real.sqrt Ln := by ring
           _ ≤ Cmov * Real.sqrt Ln := by
-              have : 0 ≤ 1 * Real.sqrt Ln := mul_nonneg one_pos.le hsqrt_Ln_nn
-              change (Real.sqrt η * Cv') * Real.sqrt Ln ≤
-                (Real.sqrt η * Cv' + 1) * Real.sqrt Ln
-              linarith
+              grind
     -- Provide existential witnesses
     refine ⟨Ch, by positivity, ?_, Cmov, by positivity, ?_⟩
     · intro s₀ n_step _s _Ln hsx hslx _hLn_le

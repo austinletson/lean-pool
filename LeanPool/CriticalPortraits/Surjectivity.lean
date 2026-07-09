@@ -66,13 +66,9 @@ theorem discrete_ivt (D : ℕ → ℤ) (L : ℕ) (h0 : D 0 ≤ 0) (hL : 0 ≤ D 
       have := Nat.findGreatest_is_greatest (P := fun k => D k ≤ 0)
         (k := K+1) (n := L) (by simp [hK]) hlt
       simpa using this
-    have hpos : 0 < D (K+1) := by omega
-    have := hstep K hlt
-    omega
+    grind
   · -- K ≥ L, with K ≤ L, so K = L; use hL
-    have hKeq : K = L := le_antisymm hKle hge
-    rw [hKeq] at hspec ⊢
-    omega
+    grind
 
 /-! ## Layer 1: Scount and the deficiency. -/
 
@@ -85,9 +81,7 @@ lemma Scount_antitone_left {d m : ℕ} (U : Finset (ZMod (d * m))) {x x' y : ℕ
     (hxx : x ≤ x') : Scount U x' y ≤ Scount U x y := by
   unfold Scount
   apply Finset.card_le_card
-  intro t ht
-  rw [Finset.mem_filter] at ht ⊢
-  exact ⟨ht.1, lt_of_le_of_lt hxx ht.2.1, ht.2.2⟩
+  grind
 
 /-- The integer **deficiency** of survivor `u` (column `φ`, level `lu`) at index `k`:
     `D(k) = Scount U (φ + k*m) u.val − (lu − k − 1)`. -/
@@ -100,24 +94,15 @@ lemma Defc_step {d m : ℕ} (_hm : 0 < m) (U : Finset (ZMod (d * m))) (φ lu uva
   unfold Defc
   have hmono : Scount U (φ + (k+1)*m) uval ≤ Scount U (φ + k*m) uval := by
     apply Scount_antitone_left
-    have : k * m ≤ (k+1) * m := Nat.mul_le_mul_right m (by omega)
-    omega
-  have h1 : (Scount U (φ + (k+1)*m) uval : ℤ) ≤ (Scount U (φ + k*m) uval : ℤ) := by
-    exact_mod_cast hmono
-  push_cast
-  omega
+    grind
+  grind
 
 /-- **E1 (upper boundary).** `D(lu-1) ≥ 0`: the constant `(lu - (lu-1) - 1) = 0`
     and `Scount ≥ 0`. -/
 lemma Defc_top_nonneg {d m : ℕ} (U : Finset (ZMod (d * m))) (φ lu uval : ℕ) (hlu : 1 ≤ lu) :
     0 ≤ Defc U φ lu uval (lu - 1) := by
   unfold Defc
-  have hc : ((lu : ℤ) - ((lu - 1 : ℕ) : ℤ) - 1) = 0 := by
-    have : ((lu - 1 : ℕ) : ℤ) = (lu : ℤ) - 1 := by omega
-    rw [this]; ring
-  rw [hc]
-  simp only [sub_zero]
-  exact_mod_cast Nat.zero_le _
+  grind
 
 /-- The scount bound from canonicity: `#{t ∈ U : φ < t.val < u.val} ≤ lu - 1`. -/
 lemma Scount_bot_le {d m : ℕ} (hd : 0 < d) (hm : 0 < m)
@@ -147,10 +132,8 @@ lemma Scount_bot_le {d m : ℕ} (hd : 0 < d) (hm : 0 < m)
       push Not at hgt
       have : (u.val / m + 1) ≤ t.val / m := hgt
       have h2 : (u.val / m + 1) * m ≤ (t.val / m) * m := Nat.mul_le_mul_right m this
-      rw [Nat.add_mul, Nat.one_mul] at h2
-      omega
-    refine ⟨?_, htU, htlevel⟩
-    intro htu; rw [htu] at htlt; omega
+      grind
+    grind
   have humem : u ∈ U.filter (fun i => i.val / m ≤ u.val / m) := by
     rw [Finset.mem_filter]; exact ⟨hu, le_refl _⟩
   have hcard1 : (U.filter (fun t => u.val % m < t.val ∧ t.val < u.val)).card
@@ -170,9 +153,7 @@ lemma Defc_bot_nonpos {d m : ℕ} (hd : 0 < d) (hm : 0 < m)
     Defc U (u.val % m) (u.val / m) u.val 0 ≤ 0 := by
   have hScount := Scount_bot_le hd hm hcanon hu
   unfold Defc
-  simp only [Nat.zero_mul, Nat.add_zero]
-  push_cast
-  omega
+  grind
 
 /-! ## Layer 2: existence of a balance index. -/
 
@@ -251,10 +232,7 @@ lemma betaParentVal_lt {d m : ℕ} (hd : 0 < d) (hm : 0 < m)
   have hmul : betaK U u * m ≤ (d-1) * m := Nat.mul_le_mul_right m hKd
   have hdm : (d-1) * m + m = d * m := by
     have : (d - 1) * m + 1 * m = (d - 1 + 1) * m := by rw [← Nat.add_mul]
-    rw [Nat.one_mul] at this
-    rw [this]
-    congr 1
-    omega
+    grind
   omega
 
 /-- The **parent point**: the ZMod element at `betaParentVal`. -/
@@ -352,8 +330,7 @@ noncomputable def betaBlock (U : Finset (ZMod (d * m))) (x : ZMod (d * m)) :
 
 lemma mem_betaBlock {U : Finset (ZMod (d * m))} {x y : ZMod (d * m)} :
     y ∈ betaBlock U x ↔ y ∈ bVerts U ∧ bReach U x y := by
-  unfold betaBlock; rw [Finset.mem_filter]
-  simp only [decide_eq_true_eq]
+  unfold betaBlock; grind
 
 /-- **The balance forest** `β(U)`: the connected components of the parent edges. -/
 noncomputable def beta (U : Finset (ZMod (d * m))) : Finset (Finset (ZMod (d * m))) :=
@@ -370,10 +347,7 @@ lemma survivor_level_pos {d m : ℕ} (hd : 0 < d) {U : Finset (ZMod (d * m))}
   have hmem : u ∈ U.filter (fun i => i.val / m ≤ 0) := by
     rw [Finset.mem_filter]; exact ⟨hu, hlt0⟩
   have hcanon0 : (U.filter (fun i => i.val / m ≤ 0)).card ≤ 0 := hcanon 0 hd
-  have hempty : (U.filter (fun i => i.val / m ≤ 0)).card = 0 := Nat.le_zero.mp hcanon0
-  rw [Finset.card_eq_zero] at hempty
-  rw [hempty] at hmem
-  exact absurd hmem (by simp)
+  grind
 
 /-- A single adjacency step preserves the fiber. -/
 lemma bAdj_sameFiber {d m : ℕ} (hd : 0 < d) (hm : 0 < m) {U : Finset (ZMod (d * m))}
@@ -415,10 +389,7 @@ lemma Scount_split {d m : ℕ} [NeZero (d * m)] {U : Finset (ZMod (d * m))} {x y
       · exact Or.inl (Or.inl ⟨htU, htx, hlt⟩)
       · exact Or.inl (Or.inr (ZMod.val_injective _ heq))
       · exact Or.inr ⟨htU, hgt, hty⟩
-    · rintro (((⟨htU, htx, htw⟩) | rfl) | ⟨htU, htw, hty⟩)
-      · exact ⟨htU, htx, lt_trans htw hwy⟩
-      · exact ⟨hwU, hxw, hwy⟩
-      · exact ⟨htU, lt_trans hxw htw, hty⟩
+    · grind
   rw [hsplit]
   -- the three parts are pairwise disjoint
   have hdisj1 : Disjoint (U.filter (fun t => x < t.val ∧ t.val < w.val))
@@ -430,9 +401,7 @@ lemma Scount_split {d m : ℕ} [NeZero (d * m)] {U : Finset (ZMod (d * m))} {x y
     rw [Finset.disjoint_union_left]
     constructor
     · rw [Finset.disjoint_left]
-      intro a ha hb
-      rw [Finset.mem_filter] at ha hb
-      omega
+      grind
     · rw [Finset.disjoint_singleton_left, Finset.mem_filter]
       rintro ⟨_, hcontra, _⟩; omega
   rw [Finset.card_union_of_disjoint hdisj2, Finset.card_union_of_disjoint hdisj1,
@@ -448,9 +417,7 @@ lemma betaParent_balance {d m : ℕ} (hd : 0 < d) (hm : 0 < m)
   have hpval : (betaParent U u).val = u.val % m + betaK U u * m := by
     rw [betaParent_val hd hm hlu]; rfl
   unfold Defc at hspec
-  rw [hpval]
-  -- hspec : (Scount U (u.val%m + betaK U u * m) u.val : ℤ) - ((u.val/m) - betaK U u - 1) = 0
-  linarith
+  grind
 
 /-- **Injectivity (I).** The parent map is injective on survivors of canonical `U`. -/
 lemma betaParent_inj {d m : ℕ} (hd : 0 < d) (hm : 0 < m)
@@ -511,24 +478,12 @@ lemma betaParent_inj {d m : ℕ} (hd : 0 < d) (hm : 0 < m)
       have haval : b.val % m + (a.val / m) * m = a.val := by
         rw [← hfibab]
         have := Nat.mod_add_div' a.val m; omega
-      rw [haval]
-      -- Scount a.val b.val = (lb - la - 1)
-      have hScab : (Scount U a.val b.val : ℤ)
-          = ((b.val / m : ℕ) : ℤ) - ((a.val / m : ℕ) : ℤ) - 1 := by
-        have e1 : (Scount U (betaParent U b).val b.val : ℤ)
-            = (Scount U (betaParent U a).val a.val : ℤ) + 1 + (Scount U a.val b.val : ℤ) := by
-          rw [hsplit, hScpaa]; push_cast; ring
-        rw [hbalB, hbalA, hKeq] at e1
-        linarith
-      rw [hScab]; ring
+      grind
     -- contradiction with maximality: betaK b < level a ≤ level b - 1
     have hlt1 : betaK U b < a.val / m := by rw [← hKeq]; exact hlevAa
     have hlt2 : a.val / m ≤ b.val / m - 1 := by omega
     exact betaK_max hlt1 hlt2 hDef_b_la
-  rcases lt_trichotomy u1.val u2.val with h | h | h
-  · exact core u1 u2 hu1 hu2 hlu1 hlu2 hfib hpv h
-  · exact hvalne h
-  · exact core u2 u1 hu2 hu1 hlu2 hlu1 hfib.symm hpv.symm h
+  grind
 
 /-! ## Layer 7: the root function (descend to the non-U sink). -/
 
@@ -717,8 +672,7 @@ lemma mem_U_of_mem_block_ne_root {d m : ℕ} (hd : 0 < d) (hm : 0 < m)
   have hself : betaRoot hd hm hcanon y = y := betaRoot_of_not_mem hd hm hcanon hyU
   have heq : betaRoot hd hm hcanon x = betaRoot hd hm hcanon y :=
     betaRoot_bReach hd hm hcanon hreach
-  rw [hself] at heq
-  exact hne heq.symm
+  grind
 
 /-- `betaBlock U x ∈ beta U` for a vertex `x`. -/
 lemma betaBlock_mem_beta {d m : ℕ} {U : Finset (ZMod (d * m))} {x : ZMod (d * m)}
@@ -761,8 +715,7 @@ theorem T_beta {d m : ℕ} (hd : 0 < d) (hm : 0 < m) {U : Finset (ZMod (d * m))}
       -- x ∈ U but betaRoot x ∉ U
       intro hcontra
       have hroot_notmem : betaRoot hd hm hcanon x ∉ U := betaRoot_not_mem hd hm hcanon x
-      rw [← hcontra] at hroot_notmem
-      exact hroot_notmem hxU
+      grind
 
 /-! ## Layer 10: β U is a Portrait — IsCriticalSet per block. -/
 
@@ -794,11 +747,7 @@ lemma betaBlock_two_le {d m : ℕ} (hd : 0 < d) (hm : 0 < m)
       have hlt : (betaParent U v).val < v.val := betaParent_val_lt hd hm hlu
       rw [h] at hlt; omega
     have hsub : ({betaParent U v, v} : Finset (ZMod (d*m))) ⊆ betaBlock U v := by
-      intro z hz
-      rw [Finset.mem_insert, Finset.mem_singleton] at hz
-      rcases hz with h | h <;> subst h
-      · exact hp_mem
-      · exact hv_mem
+      grind
     have hcard2 : ({betaParent U v, v} : Finset (ZMod (d*m))).card = 2 :=
       Finset.card_pair_eq_two_iff.mpr hne
     calc 2 = ({betaParent U v, v} : Finset (ZMod (d*m))).card := hcard2.symm
@@ -819,11 +768,7 @@ lemma betaBlock_two_le {d m : ℕ} (hd : 0 < d) (hm : 0 < m)
       have hlt : (betaParent U u).val < u.val := betaParent_val_lt hd hm hlu
       rw [hvu, h] at hlt; omega
     have hsub : ({u, v} : Finset (ZMod (d*m))) ⊆ betaBlock U v := by
-      intro z hz
-      rw [Finset.mem_insert, Finset.mem_singleton] at hz
-      rcases hz with h | h <;> subst h
-      · exact hu_mem
-      · exact hv_mem
+      grind
     have hcard2 : ({u, v} : Finset (ZMod (d*m))).card = 2 :=
       Finset.card_pair_eq_two_iff.mpr hne
     calc 2 = ({u, v} : Finset (ZMod (d*m))).card := hcard2.symm
@@ -949,16 +894,9 @@ lemma Scount_add_le {d m : ℕ} (U : Finset (ZMod (d * m))) {x y z : ℕ}
   unfold Scount
   rw [← Finset.card_union_of_disjoint]
   · apply Finset.card_le_card
-    intro t ht
-    rw [Finset.mem_union, Finset.mem_filter, Finset.mem_filter] at ht
-    rw [Finset.mem_filter]
-    rcases ht with ⟨htU, h1, h2⟩ | ⟨htU, h1, h2⟩
-    · exact ⟨htU, h1, lt_of_lt_of_le h2 hyz⟩
-    · exact ⟨htU, lt_of_le_of_lt hxy h1, h2⟩
+    grind
   · rw [Finset.disjoint_left]
-    intro t ht1 ht2
-    rw [Finset.mem_filter] at ht1 ht2
-    omega
+    grind
 
 /-- **GPRE prefix bound.** For a survivor `u` of canonical `U`, with `K := betaK U u` and a
     `φ`-column index `j` with `K < j ≤ lu`, the survivor count from `v*(u)` up to the `φ`-point at
@@ -997,20 +935,11 @@ lemma GPRE {d m : ℕ} (hd : 0 < d) (hm : 0 < m)
       have hpos := Defc_pos_after hd hm hcanon hu hlu hj1 hjle
       unfold Defc at hpos
       -- hpos : 0 < Scount U (φ + j*m) u.val - (lu - j - 1)
-      push_cast at hpos ⊢
-      linarith
+      grind
     · -- j = lu: w' = u.val, Scount = 0
-      have hwval : φ + j * m = u.val := by
-        rw [hjeq, hφ, hludef]; exact Nat.mod_add_div' u.val m
-      rw [hwval]
-      have : Scount U u.val u.val = 0 := by
-        unfold Scount
-        rw [Finset.card_eq_zero, Finset.filter_eq_empty_iff]
-        intro t _; omega
-      rw [this, hjeq]; push_cast; ring_nf; omega
+      grind
   -- combine
-  push_cast at hadd hbal ⊢
-  linarith
+  grind
 
 /-- **N0.** No survivor lies strictly inside one column-window above an edge bottom:
     there is no `t ∈ U` with `v*(u) < t.val < v*(u) + m`. -/
@@ -1037,9 +966,7 @@ lemma N0 {d m : ℕ} (hd : 0 < d) (hm : 0 < m)
   rw [hwval] at hgpre
   -- hgpre : Scount v (v+m) ≤ (K+1) - K - 1 = 0
   have hzero : Scount U (betaParent U u).val ((betaParent U u).val + m) = 0 := by
-    have : (Scount U (betaParent U u).val ((betaParent U u).val + m) : ℤ) ≤ 0 := by
-      push_cast at hgpre; linarith
-    omega
+    grind
   -- but t is in that window
   have htmem : t ∈ U.filter (fun w => (betaParent U u).val < w.val ∧
       w.val < (betaParent U u).val + m) := by
@@ -1054,9 +981,7 @@ lemma Scount_mono_right {d m : ℕ} (U : Finset (ZMod (d * m))) {x y y' : ℕ}
     (hyy : y ≤ y') : Scount U x y ≤ Scount U x y' := by
   unfold Scount
   apply Finset.card_le_card
-  intro t ht
-  rw [Finset.mem_filter] at ht ⊢
-  exact ⟨ht.1, ht.2.1, lt_of_lt_of_le ht.2.2 hyy⟩
+  grind
 
 /-- **Q (the deficiency-sign anchor).** For an edge `(v,u) = (v*(u), u)` and an interior survivor
     `s` (fiber `ψ`), if `y = ψ + ly*m` is the `ψ`-point in `[v, v+m)`, then the deficiency of `s`
@@ -1093,29 +1018,18 @@ lemma Q {d m : ℕ} (hd : 0 < d) (hm : 0 < m)
     by_contra hc; push Not at hc
     have hlt : K + 1 < ly := by omega
     have hsm := sep_master (m := m) (p := φ) (q := ψ) hφlt hψlt hlt
-    have he : (K + 1) * m = K * m + m := by ring
-    omega
+    grind
   -- choose w' = φ + j*m, j ∈ {ls, ls+1}
   set j := if φ < ψ then ls + 1 else ls with hjdef
   -- s.val ≤ w' < s.val + m
   have hsW : s.val ≤ φ + j * m := by
     rw [hjdef]; split
-    · rename_i h
-      have hsm := sep_master (m := m) (p := ψ) (q := φ) hψlt hφlt (show ls < ls + 1 by omega)
-      omega
-    · rename_i h
-      push Not at h
-      have hle : ψ + ls * m ≤ φ + ls * m := by omega
-      omega
+    · grind
+    · grind
   have hWs : φ + j * m < s.val + m := by
     rw [hjdef]; split
-    · rename_i h
-      -- φ + (ls+1)*m < ψ + ls*m + m  ↔ φ < ψ
-      have he : (ls + 1) * m = ls * m + m := by ring
-      omega
-    · rename_i h; push Not at h
-      -- ¬(φ < ψ) ⟹ ψ ≤ φ; goal φ + ls*m < ψ + ls*m + m ↔ φ < ψ + m, from φ < m
-      omega
+    · grind
+    · grind
   -- K < j ≤ lu
   have hKj : K < j := by
     by_contra hc; push Not at hc
@@ -1127,10 +1041,7 @@ lemma Q {d m : ℕ} (hd : 0 < d) (hm : 0 < m)
     by_contra hc; push Not at hc
     have h1 : φ + (lu + 1) * m ≤ φ + j * m := by
       have := Nat.mul_le_mul_right m (show lu + 1 ≤ j by omega); omega
-    have h2 : φ + (lu + 1) * m = u.val + m := by
-      have : φ + (lu + 1) * m = (φ + lu * m) + m := by ring
-      rw [this, huval]
-    omega
+    grind
   -- GPRE bound on Scount(v, w')
   have hgpre := GPRE hd hm hcanon hu hlu hKj hjlu
   rw [hpval] at hgpre
@@ -1153,16 +1064,7 @@ lemma Q {d m : ℕ} (hd : 0 < d) (hm : 0 < m)
         have he : (K + 1) * m = K * m + m := by ring
         rw [hyVal, h] at hwhi
         omega
-    subst hlyEq
-    -- yVal = ψ + K*m = φ + K*m = v (ψ=φ); and j = ls (since ¬ φ < ψ); so w' = φ+ls*m = s.val
-    have hyv : yVal = φ + K * m := by rw [hyVal, hψφ]
-    rw [hyv]
-    have hjval : j = ls := by rw [hjdef]; rw [if_neg (by omega)]
-    have hwseq : φ + j * m = s.val := by
-      rw [hjval]; rw [← hsval, hψφ]
-    rw [hwseq, hjval] at hgpre
-    -- hgpre : Scount(v, s.val) ≤ ls - K - 1, exactly the goal (ly = K).
-    linarith
+    grind
   · -- ψ ≠ φ ⟹ s.val < w' strictly, use Scount_split for the -1, then case ly/j
     have hsltw : s.val < φ + j * m := by
       rcases lt_or_eq_of_le hsW with h | h
@@ -1194,19 +1096,14 @@ lemma Q {d m : ℕ} (hd : 0 < d) (hm : 0 < m)
       -- enumerate ly∈{K,K+1}, j∈{ls,ls+1}; exclude (ly=K+1 ∧ j=ls+1)
       rcases (lt_or_eq_of_le hlyK1) with hlylt | hlyeq
       · -- ly = K
-        have : ly = K := by omega
-        subst this
-        rcases hjcase with hj | hj <;> rw [hj] <;> push_cast <;> omega
+        grind
       · -- ly = K+1 ⟹ ψ < φ (from hwhi)
         -- hwhi : ψ + ly*m < φ + K*m + m, with ly = K+1
         have hψφlt : ψ < φ := by
           rw [hyVal, hlyeq] at hwhi
-          have he2 : (K + 1) * m = K * m + m := by ring
-          omega
+          grind
         -- then j = ls (else j=ls+1 ⟹ φ<ψ, contra)
-        have hjeq : j = ls := by
-          rw [hjdef]; rw [if_neg (by omega)]
-        rw [hlyeq, hjeq]; push_cast; omega
+        grind
     linarith
 
 /-- **P (no escape).** For an edge `(v,u) = (v*(u), u)` of canonical `U` and an interior survivor
@@ -1235,15 +1132,11 @@ lemma noEscape {d m : ℕ} (hd : 0 < d) (hm : 0 < m)
   set ly := if ψ < φ then K + 1 else K with hlydef
   have hwlo : (betaParent U u).val ≤ ψ + ly * m := by
     rw [hpval, hlydef]; split
-    · rename_i h
-      have he : (K + 1) * m = K * m + m := by ring
-      omega
+    · grind
     · rename_i h; push Not at h; omega
   have hwhi : ψ + ly * m < (betaParent U u).val + m := by
     rw [hpval, hlydef]; split
-    · rename_i h
-      have he : (K + 1) * m = K * m + m := by ring
-      omega
+    · grind
     · rename_i h; push Not at h; omega
   -- Q gives the start bound; build the shifted IVT
   have hQ := Q hd hm hcanon hu hlu hs hslo hshi (ly := ly) hwlo hwhi
@@ -1264,9 +1157,7 @@ lemma noEscape {d m : ℕ} (hd : 0 < d) (hm : 0 < m)
   set L := (ls - 1) - ly with hLdef
   set E : ℕ → ℤ := fun i => Defc U ψ ls s.val (ly + i) with hEdef
   have hE0 : E 0 ≤ 0 := by
-    simp only [hEdef, Nat.add_zero]
-    rw [hψdef, hlsdef]
-    exact hQ
+    grind
   have hEL : 0 ≤ E L := by
     have hjL : ly + L = ls - 1 := by omega
     simp only [hEdef]
@@ -1296,8 +1187,7 @@ lemma noEscape {d m : ℕ} (hd : 0 < d) (hm : 0 < m)
   -- goal: φ + K*m ≤ ψ + betaK s * m; from φ+K*m ≤ ψ+ly*m (hwlo) and ly ≤ betaK s
   have hmm : ψ + ly * m ≤ ψ + betaK U s * m := by
     have := Nat.mul_le_mul_right m hbetaKge; omega
-  rw [hpval] at hwlo
-  omega
+  grind
 
 /-- The **root stays above the edge bottom**: for an edge `(v,u)` and any vertex `w` strictly
     inside its val-interval, the root of `w` has val `≥ v`. -/
@@ -1471,8 +1361,7 @@ lemma beta_interval_closed {d m : ℕ} (hd : 0 < d) (hm : 0 < m) {U : Finset (ZM
     (betaRoot_bReach hd hm hcanon hxreach_c).symm
   have haz_le_minX : (betaParent U bz).val ≤ minX.val := by
     have := root_ge hd hm hcanon hbzU cstar (bReach_mem_bVerts hx hxreach_c) haz_lt_c hc_lt_bz
-    rw [hrootc, ← hminroot] at this
-    exact this
+    grind
   -- but a_z ∈ Z so a_z.val ≥ (betaRoot z).val ≥ minX.val
   have haz_ge_minX : minX.val ≤ (betaParent U bz).val :=
     le_trans hminX_le_rootz (betaRoot_min_in_block hd hm hcanon haz_mem)
@@ -1538,9 +1427,7 @@ lemma beta_unlinked {d m : ℕ} (hd : 0 < d) (hm : 0 < m) {U : Finset (ZMod (d *
     have hdisj := betaBlock_disjoint hst
     have hmS_in_T : minVal (betaBlock U s) hSne ∈ betaBlock U t := by rw [hmineq']; exact hmT_mem
     exact (Finset.disjoint_left.mp hdisj hmS_mem) hmS_in_T
-  rcases hcase with ⟨h1, h2, h3⟩ | ⟨h1, h2, h3⟩
-  · exact core x z hx hz hAB a1 a2 b1 b2 ha1 ha2 hb1 hb2 h1 h2 h3
-  · exact core z x hz hx (Ne.symm hAB) b1 b2 a1 a2 hb1 hb2 ha1 ha2 h1 h2 h3
+  grind
 
 /-! ## Layer 14: β U is a Portrait, and surjectivity. -/
 

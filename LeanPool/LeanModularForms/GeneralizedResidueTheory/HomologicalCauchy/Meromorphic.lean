@@ -66,8 +66,7 @@ private lemma regularPart_update_differentiableOn (f : ℂ → ℂ) (s : ℂ)
     have h_ev : rp =ᶠ[𝓝 z] rp_nf := by
       apply Filter.Eventually.mono (isOpen_compl_singleton.mem_nhds
         (Set.mem_compl_singleton_iff.mpr h))
-      intro w hw
-      exact (Function.update_of_ne (Set.mem_compl_singleton_iff.mp hw) (g_an s) rp).symm
+      grind
     exact (h_ev.differentiableAt_iff.mp h_rp_diff).differentiableWithinAt
 
 private lemma contourIntegral_eq_of_agree_on_curve (f g : ℂ → ℂ)
@@ -78,8 +77,7 @@ private lemma contourIntegral_eq_of_agree_on_curve (f g : ℂ → ℂ)
   apply intervalIntegral.integral_congr
   intro t ht
   rw [Set.uIcc_of_le (le_of_lt γ.hab)] at ht
-  dsimp only
-  rw [h_agree t ht]
+  grind
 
 private lemma contourIntegral_add_principalPart_regularPart (f : ℂ → ℂ) (s : ℂ)
     (hf : MeromorphicAt f s) (U : Set ℂ) (hf_diff : DifferentiableOn ℂ f (U \ {s}))
@@ -243,16 +241,12 @@ private theorem analytic_correction_differentiableOn (S : Finset ℂ) (f : ℂ �
       have h_ev : (fun w => if w ∈ (S : Set ℂ) then
           limUnder (𝓝[≠] w) g else g w) =ᶠ[𝓝 z] g_ext :=
         h_punc.mono fun w hw => by
-          by_cases hwz : w = z
-          · subst hwz; exact h_at_z
-          · exact hw hwz
+          grind
       exact (h_ev.differentiableAt_iff.mpr hg_ext_diff).differentiableWithinAt
     · have h_ev : (fun w => if w ∈ (S : Set ℂ) then
           limUnder (𝓝[≠] w) g else g w) =ᶠ[𝓝 z] g := by
         apply Filter.Eventually.mono (S.finite_toSet.isClosed.isOpen_compl.mem_nhds hzS)
-        intro w hw
-        have : w ∉ (S : Set ℂ) := hw
-        simp only [this, if_false]
+        grind
       exact (h_ev.differentiableAt_iff.mpr
         ((h_g_diff_off z ⟨hz, hzS⟩).differentiableAt
           ((hU.sdiff S.finite_toSet.isClosed).mem_nhds ⟨hz, hzS⟩))).differentiableWithinAt
@@ -409,14 +403,11 @@ theorem conditionsAB_imply_higherOrderCancel_nh (U : Set ℂ) (hU : IsOpen U)
           (U \ ↑S0) := by
         apply continuousOn_finsetSum; intro s _
         apply ContinuousOn.div continuousOn_const (continuousOn_id.sub continuousOn_const)
-        intro z ⟨_, hz_not_S0⟩
-        exact sub_ne_zero.mpr
-          (fun heq => by subst heq; exact hz_not_S0 (Finset.mem_coe.mpr ‹_›))
+        grind
       exact intervalIntegrable_cpvIntegrandOn_of_continuousOn_diff
         U S0 _ hfres_cont γ h_null.image_subset ε hε
     rw [← intervalIntegral.integral_sub h_int_f h_int_fres]
-    congr 1; ext t
-    exact h_integrand_eq ε t
+    grind
   exact higherOrderCancel_assembly_nh U hU S0 f hf γ h_null
     hMero hCondA hCondB hγ_meas h_no_endpt h_unique_cross hS0_in_U
 
@@ -453,9 +444,7 @@ lemma pv_res_tendsto_of_immersion_nullHomologous (U : Set ℂ) (S : Set ℂ)
     apply cauchyPrincipalValueExists_of_singular_inv γ s
     intro ⟨t₀, ht₀, hcross⟩
     have ht₀_Ioo : t₀ ∈ Ioo γ.a γ.b := by
-      refine ⟨lt_of_le_of_ne ht₀.1 (fun h => ?_), lt_of_le_of_ne ht₀.2 (fun h => ?_)⟩
-      · exact (h_no_endpt_cross s hs).1 (h ▸ hcross)
-      · exact (h_no_endpt_cross s hs).2 (h ▸ hcross)
+      grind
     obtain ⟨a', b', ha't₀, ht₀b', ha'b'_sub, honly', _⟩ :=
       exists_isolated_crossing_interval γ s t₀ ht₀_Ioo hcross
     suffices ∃ M, Tendsto (fun ε => ∫ (t : ℝ) in γ.a..γ.b,
@@ -481,6 +470,5 @@ lemma pv_res_tendsto_of_immersion_nullHomologous (U : Set ℂ) (S : Set ℂ)
       hL.limUnder_eq.symm
     rw [hL_eq, h_value]; congr 1; apply Finset.sum_congr rfl
     intro s hs; rw [h_res_eq s hs]
-  rw [← h_limit_eq]
-  exact hL
+  grind
 

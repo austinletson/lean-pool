@@ -458,8 +458,7 @@ theorem Module.Dual.IsState.isFaithful_iff_of_matrix {φ : Module.Dual ℂ (Matr
     · exact hQ
     rw [Module.Dual.isState_iff_of_matrix] at hs
     exact hs.2
-  · intro hQ
-    exact hQ.1
+  · grind
 
 theorem Module.Dual.isFaithful_state_iff_of_matrix (φ : Module.Dual ℂ (Matrix n n ℂ)) :
     φ.IsState ∧ φ.IsFaithful ↔ φ.matrix.PosDef ∧ φ.matrix.trace = 1 := by
@@ -581,11 +580,7 @@ theorem Module.Dual.isTracial_faithful_pos_map_iff_of_matrix [Nonempty n]
     let α' : { x : NNReal // 0 < x } := ⟨α, this⟩
     have : α = α' := rfl
     use α'
-    constructor
-    · exact hα
-    · intro y hy
-      simp_rw [← Subtype.coe_inj] at hy ⊢
-      exact h _ hy
+    grind
   · rintro ⟨α, ⟨h1, _⟩⟩
     have : 0 < (α : NNReal) := Subtype.mem α
     constructor
@@ -612,8 +607,7 @@ theorem Matrix.ext_iff_trace' {R m n : Type _} [Semiring R] [StarRing R] [Fintyp
     specialize h (single i j (1 : R))
     simp_rw [single_conjTranspose, star_one, Matrix.single_hMul_trace] at h
     exact h
-  · intro h x
-    rw [h]
+  · grind
 
 theorem Module.Dual.isReal_iff {φ : Module.Dual ℂ (Matrix n n ℂ)} :
     LinearMap.IsReal φ ↔ φ.matrix.IsHermitian := by

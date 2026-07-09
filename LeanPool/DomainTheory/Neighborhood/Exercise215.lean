@@ -219,8 +219,7 @@ theorem toElementMap_openToMap_principal_mem_empty (U : Set V.Element) (hU : IsO
   rw [← (openToMap V U hU).rel_iff_mem_principal hX]
   constructor
   · rintro ⟨_, _, fimpl⟩
-    obtain ⟨_, hmem⟩ := fimpl rfl
-    exact hmem
+    grind
   · intro h
     exact ⟨hX, O_mem_empty, fun _ => ⟨hX, h⟩⟩
 

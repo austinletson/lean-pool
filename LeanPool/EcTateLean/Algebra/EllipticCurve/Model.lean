@@ -133,15 +133,11 @@ instance : Group (urstTransform R) where
     intros
     simp [urstTransform.mul_def, urstTransform.one_def, urstTransform.inv_def]
   mul_one := by
-    intros
-    simp [urstTransform.mul_def, urstTransform.one_def]
+    grind
   one_mul := by
-    intros
-    simp [urstTransform.mul_def, urstTransform.one_def]
+    grind
   mul_assoc := by
-    intros
-    simp only [urstTransform.mul_def, mk.injEq]
-    refine ⟨mul_assoc _ _ _, ?_, ?_, ?_⟩ <;> push_cast <;> ring
+    grind
 
 end urstTransform
 
@@ -541,15 +537,11 @@ lemma isSingularPoint_singularPoint [PerfectRing K] (e : Model K) (h : e.discr =
         rw [pow_succ _ 2]
         rw [← hchar, pthRoot_pow_char hcharne]
         rw [pthRoot_pow_char hcharne]
-        ring_nf
-        simp [hchar'']
+        grind
       · rw [dweierstrassDx]
         simp only [ha1, zero_mul, hchar'', add_zero, zero_sub, neg_add_rev]
         rw [← hchar, pthRoot_pow_char hcharne, ← sub_eq_add_neg]
-        simp only [sub_eq_iff_eq_add, zero_add]
-        rw [show (3 : K) = 2 * 2 - 1 by norm_num]
-        rw [hchar'']
-        simp []
+        grind
       · simp [dweierstrassDy, ha1, ha3, hchar'']
     · rw [isSingularPoint]
       have hchar : ringChar K = 3 := by assumption
@@ -563,44 +555,11 @@ lemma isSingularPoint_singularPoint [PerfectRing K] (e : Model K) (h : e.discr =
       refine ⟨?_, ?_, ?_⟩
       · rw [weierstrass]
         rw [← hchar, pthRoot_pow_char hcharne]
-        simp only
-        rw [show
-          (e.a1 * pthRoot (-(e.a3 ^ 2) - e.a6) + e.a3) ^ 2 +
-          e.a1 * pthRoot (-(e.a3 ^ 2) - e.a6) * (e.a1 * pthRoot (-(e.a3 ^ 2) - e.a6) + e.a3) +
-          e.a3 * (e.a1 * pthRoot (-(e.a3 ^ 2) - e.a6) + e.a3) -
-          (-(e.a3 ^ 2) - e.a6 + e.a2 * pthRoot (-(e.a3 ^ 2) - e.a6) ^ 2
-              + e.a4 * pthRoot (-(e.a3 ^ 2) - e.a6) + e.a6) =
-          (2 * e.a1 ^ 2 - e.a2) * pthRoot (-(e.a3 ^ 2) - e.a6) ^ 2 +
-          (4 * e.a1 * e.a3 - e.a4) * pthRoot (-(e.a3 ^ 2) - e.a6) +
-          3 * e.a3 ^ 2
-          by ring]
-        have hfac2 : 2 * e.a1 ^ 2 - e.a2 = 0 := by
-          linear_combination (norm := (ring_nf; simp [hchar''])) -hb2
-        have hfac4 : 4 * e.a1 * e.a3 - e.a4 = 0 := by
-          rw [show (2 : K) = -1 by rw [← add_zero (-1), ← hchar'']; norm_num] at hb4
-          rw [show (4 : K) = 1 by rw [← add_zero 1, ← hchar'']; norm_num]
-          simp only [neg_mul, one_mul] at hb4
-          simp [sub_eq_add_neg, hb4]
-        rw [hfac2, hfac4]
-        simp only [zero_mul, add_zero, hchar'']
+        grind
       · rw [dweierstrassDx]
-        rw [hchar'', zero_mul, zero_add]
-        simp only
-        rw [show e.a1 * (e.a1 * pthRoot (-(e.a3 ^ 2) - e.a6) + e.a3)
-            - (2 * e.a2 * pthRoot (-(e.a3 ^ 2) - e.a6) + e.a4) =
-                 (e.a1 * e.a1 - 2 * e.a2) * pthRoot (-(e.a3 ^ 2) - e.a6) + (e.a1 * e.a3 - e.a4)
-          by ring]
-        rw [show (2 : K) = -1 by rw [← add_zero (-1), ← hchar'']; norm_num] at hb4
-        rw [show (4 : K) =
-            -2 by rw [← add_zero (-2), ← zero_mul (2 : K), ← hchar'']; norm_num] at hb2
-        simp only [neg_mul, one_mul, ← sub_eq_add_neg] at hb4 hb2
-        rw [hb4, hb2, zero_mul, zero_add]
+        grind
       · rw [dweierstrassDy]
-        simp only
-        rw [show 2 * (e.a1 * pthRoot (-(e.a3 ^ 2) - e.a6) + e.a3)
-            + e.a1 * pthRoot (- (e.a3 ^ 2) - e.a6) + e.a3 = 3 * ((e.a1 * pthRoot (-(e.a3 ^ 2)
-                - e.a6)) + e.a3) by ring]
-        rw [hchar'', zero_mul]
+        grind
     · rename_i hn2 hn3
       rw [isSingularPoint]
       -- have hb4 : e.b2 ^ 2 = 24 * e.b4 := sorry
@@ -647,17 +606,7 @@ lemma isSingularPoint_singularPoint [PerfectRing K] (e : Model K) (h : e.discr =
         ring
       · apply nzero_mul_left_cancel 12 _ _ h12
         simp only [dweierstrassDy, div_eq_mul_inv, mul_zero]
-        rw [show
-          12 * (2 * (-(-e.a1 * b2 e * 12⁻¹ + e.a3) * 2⁻¹) + e.a1 * (-b2 e * 12⁻¹) + e.a3)
-          =
-          (-(-e.a1 * b2 e * (12 * 12⁻¹) + 12 * e.a3) * (2 * 2⁻¹))
-            + e.a1 * (-b2 e * (12 * 12⁻¹))
-              + 12 * e.a3
-          by ring]
-        simp only [mul_inv_cancel₀ h2, mul_inv_cancel₀ h12, mul_one]
-        -- This is 2*c6
-        simp only [b2]
-        ring
+        grind
   · rw [isSingularPoint]
     refine ⟨?_, ?_, ?_⟩
     · rw [weierstrass]

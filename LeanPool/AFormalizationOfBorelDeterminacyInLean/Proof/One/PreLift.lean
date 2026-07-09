@@ -168,11 +168,8 @@ def liftShort : gameTree hyp := (H.R H.liftVeryShort
       rw [H.liftVeryShort_length]))
   change
     (H.R H.liftVeryShort (by
-      change H.liftVeryShort.val.length % 2 = Player.one.toNat
-      rw [H.liftVeryShort_length]
-      synthIsPosition) (by
-      change H.liftVeryShort.val.length ≤ 2 * k + 1
-      rw [H.liftVeryShort_length])).val'.length = 2 * k + 2
+      grind) (by
+      grind)).val'.length = 2 * k + 2
   rw [hlen]
   change H.liftVeryShort.val.length + 1 = 2 * k + 2
   rw [H.liftVeryShort_length]
@@ -222,8 +219,7 @@ lemma liftVal_very_short (h : H.x.val.length = 2 * k + 1) : H.liftVal = H.liftVe
           pInvTreeHomMap hyp (H.x.val.take (min n (2 * k + 1)))
         rw [pInvTreeHomMap, List.zipInitsMap_take]
         congr 1
-        rw [List.take_take]
-        rw [min_eq_left h, min_eq_left (by omega : n ≤ 2 * k + 1)]
+        grind
       · simp
 -- for u drop (2 * k + 1)
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
@@ -406,8 +402,7 @@ lemma take_of_length_le {h} (h' : H.x.val.length ≤ n) : H.take n h = H := by
             rw [show min (2 * k + 2) (2 * k + 2 + n) = 2 * k + 2 by omega]
             exact congrArg (getTree' hyp) (H.liftVal_take_short (by omega))
           · have hdrop : n < (List.drop (2 * k + 2) H.x.val).length := by
-              simp [hn]
-              omega
+              grind
             rw [show H.x.val[2 * k + 2 + n] = (H.x.val.drop (2 * k + 2))[n]'hdrop by
               rw [List.getElem_drop']]
             rw [← List.take_concat_get' (List.drop (2 * k + 2) H.x.val) n hdrop]
@@ -432,8 +427,7 @@ lemma take_of_length_le {h} (h' : H.x.val.length ≤ n) : H.take n h = H := by
             rw [List.drop_take]
             rw [show 2 * k + 2 + n - (2 * k + 2) = n by omega]
             have hdrop : n < (List.drop (2 * k + 2) H.x.val).length := by
-              simp [hn]
-              omega
+              grind
             rw [← List.take_concat_get' (List.drop (2 * k + 2) H.x.val) n hdrop]
             congr 1
             · symm

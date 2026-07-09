@@ -242,16 +242,12 @@ theorem relabel_relabelSum [enum : IsEnum β] (g : α ≃ γ) :
       dsimp [BoundedFormula.relabelEquiv, BoundedFormula.mapTermRelEquiv,
         BoundedFormula.relabel, BoundedFormula.mapTermRel, Term.relabelEquiv_apply,
         Term.relabel_relabel]
-      congr 1
-      · exact hterm t1
-      · exact hterm t2
+      grind
   | rel R ts =>
       dsimp [BoundedFormula.relabelEquiv, BoundedFormula.mapTermRelEquiv,
         BoundedFormula.relabel, BoundedFormula.mapTermRel, Term.relabelEquiv_apply,
         Term.relabel_relabel]
-      congr 1
-      funext i
-      exact hterm (ts i)
+      grind
   | imp φ ψ ihφ ihψ =>
       simpa only [relabel_imp, imp, imp.injEq] using ⟨ihφ, ihψ⟩
   | all φ ih =>

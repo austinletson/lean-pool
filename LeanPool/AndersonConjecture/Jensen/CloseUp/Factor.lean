@@ -77,11 +77,7 @@ private def close_up_aux_factor_proof
   by_cases hqa : q ∣ a
   · -- Sub-case A: q | a. Factor out q from ALL of s, use ih_a.
     have hq_dvd_all : ∀ x ∈ s, q ∣ x := by
-      intro x hx
-      rw [hs_insert, Finset.mem_insert] at hx
-      rcases hx with rfl | hx'
-      · exact hqa
-      · exact hq_dvd_s' x hx'
+      grind
     have h_span_le : span (↑s : Set R.carrier) ≤ span {q} :=
       Ideal.span_le.mpr fun x hx =>
         Ideal.mem_span_singleton.mpr (hq_dvd_all x (Finset.mem_coe.mp hx))
@@ -95,8 +91,7 @@ private def close_up_aux_factor_proof
     let div_q : R.carrier → R.carrier := fun x =>
       if h : q ∣ x then Classical.choose h else x
     have hdiv_spec : ∀ x ∈ s, x = q * div_q x := by
-      intro x hx
-      simpa only [div_q, dif_pos (hq_dvd_all x hx)] using Classical.choose_spec (hq_dvd_all x hx)
+      grind
     let t_set := s.image div_q
     have h_ideal_eq : span (↑s : Set R.carrier) =
         span {q} * span (↑t_set : Set R.carrier) :=
@@ -136,10 +131,7 @@ private def close_up_aux_factor_proof
         rw [hdiv_spec a ha_mem, ha'_zero, mul_zero]
       set t₀ := t_set.erase (div_q a) with ht₀_def
       have ht₀_card : t₀.card ≤ n'' + 1 + 1 := by
-        have h1 : t_set.card ≤ n'' + 1 + 1 + 1 :=
-          (Finset.card_image_le (f := div_q) (s := s)).trans (le_of_eq hs_eq)
-        simp only [ht₀_def, Finset.card_erase_of_mem ha'_mem]
-        omega
+        grind
       have hspan_eq : span (↑t_set : Set R.carrier) =
           span (↑t₀ : Set R.carrier) := by
         apply le_antisymm
@@ -152,12 +144,7 @@ private def close_up_aux_factor_proof
               (Finset.mem_erase.mpr ⟨hne, Finset.mem_coe.mp hx⟩))
         · exact Ideal.span_mono (Finset.coe_subset.mpr
             (Finset.erase_subset _ _))
-      have hc'_t₀ : (c' : T) ∈ Ideal.map R.carrier.subtype
-          (span (↑t₀ : Set R.carrier)) := hspan_eq ▸ hc'_mem
-      obtain ⟨S, hAext, hle, hmem⟩ := ih R hR_card t₀ ht₀_card c' hc'_t₀
-      exact ⟨S, hAext, hle, Ideal.map_mono
-        (Ideal.span_mono (Finset.coe_subset.mpr
-          (Finset.erase_subset _ _))) hmem⟩
+      grind
     · by_cases ha'_unit : IsUnit (div_q a)
       · refine ⟨R, ⟨le_refl _, fun r hr => hr, le_max_right _ _⟩,
             le_refl _, ?_⟩
@@ -176,29 +163,17 @@ private def close_up_aux_factor_proof
             (hdiv_spec a ha_mem).trans (mul_comm q (div_q a))⟩⟩
         have ht_card : t_set.card = n'' + 1 + 1 + 1 := by
           have hinj : Set.InjOn div_q ↑s := fun x hx y hy hxy => by
-            have hx_eq := hdiv_spec x (Finset.mem_coe.mp hx)
-            have hy_eq := hdiv_spec y (Finset.mem_coe.mp hy)
-            calc x = q * div_q x := hx_eq
-              _ = q * div_q y := by rw [hxy]
-              _ = y := hy_eq.symm
-          rw [show t_set = s.image div_q from rfl,
-            Finset.card_image_of_injOn hinj, hs_eq]
+            grind
+          grind
         have ht_gcd : gcdComplexity t_set ≤ m := le_trans (by
           change gcdComplexity t_set ≤ gcdComplexity s
           have hinj : Set.InjOn div_q ↑s := fun x hx y hy hxy => by
-            have hx_eq := hdiv_spec x (Finset.mem_coe.mp hx)
-            have hy_eq := hdiv_spec y (Finset.mem_coe.mp hy)
-            calc x = q * div_q x := hx_eq
-              _ = q * div_q y := by rw [hxy]
-              _ = y := hy_eq.symm
+            grind
           exact gcdComplexity_div_le q hq s hq_dvd_all div_q hdiv_spec hinj) hs_gcd
-        exact ih_a (div_q a) hdvd t_set
-          ht_gcd ht_card ha'_mem c' hc'_mem
+        grind
   · -- Sub-case B1: q does not divide a, q | c. Factor out q from s' and c.
     have hqc : q ∣ c := by
-      rcases hq_ac with h | h
-      · exact absurd h hqa
-      · exact h
+      grind
     have h_span_le_q : span (↑s' : Set R.carrier) ≤ span {q} :=
       Ideal.span_le.mpr fun x hx =>
         Ideal.mem_span_singleton.mpr (hq_dvd_s' x (Finset.mem_coe.mp hx))
@@ -212,8 +187,7 @@ private def close_up_aux_factor_proof
     let div_q' : R.carrier → R.carrier :=
       fun x => if h : q ∣ x then Classical.choose h else x
     have hdiv_spec' : ∀ x ∈ s', x = q * div_q' x := by
-      intro x hx
-      simpa only [div_q', dif_pos (hq_dvd_s' x hx)] using Classical.choose_spec (hq_dvd_s' x hx)
+      grind
     let t_set' := s'.image div_q'
     have h_ideal_eq_q : span (↑s' : Set R.carrier) =
         span {q} * span (↑t_set' : Set R.carrier) :=
@@ -265,8 +239,7 @@ private def close_up_aux_factor_proof
       have h := h_at
       rw [ht'] at h
       have h' : (q : T) * ((a : T) * t') = (q : T) * ((c' : T) - w) := by
-        rw [← h]
-        ring
+        grind
       exact eq_add_of_sub_eq (mul_left_cancel₀ hq_ne h').symm
     have hw_span : w ∈ Ideal.map R.carrier.subtype (span (↑t_set' : Set R.carrier)) := by
       have hv' := hv
@@ -289,14 +262,11 @@ private def close_up_aux_factor_proof
     -- Recursive close_up for (R, insert a t_set', c')
     by_cases ha_t : a ∈ t_set'
     · -- a ∈ t_set': use ih directly since card ≤ n''+2
-      have h_eq : insert a t_set' = t_set' := Finset.insert_eq_of_mem ha_t
-      rw [h_eq] at hc'_mem ⊢
-      exact ih R hR_card t_set' (Finset.card_image_le.trans hs'_card) c' hc'_mem
+      grind
     · -- a ∉ t_set': card = n''+3, use nested WF
       have hs'_ne : s'.Nonempty :=
         Finset.card_pos.mp (by
-          rw [hs'_def, Finset.card_erase_of_mem ha_mem, hs_eq]
-          omega)
+          grind)
       have ht_ne : t_set'.Nonempty :=
         ⟨div_q' hs'_ne.choose, Finset.mem_image.mpr ⟨hs'_ne.choose, hs'_ne.choose_spec, rfl⟩⟩
       obtain ⟨b₀, hb₀⟩ := ht_ne
@@ -314,19 +284,14 @@ private def close_up_aux_factor_proof
         letI : NormalizationMonoid R.carrier :=
           UniqueFactorizationMonoid.normalizationMonoid
         have ha_not_s' : a ∉ s' := by
-          rw [hs'_def]
-          simp [Finset.mem_erase]
+          grind
         unfold gcdComplexity
         rw [hs_insert, Finset.sum_insert ha_not_s',
             Finset.sum_insert ha_t]
         apply Nat.add_le_add_left
         rw [show t_set' = s'.image div_q' from rfl]
         have hinj_q' : Set.InjOn div_q' ↑s' := fun x hx y hy hxy => by
-          have hx_eq := hdiv_spec' x (Finset.mem_coe.mp hx)
-          have hy_eq := hdiv_spec' y (Finset.mem_coe.mp hy)
-          calc x = q * div_q' x := hx_eq
-            _ = q * div_q' y := by rw [hxy]
-            _ = y := hy_eq.symm
+          grind
         rw [Finset.sum_image hinj_q']
         apply Finset.sum_le_sum
         intro x hx

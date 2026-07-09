@@ -173,8 +173,7 @@ theorem element_eq (x : neighborhoodSystem.Element) :
         by_contra hc
         have hle : Nat.find h' ≤ j := by omega
         exact hspec (x.up_mem hj (mem_tail_nbhd (Nat.find h')) (tail_subset_iff.mpr hle))
-      · intro hj
-        exact hmin j (by omega)
+      · grind
     constructor
     · intro hx
       obtain ⟨j, rfl⟩ := x.sub hx

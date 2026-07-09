@@ -121,8 +121,7 @@ private lemma dig_pred_pow_ge {p : ℕ} (hp : 2 ≤ p) (f t : ℕ) (ht : f ≤ t
   unfold dig
   have hlt : p ^ f - 1 < p ^ t := by
     have h1 : p ^ f ≤ p ^ t := Nat.pow_le_pow_right (by omega) ht
-    have h2 : 1 ≤ p ^ f := Nat.one_le_pow _ _ (by omega)
-    omega
+    grind
   rw [Nat.div_eq_of_lt hlt]; simp
 
 private lemma dig_pred_pow_lt {p : ℕ} (hp : 2 ≤ p) (f t : ℕ) (ht : t < f) :
@@ -238,10 +237,7 @@ private lemma Tset_nonempty_aux (p q d j f : ℕ) (hp : p.Prime) (hf : 1 ≤ f)
       · have hz : ∑ i : Fin d,
             (if f * (L + i.val) ≤ t ∧ t < f * (L + i.val) + f then p - 1 else 0) = 0 := by
           apply Finset.sum_eq_zero
-          intro i _
-          rw [if_neg]
-          rintro ⟨h1, h2⟩
-          exact h ⟨i, h1, h2⟩
+          grind
         rw [hz]; omega
     -- combine with the j-digit term
     rcases lt_or_ge t L with htL | htL
@@ -265,8 +261,7 @@ private lemma Tset_nonempty_aux (p q d j f : ℕ) (hp : p.Prime) (hf : 1 ≤ f)
           rw [List.getD_eq_default]; omega
         rw [getD_eq_dig hp2] at hgd
         exact hgd
-      rw [hj0, zero_add]
-      exact hsum
+      grind
 
 -- Main Statement(s)
 
@@ -284,9 +279,7 @@ theorem main_theorem (p q d k f : ℕ) (hp : p.Prime) (hf : 1 ≤ f) (hq : q = p
     have hkey := hnc t
     rw [getD_eq_dig hp2] at hkey ⊢
     have hdle : dig p (k - 1) t ≤ dig p k t := dig_pred_le hp2 hk hpk t
-    rw [Finset.sum_congr rfl (fun i _ => getD_eq_dig hp2 (m i) t)] at hkey
-    rw [Finset.sum_congr rfl (fun i _ => getD_eq_dig hp2 (m i) t)]
-    omega
+    grind
   -- image inclusion
   have himg : objective d '' Tset p q d k ⊆ objective d '' Tset p q d (k - 1) :=
     Set.image_mono hsubset
@@ -301,11 +294,7 @@ theorem main_theorem (p q d k f : ℕ) (hp : p.Prime) (hf : 1 ≤ f) (hq : q = p
     exact Nat.sInf_le (himg ⟨v, hv, rfl⟩)
   -- conclude
   unfold sd
-  simp only [Nat.add_sub_cancel]
-  have hdk : d * k < d * (k + 1) := by
-    have : 0 < d := by omega
-    nlinarith [this]
-  omega
+  grind
 
 -- Correctness statements characterizing `M_d(j)` as the attained minimum.
 
@@ -323,8 +312,7 @@ theorem Md_attained (p q d j f : ℕ) (hp : p.Prime) (hf : 1 ≤ f) (hq : q = p 
   have hne : (Tset p q d j).Nonempty := Tset_nonempty_aux p q d j f hp hf hq hd
   have himg : (objective d '' Tset p q d j).Nonempty := hne.image _
   have hmem : Md p q d j ∈ objective d '' Tset p q d j := Nat.sInf_mem himg
-  obtain ⟨m, hm, hval⟩ := hmem
-  exact ⟨m, hm, hval⟩
+  grind
 
 /-- `M_d(j)` is a lower bound for the objective on `T_{d,j}`. -/
 theorem Md_le (p q d j f : ℕ) (_hp : p.Prime) (_hf : 1 ≤ f) (_hq : q = p ^ f)

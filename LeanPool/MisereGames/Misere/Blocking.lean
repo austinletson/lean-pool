@@ -286,8 +286,7 @@ private theorem winsGoingFirst_left_natSub_add_blocking :
       rw [isEnd_def, Set.eq_empty_iff_forall_notMem]
       intro g' hg'
       rw [mem_leftMoves_natSub_add_isEnd hyend] at hg'
-      obtain ⟨a', ha', _⟩ := hg'
-      exact (Nat.succ_ne_zero a' ha'.symm).elim
+      grind
     · obtain ⟨a', rfl⟩ := Nat.exists_eq_succ_of_ne_zero hpos.ne'
       refine winsGoingFirst_of_moves ⟨((a' : GameForm) - (b : GameForm)) + y, ?_, ?_⟩
       · rw [mem_leftMoves_natSub_add_isEnd hyend]; exact ⟨a', rfl, rfl⟩
@@ -300,8 +299,7 @@ private theorem winsGoingFirst_left_natSub_add_blocking :
       have hmem : ((a : GameForm) - ((b - 1 : ℕ) : GameForm)) + y
           ∈ moves .right (((a : GameForm) - (b : GameForm)) + y) := by
         rw [mem_rightMoves_natSub_add]; exact Or.inl ⟨b - 1, by omega, rfl⟩
-      rw [hend] at hmem
-      exact (Set.notMem_empty _ hmem)
+      grind
     · rw [Player.neg_right]
       rw [mem_rightMoves_natSub_add] at hg'
       rcases hg' with ⟨b', hb', rfl⟩ | ⟨yr, hyr, rfl⟩

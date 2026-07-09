@@ -45,9 +45,7 @@ lemma sides_eq_union_iUnion (n : ℕ) :
   constructor
   · intro ⟨i, h⟩
     split
-    cases h with
-    | inl _ => left; use i
-    | inr _ => right; use i
+    grind
   · intro h
     cases h with
     | inl h => obtain ⟨i, h⟩ := h; split; use i; left; assumption

@@ -162,8 +162,7 @@ noncomputable def invLimRetr (y : ∀ n, D n) : InverseLimit D P :=
 theorem le_coe_invLimRetr (y : ∀ n, D n) : y ≤ (invLimRetr D P y).1 := by
   rw [invLimRetr, coe_sInf]
   refine le_sInf ?_
-  rintro _ ⟨x, hx, rfl⟩
-  exact hx
+  grind
 
 /-- `r ⊣ incl`: the retraction is left adjoint to the inclusion. -/
 theorem invLimRetr_galoisConnection :
@@ -420,8 +419,7 @@ theorem eval_preservesDirectedSup (n : ℕ) : PreservesDirectedSup (projInfFun D
   intro S hS hSdir
   have hL : (sSup S : InverseLimit D P).1 n = sSup ((fun y : InverseLimit D P => y.1 n) '' S) := by
     rw [coe_sSup_of_directed D P S hS hSdir, sSup_apply_eq_sSup_image]
-    congr 1
-    rw [Set.image_image]
+    grind
   exact hL
 
 /-- The embedding `i_{n∞} : Dₙ → D_∞`, Scott-continuous. -/

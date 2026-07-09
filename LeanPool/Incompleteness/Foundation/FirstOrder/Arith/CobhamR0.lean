@@ -39,8 +39,7 @@ lemma lt_numeral_iff {x : M} {n : ℕ} : x < numeral n ↔ ∃ i : Fin n, x = nu
   · intro hx
     rcases (this x).mp hx with ⟨i, hi, rfl⟩
     exact ⟨⟨i, hi⟩, by simp⟩
-  · rintro ⟨i, rfl⟩
-    exact (this (numeral i)).mpr ⟨i, by simp, rfl⟩
+  · grind
 
 @[simp] lemma numeral_inj_iff {n m : ℕ} : (numeral n : M) = numeral m ↔ n = m :=
   ⟨by contrapose; exact numeral_ne_numeral_of_ne, by rintro rfl; rfl⟩
@@ -80,13 +79,10 @@ lemma bold_sigma_one_completeness {n} {φ : Semiformula ℒₒᵣ ξ n} (hp : Hi
   case hNLT => intro n t₁ t₂ e; simp [val_numeral]
   case hAnd =>
     simp only [LogicalConnective.HomClass.map_and, LogicalConnective.Prop.and_eq, and_imp]
-    intro n φ ψ _ _ ihp ihq e hp hq
-    exact ⟨ihp hp, ihq hq⟩
+    grind
   case hOr =>
     simp only [LogicalConnective.HomClass.map_or, LogicalConnective.Prop.or_eq]
-    rintro n φ ψ _ _ ihp ihq e (hp | hq)
-    · left; exact ihp hp
-    · right; exact ihq hq
+    grind
   case hBall =>
     simp only [Semiformula.eval_ball, Nat.succ_eq_add_one, Semiformula.eval_operator₂,
       Semiterm.val_bvar, Matrix.cons_val_zero, Semiterm.val_bShift, Structure.LT.lt, val_numeral]

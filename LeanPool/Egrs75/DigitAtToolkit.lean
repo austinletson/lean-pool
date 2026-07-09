@@ -69,8 +69,7 @@ theorem lowDigits_iff_digitAt {p n : ℕ} (hp : 2 ≤ p) :
     rcases lt_or_ge i (Nat.digits p n).length with hi | hi
     · rw [List.getD_eq_getElem _ _ hi]
       exact h _ (List.getElem_mem hi)
-    · rw [List.getD_eq_default _ _ hi]
-      exact Nat.zero_le _
+    · grind
   · intro h d hd
     obtain ⟨i, hi, rfl⟩ := List.mem_iff_getElem.mp hd
     rw [← List.getD_eq_getElem _ 0 hi, getD_digits n i hp]

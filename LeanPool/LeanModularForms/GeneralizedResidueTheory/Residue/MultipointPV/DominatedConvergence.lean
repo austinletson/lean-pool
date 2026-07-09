@@ -36,13 +36,7 @@ private lemma continuousOn_deriv_off_partition (γ : PiecewiseC1Immersion) :
         t ht_Ioo ht_notP).continuousWithinAt
   · have ha_in_P := γ.toPiecewiseC1Curve.endpoints_in_partition.1
     have hb_in_P := γ.toPiecewiseC1Curve.endpoints_in_partition.2
-    have ht_endpoint : t = γ.a ∨ t = γ.b := by
-      simp only [Set.mem_Ioo, not_and, not_lt] at ht_Ioo
-      rcases ht_Icc.1.lt_or_eq with h | h
-      · right; exact le_antisymm ht_Icc.2 (ht_Ioo h)
-      · left; exact h.symm
-    rcases ht_endpoint with rfl | rfl
-    <;> exact (ht_notP (by assumption)).elim
+    grind
 
 private lemma uIoc_subset_Icc_of_lt {a b : ℝ} (hab : a < b) : Set.uIoc a b ⊆ Icc a b :=
   Set.uIoc_of_le (le_of_lt hab) ▸ Set.Ioc_subset_Icc_self
@@ -86,11 +80,9 @@ private lemma dominated_convergence_empty_case (f g_reg : ℂ → ℂ) (γ : Pie
     simp only [cauchyPrincipalValueIntegrandOn, Finset.notMem_empty, false_and,
       exists_false, ↓reduceIte]
   have hf_eq_g : ∀ z, f z = g_reg z := by
-    intro z; have h := hg_decomp z (Finset.notMem_empty z)
-    simp only [Finset.sum_empty, add_zero] at h; exact h
+    grind
   have hM_eq_G : ∀ ε > 0, M ε = G := by
-    intro ε hε; rw [hM_eq ε hε]
-    apply intervalIntegral.integral_congr; intro t _; simp only [hf_eq_g (γ.toFun t)]
+    grind
   apply Filter.Tendsto.congr'
   · filter_upwards [self_mem_nhdsWithin] with ε hε; rw [hA_eq_M, hM_eq_G ε hε]
   · exact tendsto_const_nhds
@@ -142,9 +134,7 @@ private lemma pointwise_ae_limit_off_crossing (S0 : Finset ℂ) (f g_reg : ℂ �
               f (γ.toFun t) * deriv γ.toFun t := by
             simp only [cauchyPrincipalValueIntegrandOn]; rw [if_neg]; push Not; exact hall_far
           rw [hM_eval, residue_sum_ifs_eq_mul_deriv hall_far, ← sub_mul]
-          have hdecomp := hg_decomp (γ.toFun t) hγt_not_in_S0
-          rw [show f (γ.toFun t) - ∑ s ∈ S0, residueSimplePole f s / (γ.toFun t - s) =
-            g_reg (γ.toFun t) from by rw [hdecomp]; ring]
+          grind
     _ = 0 := h_crossing_null
 
 /-! ## Dominated Convergence: Norm Bounds -/
@@ -198,11 +188,7 @@ private lemma residue_sum_norm_le_singular_bound {S0 : Finset ℂ} {f : ℂ → 
           calc ‖s - s₀‖ - ‖z - s₀‖ ≤ ‖(s - s₀) - (z - s₀)‖ := this
             _ = ‖s - z‖ := by ring_nf
             _ = ‖z - s‖ := norm_sub_rev _ _
-        by_cases hε_small' : ε ≤ δ / 2
-        · calc δ / 2 ≤ δ - ε := by linarith
-            _ ≤ ‖s - s₀‖ - ‖z - s₀‖ := by linarith [h_sep, hs₀_near]
-            _ ≤ ‖z - s‖ := h_tri
-        · push Not at hε_small'; linarith [h_inc]
+        grind
     have hMc_nonneg : 0 ≤ Mc := le_trans (norm_nonneg _) (hMc s hs)
     calc ‖residueSimplePole f s / (z - s)‖
         = ‖residueSimplePole f s‖ / ‖z - s‖ := norm_div _ _
@@ -233,10 +219,7 @@ private lemma norm_A_int_bound_some_near (S0 : Finset ℂ) (f : ℂ → ℂ) (γ
         then residueSimplePole f s / (γ.toFun t - s) * deriv γ.toFun t else 0) =
       (∑ s ∈ S0, if ‖γ.toFun t - s‖ > ε
         then residueSimplePole f s / (γ.toFun t - s) else 0) * deriv γ.toFun t := by
-    rw [Finset.sum_mul]; apply Finset.sum_congr rfl; intro s _
-    by_cases h : ‖γ.toFun t - s‖ > ε
-    · simp only [h, ↓reduceIte]
-    · simp only [h, ↓reduceIte, zero_mul]
+    rw [Finset.sum_mul]; grind
   rw [h_factor]
   let singularBound := 2 * (S0.card : ℝ) * Mc / δ
   have h_sum_bound : ‖∑ s ∈ S0, if ‖γ.toFun t - s‖ > ε

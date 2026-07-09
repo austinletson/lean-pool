@@ -134,9 +134,7 @@ private theorem sylvesterBelow_monotone : Monotone sylvesterBelow := by
       pow_one, Real.rpow_one, Real.rpow_two, sylvester] <;> try linarith
     have h : 1 < sylvester m := sylvester_ge_two _
     push_cast [h]
-    rw [sub_sq]
-    ring_nf
-    linarith
+    grind
 
 private theorem sylvesterAbove_strictAnti : StrictAnti sylvesterAbove := by
   refine strictAnti_nat_of_succ_lt ?h
@@ -152,9 +150,7 @@ private theorem sylvesterAbove_strictAnti : StrictAnti sylvesterAbove := by
       pow_one, Real.rpow_one, Real.rpow_two, sylvester] <;> try linarith
     have h : 1 < sylvester m := sylvester_ge_two _
     push_cast [h]
-    rw [add_sq]
-    ring_nf
-    linarith
+    grind
 
 private theorem sylvesterBelow_le_sylvesterAbove (n m : ℕ) :
     sylvesterBelow n ≤ sylvesterAbove m := by

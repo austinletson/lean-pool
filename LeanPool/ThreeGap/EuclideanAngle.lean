@@ -149,7 +149,6 @@ theorem angle_ge_pi_div_three_of_norm_sub_gt {u w : E} (hu : u â‰  0) (hw : w â‰
   by_contra h
   rw [not_le] at h
   have hlt := norm_sub_lt_max_of_angle_lt hu hw h
-  rw [max_eq_right hnorm] at hlt
-  linarith
+  grind
 
 end ThreeGap.EuclideanAngle

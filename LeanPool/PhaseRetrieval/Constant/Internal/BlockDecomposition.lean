@@ -85,11 +85,9 @@ private lemma freqBlock_unique {n ℓ₁ ℓ₂ : ℕ}
   by_contra hne
   rcases Nat.lt_or_gt_of_ne hne with h | h
   · have hsq : (ℓ₁ + 1) ^ 2 ≤ ℓ₂ ^ 2 := Nat.pow_le_pow_left (by omega) 2
-    have hpos : 0 < (ℓ₁ + 1) ^ 2 := Nat.pos_of_ne_zero (by positivity)
-    omega
+    grind
   · have hsq : (ℓ₂ + 1) ^ 2 ≤ ℓ₁ ^ 2 := Nat.pow_le_pow_left (by omega) 2
-    have hpos : 0 < (ℓ₂ + 1) ^ 2 := Nat.pos_of_ne_zero (by positivity)
-    omega
+    grind
 
 /-- Every natural number belongs to `freqBlock (Nat.sqrt n)`. -/
 private lemma mem_freqBlock_sqrt (n : ℕ) : n ∈ freqBlock (Nat.sqrt n) := by
@@ -100,8 +98,7 @@ private lemma mem_freqBlock_sqrt (n : ℕ) : n ∈ freqBlock (Nat.sqrt n) := by
 /-- The cardinality of `freqBlock ℓ` is `2ℓ + 1`. -/
 lemma freqBlock_card (ℓ : ℕ) : (freqBlock ℓ).card = 2 * ℓ + 1 := by
   simp only [freqBlock]; rw [Nat.card_Icc]
-  have h : (ℓ + 1) ^ 2 = ℓ ^ 2 + 2 * ℓ + 1 := by ring
-  omega
+  grind
 
 /-! ### Fourier analysis helpers -/
 
@@ -209,16 +206,10 @@ theorem blocks_disjoint {ℓ₁ ℓ₂ : ℕ} (h₁ : 1 ≤ ℓ₁) (h₂ : 1 �
   rcases Nat.lt_or_gt_of_ne hne with h | h
   · have hle : ℓ₁ + 1 ≤ ℓ₂ := h
     have hsq : (ℓ₁ + 1) ^ 2 ≤ ℓ₂ ^ 2 := Nat.pow_le_pow_left hle 2
-    have ha_upper : a + 1 ≤ (ℓ₁ + 1) ^ 2 := by
-      have : 0 < (ℓ₁ + 1) ^ 2 := Nat.pos_of_ne_zero (by positivity)
-      omega
-    omega
+    grind
   · have hle : ℓ₂ + 1 ≤ ℓ₁ := h
     have hsq : (ℓ₂ + 1) ^ 2 ≤ ℓ₁ ^ 2 := Nat.pow_le_pow_left hle 2
-    have ha_upper : a + 1 ≤ (ℓ₂ + 1) ^ 2 := by
-      have : 0 < (ℓ₂ + 1) ^ 2 := Nat.pos_of_ne_zero (by positivity)
-      omega
-    omega
+    grind
 
 /-! ## Theorem 5.2: Blocks partition {1, …, D}
 
@@ -356,8 +347,7 @@ theorem monomial_peak_localization {n ℓ : ℕ} (hℓ : 1 ≤ ℓ)
     apply Real.sqrt_lt_sqrt
       (by linarith [show (0 : ℝ) ≤ n from Nat.cast_nonneg n])
     have h1 : n + 1 ≤ (ℓ + 1) ^ 2 := by
-      have : 0 < (ℓ + 1) ^ 2 := Nat.pos_of_ne_zero (by positivity)
-      omega
+      grind
     have : (n : ℝ) + 1 ≤ ((ℓ + 1 : ℕ) : ℝ) ^ 2 := by exact_mod_cast h1
     push_cast at this ⊢; linarith
 

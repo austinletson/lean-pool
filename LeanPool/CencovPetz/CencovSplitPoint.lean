@@ -58,18 +58,15 @@ theorem eq_smul_fisher_of_isSplitRepresentable (G : MonotoneMetricFamily)
   let b0 : β := ⟨a0, ⟨0, hm a0⟩⟩
   let b1 : β := ⟨a1, ⟨0, hm a1⟩⟩
   have hb01 : b0 ≠ b1 := by
-    intro h
-    exact ha01 (congrArg Sigma.fst h)
+    grind
   have hn : 2 ≤ n := by
     have h : 1 < Fintype.card β :=
       (Fintype.one_lt_card_iff).2 ⟨b0, b1, hb01⟩
-    have h' : 1 < n := by simpa [n] using h
-    exact Nat.succ_le_iff.2 h'
+    grind
   let i0 : Fin n := ⟨0, lt_of_lt_of_le Nat.zero_lt_two hn⟩
   let i1 : Fin n := ⟨1, lt_of_lt_of_le Nat.one_lt_two hn⟩
   have hi01 : i0 ≠ i1 := by
-    intro h
-    exact Nat.zero_ne_one (congrArg Fin.val h)
+    grind
   haveI : Nonempty (Fin n) := ⟨i0⟩
   have h_equiv_uniform :
       (MarkovMorphism.deterministic

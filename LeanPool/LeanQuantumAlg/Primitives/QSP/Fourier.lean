@@ -271,8 +271,7 @@ private theorem yz_norm_step {L : ℕ} {A B : ℂ[X]} (hA : A.natDegree ≤ L)
       = C (starRingEnd ℂ v) * A + C (-w) * (X * B) := by
     rw [map_neg]; ring
   rw [h1, reflect_conjP_step hA hB v (-w), reflect_conjP_step hA hB w v]
-  simp only [map_neg]
-  ring
+  grind
 
 /-- One-step closure of the YZ pair conditions under the recurrence
 `(A, B) ↦ (v*·A - w·X·B, w*·A + v·X·B)` for a unit pair `(v, w)`. -/
@@ -729,13 +728,9 @@ private theorem exists_unstep_vw {L : ℕ} {A B : ℂ[X]} (h : IsYZPair (L + 1) 
     · exact ⟨1, 0, by simp, by simp, by simp [hT.1, hT.2],
         by simp [h0.1, h0.2]⟩
     · have hne : ¬(-B.coeff (L + 1) = 0 ∧ A.coeff (L + 1) = 0) := by
-        rintro ⟨hb', ha'⟩
-        exact hT ⟨ha', by simpa using hb'⟩
+        grind
       obtain ⟨c, hunit, him⟩ := exists_unit_mul hne
-      refine ⟨c * -B.coeff (L + 1), c * A.coeff (L + 1), hunit, him,
-        by ring, ?_⟩
-      rw [h0.1, h0.2]
-      ring
+      grind
   · have hne : ¬(starRingEnd ℂ (A.coeff 0) = 0
         ∧ starRingEnd ℂ (B.coeff 0) = 0) := by
       rintro ⟨h1, h2⟩
@@ -799,11 +794,9 @@ private theorem isYZPair_unstep {L : ℕ} {A B : ℂ[X]} (h : IsYZPair (L + 1) A
       ((Polynomial.degree_le_iff_coeff_zero _ _).mpr fun m hm =>
         hB'c m (by exact_mod_cast hm))
   have hAeq : A = C (starRingEnd ℂ v) * A' - C w * (X * B''.divX) := by
-    rw [hXdiv, hA'def, hB''def]
-    linear_combination (-A : ℂ[X]) * hC
+    grind
   have hBeq : B = C (starRingEnd ℂ w) * A' + C v * (X * B''.divX) := by
-    rw [hXdiv, hA'def, hB''def]
-    linear_combination (-B : ℂ[X]) * hC
+    grind
   have hnorm' : A' * (conjP A').reflect L
       + B''.divX * (conjP B''.divX).reflect L = X ^ L := by
     have hstep := yz_norm_step hA'nd hB'nd v w
@@ -891,14 +884,11 @@ private theorem exists_unstep_vw_yzy {L : ℕ} {A B : ℂ[X]}
       · exact ⟨1, 0, by norm_num, by rw [hT.1, hT.2]; ring,
           by rw [h0.1, h0.2]; ring⟩
       · have hne : ¬(-bT = 0 ∧ aT = 0) := by
-          rintro ⟨hb', ha'⟩
-          exact hT ⟨ha', by linarith⟩
+          grind
         obtain ⟨v, w, hu, c, hv, hw⟩ := exists_real_unit hne
-        exact ⟨v, w, hu, by rw [hv, hw]; ring,
-          by rw [hv, hw, h0.1, h0.2]; ring⟩
+        grind
     · obtain ⟨v, w, hu, c, hv, hw⟩ := exists_real_unit h0
-      exact ⟨v, w, hu, by rw [hv, hw]; linear_combination c * hRr,
-        by rw [hv, hw]; ring⟩
+      grind
   refine ⟨v, w, hu, ?_, ?_⟩
   · rw [haT, hbT]
     exact_mod_cast congrArg (fun u : ℝ => (u : ℂ)) hc1
@@ -960,11 +950,9 @@ theorem qspYZY_converse :
           = 1 := by
         rw [← C_mul, ← C_mul, ← C_add, hCv, map_one]
       have hA'form : A' = C (v : ℂ) * A + C (w : ℂ) * B := by
-        rw [hAeq, hBeq]
-        linear_combination (-A' : ℂ[X]) * hCp
+        grind
       have hXB'form : X * B' = C (v : ℂ) * B - C (w : ℂ) * A := by
-        rw [hAeq, hBeq]
-        linear_combination (-(X * B') : ℂ[X]) * hCp
+        grind
       have hrA' : conjP A' = A' := by
         rw [hA'form, conjP_add, conjP_mul, conjP_mul, conjP_C, conjP_C,
           Complex.conj_ofReal, Complex.conj_ofReal, h.realA, h.realB]

@@ -17,13 +17,7 @@ Imported Lean Pool material for `LeanPool.PentagonalNumberTheorem.Partition`.
 
 theorem two_pentagonal (k : ℤ) : 2 * (k * (3 * k - 1) / 2) = k * (3 * k - 1) := by
   refine Int.two_mul_ediv_two_of_even ?_
-  obtain h | h := Int.even_or_odd k
-  · exact Even.mul_right h (3 * k - 1)
-  · refine Even.mul_left ?_ _
-    refine Int.even_sub_one.mpr ?_
-    refine Int.not_even_iff_odd.mpr ?_
-    refine Odd.mul ?_ h
-    decide
+  grind
 
 theorem pentagonal_nonneg (k : ℤ) : 0 ≤ k * (3 * k - 1) / 2 := by
   suffices 0 ≤ 2 * (k * (3 * k - 1) / 2) by simpa
@@ -36,10 +30,7 @@ theorem two_pentagonal_inj {x y : ℤ} (h : x * (3 * x - 1) = y * (3 * y - 1)) :
   simp_rw [mul_sub_one] at h
   rw [sub_eq_sub_iff_sub_eq_sub, mul_left_comm x, mul_left_comm y, ← mul_sub,
     mul_self_sub_mul_self, ← mul_assoc, ← sub_eq_zero, ← sub_one_mul, mul_eq_zero] at h
-  obtain h | h := h
-  · obtain h' := Int.eq_of_mul_eq_one <| eq_of_sub_eq_zero h
-    simp [← h'] at h
-  · exact eq_of_sub_eq_zero h
+  grind
 
 theorem pentagonal_injective : Function.Injective (fun (k : ℤ) ↦ k * (3 * k - 1) / 2) := by
   intro a b h
@@ -90,16 +81,14 @@ theorem mem_kSet_iff {n k : ℤ} :
       by_contra! h
       obtain h' := h.1.trans h.2
       have : (1 + 24 * n).toNat = 0 := by
-        simp only [Int.toNat_eq_zero]
-        linarith
+        grind
       simp [Int.sqrt, this] at h'
     · simp only [false_iff, not_le]
       exact hneg.trans_le (pentagonal_nonneg k)
   symm
   calc
     k * (3 * k - 1) / 2 ≤ n ↔ 12 * (2 * (k * (3 * k - 1) / 2)) ≤ 24 * n := by
-      rw [← mul_assoc]
-      norm_num
+      grind
     _ ↔ 36 * k ^ 2 - 12 * k ≤ 24 * n := by
       rw [two_pentagonal]
       ring_nf
@@ -157,8 +146,7 @@ theorem sum_partition (n : ℕ) (hn : n ≠ 0) :
       contrapose! hmem with hi2
       simp_rw [Set.mem_image, mem_coe]
       refine ⟨k, mem_kSet_iff.mpr ?_, ?_⟩
-      · rw [← hi, hi2]
-        simp [pentagonal_nonneg]
+      · grind
       · simp [← hi, ← hi2]
     · intro k hk
       rw [tsum_eq_single k ?_]

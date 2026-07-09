@@ -103,8 +103,7 @@ lemma fdPolygon_ne_p_everywhere (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_re : |p.re
       have hin_ball : chordSegment rho' iPoint (t - 1) ∈ closedBall (0 : ℂ) 1 :=
         chord_in_closed_unit_ball rho' iPoint rho'_norm i_point_norm (t - 1) ht_range
       rw [mem_closedBall, dist_zero_right] at hin_ball
-      rw [heq] at hin_ball
-      linarith
+      grind
     · push Not at ht2
       by_cases ht3 : t ≤ 3
       · simp only [fdPolygon, not_le.mpr ht1, not_le.mpr ht2, ht3, ↓reduceIte] at heq
@@ -112,15 +111,13 @@ lemma fdPolygon_ne_p_everywhere (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_re : |p.re
         have hin_ball : chordSegment iPoint rho (t - 2) ∈ closedBall (0 : ℂ) 1 :=
           chord_in_closed_unit_ball iPoint rho i_point_norm rho_norm (t - 2) ht_range
         rw [mem_closedBall, dist_zero_right] at hin_ball
-        rw [heq] at hin_ball
-        linarith
+        grind
       · push Not at ht3
         by_cases ht4 : t ≤ 4
         · simp only [fdPolygon, not_le.mpr ht1, not_le.mpr ht2, not_le.mpr ht3, ht4,
             ↓reduceIte] at heq
           have hre : p.re = -1/2 := by rw [← heq]; simp [Complex.add_re, Complex.mul_re]
-          have hp_re' : p.re > -1/2 := by linarith [abs_lt.mp hp_re]
-          linarith
+          grind
         · push Not at ht4
           simp only [fdPolygon, not_le.mpr ht1, not_le.mpr ht2, not_le.mpr ht3,
             not_le.mpr ht4, ↓reduceIte] at heq
@@ -330,8 +327,7 @@ lemma norm_normalize_sub_le {w₁ w₂ : ℂ} {δ : ℝ} (hδ : 0 < δ)
         w₂ * ((‖w₂‖ : ℂ) - (‖w₁‖ : ℂ)) / ((‖w₁‖ : ℂ) * (‖w₂‖ : ℂ)) := by
     have h1c : (‖w₁‖ : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr (ne_of_gt h1_pos)
     have h2c : (‖w₂‖ : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr (ne_of_gt h2_pos)
-    field_simp
-    ring
+    grind
   have hterm1 : ‖(w₁ - w₂) / (‖w₁‖ : ℂ)‖ ≤ ‖w₁ - w₂‖ / δ := by
     have h_eq : ‖(w₁ - w₂) / (‖w₁‖ : ℂ)‖ = ‖w₁ - w₂‖ / ‖w₁‖ := by
       rw [norm_div, norm_real, Real.norm_eq_abs, abs_of_nonneg (le_of_lt h1_pos)]
@@ -543,8 +539,7 @@ lemma polygonToCircleRadial_deriv_bounded (p : ℂ) (hp_norm : ‖p‖ > 1)
           a + b + c - (a + d + e) = (b - d) + (c - e) := by intros; ring
       rw [h_cancel]
       simp only [RCLike.real_smul_eq_coe_mul]
-      push_cast
-      ring
+      grind
     have h_norm_ge : ∀ᶠ t' in 𝓝 t, δ / 2 ≤ ‖fdPolygon t' - p‖ :=
       (fdPolygon_continuous.sub continuous_const).norm.continuousAt.preimage_mem_nhds
         (Ici_mem_nhds (by linarith [hδ_le t ht] : δ / 2 < ‖fdPolygon t - p‖))
@@ -578,8 +573,7 @@ lemma polygonToCircleRadial_deriv_bounded (p : ℂ) (hp_norm : ‖p‖ > 1)
                 ≤ 2 * ‖fdPolygon t' - fdPolygon t‖ / (δ / 2) :=
                   h_nsub
               _ = 4 * ‖fdPolygon t' - fdPolygon t‖ / δ := by
-                  have hd : δ ≠ 0 := ne_of_gt hδ_pos
-                  field_simp; ring
+                  grind
           · exact abs_nonneg _
       _ ≤ 1 * ‖fdPolygon t' - fdPolygon t‖ +
           1 * (4 * ‖fdPolygon t' - fdPolygon t‖ / δ) := by

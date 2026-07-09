@@ -78,8 +78,7 @@ theorem intervalIntegral_continuous_on_param
     by_cases htab : t ∈ Icc a b
     · exact hM (t, s)
         ⟨htab, le_of_lt hs.1, le_of_lt hs.2⟩
-    · rw [Set.uIoc_of_le hab] at ht
-      exact absurd (Ioc_subset_Icc_self ht) htab
+    · grind
   · exact intervalIntegrable_const
   · exact hcont_pt
 
@@ -448,8 +447,7 @@ private lemma homotopy_uniform_bound
   filter_upwards with t ht s' hs'
   have h_mem_K : (t, s') ∈ K := ⟨h_uIoc_subset ht, h_ball_subset hs'⟩
   have h_le := hM_pt_max h_mem_K
-  simp only [Set.mem_setOf_eq, Function.comp_apply] at h_le
-  exact h_le
+  grind
 
 /-- Continuity of `t ↦ f(H(t,s')) * ∂H/∂t(t,s')` for fixed s'. -/
 private lemma homotopy_F_continuous_t
@@ -615,7 +613,6 @@ theorem hasDerivAt_homotopy_integral_zero
     rw [← h_ftc]
     exact hasDerivAt_homotopy_param f H a b s hab hH_smooth hf_diff hfH_cont hs
       hf_differentiable (fun t ht => h_schwarz t ht)
-  rw [h_boundary] at h_deriv
-  exact h_deriv
+  grind
 
 end

@@ -45,8 +45,7 @@ theorem descent_lemma (fx fy : ℝ) (grad_sq : ℝ) (L : ℝ)
     fy ≤ fx - 1 / (2 * L) * grad_sq := by
   have hL_ne : L ≠ 0 := ne_of_gt hL
   have key : fx - 1 / L * grad_sq + L / 2 * (1 / L) ^ 2 * grad_sq = fx - 1 / (2 * L) * grad_sq := by
-    field_simp
-    ring
+    grind
   linarith
 
 /-- Parameter identity: (1 + a) · ρ = 1 - a when ρ = (1-a)/(1+a). -/

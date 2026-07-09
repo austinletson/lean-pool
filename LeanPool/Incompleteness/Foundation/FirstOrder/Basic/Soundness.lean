@@ -57,16 +57,11 @@ lemma sound (M : Type*) [s : Structure L M] [Nonempty M] [M ⊧ₘ* T] (ε : ℕ
     · exact ⟨ψ, by simp [hq], hhq⟩
   | @wk _ _ Γ Δ d ss => by
     have : ∃ φ ∈ Δ, Evalfm M ε φ := sound M ε d
-    rcases this with ⟨φ, hp, h⟩
-    exact ⟨φ, ss hp, h⟩
+    grind
   | @cut _ _ Δ φ d dn => by
     have h : Evalfm M ε φ ∨ ∃ ψ ∈ Δ, Evalfm M ε ψ := by simpa using sound M ε d
     have hn : ¬Evalfm M ε φ ∨ ∃ ψ ∈ Δ, Evalfm M ε ψ := by simpa using sound M ε dn
-    rcases h with (h | ⟨ψ, h, hq⟩)
-    · rcases hn with (hn | ⟨ψ, hn, hq⟩)
-      · contradiction
-      · exact ⟨ψ, by simp [hn], hq⟩
-    · exact ⟨ψ, by simp [h], hq⟩
+    grind
   | root (φ := φ) h => ⟨φ, by simp, Theory.models M T h ε⟩
 
 end Derivation

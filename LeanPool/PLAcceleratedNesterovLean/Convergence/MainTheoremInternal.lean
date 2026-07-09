@@ -39,10 +39,7 @@ private theorem exists_total_nearest_projection
   classical
   refine ⟨fun x => if hx : x ∈ U then (hTub.uniqueProj x hx).choose else hS_ne.some,
     ?_, ?_, ?_⟩
-  · intro x hx
-    dsimp only
-    rw [dif_pos hx]
-    exact (hTub.uniqueProj x hx).choose_spec.1
+  · grind
   · intro x hxS
     dsimp only
     have hxU : x ∈ U := hTub.subset hxS
@@ -157,8 +154,7 @@ private theorem mu_le_L_of_pl_descent_near
     have h1 : η * ‖gradient f y‖ ≤ η * ((L : ℝ) * dist y m) := by
       exact mul_le_mul_of_nonneg_left hgrad_bound hη_pos.le
     have h2 : η * ((L : ℝ) * dist y m) = dist y m := by
-      rw [hη_def]
-      field_simp
+      grind
     linarith
   have hseg : ∀ t : ℝ, 0 ≤ t → t ≤ 1 →
       y + t • (-(η • gradient f y)) ∈ Metric.ball m r := by
@@ -187,8 +183,7 @@ private theorem mu_le_L_of_pl_descent_near
   have h_upper : ‖gradient f y‖ ^ 2 ≤ 2 * (L : ℝ) * (f y - fStar f) := by
     have h1 : η / 2 * ‖gradient f y‖ ^ 2 ≤ f y - fStar f := by linarith
     have h2 : (L : ℝ) * η = 1 := by
-      rw [hη_def]
-      field_simp
+      grind
     calc ‖gradient f y‖ ^ 2
         = (L : ℝ) * η * ‖gradient f y‖ ^ 2 := by rw [h2, one_mul]
       _ = 2 * (L : ℝ) * (η / 2 * ‖gradient f y‖ ^ 2) := by ring
@@ -220,8 +215,7 @@ private theorem open_neighborhood_from_local_balls
   · exact isOpen_biUnion (fun m _ => Metric.isOpen_ball)
   · intro m hm
     have hpos : 0 < α' m := by
-      simp only [α', dif_pos hm]
-      exact (hα m hm).1
+      grind
     exact Set.mem_biUnion hm (Metric.mem_ball_self hpos)
   · intro x hx
     obtain ⟨m, hmS, hxm⟩ := Set.mem_iUnion₂.mp hx
@@ -229,8 +223,7 @@ private theorem open_neighborhood_from_local_balls
     exact (hα m hmS).2.1 hxm
   · intro x hx
     obtain ⟨m, hmS, hxm⟩ := Set.mem_iUnion₂.mp hx
-    rw [hα'_spec m hmS] at hxm
-    exact (hα m hmS).2.2 x hxm
+    grind
 
 /-- Degenerate zero-smoothness branch for the public theorem.  Since
 `1 / L = 0`, the chosen Nesterov dynamics is stationary. -/
@@ -264,8 +257,7 @@ private theorem nesterov_pl_accelerated_rate_zero_L
   refine ⟨U, hU_open, hS_sub, Set.Subset.rfl, ?_⟩
   intro x₀ hx₀
   have hη : (1 : ℝ) / (L : ℝ) = 0 := by
-    rw [hL_zero]
-    norm_num
+    grind
   have hseq : ∀ k, nesterovSeqGen f (1 / ↑L) ρ ⟨x₀, 0⟩ k = ⟨x₀, 0⟩ := by
     intro k
     rw [hη]
@@ -368,8 +360,7 @@ private theorem nesterov_pl_accelerated_rate_zero_L_argmin
   · refine ⟨U, hU_open, hS_sub, Set.Subset.rfl, ?_⟩
     intro x₀ hx₀
     have hη : (1 : ℝ) / (L : ℝ) = 0 := by
-      rw [hL_zero]
-      norm_num
+      grind
     have hseq : ∀ k, nesterovSeqGen f (1 / ↑L) ρ ⟨x₀, 0⟩ k = ⟨x₀, 0⟩ := by
       intro k
       rw [hη]
@@ -399,8 +390,7 @@ private theorem nesterov_pl_accelerated_rate_zero_L_argmin
   · refine ⟨∅, isOpen_empty, ?_, Set.empty_subset U, ?_⟩
     · intro x hx
       exact False.elim (hS_ne ⟨x, hx⟩)
-    · intro x hx
-      cases hx
+    · grind
 
 /-- Degenerate zero-dimensional branch for the C³-only theorem. -/
 private theorem nesterov_pl_accelerated_rate_zero_dim_argmin
@@ -498,9 +488,7 @@ private theorem nesterov_pl_accelerated_rate_theta_tubular
         rw [div_le_iff₀ hL]
         simpa only [one_mul] using hμ_le_L
       have hθ_le_quarter : θ ≤ 1 / 4 := by
-        calc θ ≤ Real.sqrt (μ / ↑L) / 8 := hθ_le
-          _ ≤ 1 / 8 := by nlinarith
-          _ ≤ 1 / 4 := by norm_num
+        grind
       have hθ_lt1 : θ < 1 := by linarith
       exact nesterov_convergence_at_base_point_position_theta hd L hL μ hμ hμ_le_L
         θ hθ_pos hθ_lt1 hθ_le hθ_le_quarter f S hS_argmin U hTub_sub hPL hf_C2
@@ -651,8 +639,7 @@ theorem nesterov_pl_accelerated_rate_embedded
         dsimp only [θ]
         exact div_pos (Real.sqrt_pos_of_pos (div_pos hμ hL)) (by norm_num)
       have hθ_le : θ ≤ Real.sqrt (μ / ↑L) / 8 := by
-        dsimp only [θ]
-        nlinarith [Real.sqrt_nonneg (μ / ↑L)]
+        grind
       obtain ⟨U_tub, _hU_tub_open, _hS_sub_tub, hU_tub_sub, hGenTub⟩ :=
         exists_general_tubular_subneighborhood M ι hι U hU_open hS_sub
       have hf_C2_tub : ContDiffOn ℝ 2 f U_tub := hf_C2.mono hU_tub_sub
@@ -714,8 +701,7 @@ theorem nesterov_pl_accelerated_rate_c3_internal
           dsimp only [θ]
           exact div_pos (Real.sqrt_pos_of_pos (div_pos hμ hL)) (by norm_num)
         have hθ_le : θ ≤ Real.sqrt (μ / ↑L) / 8 := by
-          dsimp only [θ]
-          nlinarith [Real.sqrt_nonneg (μ / ↑L)]
+          grind
         obtain ⟨U_tub, _hU_tub_open, _hS_sub_tub, hU_tub_sub, _hGenTub, hTub_sub⟩ :=
           exists_tubular_subneighborhood_of_c3_pl hd hU_open hS_sub hPL hf_C3
         have hf_C2_tub : ContDiffOn ℝ 2 f U_tub :=
@@ -743,7 +729,6 @@ theorem nesterov_pl_accelerated_rate_c3_internal
   · refine ⟨∅, isOpen_empty, ?_, Set.empty_subset U, ?_⟩
     · intro x hx
       exact False.elim (hS_ne ⟨x, hx⟩)
-    · intro x hx
-      cases hx
+    · grind
 
 end PLAcceleratedNesterovLean

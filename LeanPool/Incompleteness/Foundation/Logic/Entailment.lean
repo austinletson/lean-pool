@@ -140,8 +140,7 @@ lemma not_weakerThan_iff : ¬𝓢 wkn 𝓣 ↔ (∃ f, 𝓢 ⊢! f ∧ 𝓣 ⊬ 
 lemma strictlyWeakerThan_iff : 𝓢 swkn 𝓣 ↔ (∀ {f}, 𝓢 ⊢! f → 𝓣 ⊢! f) ∧ (∃ f, 𝓢 ⊬ f ∧ 𝓣 ⊢! f) := by
   constructor
   · rintro ⟨wt, nwt⟩
-    exact ⟨weakerThan_iff.mp wt, by rcases not_weakerThan_iff.mp nwt with ⟨φ, ht, hs⟩; exact ⟨φ,
-      hs, ht⟩⟩
+    exact ⟨weakerThan_iff.mp wt, by rcases not_weakerThan_iff.mp nwt with ⟨φ, ht, hs⟩; grind⟩
   · rintro ⟨h, φ, hs, ht⟩
     exact ⟨weakerThan_iff.mpr h, not_weakerThan_iff.mpr ⟨φ, ht, hs⟩⟩
 

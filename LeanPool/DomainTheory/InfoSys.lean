@@ -109,7 +109,6 @@ instance : PartialOrder sys.Element where
     have hc : x.carrier = y.carrier := Set.Subset.antisymm h1 h2
     cases x
     cases y
-    subst hc
-    rfl
+    grind
 
 end InfoSys

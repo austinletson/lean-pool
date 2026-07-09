@@ -155,15 +155,11 @@ private lemma reducedProduct_of_star_le_mul (α β : AspPerm) (hupper : α ⋆ �
   by_cases hln : l ≤ n
   · have hn : n ∈ star_hi_error α β (α m) (β⁻¹ m) l :=
       (mem_star_hi_error α β (α m) (β⁻¹ m) l n).mpr ⟨hln, hα.2, hβ.2⟩
-    have hncard : 0 < (star_hi_error α β (α m) (β⁻¹ m) l).card :=
-      Finset.card_pos.mpr ⟨n, hn⟩
-    omega
+    grind
   · have hm : m ∈ star_lo_error α β (α m) (β⁻¹ m) l := by
       apply (mem_star_lo_error α β (α m) (β⁻¹ m) l m).mpr
       exact ⟨lt_of_lt_of_le hα.1 (le_of_lt (lt_of_not_ge hln)), le_refl _, le_refl _⟩
-    have hmcard : 0 < (star_lo_error α β (α m) (β⁻¹ m) l).card :=
-      Finset.card_pos.mpr ⟨m, hm⟩
-    omega
+    grind
 
 /-- A reduced ordinary product is an upper bound for the Demazure product.
 *Proof component for Lemma 5.1 (`lem:reducedStar`) of
@@ -191,8 +187,7 @@ private lemma star_le_mul_of_reducedProduct (α β : AspPerm)
     have hβm : β⁻¹ m ∈ β.seFinset l₀ b := by
       simpa only [AspPerm.mem_se, ge_iff_le, AspPerm.mul_inv_cancel_eval] using
         ⟨hm'.2.1, hm'.1⟩
-    rw [hse₀] at hβm
-    exact Finset.notMem_empty _ hβm
+    grind
   have hval₀ : (α.s ⋆ β.s) a b ≤ α.s a l₀ + β.s l₀ b := by
     simpa using
       SlipFace.star_val_le α.s β.s a b l₀
@@ -211,8 +206,7 @@ private lemma star_le_mul_of_reducedProduct (α β : AspPerm)
     have hn'_hi := (mem_star_hi_error α β a b (n + 1) n').mp hn'
     have hn'H : n' ∈ H := by
       apply (mem_star_hi_error α β a b l₀ n').mpr
-      have hnn' : n ≤ n' := le_trans (le_of_lt (lt_add_one n)) hn'_hi.1
-      exact ⟨le_trans hn_data.1 hnn', hn'_hi.2⟩
+      grind
     have hn'_le : n' ≤ n := Finset.le_max' H n' hn'H
     omega
   have hval_succ : (α.s ⋆ β.s) a b ≤ α.s a (n + 1) + β.s (n + 1) b := by
@@ -226,11 +220,7 @@ private lemma star_le_mul_of_reducedProduct (α β : AspPerm)
   have hm' : m < n + 1 ∧ b ≤ β⁻¹ m ∧ a ≤ α m :=
     (mem_star_lo_error α β a b (n + 1) m).mp hm
   have hmn : m < n := by
-    have hmn_le : m ≤ n := Int.le_of_lt_add_one hm'.1
-    apply lt_of_le_of_ne hmn_le
-    intro hmn_eq
-    subst m
-    omega
+    grind
   have hαmn : ⟨m, n⟩ ∈ invSet α :=
     ⟨hmn, lt_of_lt_of_le hn_data.2.1 hm'.2.2⟩
   have hβmn : ⟨m, n⟩ ∈ invSet (β⁻¹).func :=
@@ -390,17 +380,13 @@ private lemma le_weak_L_of_mul_le_lres (α β : AspPerm)
   by_cases hln : l ≤ n
   · have hn : n ∈ lres_hi_error α β a b l :=
       (mem_lres_hi_error α β a b l n).mpr ⟨hln, hβ.2, le_refl _⟩
-    have hncard : 0 < (lres_hi_error α β a b l).card :=
-      Finset.card_pos.mpr ⟨n, hn⟩
-    omega
+    grind
   · have hm : m ∈ lres_lo_error α β a b l := by
       apply (mem_lres_lo_error α β a b l m).mpr
       exact
         ⟨lt_of_lt_of_le hβ.1 (le_of_lt (lt_of_not_ge hln)),
           le_refl _, hα_lt⟩
-    have hmcard : 0 < (lres_lo_error α β a b l).card :=
-      Finset.card_pos.mpr ⟨m, hm⟩
-    omega
+    grind
 
 /-- If the inverse of the right factor lies below the left factor in left weak
 order, then ordinary multiplication lies below left residual.
@@ -419,8 +405,7 @@ private lemma mul_le_lres_of_le_weak_L (α β : AspPerm)
     have hcand := Submodular.lres_candidate_le α β a b l
     have hcand' : α.s a l - (β⁻¹).s b l ≤ (α ◃ β).s a b := by
       simpa only [AspPerm.lres_spec] using hcand
-    rw [← hcount]
-    exact hcand'
+    grind
   obtain ⟨l₀, hl₀⟩ := β.tend_zero_a b
   have hse₀ : β.seFinset l₀ b = ∅ := by
     apply Finset.card_eq_zero.mp
@@ -434,8 +419,7 @@ private lemma mul_le_lres_of_le_weak_L (α β : AspPerm)
     have hβm : β⁻¹ m ∈ β.seFinset l₀ b := by
       simpa only [AspPerm.mem_se, ge_iff_le, AspPerm.mul_inv_cancel_eval] using
         ⟨hm'.2.1, hm'.1⟩
-    rw [hse₀] at hβm
-    exact Finset.notMem_empty _ hβm
+    grind
   by_cases hhi₀_empty : lres_hi_error α β a b l₀ = ∅
   · exact hle_of_errors_empty l₀ hlo₀ hhi₀_empty
   · have hhi₀ : 0 < (lres_hi_error α β a b l₀).card :=
@@ -451,8 +435,7 @@ private lemma mul_le_lres_of_le_weak_L (α β : AspPerm)
       have hn'_hi := (mem_lres_hi_error α β a b (n + 1) n').mp hn'
       have hn'H : n' ∈ H := by
         apply (mem_lres_hi_error α β a b l₀ n').mpr
-        have hnn' : n ≤ n' := le_trans (le_of_lt (lt_add_one n)) hn'_hi.1
-        exact ⟨le_trans hn_data.1 hnn', hn'_hi.2⟩
+        grind
       have hn'_le : n' ≤ n := Finset.le_max' H n' hn'H
       omega
     have hlo_succ : lres_lo_error α β a b (n + 1) = ∅ := by
@@ -460,11 +443,7 @@ private lemma mul_le_lres_of_le_weak_L (α β : AspPerm)
       intro m hm
       have hm' := (mem_lres_lo_error α β a b (n + 1) m).mp hm
       have hmn : m < n := by
-        have hmn_le : m ≤ n := Int.le_of_lt_add_one hm'.1
-        apply lt_of_le_of_ne hmn_le
-        intro hmn_eq
-        subst m
-        omega
+        grind
       have hβmn : ⟨m, n⟩ ∈ invSet (β⁻¹).func :=
         ⟨hmn, lt_of_lt_of_le hn_data.2.1 hm'.2.1⟩
       have hαmn := hweak hβmn

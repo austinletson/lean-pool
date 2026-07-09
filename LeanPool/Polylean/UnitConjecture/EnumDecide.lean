@@ -44,10 +44,7 @@ def decideBelow (p : Nat → Prop) [DecidablePred p] (bound : Nat) :
       | .isTrue hyp =>
         if c: p k then
           .isTrue (fun n bd => by
-            rcases Nat.eq_or_lt_of_le bd with eql | lt
-            · have : n = k := by injection eql
-              exact this ▸ c
-            · exact hyp n (Nat.le_of_succ_le_succ lt))
+            grind)
         else
           .isFalse (fun contra => c (contra k (Nat.lt_succ_self k)))
       | .isFalse hyp =>
@@ -68,10 +65,7 @@ def decideBelowFin {m : Nat} (p : Fin m → Prop) [DecidablePred p] (bound : Nat
         if ineq : k < m then
           if c: p ⟨k, ineq⟩ then
             .isTrue (fun n bd => by
-              rcases Nat.eq_or_lt_of_le bd with eql | lt
-              · have : n = ⟨k, ineq⟩ := Fin.eq_of_val_eq (by injection eql)
-                exact this ▸ c
-              · exact hyp n (Nat.le_of_succ_le_succ lt))
+              grind)
           else
             .isFalse (fun contra => c (contra ⟨k, ineq⟩ (Nat.lt_succ_self k)))
         else

@@ -541,8 +541,7 @@ lemma conj {k l} {P : Fin l → (Fin k → V) → Prop}
     suffices ℌ.Boldface fun v : Fin k → V ↦ P 0 v ∧ ∀ i : Fin l, P i.succ v by
       apply of_iff this; intro x
       constructor
-      · intro h
-        exact ⟨h 0, fun i ↦ h i.succ⟩
+      · grind
       · rintro ⟨h0, hs⟩
         intro i
         cases i using Fin.cases with
@@ -667,8 +666,7 @@ private lemma substitution_sigma {f : Fin k → (Fin l → V) → V} (hP : Sg-[m
   exact of_iff this <| by
     intro v
     constructor
-    · intro hP
-      exact ⟨(f · v), by simp, hP⟩
+    · grind
     · rintro ⟨ys, hys, hP⟩
       have : ys = fun i ↦ f i v := funext hys
       rcases this; exact hP

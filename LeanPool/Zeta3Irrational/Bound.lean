@@ -80,17 +80,7 @@ lemma bound (x y z : ℝ) (x0 : 0 < x) (x1 : x < 1) (y0 : 0 < y) (y1 : y < 1)
       exact mul_le_mul_of_nonneg_left h2 (le_of_lt <| by positivity)
     _ = √x * √(1 -x) * (√y * √(1 - y)) * (√z * √(1 - z)) / 4 := by
       rw [Real.sqrt_mul (le_of_lt x0) z, Real.sqrt_mul (by linarith : 0 ≤ 1 - z) y]
-      calc _
-        _ =
-            ((x * (1 - x)) * (y * (1 - y)) * (z * (1 - z))) /
-              (4 * (√x * √(1 - x)) * (√y * √(1 - y)) * (√z * √(1 - z))) := by
-          ring
-        _ =
-            (x / √x) * ((1 - x) / √(1 - x)) * (y / √y) *
-              ((1 - y) / √(1 -y)) * (z / √z) * ((1 - z) / √(1 - z)) / 4 := by
-          ring
-        _ = _ := by
-          simpa only [Real.div_sqrt] using (by ring)
+      grind
     _ ≤ (1 / 2) * (1 / 2) * (1 / 2) / 4 := by
       refine div_le_div₀ (by norm_num)
         (mul_le_mul_of_nonneg (mul_le_mul_of_nonneg (max_value ?_ ?_) (max_value ?_ ?_) ?_ ?_)
@@ -133,17 +123,7 @@ lemma bound' (x y z : ℝ) (x0 : 0 < x) (x1 : x < 1) (y0 : 0 < y) (y1 : y < 1)
       apply bound_aux' <;> linarith
     _ = √x * (1 - x) * (√y * (1 - y)) * (√z * √(1 - z)) / 2 := by
       rw [Real.sqrt_mul (by positivity : 0 ≤ x * y) z, Real.sqrt_mul (le_of_lt x0) y]
-      calc _
-        _ =
-            ((x * (1 - x)) * (y * (1 - y)) * (z * (1 - z))) /
-              (2 * √x * √y * (√z * √(1 - z))) := by
-          ring
-        _ =
-            (x / √x) * (1 - x) * (y / √y) * (1 - y) *
-              (z / √z) * ((1 - z) / √(1 - z)) / 2 := by
-          ring
-        _ = _ := by
-          simpa only [Real.div_sqrt] using (by ring)
+      grind
     _ ≤ (2 / 5) * (2 / 5) * (1 / 2) / 2 := by
       refine div_le_div₀ (by norm_num)
         (mul_le_mul_of_nonneg (mul_le_mul_of_nonneg (max_value' ?_ ?_) (max_value' ?_ ?_) ?_ ?_)
@@ -179,8 +159,7 @@ lemma bound'' (x y z : ℝ) (x0 : 0 < x) (x1 : x < 1) (y0 : 0 < y) (y1 : y < 1)
     have hxy_lt_one : x * y < 1 := by nlinarith
     nlinarith
   have hden_pos_s : 0 < 1 - (1 - s ^ 2) * z := by
-    rw [hs_sq]
-    exact hden_pos
+    grind
   have hfrac :
       z * (1 - z) / (1 - (1 - s ^ 2) * z) ≤ 1 / (1 + s) ^ 2 := by
     rw [div_le_div_iff₀ hden_pos_s (by positivity : 0 < (1 + s) ^ 2)]
@@ -201,8 +180,7 @@ lemma bound'' (x y z : ℝ) (x0 : 0 < x) (x1 : x < 1) (y0 : 0 < y) (y1 : y < 1)
     calc
       x * (1 - x) * y * (1 - y) * z * (1 - z)
           = s ^ 2 * ((1 - x) * (1 - y)) * (z * (1 - z)) := by
-            rw [hs_sq]
-            ring
+            grind
       _ ≤ s ^ 2 * (1 - s) ^ 2 * (z * (1 - z)) := by
         gcongr
       _ = s ^ 2 * (1 - s) ^ 2 * z * (1 - z) := by ring

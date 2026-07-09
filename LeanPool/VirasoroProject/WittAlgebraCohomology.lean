@@ -110,9 +110,7 @@ lemma exists_add_bdry_eq_smul_virasoroCocycle :
       simp only [virasoroCocycle_apply_lgen_lgen, hnm, ↓reduceIte]
       by_cases hn : 0 ≤ n
       · specialize this n.toNat
-        have n_eq : n.toNat = n := Int.toNat_of_nonneg hn
-        simp_rw [n_eq] at this
-        simp_rw [show m = -n by linarith, this, mul_div]
+        grind
       · specialize this m.toNat
         simp only [not_le] at hn
         have m_eq : m.toNat = m := Int.toNat_of_nonneg <| by linarith
@@ -120,9 +118,7 @@ lemma exists_add_bdry_eq_smul_virasoroCocycle :
         have aux : (-m)^3 = -(m^3) := by
           rw [(pow_eq_neg_pow_iff (by linarith)).mpr ⟨rfl, Nat.odd_iff.mpr rfl⟩]
         rw [← LieTwoCocycle.skew]
-        rw [this]
-        simp [show (-m : 𝕜)^3 = -((m : 𝕜)^3) by exact_mod_cast aux]
-        ring
+        grind
     intro k
     induction k using Nat.strong_induction_on with
     | h j hj =>
@@ -136,9 +132,7 @@ lemma exists_add_bdry_eq_smul_virasoroCocycle :
           rw [hr]
           norm_num
           ring
-      · have j_large : 2 < j := by match j with
-          | 0 => contradiction | 1 => contradiction | 2 => contradiction
-          | j' + 3 => simp
+      · have j_large : 2 < j := by grind
         -- For j ≥ 3, the coefficient (2-j) in a key recusive equation does not vanish.
         have not_zero : (2 - j : 𝕜) ≠ 0 := by exact_mod_cast show (2 - j : ℤ) ≠ 0 by linarith
         -- The key recursive equation is obtained by taking n = j, m = 1-j, k = -1
@@ -155,8 +149,6 @@ lemma exists_add_bdry_eq_smul_virasoroCocycle :
           simp only [Int.cast_sub, Int.cast_one, Int.cast_natCast, Int.reduceNeg, Int.cast_neg,
                     sub_neg_eq_add, add_sub_cancel] at eqn
           rw [← γ₀.skew (lgen 𝕜 (-1)), ← γ₀.skew (lgen 𝕜 (1 - j))] at eqn
-          have nothing : -(γ₀ ((lgen 𝕜) 1)) ((lgen 𝕜) (-1)) = 0 := by
-            simpa using hj 1 (by linarith)
           grind
         rw [hj j' (by linarith), hj'] at eqn
         simp only [Int.cast_natCast] at eqn

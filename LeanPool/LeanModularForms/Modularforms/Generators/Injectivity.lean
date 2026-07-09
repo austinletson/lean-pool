@@ -95,8 +95,7 @@ private lemma evalE₄E₆_component_eq (p : MvPolynomial (Fin 2) ℂ) (n : ℕ)
 private lemma no_wt_monomial_of_odd {n : ℕ} (hn : Odd n) (d : Fin 2 →₀ ℕ) :
     Finsupp.weight E₄E₆Weight d ≠ n := by
   have := weight_fin2_cast d
-  rw [Nat.odd_iff] at hn
-  omega
+  grind
 
 private lemma no_wt_monomial_of_two (d : Fin 2 →₀ ℕ) :
     Finsupp.weight E₄E₆Weight d ≠ 2 := by have := weight_fin2_cast d; omega
@@ -143,8 +142,7 @@ private lemma per_weight_injective_unique_monomial {n : ℕ} (p : MvPolynomial (
     map_mul, map_pow, map_pow, evalE₄E₆_X0, evalE₄E₆_X1,
     DirectSum.smul_apply] at heval
   rcases smul_eq_zero.mp heval with hc | hmz
-  · rw [show MvPolynomial.monomial d₀ (MvPolynomial.coeff d₀ p) =
-      MvPolynomial.monomial d₀ 0 from by rw [hc], MvPolynomial.monomial_zero]
+  · grind
   · exact absurd hmz hmf_ne
 
 private lemma Delta_poly_isWeightedHomogeneous :
@@ -220,11 +218,7 @@ private lemma delta_piece_eq_monomial_sub
     (MvPolynomial.X (0 : Fin 2) ^ (d 0 - 3) * MvPolynomial.X (1 : Fin 2) ^ d 1) =
     MvPolynomial.X (0 : Fin 2) ^ (d 0 - 3) *
       MvPolynomial.X (1 : Fin 2) ^ (d 1 + 2) := by
-    have h := show (MvPolynomial.X (1 : Fin 2) : MvPolynomial (Fin 2) ℂ) ^ 2 *
-        (MvPolynomial.X (0 : Fin 2) ^ (d 0 - 3) * MvPolynomial.X (1 : Fin 2) ^ d 1)
-      = MvPolynomial.X (0 : Fin 2) ^ (d 0 - 3) *
-          (MvPolynomial.X (1 : Fin 2) ^ d 1 * MvPolynomial.X (1 : Fin 2) ^ 2) from by ring
-    rw [h, ← pow_add]
+    grind
   rw [show MvPolynomial.C c * (MvPolynomial.X (0 : Fin 2) ^ 3 -
       MvPolynomial.X (1 : Fin 2) ^ 2) *
       (MvPolynomial.X (0 : Fin 2) ^ (d 0 - 3) *
@@ -261,8 +255,7 @@ private lemma Finset.sum_lt_sum_of_replace {α : Type*} [DecidableEq α]
   · calc ∑ x ∈ S', f x
         ≤ ∑ x ∈ S.erase d ∪ {d'}, f x := Finset.sum_le_sum_of_subset hS'
       _ = ∑ x ∈ S.erase d, f x + f d' := by
-          rw [Finset.sum_union (Finset.disjoint_singleton_right.mpr
-            (fun h => hd'S (Finset.mem_of_mem_erase h))), Finset.sum_singleton]
+          grind
       _ < ∑ x ∈ S.erase d, f x + f d := Nat.add_lt_add_left hlt _
       _ = ∑ x ∈ S, f x := Finset.sum_erase_add S f hd_mem
 
@@ -282,18 +275,12 @@ private lemma mvpoly_support_after_reduction {σ R : Type*} [CommRing R] [Decida
     MvPolynomial.notMem_support_iff.mpr hcoeff_d
   refine ⟨hd_not, fun x hx => ?_⟩
   rcases Finset.mem_union.mp (MvPolynomial.support_sub σ p _ hx) with hp | hdelta
-  · by_cases hxd : x = d
-    · exact absurd (hxd ▸ hx) hd_not
-    · exact Finset.mem_union_left _ (Finset.mem_erase.mpr ⟨hxd, hp⟩)
+  · grind
   · rcases Finset.mem_union.mp (MvPolynomial.support_sub σ _ _ hdelta) with h1 | h2
     · rw [MvPolynomial.support_monomial] at h1
-      split_ifs at h1
-      · exact absurd h1 (Finset.notMem_empty _)
-      · exact absurd ((Finset.mem_singleton.mp h1) ▸ hx) hd_not
+      grind
     · rw [MvPolynomial.support_monomial] at h2
-      split_ifs at h2
-      · exact absurd h2 (Finset.notMem_empty _)
-      · exact Finset.mem_union_right _ (by rwa [Finset.mem_singleton] at h2 ⊢)
+      grind
 
 private lemma whomog_poly_Delta_decomp {n : ℕ} (hn12 : 12 ≤ n)
     (p : MvPolynomial (Fin 2) ℂ)
@@ -394,10 +381,7 @@ private lemma evalE₄E₆_Delta_mul_coeff_zero {n : ℕ} (_hn12 : 12 ≤ n)
   have hq_eq : qExpansion 1 ↑(hcast ▸ GradedMonoid.GMul.mul (D 12) (S (↑(n-12))) :
       ModularForm Γ(1) (↑n)) =
       qExpansion 1 ↑(GradedMonoid.GMul.mul (D 12) (S (↑(n-12)))) := by
-    congr 1; ext z
-    have : ∀ {k₁ k₂ : ℤ} (heq : k₁ = k₂) (f : ModularForm Γ(1) k₁) (z : ℍ),
-      (heq ▸ f : ModularForm Γ(1) k₂) z = f z := by intros; subst_vars; rfl
-    exact this hcast _ z
+    grind
   rw [hq_eq, show (↑(GradedMonoid.GMul.mul (D 12) (S (↑(n-12)))) : ℍ → ℂ) =
       ↑((D 12).mul (S (↑(n-12)))) from rfl]
   have hmul_coeff := qExpansion_mul_coeff 1 12 (↑(n-12)) (D 12) (S (↑(n-12)))
@@ -472,9 +456,7 @@ private lemma eval_Delta_mul_zero_imp {n : ℕ} (hn12 : 12 ≤ n)
   have hds2 : GradedMonoid.GMul.mul (D 12) (S (↑(n-12))) = 0 := by
     have h := hds
     rw [DirectSum.of_apply, dif_pos hcast] at h
-    have : ∀ {k₁ k₂ : ℤ} (h : k₁ = k₂) (f : ModularForm Γ(1) k₁),
-      h ▸ f = (0 : ModularForm Γ(1) k₂) → f = 0 := by intros k₁ k₂ heq f hf; cases heq; exact hf
-    exact this hcast _ h
+    grind
   ext z; simp only [ModularForm.zero_apply]
   have hpw := congr_fun (congr_arg (fun (f : ModularForm Γ(1) _) => f.toFun) hds2) z
   simp only [SlashInvariantForm.toFun_eq_coe, ModularForm.toSlashInvariantForm_coe,

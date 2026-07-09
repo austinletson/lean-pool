@@ -25,12 +25,10 @@ open HasSucc
 namespace Xor
 
 lemma true1 {P Q R : Prop} : P -> (Xor (Xor P Q) R <-> ¬ Xor Q R) := by
-  unfold Xor
-  tauto
+  grind
 
 lemma true2 {P Q R : Prop} : Q -> (Xor (Xor P Q) R <-> ¬ Xor P R) := by
-  unfold Xor
-  tauto
+  grind
 
 end Xor
 
@@ -57,22 +55,16 @@ lemma len_le_len_succ : ∀ {X : str}, (len X : num) ≤ len (succ X) := by
         exact _root_.le_of_eq (id (Eq.symm p_eq))
       · intro j jp
         by_cases hj : j = p
-        · rw [hj]
-          exact px
+        · grind
         · apply ps.1
           · exact px
           · constructor
             · rw [B11]
               exact jp
             · rw [<- B11] at jp
-              intro contr
-              apply hj
-              apply _root_.le_antisymm <;> assumption
+              grind
   have aux2 : p + 1 ≤ len (succ X) := (L1 aux).1
-  rw [p_eq] at aux2
-  have aux3 : len X < len X := lt_of_le_of_lt aux2 h
-  apply aux3.2
-  rfl
+  grind
 
 lemma len_succ_le_succ : ∀ {X : str}, len (succ X) ≤ (len X : num) + (1 : num) := by
   intro X
@@ -103,26 +95,10 @@ lemma exists_lowest_order_zero (X : str) : ∃ m : num, LowestOrderZero X m := b
   exists min
   have min_le_lenx : min <= len X := by
     rw [B11]
-    apply lt_of_lt_of_le
-    · exact hmin.1
-    · exact hX'.1
+    grind
   constructor
   · exact min_le_lenx
-  · constructor
-    · rw [<- hX'.2]
-      · exact hmin.2.1
-      · rw [<- B11]
-        exact min_le_lenx
-    · intro j hj
-      rw [@in_iff_not_notin]
-      rw [<- hX'.2]
-      · apply hmin.2.2
-        exact hj
-      · rw [<- B11]
-        apply le_of_lt
-        apply lt_of_lt_of_le
-        · exact hj
-        · exact min_le_lenx
+  · grind
 
 /-- `m` is the least position below the string length where `X` has a bit. -/
 def LowestOrderOne (X : str) (m : num) := m ≤ len X ∧ m ∈ X ∧ ∀ j < m, j ∉ X
@@ -132,8 +108,7 @@ lemma exists_lowest_order_one {X : str} : (0 : num) < len X -> ∃ m : num, Lowe
   obtain ⟨min, hmin⟩ := xmin len_ne_zero
   exists min
   constructor
-  · apply le_of_lt
-    exact hmin.1
+  · grind
   · exact hmin.2
 
 /-- The discrete-successor step: `a < b` upgrades to `a + 1 ≤ b`. -/
@@ -206,9 +181,7 @@ lemma all_lt_mem_of_not_mem_of_mem_succ :
     ∀ {X : str} {i : num}, i ∉ X -> i ∈ succ X -> ∀ j < i, j ∈ X := by
   intro X i h_i_notX h_i_SX
   rw [ax_succ] at h_i_SX
-  rcases h_i_SX with ⟨h_i_le, ⟨h_i_X, ex⟩ | ⟨h_i_notX, all⟩⟩
-  · exact fun j a ↦ False.elim (h_i_notX h_i_X)
-  · exact all
+  grind
 
 lemma all_lt_not_mem_of_not_carry_of_all_lt_mem :
     ∀ {X Y : str} {i : num},
@@ -217,21 +190,7 @@ lemma all_lt_not_mem_of_not_carry_of_all_lt_mem :
       ∀ j < i, j ∉ X := by
   intro X Y i h_Carry h_all_lt_mem_Y
   unfold Carry at h_Carry
-  rw [not_exists] at h_Carry
-  intro j
-  specialize h_Carry j
-  rw [not_and_or] at h_Carry
-  rcases h_Carry with contr | h_Carry
-  · intro contr'
-    contradiction
-  · intro h_j_lt_i h_j_X
-    rw [not_and] at h_Carry
-    specialize h_Carry h_j_X
-    rw [not_and] at h_Carry
-    specialize h_Carry (h_all_lt_mem_Y j h_j_lt_i)
-    apply h_Carry; clear h_Carry; intro z z_lt j_lt
-    right
-    exact h_all_lt_mem_Y z z_lt
+  grind
 
 lemma all_lt_not_carry_of_not_carry_of_all_lt_mem :
     ∀ {X Y : str} {i : num}, ¬ Carry i X Y -> (∀ j < i, j ∈ Y) -> ∀ j < i, ¬ Carry j X Y := by
@@ -289,8 +248,7 @@ lemma not_carry_of_all_lt_mem_add :
   unfold Carry at hC
   obtain ⟨k, h_k_lt_i, h_kX, h_kY, _⟩ := hC
   have h_kI : k ∈ I := by
-    rw [h_I k h_k_lt_i]
-    exact ⟨h_kX, h_kY⟩
+    grind
   have h_len_I_pos : (0 : num) < len I := len_pos_of_exists h_kI
   obtain ⟨c, h_c_lt_len_I, h_cI, h_cmin⟩ := xmin h_len_I_pos
   have h_c_lt_i : c < i := lt_of_lt_of_le h_c_lt_len_I h_I_le
@@ -299,19 +257,10 @@ lemma not_carry_of_all_lt_mem_add :
   have h_c_notCarry : ¬ Carry c X Y := by
     intro h_cC
     unfold Carry at h_cC
-    obtain ⟨d, h_d_lt_c, h_dX, h_dY, _⟩ := h_cC
-    have h_dI : d ∈ I := by
-      rw [h_I d (lt_trans h_d_lt_c h_c_lt_i)]
-      exact ⟨h_dX, h_dY⟩
-    exact h_cmin d h_d_lt_c h_dI
+    grind
   have h_c_in_add : c ∈ X + Y := h_all_lt_mem_add c h_c_lt_i
   rw [ax_add] at h_c_in_add
-  rw [xor3_split] at h_c_in_add
-  rcases h_c_in_add.2 with h1 | h2 | h3 | h4
-  · exact h1.2.1 h_cY
-  · exact h2.1 h_cX
-  · exact h3.1 h_cX
-  · exact h_c_notCarry h4.2.2
+  grind
 
 lemma all_lt_not_carry_of_all_lt_mem_add :
     ∀ {X Y : str} {i : num},
@@ -319,8 +268,7 @@ lemma all_lt_not_carry_of_all_lt_mem_add :
       ∀ j < i, ¬ Carry j X Y := by
   intro X Y i h_all_lt_mem_add j h_j_lt_i
   apply not_carry_of_all_lt_mem_add
-  intro z h_z_lt_j
-  exact h_all_lt_mem_add z (lt_trans h_z_lt_j h_j_lt_i)
+  grind
 
 lemma carry_succ_of_all_lt_mem_add_of_lowest_zero_lt :
     ∀ {X Y : str} {m i : num},
@@ -332,8 +280,7 @@ lemma carry_succ_of_all_lt_mem_add_of_lowest_zero_lt :
   have h_all_lt_not_carry : ∀ j < i, ¬ Carry j X Y :=
     all_lt_not_carry_of_all_lt_mem_add h_all_lt_mem_add
   have h_before_m : ∀ j < m, j ∈ X + Y := by
-    intro j h_j_lt_m
-    exact h_all_lt_mem_add j (lt_trans h_j_lt_m h_m_lt_i)
+    grind
   have h_m_notCarry : ¬ Carry m X Y :=
     not_carry_of_all_lt_mem_add_of_all_lt_mem hm.2.2 h_before_m
   have h_m_in_add : m ∈ X + Y := h_all_lt_mem_add m h_m_lt_i
@@ -351,13 +298,7 @@ lemma carry_succ_of_all_lt_mem_add_of_lowest_zero_lt :
     have h_j_in_add : j ∈ X + Y := h_all_lt_mem_add j h_j_lt_i
     have h_j_notCarry : ¬ Carry j X Y := h_all_lt_not_carry j h_j_lt_i
     rw [ax_add] at h_j_in_add
-    have h_j_xor := h_j_in_add.2
-    rw [xor3_split] at h_j_xor
-    rcases h_j_xor with h1 | h2 | h3 | h4
-    · exact Or.inl h1.1
-    · exact Or.inr h2.2.1
-    · exact False.elim (h_j_notCarry h3.2.2)
-    · exact False.elim (h_j_notCarry h4.2.2)
+    grind
   unfold Carry
   refine ⟨m, h_m_lt_i, h_mX, succ_bit_eq hm, ?_⟩
   intro j h_j_lt_i h_m_lt_j
@@ -378,13 +319,7 @@ lemma prefix_zero_contradiction_of_not_carry_of_all_lt_mem :
   obtain ⟨contr, h_contr_lt, h_contr_notXY⟩ := h_prefix_zero
   apply h_contr_notXY
   rw [ax_add]
-  constructor
-  · exact lt_trans h_contr_lt h_i_lt
-  · rw [Xor.true2 (h_all_lt_mem_Y contr h_contr_lt)]
-    rw [not_xor]
-    rw [<- not_iff_not, iff_true_left]
-    · exact h_Carry_prefix_zero contr h_contr_lt
-    · exact h_X_prefix_zero contr h_contr_lt
+  grind
 
 lemma not_lt_lowest_zero_of_prefix_zero_of_not_carry :
     ∀ {X Y : str} {m i : num},
@@ -473,26 +408,16 @@ lemma not_carry_succ_of_prefix_zero_of_not_carry_of_lowest_zero_lt :
     intro z h_z_lt_i h_j_lt_z
     by_cases h_z_lt_m : z < m
     · exact Or.inr (hm.2.2 z h_z_lt_m)
-    · have h_m_le_z : m ≤ z := le_of_not_gt h_z_lt_m
-      rcases eq_or_lt_of_le h_m_le_z with h_z_eq_m | h_m_lt_z
-      · exact Or.inl (by simpa [h_z_eq_m] using h_m_X)
-      · exact h_or_after_m z h_m_lt_z h_z_lt_i
+    · grind
   have h_Carry_le_m_zero : ∀ j ≤ m, ¬ Carry j X Y := by
     intro j h_j_le_m h_jC
     unfold Carry at h_jC
-    obtain ⟨c, h_c_lt_j, h_c_X, _, _⟩ := h_jC
-    exact h_X_prefix_zero c (lt_of_lt_of_le h_c_lt_j h_j_le_m) h_c_X
+    grind
   have carry_to_i_from_after_m :
       ∀ {j : num}, m < j -> j < i -> Carry j X Y -> Carry i X Y := by
     intro j h_m_lt_j h_j_lt_i h_jC
     unfold Carry at h_jC ⊢
-    obtain ⟨c, h_c_lt_j, h_c_X, h_c_Y, h_c_prop⟩ := h_jC
-    refine ⟨c, lt_trans h_c_lt_j h_j_lt_i, h_c_X, h_c_Y, ?_⟩
-    intro z h_z_lt_i h_c_lt_z
-    by_cases h_z_lt_j : z < j
-    · exact h_c_prop z h_z_lt_j h_c_lt_z
-    · have h_j_le_z : j ≤ z := le_of_not_gt h_z_lt_j
-      exact h_or_after_m z (lt_of_lt_of_le h_m_lt_j h_j_le_z) h_z_lt_i
+    grind
   obtain ⟨contr, h_contr_lt, h_contr_notXY⟩ := h_prefix_zero
   apply h_contr_notXY
   rw [ax_add]
@@ -518,20 +443,8 @@ lemma not_carry_succ_of_prefix_zero_of_not_carry_of_lowest_zero_lt :
         intro h_both
         apply h_notC
         refine ⟨contr, h_contr_lt, h_both.1, h_both.2, ?_⟩
-        intro z h_z_lt_i h_contr_lt_z
-        exact h_or_after_m z (lt_trans h_m_lt_contr h_contr_lt_z) h_z_lt_i
-      have h_contr_notCarry : ¬ Carry contr X Y := by
-        intro h_contr_Carry
-        apply h_notC
-        exact carry_to_i_from_after_m h_m_lt_contr h_contr_lt h_contr_Carry
-      rcases h_contr_or with h_contr_X | h_contr_Y
-      · rw [xor3_split]
-        left
-        exact ⟨h_contr_X, fun h_Y => h_contr_notboth ⟨h_contr_X, h_Y⟩, h_contr_notCarry⟩
-      · rw [xor3_split]
-        right
-        left
-        exact ⟨fun h_X => h_contr_notboth ⟨h_X, h_contr_Y⟩, h_contr_Y, h_contr_notCarry⟩
+        grind
+      grind
 
 lemma not_mem_add_succ_of_not_mem_add_of_prefix_zero :
     ∀ {X Y : str} {y : num},
@@ -552,11 +465,7 @@ lemma not_mem_add_succ_of_not_mem_add_of_prefix_zero :
         rw [ax_add]
         constructor
         · exact carry_lt_add_len hC
-        · rw [xor3_split]
-          right
-          right
-          right
-          exact ⟨h1.1, h_yY, hC⟩
+        · grind
       have h_y_lt_old : y < len X + len Y := lt_add_left_of_mem_right h_yY
       exact prefix_zero_contradiction_of_not_carry_of_all_lt_mem h_y_lt_old h_prefix_zero h_notC
         (fun j h_j_lt ↦ hm.2.2 j (lt_trans h_j_lt h_y_lt_m))
@@ -601,10 +510,7 @@ lemma not_mem_add_succ_of_not_mem_add_of_prefix_zero :
           rw [ax_add]
           constructor
           · exact lt_add_left_of_mem_right h_yY
-          · rw [xor3_split]
-            right
-            left
-            exact ⟨h2.1, h_yY, h_notC⟩
+          · grind
         exact h2.2.2 (carry_succ_of_carry_of_lowest_zero_lt hm h_m_lt_y h_oldC)
       · exact h3.2.1 h_ySY
       · have h_notC : ¬ Carry y X Y := by
@@ -613,11 +519,7 @@ lemma not_mem_add_succ_of_not_mem_add_of_prefix_zero :
           rw [ax_add]
           constructor
           · exact lt_add_left_of_mem_right h_yY
-          · rw [xor3_split]
-            right
-            right
-            right
-            exact ⟨h4.1, h_yY, hC⟩
+          · grind
         exact (not_carry_succ_of_prefix_zero_of_not_carry_of_lowest_zero_lt hm h_m_lt_y
           h_prefix_zero h_notC) h4.2.2
     · have h_notSY : y ∉ succ Y := by
@@ -630,9 +532,7 @@ lemma not_mem_add_succ_of_not_mem_add_of_prefix_zero :
           rw [ax_add]
           constructor
           · exact lt_add_right_of_mem_left h1.1
-          · rw [xor3_split]
-            left
-            exact ⟨h1.1, h_yY, h_notC⟩
+          · grind
         exact h1.2.2 (carry_succ_of_carry_of_lowest_zero_lt hm h_m_lt_y h_oldC)
       · exact h_notSY h2.2.1
       · have h_notC : ¬ Carry y X Y := by
@@ -641,11 +541,7 @@ lemma not_mem_add_succ_of_not_mem_add_of_prefix_zero :
           rw [ax_add]
           constructor
           · exact carry_lt_add_len hC
-          · rw [xor3_split]
-            right
-            right
-            left
-            exact ⟨h3.1, h_yY, hC⟩
+          · grind
         exact (not_carry_succ_of_prefix_zero_of_not_carry_of_lowest_zero_lt hm h_m_lt_y
           h_prefix_zero h_notC) h3.2.2
       · exact h_notSY h4.2.1
@@ -663,36 +559,16 @@ lemma not_mem_add_succ_of_mem_add_of_prefix_one :
   rw [xor3_split] at hy_xor
   have h_new_X_SY_notCarry :
       y ∈ X -> y ∈ succ Y -> ¬ Carry y X (succ Y) -> False := by
-    intro h_X h_SY h_notCarry
-    rcases hy_xor with hy1 | hy2 | hy3 | hy4
-    · exact hy1.2.1 h_SY
-    · exact hy2.1 h_X
-    · exact hy3.1 h_X
-    · exact h_notCarry hy4.2.2
+    grind
   have h_new_X_notSY_Carry :
       y ∈ X -> y ∉ succ Y -> Carry y X (succ Y) -> False := by
-    intro h_X h_notSY h_Carry
-    rcases hy_xor with hy1 | hy2 | hy3 | hy4
-    · exact hy1.2.2 h_Carry
-    · exact hy2.1 h_X
-    · exact hy3.1 h_X
-    · exact h_notSY hy4.2.1
+    grind
   have h_new_notX_notSY_notCarry :
       y ∉ X -> y ∉ succ Y -> ¬ Carry y X (succ Y) -> False := by
-    intro h_notX h_notSY h_notCarry
-    rcases hy_xor with hy1 | hy2 | hy3 | hy4
-    · exact h_notX hy1.1
-    · exact h_notSY hy2.2.1
-    · exact h_notCarry hy3.2.2
-    · exact h_notX hy4.1
+    grind
   have h_new_notX_SY_Carry :
       y ∉ X -> y ∈ succ Y -> Carry y X (succ Y) -> False := by
-    intro h_notX h_SY h_Carry
-    rcases hy_xor with hy1 | hy2 | hy3 | hy4
-    · exact h_notX hy1.1
-    · exact hy2.2.2 h_Carry
-    · exact hy3.2.1 h_SY
-    · exact h_notX hy4.1
+    grind
   have h_old := h_add
   rw [ax_add] at h_old
   have h_old_xor := h_old.2
@@ -768,14 +644,12 @@ lemma add_succ_of_succ_add_zero :
             hy_not.1 (add_pos_of_pos_of_nonneg (L1 X0) (B9 (len Y)))
           simp only [not_xor] at h_not_xor
           rw [<- lsb_not_succ]
-          rw [<- h_not_xor]
-          assumption
+          grind
         · intro succY0
           have hY0 : 0 ∈ Y := lsb_not_succ.mpr succY0
           have h_not_xor :=
             hy_not.1 (add_pos_of_nonneg_of_pos (B9 (len X)) (L1 hY0))
-          simp only [not_xor] at h_not_xor
-          rwa [h_not_xor]
+          grind
 
 lemma add_succ_of_succ_add_of_mem_add :
     ∀ {X Y : str} {y pred_y : num},
@@ -828,10 +702,7 @@ lemma add_succ_of_succ_add_of_mem_add :
     have h_SY : y ∈ succ Y := (succ_bit_gt hm y hm_lt_y).2 h_Y
     have h_notCarry_new : ¬ Carry y X (succ Y) :=
       not_carry_succ_of_prefix_zero_of_not_carry_of_lowest_zero_lt hm hm_lt_y h_prefix_zero h_notC
-    rw [xor3_split]
-    right
-    left
-    exact ⟨h_notX, h_SY, h_notCarry_new⟩
+    grind
   · obtain ⟨m, hm⟩ := exists_lowest_order_zero Y (num := num)
     have hm_le_y : m ≤ y := by
       by_contra h
@@ -846,30 +717,20 @@ lemma add_succ_of_succ_add_of_mem_add :
         exact h_notY ((succ_bit_gt hm y hm_lt_y).1 h_SY)
       have h_Carry_new : Carry y X (succ Y) :=
         carry_succ_of_carry_of_lowest_zero_lt hm hm_lt_y h_C
-      rw [xor3_split]
-      right
-      right
-      left
-      exact ⟨h_notX, h_notSY, h_Carry_new⟩
+      grind
   · obtain ⟨m, hm⟩ := exists_lowest_order_zero Y (num := num)
     rcases lt_trichotomy y m with h_y_lt_m | h_y_eq_m | h_m_lt_y
     · have h_notSY : y ∉ succ Y := succ_bit_lt hm y h_y_lt_m
       have h_notCarry_new : ¬ Carry y X (succ Y) :=
         not_carry_succ_of_lowest_zero_ge hm (le_of_lt h_y_lt_m)
-      rw [xor3_split]
-      left
-      exact ⟨h_X, h_notSY, h_notCarry_new⟩
+      grind
     · exfalso
       apply hm.2.1
       simpa [h_y_eq_m] using h_Y
     · have h_SY : y ∈ succ Y := (succ_bit_gt hm y h_m_lt_y).2 h_Y
       have h_Carry_new : Carry y X (succ Y) :=
         carry_succ_of_carry_of_lowest_zero_lt hm h_m_lt_y h_C
-      rw [xor3_split]
-      right
-      right
-      right
-      exact ⟨h_X, h_SY, h_Carry_new⟩
+      grind
 
 lemma add_succ_of_succ_add : ∀ {X Y : str}, ∀ {y : num}, y ∈ succ (X + Y) -> y ∈ X + succ Y := by
   intro X Y y hy
@@ -898,19 +759,14 @@ lemma add_succ_of_succ_add : ∀ {X Y : str}, ∀ {y : num}, y ∈ succ (X + Y) 
         rw [ax_add]
         constructor
         · exact lt_add_left_of_mem_right h_yY
-        · rw [xor3_split]
-          right
-          left
-          exact ⟨h_notX, h_yY, h_notC⟩
+        · grind
       have h_notSY : y ∉ succ Y := succ_bit_lt hm y h_y_lt_m
       have h_notCarry_new : ¬ Carry y X (succ Y) :=
         not_carry_succ_of_lowest_zero_ge hm (le_of_lt h_y_lt_m)
       rw [ax_add]
       constructor
       · exact lt_add_right_of_mem_left h_X
-      · rw [xor3_split]
-        left
-        exact ⟨h_X, h_notSY, h_notCarry_new⟩
+      · grind
     · have h_notC : ¬ Carry y X Y := not_carry_of_all_lt_mem_add h_prefix_one
       have h_notY : y ∉ Y := by
         simpa [h_y_eq_m] using hm.2.1
@@ -920,9 +776,7 @@ lemma add_succ_of_succ_add : ∀ {X Y : str}, ∀ {y : num}, y ∈ succ (X + Y) 
         rw [ax_add]
         constructor
         · exact lt_add_right_of_mem_left h_yX
-        · rw [xor3_split]
-          left
-          exact ⟨h_yX, h_notY, h_notC⟩
+        · grind
       have h_SY : y ∈ succ Y := by
         simpa [h_y_eq_m] using succ_bit_eq hm
       have h_notCarry_new : ¬ Carry y X (succ Y) := by
@@ -930,10 +784,7 @@ lemma add_succ_of_succ_add : ∀ {X Y : str}, ∀ {y : num}, y ∈ succ (X + Y) 
       rw [ax_add]
       constructor
       · exact lt_add_left_of_mem_right h_SY
-      · rw [xor3_split]
-        right
-        left
-        exact ⟨h_notX, h_SY, h_notCarry_new⟩
+      · grind
     · have h_m_in_add : m ∈ X + Y := h_prefix_one m h_m_lt_y
       have h_m_notC : ¬ Carry m X Y := h_notCarry_prefix m (le_of_lt h_m_lt_y)
       have h_mX : m ∈ X := by
@@ -950,13 +801,7 @@ lemma add_succ_of_succ_add : ∀ {X Y : str}, ∀ {y : num}, y ∈ succ (X + Y) 
         have h_j_in_add : j ∈ X + Y := h_prefix_one j h_j_lt_y
         have h_j_notC : ¬ Carry j X Y := h_notCarry_prefix j (le_of_lt h_j_lt_y)
         rw [ax_add] at h_j_in_add
-        have h_j_xor := h_j_in_add.2
-        rw [xor3_split] at h_j_xor
-        rcases h_j_xor with h1 | h2 | h3 | h4
-        · exact Or.inl h1.1
-        · exact Or.inr h2.2.1
-        · exact False.elim (h_j_notC h3.2.2)
-        · exact False.elim (h_j_notC h4.2.2)
+        grind
       have h_Carry_new : Carry y X (succ Y) := by
         unfold Carry
         refine ⟨m, h_m_lt_y, h_mX, succ_bit_eq hm, ?_⟩
@@ -973,11 +818,7 @@ lemma add_succ_of_succ_add : ∀ {X Y : str}, ∀ {y : num}, y ∈ succ (X + Y) 
               simpa [hpred_y_eq] using h_Carry_new
             exact (carry_rec (i := pred_y) (X := X) (Y := succ Y)).2.1 h_y_carry
           unfold Maj at h_y_maj
-          rcases h_y_maj with h1 | h2 | h3 | h4
-          · exact Or.inl h1.2.1
-          · exact Or.inr h2.2.2
-          · exact Or.inl h3.2.1
-          · exact Or.inl h4.2.1
+          grind
         rcases h_pred_or with h_predX | h_predSY
         · have h_y_le_lenX : y ≤ len X := by
             rw [<- hpred_y_eq, B11]
@@ -995,39 +836,22 @@ lemma add_succ_of_succ_add : ∀ {X Y : str}, ∀ {y : num}, y ∈ succ (X + Y) 
           rw [ax_add]
           constructor
           · exact lt_add_left_of_mem_right h_yY
-          · rw [xor3_split]
-            right
-            left
-            exact ⟨h_notX, h_yY, h_notC⟩
+          · grind
         have h_SY : y ∈ succ Y := (succ_bit_gt hm y h_m_lt_y).2 h_yY
         rw [ax_add]
-        constructor
-        · exact h_y_lt_new
-        · rw [xor3_split]
-          right
-          right
-          right
-          exact ⟨h_X, h_SY, h_Carry_new⟩
+        grind
       · have h_notX : y ∉ X := by
           intro h_X
           apply h_y_notin_add
           rw [ax_add]
           constructor
           · exact lt_add_right_of_mem_left h_X
-          · rw [xor3_split]
-            left
-            exact ⟨h_X, h_yY, h_notC⟩
+          · grind
         have h_notSY : y ∉ succ Y := by
           intro h_SY
           exact h_yY ((succ_bit_gt hm y h_m_lt_y).1 h_SY)
         rw [ax_add]
-        constructor
-        · exact h_y_lt_new
-        · rw [xor3_split]
-          right
-          right
-          left
-          exact ⟨h_notX, h_notSY, h_Carry_new⟩
+        grind
 
 lemma succ_len_eq : ∀ {X Y : str}, len (X + succ Y) = (len (succ (X + Y)) : num) := by
   intro X Y
@@ -1048,11 +872,7 @@ lemma succ_len_eq : ∀ {X Y : str}, len (X + succ Y) = (len (succ (X + Y)) : nu
     · intro h_top
       by_contra h_not_prefix
       have h_prefix_zero : ∃ j < len (X + Y), j ∉ X + Y := by
-        by_contra h_no
-        apply h_not_prefix
-        intro j h_j_lt
-        by_contra h_j_not
-        exact h_no ⟨j, h_j_lt, h_j_not⟩
+        grind
       exact not_mem_add_succ_of_not_mem_add_of_prefix_zero len_not_in h_prefix_zero h_top
     · intro h_prefix_one
       apply add_succ_of_succ_add
@@ -1127,20 +947,14 @@ lemma succ_add_of_add_succ : ∀ {X Y : str}, ∀ {y : num}, y ∈ X + succ Y ->
       · exact h_add
       · by_contra h_no_zero
         have h_prefix_one : ∀ j < y, j ∈ X + Y := by
-          intro j h_j_lt
-          by_contra h_j_not
-          exact h_no_zero ⟨j, h_j_lt, h_j_not⟩
+          grind
         exact (not_mem_add_succ_of_mem_add_of_prefix_one h_add h_prefix_one) hy
     · right
       constructor
       · exact h_add
       · by_contra h_not_prefix
         have h_prefix_zero : ∃ j < y, j ∉ X + Y := by
-          by_contra h_no
-          apply h_not_prefix
-          intro j h_j_lt
-          by_contra h_j_not
-          exact h_no ⟨j, h_j_lt, h_j_not⟩
+          grind
         exact (not_mem_add_succ_of_not_mem_add_of_prefix_zero h_add h_prefix_zero) hy
 
 theorem str_succ_assoc : ∀ {X Y : str}, X + succ Y = succ (X + Y) := by

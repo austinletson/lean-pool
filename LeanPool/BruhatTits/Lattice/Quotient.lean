@@ -474,8 +474,7 @@ lemma _root_.BruhatTits.Lattice.mapIntermediate_ne_bot_of (L M : Lattice R)
     · exact Submodule.smul_le_self_of_tower ϖ L.M
     · rw [maximalIdeal_smul_eq_uniformizer_smul _ hϖ]
     · exact heq
-  rw [this] at h2
-  simp at h2
+  grind
 
 lemma _root_.BruhatTits.Lattice.mapIntermediate_ne_top_of (L M : Lattice R)
     {ϖ : R} (hϖ : Irreducible ϖ) (h1 : M.M < L.M) (h2 : ϖ • L.M ≤ M.M) :
@@ -499,8 +498,7 @@ lemma _root_.BruhatTits.Lattice.mapIntermediate_ne_top_of (L M : Lattice R)
     · rw [maximalIdeal_smul_eq_uniformizer_smul _ hϖ]
       exact Submodule.smul_le_self_of_tower ϖ L.M
     · exact heq
-  rw [this] at h1
-  simp at h1
+  grind
 
 variable [IsFractionRing R K]
 
@@ -511,14 +509,12 @@ lemma _root_.BruhatTits.Lattice.mapIntermediate_finrank_eq_one_of
     Module.finrank (ResidueField R) (L.mapIntermediate M) = 1 := by
   have hM'_ne_bot : L.mapIntermediate M ≠ ⊥ := by
     apply Lattice.mapIntermediate_ne_bot_of _ _ hϖ
-    · apply le_of_lt
-      exact h1
+    · grind
     · exact h2
   have hM'_ne_top : L.mapIntermediate M ≠ ⊤ := by
     apply Lattice.mapIntermediate_ne_top_of _ _ hϖ
     · exact h1
-    · apply le_of_lt
-      exact h2
+    · grind
   have h1' : Module.finrank (ResidueField R) (L.mapIntermediate M) < 2 := by
     rw [← L.quotient_finrank]
     apply Submodule.finrank_lt_finrank_of_ne_top
@@ -582,11 +578,9 @@ lemma mapIntermediate_unipotent_smul (b : Basis (Fin 2) K (Fin 2 → K)) (x : R)
       apply b.transvectEquiv_symm_mem_of_mem
       exact y.property
     let y' : (b.toLattice (R := R)).M := ⟨b.transvectEquiv x m, by
-      rw [heq]
-      exact y.property⟩
+      grind⟩
     have : y = y' := by
-      ext : 1
-      rw [← heq]
+      grind
     simp only [this, Basis.toLattice_module, Submodule.mem_map, Basis.toLattice_module, y']
     refine ⟨Submodule.Quotient.mk ⟨m, hmL⟩, ?_, ?_⟩
     · rw [Lattice.mem_mapIntermediate]

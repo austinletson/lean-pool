@@ -148,8 +148,7 @@ theorem whichGuard_left {W : Set (Option (α ⊕ β))} {C : Set Example12.Token}
   · exact hc
   · refine absurd (hW.symm.trans hWY) ?_
     intro h; exact not_inj₀_subset_inj₁ hX h.subset
-  · refine absurd (hW.symm.trans hWsm) ?_
-    intro h; exact none_mem_inj₀ (h ▸ none_mem_sumMaster)
+  · grind
 
 theorem whichGuard_right {W : Set (Option (α ⊕ β))} {C : Set Example12.Token} {Y : Set β}
     (hg : whichGuard V₀ V₁ W C) (hW : W = inj₁ Y) (hY : Y.Nonempty) :
@@ -158,8 +157,7 @@ theorem whichGuard_right {W : Set (Option (α ⊕ β))} {C : Set Example12.Token
   · refine absurd (hW.symm.trans hWX) ?_
     intro h; exact not_inj₁_subset_inj₀ hY h.subset
   · exact hc
-  · refine absurd (hW.symm.trans hWsm) ?_
-    intro h; exact none_mem_inj₁ (h ▸ none_mem_sumMaster)
+  · grind
 
 theorem whichGuard_masterC {W : Set (Option (α ⊕ β))} {C : Set Example12.Token}
     (hg : whichGuard V₀ V₁ W C) (hW : W = sumMaster V₀ V₁) : C = Example12.master := by

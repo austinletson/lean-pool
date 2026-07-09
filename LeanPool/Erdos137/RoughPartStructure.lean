@@ -93,13 +93,9 @@ lemma prime_dvd_roughPartAbove_imp {k m p : ℕ} (hp : p.Prime) (hpdvd : p ∣ R
   by_contra hbad
   push Not at hbad
   have hnot : p ∉ m.primeFactors.filter (fun q => ¬ q < k) := by
-    intro hmem
-    have hpmem : p ∈ m.primeFactors := (Finset.mem_filter.mp hmem).1
-    have hnotlt : ¬ p < k := (Finset.mem_filter.mp hmem).2
-    exact hnotlt (hbad hpmem)
+    grind
   have hfac := factorization_roughPartAbove k m p
-  rw [if_neg hnot] at hfac
-  omega
+  grind
 
 /-- **Rough part of each term is powerful in a very bad interval.** -/
 theorem roughPartAbove_powerful_of_block_powerful {k n i : ℕ}

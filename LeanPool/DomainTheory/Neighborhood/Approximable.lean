@@ -232,8 +232,7 @@ def idMap (V : NeighborhoodSystem α) : ApproximableMap V V where
     rintro X Y Y' ⟨hX, hY, hXY⟩ ⟨_, hY', hXY'⟩
     exact ⟨hX, V.inter_mem hY hY' hX (Set.subset_inter hXY hXY'), Set.subset_inter hXY hXY'⟩
   mono := by
-    rintro X X' Y Y' ⟨_, _, hXY⟩ hX'X hYY' hX' hY'
-    exact ⟨hX', hY', (hX'X.trans hXY).trans hYY'⟩
+    grind
 
 @[simp] theorem idMap_rel {V : NeighborhoodSystem α} {X Y : Set α} :
     (idMap V).rel X Y ↔ V.mem X ∧ V.mem Y ∧ X ⊆ Y := Iff.rfl

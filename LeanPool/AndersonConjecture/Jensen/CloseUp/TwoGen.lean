@@ -109,8 +109,7 @@ theorem close_up_two_gen_coprime
     have := close_up_dvd R y₂ c hc_span_y₂
     obtain ⟨q, hq⟩ := Ideal.mem_span_singleton.mp this
     refine ⟨R, ⟨le_refl _, fun r hr => hr, le_max_right _ _⟩, le_refl _, 0, ?_⟩
-    change c - 0 * y₁ ∈ Ideal.span {y₂}
-    simpa only [zero_mul, sub_zero] using Ideal.mem_span_singleton.mpr ⟨q, hq⟩
+    grind
   exact intersection_close_up R y₁ y₂ c hc hcoprime hy₁_zero hy₂_zero hM_bot
     hM_not_assoc hAss_ht hR_card hT_card
 
@@ -170,8 +169,7 @@ theorem close_up_two_gen_key
       obtain ⟨u₁, u₂, hu⟩ := Submodule.mem_span_pair.mp hc
       rw [hpa, hpb, smul_eq_mul, smul_eq_mul] at hu
       have heq : (p : T) * (c' : T) = (p : T) * (u₁ * (a : T) + u₂ * (b : T)) := by
-        rw [← hpc, ← hu]
-        ring
+        grind
       exact Submodule.mem_span_pair.mpr ⟨u₁, u₂, by
         rw [smul_eq_mul, smul_eq_mul]
         exact (mul_left_cancel₀ hp_ne heq).symm⟩
@@ -189,12 +187,7 @@ theorem close_up_two_gen_key
       rw [Ideal.mem_span_singleton] at hc'R ⊢
       obtain ⟨q, hq⟩ := hc'R
       refine ⟨⟨(q : T), q.2⟩, Subtype.ext ?_⟩
-      have hc'_val : (c' : T) = (b : T) * (q : T) := by
-        have := congr_arg Subtype.val hq
-        simp only [Subring.coe_mul] at this
-        exact this
-      simp only [Subring.coe_mul]
-      rw [hpc, hc'_val, mul_assoc]
+      grind
     · have hdvd : DvdNotUnit a (p * a) := ⟨ha, ⟨p, hp.not_unit, mul_comm p a⟩⟩
       obtain ⟨S, hAext, hle, x₁, hrem⟩ := ih a hdvd b c' hc'_ab
       refine ⟨S, hAext, hle, x₁, ?_⟩

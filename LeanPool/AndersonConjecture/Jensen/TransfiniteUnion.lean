@@ -285,8 +285,7 @@ theorem transfinite_union_isNSubring
     have hs'_q : s' ∈ Ideal.comap inclγ q := by
       change inclγ s' ∈ q
       have : inclγ s' = s := Subtype.ext rfl
-      rw [this]
-      exact hs_q
+      grind
     have hs'_ne : s' ≠ 0 := by
       intro h
       apply hs_ne

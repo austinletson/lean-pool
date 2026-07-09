@@ -206,9 +206,7 @@ variable {M T}
 theorem filterOf (M_trans : IsTrans M.World M.Rel) :
     FilterOf (finestFilterationTransitiveClosureModel M T) M T where
   def_rel₁ := by
-    intro x y hxy;
-    apply Frame.TransitiveClosure.single;
-    tauto;
+    grind
   def_box := by
     intro Qx Qy RQxQy;
     induction RQxQy using Relation.TransGen.head_induction_on with

@@ -15,22 +15,7 @@ import LeanPool.Monlib4.LinearAlgebra.End
 theorem isUnit_comm (K E : Type _) [DivisionRing K] [AddCommGroup E] [Module K E]
     [FiniteDimensional K E] (x y : E →ₗ[K] E) : IsUnit (x ∘ₗ y) ↔ IsUnit (y ∘ₗ x) := by
   simp_rw [← Module.End.mul_eq_comp]
-  constructor
-  all_goals
-    intro h
-    rw [← nonempty_invertible_iff_isUnit] at h ⊢
-    refine Nonempty.intro ?_
-    obtain ⟨z, hz1, hz2⟩ := Nonempty.some h
-    apply @invertibleMul _ _ _ _ ?_ ?_
-    rw [mul_assoc, mul_eq_one_comm, mul_assoc] at hz2
-    rw [← mul_assoc] at hz1
-  any_goals apply Invertible.mk (z * x) hz1 hz2
-  any_goals apply Invertible.mk (z * y) hz1 hz2
-  all_goals
-    rw [mul_eq_one_comm, mul_assoc] at hz1
-    rw [mul_assoc, mul_eq_one_comm] at hz2
-  · exact Invertible.mk (y * z) hz2 hz1
-  · exact Invertible.mk (x * z) hz2 hz1
+  grind
 
 theorem isUnit_neg {α : Type _} [Monoid α] [HasDistribNeg α] (x : α) : IsUnit (-x) ↔ IsUnit x := by
   constructor

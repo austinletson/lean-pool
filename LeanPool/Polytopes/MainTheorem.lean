@@ -51,12 +51,10 @@ lemma hxSegBallInterSeg : ∀ (x1 x2 : E) (ε : ℝ),
     · constructor
       · -- 1.
         rw [div_pos_iff]
-        left
-        exact ⟨ neg_pos_of_neg ht1, ht12 ⟩
+        grind
       · -- 2.
         rw [div_lt_one_iff]
-        left
-        exact ⟨ ht12, neg_lt_sub_iff_lt_add.mpr <| lt_add_of_le_of_pos (le_refl _) ht2 ⟩
+        grind
     · rw [smul_sub (-t1 / (t2 - t1)), smul_add (-t1 / (t2 - t1)), smul_smul, smul_add, smul_smul,
         add_sub_add_comm, sub_self, add_zero, ←sub_smul, ←mul_sub, div_mul_cancel₀ _ ?_, add_comm,
         ← add_assoc, ← add_smul, neg_add_cancel, zero_smul, zero_add]
@@ -82,9 +80,7 @@ lemma hxSegBallInterSeg : ∀ (x1 x2 : E) (ε : ℝ),
         refine ⟨ t + t2,
           ⟨ lt_trans ht.1 (by linarith [ht2pos] : t < t + (min (1 - t) (ε / ‖x2 - x1‖) / 2)), ?_ ⟩,
           by simp only [v, add_comm] ⟩
-        exact lt_of_lt_of_le' (by linarith [ht.2])
-          (by linarith [min_le_left (1 - t) ((ε / ‖x2 - x1‖))]
-          : t + min (1 - t) (ε / ‖x2 - x1‖) / 2 ≤ t + ((1 - t) / 2))
+        grind
     · -- 2. smaller segment is in the ball
       clear ht hxseg' hne
       have hvpos : 0 < ‖v‖ := norm_sub_pos_iff.mpr (Ne.symm hx12)
@@ -102,17 +98,13 @@ lemma hxSegBallInterSeg : ∀ (x1 x2 : E) (ε : ℝ),
       have hmin' : min (1 - t) (ε / ‖v‖) / 2 ≤ ε / ‖v‖ / 2 := by
         apply div_le_div_of_nonneg_right (min_le_right _ _) (by norm_num)
       apply (convex_iff_segment_subset.mp <| convex_ball x ε)
-      · apply key
-        rwa [abs_of_neg ht1, neg_neg]
-      · apply key
-        rwa [abs_of_pos ht2]
+      · grind
+      · grind
   · -- 2. the smaller segment is not a singleton
     rintro ⟨_, h2⟩
     have hvne : v ≠ 0 := sub_ne_zero_of_ne (Ne.symm hx12)
     rw [add_eq_right, smul_eq_zero] at h2
-    rcases h2 with h2 | h2
-    · exact (ne_of_lt ht2) h2.symm
-    · exact hvne h2
+    grind
 
 
 /-- The halfspaces of `H_` whose boundary contains the point `x`. -/
@@ -159,8 +151,7 @@ lemma ExtremePointsofHpolytope {H_ : Set (Halfspace E)} (hH_ : H_.Finite) :
           rintro HiS ⟨ Hi_, hHi_, rfl ⟩
           rw [Set.mem_sdiff, Hpolytope.I_mem, IsClosed.frontier_eq <| Halfspace_closed Hi_,
             Set.mem_sdiff] at hHi_
-          push Not at hHi_
-          exact hHi_.2 hHi_.1 <| hxH Hi_ ⟨ Hi_, hHi_.1, rfl ⟩
+          grind
         have hIcinteriorOpen :
             IsOpen (⋂₀ ((interior <| SetLike.coe ·) '' (H_ \ Hpolytope.I H_ x))) := by
           apply Set.Finite.isOpen_sInter (Set.Finite.image _ (Set.Finite.sdiff hH_))
@@ -191,8 +182,7 @@ lemma ExtremePointsofHpolytope {H_ : Set (Halfspace E)} (hH_ : H_.Finite) :
         norm_num [Matrix.cons_val_zero, Matrix.cons_val_one]
       have h2x_y := Hyperplane_affineClosed Hi_ ![x, y] (by
         rw [Matrix.range_cons, Matrix.range_cons, Matrix.range_empty, Set.union_empty];
-        exact Set.union_subset (Set.singleton_subset_iff.mpr hHi_2)
-          (Set.singleton_subset_iff.mpr hy))
+        grind)
         ![2, -1] h21
       rw [Finset.affineCombination_eq_linear_combination _ _ _ h21, Fin.sum_univ_two] at h2x_y
       simp only [Matrix.cons_val_zero, Matrix.cons_val_one, neg_one_smul,
@@ -217,20 +207,14 @@ lemma ExtremePointsofHpolytope {H_ : Set (Halfspace E)} (hH_ : H_.Finite) :
       · apply hmemsegmemI x1 ?_ Hi_ hinI
         apply openSegment_subset_segment
         exact Set.mem_of_mem_inter_left hsub
-      · have : Hi_ ∈ H_ \ Hpolytope.I H_ x := by
-          rw [Set.mem_sdiff]
-          exact ⟨ hHi_, hninI ⟩
-        exact hmemballmemIc x1 (Set.mem_of_mem_inter_right hsub) Hi_ this
+      · grind
     · -- x2 ∈ Hpolytope hH_
       specialize hsub (right_mem_segment ℝ x1 x2)
       rcases (em (Hi_ ∈ Hpolytope.I H_ x)) with (hinI | hninI)
       · apply hmemsegmemI x2 ?_ Hi_ hinI
         apply openSegment_subset_segment
         exact Set.mem_of_mem_inter_left hsub
-      · have : Hi_ ∈ H_ \ Hpolytope.I H_ x := by
-          rw [Set.mem_sdiff]
-          exact ⟨ hHi_, hninI ⟩
-        exact hmemballmemIc x2 (Set.mem_of_mem_inter_right hsub) Hi_ this
+      · grind
   · -- 2.
     intro hinterx
     rw [mem_extremePoints]
@@ -337,8 +321,7 @@ lemma DualOfVpolytope_compactHpolytope [FiniteDimensional ℝ E] {S : Set E} (hS
     rcases em (s = 0) with h | h
     · exact h ▸ pointDual_origin x'
     specialize hx (pointDual ⟨ s, h ⟩) (Set.mem_image_of_mem _ ?_)
-    · rw [Set.mem_preimage, Subtype.coe_mk, Set.mem_sdiff]
-      exact ⟨ hs, h ⟩
+    · grind
     rw [← Halfspace_mem, mem_pointDual, Subtype.coe_mk] at hx
     rwa [mem_pointDual, Subtype.coe_mk, real_inner_comm]
   · -- easy direction, simply need to show it is set intersection of a smaller set
@@ -348,10 +331,7 @@ lemma DualOfVpolytope_compactHpolytope [FiniteDimensional ℝ E] {S : Set E} (hS
     rw [Set.preimage_subset_preimage_iff]
     · apply subset_trans (by simp) <| subset_convexHull _ _
     · rw [Subtype.range_coe_subtype]
-      intro x hx
-      rw [Set.mem_sdiff, Set.mem_singleton_iff] at hx
-      rw [Set.mem_setOf]
-      exact hx.2
+      grind
 
 lemma Vpolytope_of_Hpolytope : ∀ {H_ : Set (Halfspace E)} (hH_ : H_.Finite),
   IsCompact (Hpolytope hH_) →

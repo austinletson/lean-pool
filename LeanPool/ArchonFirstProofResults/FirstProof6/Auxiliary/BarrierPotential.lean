@@ -96,8 +96,7 @@ lemma posDef_sqrt_exists (U : Matrix V V ℝ) (hU : U.PosDef) :
       _ = eigP * Matrix.diagonal d * star eigP := by
           have h : Matrix.diagonal (fun i => sqrtd i * sqrtd i) = Matrix.diagonal d := by
             congr 1
-            ext i
-            exact Real.mul_self_sqrt (le_of_lt (hU.eigenvalues_pos i))
+            grind
           rw [Matrix.diagonal_mul_diagonal, h]
   have hUhalf_herm : Uhalf.IsHermitian := by
     rw [Uhalf_def, Matrix.IsHermitian, Matrix.conjTranspose_mul, Matrix.conjTranspose_mul]

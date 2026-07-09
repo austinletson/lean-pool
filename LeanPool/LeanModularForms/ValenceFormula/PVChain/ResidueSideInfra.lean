@@ -186,8 +186,7 @@ theorem hasSimplePoleAt_logDeriv_of_zero' (s : ℍ) (hs : f s = 0) :
   obtain ⟨n, g, _, hg_analytic, hg_ne_zero, _, h_formula⟩ :=
     hasSimplePoleAt_logDeriv_of_zero_full f hf s hs
   exact ⟨(n : ℂ), logDeriv g, hg_analytic.deriv.fun_div hg_analytic hg_ne_zero, by
-    rw [eventually_nhdsWithin_iff]; simp only [Set.mem_compl_iff, Set.mem_singleton_iff]
-    exact h_formula⟩
+    rw [eventually_nhdsWithin_iff]; grind⟩
 
 omit hf in
 /-- `HasSimplePoleAt` of logDeriv at a non-zero point (trivial: c = 0, g = logDeriv f). -/
@@ -243,8 +242,7 @@ theorem residueSimplePole_logDeriv_eq_order (s : ℍ) (hs : f s = 0) :
     hg_analytic.deriv.fun_div hg_analytic hg_ne_zero
   have h_decomp : ∀ᶠ z in 𝓝[≠] (s : ℂ),
       logDeriv (modularFormCompOfComplex f) z = (n : ℂ) / (z - (s : ℂ)) + logDeriv g z := by
-    rw [eventually_nhdsWithin_iff]; simp only [Set.mem_compl_iff, Set.mem_singleton_iff]
-    exact h_formula
+    rw [eventually_nhdsWithin_iff]; grind
   rw [residue_simple_pole_eq_laurent _ (s : ℂ) (n : ℂ) (logDeriv g)
     h_logDeriv_g_analytic h_decomp, hn_eq]
   exact_mod_cast (orderOfVanishingAt'_eq_analyticOrderNatAt f hf s hs).symm
@@ -334,8 +332,7 @@ lemma cpvExists_scale (γ : ℝ → ℂ) (a b : ℝ) (s c : ℂ)
     fun ε => c * ∫ t in a..b, if ‖γ t - s‖ > ε
       then (γ t - s)⁻¹ * deriv γ t else 0 := by
     ext ε; erw [← intervalIntegral.integral_const_mul]
-    apply intervalIntegral.integral_congr; intro t _
-    dsimp only; split_ifs with h <;> ring
+    grind
   erw [h_eq]
   exact hL.const_mul c
 
@@ -568,8 +565,7 @@ lemma ftc_integral_zero_of_closed_slit {γ : ℝ → ℂ} {z₀ : ℂ} {ω : ℂ
   have hFTC := MeasureTheory.integral_eq_of_hasDerivAt_off_countable_of_le F F'
     (by norm_num : (0 : ℝ) ≤ 5) fdBoundaryFullPartition.countable_toSet
     hF_cont hF_deriv hF'_int
-  rw [hFTC]; change F 5 - F 0 = 0
-  simp only [hF_def, hγ_closed]; ring
+  grind
 
 include hf in
 /-- Winding number = 0 for points in `fdBox` but NOT in the fundamental domain. -/
@@ -658,9 +654,7 @@ lemma winding_zero_for_non_fd_point_H_geo (S : Finset UpperHalfPlane)
       · exact hγ_deriv_cont
       · exact hγ_deriv_bdd
     · have h_re_neg : z₀.re < -1/2 := by
-        cases abs_cases z₀.re with
-        | inl h => linarith [h.1]
-        | inr h => linarith [h.1, h_re_pos]
+        grind
       apply ftc_integral_zero_of_closed_slit (ω := 1) one_ne_zero
         (fdBoundary_H_continuous H) (fdBoundary_H_closed H) h_off
       · intro t ht; rw [Complex.mem_slitPlane_iff]; left

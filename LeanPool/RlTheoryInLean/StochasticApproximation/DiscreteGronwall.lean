@@ -46,22 +46,16 @@ private theorem prod_one_add_le_prod_one_add_of_le
     (by omega) (by omega)]
   apply le_mul_of_one_le_left
   · apply prod_nonneg
-    intro i hi
-    simp only [mem_Ico] at hi
-    linarith [hc i (by linarith)]
+    grind
   · apply Finset.one_le_prod
-    intro i hi
-    simp only [mem_Ico] at hi
-    linarith [hc i (by linarith)]
+    grind
 
 private theorem prod_one_add_le_exp_sum
     {n₀ n : ℕ} (hc : ∀ m ≥ n₀, c m ≥ 0) :
     ∏ i ∈ Ico n₀ n, (1 + c i) ≤ exp (∑ i ∈ Ico n₀ n, c i) := by
   rw [exp_sum]
   apply prod_le_prod
-  · intro i hi
-    simp only [mem_Ico] at hi
-    linarith [hc i (by linarith)]
+  · grind
   · intro i _
     rw [add_comm]
     exact add_one_le_exp (c i)
@@ -108,12 +102,10 @@ theorem discrete_gronwall_Ico
   have hsubset : Ico n₀ n ⊆ Ico n₀ n₁ := Ico_subset_Ico_right (by omega)
   have hbsum : ∑ k ∈ Ico n₀ n, b k ≤ ∑ k ∈ Ico n₀ n₁, b k :=
     sum_le_sum_of_subset_of_nonneg hsubset
-      fun i hi _ => by simp only [mem_Ico] at hi
-                       exact hb i (by linarith)
+      fun i hi _ => by grind
   have hcsum : ∑ i ∈ Ico n₀ n, c i ≤ ∑ i ∈ Ico n₀ n₁, c i :=
     sum_le_sum_of_subset_of_nonneg hsubset
-      fun i hi _ => by simp only [mem_Ico] at hi
-                       exact hc i (by linarith)
+      fun i hi _ => by grind
   have hbnn : 0 ≤ u n₀ + ∑ k ∈ Ico n₀ n₁, b k :=
     add_nonneg hun₀ (sum_nonneg fun i hi => by simp only [mem_Ico] at hi; exact hb i (by linarith))
   exact mul_le_mul (by linarith) (exp_le_exp.mpr hcsum) (by positivity) hbnn

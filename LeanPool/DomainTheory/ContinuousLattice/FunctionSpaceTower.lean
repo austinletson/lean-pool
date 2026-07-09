@@ -481,9 +481,7 @@ theorem projInfInf_embInfInf_eq (x : DInf D₀ j₀) :
   have g_mono_n (m : ℕ) : Monotone (fun n => g n m) :=
     monotone_nat_of_le_succ (g_mono_n_succ m)
   have hin : (⨆ n, jInfTerm D₀ j₀ n (embInfInf D₀ j₀ x)) = ⨆ n, ⨆ m, g n m := by
-    congr 1
-    funext n
-    exact hinner n
+    grind
   rw [hin, iSup₂_monotone_eq_diagonal g g_mono_m g_mono_n]
   congr 1
   funext n
@@ -638,10 +636,7 @@ theorem embInfInf_comp_projInfInf :
             iSup_congr (fun k => hcont (r k) (fun m => f (r m z)) hmono_frz)
       _ = ⨆ n, r n (f (r n z)) :=
             iSup₂_monotone_eq_diagonal (fun n m => r n (f (r m z))) hfm hfn
-  calc embInfInf D₀ j₀ (projInfInf D₀ j₀ f) z
-      = ⨆ n, (iInfTerm D₀ j₀ n (projInfInf D₀ j₀ f)) z := hev
-    _ = ⨆ n, r n (f (r n z)) := iSup_congr hterm
-    _ = f z := hfz.symm
+  grind
 
 end Thm44b
 

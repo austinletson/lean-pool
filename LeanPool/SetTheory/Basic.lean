@@ -194,8 +194,7 @@ namespace ToV
       fun h y => ⟨fun hy => (h _).mp hy, fun hy => (h _).mpr hy⟩,
       fun h y => ⟨fun hy => (h ⟨⇓y, isTransitive_vonNeumann _ _ x.2 hy⟩).mp hy, fun hy => ?_⟩
     ⟩
-    obtain ⟨z, hz⟩ := hp _ hy
-    exact hz ▸ (h z).mpr (hz ▸ hy)
+    grind
   · exact Iff.rfl
 
 @[toV_simps] lemma exists_mem_toV {x : M} {p : V → Prop} :
@@ -279,10 +278,7 @@ attribute [formula_builder_pre, formula_builder] Set.mem_setOf_eq
 lemma isSet_iff_exists_set {C : Set M} : IsSet C ↔ ∃ x : M, ∀ y, y ∈ x ↔ y ∈ C := by
   refine ⟨fun | ⟨x, hx⟩ => ⟨x, hx.1⟩, fun | ⟨x, hx⟩ => ⟨x, hx, fun y hy => ?_⟩⟩
   ext z
-  refine ⟨fun hz => ?_, fun hz => ?_⟩ <;> (
-    simp only [hx, hy] at hz ⊢
-    exact hz
-  )
+  grind
 
 lemma not_mem_self {x : M} : x ∉ x := by
   simpa [toZFSet_simps] using mem_irrefl _
@@ -438,8 +434,7 @@ namespace SetTheory
 @[toV_simps] lemma singleton.toV {x} : {↓x} = ↓({x} : M) := by
   rw [Singleton.singleton.eq_iff, ToV.forall_mem_toV_iff]
   · simpa only [toV_simps] using Singleton.singleton.spec _
-  · rintro z ⟨_⟩
-    exact ⟨x, rfl⟩
+  · grind
 
 @[toZFSet_simps] lemma singleton.toZFSet {x} : ⇓({x} : M) = {⇓x} := by
   simp (config := {singlePass := true}) only [← ToZFSet.toZFSet_toV]

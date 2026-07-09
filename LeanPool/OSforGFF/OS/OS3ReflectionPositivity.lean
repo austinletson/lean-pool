@@ -57,8 +57,7 @@ private lemma freeCovarianceFormR_reflection_nonneg
   classical
   have hf_supp : ∀ x : SpaceTime, x 0 ≤ 0 → f.val x = 0 := fun x hx => by
     apply f.zero_on_nonpositive
-    unfold getTimeComponent
-    exact hx
+    grind
   have h := freeCovariance_reflection_positive_real (m := m) (f := f.val) hf_supp
   simpa [freeCovarianceFormR] using h
 
@@ -319,9 +318,7 @@ lemma gaussianFreeField_real_generating_re
       (Complex.exp (-(1 / 2 : ℂ) * (freeCovarianceFormR m h h : ℝ))).re
         = Real.exp r := by
     simpa [h_arg, r] using (Complex.exp_ofReal_re r)
-  have h_char' := h_char
-  rw [h_exp_rewrite] at h_char'
-  simpa [r] using h_char'
+  grind
 
 /-- Factorisation of OS3 matrix entries in the purely real setting. -/
 lemma gaussianFreeField_real_entry_factor
@@ -380,10 +377,7 @@ lemma gaussianFreeField_real_entry_factor
     simp [A, a, b]
   have h_factor :
       -(1 / 2 : ℝ) * (Cf + Cg - 2 * Cfg) = A + Cfg := by
-    have h_ring : -(1 / 2 : ℝ) * (Cf + Cg - 2 * Cfg)
-        = -(1 / 2 : ℝ) * Cf + -(1 / 2 : ℝ) * Cg + Cfg := by
-          ring
-    simpa [A, a, b, add_comm, add_left_comm, add_assoc, hA] using h_ring
+    grind
   calc
     (GJGeneratingFunctional (gaussianFreeFieldFree m)
         (f.val - QFT.compTimeReflectionReal g.val)).re
@@ -461,16 +455,7 @@ lemma gaussianFreeField_OS3_matrix_real
     classical
     simp [Matrix.mulVec, dotProduct, Finset.mul_sum, mul_comm, mul_assoc]
   have hy_nonneg : 0 ≤ y ⬝ᵥ (E.mulVec y) := h_E_psd.dotProduct_mulVec_nonneg y
-  have h_goal :
-      0 ≤ (∑ i, ∑ j, c i * c j *
-        (GJGeneratingFunctional (gaussianFreeFieldFree m)
-          ((f i).val - QFT.compTimeReflectionReal (f j).val)).re) := by
-    have h₁ : 0 ≤ ∑ i, ∑ j, y i * y j * E i j := by
-      simpa [h_quad_sum] using hy_nonneg
-    have h₂ : 0 ≤ ∑ i, ∑ j, c i * c j * (Z i * Z j * E i j) := by
-      simpa [h_sum₂] using h₁
-    simpa [h_sum₁] using h₂
-  exact h_goal
+  grind
 
 /-- Main theorem: the Gaussian free field satisfies OS3_real (reflection positivity,
 real version). -/

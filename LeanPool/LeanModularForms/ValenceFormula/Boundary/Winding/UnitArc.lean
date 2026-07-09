@@ -391,11 +391,7 @@ private lemma unitArc_winding_aux (H : ℝ) (hH : 1 < H) (s : ℂ)
     intro ε hε_pos _
     simpa only [hδ_fn_def] using mul_pos (by positivity) (Real.arcsin_pos.mpr (by linarith))
   have hδ_small : ∀ ε, 0 < ε → ε < threshold → δ_fn ε < min (t₀ - 0) (5 - t₀) := by
-    intro ε hε_pos hε_lt
-    have hδ_lt := hδ_lt_hw ε hε_pos hε_lt
-    apply lt_min
-    · linarith [ht₀_Ioo.1, hhw_le_t₀_sub_one, hδ_lt]
-    · linarith [ht₀_Ioo.2, hhw_le_three_sub_t₀, hδ_lt]
+    grind
   have hδ_norm_eq : ∀ ε, 0 < ε → ε < threshold →
       ‖fdBoundaryH H (t₀ + δ_fn ε) - s‖ = ε := by
     intro ε hε_pos hε_lt
@@ -422,11 +418,7 @@ private lemma unitArc_winding_aux (H : ℝ) (hH : 1 < H) (s : ℂ)
       · have := hδ_lt_hw ε hε_pos hε_lt
         nlinarith [Real.pi_pos]
     have hε_half_bounds : -1 ≤ ε / 2 ∧ ε / 2 ≤ 1 := by
-      constructor
-      · linarith
-      · have hthresh_le : threshold ≤ 2 * Real.sin (Real.pi * hw / 12) :=
-          min_le_right _ _
-        nlinarith [Real.sin_le_one (Real.pi * hw / 12)]
+      grind
     rw [h2sin, Real.sqrt_sq_eq_abs, abs_of_pos (by linarith), hangle,
         Real.sin_arcsin hε_half_bounds.1 hε_half_bounds.2]
     ring
@@ -445,12 +437,7 @@ private lemma unitArc_winding_aux (H : ℝ) (hH : 1 < H) (s : ℂ)
     · exact unitArc_norm_gt_left s H hH t₀ (δ_fn ε) ε ht₀_Ioo h_s_arc hs_re
         hδ_pos' hδ_left hδ_right hδ_eq hε_lt_d t ⟨ht_mem.1, le_of_lt ht_left⟩ ht_left
     · have ht_right' : t₀ + δ_fn ε < t := by
-        rcases le_or_gt t₀ t with h_t_ge | h_t_lt
-        · rw [abs_of_nonneg (by linarith)] at habs; linarith
-        · exfalso
-          have h_abs_eq : |t - t₀| = t₀ - t := by rw [abs_of_neg (sub_neg.mpr h_t_lt)]; ring
-          have habs' : δ_fn ε < t₀ - t := h_abs_eq ▸ habs
-          linarith
+        grind
       exact unitArc_norm_gt_right s H hH t₀ (δ_fn ε) ε ht₀_Ioo h_s_arc hs_re hs_norm hs_im_pos
         hδ_pos' hδ_left hδ_right hδ_eq hε_lt_d t ht_right' ht_mem.2
   have h_near : ∀ ε, 0 < ε → ε < threshold →

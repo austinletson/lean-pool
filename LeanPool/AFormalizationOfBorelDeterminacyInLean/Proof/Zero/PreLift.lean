@@ -86,8 +86,7 @@ lemma game_closed : IsClosed H.game.payoff := by
   rw [G.residual_payoff_odd _ (by have := H.hlvl; synthIsPosition)]
   change IsClosed ((body.append (H.x.val.take (2 * k + 1)) ⁻¹' G.payoff)ᶜᶜ)
   convert hyp.closed.preimage (body.append_con (H.x.val.take (2 * k + 1))) using 1
-  ext x
-  simp
+  grind
 
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
 @[simps] def take (n : ℕ) (h : 2 * k < n) : PreLift hyp where
@@ -109,8 +108,7 @@ lemma take_of_length_le {h} (h' : H.x.val.length ≤ n) : H.take n h = H := by
     · rw [pInv_treeHom_val]
       · change pInvTreeHomMap hyp (List.take (2 * k) (List.take n H.x.val)) =
           pInvTreeHomMap hyp (List.take (2 * k) H.x.val)
-        rw [List.take_take]
-        rw [min_eq_left (by omega : 2 * k ≤ n)]
+        grind
       · simp
     · simp
   apply tree_ext
@@ -130,11 +128,9 @@ lemma take_of_length_le {h} (h' : H.x.val.length ≤ n) : H.take n h = H := by
     ext x
     constructor <;> rintro ⟨y, hy, rfl⟩
     · refine ⟨⟨y.val, ?_⟩, hy, rfl⟩
-      rw [← htree]
-      exact y.prop
+      grind
     · refine ⟨⟨y.val, ?_⟩, hy, rfl⟩
-      rw [htree]
-      exact y.prop
+      grind
 
 @[simps] instance : LE (PreLift hyp) where
   le p q := q.take p.x.val.length p.hlvl = p

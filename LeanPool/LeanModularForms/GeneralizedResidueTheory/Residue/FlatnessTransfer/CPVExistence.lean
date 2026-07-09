@@ -56,20 +56,13 @@ private lemma continuousOn_cutoff_integral
     obtain ⟨σ₁, σ₂, hσ₁_ge, hσ₁_lt, hσ₂_gt, hσ₂_le,
       hσ₁_val, hσ₂_val, h_left, h_right, h_mid⟩ := hbnd ε₀ hε₀
     have hσ₁_ge_l : l ≤ σ₁ := by
-      by_contra h_lt; push Not at h_lt
-      have hl_in : l ∈ Icc σ₁ σ₂ := ⟨h_lt.le, le_trans hl_lt.le hσ₂_gt.le⟩
-      exact absurd (h_mid l hl_in) (not_le.mpr (by linarith [hδ_le_l, hε₀.2]))
+      grind
     have hσ₂_le_r : σ₂ ≤ r := by
-      by_contra h_gt; push Not at h_gt
-      have hr_in : r ∈ Icc σ₁ σ₂ :=
-        ⟨le_trans hσ₁_lt.le (le_trans (le_of_lt hr_gt) (le_refl r)), h_gt.le⟩
-      exact absurd (h_mid r hr_in) (not_le.mpr (by linarith [hδ_le_r, hε₀.2]))
+      grind
     apply measure_mono_null (t := ({σ₁, σ₂} : Set ℝ))
     · intro t ⟨ht_Icc, ht_eq⟩
       have ht_σ : t ∈ Icc σ₁ σ₂ := by
-        refine ⟨?_, ?_⟩
-        · by_contra h; push Not at h; linarith [h_left t ⟨ht_Icc.1, h⟩]
-        · by_contra h; push Not at h; linarith [h_right t ⟨h, ht_Icc.2⟩]
+        grind
       rcases le_or_gt t t₀ with htt₀ | ht₀t
       · left; exact hg_anti.injOn ⟨le_trans hσ₁_ge_l ht_σ.1, htt₀⟩
           ⟨hσ₁_ge_l, hσ₁_lt.le⟩ (ht_eq ▸ hσ₁_val.symm)
@@ -93,11 +86,9 @@ private lemma continuousOn_cutoff_integral
       have ht_nP : t ∉ (↑γ.partition : Set ℝ) := by
         intro h; exact ht_nQ (Finset.mem_coe.mpr (Finset.mem_union_left _ (Finset.mem_coe.mp h)))
       have ht_ne_σ₁ : t ≠ σ₁ := by
-        intro h; exact ht_nQ (Finset.mem_coe.mpr (Finset.mem_union_right _
-          (Finset.mem_insert_self σ₁ {σ₂}) |> (h ▸ ·)))
+        grind
       have ht_ne_σ₂ : t ≠ σ₂ := by
-        intro h; exact ht_nQ (Finset.mem_coe.mpr (Finset.mem_union_right _
-          (Finset.mem_insert_of_mem (Finset.mem_singleton_self σ₂)) |> (h ▸ ·)))
+        grind
       have ht_Ioo : t ∈ Ioo γ.a γ.b :=
         ⟨lt_of_le_of_ne ht_Icc.1 (fun h =>
           ht_nP (h ▸ γ.toPiecewiseC1Curve.endpoints_in_partition.1)),
@@ -218,8 +209,7 @@ lemma cpv_exists_inv_sub_of_closed_unique
       obtain ⟨r, hr, hr_ball⟩ := Metric.isOpen_iff.mp hU_open 0 h0_mem
       exact ⟨min r δ, by positivity, min_le_right _ _, fun ε hε => hU_sub ⟨hr_ball (by
         simp only [Metric.mem_ball, Real.dist_eq]
-        rw [sub_zero, abs_of_pos hε.1]
-        exact lt_of_lt_of_le hε.2 (min_le_left _ _)), hε.1⟩⟩
+        grind), hε.1⟩⟩
     have h_logexp_cont : ContinuousOn (fun ε => Complex.log (Complex.exp (R ε))) (Ioo 0 η) :=
       (Complex.continuous_exp.comp_continuousOn
         (hR_cont.mono fun ε hε => ⟨(Set.mem_Ioo.mp hε).1,
@@ -238,8 +228,7 @@ lemma cpv_exists_inv_sub_of_closed_unique
           rw [Complex.exp_sub, Complex.exp_log (Complex.exp_ne_zero _), div_self
             (Complex.exp_ne_zero _)]
         rw [Complex.exp_eq_one_iff] at h_exp_eq
-        obtain ⟨n, hn⟩ := h_exp_eq
-        exact ⟨n, hn.symm⟩
+        grind
       have h2pi_pos : (0 : ℝ) < 2 * Real.pi := by positivity
       have hT_disc : DiscreteTopology T := by
         rw [discreteTopology_subtype_iff']

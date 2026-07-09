@@ -60,16 +60,14 @@ private lemma cardSqrtsPrimePowCoprimeTwoMulNeZero (hp2 : p ≠ 2)
   | inl h2 =>
     have h_p_dvd_2 : (p : ℤ) ∣ 2 := by
       have h2' : ((2 : ℤ) : ZMod p) = 0 := by
-        push_cast
-        exact h2
+        grind
       rw [ZMod.intCast_zmod_eq_zero_iff_dvd] at h2'
       exact h2'
     have hp_le_2 : p ≤ 2 := by
       have : (p : ℤ) ≤ 2 := Int.le_of_dvd (by decide) h_p_dvd_2
       omega
     have hp_ge_2 : 2 ≤ p := Fact.out (p := Nat.Prime p) |>.two_le
-    have : p = 2 := by omega
-    exact hp2 this
+    grind
   | inr hx =>
     exact h_x_nz hx
 
@@ -147,8 +145,7 @@ private lemma cardSqrtsPrimePowCoprimeLift (hp2 : p ≠ 2)
       (t.val : ZMod (p ^ (k + 2))) * (p ^ (k + 1) : ZMod (p ^ (k + 2)))
   have hy_cast : y.cast = x := by
     have h_fib := h_fiber x y
-    rw [h_fib]
-    use t
+    grind
   have hy_sq : y^2 = c := by
     have h_expand :
         y^2 =
@@ -157,12 +154,10 @@ private lemma cardSqrtsPrimePowCoprimeLift (hp2 : p ≠ 2)
               (t.val : ZMod (p ^ (k + 2))) * (p ^ (k + 1) : ZMod (p ^ (k + 2))) +
             (t.val : ZMod (p ^ (k + 2)))^2 *
               ((p ^ (k + 1) : ZMod (p ^ (k + 2))))^2 := by
-      dsimp [y]
-      ring
+      grind
     rw [h_expand]
     have h_pow_sq' : ((p : ZMod (p ^ (k + 2)))^(k + 1))^2 = 0 := by
-      rw [← Nat.cast_pow]
-      exact h_pow_sq
+      grind
     rw [h_pow_sq']
     simp only [mul_zero, add_zero]
     rw [h_c_eq']
@@ -173,8 +168,7 @@ private lemma cardSqrtsPrimePowCoprimeLift (hp2 : p ≠ 2)
           (2 : ZMod p) * (x.val : ZMod p) * (t.val : ZMod p) -
               (L : ZMod p) = 0 := by
         rw [ZMod.natCast_zmod_val t]
-        rw [h_t_prop]
-        exact sub_self _
+        grind
       exact h_eq
     obtain ⟨m', hm'⟩ := h_t_prop'
     have h_linear : 2 * (x.val : ℤ) * (t.val : ℤ) = L + p * m' := by
@@ -182,16 +176,13 @@ private lemma cardSqrtsPrimePowCoprimeLift (hp2 : p ≠ 2)
     have h_eq' :
         2 * (x.val : ℤ) * (t.val : ℤ) * (p : ℤ) ^(k + 1) =
           (L : ℤ) * (p : ℤ) ^(k + 1) + m' * (p : ℤ) ^(k + 2) := by
-      calc 2 * (x.val : ℤ) * (t.val : ℤ) * (p : ℤ) ^(k + 1)
-        _ = (L + p * m') * (p : ℤ) ^(k + 1) := by rw [h_linear]
-        _ = (L : ℤ) * (p : ℤ) ^(k + 1) + m' * (p : ℤ) ^(k + 2) := by ring
+      grind
     have h_cast := congr_arg (fun (a : ℤ) => (a : ZMod (p ^ (k + 2)))) h_eq'
     push_cast at h_cast
     have hp_pow_zero : (p : ZMod (p ^ (k + 2)))^(k + 2) = 0 := by
       rw [← Nat.cast_pow]
       exact ZMod.natCast_self (p ^ (k + 2))
-    rw [hp_pow_zero, mul_zero, add_zero] at h_cast
-    rw [h_cast, mul_comm (L : ZMod (p ^ (k + 2)))]
+    grind
   refine ⟨y, ⟨hy_cast, hy_sq⟩, ?_⟩
   intro y' ⟨hy'_cast, hy'_sq⟩
   have h_fib' := h_fiber x y' |>.mp hy'_cast
@@ -201,26 +192,12 @@ private lemma cardSqrtsPrimePowCoprimeLift (hp2 : p ≠ 2)
         (x.val : ZMod (p ^ (k + 2)))^2 +
           2 * (x.val : ZMod (p ^ (k + 2))) *
             (t'.val : ZMod (p ^ (k + 2))) * (p ^ (k + 1) : ZMod (p ^ (k + 2))) := by
-    rw [ht']
-    have :
-        (↑x.val + ↑t'.val * ↑p ^ (k + 1) : ZMod (p ^ (k + 2)))^2 =
-          ↑x.val ^ 2 + 2 * ↑x.val * ↑t'.val * ↑p ^ (k + 1) +
-            ↑t'.val ^ 2 * (↑p ^ (k + 1)) ^ 2 := by
-      ring
-    rw [this]
-    have h_pow_sq' : ((p : ZMod (p ^ (k + 2)))^(k + 1))^2 = 0 := by
-      rw [← Nat.cast_pow]
-      exact h_pow_sq
-    rw [h_pow_sq']
-    simp only [mul_zero, add_zero]
+    grind
   have h_eq'_mod :
       2 * (x.val : ZMod (p ^ (k + 2))) *
           (t'.val : ZMod (p ^ (k + 2))) * (p ^ (k + 1) : ZMod (p ^ (k + 2))) =
         (p ^ (k + 1) : ZMod (p ^ (k + 2))) * (L : ZMod (p ^ (k + 2))) := by
-    have h_eq : y'^2 = c := hy'_sq
-    rw [hy'_expand] at h_eq
-    rw [h_c_eq'] at h_eq
-    exact add_left_cancel h_eq
+    grind
   have h_dvd :
       (p : ℤ) ^(k + 2) ∣
         (2 * (x.val : ℤ) * (t'.val : ℤ) - L) * (p : ℤ) ^(k + 1) := by
@@ -236,17 +213,14 @@ private lemma cardSqrtsPrimePowCoprimeLift (hp2 : p ≠ 2)
             (p : ZMod (p ^ (k + 2)))^(k + 1) * (L : ZMod (p ^ (k + 2))) := by
       push_cast
       ring
-    rw [h_ring]
-    rw [h_eq'_mod]
-    exact sub_self _
+    grind
   have hp_pow_nz : (p : ℤ) ^ (k + 1) ≠ 0 :=
     pow_ne_zero _ (Nat.prime_iff_prime_int.mp hp.out).ne_zero
   have h_div : (p : ℤ) ∣ 2 * (x.val : ℤ) * (t'.val : ℤ) - L := by
     have h_dvd' :
         (p : ℤ) * (p : ℤ) ^(k + 1) ∣
           (2 * (x.val : ℤ) * (t'.val : ℤ) - L) * (p : ℤ) ^(k + 1) := by
-      rw [mul_comm, ← pow_succ]
-      exact h_dvd
+      grind
     exact Int.dvd_of_mul_dvd_mul_right hp_pow_nz h_dvd'
   have h_t'_prop : (2 : ZMod p) * (x.val : ZMod p) * t' = (L : ZMod p) := by
     have h_zero : ((2 * (x.val : ℤ) * (t'.val : ℤ) - L : ℤ) : ZMod p) = 0 := by
@@ -261,14 +235,8 @@ private lemma cardSqrtsPrimePowCoprimeLift (hp2 : p ≠ 2)
   have h_x_nz' : (2 : ZMod p) * (x.val : ZMod p) ≠ 0 :=
     cardSqrtsPrimePowCoprimeTwoMulNeZero (p := p) hp2 h_x_nz
   have ht_eq : t' = t := by
-    have :
-        (2 : ZMod p) * (x.val : ZMod p) * t' =
-          (2 : ZMod p) * (x.val : ZMod p) * t := by
-      rw [h_t'_prop, h_t_prop]
-    exact mul_left_cancel₀ h_x_nz' this
-  have ht_val_eq : t'.val = t.val := by rw [ht_eq]
-  rw [ht']
-  rw [ht_val_eq]
+    grind
+  grind
 
 private lemma cardSqrtsPrimePowCoprimeSucc (hp2 : p ≠ 2)
     (c : ℤ) (hc : ¬ (p : ℤ) ∣ c) (k : ℕ)
@@ -295,16 +263,11 @@ private lemma cardSqrtsPrimePowCoprimeSucc (hp2 : p ≠ 2)
       have h_y_val : y.val = x.val + t * p ^ (k + 1) := by
         dsimp [t]
         have h_div_add_mod := Nat.div_add_mod y.val (p ^ (k + 1))
-        rw [h_mod] at h_div_add_mod
-        rw [mul_comm (p ^ (k + 1))] at h_div_add_mod
-        rw [add_comm] at h_div_add_mod
-        exact h_div_add_mod.symm
+        grind
       have h_t_lt : t < p := by
         dsimp [t]
         apply Nat.div_lt_of_lt_mul
-        have h_y_lt : y.val < p ^ (k + 2) := y.val_lt
-        have h_pow : p ^ (k + 2) = p * p ^ (k + 1) := by ring
-        linarith
+        grind
       have h_t_val : ((t : ZMod p).val : ZMod (p ^ (k + 2))) = (t : ZMod (p ^ (k + 2))) := by
         rw [ZMod.val_cast_of_lt h_t_lt]
       use (t : ZMod p)
@@ -313,11 +276,7 @@ private lemma cardSqrtsPrimePowCoprimeSucc (hp2 : p ≠ 2)
       rw [ZMod.val_add]
       rw [ZMod.val_mul]
       have h_x_lt : x.val < p ^ (k + 2) := by
-        have h1 := x.val_lt
-        have hp_two_le := Nat.Prime.two_le hp.out
-        have h_pow : p ^ (k + 2) = p ^ (k + 1) * p := by ring
-        have : 1 ≤ p := by omega
-        nlinarith
+        grind
       have h_t_lt' : t < p ^ (k + 2) := by
         have hp_two_le := Nat.Prime.two_le hp.out
         have h_pow : p ^ (k + 2) = p ^ (k + 1) * p := by ring
@@ -336,10 +295,7 @@ private lemma cardSqrtsPrimePowCoprimeSucc (hp2 : p ≠ 2)
       rw [h_pow_eq]
       rw [ZMod.val_cast_of_lt h_p_pow_lt]
       have h_t_mul_lt : t * p ^ (k + 1) < p ^ (k + 2) := by
-        have hp_two_le := Nat.Prime.two_le hp.out
-        have h_pow : p ^ (k + 2) = p ^ (k + 1) * p := by ring
-        have : 0 < p ^ (k + 1) := by positivity
-        nlinarith
+        grind
       rw [Nat.mod_eq_of_lt h_t_mul_lt]
       rw [← h_y_val]
       rw [Nat.mod_eq_of_lt y.val_lt]
@@ -363,9 +319,7 @@ private lemma cardSqrtsPrimePowCoprimeSucc (hp2 : p ≠ 2)
         rw [ZMod.cast_natCast h_dvd]
         rw [ZMod.natCast_val]
         rw [ZMod.cast_id]
-      rw [h_cast]
-      simp only [mul_zero, add_zero]
-      exact h_id
+      grind
   have h_map :
       ∀ (y : ZMod (p ^ (k + 2))), y^2 = (c : ZMod (p ^ (k + 2))) →
         (ZMod.cast y : ZMod (p ^ (k + 1)))^2 = (c : ZMod (p ^ (k + 1))) := by
@@ -387,13 +341,7 @@ private lemma cardSqrtsPrimePowCoprimeSucc (hp2 : p ≠ 2)
     obtain ⟨y, ⟨hy_cast, hy_sq⟩, hy_uniq⟩ := h_lift x hx
     rw [Finset.card_eq_one]
     refine ⟨y, ?_⟩
-    ext y'
-    simp only [mem_filter, mem_univ, true_and, mem_singleton]
-    constructor
-    · rintro ⟨hy'_sq, hy'_cast⟩
-      exact hy_uniq y' ⟨hy'_cast, hy'_sq⟩
-    · rintro rfl
-      exact ⟨hy_sq, hy_cast⟩
+    grind
   unfold cardSqrts
   have h_sum :
       ((univ.filter (fun y : ZMod (p ^ (k + 2)) =>
@@ -405,9 +353,7 @@ private lemma cardSqrtsPrimePowCoprimeSucc (hp2 : p ≠ 2)
             (fun y => ZMod.cast y = x)).card := by
     apply Finset.card_eq_sum_card_fiberwise
     intro y hy
-    have hy_sq : y^2 = c := (Finset.mem_filter.mp hy).2
-    have h_map_goal : (ZMod.cast y : ZMod (p ^ (k + 1)))^2 = c := h_map y hy_sq
-    exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, h_map_goal⟩
+    grind
   rw [h_sum]
   have h_sum_one :
       (∑ x ∈ univ.filter (fun x : ZMod (p ^ (k + 1)) =>
@@ -418,8 +364,7 @@ private lemma cardSqrtsPrimePowCoprimeSucc (hp2 : p ≠ 2)
         ∑ x ∈ univ.filter (fun x : ZMod (p ^ (k + 1)) =>
           x ^ 2 = (c : ZMod (p ^ (k + 1)))), 1 := by
     apply Finset.sum_congr rfl
-    intro x hx
-    exact h_fiber_card x hx
+    grind
   rw [h_sum_one]
   rw [Finset.sum_const]
   have h_smul :
@@ -451,9 +396,7 @@ theorem cardSqrts_prime_pow_coprime (hp2 : p ≠ 2) (n : ℕ) (hn : 0 < n)
     rw [h_equiv (p ^ Nat.succ 0) hp_eq]
     have h_prime := cardSqrts_prime p hp2 c
     by_cases h : legendreSym p c = 1
-    · rw [h] at h_prime
-      rw [if_pos h]
-      omega
+    · grind
     · rw [if_neg h]
       have h_c_nz : (c : ZMod p) ≠ 0 := by
         intro h0
@@ -461,8 +404,7 @@ theorem cardSqrts_prime_pow_coprime (hp2 : p ≠ 2) (n : ℕ) (hn : 0 < n)
         exact (ZMod.intCast_zmod_eq_zero_iff_dvd c p).mp h0
       rcases legendreSym.eq_one_or_neg_one p h_c_nz with h_pos | h_neg
       · exact False.elim (h h_pos)
-      · rw [h_neg] at h_prime
-        omega
+      · grind
   | succ k ih =>
     exact cardSqrtsPrimePowCoprimeSucc (p := p) hp2 c hc k ih
 
@@ -801,9 +743,7 @@ theorem cardSqrts_prime_pow_even_val (hp2 : p ≠ 2) (n r : ℕ)
           ((u : ℤ) : ZMod (p ^ (n - 2 * r))) := rfl
     rw [h_card_Sy]
     rw [cardSqrts_prime_pow_coprime p hp2 (n - 2 * r) (by omega) u hu]
-    split_ifs with h_leg
-    · ring
-    · ring
+    grind
   · -- f is injective on domain
     rintro ⟨y1, k1⟩ hy1 ⟨y2, k2⟩ hy2 hf_eq
     obtain ⟨hy1_y, hy1_k⟩ := Finset.mem_product.mp hy1
@@ -816,45 +756,32 @@ theorem cardSqrts_prime_pow_even_val (hp2 : p ≠ 2) (n r : ℕ)
     have h_add1 : r + (n - 2 * r) = n - r := by omega
     have h_sub : (p ^ r - 1) * p ^ (n - r) = p ^ n - p ^ (n - r) := by
       rw [Nat.sub_mul, one_mul, ← pow_add]
-      have h_add2 : r + (n - r) = n := by omega
-      rw [h_add2]
+      grind
     have h_le : p ^ (n - r) ≤ p ^ n := Nat.pow_le_pow_right hp.out.pos (by omega)
     have h2_lt1 : p ^ r * y1.val < p ^ (n - r) := by
       have hy1_lt : y1.val < p ^ (n - 2 * r) := y1.val_lt
       have h2 := Nat.mul_lt_mul_of_pos_left hy1_lt (pow_pos (Nat.Prime.pos hp.out) r)
-      rw [← pow_add, h_add1] at h2
-      exact h2
+      grind
     have h2_lt2 : p ^ r * y2.val < p ^ (n - r) := by
       have hy2_lt : y2.val < p ^ (n - 2 * r) := y2.val_lt
       have h2 := Nat.mul_lt_mul_of_pos_left hy2_lt (pow_pos (Nat.Prime.pos hp.out) r)
-      rw [← pow_add, h_add1] at h2
-      exact h2
+      grind
     have h_lt1 : p ^ r * y1.val + k1 * p ^ (n - r) < p ^ n := by
       have hk1_le : k1 ≤ p ^ r - 1 := Nat.le_sub_one_of_lt hk1
       have h1 : k1 * p ^ (n - r) ≤ (p ^ r - 1) * p ^ (n - r) := Nat.mul_le_mul_right _ hk1_le
-      rw [h_sub] at h1
-      calc p ^ r * y1.val + k1 * p ^ (n - r)
-        _ < p ^ (n - r) + k1 * p ^ (n - r) := Nat.add_lt_add_right h2_lt1 _
-        _ ≤ p ^ (n - r) + (p ^ n - p ^ (n - r)) := Nat.add_le_add_left h1 _
-        _ = p ^ n := Nat.add_sub_cancel' h_le
+      grind
     have h_lt2 : p ^ r * y2.val + k2 * p ^ (n - r) < p ^ n := by
       have hk2_le : k2 ≤ p ^ r - 1 := Nat.le_sub_one_of_lt hk2
       have h1 : k2 * p ^ (n - r) ≤ (p ^ r - 1) * p ^ (n - r) := Nat.mul_le_mul_right _ hk2_le
-      rw [h_sub] at h1
-      calc p ^ r * y2.val + k2 * p ^ (n - r)
-        _ < p ^ (n - r) + k2 * p ^ (n - r) := Nat.add_lt_add_right h2_lt2 _
-        _ ≤ p ^ (n - r) + (p ^ n - p ^ (n - r)) := Nat.add_le_add_left h1 _
-        _ = p ^ n := Nat.add_sub_cancel' h_le
+      grind
     have h_eq1 :
         (↑(p ^ r * y1.val + k1 * p ^ (n - r)) : ZMod (p ^ n)) =
           ↑p ^ r * ↑y1.val + ↑k1 * ↑p ^ (n - r) := by
-      push_cast
-      rfl
+      grind
     have h_eq2 :
         (↑(p ^ r * y2.val + k2 * p ^ (n - r)) : ZMod (p ^ n)) =
           ↑p ^ r * ↑y2.val + ↑k2 * ↑p ^ (n - r) := by
-      push_cast
-      rfl
+      grind
     have h_val1 :
         (↑(p ^ r * y1.val + k1 * p ^ (n - r)) : ZMod (p ^ n)).val =
           p ^ r * y1.val + k1 * p ^ (n - r) :=
@@ -881,8 +808,7 @@ theorem cardSqrts_prime_pow_even_val (hp2 : p ≠ 2) (n r : ℕ)
       exact ZMod.val_injective _ hy_eq
     have hk_eq : k1 = k2 := by
       have h_subst : p ^ r * y1.val + k1 * p ^ (n - r) = p ^ r * y1.val + k2 * p ^ (n - r) := by
-        rw [← h_mod_eq] at hf_eq_val
-        exact hf_eq_val
+        grind
       have h_cancel := Nat.add_left_cancel h_subst
       have hp_pow_pos : 0 < p ^ (n - r) := pow_pos hp.out.pos (n - r)
       exact Nat.eq_of_mul_eq_mul_right hp_pow_pos h_cancel
@@ -959,10 +885,7 @@ theorem cardSqrts_zero (n : ℕ) (hn : 0 < n) :
       use i
       have hi_lt : i < p ^ (n / 2) := by
         have : p ^ k * i < p ^ k * p ^ (n / 2) := by
-          calc p ^ k * i = x.val := hi_eq.symm
-            _ < p ^ n := ZMod.val_lt _
-            _ = p ^ (k + n / 2) := by rw [show k + n / 2 = n by omega]
-            _ = p ^ k * p ^ (n / 2) := pow_add _ _ _
+          grind
         exact Nat.lt_of_mul_lt_mul_left this
       refine ⟨by simpa using hi_lt, ?_⟩
       rw [hf_def]

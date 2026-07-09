@@ -247,9 +247,7 @@ lemma fdBoundaryToPolygonHomotopy_avoids (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_r
         Complex.ofReal_im, Complex.div_ofNat_im,
         Complex.mul_im]
       norm_num
-    rw [heq] at hre
-    have : |p.re| = 1/2 := by rw [hre]; norm_num
-    linarith
+    grind
   · have ht2 : t - 1 ∈ Icc 0 1 := by constructor <;> linarith [h1, h2]
     have h_arc_in := segment2_arc_in_closed_unit_ball t
     have h_chord_in := chord1_in_closed_unit_ball (t - 1) ht2
@@ -283,9 +281,7 @@ lemma fdBoundaryToPolygonHomotopy_avoids (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_r
         Complex.sub_im, Complex.ofReal_im,
         Complex.div_ofNat_im]
       norm_num
-    rw [heq] at hre
-    have : |p.re| = 1/2 := by rw [hre]; norm_num
-    linarith
+    grind
   · intro heq
     have him : (↑t - 9/2 + ↑HHeight * I : ℂ).im =
           HHeight := by

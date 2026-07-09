@@ -45,23 +45,7 @@ lemma transAssocReparamAux_directed : DirectedMap.Directed
   unfold transAssocReparamAux
   simp only [one_div, ContinuousMap.coe_mk, Subtype.mk_le_mk]
   have hxy' : (x : ℝ) ≤ (y : ℝ) := hxy
-  split_ifs with h₀ h₁ h₂ h₃ h₄ h₅
-  · linarith
-  · linarith
-  · push Not at h₂
-    have hy_pos : 0 ≤ (y : ℝ) := le_trans (by norm_num) (le_of_lt h₂)
-    have h₀' : (x : ℝ) ≤ 4⁻¹ := h₀
-    nlinarith
-  · linarith
-  · linarith
-  · push Not at h₅
-    have h₃' : (x : ℝ) ≤ 2⁻¹ := h₃
-    have h₅' : (2⁻¹ : ℝ) < y := h₅
-    nlinarith
-  · linarith
-  · linarith
-  · apply (mul_le_mul_iff_of_pos_left (show 0 < (2⁻¹ : ℝ) by norm_num)).mpr
-    linarith
+  grind
 
 /-- The directed self-map of the unit interval used to associate triple concatenations of
 dipaths. -/

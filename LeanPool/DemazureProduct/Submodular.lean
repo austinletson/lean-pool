@@ -47,8 +47,7 @@ private lemma unique_a_helper {s : SlipFace} (hsub : s.submodular)
       have : A - 1 + 1 = A := sub_add_cancel A 1
       rw [this]
       rw [s.s_eq (A-1) b, s.s_eq (A-1) (b+1)]
-      rw [hA', hA, hAb, hbA]
-      omega
+      grind
     linarith [hsub (A-1) b]
   apply And.intro A_le_A'
   suffices s.dual b A' + s A (b+1) = 0 by
@@ -75,8 +74,7 @@ private lemma unique_a {s : SlipFace} (hsub : s.submodular) (b : ℤ) :
       · exact h0
       · have mem : ⟨a, b⟩ ∈ s.Γ := by
           simpa [SlipFace.Γ] using h1
-        have nmem := h a ha
-        contradiction
+        grind
       · linarith [hsub a b]
     have : (0 : ℤ) = 1 := by rwa [Finset.sum_eq_zero this] at h_sum
     contradiction
@@ -91,19 +89,13 @@ private lemma unique_a {s : SlipFace} (hsub : s.submodular) (b : ℤ) :
   let Anew := min A a'
   have Anew_le_A : Anew ≤ A := by apply Int.min_le_left
   have a'_Ico : a' ∈ Finset.Ico Anew A'new := by
-    simp only [Finset.mem_Ico]
-    constructor <;> linarith [Int.le_max_right A' (a' + 1), Int.min_le_right A a']
+    grind
   have a_Ico : a ∈ Finset.Ico Anew A'new := by
-    simp only [Finset.mem_Ico]
-    constructor <;> linarith
+    grind
   have hAnew : ∀ a ≤ Anew, s a b = 0 := by
-    intro a ha
-    have : a ≤ A := by linarith [Anew_le_A]
-    exact hA a this
+    grind
   have hA'new : ∀ a ≥ A'new, s.dual (b + 1) a = 0 := by
-    intro a ha
-    have : a ≥ A' := by linarith [A_le_A'new]
-    exact hA' a this
+    grind
   obtain ⟨A'new_le_A'new, h_sum⟩ := unique_a_helper hsub Anew A'new b hAnew hA'new
   have : (∑ x ∈ Finset.Ico Anew A'new, s.Δ x b)
     = s.Δ a b + ∑ x ∈ (Finset.Ico Anew A'new \ {a}), s.Δ x b := by
@@ -124,16 +116,12 @@ private lemma unique_a {s : SlipFace} (hsub : s.submodular) (b : ℤ) :
   specialize all0 a'
   by_contra! a'_ne_a
   have : a' ∈ Finset.Ico Anew A'new \ {a} := by
-    simp only [Finset.mem_sdiff, Finset.mem_Ico, Finset.mem_singleton]
-    constructor
-    · simpa using a'_Ico
-    · exact a'_ne_a
+    grind
   have eq0 : s.Δ a' b = 0 := by
     exact all0 this
   have eq1 : s.Δ a' b = 1 := by
     simpa [SlipFace.Γ] using ha'
-  rw [eq0] at eq1
-  norm_num at eq1
+  grind
 
 private lemma submodular_dual {s : SlipFace} (hsub : s.submodular) :
     s.dual.submodular := by
@@ -155,12 +143,10 @@ private lemma asp_func_spec {s : SlipFace} (hsub : s.submodular) (a b : ℤ) :
   constructor
   · intro eq
     dsimp [asp_func] at eq
-    rw [← eq]
-    exact (unique_a hsub b).choose_spec.1
+    grind
   · intro mem
     dsimp [asp_func]
-    have := (unique_a hsub b).choose_spec.2 a mem
-    rw [this]
+    grind
 
 private lemma asp_bijective {s : SlipFace} (hsub : s.submodular) :
   (asp_func hsub).Bijective := by
@@ -174,10 +160,7 @@ private lemma asp_bijective {s : SlipFace} (hsub : s.submodular) :
     let b := (unique_b hsub a1).choose
     have eq1 : b1 = b :=
       (unique_b hsub a1).choose_spec.2 b1 mem1
-    rw [← eq] at mem2
-    have eq2 : b2 = b :=
-      (unique_b hsub a1).choose_spec.2 b2 mem2
-    rw [eq1, eq2]
+    grind
   · intro a
     let b := (unique_b hsub a).choose
     use b
@@ -223,8 +206,7 @@ noncomputable def asp {s : SlipFace} (hsub : s.submodular) : AspPerm where
         apply s.zero_below (a' := 0) (b' := b)
         repeat linarith
       have : s.Δ a b = 0 := s.Δ_zero_of_s_zero a b s0
-      rw [this]
-      norm_num
+      grind
     have b_ge : ∀ b ∈ S, b ≥ min 0 B := by
       intro b hb
       by_cases b_nonneg : b ≥ 0
@@ -238,8 +220,7 @@ noncomputable def asp {s : SlipFace} (hsub : s.submodular) : AspPerm where
         by_contra! a_nonpos
         have nonneg : b * a ≥ 0 := by
           apply mul_nonneg_of_nonpos_of_nonpos (le_of_lt b_neg) a_nonpos
-        have neg : b * a < 0 := hb
-        linarith
+        grind
       have mem : ⟨a, b⟩ ∈ s.Γ := by
         apply (asp_func_spec hsub a b).mp
         rfl
@@ -254,13 +235,9 @@ noncomputable def asp {s : SlipFace} (hsub : s.submodular) : AspPerm where
       have : s.Δ a b = 0 := by
         rw [← s.Δ_dual a b]
         apply s.dual.Δ_zero_of_s_zero b a s0
-      rw [this]
-      norm_num
+      grind
     have : S ⊆ Set.Ico (min 0 B) (max 0 B') := by
-      intro b hb
-      have lt := b_lt b hb
-      have ge := b_ge b hb
-      simp only [Set.mem_Ico, ge, lt, and_self]
+      grind
     apply Set.Finite.subset _ this
     apply Set.finite_Ico
 
@@ -276,9 +253,7 @@ private lemma asp_spec (s : SlipFace) (hsub : s.submodular) :
     · use A
       exact ⟨h, hA A (le_refl A)⟩
     · use a
-      have : a ≤ A := by linarith
-      have := hA a this
-      exact ⟨le_refl a, this⟩
+      grind
   obtain ⟨A, hA⟩ := this
   have : ∃ B ≥ b, s a B = 0 := by
     obtain ⟨B, hB⟩ := s.large_b a
@@ -286,9 +261,7 @@ private lemma asp_spec (s : SlipFace) (hsub : s.submodular) :
     · use B
       exact ⟨h, hB B (le_refl B)⟩
     · use b
-      have : b ≥ B := by linarith
-      have := hB b this
-      exact ⟨le_refl b, this⟩
+      grind
   obtain ⟨B, hB⟩ := this
   have hAB : s A B = 0 := by
     apply s.zero_below (a' := A) (b' := b)
@@ -310,21 +283,18 @@ private lemma asp_spec (s : SlipFace) (hsub : s.submodular) :
     ∑ a' ∈ Finset.Ico A a, s.Δ a' b' = if τ b' < a ∧ τ b' ≥ A then 1 else 0 := by
     intro b' hb'
     simp only [ite, Finset.sum_ite_eq, Finset.mem_Ico, ge_iff_le]
-    congr 1
-    rw [And.comm]
+    grind
   simp only [ite, Finset.sum_ite_eq, Finset.mem_Ico, Finset.sum_boole]
   rw [τ.s_eq_se_card]
   suffices τ.seFinset a b = {x ∈ Finset.Ico b B | A ≤ τ.func x ∧ τ.func x < a} by congr
   ext b'
   simp only [τ.mem_se, Finset.mem_filter, Finset.mem_Ico]
   by_cases h : b' < b
-  · have : ¬ (b' ≥ b) := by linarith
-    simp only [ge_iff_le, this, false_and]
+  · grind
   have b_le_b' : b ≤ b' := by linarith
   simp only [ge_iff_le, b_le_b', true_and]
   by_cases h : τ b' ≥ a
-  · have : ¬ (τ b' < a) := by linarith
-    simp only [this, and_false]
+  · grind
   have τb'_lt_a : τ b' < a := by linarith
   simp only [τb'_lt_a, and_true, true_iff]
   clear h
@@ -384,8 +354,7 @@ private noncomputable def AspValley (α β : AspPerm) (a b : ℤ) : Valley where
       suffices {n : ℤ | α.s a n + β.s n b ≤ m} ⊆ Finset.Icc L R by
         apply Set.Finite.subset _ this
         apply Set.Finite.ofFinset (Finset.Icc L R)
-        intro x
-        simp only [Finset.mem_Icc, Finset.coe_Icc, Set.mem_Icc]
+        grind
       intro n hn
       simp only [Set.mem_setOf_eq] at hn
       suffices n ≥ L ∧ n ≤ R by simpa
@@ -429,11 +398,7 @@ lemma sediment (v w : Valley) {A : ℤ}
   := by
   by_cases h : v.M ≤ A
   · suffices w.min = v.min + 1 ∧ v.M ≤ w.M by
-      constructor
-      · constructor
-        · intro h'; exact this.1
-        · intro h'; exfalso; exact lt_irrefl v.M <| lt_of_le_of_lt h h'
-      exact this.2
+      grind
     have Mv_le_Mw : v.M ≤ w.M := by
       by_contra! vM_lt_wM
       have := (w.M_spec v.M).2 vM_lt_wM
@@ -446,8 +411,7 @@ lemma sediment (v w : Valley) {A : ℤ}
     have le : w.min ≤ v.min + 1 := by
       rw [← v.f_M]
       have : w.f v.M ≥ w.min := w.min_spec v.M
-      apply le_trans this
-      rw [low v.M h]
+      grind
     suffices w.min ≥ v.min + 1 by exact le_antisymm le this
     rw [← w.f_M]
     by_cases hM : w.M ≤ A
@@ -461,11 +425,7 @@ lemma sediment (v w : Valley) {A : ℤ}
       rw [← v.f_M]
       omega
   · suffices w.min = v.min ∧ v.M = w.M by
-      constructor
-      · constructor
-        · intro h'; absurd h'; exact h
-        · intro h'; exact this.1
-      · exact le_of_eq this.2
+      grind
     apply lt_of_not_ge at h
     have spec : ∀ n : ℤ, w.f n ≥ w.f v.M ∧ (n > v.M → w.f n > w.f v.M) := by
       intro n
@@ -473,18 +433,13 @@ lemma sediment (v w : Valley) {A : ℤ}
       by_cases hn : n ≤ A
       · repeat rw [low n hn]
         have vspec := v.M_spec n
-        constructor
-        · omega
-        · intro hn'
-          have := vspec.2 hn'
-          omega
+        grind
       · have hn := lt_of_not_ge hn
         repeat rw [high n hn]
         exact v.M_spec n
     have eq_val := le_antisymm (spec w.M).1 (w.M_spec v.M).1
     have le : w.M ≤ v.M := by
-      contrapose! eq_val with vM_lt_wM
-      exact ne_of_lt <| (spec w.M).2 vM_lt_wM
+      grind
     have ge : w.M ≥ v.M := by
       contrapose! eq_val with wM_lt_vM
       have := ne_of_lt <| (w.M_spec v.M).2 wM_lt_vM
@@ -509,18 +464,11 @@ lemma AspValley_step_a (α β : AspPerm) (a b : ℤ) :
     rw [α.a_step a n]
     omega
   have low : (∀ n : ℤ, n ≤ α⁻¹ a → w.f n = v.f n + 1) := by
-    intro n hn
-    rw [this n, if_pos hn]
+    grind
   have high : (∀ n : ℤ, n > α⁻¹ a → w.f n = v.f n) := by
-    intro n hn
-    rw [this n]
-    simp only [add_eq_left, ite_eq_right_iff, one_ne_zero, imp_false, not_le, hn]
+    grind
   have sed := sediment v w low high
-  by_cases h : v.M ≤ α⁻¹ a
-  · simp only [h, ↓reduceIte]
-    exact ⟨sed.1.1 h, sed.2⟩
-  · simp only [h, ↓reduceIte, add_zero]
-    exact ⟨sed.1.2 (lt_of_not_ge h), sed.2⟩
+  grind
 
 /-- Incrementing the second coordinate changes the valley minimum according to
 the position of the rightmost minimizer relative to `β b`, and the rightmost
@@ -550,23 +498,13 @@ lemma AspValley_step_b (α β : AspPerm) (a b : ℤ) :
     subst v w; simp only [AspValley]
     rw [β.b_step n b]
     unfold Valley.shiftDown
-    by_cases h : n ≤ β b
-    · simp only [h, ↓reduceIte, sub_add_cancel, add_right_inj, sub_eq_self,
-        ite_eq_right_iff, one_ne_zero, imp_false, not_lt]
-    · simp only [not_le.mp h, ↓reduceIte]
-      omega
+    grind
   have low : (∀ n : ℤ, n ≤ β b → w.f n = v.f n + 1) := by
-    intro n hn
-    rw [this n, if_pos hn]
+    grind
   have high : (∀ n : ℤ, n > β b → w.f n = v.f n) := by
-    intro n hn
-    rw [this n, if_neg (not_le.mpr hn), add_zero]
+    grind
   have sed := sediment v w low high
-  by_cases h : v.M ≤ β b
-  · simp only [h, ↓reduceIte]
-    exact ⟨sed.1.1 h, sed.2⟩
-  · simp only [h, ↓reduceIte, add_zero]
-    exact ⟨sed.1.2 (lt_of_not_ge h), sed.2⟩
+  grind
 
 lemma AspValley_noninc (α β : AspPerm) (a b c : ℤ) (b_le_c : b ≤ c) :
   let v := AspValley α β a b
@@ -611,9 +549,7 @@ private lemma submodular_of_basepoint_preserved (s : SlipFace) (a b : ℤ) :
     · rw [h1, h h1]
     · have h1 : d1 ≥ 1 := by
         have : d1 ≥ 0 := by linarith [(s.b_step (a+1) b).1]
-        apply lt_of_le_of_ne this
-        contrapose! h1
-        rw [← h1]
+        grind
       have h2 : d2 ≤ 1 := by linarith [s.b_step a b]
       exact le_trans h2 h1
 
@@ -644,16 +580,13 @@ theorem submodular_of_star {s t : SlipFace} (subS : s.submodular) (subT : t.subm
   rw [this] at eq
   let M' := (AspValley α β (a + 1) b).M
   have M'_ge_b : M' ≤ β b := by
-    have : 1 = if (AspValley α β (a + 1) b).M ≤ β.func b then 1 else 0 := by
-      linarith [eq]
-    simpa using this
+    grind
   let M := (AspValley α β a b).M
   have M_le_M' : M ≤ M' := by
     exact (AspValley_step_a α β a b).2
   have M_le_βb : M ≤ β b := le_trans M_le_M' M'_ge_b
   rw [(AspValley_step_b α β a b).1]
-  subst M
-  simp only [M_le_βb, ↓reduceIte, sub_add_cancel]
+  grind
 
 /-! ### Closure of submodularity under residuals
 
@@ -712,18 +645,14 @@ private lemma lres_a_step_eq_iff_exists_witness (α β : AspPerm) (a b : ℤ) :
     have hstep : α.s (a + 1) l = α.s a l :=
       (α.a_step_eq_iff a l).mpr hcut
     dsimp [lres_witness_set] at hl ⊢
-    rw [hflat, hstep]
-    exact hl
+    grind
   · rintro ⟨l, hl, hcut⟩
     have hstep : α.s (a + 1) l = α.s a l :=
       (α.a_step_eq_iff a l).mpr hcut
     have hmax := lres_candidate_le α β a b l
     have hmono := ((α.s ◃ β.s).a_step a b).1
     dsimp [lres_witness_set] at hl
-    apply le_antisymm
-    · rw [hl, hstep]
-      exact hmax
-    · exact hmono
+    grind
 
 /-- Witness-set form of the left-residual step in the first coordinate:
 the step rises by one exactly when every witness for the new value is at or
@@ -775,8 +704,7 @@ private lemma lres_b_step_eq_iff_exists_witness (α β : AspPerm) (a b : ℤ) :
       apply ((β⁻¹).a_step_eq_iff b l).mpr
       simpa only [inv_inv] using hcut
     dsimp [lres_witness_set] at hl ⊢
-    rw [← hflat, ← hstep]
-    exact hl
+    grind
   · rintro ⟨l, hl, hcut⟩
     have hstep : (β⁻¹).s (b + 1) l = (β⁻¹).s b l := by
       apply ((β⁻¹).a_step_eq_iff b l).mpr
@@ -784,10 +712,7 @@ private lemma lres_b_step_eq_iff_exists_witness (α β : AspPerm) (a b : ℤ) :
     have hmax := lres_candidate_le α β a (b + 1) l
     have hmono := ((α.s ◃ β.s).b_step a b).1
     dsimp [lres_witness_set] at hl
-    apply le_antisymm
-    · exact hmono
-    · rw [hl, ← hstep]
-      exact hmax
+    grind
 
 /-- Witness-set form of the left-residual step in the second coordinate:
 the step drops by one exactly when every old witness is at or left of the
@@ -830,8 +755,7 @@ private lemma lres_witness_move_a_down (α β : AspPerm) (a b l : ℤ)
     have hstep : α.s (a + 1) m = α.s a m :=
       (α.a_step_eq_iff a m).mpr hcut
     dsimp [lres_witness_set] at hm ⊢
-    rw [← hflat, ← hstep]
-    exact hm
+    grind
   by_cases hcut : α⁻¹ a < l
   · exact ⟨l, old_of_high hl hcut, le_refl l⟩
   have hle : l ≤ α⁻¹ a := by omega
@@ -847,8 +771,7 @@ private lemma lres_witness_move_a_down (α β : AspPerm) (a b l : ℤ)
       simp only [if_pos hle]
     refine ⟨l, ?_, le_refl l⟩
     dsimp [lres_witness_set] at hl ⊢
-    rw [hstep] at hl
-    omega
+    grind
 
 /-- Moving the second coordinate up transports any witness weakly to the
 right. This replaces the inequality from
@@ -869,8 +792,7 @@ private lemma lres_witness_move_b_up (α β : AspPerm) (a b l : ℤ)
       apply ((β⁻¹).a_step_eq_iff b m).mpr
       simpa only [inv_inv] using hcut
     dsimp [lres_witness_set] at hm ⊢
-    rw [hflat, hstep]
-    exact hm
+    grind
   by_cases hcut : β b < l
   · exact ⟨l, new_of_high hl hcut, le_refl l⟩
   have hle : l ≤ β b := by omega
@@ -886,8 +808,7 @@ private lemma lres_witness_move_b_up (α β : AspPerm) (a b l : ℤ)
       simp only [inv_inv, if_pos hle]
     refine ⟨l, ?_, le_refl l⟩
     dsimp [lres_witness_set] at hl ⊢
-    rw [hstep]
-    omega
+    grind
 
 /-- Moving the first coordinate down through several steps transports a witness
 weakly to the right. -/
@@ -905,16 +826,13 @@ private lemma lres_witness_move_a_down_of_le (α β : AspPerm) (a c b l : ℤ)
   intro n
   induction n with
   | zero =>
-    intro l hl
-    simp only [Nat.cast_zero, add_zero] at hl
-    exact ⟨l, hl, le_refl l⟩
+    grind
   | succ n ih =>
     intro l hl
     have hl_step : l ∈ lres_witness_set α β ((a + n) + 1) b := by
       simpa only [Nat.cast_succ, Nat.cast_add, Nat.cast_one, add_assoc] using hl
     obtain ⟨m, hm, hlm⟩ := lres_witness_move_a_down α β (a + n) b l hl_step
-    obtain ⟨l', hl', hml'⟩ := ih m hm
-    exact ⟨l', hl', le_trans hlm hml'⟩
+    grind
 
 /-- Moving the second coordinate up through several steps transports a witness
 weakly to the right. -/
@@ -932,15 +850,12 @@ private lemma lres_witness_move_b_up_of_le (α β : AspPerm) (a b c l : ℤ)
   intro n
   induction n with
   | zero =>
-    intro l hl
-    simp only [Nat.cast_zero, add_zero]
-    exact ⟨l, hl, le_refl l⟩
+    grind
   | succ n ih =>
     intro l hl
     obtain ⟨m, hm, hlm⟩ := ih l hl
     obtain ⟨l', hl', hml'⟩ := lres_witness_move_b_up α β a (b + n) m hm
-    refine ⟨l', ?_, le_trans hlm hml'⟩
-    simpa only [Nat.cast_succ, Nat.cast_add, Nat.cast_one, add_assoc] using hl'
+    grind
 
 /-- The left residual $s \triangleleft t$ of submodular slipfaces is
 submodular. *Theorem 4.11 (`thm:resLExists`) of
@@ -1000,8 +915,7 @@ lemma eq_of_sf_eq {α β : AspPerm} (eq_sf : α.s = β.s) : α = β := by
     simpa using β.Delta_eq (β n) n
   rw [← eq_sf] at this
   rw [α.Delta_eq (β n) n] at this
-  contrapose! this with neq
-  simp only [neq, ↓reduceIte, ne_eq, zero_ne_one, not_false_eq_true]
+  grind
 
 /-- The slipface product of two ASP permutations is represented by a unique ASP
 permutation. -/
@@ -1251,12 +1165,7 @@ lemma id_s_eq (a b : ℤ) : AspPerm.id.s a b = max (a - b) 0 := by
       exact (AspPerm.id.mem_se a b k).2 hk']
   rw [show (Finset.Ico b a).card = (a - b).toNat by
     simp only [Int.card_Ico b a]]
-  by_cases h : a - b ≥ 0
-  · rw [max_eq_left h, Int.toNat_of_nonneg h]
-  · have h' : a - b < 0 := lt_of_not_ge h
-    rw [max_eq_right (le_of_lt h')]
-    have : (a - b).toNat = 0 := Int.toNat_of_nonpos (le_of_lt h')
-    simp only [this, Nat.cast_zero]
+  grind
 
 lemma id_sf : AspPerm.id.s = SlipFace.id := by
   apply (SF_ext _ _).mpr
@@ -1283,17 +1192,14 @@ lemma star_id (α : AspPerm) : α ⋆ AspPerm.id = α := by
 instance : PartialOrder AspPerm where
   le (σ τ : AspPerm) := ∀ a b : ℤ, σ.s a b ≤ τ.s a b
   le_refl := by
-    intro σ a b
-    exact Int.le_refl (σ.s a b)
+    grind
   le_trans := by
-    intro σ τ υ h₁ h₂ a b
-    exact Int.le_trans (h₁ a b) (h₂ a b)
+    grind
   le_antisymm := by
     intro σ τ h₁ h₂
     apply eq_of_sf_eq
     rw [SF_ext]
-    intro a b
-    exact Int.le_antisymm (h₁ a b) (h₂ a b)
+    grind
 
 /-- The relation $\alpha \leq_\chi \beta$ from
 [An extended Demazure product](https://arxiv.org/abs/2206.14227): Bruhat order together with
@@ -1460,8 +1366,7 @@ theorem lel_of_dprod (α β : AspPerm) : β ≤L α ⋆ β := by
   have : τ u ≠ τ v := by
     intro eq
     apply τ.injective at eq
-    rw [eq] at u_lt_v
-    exact lt_irrefl v u_lt_v
+    grind
   have τv_le_τu : τ u < τ v := lt_of_le_of_ne τu_le_τv this; clear this τu_le_τv
   let a := τ v
   let val_au := AspValley α β a u

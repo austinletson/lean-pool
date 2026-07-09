@@ -88,10 +88,7 @@ private theorem norm_ne_zero_of_ne_zero_pkappa_wip
     have hsum_pos : 0 < Finset.sum F.support (fun a : Idx d => ‖F a‖ ^ 2) :=
       lt_of_lt_of_le hterm_pos hle
     change Real.sqrt (Finset.sum F.support (fun a : Idx d => ‖F a‖ ^ 2)) = 0 at hnorm
-    have hsqrt_pos :
-        0 < Real.sqrt (Finset.sum F.support (fun a : Idx d => ‖F a‖ ^ 2) ) :=
-      Real.sqrt_pos.mpr hsum_pos
-    linarith
+    grind
   · exact Finsupp.notMem_support_iff.mp hmem
 
 private theorem norm_smul_pkappa_wip
@@ -133,9 +130,7 @@ private theorem orthogonalToPk_smul_right_wip
       Finset.sum G.support (fun alpha => c * G alpha * star (F alpha))
           = c * Finset.sum G.support (fun alpha => G alpha * star (F alpha)) := by
             rw [Finset.mul_sum]
-            refine Finset.sum_congr rfl ?_
-            intro alpha halpha
-            ring
+            grind
       _ = 0 := by simp [horth]
 
 private theorem phi1D_eq_oneDimPhi_wip
@@ -162,11 +157,7 @@ private theorem phi1D_eq_oneDimPhi_wip
         _ = (Nat.factorial n : ℂ) := by exact_mod_cast Nat.choose_mul_factorial_mul_factorial hjn
         _ = ((Nat.factorial n : ℂ) / (Nat.factorial (n - j) : ℂ)) *
               (Nat.factorial (n - j) : ℂ) := by field_simp [hfac_ne]
-    simpa [mul_assoc, mul_left_comm, mul_comm] using
-      congrArg
-        (fun x : ℂ =>
-          ((-1 : ℂ) ^ j) * x * (Nat.choose k j : ℂ) * z ^ (n - j) * (star z) ^ (k - j))
-        hfactor
+    grind
 
 private lemma continuous_Phi_wip
     {d : Nat} (kappa alpha : MultiIndex d) :
@@ -292,9 +283,7 @@ private lemma integrable_evalPkappa_cross_wip
         (starRingEnd ℂ) (∑ beta ∈ G.support, G beta * Phi kappa beta z) =
           ∑ beta ∈ G.support, (starRingEnd ℂ) (G beta * Phi kappa beta z) := by simp
     rw [hconjsum, Finset.mul_sum]
-    refine Finset.sum_congr rfl ?_
-    intro beta hbeta
-    simp [mul_assoc, mul_left_comm, mul_comm]
+    grind
   change
     Integrable
       (fun z : Cd d =>
@@ -425,8 +414,7 @@ private theorem evalPkappa_add_apply_wip
   unfold evalPkappa
   rw [Finsupp.sum_add_index]
   · simp
-  · intro alpha halpha b1 b2
-    ring
+  · grind
 
 private lemma evalPkappa_pointwise_bound_wip
     {d : Nat} (kappa : MultiIndex d) (F G : Pkappa d kappa) (z : Cd d) :
@@ -521,11 +509,9 @@ theorem orthogonal_coercivity
   let delta : ℝ := min delta_high delta_low
   let C_F_perp : ℝ := max 2 delta⁻¹
   have hdelta_pos : 0 < delta := by
-    dsimp [delta]
-    exact lt_min hdelta_high_pos hdelta_low_pos
+    grind
   have hC_F_perp_pos : 0 < C_F_perp := by
-    dsimp [C_F_perp]
-    exact lt_of_lt_of_le zero_lt_two (le_max_left _ _)
+    grind
   refine ⟨C_F_perp, hC_F_perp_pos, ?_⟩
   intro G horth
   by_cases hG : G = 0
@@ -553,11 +539,9 @@ theorem orthogonal_coercivity
     by_cases hlt4 : t < 4
     · by_cases hsmall : defectPk kappa F G ≤ delta * t
       · have hdelta_le_high : delta ≤ delta_high := by
-          dsimp [delta]
-          exact min_le_left _ _
+          grind
         have hdelta_le_low : delta ≤ delta_low := by
-          dsimp [delta]
-          exact min_le_right _ _
+          grind
         have hdefect_high : defect F (t • H) ≤ delta_high * t := by
           have hstep : defectPk kappa F G ≤ delta_high * t := by
             refine le_trans hsmall ?_
@@ -573,16 +557,9 @@ theorem orthogonal_coercivity
         have hlow_mass : lowAnnulusMass J (ofPkappa kappa H) ≤ 1 / 4 :=
           hlow hH_orth hH_norm ht_pos (le_of_lt hlt4) hhigh_mass hdefect_low
         have hpartition := annulusMassPartition hd kappa J H
-        have hsum_le :
-            lowAnnulusMass J (ofPkappa kappa H) + highAnnulusMass J (ofPkappa kappa H) ≤ 1 / 2 := by
-          linarith
-        have hnorm_sq : ‖H‖ ^ 2 = 1 := by
-          rw [hH_norm]
-          norm_num
-        linarith
+        grind
       · have hdelta_inv_le : delta⁻¹ ≤ C_F_perp := by
-          dsimp [C_F_perp]
-          exact le_max_right _ _
+          grind
         have hstrict : delta * t < defectPk kappa F G := lt_of_not_ge hsmall
         have ht_le_delta : t ≤ delta⁻¹ * defectPk kappa F G := by
           have haux : t ≤ defectPk kappa F G / delta := by
@@ -598,8 +575,7 @@ theorem orthogonal_coercivity
       have htwo_defect : t ≤ 2 * defectPk kappa F G := by
         nlinarith [defect_nonneg_wip hd F G]
       have htwo_le_C : 2 ≤ C_F_perp := by
-        dsimp [C_F_perp]
-        exact le_max_left _ _
+        grind
       calc
         ‖G‖ = t := rfl
         _ ≤ 2 * defectPk kappa F G := htwo_defect

@@ -210,12 +210,7 @@ theorem negChoose_cast_ne_zero_iff (Fq : Type) [Field Fq]
   have hCpos : Nat.choose N y ≠ 0 := (Nat.choose_pos (by omega : y ≤ N)).ne'
   have step3 : ¬ (p ∣ Nat.choose N y) ↔ (Nat.choose N y).factorization p = 0 := by
     rw [Nat.factorization_eq_zero_iff]
-    constructor
-    · intro h; right; left; exact h
-    · rintro (h|h|h)
-      · exact absurd hp h
-      · exact h
-      · exact absurd h hCpos
+    grind
   rw [step3]
   set b := Nat.log p N + 1 with hb
   have hbgt : Nat.log p N < b := by omega
@@ -237,9 +232,7 @@ theorem negChoose_cast_ne_zero_iff (Fq : Type) [Field Fq]
         have hy : y < p ^ i := by omega
         have hk1 : k-1 < p ^ i := by omega
         rw [Nat.mod_eq_of_lt hy, Nat.mod_eq_of_lt hk1]; omega
-    · intro H i hi hle
-      rw [Finset.mem_Ico] at hi
-      have := H i hi.1; omega
+    · grind
   rw [bridge]
   change (∀ i, 1 ≤ i → y % p ^ i + (k - 1) % p ^ i < p ^ i) ↔ CarryFree p [k-1, y]
   unfold CarryFree digit
@@ -260,8 +253,7 @@ theorem negChoose_cast_ne_zero_iff (Fq : Type) [Field Fq]
     push Not at hcon
     have hge : p ≤ v + u := by omega
     have hmul : Pe * p ≤ Pe * (v + u) := Nat.mul_le_mul_left _ hge
-    have hexp : Pe * (v + u) = Pe * v + Pe * u := by ring
-    omega
+    grind
   · intro H
     have hno : ∀ e, y % p ^ e + (k - 1) % p ^ e < p ^ e := by
       intro e
@@ -281,8 +273,7 @@ theorem negChoose_cast_ne_zero_iff (Fq : Type) [Field Fq]
         have h3 : Pe * (p-1) = Pe*p - Pe := by rw [Nat.mul_sub_one]
         have h4 : Pe ≤ Pe * p := Nat.le_mul_of_pos_right _ (by omega)
         omega
-    intro i _
-    exact hno i
+    grind
 
 /-- **L4 (Lucas, multinomial).** With `y = ∑ i, m i`, the multinomial coefficient
 `multinomial(y; m_1,…,m_d)` has nonzero image in `F_q` iff the addition
@@ -300,16 +291,14 @@ theorem multinomial_cast_ne_zero_iff (Fq : Type) [Field Fq]
     have he1 : (a + 1) + s - 1 = a + s := by omega
     have he2 : Nat.choose (a + s) s = Nat.choose (a + s) a := by
       have := Nat.choose_symm (n := a + s) (k := a) (by omega)
-      rw [show a + s - a = s by omega] at this
-      exact this
+      grind
     rw [he1, he2] at h3
     have hsimp : (a + 1) - 1 = a := by omega
     rw [hsimp] at h3
     rw [← h3]
     push_cast
     have hu : ((-1:Fq)) ^ s ≠ 0 := pow_ne_zero _ (by simp)
-    rw [mul_ne_zero_iff]
-    tauto
+    grind
   -- Product of factorials divides factorial of sum (so the list multinomial is an
   -- integer).
   have hmultidvd : ∀ L : List ℕ, (L.map Nat.factorial).prod ∣ L.sum.factorial := by
@@ -335,8 +324,7 @@ theorem multinomial_cast_ne_zero_iff (Fq : Type) [Field Fq]
       exact Nat.factorial_pos n
     have key : (a + L.sum).factorial = (a + L.sum).choose a * (a.factorial * L.sum.factorial) := by
       have h := Nat.add_choose_mul_factorial_mul_factorial L.sum a
-      rw [add_comm L.sum a] at h
-      rw [← h]; ring
+      grind
     simp only [List.map_cons, List.prod_cons]
     rw [key]
     obtain ⟨c, hc⟩ := hmultidvd L
@@ -412,8 +400,7 @@ theorem multinomial_cast_ne_zero_iff (Fq : Type) [Field Fq]
           intro e
           rw [ihd e]
           have := h e
-          simp only [List.map_cons, List.sum_cons] at this
-          exact this
+          grind
         rw [crux_digit_two a t.sum hp' hpair e, ihd e]
   -- CarryFree splits over a cons: the head together with the tail-sum.
   have hcons : ∀ (a : ℕ) (L : List ℕ),
@@ -424,18 +411,14 @@ theorem multinomial_cast_ne_zero_iff (Fq : Type) [Field Fq]
     constructor
     · rintro ⟨h1, h2⟩ e
       have hc := crux_list L h2 e
-      have h1e := h1 e
-      rw [hc] at h1e
-      exact h1e
+      grind
     · intro h
       have h2 : ∀ e, (L.map (fun x => digit p x e)).sum ≤ p - 1 := by
         intro e; have := h e; omega
       refine ⟨?_, h2⟩
       intro e
       have hc := crux_list L h2 e
-      have he := h e
-      rw [← hc] at he
-      exact he
+      grind
   -- Main induction on lists: the list multinomial cast is nonzero iff CarryFree.
   have hmain : ∀ L : List ℕ,
       (((L.sum.factorial / (L.map Nat.factorial).prod : ℕ) : ℤ) : Fq) ≠ 0 ↔ CarryFree p L := by
@@ -461,8 +444,7 @@ theorem multinomial_cast_ne_zero_iff (Fq : Type) [Field Fq]
       rw [show (((t.sum.factorial / (t.map Nat.factorial).prod : ℕ) : Fq))
           = ((((t.sum.factorial / (t.map Nat.factorial).prod : ℕ) : ℤ)) : Fq) by
         rw [Int.cast_natCast]] at *
-      rw [ih]
-      rw [hcons a t]
+      grind
   -- Reduce `Nat.multinomial Finset.univ m` to the list version over `List.ofFn m`.
   have hreduce : ((Nat.multinomial Finset.univ m : ℤ) : Fq)
       = ((((List.ofFn m).sum.factorial
@@ -547,8 +529,7 @@ theorem crux_list (p : ℕ) (L : List ℕ)
         intro e
         rw [ihd e]
         have := h e
-        simp only [List.map_cons, List.sum_cons] at this
-        exact this
+        grind
       rw [crux_digit_two p a t.sum hp' hpair e, ihd e]
 
 /-- **L5 (carry-free combination).** With `y = ∑ i, m i`, the two carry-free
@@ -564,20 +545,14 @@ theorem carryfree_combine (p kk d : ℕ) (m : Fin d → ℕ) :
   constructor
   · rintro ⟨h1, h2⟩ e
     have hc := crux_list p (List.ofFn m) h2 e
-    rw [hsum] at hc
-    have h1e := h1 e
-    rw [hc] at h1e
-    exact h1e
+    grind
   · intro h
     have h2 : ∀ e, ((List.ofFn m).map (fun x => digit p x e)).sum ≤ p - 1 := by
       intro e; have := h e; omega
     refine ⟨?_, h2⟩
     intro e
     have hc := crux_list p (List.ofFn m) h2 e
-    rw [hsum] at hc
-    have he := h e
-    rw [← hc] at he
-    exact he
+    grind
 
 /-! ### L1 helper lemmas (PowerSeries / LaurentSeries infrastructure)
 
@@ -709,10 +684,7 @@ theorem phi_monicOf_eq (Fq : Type) [Field Fq] (d : ℕ) (θ : Fin d → Fq) :
     intro i
     rw [map_mul, hofX, HahnSeries.ofPowerSeries_C, HahnSeries.C_apply,
         ← mul_assoc, HahnSeries.single_mul_single, HahnSeries.single_mul_single, mul_one, one_mul]
-    congr 1
-    have : (i : ℕ) ≤ d := le_of_lt i.isLt
-    push_cast [Nat.cast_sub this]
-    ring_nf
+    grind
   -- LHS transform
   unfold phi monicOf
   rw [map_add, map_pow, map_sum, Polynomial.aeval_X, hXinv, hpow,
@@ -720,10 +692,7 @@ theorem phi_monicOf_eq (Fq : Type) [Field Fq] (d : ℕ) (θ : Fin d → Fq) :
   rw [Finset.sum_congr rfl (fun i _ => hLHSterm i)]
   -- RHS transform
   rw [map_add, mul_add, map_sum, Finset.mul_sum]
-  rw [Finset.sum_congr rfl (fun i _ => hRHSterm i)]
-  -- now: single(-d)1 + ∑ single(-i)(θi) = single(-d)1 * ofPowerSeries 1 + ∑ single(-i)(θi)
-  congr 1
-  simp
+  grind
 
 /-- **H3 (inverse `k`-th power as shift × PowerSeries inverse).** From H2: the
 `k`-th power of the inverse is `single (d*k) 1` times the coercion of the
@@ -893,10 +862,7 @@ theorem Sdk_coeff_per_theta (Fq : Type) [Field Fq] (d k : ℕ) (θ : Fin d → F
           apply Finset.sum_congr rfl
           intro j _
           simp only [Function.comp, Fin.revPerm_apply, Fin.rev_rev]
-          have hjr : ((Fin.rev j : Fin d) : ℕ) = d - 1 - (j : ℕ) := by rw [Fin.val_rev]; omega
-          rw [hjr]
-          have hj : (j : ℕ) < d := j.isLt
-          congr 1; omega
+          grind
         rw [hmult, hprodθ, hweight]
     -- apply reindex
     rw [Finset.sum_congr rfl (fun y _ => by rw [hcoeff y, hreindex y])]
@@ -914,9 +880,7 @@ theorem Sdk_coeff_per_theta (Fq : Type) [Field Fq] (d k : ℕ) (θ : Fin d → F
       constructor
       · intro hm
         have hw : weight d m = e := by
-          have hcast : ((d * k : ℕ) : ℤ) + (weight d m : ℤ) = n := by exact_mod_cast hm
-          have : (weight d m : ℤ) = (e : ℤ) := by push_cast [he] at hcast ⊢; omega
-          exact_mod_cast this
+          grind
         refine ⟨fun i => ?_, hw⟩
         have hle : m i ≤ weight d m := by
           rw [weight]
@@ -925,10 +889,7 @@ theorem Sdk_coeff_per_theta (Fq : Type) [Field Fq] (d k : ℕ) (θ : Fin d → F
               Finset.single_le_sum (f := fun j : Fin d => ((j : ℕ)+1) * m j)
                 (fun j _ => Nat.zero_le _) (Finset.mem_univ i)
         omega
-      · rintro ⟨_, hw⟩
-        have : (weight d m : ℤ) = (e : ℤ) := by exact_mod_cast hw
-        push_cast [← he, this]
-        omega
+      · grind
     rw [hset, finsum_mem_coe_finset]
     -- LHS → fiberwise
     rw [← Finset.sum_fiberwise_of_maps_to (s := FS) (t := Finset.range (e + 1))
@@ -964,8 +925,7 @@ theorem Sdk_coeff_per_theta (Fq : Type) [Field Fq] (d k : ℕ) (θ : Fin d → F
       · intro m hm
         simp only [hFS, Finset.mem_filter, Fintype.mem_piFinset, Finset.mem_range] at hm
         simp only [Finset.mem_filter, Finset.mem_piAntidiag]
-        obtain ⟨⟨_, hw⟩, hsum⟩ := hm
-        exact ⟨⟨hsum, fun i _ => Finset.mem_univ i⟩, hw.symm⟩
+        grind
       · intro m hm; rfl
       · intro m hm; rfl
       · intro m hm
@@ -991,11 +951,7 @@ theorem Sdk_coeff_per_theta (Fq : Type) [Field Fq] (d k : ℕ) (θ : Fin d → F
     -- LHS = 0; show RHS finsum = 0 because index set is empty
     symm
     apply finsum_mem_eq_zero_of_forall_eq_zero
-    intro x hx
-    simp only [Set.mem_setOf_eq] at hx
-    exfalso
-    push_cast at hx h
-    omega
+    grind
 
 /-- **L1 (Laurent/multinomial expansion).** The coefficient of `X ^ n` in `Sdk`
 equals the `θ`-sum of single-monic-polynomial coefficients, each of which is the
@@ -1017,8 +973,7 @@ theorem Sdk_coeff_as_thetasum (Fq : Type) [Field Fq] [Fintype Fq]
   -- which turns `∏ i, (θ (Fin.rev i)) ^ (m i)` into `∏ i, (θ i) ^ (m i)`.
   apply Fintype.sum_bijective (fun θ : Fin d → Fq => θ ∘ Fin.rev)
     (Function.Involutive.bijective (fun θ => by funext i; simp [Function.comp]))
-  intro θ
-  rfl
+  grind
 
 /-- **Assembly (b): nonvanishing of `cwit` on the index set.** For `m ∈ T_{d,k-1}`,
 `cwit Fq d k m ≠ 0`.  From L3, L4, and L5: membership in `Tindex` supplies both
@@ -1038,11 +993,7 @@ theorem cwit_ne_zero (Fq : Type) [Field Fq] [Fintype Fq]
   push_cast
   push_cast at h3 h4
   have hsign : ((-1 : Fq)) ^ d ≠ 0 := pow_ne_zero _ (by norm_num)
-  have hcombo := mul_ne_zero (mul_ne_zero hsign h3) h4
-  intro hzero
-  apply hcombo
-  rw [← hzero]
-  ring
+  grind
 
 /-- **Assembly (c): the coefficient identity** with the explicit witness `cwit`.
 Combines L1 (expansion), L2 (the finite-field power sum collapsing the `θ`-sum to
@@ -1079,9 +1030,7 @@ theorem Sdk_coeff_eq_finsum (Fq : Type) [Field Fq] [Fintype Fq]
       refine ⟨fun i => ?_, hm⟩
       have hcast : ((d * k : ℕ) : ℤ) + (weight d m : ℤ) = n := by exact_mod_cast hm
       have hle := hwle m i
-      have : (weight d m : ℤ) ≤ (n - d*k) := by push_cast at hcast ⊢; omega
-      have hwn : weight d m ≤ (n - d*k).toNat := by omega
-      omega
+      grind
     · rintro ⟨_, hm⟩; exact hm
   have hsetT : {m : Fin d → ℕ | Tindex p (Fintype.card Fq) d (k - 1) m ∧
         ((d * k : ℕ) + weight d m : ℤ) = n}
@@ -1094,9 +1043,7 @@ theorem Sdk_coeff_eq_finsum (Fq : Type) [Field Fq] [Fintype Fq]
       refine ⟨⟨fun i => ?_, hm⟩, hT⟩
       have hcast : ((d * k : ℕ) : ℤ) + (weight d m : ℤ) = n := by exact_mod_cast hm
       have hle := hwle m i
-      have : (weight d m : ℤ) ≤ (n - d*k) := by push_cast at hcast ⊢; omega
-      have hwn : weight d m ≤ (n - d*k).toNat := by omega
-      omega
+      grind
     · rintro ⟨⟨_, hm⟩, hT⟩; exact ⟨hT, hm⟩
   rw [hsetT, finsum_mem_coe_finset]
   rw [Finset.sum_congr rfl (fun θ _ => by rw [hset, finsum_mem_coe_finset])]
@@ -1214,9 +1161,7 @@ theorem monicOf_coeff (Fq : Type) [Field Fq] (d : ℕ) (θ : Fin d → Fq)
   rw [zero_add, finsetSum_coeff]
   rw [Finset.sum_eq_single i]
   · rw [coeff_C_mul, coeff_X_pow, if_pos rfl, mul_one]
-  · intro j _ hj
-    rw [coeff_C_mul, coeff_X_pow, if_neg, mul_zero]
-    exact fun h => hj (Fin.ext h.symm)
+  · grind
   · intro h; exact absurd (Finset.mem_univ i) h
 
 /-- Distinct coefficient tuples give distinct polynomials, so the parameterization
@@ -1227,9 +1172,7 @@ theorem monicOf_injective (Fq : Type) [Field Fq] (d : ℕ) :
   funext i
   have := monicOf_coeff Fq d θ i
   have h2 := monicOf_coeff Fq d θ' i
-  rw [h] at this
-  rw [this] at h2
-  exact h2
+  grind
 
 /-- The parameterization is surjective onto `A_d ^ +`: every monic polynomial of
 degree exactly `d` arises as `monicOf` of its lower coefficients. -/

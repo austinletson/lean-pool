@@ -246,9 +246,7 @@ theorem dot_tMatVec_eq_dot_matVec {m n : Nat}
             apply Finset.sum_congr rfl
             intro i _
             rw [Finset.mul_sum]
-            apply Finset.sum_congr rfl
-            intro j _
-            ring
+            grind
 
 /-- All-ones vector. -/
 def ones {n : Nat} : Vec n := fun _ => 1

@@ -131,8 +131,7 @@ theorem ContinuousOnMaps.isStrict_map {T : Endofunctor DomainObj} (h : Continuou
     {D E : DomainObj} (f : StrictMap D.sys E.sys) :
     IsStrict (T.map (X := D) (Y := E) f.1) := by
   obtain ⟨Φ, hΦ⟩ := h D E
-  rw [← hΦ f]
-  exact (toStrictMap (Φ.toElementMap (toStrictFilter f))).2
+  grind
 
 /-- `toStrictMap ∘ toStrictFilter = id` (the right inverse of the
 strict-function-space

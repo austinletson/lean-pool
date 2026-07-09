@@ -412,34 +412,24 @@ private lemma pairBonus_submodular_left_pair (β : Finset (Fin 4)) :
       subst hβ
       simp [pairBonus]
     · have hβ : β ≠ pair01 := by
-        intro h
-        have hEqSub : pair01 ⊆ β := by simp [h]
-        exact hSup hEqSub
+        grind
       have hUnion : pair01 ∪ β = pair01 := Finset.union_eq_left.mpr hSub
       have hInter : pair01 ∩ β ≠ pair01 := by
-        intro h
-        exact hSup (Finset.inter_eq_left.mp h)
+        grind
       simp [pairBonus, hUnion, hInter, hβ]
   · by_cases hSup : pair01 ⊆ β
     · have hβ : β ≠ pair01 := by
-        intro h
-        have hEqSub : β ⊆ pair01 := by simp [h]
-        exact hSub hEqSub
+        grind
       have hUnion : pair01 ∪ β ≠ pair01 := by
-        intro h
-        exact hSub (Finset.union_eq_left.mp h)
+        grind
       have hInter : pair01 ∩ β = pair01 := Finset.inter_eq_left.mpr hSup
       simp [pairBonus, hUnion, hInter, hβ]
     · have hβ : β ≠ pair01 := by
-        intro h
-        have hEqSub : β ⊆ pair01 := by simp [h]
-        exact hSub hEqSub
+        grind
       have hUnion : pair01 ∪ β ≠ pair01 := by
-        intro h
-        exact hSub (Finset.union_eq_left.mp h)
+        grind
       have hInter : pair01 ∩ β ≠ pair01 := by
-        intro h
-        exact hSup (Finset.inter_eq_left.mp h)
+        grind
       simp [pairBonus, hUnion, hInter, hβ]
 
 private lemma pairBonus_submodular_outside_exceptional :
@@ -610,8 +600,7 @@ lemma entropyFn_empty : entropyFn X μ ∅ = 0 := by
   have h_eq : (fun ω : Ω => fun j : (∅ : Finset (Fin 4)) => X j.1 ω)
       = fun _ =>
         (fun j : (∅ : Finset (Fin 4)) => X j.1 (Classical.arbitrary Ω)) := by
-    funext ω
-    exact Subsingleton.elim _ _
+    grind
   rw [h_eq]
   exact entropy_const _
 
@@ -633,11 +622,7 @@ lemma entropyFn_singleton (hX : ∀ i, Measurable (X i)) (i : Fin 4) :
   -- value at ⟨i, _⟩.
   have hπ : Function.Injective π := by
     intro g₁ g₂ heq
-    funext j
-    obtain ⟨j, hj⟩ := j
-    have hji : j = i := Finset.mem_singleton.mp hj
-    subst hji
-    exact heq
+    grind
   -- The joint RV is measurable: each coordinate `X j.1` is measurable.
   have h_meas : Measurable
       (fun ω : Ω => fun j : ({i} : Finset (Fin 4)) => X j.1 ω) :=
@@ -664,14 +649,7 @@ lemma entropyFn_pair (hX : ∀ i, Measurable (X i))
   -- Injectivity: every k : {i, j} satisfies k.1 = i ∨ k.1 = j.
   have hπ : Function.Injective π := by
     intro g₁ g₂ heq
-    have h₁ : g₁ ⟨i, hi⟩ = g₂ ⟨i, hi⟩ := (Prod.mk.inj heq).1
-    have h₂ : g₁ ⟨j, hj⟩ = g₂ ⟨j, hj⟩ := (Prod.mk.inj heq).2
-    funext k
-    obtain ⟨k, hk⟩ := k
-    rcases Finset.mem_insert.mp hk with hki | hk'
-    · subst hki; exact h₁
-    · have : k = j := Finset.mem_singleton.mp hk'
-      subst this; exact h₂
+    grind
   have h_meas : Measurable
       (fun ω : Ω => fun k : ({i, j} : Finset (Fin 4)) => X k.1 ω) :=
     measurable_pi_lambda _ (fun k => hX k.1)
@@ -698,17 +676,7 @@ lemma entropyFn_triple (hX : ∀ i, Measurable (X i))
     fun g => (g ⟨i, hi⟩, (g ⟨j, hj⟩, g ⟨k, hk⟩))
   have hπ : Function.Injective π := by
     intro g₁ g₂ heq
-    have h₁ : g₁ ⟨i, hi⟩ = g₂ ⟨i, hi⟩ := (Prod.mk.inj heq).1
-    have h₂ : g₁ ⟨j, hj⟩ = g₂ ⟨j, hj⟩ := (Prod.mk.inj (Prod.mk.inj heq).2).1
-    have h₃ : g₁ ⟨k, hk⟩ = g₂ ⟨k, hk⟩ := (Prod.mk.inj (Prod.mk.inj heq).2).2
-    funext m
-    obtain ⟨m, hm⟩ := m
-    rcases Finset.mem_insert.mp hm with hmi | hm'
-    · subst hmi; exact h₁
-    · rcases Finset.mem_insert.mp hm' with hmj | hmk
-      · subst hmj; exact h₂
-      · have : m = k := Finset.mem_singleton.mp hmk
-        subst this; exact h₃
+    grind
   have h_meas : Measurable
       (fun ω : Ω => fun m : ({i, j, k} : Finset (Fin 4)) => X m.1 ω) :=
     measurable_pi_lambda _ (fun m => hX m.1)
@@ -736,19 +704,7 @@ lemma entropyFn_quad (hX : ∀ i, Measurable (X i)) :
     fun g => (g ⟨0, h0⟩, (g ⟨1, h1⟩, (g ⟨2, h2⟩, g ⟨3, h3⟩)))
   have hπ : Function.Injective π := by
     intro g₁ g₂ heq
-    have e1 : g₁ ⟨0, h0⟩ = g₂ ⟨0, h0⟩ := (Prod.mk.inj heq).1
-    have e2 : g₁ ⟨1, h1⟩ = g₂ ⟨1, h1⟩ := (Prod.mk.inj (Prod.mk.inj heq).2).1
-    have e3 : g₁ ⟨2, h2⟩ = g₂ ⟨2, h2⟩ :=
-      (Prod.mk.inj (Prod.mk.inj (Prod.mk.inj heq).2).2).1
-    have e4 : g₁ ⟨3, h3⟩ = g₂ ⟨3, h3⟩ :=
-      (Prod.mk.inj (Prod.mk.inj (Prod.mk.inj heq).2).2).2
-    funext m
-    obtain ⟨m, hm⟩ := m
-    fin_cases m
-    · exact e1
-    · exact e2
-    · exact e3
-    · exact e4
+    grind
   have h_meas : Measurable
       (fun ω : Ω => fun m : ({0, 1, 2, 3} : Finset (Fin 4)) => X m.1 ω) :=
     measurable_pi_lambda _ (fun m => hX m.1)

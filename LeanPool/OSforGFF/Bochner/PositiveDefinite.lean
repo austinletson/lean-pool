@@ -160,18 +160,15 @@ lemma bounded_by_zero (hpd : IsPositiveDefinite φ) (x : α) :
       sq, mul_div_cancel_right₀ _ hnorm_pos']
   -- Term 2: -(conj(φ x) / ↑‖φ x‖) * φ x = -‖φ x‖
   have ht2 : -((starRingEnd ℂ) (φ x) / ↑‖φ x‖) * φ x = -(↑‖φ x‖) := by
-    rw [neg_mul, neg_inj, div_mul_eq_mul_div, hns, Complex.ofReal_pow,
-      sq, mul_div_cancel_right₀ _ hnorm_pos']
+    grind
   -- Term 3: -(conj(φ x)/‖φ x‖) * -(φ x/‖φ x‖) = ‖φ x‖²/‖φ x‖² = 1
   have ht3 : -((starRingEnd ℂ) (φ x) / ↑‖φ x‖) * -(φ x / ↑‖φ x‖) = 1 := by
-    rw [neg_mul_neg, div_mul_div_comm, hns, Complex.ofReal_pow, sq,
-      div_self (mul_ne_zero hnorm_pos' hnorm_pos')]
+    grind
   rw [ht1, ht2, ht3, one_mul] at h
   -- h : 0 ≤ (φ 0 + -↑‖φ x‖ + (-↑‖φ x‖ + φ 0)).re
   -- = 2 * (φ 0).re - 2 * ‖φ x‖
   simp only [Complex.add_re, Complex.neg_re, Complex.ofReal_re] at h
-  have him : (φ 0).im = 0 := hpd.eval_zero_real
-  linarith
+  grind
 
 /-- Pointwise product of PD functions is PD (Schur product theorem for functions).
     This is the key fact used in Phase 2 (Gaussian regularization).

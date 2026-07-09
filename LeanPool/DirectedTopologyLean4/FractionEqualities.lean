@@ -13,25 +13,20 @@ namespace FractionEqualities
 
 lemma one_sub_inverse_of_add_one {n : ℝ} (hn : n + 1 ≠ 0) :
     1 - 1 / (n + 1) = n / (n + 1) := by
-  field_simp
-  ring
+  grind
 
 lemma frac_cancel {a b c : ℝ} (hb : b ≠ 0) : (a / b) * (b / c) = a / c := by
   field_simp
 
 lemma frac_cancel' {a b c : ℝ} (hb : b ≠ 0) : (b / a) * (c / b) = c / a := by
-  rw [mul_comm]
-  exact frac_cancel hb
+  grind
 
 lemma one_sub_frac {a b : ℝ} (hb : b + 1 ≠ 0) : (1 - (a + 1)/(b+1)) = (b - a) / (b + 1) := by
-  field_simp
-  ring
+  grind
 
 lemma frac_special {a b c : ℝ} (hbc : b ≠ c) (hc : c + 1 ≠ 0) :
     (a + (b + 1)) / (c + 1) = (1 - (b + 1) / (c + 1)) * (a / (c - b)) + (b + 1) / (c + 1) := by
-  have hcb : c - b ≠ 0 := sub_ne_zero_of_ne hbc.symm
-  field_simp
-  ring
+  grind
 
 /-- For any `i n : ℕ` with `i > 0` and `i ≤ (n + 1) * i`,
 we have that `1 / (n + 1) = i / ((n + 1) * i)`. -/

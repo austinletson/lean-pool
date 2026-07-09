@@ -108,8 +108,7 @@ theorem delta_astar (d n₀ n₁ n₂ r₀ r₁ r₂ M : ℤ)
     · refine le_trans ?_ (norm_le_pi_norm (rem astar d p) 1)
       rw [c1 p, normcoord, hMa]
       have hnum : ((|r₁| : ℤ) : ℝ) ≤ ((|-11872 * d - 50000 * p 1| : ℤ) : ℝ) := by
-        exact_mod_cast abs_residue_le 50000 r₁ (-11872 * d) (by norm_num) hb1 ⟨n₁, by linarith
-          [hr1]⟩ (p 1)
+        exact_mod_cast abs_residue_le 50000 r₁ (-11872 * d) (by norm_num) hb1 ⟨n₁, by grind⟩ (p 1)
       linarith
     · refine le_trans ?_ (norm_le_pi_norm (rem astar d p) 2)
       rw [c2 p, normcoord, hMa]
@@ -448,30 +447,23 @@ theorem nine_le_card_image {N : ℕ} (f : ℕ → ℝ) {q₀ q₁ q₂ q₃ q₄
   have a6_8 : f q₈ < f q₆ := lt_trans h78 h67
   have e0 : f q₀ ∉ ({f q₁, f q₂, f q₃, f q₄, f q₅, f q₆, f q₇, f q₈} : Finset ℝ) := by
     simp only [Finset.mem_insert, Finset.mem_singleton, not_or]
-    exact ⟨ne_of_gt h01, ne_of_gt a0_2, ne_of_gt a0_3, ne_of_gt a0_4, ne_of_gt a0_5, ne_of_gt a0_6,
-      ne_of_gt a0_7, ne_of_gt a0_8⟩
+    grind
   have e1 : f q₁ ∉ ({f q₂, f q₃, f q₄, f q₅, f q₆, f q₇, f q₈} : Finset ℝ) := by
     simp only [Finset.mem_insert, Finset.mem_singleton, not_or]
-    exact ⟨ne_of_gt h12, ne_of_gt a1_3, ne_of_gt a1_4, ne_of_gt a1_5, ne_of_gt a1_6, ne_of_gt a1_7,
-      ne_of_gt a1_8⟩
+    grind
   have e2 : f q₂ ∉ ({f q₃, f q₄, f q₅, f q₆, f q₇, f q₈} : Finset ℝ) := by
     simp only [Finset.mem_insert, Finset.mem_singleton, not_or]
     exact ⟨ne_of_gt h23, ne_of_gt a2_4, ne_of_gt a2_5, ne_of_gt a2_6, ne_of_gt a2_7, ne_of_gt a2_8⟩
   have e3 : f q₃ ∉ ({f q₄, f q₅, f q₆, f q₇, f q₈} : Finset ℝ) := by
-    simp only [Finset.mem_insert, Finset.mem_singleton, not_or]
-    exact ⟨ne_of_gt h34, ne_of_gt a3_5, ne_of_gt a3_6, ne_of_gt a3_7, ne_of_gt a3_8⟩
+    grind
   have e4 : f q₄ ∉ ({f q₅, f q₆, f q₇, f q₈} : Finset ℝ) := by
-    simp only [Finset.mem_insert, Finset.mem_singleton, not_or]
-    exact ⟨ne_of_gt h45, ne_of_gt a4_6, ne_of_gt a4_7, ne_of_gt a4_8⟩
+    grind
   have e5 : f q₅ ∉ ({f q₆, f q₇, f q₈} : Finset ℝ) := by
-    simp only [Finset.mem_insert, Finset.mem_singleton, not_or]
-    exact ⟨ne_of_gt h56, ne_of_gt a5_7, ne_of_gt a5_8⟩
+    grind
   have e6 : f q₆ ∉ ({f q₇, f q₈} : Finset ℝ) := by
-    simp only [Finset.mem_insert, Finset.mem_singleton, not_or]
-    exact ⟨ne_of_gt h67, ne_of_gt a6_8⟩
+    grind
   have e7 : f q₇ ∉ ({f q₈} : Finset ℝ) := by
-    simp only [Finset.mem_singleton]
-    exact ne_of_gt h78
+    grind
   have hcard : (({f q₀, f q₁, f q₂, f q₃, f q₄, f q₅, f q₆, f q₇, f q₈} : Finset ℝ)).card = 9 := by
     rw [Finset.card_insert_of_notMem e0, Finset.card_insert_of_notMem e1,
       Finset.card_insert_of_notMem e2, Finset.card_insert_of_notMem e3,
@@ -481,8 +473,7 @@ theorem nine_le_card_image {N : ℕ} (f : ℕ → ℝ) {q₀ q₁ q₂ q₃ q₄
     + 1)).image f := by
     intro x hx
     simp only [Finset.mem_insert, Finset.mem_singleton] at hx
-    rcases hx with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> exact
-      Finset.mem_image_of_mem f ‹_›
+    grind
   calc 9 = _ := hcard.symm
     _ ≤ _ := Finset.card_le_card hsub
 
@@ -630,14 +621,7 @@ theorem transport (s : ℝ) (hs0 : 0 ≤ s) (m n : ℤ) (Mm Mn : ℝ)
   have hd2 := delta_sub_le astar (aprt s) n
   rw [norm_aprt s hs0, hm] at hd1
   rw [norm_aprt' s hs0, hn] at hd2
-  have hexp : 50000 * ((|(m : ℝ)| + |(n : ℝ)|) * s)
-      = 50000 * (|(m : ℝ)| * s) + 50000 * (|(n : ℝ)| * s) := by ring
-  rw [hexp] at hgap
-  obtain ⟨U, hU⟩ : ∃ U, |(m : ℝ)| * s = U := ⟨_, rfl⟩
-  obtain ⟨V, hV⟩ : ∃ V, |(n : ℝ)| * s = V := ⟨_, rfl⟩
-  rw [hU] at hd1 hgap
-  rw [hV] at hd2 hgap
-  linarith [hd1, hd2, hgap]
+  grind
 
 theorem Hpair (s : ℝ) (hs0 : 0 ≤ s) (hsmall : 7200000 * s < 1) (m n Mm Mn : ℤ)
     (hm : delta astar m = (Mm : ℝ) / 50000) (hn : delta astar n = (Mn : ℝ) / 50000)

@@ -59,13 +59,7 @@ def BlockRadLB4 : Prop :=
 `3/4` and `(4-1)/4` agree, and the guard `4 ≤ k` matches `g ≤ k`). -/
 lemma blockRadLB4_iff : BlockRadLB4 ↔ BlockRadLBg 4 := by
   unfold BlockRadLB4 BlockRadLBg
-  constructor
-  · intro h k n hk hn
-    have := h k n hk hn
-    rwa [show (((4 : ℕ) : ℝ) - 1) / ((4 : ℕ) : ℝ) = (3 : ℝ) / 4 by norm_num]
-  · intro h k n hk hn
-    have := h k n hk hn
-    rwa [show (((4 : ℕ) : ℝ) - 1) / ((4 : ℕ) : ℝ) = (3 : ℝ) / 4 by norm_num] at this
+  grind
 
 /-! ## The `g = 4` block objects as literal instances of the generic framework -/
 
@@ -99,8 +93,7 @@ theorem not_powerful_of_large_g4 (hBlock : BlockRadLB4) {k n : ℕ}
     simpa using this   -- (4-2)=2, 2*4=8
   have hlt : k ^ 8 < n ^ 2 := by
     have h2 : (k ^ 4) ^ 2 < n ^ 2 := Nat.pow_lt_pow_left hn (by norm_num)
-    have : (k ^ 4) ^ 2 = k ^ 8 := by ring
-    omega
+    grind
   omega
 
 /-- **Per-`k` finiteness (quartic crude).** For `k ≥ 4` under `BlockRadLB4`,

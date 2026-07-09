@@ -164,8 +164,7 @@ theorem exp_I_injOn_Ioo :
         mul_le_mul_of_nonneg_right hle (by linarith)
       linarith [hs.2, ht.1]
   rw [hn0] at hreal
-  push_cast at hreal
-  linarith
+  grind
 
 /-- `z·z* = ‖z‖²` in `ℂ`. -/
 theorem mul_conj_eq_norm_sq (z : ℂ) :
@@ -210,8 +209,7 @@ theorem exists_unit_mul {p q : ℂ} (hpq : ¬(p = 0 ∧ q = 0)) :
       _ = ((r⁻¹ ^ 2 : ℝ) : ℂ) * ((r ^ 2 : ℝ) : ℂ) := by rw [hcc, hsum]
       _ = 1 := by
           norm_cast
-          rw [inv_pow]
-          exact inv_mul_cancel₀ (pow_ne_zero 2 hrpos.ne')
+          grind
   · have hexp : Complex.exp ((μ : ℂ) * Complex.I)
         * Complex.exp ((μ : ℂ) * Complex.I)
         * Complex.exp (((p * q).arg : ℂ) * Complex.I) = 1 := by
@@ -248,10 +246,7 @@ theorem exists_real_unit {p q : ℝ} (hpq : ¬(p = 0 ∧ q = 0)) :
   have hrpos : 0 < r := Real.sqrt_pos.mpr hpos
   have hr2 : r ^ 2 = p ^ 2 + q ^ 2 := Real.sq_sqrt hpos.le
   refine ⟨r⁻¹ * p, r⁻¹ * q, ?_, r⁻¹, rfl, rfl⟩
-  have h1 : (r⁻¹ * p) ^ 2 + (r⁻¹ * q) ^ 2 = r⁻¹ ^ 2 * (p ^ 2 + q ^ 2) := by
-    ring
-  rw [h1, ← hr2, inv_pow]
-  exact inv_mul_cancel₀ (pow_ne_zero 2 hrpos.ne')
+  grind
 
 /-- Any point of the real unit circle is `(cos(θ/2), sin(θ/2))` for some
 angle `θ`. -/
@@ -272,9 +267,7 @@ theorem exists_cos_sin {v w : ℝ} (hvw : v ^ 2 + w ^ 2 = 1) :
     · linarith
     · exfalso; linarith [norm_nonneg ζ]
   have hζ0 : ζ ≠ 0 := by
-    intro h0
-    rw [h0, norm_zero] at hn1
-    norm_num at hn1
+    grind
   refine ⟨2 * ζ.arg, ?_, ?_⟩
   · rw [show (2 * ζ.arg) / 2 = ζ.arg by ring, Complex.cos_arg hζ0, hn1,
       div_one, hζdef]

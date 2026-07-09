@@ -153,14 +153,12 @@ private lemma besselK1_integrand_tail_integral_le (z : ℝ) (hz : 0 < z) :
     intro t
     have h1 : HasDerivAt (fun s => -z * exp s / 2) (-z / 2 * exp t) t := by
       have h := (hasDerivAt_exp t).const_mul (-z / 2)
-      have heq : (fun s => -z * exp s / 2) = fun y => -z / 2 * exp y := by funext s; ring
-      rwa [heq]
+      grind
     have h2 : HasDerivAt (fun s => exp (-z * exp s / 2))
         (exp (-z * exp t / 2) * (-z / 2 * exp t)) t :=
       (hasDerivAt_exp _).comp t h1
     have hval : g t = -2 / z * (exp (-z * exp t / 2) * (-z / 2 * exp t)) := by
-      simp only [hg_def]
-      field_simp
+      grind
     rw [show F = fun s => -2 / z * exp (-z * exp s / 2) from hF_def, hval]
     exact h2.const_mul (-2 / z)
   have hF_cont : ContinuousWithinAt F (Ici 1) 1 :=
@@ -312,27 +310,14 @@ lemma besselK1_asymptotic (z : ℝ) (hz : 1 ≤ z) :
           apply mul_le_mul_of_nonneg_right hz_bound; positivity
   -- Combine using Ico for proper disjointness
   have h_union' : Ici (0 : ℝ) = Ico 0 1 ∪ Ici 1 := by
-    ext x; simp only [mem_Ici, mem_union, mem_Ico]
-    constructor
-    · intro hx
-      by_cases h : x < 1
-      · left; exact ⟨hx, h⟩
-      · right; push Not at h; exact h
-    · intro h; cases h with | inl h => exact h.1 | inr h => linarith
+    grind
   have hf_int_Ico : IntegrableOn f (Ico 0 1) := hf_int_Icc.mono_set Ico_subset_Icc_self
   have h_disjoint : Disjoint (Ico (0:ℝ) 1) (Ici 1) := by
-    rw [Set.disjoint_left]
-    intro x hx hx'
-    simp only [mem_Ico] at hx
-    simp only [mem_Ici] at hx'
-    linarith
+    grind
   have h_Ico_eq_Icc : ∫ t in Ico 0 1, f t = ∫ t in Icc 0 1, f t :=
     setIntegral_congr_set Ico_ae_eq_Icc
   rw [h_union', setIntegral_union h_disjoint measurableSet_Ici hf_int_Ico hf_int_Ici1]
-  calc (∫ t in Ico 0 1, f t) + (∫ t in Ici 1, f t)
-      = (∫ t in Icc 0 1, f t) + (∫ t in Ici 1, f t) := by rw [h_Ico_eq_Icc]
-    _ ≤ sinh 1 * exp (-z) + 2 * exp (-z) := add_le_add h_part1 h_part2
-    _ = (sinh 1 + 2) * exp (-z) := by ring
+  grind
 
 /-- For z ∈ (0, 1], we have z · K₁(z) ≤ cosh(1) + 2.
     This follows from splitting the integral at t = 1:
@@ -389,21 +374,11 @@ lemma besselK1_mul_self_le (z : ℝ) (hz : 0 < z) (hz_le : z ≤ 1) :
       _ = 2 := by ring
   -- Combine: Use Ico instead of Icc for proper disjointness
   have h_union' : Ici (0 : ℝ) = Ico 0 1 ∪ Ici 1 := by
-    ext x; simp only [mem_Ici, mem_union, mem_Ico]
-    constructor
-    · intro hx
-      by_cases h : x < 1
-      · left; exact ⟨hx, h⟩
-      · right; simp only [not_lt] at h; exact h
-    · intro h; cases h with | inl h => exact h.1 | inr h => linarith
+    grind
   have hf_int_Ico : IntegrableOn f (Ico 0 1) := hf_int_Icc.mono_set Ico_subset_Icc_self
   -- Disjointness: Ico 0 1 and Ici 1 are disjoint since x < 1 and x ≥ 1 are contradictory
   have h_disjoint : Disjoint (Ico (0:ℝ) 1) (Ici 1) := by
-    rw [Set.disjoint_left]
-    intro x hx hx'
-    simp only [mem_Ico] at hx
-    simp only [mem_Ici] at hx'
-    linarith
+    grind
   -- The integrals over Ico and Icc are equal (they differ by a null set)
   have h_Ico_eq_Icc : ∫ t in Ico 0 1, f t = ∫ t in Icc 0 1, f t :=
     setIntegral_congr_set Ico_ae_eq_Icc
@@ -420,8 +395,7 @@ lemma besselK1_mul_self_le (z : ℝ) (hz : 0 < z) (hz_le : z ≤ 1) :
       z * ∫ t in Ici 0, f t =
         (z * ∫ t in Ico 0 1, f t) + (z * ∫ t in Ici 1, f t) := by
     rw [h_split, mul_add]
-  rw [h_distrib]
-  exact add_le_add h_part1' h_part2
+  grind
 
 /-- Near-origin bound for K₁: K₁(z) ≤ (cosh(1) + 2)/z for z ∈ (0, 1].
     This follows from z · K₁(z) ≤ cosh(1) + 2 (proved in besselK1_mul_self_le).
@@ -580,8 +554,7 @@ lemma radial_besselK1_integrable (m : ℝ) (hm : 0 < m) :
         intro r hr; simp only [mem_Ioi] at hr ⊢; exact mul_pos hm hr
       -- Ioi (1/m) ⊆ Ioi 0 for the restriction
       have hsub : Ioi (1 / m) ⊆ Ioi 0 := fun r hr => by
-        simp only [mem_Ioi] at hr ⊢
-        linarith [one_div_pos.mpr hm]
+        grind
       exact (hcont.mono hsub).aestronglyMeasurable measurableSet_Ioi
     have h_nonneg : ∀ r ∈ Ioi (1/m : ℝ), 0 ≤ r ^ 2 * besselK1 (m * r) := by
       intro r hr
@@ -664,8 +637,7 @@ lemma bessel_symmetry_integral (z : ℝ) (hz : 0 < z) :
               -- deriv (fun v => v^2) x = 2 * x
               have hpow : deriv (fun v : ℝ => v ^ (2 : ℕ)) x = (2 : ℝ) * x ^ (2 - 1) :=
                 deriv_pow_field 2
-              simp only [pow_one, Nat.add_one_sub_one] at hpow
-              rw [hpow]; ring
+              grind
             rw [hderiv]
             -- Need exp(x) - x > 0 for x > 4. Use exp(x) > x for all x > 0.
             -- exp(x) ≥ 1 + x, so exp(x) - x ≥ 1 > 0
@@ -759,17 +731,14 @@ lemma bessel_symmetry_integral (z : ℝ) (hz : 0 < z) :
   have h_factor : ∫ u in Ioi 0, 2 * cosh u * exp (-z * cosh u) =
       2 * ∫ u in Ioi 0, cosh u * exp (-z * cosh u) := by
     rw [← MeasureTheory.integral_const_mul]
-    apply MeasureTheory.setIntegral_congr_fun measurableSet_Ioi
-    intro u _; ring
+    grind
   rw [h_factor]
   -- Match with besselK1 definition (which uses Ici 0 = [0, ∞))
   have h_Ioi_Ici : ∫ u in Ioi 0, cosh u * exp (-z * cosh u) =
       ∫ u in Ici 0, cosh u * exp (-z * cosh u) := setIntegral_congr_set Ioi_ae_eq_Ici
   rw [h_Ioi_Ici]
   unfold besselK1
-  congr 1
-  apply MeasureTheory.setIntegral_congr_fun measurableSet_Ici
-  intro u _; ring
+  grind
 
 /-- Key identity connecting the Schwinger proper-time integral to K₁:
     ∫₀^∞ t^{-2} exp(-m²t - r²/(4t)) dt = (4m/r) · K₁(mr)
@@ -824,9 +793,7 @@ lemma schwingerIntegral_eq_besselK1 (m r : ℝ) (hm : 0 < m) (hr : 0 < r) :
       have h1 : exp u * exp (-u) = 1 := by rw [exp_neg]; exact mul_inv_cancel₀ he
       field_simp
       rw [cosh_eq]
-      ring_nf
-      rw [h1]
-      ring
+      grind
     -- Verify: c * exp(u) / (c * exp(u))² = (2m/r) * exp(-u)
     have h_jacobian : r / (2 * m) * exp u / (r / (2 * m) * exp u) ^ 2 =
         2 * m / r * exp (-u) := by
@@ -834,17 +801,7 @@ lemma schwingerIntegral_eq_besselK1 (m r : ℝ) (hm : 0 < m) (hr : 0 < r) :
       rw [exp_neg]
       field_simp
     -- The key algebraic calculation
-    have ht : r / (2 * m) * exp u ≠ 0 := by positivity
-    calc (r / (2 * m) * exp u) * (1 / (r / (2 * m) * exp u) ^ 2 *
-            exp (-(m ^ 2 * (r / (2 * m) * exp u)) - r ^ 2 / (4 * (r / (2 * m) * exp u))))
-        = (r / (2 * m) * exp u / (r / (2 * m) * exp u) ^ 2) *
-            exp (-(m ^ 2 * (r / (2 * m) * exp u) + r ^ 2 / (4 * (r / (2 * m) * exp u)))) := by
-          have : -(m ^ 2 * (r / (2 * m) * exp u)) - r ^ 2 / (4 * (r / (2 * m) * exp u)) =
-              -(m ^ 2 * (r / (2 * m) * exp u) + r ^ 2 / (4 * (r / (2 * m) * exp u))) := by ring
-          rw [this]
-          field_simp
-      _ = (2 * m / r * exp (-u)) * exp (-(m * r * cosh u)) := by rw [h_jacobian, h_sum]
-      _ = 2 * m / r * (exp (-u) * exp (-(m * r) * cosh u)) := by ring_nf
+    grind
   -- Step 2: Apply the change of variables formula
   -- The substitution φ(u) = c exp(u) is strictly monotone and maps ℝ onto (0, ∞)
   -- We'll use bounded interval approximation
@@ -893,9 +850,5 @@ lemma schwingerIntegral_eq_besselK1 (m r : ℝ) (hm : 0 < m) (hr : 0 < r) :
       ∫ u, (2 * m / r) * (exp (-u) * exp (-z * cosh u)) := by
     apply MeasureTheory.integral_congr_ae
     filter_upwards with u
-    simp only [g]
-    -- The expressions differ only in parenthesization: -(m^2 * t) vs -m^2 * t
-    convert h_transform u using 2
-    congr 1
-    ring_nf
+    grind
   rw [h_eq, integral_const_mul]

@@ -21,8 +21,7 @@ lemma LinearMap.map_finsum {ι 𝕜 : Type*} [Semiring 𝕜]
   rw [finsum_eq_sum _ ha, map_sum, ← finsum_eq_sum_of_support_subset (fun i ↦ f (a i))]
   intro i hi
   simp only [Function.mem_support, ne_eq, Set.Finite.coe_toFinset] at hi ⊢
-  intro con
-  simp [con] at hi
+  grind
 
 -- NOTE: Mathlib naming is inconsistent:
 

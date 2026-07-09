@@ -56,9 +56,7 @@ private lemma eq_of_mapClusterPt_of_tendsto {X : Type*} [TopologicalSpace X] [T2
   have hle : (𝓝 z ⊓ Filter.map f l : Filter X) ≤ (𝓝 z ⊓ 𝓝 y : Filter X) :=
     inf_le_inf_left _ hmap
   have : (𝓝 z ⊓ Filter.map f l : Filter X) = ⊥ := by
-    apply le_antisymm
-    · exact le_trans hle (by simp [hbot])
-    · exact bot_le
+    grind
   exact (hz.clusterPt.neBot.ne this)
 /-- If `T` is compact, then it sends weak convergence on a weakly-closed ball
 to norm convergence. -/
@@ -257,10 +255,7 @@ private lemma extremizer_mem_unit_sphere
   -- `f 0 = 0` from 2-homogeneity: f (0 • x) = ‖0‖² · f x = 0.
   have hf0 : f 0 = 0 := by simpa [norm_zero, zero_smul, zero_mul] using hf_scale (0 : 𝕜) x
   have hx_ne0 : (x : E) ≠ 0 := by
-    intro h
-    have hxz : x = (0 : WeakSpace 𝕜 E) := h
-    rw [hxz, hf0, mul_zero] at hσ
-    exact lt_irrefl 0 hσ
+    grind
   have hx_pos : 0 < ‖(x : E)‖ := by
     let xe : E := x
     have : xe ≠ 0 := hx_ne0
@@ -307,10 +302,7 @@ lemma exists_reApplyInnerSelf_ne_zero_of_isSelfAdjoint
     have hRe : (T.reApplyInnerSelf x : 𝕜) = inner 𝕜 (T x) x := by
       simpa [ContinuousLinearMap.reApplyInnerSelf_apply] using
         (LinearMap.IsSymmetric.coe_re_inner_apply_self (T := (T : E →ₗ[𝕜] E)) hSym x)
-    have hx : T.reApplyInnerSelf x = 0 := h x
-    have : ((T.reApplyInnerSelf x : ℝ) : 𝕜) = 0 := by
-      simpa using congrArg (fun t : ℝ => (t : 𝕜)) hx
-    simpa [hRe] using this
+    grind
   have hinner : ∀ x y : E, inner 𝕜 ((T : E →ₗ[𝕜] E) x) y = 0 := by
     intro x y
     have hpol :=
@@ -325,8 +317,7 @@ lemma exists_reApplyInnerSelf_ne_zero_of_isSelfAdjoint
     have hxmIy :
         inner 𝕜 ((T : E →ₗ[𝕜] E) (x - (RCLike.I : 𝕜) • y)) (x - (RCLike.I : 𝕜) • y) = 0 := by
       simpa using hinner0 (x - (RCLike.I : 𝕜) • y)
-    rw [hxy, hxmy, hxIy, hxmIy] at hpol
-    simpa using hpol
+    grind
   have hTzero : T = 0 := by
     ext x
     have : ∀ v : E, inner 𝕜 v (T x) = 0 := by

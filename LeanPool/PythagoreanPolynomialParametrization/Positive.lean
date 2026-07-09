@@ -59,15 +59,9 @@ theorem f_pos_param_intValued : IsIntValued fPosParam := by
     · left
       rcases hw with ⟨t, ht⟩
       refine ⟨x * (1 - 2 * t + 2 * t ^ 2), ?_⟩
-      dsimp [Cc]
-      rw [ht]
-      ring
+      grind
     · right
-      rcases hw with ⟨t, ht⟩
-      refine ⟨z * (t + 1), ?_⟩
-      dsimp [A, B]
-      rw [ht]
-      ring
+      grind
   rcases (TMap_integral_iff_parity A B Cc).mpr hpar with ⟨fx, gy, hz, hT⟩
   refine ⟨fx, ?_⟩
   have hfcoord : (Cc : ℚ) * ((A : ℚ) ^ 2 - (B : ℚ) ^ 2) / 2 = (fx : ℚ) := by
@@ -107,15 +101,9 @@ theorem h_pos_param_intValued : IsIntValued hPosParam := by
     · left
       rcases hw with ⟨t, ht⟩
       refine ⟨x * (1 - 2 * t + 2 * t ^ 2), ?_⟩
-      dsimp [Cc]
-      rw [ht]
-      ring
+      grind
     · right
-      rcases hw with ⟨t, ht⟩
-      refine ⟨z * (t + 1), ?_⟩
-      dsimp [A, B]
-      rw [ht]
-      ring
+      grind
   rcases (TMap_integral_iff_parity A B Cc).mpr hpar with ⟨fx, gy, hz, hT⟩
   refine ⟨hz, ?_⟩
   have hhcoord : (Cc : ℚ) * ((A : ℚ) ^ 2 + (B : ℚ) ^ 2) / 2 = (hz : ℚ) := by
@@ -170,13 +158,9 @@ theorem positive_triples_parametrization :
         pos_of_mul_pos_right hcabprod_pos (le_of_lt hcqpos)
       have habpos : 0 < a * b := by exact_mod_cast habqpos
       have ha_ne : a ≠ 0 := by
-        intro ha
-        subst a
-        norm_num at habpos
+        grind
       have hb_ne : b ≠ 0 := by
-        intro hb
-        subst b
-        norm_num at habpos
+        grind
       have hapos : 0 < |a| := abs_pos.mpr ha_ne
       have hbpos : 0 < |b| := abs_pos.mpr hb_ne
       have hcxprod_pos : (0 : ℚ) < (c : ℚ) * ((a : ℚ) ^ 2 - (b : ℚ) ^ 2) := by
@@ -426,25 +410,11 @@ theorem exists_16_param_parametrization :
       if i = (13 : Fin 16) then w1 else
       if i = (14 : Fin 16) then w2 else w3
     have hinput : lift16ToPosInput a = mkRatPolyInput4 x' y' z' w' := by
-      funext i
-      fin_cases i <;> simp [lift16ToPosInput, mkRatPolyInput4, a, hxsum, hysum, hzsum,
-        hwsum]
+      grind
     refine ⟨a, ?_, ?_, ?_⟩
-    · calc
-        ratPolyEval f16Param a = ratPolyEval fPosParam (lift16ToPosInput a) :=
-          hf_eval a
-        _ = ratPolyEval fPosParam (mkRatPolyInput4 x' y' z' w') := by rw [hinput]
-        _ = (x : ℚ) := hf
-    · calc
-        ratPolyEval g16Param a = ratPolyEval gPosParam (lift16ToPosInput a) :=
-          hg_eval a
-        _ = ratPolyEval gPosParam (mkRatPolyInput4 x' y' z' w') := by rw [hinput]
-        _ = (y : ℚ) := hg
-    · calc
-        ratPolyEval h16Param a = ratPolyEval hPosParam (lift16ToPosInput a) :=
-          hh_eval a
-        _ = ratPolyEval hPosParam (mkRatPolyInput4 x' y' z' w') := by rw [hinput]
-        _ = (z : ℚ) := hh
+    · grind
+    · grind
+    · grind
   · rintro ⟨a, hf, hg, hh⟩
     let x' : ℤ := a (0 : Fin 16) ^ 2 + a (1 : Fin 16) ^ 2 + a (2 : Fin 16) ^ 2 +
       a (3 : Fin 16) ^ 2 + 1
@@ -470,24 +440,6 @@ theorem exists_16_param_parametrization :
       dsimp [w']
       nlinarith [sq_nonneg (a (12 : Fin 16)), sq_nonneg (a (13 : Fin 16)),
         sq_nonneg (a (14 : Fin 16)), sq_nonneg (a (15 : Fin 16))]
-    have hinput : lift16ToPosInput a = mkRatPolyInput4 x' y' z' w' := by
-      funext i
-      fin_cases i <;> simp [lift16ToPosInput, mkRatPolyInput4, x', y', z', w']
-    refine ⟨x', y', z', w', hxpos, hypos, hzpos, hwnonneg, ?_, ?_, ?_⟩
-    · calc
-        ratPolyEval fPosParam (mkRatPolyInput4 x' y' z' w') =
-            ratPolyEval fPosParam (lift16ToPosInput a) := by rw [hinput]
-        _ = ratPolyEval f16Param a := (hf_eval a).symm
-        _ = (x : ℚ) := hf
-    · calc
-        ratPolyEval gPosParam (mkRatPolyInput4 x' y' z' w') =
-            ratPolyEval gPosParam (lift16ToPosInput a) := by rw [hinput]
-        _ = ratPolyEval g16Param a := (hg_eval a).symm
-        _ = (y : ℚ) := hg
-    · calc
-        ratPolyEval hPosParam (mkRatPolyInput4 x' y' z' w') =
-            ratPolyEval hPosParam (lift16ToPosInput a) := by rw [hinput]
-        _ = ratPolyEval h16Param a := (hh_eval a).symm
-        _ = (z : ℚ) := hh
+    grind
 
 end LeanPool.PythagoreanPolynomialParametrization

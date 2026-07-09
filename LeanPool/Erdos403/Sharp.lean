@@ -37,9 +37,7 @@ theorem two_pow_mod_24_even : ∀ t, 2 ^ (2 * t + 4) % 24 = 16 := by
   induction t with
   | zero => decide
   | succ k ih =>
-    have he : 2 * (k + 1) + 4 = (2 * k + 4) + 2 := by ring
-    rw [he, pow_add, Nat.mul_mod, ih]
-    decide
+    grind
 
 /-- `2^m ≡ 16 (mod 24)` for even `m ≥ 4`. -/
 theorem two_pow_mod_24_of_even {m : ℕ} (he : Even m) (hm : 4 ≤ m) : 2 ^ m % 24 = 16 := by
@@ -138,23 +136,7 @@ private theorem two_pow_modEq_one_of_dvd {d n e : ℕ} (h : (2 : ℕ) ^ d ≡ 1 
 prime power is `162, 20, 3, 10`, each dividing `1620`. The four small `decide`s are kernel
 computations; the combine is `Nat.modEq_and_modEq_iff_modEq_mul`. -/
 private theorem two_pow_1620_odd : (2 : ℕ) ^ 1620 % 467775 = 1 := by
-  have h243 : (2 : ℕ) ^ 1620 ≡ 1 [MOD 243] :=
-    two_pow_modEq_one_of_dvd (by decide : (2 : ℕ) ^ 162 ≡ 1 [MOD 243]) (by norm_num)
-  have h25 : (2 : ℕ) ^ 1620 ≡ 1 [MOD 25] :=
-    two_pow_modEq_one_of_dvd (by decide : (2 : ℕ) ^ 20 ≡ 1 [MOD 25]) (by norm_num)
-  have h7 : (2 : ℕ) ^ 1620 ≡ 1 [MOD 7] :=
-    two_pow_modEq_one_of_dvd (by decide : (2 : ℕ) ^ 3 ≡ 1 [MOD 7]) (by norm_num)
-  have h11 : (2 : ℕ) ^ 1620 ≡ 1 [MOD 11] :=
-    two_pow_modEq_one_of_dvd (by decide : (2 : ℕ) ^ 10 ≡ 1 [MOD 11]) (by norm_num)
-  have c1 : (2 : ℕ) ^ 1620 ≡ 1 [MOD 243 * 25] :=
-    (Nat.modEq_and_modEq_iff_modEq_mul (by decide)).mp ⟨h243, h25⟩
-  have c2 : (2 : ℕ) ^ 1620 ≡ 1 [MOD 243 * 25 * 7] :=
-    (Nat.modEq_and_modEq_iff_modEq_mul (by decide)).mp ⟨c1, h7⟩
-  have c3 : (2 : ℕ) ^ 1620 ≡ 1 [MOD 243 * 25 * 7 * 11] :=
-    (Nat.modEq_and_modEq_iff_modEq_mul (by decide)).mp ⟨c2, h11⟩
-  rw [show (243 * 25 * 7 * 11 : ℕ) = 467775 by norm_num] at c3
-  -- `c3 : 2^1620 % 467775 = 1 % 467775`; `1 % 467775` is defeq `1`.
-  exact c3
+  grind
 
 /-- `2^(10+k) mod 12! = 1024 · (2^k mod 467775)` (since `12! = 1024 · 467775`). -/
 private theorem two_pow_split (k : ℕ) : (2 : ℕ) ^ (10 + k) % (12)! = 1024 * (2 ^ k % 467775) := by
@@ -165,8 +147,7 @@ private theorem two_pow_split (k : ℕ) : (2 : ℕ) ^ (10 + k) % (12)! = 1024 * 
 private theorem two_pow_period (k : ℕ) :
     (2 : ℕ) ^ (10 + (k + 1620)) % (12)! = (2 : ℕ) ^ (10 + k) % (12)! := by
   have hinner : (2 : ℕ) ^ (k + 1620) % 467775 = 2 ^ k % 467775 := by
-    rw [pow_add, Nat.mul_mod, two_pow_1620_odd, mul_one]
-    omega
+    grind
   rw [two_pow_split (k + 1620), two_pow_split k, hinner]
 
 /-- Drop full periods: `2^(10 + (1620·j + k)) ≡ 2^(10+k)  (mod 12!)`. -/
@@ -184,8 +165,7 @@ private theorem two_pow_reduce {m : ℕ} (hm : 10 ≤ m) :
   obtain ⟨k, rfl⟩ : ∃ k, m = 10 + k := ⟨m - 10, by omega⟩
   conv_lhs => rw [show k = 1620 * (k / 1620) + k % 1620 from (Nat.div_add_mod k 1620).symm]
   rw [two_pow_drop]
-  have : (10 + k - 10) % 1620 = k % 1620 := by omega
-  rw [this]
+  grind
 
 -- Base window (one full period): every `m ∈ [10, 1630)` has an offending factorial digit of
 -- `2^m` (resp. `2^m - 1`) at an index in `[1, 11]`. Proved **kernel-pure** (no `native_decide`):
@@ -276,9 +256,7 @@ private theorem checkAllSub_true {fuel r : ℕ} (h : checkAllSub fuel r = true) 
 /-- `(n - 1) mod 12! = (n mod 12! + (12!-1)) mod 12!` for `n ≥ 1`. -/
 private theorem sub_res {n : ℕ} (hn : 1 ≤ n) :
     (n - 1) % 479001600 = (n % 479001600 + 479001599) % 479001600 := by
-  conv_lhs => rw [← Nat.add_mod_right (n - 1) 479001600]
-  rw [show n - 1 + 479001600 = n + 479001599 from by omega, Nat.add_mod,
-      Nat.mod_eq_of_lt (by norm_num : (479001599 : ℕ) < 479001600)]
+  grind
 
 /-- The residue reached after a `seg`-block of depth `d` is `adv` iterated `2^d` times. -/
 private theorem seg_snd (d : ℕ) (r : ℕ) : (seg d r).2 = adv^[2 ^ d] r := by
@@ -336,8 +314,7 @@ private theorem segSub_true {d r : ℕ} (h : (segSub d r).1 = true) :
     · obtain ⟨j, rfl⟩ : ∃ j, k = 2 ^ n + j := ⟨k - 2 ^ n, by omega⟩
       have hsplit : adv^[2 ^ n + j] r = adv^[j] (segSub n r).2 := by
         rw [segSub_snd n r, Nat.add_comm, Function.iterate_add_apply]
-      rw [hsplit]
-      exact ih h.2 j (by omega)
+      grind
 
 private theorem base_offending :
     ∀ m ∈ Finset.Ico 10 1630, ∃ i ∈ Finset.Icc 1 11, 2 ≤ factDigit i (2 ^ m) := by
@@ -396,10 +373,7 @@ theorem two_pow_sub_one_offending {m : ℕ} (hm : 8 ≤ m) :
     have key : (2 ^ m - 1) % (12)! = (2 ^ (10 + (m - 10) % 1620) - 1) % (12)! := by
       have hbase := two_pow_reduce h10
       have hNval : ((12)! : ℕ) = 479001600 := by decide
-      have hm1 : 1 ≤ 2 ^ m := Nat.one_le_two_pow
-      have hr1 : 1 ≤ 2 ^ (10 + (m - 10) % 1620) := Nat.one_le_two_pow
-      rw [hNval] at hbase ⊢
-      omega
+      grind
     rwa [factDigit_mod_twelve hi_mem.2 (2 ^ m - 1), key,
         ← factDigit_mod_twelve hi_mem.2 (2 ^ (10 + (m - 10) % 1620) - 1)]
 

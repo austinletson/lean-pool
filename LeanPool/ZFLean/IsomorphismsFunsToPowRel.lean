@@ -132,9 +132,7 @@ theorem funsToPowRel_left_inverse {A B : ZFSet} :
               rw [dite_cond_eq_true (eq_true <| mem_funs.mp hX)]
               apply sep_mem_powerset
               rw [mem_powerset]
-          · intro a ha
-            rw [dite_cond_eq_true (eq_true ha)]
-            apply fapply_mem_range
+          · grind
 
 theorem funsToPowRel_right_inverse {A B : ZFSet} :
     funsToPowRelF A B ∘ᶻ funsToPowRelG A B = 𝟙((A.prod B).powerset) := by
@@ -191,8 +189,7 @@ theorem funsToPowRel_right_inverse {A B : ZFSet} :
           and_intros
           · exact sep_subset_self
           · rfl
-          · rintro _ ⟨_, rfl⟩
-            rfl
+          · grind
         · intros
           apply mem_funs_of_lambda
           intro _ ha

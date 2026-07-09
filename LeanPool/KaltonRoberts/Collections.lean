@@ -122,9 +122,7 @@ lemma DualCertificate.negMass_nonneg
 
 /-- `|x| = max(x, 0) + max(-x, 0)` -/
 private lemma abs_eq_max_add (x : ℝ) : |x| = max x 0 + max (-x) 0 := by
-  rcases le_or_gt x 0 with h | h
-  · rw [abs_of_nonpos h, max_eq_right h, max_eq_left (by linarith)]; ring
-  · rw [abs_of_pos h, max_eq_left h.le, max_eq_right (by linarith)]; ring
+  grind
 
 /-
 Positive mass plus negative mass equals 1.
@@ -135,8 +133,7 @@ lemma DualCertificate.posMass_add_negMass
   have h_sum : ∑ S : Finset U, |cert.lam S| = 1 := by
     exact cert.norm_one;
   rw [ ← h_sum, DualCertificate.posMass, DualCertificate.negMass, ← Finset.sum_add_distrib ];
-  exact Finset.sum_congr rfl fun _ _ => by rw [ max_def, max_def ]; split_ifs <;> cases abs_cases (
-    cert.lam _ ) <;> linarith;
+  grind
 
 /-- p ≤ 1 -/
 lemma DualCertificate.posMass_le_one
@@ -190,8 +187,7 @@ lemma DualCertificate.marginal_pos_eq_neg
       by
     simpa only [← Finset.sum_sub_distrib] using
       Finset.sum_congr rfl fun x hx => by
-        cases max_cases (cert.lam x) 0 <;>
-          cases max_cases (-cert.lam x) 0 <;>
+        grind <;>
           linarith
   linarith
 
@@ -303,9 +299,7 @@ lemma DualCertificate.negCollection_avgSurplus_eq_zero
     by_cases hS : cert.lam S < 0;
     · have := cert.neg_support S hS; aesop;
     · simp only [DualCertificate.negCollection]
-      rw [max_eq_right]
-      · ring
-      · linarith [le_of_not_gt hS]
+      grind
   exact div_eq_zero_iff.mpr ( Or.inl <| Finset.sum_eq_zero fun S _ => h_negCollection_weights S )
 
 /-
@@ -441,9 +435,7 @@ lemma DualCertificate.augPosCollection_itemFreq
           (∑ S : Finset U, if i ∉ S then max (-cert.lam S) 0 else 0) := by rw [h_marg]
     _ = ∑ S : Finset U, max (-cert.lam S) 0 := by
       rw [← Finset.sum_add_distrib]
-      apply Finset.sum_congr rfl
-      intro S _
-      by_cases h : i ∈ S <;> simp [h]
+      grind
     _ = cert.negMass := rfl
 
 /-
@@ -502,8 +494,7 @@ lemma DualCertificate.augPosCollection_avgDeficit_le
         simp only [hpos.1, hneg.1]
         norm_num [hlam]
       · simp only [hpos.1, hnonneg.1, zero_mul, add_zero]
-        rw [h_cases S |>.1 (by linarith)]
-        nlinarith
+        grind
     · rcases max_cases (-cert.lam S) 0 with hneg | hnonneg
       · simp only [hnonpos.1, hneg.1, zero_mul, zero_add]
         have hadd := abs_le.mp (h_additivity S)

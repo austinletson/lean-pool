@@ -272,10 +272,7 @@ private lemma tRep_mul_eq_transpose (D : HeckeCoset (GLPair 2))
       (GLTransposeEquiv 2 σ_Q).unop).unop from
       (GL_transposeEquiv_involutive 2 σ_Q).symm,
       ← MulOpposite.unop_mul, ← (GLTransposeEquiv 2).map_mul]
-  rw [show (GLTransposeEquiv 2 σ_Q).unop * (i.out : GL _ ℚ) *
-      (HeckeCoset.rep D : GL _ ℚ) =
-      (GLTransposeEquiv 2 σ_Q).unop *
-      ((i.out : GL _ ℚ) * (HeckeCoset.rep D : GL _ ℚ)) from by group]
+  grind
 
 /-- The Hecke slash action preserves slash-invariance under `SL₂(Z)` (Shimura Prop 3.30). -/
 lemma heckeSlash_slash_invariant (k : ℤ) (D : HeckeCoset (GLPair 2)) (f : ℍ → ℂ)

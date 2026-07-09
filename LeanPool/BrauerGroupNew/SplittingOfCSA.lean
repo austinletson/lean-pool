@@ -108,8 +108,7 @@ theorem centralSimple_over_extension_iff_nontrivial
       Module.finrank k K <
       Module.finrank k K * Module.finrank k (Subalgebra.center k A) := by
       apply lt_mul_right <;> assumption
-    conv_lhs at ineq1 => rw [eq2]
-    exact Nat.lt_irrefl _ ineq1, is_simple_A k A K⟩
+    grind, is_simple_A k A K⟩
 
 theorem centralsimple_over_extension_iff
     [FiniteDimensional k A] [FiniteDimensional k K] :
@@ -137,27 +136,7 @@ def extensionInv [FiniteDimensional k A]
   isCentral := centralsimple_over_extension_iff k A K |>.2 ⟨inferInstance, inferInstance⟩ |>.1
   isSimple := centralsimple_over_extension_iff k A K |>.2 ⟨inferInstance, inferInstance⟩ |>.2
   fin_dim := by
-    have := centralsimple_over_extension_iff k A K |>.2 ⟨inferInstance, inferInstance⟩ |>.2
-    let to_ten: A →ₐ[k] K ⊗[k] A :=
-    {
-      toFun := fun a ↦ 1 ⊗ₜ a
-      map_one' := rfl
-      map_mul' := by simp
-      map_zero' := TensorProduct.tmul_zero A 1
-      map_add' := TensorProduct.tmul_add 1
-      commutes' := fun _ ↦ Algebra.TensorProduct.algebraMap_apply' _|>.symm
-    }
-    have Isinj : Function.Injective to_ten := by
-      have := IsSimpleRing.iff_eq_zero_or_injective' A k|>.1 inferInstance (B := K ⊗[k] A) to_ten
-      have nezero : TwoSidedIdeal.ker to_ten ≠ ⊤ := by
-        intro h
-        have : (1 : A) ∈ (⊤ : TwoSidedIdeal A) := by simp
-        rw [h.symm, TwoSidedIdeal.mem_ker] at this
-        simp only [map_one, one_ne_zero] at this
-      simp only [nezero, false_or] at this
-      exact this
-    haveI : FiniteDimensional k (K ⊗[k] A) := Module.Finite.trans (R := k) K (K ⊗[k] A)
-    exact FiniteDimensional.of_injective (K := k) to_ten.toLinearMap Isinj
+    grind
 
 theorem CSA_iff_exist_split (k_bar : Type u) [Field k_bar] [Algebra k k_bar]
     [hk_bar : IsAlgClosure k k_bar] [hA : FiniteDimensional k A] :

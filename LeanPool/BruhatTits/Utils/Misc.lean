@@ -37,15 +37,13 @@ lemma exp_zero_of_zpow_eq_one' {n : ℤ} (ha : (0 : Γ₀) ^ n = 1) : n = 0 := b
     have : n.toNat = 0 := by
       apply exp_zero_of_pow_eq_one_aux (Γ₀ := Γ₀)
       rwa [← zpow_natCast, Int.toNat_of_nonneg hn]
-    rw [← Int.toNat_of_nonneg hn]
-    simpa
+    grind
   by_cases hn : n ≥ 0
   · exact haux n ha hn
   · apply Int.neg_eq_zero.mp
     apply haux
     · simpa
-    · simp only [ge_iff_le, Left.nonneg_neg_iff]
-      exact Int.le_of_not_le hn
+    · grind
 
 lemma exp_zero_of_zpow_eq_one {a : Γ₀} (h : a < 1) {n : ℤ} (han : a ^ n = 1) : n = 0 := by
   by_cases ha : a = 0
@@ -71,8 +69,7 @@ lemma Fin.rev_antitone (n : ℕ) : Antitone (Fin.rev (n := n)) := by match n wit
   | 0 => intro j; simp
   | n + 1 =>
       apply Fin.antitone_iff_succ_le.mpr
-      intro i
-      simpa only [Fin.rev_le_rev] using Fin.le_of_lt i.castSucc_lt_succ
+      grind
 
 namespace Finset
 
@@ -96,19 +93,10 @@ def Fin.succEquivUnit (n : ℕ) : Fin (n + 1) ≃ Fin n ⊕ Unit where
   toFun j := if h : (j : ℕ) < n then Sum.inl ⟨j, h⟩ else Sum.inr ()
   invFun := Sum.elim (fun j ↦ j.castSucc) (fun _ ↦ Fin.last n)
   left_inv j := by
-    simp only
-    split_ifs with h
-    · ext
-      simp
-    · ext
-      simp only [Sum.elim_inr, Fin.val_last]
-      omega
+    grind
   right_inv
     | Sum.inl i => by
-        simp only [Sum.elim_inl, Fin.val_castSucc]
-        split_ifs with h
-        · rw [Sum.inl.injEq]
-        · omega
+        grind
     | Sum.inr () => by simp
 
 lemma MulAction.stabilizer_fun_const {α : Type*} (ι G : Type*) [Nonempty ι] [Group G]

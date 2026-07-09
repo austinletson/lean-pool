@@ -47,8 +47,7 @@ theorem modform_tendto_ndhs_zero {k : ℤ} (n : ℕ) [ModularFormClass F Γ(n) k
       use 1
       intro b hb a ha
       refine UpperHalfPlane.mdifferentiableAt_iff.mp (ModularFormClass.holo f ⟨a, ?_⟩)
-      rw [ha]
-      linarith
+      grind
     exact (OnePoint.isBoundedAt_infty_iff.mp (ModularFormClass.bdd_at_cusps f hi)).comp_tendsto
       tendsto_comap_im_ofComplex
   apply h2.congr'
@@ -98,10 +97,7 @@ lemma iteratedDerivWithin_mul' (f g : ℂ → ℂ) (s : Set ℂ) (hs : IsOpen s)
       rw [this, add_comm]
       congr 1
       apply Finset.sum_congr rfl
-      intros i hi
-      congr
-      simp at hi
-      omega
+      grind
     · exact ContDiffOn.derivWithin hf (by exact IsOpen.uniqueDiffOn hs) (m := ⊤) (by simp)
     · exact ContDiffOn.derivWithin hg (by exact IsOpen.uniqueDiffOn hs) (m := ⊤) (by simp)
     · apply ContDiffOn.mul
@@ -155,8 +151,7 @@ lemma qExpansion_ext (f g : ℍ → ℂ) (h : f = g) : qExpansion 1 f =
 lemma cuspFunction_congr_funLike
     {α β : Type*} [FunLike α ℍ ℂ] [FunLike β ℍ ℂ] (n : ℕ) (f : α) (g : β) (h : ⇑f = ⇑g) :
     cuspFunction n f = cuspFunction n g := by
-  ext z
-  by_cases hz : z = 0 <;> simp [cuspFunction, Periodic.cuspFunction, h, hz]
+  grind
 
 lemma qExpansion_ext2 {α β : Type*} [FunLike α ℍ ℂ] [FunLike β ℍ ℂ] (f : α) (g : β) (h : ⇑f = ⇑g) :
     qExpansion 1 f = qExpansion 1 g := by

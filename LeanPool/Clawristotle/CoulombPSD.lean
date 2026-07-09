@@ -127,8 +127,7 @@ lemma psd_outer_integrable_coulomb
           calc ∫ w, ‖v - w‖⁻¹ * f w
               = ∫ w, ‖v - w‖⁻¹ * |f w| :=
                 integral_congr_ae (ae_of_all _ fun w => by
-                  change ‖v - w‖⁻¹ * f w = ‖v - w‖⁻¹ * |f w|
-                  rw [abs_of_pos (hf_pos w)])
+                  grind)
             _ ≤ M₁ := hM₁b v
         · calc ∫ w, ‖v - w‖⁻¹ * ((1 + ‖w‖) ^ (2 * Kg) * f w)
               = ∫ w, ‖v - w‖⁻¹ * |(1 + ‖w‖) ^ (2 * Kg) * f w| :=
@@ -181,9 +180,7 @@ private lemma fubini_double_int_bound_coulomb
           (fun w => ‖v - w‖⁻¹ * (f w * |vGrad f v j| + f v * |vGrad f w j|)) =
           (fun w => |vGrad f v j| * (‖v - w‖⁻¹ * |f w|) +
             f v * (‖v - w‖⁻¹ * |vGrad f w j|)) := fun j => by
-        ext w
-        rw [abs_of_pos (hf_pos w)]
-        ring
+        grind
       have h_each_int : ∀ j : Fin 3, Integrable
           (fun w => ‖v - w‖⁻¹ * (f w * |vGrad f v j| + f v * |vGrad f w j|)) := fun j => by
         rw [hrearrange j]

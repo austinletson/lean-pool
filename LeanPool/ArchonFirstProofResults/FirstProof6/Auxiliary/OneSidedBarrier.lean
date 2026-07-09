@@ -91,11 +91,8 @@ lemma one_sided_barrier
           have hUU : U⁻¹ * U = 1 := Matrix.nonsing_inv_mul U hU_det
           have hUU' : U * U⁻¹ = 1 := Matrix.mul_nonsing_inv U hU_det
           have h1 : U⁻¹ * (U * B * U) * U⁻¹ = B := by
-            calc U⁻¹ * (U * B * U) * U⁻¹
-                = U⁻¹ * U * B * (U * U⁻¹) := by simp only [Matrix.mul_assoc]
-              _ = B := by rw [hUU, hUU', one_mul, mul_one]
-          rw [hUBU_zero, Matrix.mul_zero, Matrix.zero_mul] at h1
-          exact h1.symm
+            grind
+          grind
         rw [hB_zero, add_zero]; linarith
       · have htrBU_lt : trBU < 1 := lt_of_le_of_ne htrBU_le htrBU_eq
         linarith [barrier_smw_trace_bound M B u u' hu hM_bound hB htrBU_lt htrBU_nn htrBU2_nn,
@@ -131,9 +128,7 @@ lemma inv_sub_posDef_of_trace_lt_one
     congr 1; rw [hK_def]; symm
     have hUU := Matrix.nonsing_inv_mul Uhalf hUhalf_det
     have hUU' := Matrix.mul_nonsing_inv Uhalf hUhalf_det
-    calc Uhalf⁻¹ * (Uhalf * B * Uhalf) * Uhalf⁻¹
-        = (Uhalf⁻¹ * Uhalf) * B * (Uhalf * Uhalf⁻¹) := by simp only [Matrix.mul_assoc]
-      _ = B := by rw [hUU, hUU', one_mul, mul_one]
+    grind
   rw [hUinv_sub_B]
   have hUhalf_inv_unit : IsUnit Uhalf⁻¹ :=
     IsUnit.of_mul_eq_one Uhalf (Matrix.nonsing_inv_mul Uhalf hUhalf_det)

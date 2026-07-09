@@ -234,9 +234,7 @@ lemma f₄_S_action : (f₄ ∣[(4 : ℤ)] S) = -f₂ := by
     ext z; simp [Pi.mul_apply, Pi.neg_apply, Pi.add_apply, Pi.smul_apply]; ring
   -- Combine: f₄|[4]S = -serreD 2 H₂ + (1/6) * H₂ * (H₂ + 2H₄) = -f₂
   rw [f₄_decompose, add_slash, SL_smul_slash, h_serre_term, h_prod]; unfold f₂
-  ext z
-  simp only [Pi.sub_apply, Pi.add_apply, Pi.smul_apply, Pi.neg_apply, Pi.mul_apply, smul_eq_mul]
-  ring_nf
+  grind
 
 /-- f₄ transforms under T as f₄|T = f₃.
 
@@ -300,19 +298,11 @@ lemma theta_g_S_action : (thetaG ∣[(6 : ℤ)] S) = thetaG := by
   have h_term1 : ((((2 : ℂ) • H₂ + H₄) * f₂) ∣[(6 : ℤ)] S) = ((2 : ℂ) • H₄ + H₂) * f₄ := by
     have hmul := mul_slash_SL2 2 4 S ((2 : ℂ) • H₂ + H₄) f₂
     simp only [h_2H₂_H₄, f₂_S_action] at hmul
-    convert hmul using 1
-    all_goals first
-      | (ext z; simp only [Pi.mul_apply, Pi.neg_apply, Pi.add_apply, Pi.smul_apply,
-          smul_eq_mul]; ring)
-      | norm_num
+    grind
   have h_term2 : (((H₂ + (2 : ℂ) • H₄) * f₄) ∣[(6 : ℤ)] S) = (H₄ + (2 : ℂ) • H₂) * f₂ := by
     have hmul := mul_slash_SL2 2 4 S (H₂ + (2 : ℂ) • H₄) f₄
     simp only [h_H₂_2H₄, f₄_S_action] at hmul
-    convert hmul using 1
-    all_goals first
-      | (ext z; simp only [Pi.mul_apply, Pi.neg_apply, Pi.add_apply, Pi.smul_apply,
-          smul_eq_mul]; ring)
-      | norm_num
+    grind
   -- g|S = (2H₄ + H₂)f₄ + (H₄ + 2H₂)f₂ = g
   simp only [thetaG, add_slash, h_term1, h_term2]
   ext z; simp only [Pi.add_apply, Pi.mul_apply, Pi.smul_apply]; ring
@@ -653,15 +643,10 @@ lemma f₄_sq_mul_eq (z : ℍ) (hg_z : thetaG z = 0) :
   have hAf₂ : A * f₂ z = -(B * f₄ z) := by linear_combination h_Af₂_eq
   -- A²f₂² = B²f₄²
   have h1 : A ^ 2 * f₂ z ^ 2 = B ^ 2 * f₄ z ^ 2 := by
-    have h_sq : (A * f₂ z) ^ 2 = (B * f₄ z) ^ 2 := by rw [hAf₂]; ring
-    calc A ^ 2 * f₂ z ^ 2 = (A * f₂ z) ^ 2 := by ring
-      _ = (B * f₄ z) ^ 2 := h_sq
-      _ = B ^ 2 * f₄ z ^ 2 := by ring
+    grind
   -- A²f₂f₄ = -ABf₄²
   have h2 : A ^ 2 * (f₂ z * f₄ z) = -(A * B * f₄ z ^ 2) := by
-    calc A ^ 2 * (f₂ z * f₄ z) = (A * f₂ z) * (A * f₄ z) := by ring
-      _ = (-(B * f₄ z)) * (A * f₄ z) := by rw [hAf₂]
-      _ = -(A * B * f₄ z ^ 2) := by ring
+    grind
   -- A² - AB + B² = 3(H₂² + H₂H₄ + H₄²)
   have h_sum : A ^ 2 - A * B + B ^ 2 = 3 * (H₂ z ^ 2 + H₂ z * H₄ z + H₄ z ^ 2) := by
     simp only [hA, hB]; ring

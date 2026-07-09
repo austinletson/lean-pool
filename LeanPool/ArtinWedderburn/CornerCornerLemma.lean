@@ -38,8 +38,7 @@ def nonUnitalSubringEq
     (h : (Subtype.val '' A.carrier) = B.carrier) : A ≃+* B := by
   have h' (x : R) : x ∈ B ↔ x ∈ Subtype.val '' A.carrier := by rw [h]; rfl
   have h'' (b : B) : b.val ∈ S := by
-    obtain ⟨w, _, weqb⟩ := (h' b.val).mp b.property
-    rw [← weqb]; exact w.property
+    grind
   have h''' (b : B) : ⟨b.val, h'' b⟩ ∈ A := by
     obtain ⟨w, ca, weqb⟩ := (h' b.val).mp b.property
     simp only [← weqb, Subtype.coe_eta]; exact ca

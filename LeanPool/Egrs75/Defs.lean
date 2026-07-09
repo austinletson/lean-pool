@@ -53,21 +53,13 @@ form). The hypotheses are stated per-digit so the lemma threads through the
 `∀ d ∈ digits p n` quantifier. -/
 lemma digit_le_half_iff_two_mul_lt {p d : ℕ} (hp2 : 2 ≤ p) (hpodd : Odd p) :
     d ≤ (p - 1) / 2 ↔ 2 * d < p := by
-  obtain ⟨k, hk⟩ := hpodd
-  -- p = 2k+1, so (p-1)/2 = k and the claim is `d ≤ k ↔ 2*d < 2k+1 ↔ 2*d ≤ 2k`.
-  subst hk
-  have hhalf : (2 * k + 1 - 1) / 2 = k := by
-    have : 2 * k + 1 - 1 = 2 * k := by omega
-    rw [this]; exact Nat.mul_div_cancel_left k (by decide)
-  rw [hhalf]; omega
+  grind
 
 /-- `LowDigits` and #376's `LowDoubleDigits` coincide for odd primes. -/
 theorem lowDigits_iff_lowDoubleDigits {p n : ℕ} (hp2 : 2 ≤ p) (hpodd : Odd p) :
     LowDigits p n ↔ Egrs75.Erdos376.LowDoubleDigits p n := by
   unfold LowDigits Egrs75.Erdos376.LowDoubleDigits
-  constructor
-  · intro h d hd; exact (digit_le_half_iff_two_mul_lt hp2 hpodd).mp (h d hd)
-  · intro h d hd; exact (digit_le_half_iff_two_mul_lt hp2 hpodd).mpr (h d hd)
+  grind
 
 /-! ## The single-base bridge (KERNEL-CLEAN — assembled from #376)
 

@@ -62,11 +62,9 @@ theorem bridge_round_trip (X : Type u) (C : ConceptClass X Bool) :
     have hcc' : c = c' := by
       funext x
       have := Set.ext_iff.mp hEq x
-      simp only [Set.mem_setOf_eq] at this
-      cases hcx : c x <;> cases hc'x : c' x <;> simp_all
+      grind
     rwa [hcc']
-  · intro hc
-    exact ⟨c, hc, rfl⟩
+  · grind
 
 /-!
 ## B₂: Function-Class → Finset Family Bridge (Fintype-level)
@@ -144,14 +142,12 @@ theorem shatters_iff_finset_shatters {X : Type u} [Fintype X] [DecidableEq X]
     · rintro ⟨hxS, hcx⟩
       have h := hcf ⟨x, hxS⟩
       -- h : c x = decide (x ∈ t), hcx : c x = true
-      rw [hcx] at h
-      exact decide_eq_true_eq.mp h.symm
+      grind
     · intro hxt
       refine ⟨ht hxt, ?_⟩
       have h := hcf ⟨x, ht hxt⟩
       -- h : c x = decide (x ∈ t), hxt : x ∈ t
-      simp only [f] at h
-      rw [h, decide_eq_true_eq]; exact hxt
+      grind
   · -- (←) Mathlib Shatters → Our Shatters
     intro hShat f
     -- Build t ⊆ S from f: the "true-set" of f within S
@@ -162,8 +158,7 @@ theorem shatters_iff_finset_shatters {X : Type u} [Fintype X] [DecidableEq X]
       intro x hx
       simp only [t, Finset.mem_map, Finset.mem_filter, Finset.mem_attach, true_and,
         Function.Embedding.coeFn_mk] at hx
-      obtain ⟨⟨y, hyS⟩, _, rfl⟩ := hx
-      exact hyS
+      grind
     obtain ⟨u, huA, hSu⟩ := hShat htS
     simp only [conceptClassToFinsetFamily, Finset.mem_image] at huA
     obtain ⟨c, hcC, rfl⟩ := huA
@@ -176,17 +171,13 @@ theorem shatters_iff_finset_shatters {X : Type u} [Fintype X] [DecidableEq X]
     have hx_in_t : x ∈ t ↔ f ⟨x, hxS⟩ = true := by
       simp only [t, Finset.mem_map, Finset.mem_filter, Finset.mem_attach, true_and,
         Function.Embedding.coeFn_mk]
-      constructor
-      · rintro ⟨⟨y, hyS⟩, hfy, rfl⟩; exact hfy
-      · intro hfx; exact ⟨⟨x, hxS⟩, hfx, rfl⟩
+      grind
     have hx_cx : x ∈ S ∩ conceptToFinset c ↔ c x = true := by
       simp only [Finset.mem_inter, conceptToFinset, Finset.mem_filter, Finset.mem_univ,
         true_and]
       exact ⟨fun h => h.2, fun h => ⟨hxS, h⟩⟩
     -- Combine: c x = true ↔ f ⟨x, hxS⟩ = true
-    have key : c x = true ↔ f ⟨x, hxS⟩ = true := by
-      rw [← hx_cx, hx_in_inter, hx_in_t]
-    cases hfx : f ⟨x, hxS⟩ <;> cases hcx : c x <;> simp_all
+    grind
 
 /-!
 ## B₄: VCDim Bridge (ours ↔ Mathlib's Finset.vcDim)
@@ -305,8 +296,7 @@ private theorem funcToSubset_injective {X : Type u} (S : Finset X) :
   intro f g h
   funext x
   have hmem := Finset.ext_iff.mp h x
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hmem
-  cases hf : f x <;> cases hg : g x <;> simp_all
+  grind
 
 -- If 𝒜 = funcToSubsetFamily S (restrictConceptClass C S) shatters T ⊆ ↥S,
 -- then conceptClassToFinsetFamily C shatters T.map Subtype.val ⊆ X.
@@ -342,34 +332,18 @@ private theorem restrict_shatters_lift {X : Type u} [Fintype X] [DecidableEq X]
     fun z => Finset.ext_iff.mp hTA z
   constructor
   · -- y ∈ (T.map val) ∩ {x | c x = true} → y ∈ t
-    rintro ⟨⟨⟨x, hxS⟩, hxT, rfl⟩, hcx⟩
-    have hx_in : (⟨x, hxS⟩ : ↥S) ∈ T ∩ Finset.univ.filter (fun x => c ↑x = true) := by
-      simp only [Finset.mem_inter, Finset.mem_filter, Finset.mem_univ, true_and]
-      exact ⟨hxT, hcx⟩
-    have hx_t' := (mem_iff _).mp hx_in
-    simp only [t', Finset.mem_filter] at hx_t'
-    exact hx_t'.2
+    grind
   · -- y ∈ t → y ∈ (T.map val) ∩ {x | c x = true}
     intro hyt
     have hyS : y ∈ S := by
       have := ht hyt
       simp only [Finset.mem_map, Function.Embedding.coeFn_mk] at this
-      obtain ⟨⟨_, hxS⟩, _, rfl⟩ := this
-      exact hxS
+      grind
     have hyT : (⟨y, hyS⟩ : ↥S) ∈ T := by
       have := ht hyt
       simp only [Finset.mem_map, Function.Embedding.coeFn_mk] at this
-      obtain ⟨⟨z, hzS⟩, hzT, hzy⟩ := this
-      have : (⟨y, hyS⟩ : ↥S) = ⟨z, hzS⟩ := Subtype.ext hzy.symm
-      rw [this]; exact hzT
-    constructor
-    · exact ⟨⟨y, hyS⟩, hyT, rfl⟩
-    · have hy_t' : (⟨y, hyS⟩ : ↥S) ∈ t' := by
-        simp only [t', Finset.mem_filter]
-        exact ⟨hyT, hyt⟩
-      have := (mem_iff ⟨y, hyS⟩).mpr hy_t'
-      simp only [Finset.mem_inter, Finset.mem_filter, Finset.mem_univ, true_and] at this
-      exact this.2
+      grind
+    grind
 
 -- vcDim of the restricted family ≤ vcDim of the original family.
 private theorem vcDim_restrict_le {X : Type u} [Fintype X] [DecidableEq X]
@@ -568,8 +542,7 @@ theorem vcdim_to_ordinal_vcdim (X : Type u)
                       (S.card : WithTop ℕ)) S hS
                 _ = ↑n := hv
             exact WithTop.coe_le_coe.mp this
-          have hne := h_none S hS
-          omega
+          grind
         have hbound : VCDim X C ≤ ↑(n - 1) := by
           apply iSup₂_le
           intro S hS
@@ -668,10 +641,7 @@ theorem compression_bounds_vcdim (X : Type u)
     intro f
     let f' : ↥T → Bool := fun ⟨x, hx⟩ => f (T.equivFin ⟨x, hx⟩)
     obtain ⟨c, hcC, hcf'⟩ := hT_shatt f'
-    refine ⟨c, hcC, fun i => ?_⟩
-    have := hcf' (eqv i)
-    simp only [f', pts] at this ⊢
-    rwa [show T.equivFin (eqv i) = i from T.equivFin.apply_symm_apply i] at this
+    grind
   -- compress ∘ mkSample is injective
   have h_inj : Function.Injective (cs.compress ∘ mkSample) := by
     intro f g hfg
@@ -689,11 +659,7 @@ theorem compression_bounds_vcdim (X : Type u)
       have hsub := cs.compress_sub (mkSample f)
       have hp_range : (p : X × Bool) ∈ Set.range (mkSample f) :=
         hsub (Finset.mem_coe.mpr hp)
-      obtain ⟨i, hi⟩ := hp_range
-      simp only [mkSample] at hi
-      rw [Finset.mem_product]
-      exact ⟨by rw [show p.1 = pts i from (congr_arg Prod.fst hi).symm]; exact (eqv i).2,
-             Finset.mem_univ _⟩
+      grind
     · have := cs.compress_small (mkSample f); omega
   -- Source cardinality: 2^n
   have h_source_card : (Finset.univ : Finset (Fin n → Bool)).card = 2 ^ n := by
@@ -727,8 +693,7 @@ theorem compression_bounds_vcdim (X : Type u)
     have h1 : k + 1 ≤ 2 ^ k := by
       induction k with
       | zero => omega
-      | succ k ih => calc k + 1 + 1 ≤ 2 ^ k + 2 ^ k := by omega
-                       _ = 2 ^ (k + 1) := by ring
+      | succ k ih => grind
     have hsimp : 2 * (2 * (k + 1) * (k + 1)) = 4 * (k + 1) ^ 2 := by ring
     rw [hsimp]
     have hpow : (4 * (k + 1) ^ 2) ^ k = 2 ^ (2 * k) * (k + 1) ^ (2 * k) := by
@@ -750,10 +715,7 @@ theorem compression_bounds_vcdim (X : Type u)
           apply Nat.pow_lt_pow_right (by norm_num : 1 < 2)
           nlinarith
   have h_target_lt : target.card < 2 ^ n := by
-    calc target.card ≤ (k + 1) * (2 * n) ^ k := h_target_le
-      _ = (k + 1) * (2 * (2 * (k + 1) * (k + 1))) ^ k := by rw [hn_eq]
-      _ < 2 ^ (2 * (k + 1) * (k + 1)) := h_exp_beats
-      _ = 2 ^ n := by rw [hn_eq]
+    grind
   -- Pigeonhole: more labelings (2^n) than target slots → contradiction with injectivity
   have h_card_lt : target.card < (Finset.univ : Finset (Fin n → Bool)).card := by
     rw [h_source_card]; exact h_target_lt

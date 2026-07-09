@@ -131,9 +131,7 @@ variable (hp : IsPosition H.x.val Player.one)
         have hdrop :
             List.drop (2 * k + 1) (H.x.val ++ [(H.extension hp R).val.1]) =
               [(H.extension hp R).val.1] := by
-          rw [List.drop_append_of_le_length (by omega : 2 * k + 1 ≤ H.x.val.length)]
-          rw [List.drop_eq_nil_of_le (by omega : H.x.val.length ≤ 2 * k + 1)]
-          rfl
+          grind
         have hval1 : (H.extension hp R).val.1 =
             (R H.liftVeryShort hpVeryShort hleVeryShort).val.1 :=
           congrArg Prod.fst hval
@@ -141,8 +139,7 @@ variable (hp : IsPosition H.x.val Player.one)
         rw [hval1]
       · exact (getTree_ne_and_pruned H.liftShort).1
     · have hlong : 2 * k + 2 ≤ H.x.val.length := by
-        have := H.hlvl
-        omega
+        grind
       rw [mem_pullSub_long (by
         rw [List.length_drop]
         simp only [List.length_singleton]
@@ -292,9 +289,7 @@ lemma concat_mem_tree {y a} (hp : IsPosition y Player.zero)
           ¬ H.game.WinningPosition
             (H.toLift.liftShort.val[2 * k + 1].1 :: (y ++ [b.val]))}
     else Set.univ)
-  conv => simp [Set.nonempty_def]
-  intro _ _
-  exact hw
+  grind
 end LLift
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
 def Losable (H : PreLift hyp) := ∃ h : H.Losable', (LLift.mk _ h).toLift.Con
@@ -380,10 +375,7 @@ lemma u_zero : H.u.val[0]'(by simpa [List.length_pos_iff] using H.u_nil)
     by_cases hl : H.x.val.length = 2 * k + 1
     · rw [mem_pullSub_short (by simp [hl])]
       conv => simp [← hl]
-      change H.u.val ∈ subAt G.tree H.x.val
-      apply mem_of_prefix hu
-      rw [← hl]
-      simp
+      grind
     · rw [mem_pullSub_long (by
         have := hu.length_le; synthIsPosition)]
       obtain ⟨z, hz⟩ := hu

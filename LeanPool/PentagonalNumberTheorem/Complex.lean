@@ -38,8 +38,7 @@ theorem gamma_bound (k n : ℕ) {x : K} (hx : ‖x‖ < 1) :
   rw [eventually_atTop]
   refine ⟨n + 1 + (k + 1), fun a ha ↦ ?_⟩
   have : Finset.Ico (k + 1) (n + 1 + (k + 1)) ⊆ Finset.range a := by
-    rw [Finset.range_eq_Ico]
-    exact Finset.Ico_subset_Ico (by simp) ha
+    grind
   rw [← Finset.prod_sdiff this]
   apply le_mul_of_one_le_left (Finset.prod_nonneg (fun _ _ ↦ by trans 1 <;> simp))
   generalize Finset.range a \ Finset.Ico (k + 1) (n + 1 + (k + 1)) = s
@@ -104,8 +103,7 @@ theorem summable_pentagonalRhs_complex {x : K} (hx : ‖x‖ < 1) :
     · simp
     rw [Nat.le_div_iff_mul_le (by simp)]
     exact Nat.mul_le_mul_left _ (by linarith)
-  · rw [Nat.le_div_iff_mul_le (by simp)]
-    exact Nat.mul_le_mul (by simp) (by simp)
+  · grind
 
 /-- **Pentagonal number theorem** for real/complex numbers, summation over natural numbers.
 
@@ -124,8 +122,7 @@ theorem pentagonalNumberTheorem_complex {x : K} (hx : ‖x‖ < 1) :
       apply (tendsto_pow_atTop_nhds_zero_of_norm_lt_one hx).comp
       rw [Filter.tendsto_atTop_atTop]
       refine fun k ↦ ⟨k, fun n hn ↦ hn.trans ?_⟩
-      rw [Nat.le_div_iff_mul_le (by simp)]
-      exact Nat.mul_le_mul (by simp) (by simp)
+      grind
     · use (1 - ‖x‖)⁻¹ * ∏' i, (1 + ‖x‖ ^ i)
       simp_rw [eventually_map, Function.comp_apply, eventually_atTop]
       exact ⟨0, fun k _ ↦ tsum_gamma_bound k hx⟩

@@ -56,9 +56,7 @@ lemma MultipliableEtaProductExpansion (z : ℍ) :
     Multipliable (fun (n : ℕ) => (1 - cexp (2 * π * Complex.I * (n + 1) * z)) ) := by
   have := Complex.summable_nat_multipliable_one_add (fun (n : ℕ) =>
     (-cexp (2 * π * Complex.I * (n + 1) * z)) ) ?_
-  · apply this.congr
-    intro n
-    ring
+  · grind
   rw [←summable_norm_iff]
   simpa using summable_exp_pow z
 
@@ -75,9 +73,7 @@ lemma MultipliableEtaProductExpansion_pnat (z : ℍ) :
     ext n
     rw [show (n : ℂ) + 1 = (((n + 1) : ℕ) : ℂ) by simp]
   rw [ ← multipliable_pnat_iff_multipliable_succ (f := g)] at this
-  apply this.congr
-  intro b
-  rfl
+  grind
 
 
 

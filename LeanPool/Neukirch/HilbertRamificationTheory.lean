@@ -107,8 +107,7 @@ theorem isIntegralClosure_root_eq_ofMonic {p : R[X]} (hp : p.Monic) :
   · have h : count x ((p.map (algebraMap R S)).roots.map (algebraMap S L)) = 0 := by
       simp only [mem_map, mem_roots', ne_eq, IsRoot.def, not_exists,
         not_and, and_imp, count_eq_zero]
-      intro y _ _ h
-      exact hx ⟨y, h⟩
+      grind
     rw [h]
     exact Decidable.byContradiction fun h ↦ hx <| IsIntegralClosure.isIntegral_iff.mp
       ⟨p, hp, (eval₂_eq_eval_map (algebraMap R L)).trans <|

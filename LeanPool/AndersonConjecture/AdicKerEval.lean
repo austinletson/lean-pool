@@ -35,9 +35,7 @@ lemma smul_eq_zero_of_quotient (I : Ideal R) (n : ℕ)
       change Submodule.Quotient.mk (r • a) = 0
       rw [Submodule.Quotient.mk_eq_zero]
       exact Submodule.smul_mem_smul hr Submodule.mem_top
-  · intro a b ha hb
-    rw [ha, hb]
-    exact add_zero 0
+  · grind
 
 instance quotientIsHausdorff (I : Ideal R) (n : ℕ) :
     IsHausdorff I (R ⧸ (I ^ n • ⊤ : Submodule R R)) where

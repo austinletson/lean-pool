@@ -40,9 +40,7 @@ variable {k α} in
 abbrev pure [DecidableEq α] (i : α) : stdSimplex k α := ⟨fun j => if i = j then 1 else 0,
  by
   constructor
-  · intro j
-    by_cases H : i = j
-    repeat simp [H]
+  · grind
   · simp only [Finset.sum_ite_eq, Finset.mem_univ, ite_true]⟩
 
 variable {k α} in
@@ -79,8 +77,7 @@ lemma wsum_magic_ineq [PosMulMono k]
       have h_all_eq_zero : ∀ i, σ i = 0 := fun i => le_antisymm (h_all_zero i) (σ.2.1 i)
       have h_sum_zero : ∑ i, σ i = 0 := by simp [h_all_eq_zero]
       have h_sum_one : ∑ i, σ i = 1 := σ.2.2
-      rw [h_sum_zero] at h_sum_one
-      exact zero_ne_one h_sum_one
+      grind
     obtain ⟨i₀, hi₀⟩ := h_exists_pos
     have h_ge : c < ∑ i, σ i * f i := by
       have h_sum_c : ∑ i, σ i * c = c := by
@@ -97,8 +94,7 @@ lemma wsum_magic_ineq [PosMulMono k]
       · use i₀, Finset.mem_univ i₀
         have h_fi₀_gt_c : c < f i₀ := H2 i₀ hi₀
         exact mul_lt_mul_of_pos_left h_fi₀_gt_c hi₀
-    rw [H1] at h_ge
-    exact lt_irrefl c h_ge
+    grind
 
 end stdSimplex
 

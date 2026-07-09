@@ -54,21 +54,7 @@ theorem aut_iter_deriv (d : ℤ) (k : ℕ) :
         · simp only [Nat.cast_add, Nat.cast_one, add_tsub_cancel_right, mul_one]
           rw [pow_add]
           simp only [pow_one, Pi.mul_apply, Pi.pow_apply]
-          have Hw : (-(((k : ℂ) + 1) * (x + ↑d) ^ k) / ((x + ↑d) ^ k * (x + ↑d)) ^ 2) =
-                    -(↑k + 1) / (x + ↑d) ^ (k + 2) := by
-            rw [div_eq_div_iff]
-            · norm_cast
-              simp
-              ring
-            · norm_cast
-              apply pow_ne_zero
-              apply mul_ne_zero
-              · apply pow_ne_zero k (upper_ne_int ⟨x, hx⟩ d)
-              apply upper_ne_int ⟨x, hx⟩ d
-            norm_cast
-            apply pow_ne_zero (k + 2) (upper_ne_int ⟨x, hx⟩ d)
-          rw [Hw]
-          ring
+          grind
         · fun_prop
         · fun_prop
         norm_cast
@@ -90,11 +76,7 @@ theorem aut_iter_deriv (d : ℤ) (k : ℕ) :
         Nat.cast_one, Int.cast_add] at *
       intro r hr
       apply IH hr
-    norm_cast at *
-    simp only [mem_setOf_eq, one_div, Int.reduceNegSucc, Int.reduceNeg, Int.cast_mul, Int.cast_pow,
-      Int.cast_neg, Int.cast_one, Int.cast_natCast, Nat.cast_mul, Nat.cast_add, Nat.cast_one,
-      Int.cast_add] at *
-    apply this
+    grind
 
 theorem aut_iter_deriv' (d : ℤ) (k : ℕ) :
     EqOn (iteratedDerivWithin k (fun z : ℂ => 1 / (z - d)) {z : ℂ | 0 < z.im})
@@ -124,8 +106,7 @@ theorem iter_div_aut_add (d : ℤ) (k : ℕ) :
   rw [iteratedDerivWithin_add hx ?_]
   · have h2 := aut_iter_deriv d k hx
     have h3 := aut_iter_deriv' d k hx
-    simp only [mem_setOf_eq, one_div] at *
-    rw [h2, h3]
+    grind
   · have h4 := aut_contDiffOn d k
     simp only [one_div] at h4
     apply h4

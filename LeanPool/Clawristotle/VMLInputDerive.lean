@@ -263,8 +263,7 @@ lemma _root_.VML.VMLInput.hb₀_zero (p : VMLInput X) : p.b₀ = 0 := by
     exact dotProduct_smul_self (p.ρ x) u₀
   -- Step 3: ∫ ρ * |u₀|² = |u₀|² * ∫ ρ = 0
   have h3 : FlatTorus3.spatialIntegral (fun x => p.ρ x * normSq u₀) = 0 := by
-    rwa [show (fun x => p.ρ x * normSq u₀) =
-      (fun x => dotProduct u₀ (FlatTorus3.curlX p.B x)) from funext (fun x => (h2 x).symm)]
+    grind
   have h4 : FlatTorus3.spatialIntegral p.ρ * normSq u₀ = 0 := by
     rwa [← FlatTorus3.hSpatialMul]
   -- Step 4: ∫ ρ > 0, so |u₀|² = 0, hence u₀ = 0

@@ -343,8 +343,7 @@ lemma bexp_exists_unique (a x : V) : ∃! y, (x < ‖a‖ → Exponential x y) �
   by_cases hx : x < ‖a‖
   · rcases brange_exists_unique a x hx with ⟨y, Hy, Huniq⟩
     refine ⟨y, ⟨fun _ ↦ Hy, fun hle ↦ False.elim ((not_le.mpr hx) hle)⟩, ?_⟩
-    intro y' hy'
-    exact Huniq y' (hy'.1 hx)
+    grind
   · simp [hx, show ‖a‖ ≤ x from by simpa using hx]
 
 /-- `bexp a x = exp x` if `x < ‖a‖`; `= 0` o.w. -/

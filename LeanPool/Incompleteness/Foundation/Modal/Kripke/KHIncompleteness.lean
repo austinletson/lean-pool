@@ -177,8 +177,7 @@ lemma exists_max_sharp (h₁ : ∀ n, n♭ ∈ ‖φ‖) (h₂ : ‖φ‖ᶜ.Fin
   have se : s.Nonempty := by
     let ⟨x, hx⟩ := h₃;
     use x.1;
-    apply hs _ |>.mpr;
-    use x;
+    grind
   use (s.max' se);
   constructor;
   · have hmem := (@hs _).mp (Finset.max'_mem _ se)
@@ -213,12 +212,7 @@ lemma exists_min_flat (h₁ : ∃ n, n♭ ∉ ‖φ‖) :
   · intro m hm;
     by_contra hC;
     have := Finset.lt_min'_iff _ _ |>.mp hm m <| by
-      simp only [Set.mem_setOf_eq, Finset.mem_filter, Finset.mem_Icc, zero_le, true_and, s];
-      constructor;
-      · simp only [Finset.lt_min'_iff, s] at hm;
-        have := hm n <| by simpa [s];
-        omega;
-      · exact hC;
+      grind
     simp at this;
 
 lemma either_finite_cofinite : (‖φ‖.Finite) ∨ (‖φ‖ᶜ.Finite) := by
@@ -250,8 +244,7 @@ lemma either_finite_cofinite : (‖φ‖.Finite) ∨ (‖φ‖ᶜ.Finite) := by
           | m♭, k♯ => simp at Rxy;
           | m♯, k♭ => apply h;
           | m♭, k♭ => apply h;
-        rw [this];
-        simp;
+        grind
       obtain ⟨n, hn, hn_max⟩ := exists_max_sharp h tsφc_finite tsφc_ne;
       right;
       apply @Set.Finite.subset (s := (·♯) '' Set.Icc 0 (n + 1));
@@ -354,8 +347,7 @@ lemma valid_axiomH_in_cresswellModel : cresswellModel ⊧ □(□φ <=> φ) ==> 
         right;
         rintro y Rmy;
         obtain ⟨k, ⟨rfl, hk₂⟩⟩ := exists_flat_of_from_flat Rmy;
-        apply hn_max;
-        omega;
+        grind
 
 lemma provable_KH_of_valid_cresswellModel : Hilbert.KH ⊢! φ → cresswellModel ⊧ φ := by
   intro h;

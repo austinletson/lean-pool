@@ -79,8 +79,7 @@ theorem singleton_ne_univ (n : ℕ) : ({n} : Set ℕ) ≠ Set.univ := fun h => u
 /-- Singletons of naturals are one-one as sets. -/
 theorem singleton_nat_inj {n m : ℕ} (h : ({n} : Set ℕ) = {m}) : n = m := by
   have h1 : n ∈ ({n} : Set ℕ) := rfl
-  rw [h] at h1
-  exact h1
+  grind
 
 /-- Any two neighbourhoods of `N` are nested or disjoint: `ℕ` contains every
 singleton, and two
@@ -90,14 +89,7 @@ theorem nestedOrDisjoint : NestedOrDisjoint memN := by
   · exact Or.inl (Set.Subset.refl _)
   · exact Or.inr (Or.inl (Set.subset_univ _))
   · exact Or.inl (Set.subset_univ _)
-  · by_cases h : n = m
-    · subst h; exact Or.inl (Set.Subset.refl _)
-    · refine Or.inr (Or.inr ?_)
-      ext k
-      simp only [Set.mem_inter_iff, Set.mem_singleton_iff, Set.mem_empty_iff_false, iff_false,
-        not_and]
-      rintro rfl hkm
-      exact h hkm
+  · grind
 
 /-- **Example 4.3 (Scott 1981, PRG-19).** The natural-number neighbourhood system
 `N` on `Δ = ℕ`. -/
@@ -128,8 +120,7 @@ theorem mem_natElem_iff {n : ℕ} {Y : Set ℕ} :
   · rintro ⟨hY, hsub⟩
     rcases hY with rfl | ⟨m, rfl⟩
     · exact Or.inl rfl
-    · have hnm : n = m := Set.mem_singleton_iff.mp (Set.singleton_subset_iff.mp hsub)
-      subst hnm; exact Or.inr rfl
+    · grind
   · rintro (rfl | rfl)
     · exact ⟨memN_univ, Set.subset_univ _⟩
     · exact ⟨memN_singleton n, subset_rfl⟩

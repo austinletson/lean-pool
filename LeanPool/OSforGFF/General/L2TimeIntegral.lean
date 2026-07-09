@@ -144,8 +144,7 @@ lemma scaled_time_average_pointwise_bound (A : ℝ → Ω → ℂ) (T : ℝ) (hT
       rw [show (1/T : ℂ) = ((1/T : ℝ) : ℂ) by simp]
       rw [Complex.norm_real]
       exact abs_of_pos (by positivity)
-    rw [h_norm]
-    ring
+    grind
   rw [h1]
   -- Apply Cauchy-Schwarz: ‖∫ f‖² ≤ T * ∫ ‖f‖²
   have h_cs := cauchy_schwarz_time_integral_pointwise A T hT ω hf_sq

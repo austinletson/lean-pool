@@ -82,8 +82,7 @@ theorem mem_span_pair_imp_dep
   refine ⟨![1, -s, -t], ?_, 0, by simp⟩
   simp only [Fin.sum_univ_three, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons,
     Matrix.cons_val_two, Matrix.tail_cons, one_smul, neg_smul]
-  rw [← hst]
-  abel
+  grind
 
 -- Version with representatives of the axiom L_2.
 theorem l2_rep

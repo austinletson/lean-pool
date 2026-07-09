@@ -53,8 +53,7 @@ theorem MeasureTheory.compactCap_mono
     {μ : MeasureTheory.Measure α} {s t : Set α} (hst : s ⊆ t) :
     MeasureTheory.compactCap μ s ≤ MeasureTheory.compactCap μ t := by
   apply sSup_le_sSup
-  rintro r ⟨K, hKc, hKs, rfl⟩
-  exact ⟨K, hKc, hKs.trans hst, rfl⟩
+  grind
 
 /-! ## Choquet capacity structure -/
 
@@ -155,8 +154,7 @@ private abbrev Bnd (N : ℕ → ℕ) : Set (ℕ → ℕ) :=
 
 private lemma isCompact_bnd (N : ℕ → ℕ) : IsCompact (Bnd N) := by
   have : Bnd N = Set.pi Set.univ (fun i => Set.Iic (N i)) := by
-    ext g
-    simp only [Bnd, Set.mem_setOf_eq, Set.mem_pi, Set.mem_univ, true_implies, Set.mem_Iic]
+    grind
   rw [this]
   exact isCompact_univ_pi fun i => (Set.finite_Iic (N i)).isCompact
 
@@ -170,31 +168,17 @@ private lemma cyl_succ_eq (N : ℕ → ℕ) (n : ℕ) :
 
 private lemma monotone_cyl_split (N : ℕ → ℕ) (n : ℕ) :
     Monotone (fun k => Cyl N n ∩ {g : ℕ → ℕ | g (n + 1) ≤ k}) := by
-  intro a b hab x ⟨hx1, hx2⟩
-  exact ⟨hx1, le_trans hx2 hab⟩
+  intro a b hab x grind
 
 private lemma cyl_inter_eq_cyl_update (N : ℕ → ℕ) (n k : ℕ) :
     Cyl N n ∩ {g : ℕ → ℕ | g (n + 1) ≤ k} = Cyl (Function.update N (n + 1) k) (n + 1) := by
   ext g
   simp only [Cyl, Set.mem_inter_iff, Set.mem_setOf_eq, Function.update]
-  constructor
-  · rintro ⟨hg, hgk⟩ i hi
-    by_cases heq : i = n + 1
-    · subst heq; simp [hgk]
-    · have : i ≤ n := by omega
-      simp [heq, hg i this]
-  · intro hg; constructor
-    · intro i hi
-      specialize hg i (by omega)
-      have hi_ne : i ≠ n + 1 := by omega
-      simpa [hi_ne] using hg
-    · specialize hg (n + 1) (le_refl _)
-      simpa using hg
+  grind
 
 private lemma cyl_ext (N N' : ℕ → ℕ) (n : ℕ) (h : ∀ i, i ≤ n → N i = N' i) :
     Cyl N n = Cyl N' n := by
-  ext g; simp only [Cyl, Set.mem_setOf_eq]
-  exact ⟨fun hg i hi => h i hi ▸ hg i hi, fun hg i hi => (h i hi).symm ▸ hg i hi⟩
+  grind
 
 /-- Truncation: replace g(i) by min(g(i), N(i)) to bring any g into bounded set. -/
 private noncomputable def truncate (N : ℕ → ℕ) (g : ℕ → ℕ) : ℕ → ℕ :=
@@ -284,8 +268,7 @@ private lemma iInter_closure_image_cyl_eq
     simp only [Set.mem_iInter]
     intro n
     apply subset_closure
-    obtain ⟨g, hg, hfg⟩ := hy
-    exact ⟨g, bnd_subset_cyl N n hg, hfg⟩
+    grind
 
 /-! ## Choquet capacitability theorem -/
 

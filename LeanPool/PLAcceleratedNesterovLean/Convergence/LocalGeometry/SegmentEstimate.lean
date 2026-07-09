@@ -42,8 +42,7 @@ theorem segment_estimate_from_hessian (φ : ℝ → ℝ) (c : ℝ)
   set ψ : ℝ → ℝ := fun t => t * deriv φ t - φ t + φ 0 - c / 2 * t ^ 2
   -- Key: ψ(0) = 0 without needing φ'(0) = 0 (since 0 * φ'(0) = 0)
   have hψ0 : ψ 0 = 0 := by
-    change 0 * deriv φ 0 - φ 0 + φ 0 - c / 2 * 0 ^ 2 = 0
-    ring
+    grind
   have hψ_cont : ContinuousOn ψ (Set.Icc 0 1) := by
     apply ContinuousOn.sub
     · apply ContinuousOn.add
@@ -85,8 +84,7 @@ theorem segment_estimate_from_hessian (φ : ℝ → ℝ) (c : ℝ)
     monotoneOn_of_deriv_nonneg (convex_Icc 0 1) hψ_cont hψ_diff hψ'_nonneg
   have h := hψ_mono (Set.left_mem_Icc.mpr zero_le_one) (Set.right_mem_Icc.mpr zero_le_one)
     zero_le_one
-  simp only [ψ] at h
-  linarith [hψ0]
+  grind
 
 /-! ## Fiber path second derivative = Hessian quadratic form -/
 

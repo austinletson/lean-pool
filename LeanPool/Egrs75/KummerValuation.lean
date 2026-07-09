@@ -38,10 +38,7 @@ theorem sub_one_mul_padicValNat_centralBinom (p : ℕ) [hp : Fact p.Prime] (n : 
           (Nat.digits p (2 * n)).sum :=
     sub_one_mul_padicValNat_choose_eq_sub_sum_digits (p := p) (k := n)
       (n := 2 * n) hk
-  have h2n : 2 * n - n = n := by omega
-  rw [h2n] at hkummer
-  rw [hkummer]
-  ring_nf
+  grind
 
 /-- **`p^m` divides `Nat.centralBinom n` from a Kummer digit bound.**
 

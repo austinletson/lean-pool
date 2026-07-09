@@ -44,8 +44,7 @@ theorem cs_aux {x y : E} (hy : y ≠ 0) :
       ?_
     _ = RCLike.re (↑(‖x‖ ^ 2) - ‖inner 𝕜 x y‖ ^ 2 * (↑(‖y‖ ^ 2))⁻¹) := ?_
     _ = ‖x‖ ^ 2 - ‖inner 𝕜 x y‖ ^ 2 * (‖y‖ ^ 2)⁻¹ := ?_
-  · congr
-    ring_nf
+  · grind
   · rw [mul_rotate', ← inner_conj_symm, RCLike.conj_mul, mul_comm,
       ← RCLike.normSq_eq_def', RCLike.normSq_eq_def']
     simp_rw [_root_.map_sub, ← RCLike.ofReal_inv,
@@ -140,8 +139,7 @@ theorem innerDef_i_smul_left (x y : X) : (innerDef ((I : 𝕜) • x) y : 𝕜) 
   simp_rw [← mul_assoc, hI', one_mul, neg_mul]
   rw [sub_neg_eq_add]
   have : ‖x - y‖ = ‖-x + y‖ := by rw [← norm_neg, neg_sub', sub_eq_add_neg, neg_neg]
-  rw [this, add_comm x y]
-  ring_nf
+  grind
 
 theorem im_innerDef_aux (x y : X) : im (innerDef x y : 𝕜) = re (innerDef ((I : 𝕜) • x) y : 𝕜) := by
   rw [im_eq_re_neg_i, ← innerDef_i_smul_left]
@@ -175,8 +173,7 @@ theorem innerDef_conj (x y : X) : conj (innerDef x y : 𝕜) = innerDef y x := b
     ↑(re (innerDef x y : 𝕜)) + ↑(im (innerDef x y : 𝕜)) * -(I : 𝕜) =
         ↑(re (innerDef y x : 𝕜)) + ↑(-im (innerDef x y : 𝕜)) * (I : 𝕜) := by
       rw [re_innerDef_symm]
-      congr 1
-      simp
+      grind
     _ = ↑(re (innerDef y x : 𝕜)) + ↑(im (innerDef y x : 𝕜)) * (I : 𝕜) := by
       rw [← im_innerDef_symm]
     _ = innerDef y x := re_add_im _
@@ -535,10 +532,8 @@ theorem norm_one_of_mem_extremePoints_of_closed_unitBall {𝕜 H : Type _} [RCLi
         by simp_rw [← @RCLike.ofReal_one 𝕜, real_lt_real, lt_iff_le_and_ne]; exact ⟨h1, hx'⟩,
         by simp only [one_div, smul_zero, add_zero, smul_smul, ← ofReal_inv, ← ofReal_mul,
           mul_inv_cancel₀ (norm_ne_zero_iff.mpr this), ofReal_one, one_smul]⟩)
-    exfalso
-    exact this h.2.symm
-  rw [not_ne_iff] at hx'
-  exact hx'
+    grind
+  grind
 
 theorem mem_extremePoints_of_closedBall_iff_norm_eq_one
   {𝕜 H : Type _} [RCLike 𝕜] [NormedAddCommGroup H] [InnerProductSpace 𝕜 H] [Nontrivial H] (x : H) :
@@ -704,9 +699,6 @@ lemma example_pos_commute_iff_pos_mul_of {𝕜 R : Type _} [RCLike 𝕜] [Ring R
       _ = spectrum 𝕜 (star (b * star a) * (b * star a)) \ {0} := by
         simp only [star_mul, star_star, mul_assoc]
       _ ⊆ {c : 𝕜 | 0 ≤ c} \ {0} := ?_
-    rw [← this]
-    have this : ∀ x : R, 0 ≤ star x * x := fun x => (h₁ _).mpr ⟨x, rfl⟩
-    have := fun x => ((h₂ _).mp (this x)).2
-    exact this _
+    grind
   · intro h
     exact h.1.symm

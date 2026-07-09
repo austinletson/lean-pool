@@ -339,8 +339,7 @@ private lemma parseval_partition {N L : ℕ}
   --    = (1/N) * ∑‖q_k‖² + totalDelta
   simp only [smul_eq_mul]
   unfold totalDelta Q
-  have hT_ne' : T ≠ 0 := ne_of_gt hT_pos
-  field_simp
+  grind
 
 /-! ## Parseval identity for finite Fourier sums indexed by Fin L -/
 
@@ -357,8 +356,7 @@ private lemma parseval_fin_fourier {L : ℕ} (c : Fin L → ℂ) :
         ∑ m : Fin L, c m * fourier (↑↑m : ℤ) t) =
       fun t => ∑ n ∈ E, b' n * fourier (↑n : ℤ) t := by
     ext t; simp only [E]; rw [@sum_fin_eq_sum_range]
-    refine Finset.sum_congr rfl fun n hn => ?_
-    simp [b', Finset.mem_range.mp hn]
+    grind
   rw [h_func_eq]
   -- Set up L² machinery
   let Pcont : C(AddCircle T, ℂ) :=
@@ -407,8 +405,7 @@ private lemma parseval_fin_fourier {L : ℕ} (c : Fin L → ℂ) :
             ∂AddCircle.haarAddCircle := by
         unfold circleNormSq; symm; apply integral_congr_ae
         filter_upwards [hae] with t ht
-        rw [show (↑↑PLp : AddCircle T → ℂ) t =
-          Pcont t from ht, hPcont_eq t]
+        grind
     _ = (∫ t : AddCircle T,
           @inner ℂ ℂ _
             ((↑↑PLp : AddCircle T → ℂ) t)
@@ -476,8 +473,7 @@ private lemma deriv_norm_le_circleNormSq {N L : ℕ} (hN : 1 ≤ N)
         (b m * (2 * Real.pi * Complex.I *
           ↑(m.val : ℤ) / (T : ℂ))) *
         fourier (m.val : ℤ) t := by
-    ext t; apply Finset.sum_congr rfl; intro m _
-    ring
+    grind
   have h_parseval_Q' : circleNormSq Q'_circle =
       ∑ m : Fin L,
         ‖b m * (2 * Real.pi * Complex.I *
@@ -630,8 +626,7 @@ private lemma poincare_per_interval {N L : ℕ} (hN : 1 ≤ N)
         qAvg b N k := by simpa only [one_div] using h_mean_smul
   have hp := FockSPR.MissingMathlib.poincare_interval
     hh_pos hf_deriv hf_cont hf'_cont
-  simp only [one_div] at hp
-  rwa [h_mean_inv] at hp
+  grind
 
 /-- 4.1a: Poincaré bound with (L−1)² derivative bound. -/
 private lemma poincare_bound {N L : ℕ} (hN : 1 ≤ N)
@@ -747,9 +742,7 @@ private lemma frozen_rotation {N L : ℕ} (hN : 1 ≤ N)
     -- Replace g(s/N) by ρ(fourier(1)·q)²
     have h_congr : ∀ s ∈ Set.uIcc (T * ↑k.val) (T * (↑k.val + 1)),
         g (s / ↑N) = (rho (fourier (1 : ℤ) (↑s : AddCircle T) * q)) ^ 2 := by
-      intro s _;
-      change (rho (fourier (N : ℤ) (↑(s / ↑N) : AddCircle T) * q)) ^ 2 = _
-      rw [fourier_rescale]
+      grind
     rw [intervalIntegral.integral_congr h_congr]
     -- Periodicity: ∫_{T·k}^{T·(k+1)} = ∫_0^{0+T}
     set g₁ : ℝ → ℝ := fun s => (rho (fourier (1 : ℤ) (↑s : AddCircle T) * q)) ^ 2
@@ -776,10 +769,7 @@ private lemma frozen_rotation {N L : ℕ} (hN : 1 ≤ N)
           ∂AddCircle.haarAddCircle := by
         -- ∫ f = T * ∫ f ∂haar  <==  ∫ f ∂haar = T⁻¹ • ∫ f
         rw [h_haar, smul_eq_mul]
-        set V := ∫ t : AddCircle T, (rho (fourier (1 : ℤ) t * q)) ^ 2
-        -- Goal: V = T * (T⁻¹ * V)
-        rw [mul_comm T (T⁻¹ * V), mul_assoc, mul_comm V T, ← mul_assoc,
-          inv_mul_cancel₀ hT_ne, one_mul]
+        grind
   -- Step B: ∫ ρ(fourier(1)·q)² d(haar) ≥ ‖q‖²/8
   -- Use rotation invariance: fourier(1)(t) * q = ‖q‖ * fourier(1)(t + s)
   -- where s is chosen so that fourier(1)(s) = q/‖q‖
@@ -942,17 +932,14 @@ private lemma assembly {N L : ℕ} (hN : 1 ≤ N)
         (1/2) * ∫ t in iLeft N k.val..iLeft N (k.val + 1),
           (rho (fourier (N : ℤ) (↑t : AddCircle T) * qAvg b N k)) ^ 2 :=
         intervalIntegral.integral_const_mul _ _
-      simp only [hA_def, hB_def] at h1 h2 ⊢
-      linarith
+      grind
     rw [h_split] at h_int_bound
     -- Multiply by 1/T
     have h_mul := mul_le_mul_of_nonneg_left h_int_bound hT_inv_pos.le
     -- Use frozen_rotation for the first term
     have h_frozen := frozen_rotation hN b k
     -- Expand 1/T * (1/2 * A - B) = 1/2 * (1/T * A) - 1/T * B
-    have h_expand : 1 / T * (1 / 2 * A - B) = 1 / 2 * (1 / T * A) - 1 / T * B := by ring
-    rw [h_expand] at h_mul
-    linarith
+    grind
   -- Sum over k
   have h_sum : (1 / T) • ∑ k : Fin N,
       ∫ t in iLeft N k.val..iLeft N (k.val + 1),

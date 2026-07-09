@@ -134,8 +134,7 @@ theorem add_alpha {a : α} (ha : a ∈ S) {n : ℕ} {c : List α} (c_in_S : c.In
   rcases List.takeLast' d_last with ⟨d', eq_d⟩
   rcases List.takeHead' c_head with ⟨c', eq_c⟩
   have alpha_eq : d'.length = l.alpha a := by
-    rw [eq_d, List.length_append, List.length_singleton] at d_length
-    omega
+    grind
   refine ⟨d' ++ a::c', ?_, ?_⟩
   swap
   · intro x hx
@@ -148,17 +147,10 @@ theorem add_alpha {a : α} (ha : a ∈ S) {n : ℕ} {c : List α} (c_in_S : c.In
     rw [Config.NCup, ← eq_d]
     refine ⟨d_cup, ?_⟩
     obtain ⟨_, c_len⟩ := c_cup
-    rw [eq_c, List.length_cons, List.length_nil] at c_len
-    rw [d_length]
-    omega
+    grind
   | cons q c'' =>
     rcases List.eq_nil_or_concat d' with hd' | ⟨d'', p, eq_d'⟩
-    · rw [hd', List.nil_append, ← eq_c]
-      rw [Config.NCup]
-      refine ⟨c_cup.left, ?_⟩
-      rw [hd', List.length_nil] at alpha_eq
-      rw [c_cup.right]
-      omega
+    · grind
     · rw [Config.NCup]
       rw [eq_d', List.concat_eq_append,
         show (d'' ++ [p]) ++ a :: q :: c'' = d'' ++ p :: a :: q :: c'' by simp]
@@ -174,9 +166,7 @@ theorem add_alpha {a : α} (ha : a ∈ S) {n : ℕ} {c : List α} (c_in_S : c.In
         · exact c_in_S q (by simp)
         · exact (List.isChain_cons_cons.mp c_cup.left.left).1
       · have hcl := c_cup.right
-        rw [eq_d', List.concat_eq_append] at alpha_eq
-        simp only [List.length_append, List.length_cons, List.length_nil] at alpha_eq hcl ⊢
-        omega
+        grind
 
 end Label
 end Config
@@ -273,8 +263,7 @@ theorem Config.Label.alpha_le_beta {a : α} (ha : a ∈ S) : l.alpha a ≤ C.bet
   rcases l.alphaCup ha with ⟨c, c_length, c_in, c_sorted, c_chain, c_last⟩
   have c_cup := l.alphaCup_is_cup _ c_in c_sorted c_chain
   have ineq := C.cup_length_le_beta S c_in c_cup c_last
-  rw [c_length] at ineq
-  omega
+  grind
 
 variable {l}
 
@@ -289,18 +278,12 @@ theorem slope_ff_inc_alpha {a b : α} (sab : ¬l.Slope a b) (ha : a ∈ S) (hb :
   rw [← d_length]
   apply l.cup_length_le_alpha
   · rw [def_d]; simp; tauto
-  · rw [def_d, ← List.isChain_iff_pairwise]
-    apply (List.isChain_iff_pairwise.mpr c_sorted).append (List.isChain_singleton b)
-    intro x hx y hy
-    rw [List.head?_singleton, Option.mem_some_iff] at hy
-    rw [c_eq, List.getLast?_concat, Option.mem_some_iff] at hx
-    rw [← hx, ← hy]; exact a_le_b
+  · grind
   · rw [def_d, c_eq]
     simp only [List.append_assoc, List.cons_append, List.nil_append,
       List.isChain_append_cons_cons, Pi.compl_apply, compl_iff_not, List.IsChain.singleton,
       and_true]
-    rw [← c_eq]
-    exact ⟨c_chain, sab⟩
+    grind
   · rw [def_d]; simp
 
 theorem slope_tt_inc_beta {a b : α} (sab : l.Slope a b) (ha : a ∈ S) (hb : b ∈ S) (a_le_b : a < b) :
@@ -317,8 +300,7 @@ theorem slope_tt_inc_beta {a b : α} (sab : l.Slope a b) (ha : a ∈ S) (hb : b 
     exact ⟨c_in, hb, List.nil_in⟩
   · rw [def_d]
     exact c_cup.extend_right sab a_le_b hb c_in c_last
-  · rw [def_d, List.getLast?_append, List.getLast?_singleton]
-    rfl
+  · grind
 
 variable (C)
 
@@ -329,8 +311,7 @@ theorem Config.alpha_eq_beta_inc {a b : α} (ha : a ∈ S) (hb : b ∈ S) (h : l
     by_cases hl : l.Slope a b
     · exact slope_tt_inc_beta hl ha hb hab
     · have h' := slope_ff_inc_alpha hl ha hb hab
-      rw [h] at h'
-      exact absurd h' (lt_irrefl _)
+      grind
   · intro hab
     rcases lt_trichotomy a b with (a_lt_b | a_eq_b | b_lt_a)
     · exact a_lt_b
@@ -340,8 +321,7 @@ theorem Config.alpha_eq_beta_inc {a b : α} (ha : a ∈ S) (hb : b ∈ S) (h : l
       · have h' := slope_tt_inc_beta hl hb ha b_lt_a
         exact absurd (lt_trans h' hab) (lt_irrefl _)
       · have h' := slope_ff_inc_alpha hl hb ha b_lt_a
-        rw [h] at h'
-        exact absurd h' (lt_irrefl _)
+        grind
 
 variable {C} (l)
 
@@ -351,8 +331,7 @@ theorem Config.Label.beta_eq_alpha_inc {a b : α} (ha : a ∈ S) (hb : b ∈ S)
   · intro hab
     by_cases hl : l.Slope a b
     · have h' := slope_tt_inc_beta hl ha hb hab
-      rw [h] at h'
-      exact absurd h' (lt_irrefl _)
+      grind
     · exact slope_ff_inc_alpha hl ha hb hab
   · intro hab
     rcases lt_trichotomy a b with (a_lt_b | a_eq_b | b_lt_a)
@@ -361,7 +340,6 @@ theorem Config.Label.beta_eq_alpha_inc {a b : α} (ha : a ∈ S) (hb : b ∈ S)
     · exfalso
       by_cases hl : l.Slope b a
       · have h' := slope_tt_inc_beta hl hb ha b_lt_a
-        rw [h] at h'
-        exact absurd h' (lt_irrefl _)
+        grind
       · have h' := slope_ff_inc_alpha hl hb ha b_lt_a
         exact absurd (lt_trans h' hab) (lt_irrefl _)

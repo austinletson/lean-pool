@@ -788,11 +788,7 @@ lemma hexagon_forward
     rw [Array.getElem_extract, Array.getElem_extract,
         Array.getElem_append_left (by simp [*]),
         Array.getElem_append_right (by simp [*])]
-    simp only [Array.size_extract, tensorObj_size_eq_forward, hm1, min_self,
-               Nat.add_sub_cancel_left, Nat.sub_zero]
-    rw [Array.getElem_extract, Array.getElem_extract]
-    congr 1
-    omega
+    grind
 
 omit [Preorder V] in
 lemma tensorObj_size_eq_reverse
@@ -844,14 +840,11 @@ lemma hexagon_reverse
       rw [Array.getElem_extract,
           Array.getElem_append_right
             (by
-               simp only [Array.size_extract, tensorObj_size_eq_reverse, hm3', Nat.sub_zero]
-               omega)]
+               grind)]
       simp only [Array.size_extract, tensorObj_size_eq_reverse, hm3', Nat.sub_zero]
       rw [Array.getElem_append_right
             (by
-               simp only [Array.size_extract, tensorObj_size_eq_reverse, min_self,
-                          Nat.add_sub_cancel_left]
-               omega)]
+               grind)]
       simp only [Array.size_extract, tensorObj_size_eq_reverse, min_self, Nat.add_sub_cancel_left]
       rw [Array.getElem_extract, Array.getElem_extract]
       congr 1
@@ -872,8 +865,7 @@ lemma hexagon_reverse
           Array.getElem_extract, Array.getElem_extract,
           Array.getElem_append_right
              (by
-                simp only [Array.size_extract, tensorObj_size_eq_reverse, hm3', Nat.sub_zero]
-                omega)]
+                grind)]
       simp only [Array.size_extract, tensorObj_size_eq_reverse, hm3', Nat.sub_zero]
       rw [Array.getElem_append_left
             (by
@@ -902,8 +894,7 @@ lemma hexagon_reverse
       rw [Array.getElem_extract, Array.getElem_extract,
           Array.getElem_append_left
             (by
-               simp only [Array.size_extract, tensorObj_size_eq_reverse, hm3', hm9, Nat.sub_zero]
-               omega),
+               grind),
           Array.getElem_extract]
       congr 1
       omega

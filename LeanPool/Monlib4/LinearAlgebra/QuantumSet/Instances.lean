@@ -202,10 +202,7 @@ theorem _root_.Matrix.smulPosSemidef_isPosSemidef_iff {𝕜 : Type*} [RCLike �
         simp only [hi, not_lt_of_ge (hQ.eigenvalues_nonneg _),
           and_false, or_false, h, and_true] at h2
         exact ⟨h2, h⟩
-      · simp only [RCLike.star_def, mul_eq_mul_right_iff, and_imp]
-        intro h hi
-        refine ⟨hi, ?_⟩
-        simp only [h, true_or, true_and, hi, implies_true]
+      · grind
 
 theorem smul_onePosSemidef_rpow_eq {𝕜 : Type*} [RCLike 𝕜]
   {n : Type _} [Fintype n] [DecidableEq n] {α : 𝕜}
@@ -273,8 +270,7 @@ theorem Module.Dual.IsPosMap.isTracial_iff
   simp only [hφ, true_and] at this
   rw [this]
   constructor
-  · rintro ⟨α, h⟩
-    exact ⟨((α : ℝ) : ℂ), h⟩
+  · grind
   · rintro ⟨α, h⟩
     by_cases H : (1 : Matrix n n ℂ) = 0
     · use 0

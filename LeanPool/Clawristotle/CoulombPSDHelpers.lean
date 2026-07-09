@@ -289,9 +289,7 @@ lemma psd_pointwise_bound_coulomb
       calc ∑ i : Fin 3, |vGrad (Real.log ∘ f) v i - vGrad (Real.log ∘ f) w i|
           ≤ ∑ i : Fin 3, (Cg * (1 + ‖v‖) ^ Kg + Cg * (1 + ‖w‖) ^ Kg) :=
             Finset.sum_le_sum fun i _ => by
-              have := norm_sub_le (vGrad (Real.log ∘ f) v i) (vGrad (Real.log ∘ f) w i)
-              rw [Real.norm_eq_abs, Real.norm_eq_abs, Real.norm_eq_abs] at this
-              linarith [h_score v i, h_score w i]
+              grind
         _ = 3 * Cg * ((1 + ‖v‖) ^ Kg + (1 + ‖w‖) ^ Kg) := by
             simp; ring
     have h_sq_bound : (∑ i : Fin 3, |Δ i|) ^ 2 ≤

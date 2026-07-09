@@ -70,8 +70,7 @@ theorem predictor_component_quotient_sum_eq_neg_one {n : Nat}
   have hlin : w.x i * d.ds i + w.s i * d.dx i = -(w.x i * w.s i) := by
     have hc := hdir.compl.component_eq i
     simpa using hc
-  field_simp [hxne, hsne]
-  nlinarith [hlin]
+  grind
 
 /-- Step 1, scalar part: the predictor scalar complementarity equation in quotient form. -/
 theorem predictor_scalar_quotient_sum_eq_neg_one {n : Nat}
@@ -85,8 +84,7 @@ theorem predictor_scalar_quotient_sum_eq_neg_one {n : Nat}
   have hlin : w.tau * d.dkappa + w.kappa * d.dtau = -(w.tau * w.kappa) := by
     have hc := hdir.compl.scalar_eq
     simpa using hc
-  field_simp [htne, hkne]
-  nlinarith [hlin]
+  grind
 
 /-- Step 2: skew orthogonality rewritten in quotient variables. -/
 theorem predictor_quotient_weighted_cross_zero {n : Nat}
@@ -101,21 +99,14 @@ theorem predictor_quotient_weighted_cross_zero {n : Nat}
       (∑ i : Fin n,
           (w.x i * w.s i) * (d.dx i / w.x i) * (d.ds i / w.s i)) =
         ∑ i : Fin n, d.dx i * d.ds i := by
-    apply Finset.sum_congr rfl
-    intro i _
-    have hxne : w.x i ≠ 0 := ne_of_gt (hxpos i)
-    have hsne : w.s i ≠ 0 := ne_of_gt (hspos i)
-    field_simp [hxne, hsne]
+    grind
   have hscalar :
       (w.tau * w.kappa) * (d.dtau / w.tau) * (d.dkappa / w.kappa) =
         d.dtau * d.dkappa := by
-    have htne : w.tau ≠ 0 := ne_of_gt htpos
-    have hkne : w.kappa ≠ 0 := ne_of_gt hkpos
-    field_simp [htne, hkne]
+    grind
   have hzero : (∑ i : Fin n, d.dx i * d.ds i) + d.dtau * d.dkappa = 0 := by
     simpa [hdot, dot] using hdir.skew.cross_zero
-  rw [hvec, hscalar]
-  exact hzero
+  grind
 
 /-- Step 3: the total complementarity product is `hdim n * mu w`. -/
 theorem complementarity_total_eq_hdim_mul_mu {n : Nat} (w : HSState n) :
@@ -128,11 +119,7 @@ theorem complementarity_total_eq_hdim_mul_mu {n : Nat} (w : HSState n) :
 theorem square_sum_eq_one_sub_two_mul_of_sum_eq_neg_one
     {u v : ℝ} (h : u + v = -1) :
     u ^ 2 + v ^ 2 = 1 - 2 * (u * v) := by
-  calc
-    u ^ 2 + v ^ 2 = (u + v) ^ 2 - 2 * (u * v) := by ring
-    _ = 1 - 2 * (u * v) := by
-      rw [h]
-      ring
+  grind
 
 /-- Step 4: weighted norm identity for predictor quotient variables. -/
 theorem predictor_weighted_relative_norm_identity {n : Nat}
@@ -166,10 +153,7 @@ theorem predictor_weighted_relative_norm_identity {n : Nat}
                 w d hneigh.1 hdir i
               rw [square_sum_eq_one_sub_two_mul_of_sum_eq_neg_one hsum]
       _ = ∑ i : Fin n, ((w.x i * w.s i) - 2 * crossVec i) := by
-              apply Finset.sum_congr rfl
-              intro i _
-              dsimp [crossVec]
-              ring
+              grind
       _ = (∑ i : Fin n, w.x i * w.s i) - 2 * (∑ i : Fin n, crossVec i) := by
               rw [Finset.sum_sub_distrib]
               rw [← Finset.mul_sum]
@@ -178,27 +162,12 @@ theorem predictor_weighted_relative_norm_identity {n : Nat}
           ((d.dtau / w.tau) ^ 2 + (d.dkappa / w.kappa) ^ 2) =
         w.tau * w.kappa - 2 * crossScalar := by
     have hsum := predictor_scalar_quotient_sum_eq_neg_one w d hneigh.1 hdir
-    rw [square_sum_eq_one_sub_two_mul_of_sum_eq_neg_one hsum]
-    dsimp [crossScalar]
-    ring
+    grind
   have hcross : (∑ i : Fin n, crossVec i) + crossScalar = 0 := by
     dsimp [crossVec, crossScalar]
     exact predictor_quotient_weighted_cross_zero w d hneigh.1 hdir
   have htotal := complementarity_total_eq_hdim_mul_mu w
-  calc
-    (∑ i : Fin n,
-        (w.x i * w.s i) *
-          ((d.dx i / w.x i) ^ 2 + (d.ds i / w.s i) ^ 2)) +
-      (w.tau * w.kappa) *
-        ((d.dtau / w.tau) ^ 2 + (d.dkappa / w.kappa) ^ 2)
-        = ((∑ i : Fin n, w.x i * w.s i) - 2 * (∑ i : Fin n, crossVec i)) +
-            (w.tau * w.kappa - 2 * crossScalar) := by
-            rw [hvec_rewrite, hscalar_rewrite]
-    _ = ((∑ i : Fin n, w.x i * w.s i) + w.tau * w.kappa) -
-          2 * ((∑ i : Fin n, crossVec i) + crossScalar) := by ring
-    _ = hdim n * mu w := by
-          rw [hcross, htotal]
-          ring
+  grind
 
 /-- Step 5, vector part: tight-neighborhood lower bound `3μ/4 ≤ xᵢsᵢ`. -/
 theorem neighborhood_component_product_lower_tight {n : Nat}
@@ -251,11 +220,7 @@ theorem predictor_component_quotient_square_bounds {n : Nat}
   have hsingle : termVec i ≤ ∑ j : Fin n, termVec j := by
     exact Finset.single_le_sum (fun j _ => hterm_nonneg j) (by simp)
   have hterm_le_total : termVec i ≤ hdim n * mu w := by
-    calc
-      termVec i ≤ (∑ j : Fin n, termVec j) + termScalar := by nlinarith
-      _ = hdim n * mu w := by
-          dsimp [termVec, termScalar]
-          exact hweighted
+    grind
   have hprod_lower := neighborhood_component_product_lower_tight w hneigh i
   have hprod_nonneg : 0 ≤ w.x i * w.s i := by
     exact mul_nonneg (le_of_lt (hxpos i)) (le_of_lt (hspos i))
@@ -312,11 +277,7 @@ theorem predictor_scalar_quotient_square_bounds {n : Nat}
         (mul_nonneg (le_of_lt (hxpos j)) (le_of_lt (hspos j)))
         (add_nonneg (sq_nonneg _) (sq_nonneg _)))
   have hscalar_le_total : termScalar ≤ hdim n * mu w := by
-    calc
-      termScalar ≤ (∑ j : Fin n, termVec j) + termScalar := by nlinarith
-      _ = hdim n * mu w := by
-          dsimp [termVec, termScalar]
-          exact hweighted
+    grind
   have hprod_lower := neighborhood_scalar_product_lower_tight w hneigh
   have hprod_nonneg : 0 ≤ w.tau * w.kappa := by
     exact mul_nonneg (le_of_lt htpos) (le_of_lt hkpos)
@@ -355,8 +316,7 @@ theorem ytmStepConstant_le_half : ytmStepConstant ≤ (1 / 2 : ℝ) := by
   unfold ytmStepConstant
   have hsqrt_ge_one : (1 : ℝ) ≤ Real.sqrt (8 : ℝ) := by
     have hsqrt_sq : (Real.sqrt (8 : ℝ)) ^ 2 = 8 := by
-      rw [Real.sq_sqrt]
-      norm_num
+      grind
     have hsqrt_nonneg : 0 ≤ Real.sqrt (8 : ℝ) := Real.sqrt_nonneg 8
     nlinarith
   have hden_pos : 0 < (8 : ℝ) ^ 2 * Real.sqrt (8 : ℝ) := by
@@ -369,10 +329,7 @@ theorem predictor_fixed_alpha_sq_mul_hdim (n : Nat) :
     (predictorFixedAlpha n) ^ 2 * hdim n = ytmStepConstant ^ 2 := by
   unfold predictorFixedAlpha
   have hsqrt_ne : Real.sqrt (hdim n) ≠ 0 := ne_of_gt (sqrt_hdim_pos n)
-  have hsqrt_sq : (Real.sqrt (hdim n)) ^ 2 = hdim n := by
-    exact Real.sq_sqrt (le_of_lt (hdim_pos n))
-  field_simp [hsqrt_ne]
-  rw [hsqrt_sq]
+  grind
 
 /-- Step 7: fixed-alpha constant evaluation used by the scaled bounds. -/
 theorem predictor_fixed_alpha_sq_four_thirds_hdim_lt_one (n : Nat) :
@@ -382,13 +339,7 @@ theorem predictor_fixed_alpha_sq_four_thirds_hdim_lt_one (n : Nat) :
   have hc_le : ytmStepConstant ≤ (1 / 2 : ℝ) := ytmStepConstant_le_half
   have hc_sq : ytmStepConstant ^ 2 ≤ (1 / 2 : ℝ) ^ 2 := by
     nlinarith
-  calc
-    (predictorFixedAlpha n) ^ 2 * ((4 / 3 : ℝ) * hdim n)
-        = (4 / 3 : ℝ) * ((predictorFixedAlpha n) ^ 2 * hdim n) := by ring
-    _ = (4 / 3 : ℝ) * ytmStepConstant ^ 2 := by rw [hcancel]
-    _ ≤ (4 / 3 : ℝ) * ((1 / 2 : ℝ) ^ 2) := by
-        exact mul_le_mul_of_nonneg_left hc_sq (by norm_num)
-    _ < 1 := by norm_num
+  grind
 
 /-- Step 8: square bound plus fixed-alpha constant bound gives an absolute bound. -/
 theorem abs_alpha_mul_lt_one_of_square_bound
@@ -446,8 +397,7 @@ theorem predictor_second_order_l1_bound {n : Nat}
       calc
         |d.dx i * d.ds i|
             = |(w.x i * w.s i) * ((d.dx i / w.x i) * (d.ds i / w.s i))| := by
-                rw [← hrepr]
-                ring_nf
+                grind
         _ = (w.x i * w.s i) * |(d.dx i / w.x i) * (d.ds i / w.s i)| := by
                 rw [abs_mul, abs_of_pos hprod_pos]
         _ ≤ (w.x i * w.s i) *
@@ -472,8 +422,7 @@ theorem predictor_second_order_l1_bound {n : Nat}
     calc
       |d.dtau * d.dkappa|
           = |(w.tau * w.kappa) * ((d.dtau / w.tau) * (d.dkappa / w.kappa))| := by
-              rw [← hrepr]
-              ring_nf
+              grind
       _ = (w.tau * w.kappa) * |(d.dtau / w.tau) * (d.dkappa / w.kappa)| := by
               rw [abs_mul, abs_of_pos hprod_pos]
       _ ≤ (w.tau * w.kappa) *
@@ -572,19 +521,7 @@ theorem predictor_residual_split_square_sum_bound {n : Nat}
                       (∑ i : Fin n, 2 * b ^ 2 * (q i) ^ 2)) +
                     (2 * a ^ 2 * ρ ^ 2 + 2 * b ^ 2 * η ^ 2) := by
                       rw [Finset.sum_add_distrib]
-                      congr 2
-                      · apply Finset.sum_congr rfl
-                        intro i _
-                        simp only [mul_pow]
-                        ring
-                      · apply Finset.sum_congr rfl
-                        intro i _
-                        simp only [mul_pow]
-                        ring
-                      · simp only [mul_pow]
-                        ring
-                      · simp only [mul_pow]
-                        ring
+                      grind
               _ = 2 * a ^ 2 * ((∑ i : Fin n, (r i) ^ 2) + ρ ^ 2) +
                   2 * b ^ 2 * ((∑ i : Fin n, (q i) ^ 2) + η ^ 2) := by
                       rw [← Finset.mul_sum, ← Finset.mul_sum]
@@ -634,10 +571,7 @@ theorem predictor_center_two_square_constant_bound {n : Nat} (μ : ℝ)
   have hq_rewrite :
       2 * (α ^ 2) ^ 2 * ((hdim n * μ / 2) ^ 2) =
         ((c ^ 2) ^ 2 * μ ^ 2) / 2 := by
-    calc
-      2 * (α ^ 2) ^ 2 * ((hdim n * μ / 2) ^ 2)
-          = ((α ^ 2 * hdim n) ^ 2 * μ ^ 2) / 2 := by ring
-      _ = ((c ^ 2) ^ 2 * μ ^ 2) / 2 := by rw [hcancel]
+    grind
   unfold ytmBetaTight ytmBetaWide
   dsimp [α] at *
   rw [hq_rewrite]
@@ -672,8 +606,7 @@ theorem predictor_fixed_center_bound {n : Nat}
         (predictorScalarResidualAfter w d) ^ 2 ≤
         2 * a ^ 2 * ((∑ i : Fin n, (r i) ^ 2) + ρ ^ 2) +
         2 * b ^ 2 * ((∑ i : Fin n, (q i) ^ 2) + η ^ 2) := by
-    simpa [predictorVecResidualAfter, predictorScalarResidualAfter, a, b, r, q, ρ, η]
-      using hsplit
+    grind
   have hbound :
       2 * a ^ 2 * ((∑ i : Fin n, (r i) ^ 2) + ρ ^ 2) +
         2 * b ^ 2 * ((∑ i : Fin n, (q i) ^ 2) + η ^ 2) ≤
@@ -686,15 +619,7 @@ theorem predictor_fixed_center_bound {n : Nat}
         (by simpa [q, η] using hqnew) hcoef_b)
   have hconst := predictor_center_two_square_constant_bound (n := n) (mu w)
     (le_of_lt hmu_pos)
-  calc
-    (∑ i : Fin n, (predictorVecResidualAfter w d i) ^ 2) +
-      (predictorScalarResidualAfter w d) ^ 2
-        ≤ 2 * a ^ 2 * ((∑ i : Fin n, (r i) ^ 2) + ρ ^ 2) +
-          2 * b ^ 2 * ((∑ i : Fin n, (q i) ^ 2) + η ^ 2) := hsplit'
-    _ ≤ 2 * a ^ 2 * ((ytmBetaTight * mu w) ^ 2) +
-          2 * b ^ 2 * ((hdim n * mu w / 2) ^ 2) := hbound
-    _ ≤ (ytmBetaWide * ((1 - predictorFixedAlpha n) * mu w)) ^ 2 := by
-          simpa [a, b] using hconst
+  grind
 
 
 /-!
@@ -1041,8 +966,7 @@ theorem YTM_predictor_estimate_from_paper (n : Nat) :
         = (1 - α * (1 - 0)) * gap w := by
             exact gap_addStep_of_HSDStepDirection w d α 0 hdir
     _ = (1 - ytmStepConstant / Real.sqrt (hdim n)) * gap w := by
-            simp only [α]
-            ring
+            grind
     _ ≤ (1 - ytmStepConstant / Real.sqrt (hdim n)) * gap w := le_rfl
 
 /-- Corrector half of the YTM local neighborhood analysis. -/
@@ -1129,8 +1053,7 @@ theorem predictor_step_guarantee_fixed_alpha {n : Nat}
     gap (addStep w d a) = (1 - a * (1 - 0)) * gap w := by
       exact gap_addStep_of_HSDStepDirection w d a 0 hdir
     _ = (1 - ytmStepConstant / Real.sqrt (hdim n)) * gap w := by
-      simp only [a]
-      ring
+      grind
     _ ≤ (1 - ytmStepConstant / Real.sqrt (hdim n)) * gap w := le_rfl
 
 /-- Corrector local guarantee from the YTM wide-to-tight estimate. -/
@@ -1219,8 +1142,7 @@ theorem one_sub_pow_le_exp_neg_mul_nat
         _ = Real.exp (-(a * ((K + 1 : Nat) : ℝ))) := by
                 rw [← Real.exp_add]
                 congr 1
-                norm_num
-                ring
+                grind
 
 /-- The YTM contraction power is bounded by the corresponding exponential decay. -/
 theorem YTM_contraction_power_le_exp {n : Nat} (K : Nat) :

@@ -214,8 +214,7 @@ theorem Qam.Nontracial.Complement'.qam
       (Qam.complement' x) •ₛ (Qam.complement' x) = Qam.complement' x := by
   simp only [Qam.complement', _root_.map_sub, LinearMap.sub_apply,
     Qam.refl_idempotent_completeGraph_left, Qam.refl_idempotent_completeGraph_right]
-  simp only [sub_eq_self]
-  simp only [sub_eq_zero, @eq_comm _ x]
+  grind
 
 theorem Qam.Nontracial.Complement'.qam.isReal
     (x : A →ₗ[ℂ] B) : LinearMap.IsReal x ↔ LinearMap.IsReal (Qam.complement' x) := by

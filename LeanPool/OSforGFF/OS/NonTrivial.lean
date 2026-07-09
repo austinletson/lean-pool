@@ -332,8 +332,6 @@ theorem freeCovariance_tendsto_atTop (m : ℝ) [Fact (0 < m)] (x₀ : SpaceTime)
   suffices h : freeCovarianceBessel m x₀ x = m / (4 * Real.pi ^ 2) * ‖x₀ - x‖⁻¹ *
       besselK1 (m * ‖x₀ - x‖) by rw [h]; exact hx
   unfold freeCovarianceBessel
-  by_cases hr : ‖x₀ - x‖ = 0
-  · simp [hr]
-  · simp only [hr, ↓reduceIte]; field_simp
+  grind
 
 end OSforGFF

@@ -69,8 +69,7 @@ theorem evalPkappa_sub
     simp
   rw [sub_eq_add_neg, hneg, evalPkappa_add hd kappa F ((-1 : ℂ) • G),
     evalPkappa_smul hd kappa (-1 : ℂ) G]
-  ext z
-  simp [sub_eq_add_neg]
+  grind
 
 theorem projFinset_idempotent
     {d : Nat} (hd : 0 < d) {kappa : MultiIndex d}
@@ -99,10 +98,7 @@ theorem exact_truncate_coeff_energy
     · simp [h, Finsupp.single_apply]
     · simp [h, Finsupp.single_apply]
   have hsupp : (truncateFinset E F).support ⊆ E := by
-    intro alpha halpha
-    by_contra hnot
-    have hzero : truncateFinset E F alpha = 0 := by simp [hcoeff alpha, hnot]
-    exact (Finsupp.mem_support_iff.mp halpha) hzero
+    grind
   change
     (Real.sqrt (Finset.sum (truncateFinset E F).support
       (fun alpha => ‖truncateFinset E F alpha‖ ^ 2))) ^ 2 =
@@ -118,8 +114,7 @@ theorem exact_truncate_coeff_energy
               simp [hzero]
       _ = Finset.sum E (fun alpha => ‖coeffSkappa F alpha‖ ^ 2) := by
             refine Finset.sum_congr rfl ?_
-            intro alpha halpha
-            simp [hcoeff alpha, halpha]
+            grind
   · positivity
 
 private theorem phi1D_eq_oneDimPhi
@@ -144,10 +139,7 @@ private theorem phi1D_eq_oneDimPhi
         _ = (Nat.factorial n : ℂ) := by exact_mod_cast Nat.choose_mul_factorial_mul_factorial hjn
         _ = ((Nat.factorial n : ℂ) / (Nat.factorial (n - j) : ℂ)) *
               (Nat.factorial (n - j) : ℂ) := by field_simp [hfac_ne]
-    simpa [mul_assoc, mul_left_comm, mul_comm] using
-      congrArg
-        (fun x : ℂ => ((-1 : ℂ) ^ j) * x * (Nat.choose k j : ℂ) * z ^ (n - j) * (star z) ^ (k - j))
-        hfactor
+    grind
 
 private theorem Phi_eq_PhiKappaAlpha
     {d : Nat} (kappa alpha : MultiIndex d) (z : Cd d) :
@@ -176,8 +168,7 @@ private lemma oneDimPhi_phaseLaw
             rw [mul_assoc]
       _ = ((‖z‖ : ℂ) * Complex.exp (Complex.I * (t + z.arg))) := by
             rw [← Complex.exp_add]
-            congr 1
-            ring_nf
+            grind
   have hleft :
       Hermite1DimdLEAN.oneDimPhi k n ((‖z‖ : ℂ) * Complex.exp (Complex.I * (t + z.arg))) =
         Complex.exp (Complex.I * (((n : ℤ) - (k : ℤ) : ℂ) * (t + z.arg))) *
@@ -194,16 +185,7 @@ private lemma oneDimPhi_phaseLaw
         Complex.I * ((((n : ℤ) - (k : ℤ) : ℂ) * t)) +
           Complex.I * ((((n : ℤ) - (k : ℤ) : ℂ) * z.arg)) by ring_nf]
     rw [Complex.exp_add]
-  calc
-    Hermite1DimdLEAN.oneDimPhi k n (Complex.exp (Complex.I * t) * z) =
-        Hermite1DimdLEAN.oneDimPhi k n
-          ((‖z‖ : ℂ) * Complex.exp (Complex.I * (t + z.arg))) := by rw [hrot]
-    _ = Complex.exp (Complex.I * (((n : ℤ) - (k : ℤ) : ℂ) * (t + z.arg))) *
-          radial.eval₂ (algebraMap ℝ ℂ) ‖z‖ := hleft
-    _ = Complex.exp (Complex.I * (((n : ℤ) - (k : ℤ) : ℂ) * t)) *
-          Hermite1DimdLEAN.oneDimPhi k n z := by
-          rw [hexp, hright]
-          ring_nf
+  grind
 
 theorem Phi_rotate_one_exp
     {d : Nat} (kappa alpha : MultiIndex d) (q0 : Fin d) (t : ℝ) (z : Cd d) :
@@ -222,11 +204,7 @@ theorem Phi_rotate_one_exp
           q0
           (Hermite1DimdLEAN.oneDimPhi (kappa q0) (alpha q0)
             (Complex.exp (Complex.I * t) * z q0)) := by
-    funext q
-    by_cases hq : q = q0
-    · subst hq
-      simp
-    · simp [Function.update, hq]
+    grind
   rw [hupdate, Finset.prod_update_of_mem (s := Finset.univ) (i := q0) (by simp), oneDimPhi_phaseLaw]
   conv_rhs =>
     rw [Finset.prod_eq_mul_prod_sdiff_singleton_of_mem (s := Finset.univ) (i := q0) (by simp)]
@@ -257,8 +235,7 @@ theorem Phi_rotateCoord_circle_phase
       have hone :
         Complex.exp (Complex.I * ((1 : ℤ) : ℂ) * θ) =
             Complex.exp (Complex.I * θ) := by
-        congr 1
-        ring_nf
+        grind
       rw [hone, Phi_rotate_one_exp]
       have hphase :
           Complex.exp (Complex.I * (((kappa q0 : Nat) : Int) : ℂ) * θ) *
@@ -268,9 +245,7 @@ theorem Phi_rotateCoord_circle_phase
             Complex.exp (Complex.I * (((alpha q0 : Nat) : Int) : ℂ) * θ) *
               Phi kappa alpha z := by
         rw [← mul_assoc, ← Complex.exp_add]
-        congr 1
-        push_cast
-        ring_nf
+        grind
       exact hphase
 
 theorem evalPkappa_rotateCoord_circle_phase_sum
@@ -291,19 +266,7 @@ theorem evalPkappa_rotateCoord_circle_phase_sum
       (kappa := kappa) (alpha := alpha) (q0 := q0) x z
   have hchar : circleChar (alpha q0) x = (fourier ((alpha q0 : Nat) : Int) x : ℂ) :=
     circleChar_eq_fourier_nat (alpha q0) x
-  calc
-    (fourier ((kappa q0 : Nat) : Int) x : ℂ) *
-        (F alpha *
-          Phi kappa alpha
-            (Function.update z q0 ((fourier (1 : Int) x : ℂ) * z q0)))
-      = F alpha *
-          ((fourier ((kappa q0 : Nat) : Int) x : ℂ) *
-            Phi kappa alpha
-              (Function.update z q0 ((fourier (1 : Int) x : ℂ) * z q0))) := by ring_nf
-    _ = F alpha * ((fourier ((alpha q0 : Nat) : Int) x : ℂ) * Phi kappa alpha z) := by rw [hphase]
-    _ = F alpha * Phi kappa alpha z * circleChar (alpha q0) x := by
-          rw [hchar]
-          ring_nf
+  grind
 
 private theorem evalPkappa_eq_evalHermiteSum
     {d : Nat} (kappa : MultiIndex d) (F : Pkappa d kappa) :
@@ -520,21 +483,7 @@ theorem toFun_rotateCoord_circle_phase_tsum
       Phi_rotateCoord_circle_phase (kappa := kappa) (alpha := alpha) (q0 := q0) x z
     have hchar : circleChar (alpha q0) x = (fourier ((alpha q0 : Nat) : Int) x : ℂ) :=
       circleChar_eq_fourier_nat (alpha q0) x
-    dsimp [cκ, zrot]
-    calc
-      (fourier ((kappa q0 : Nat) : Int) x : ℂ) *
-          (coeffSkappa U alpha *
-            Phi kappa alpha
-              (Function.update z q0 ((fourier (1 : Int) x : ℂ) * z q0)))
-        = coeffSkappa U alpha *
-            ((fourier ((kappa q0 : Nat) : Int) x : ℂ) *
-              Phi kappa alpha
-                (Function.update z q0 ((fourier (1 : Int) x : ℂ) * z q0))) := by ring
-      _ = coeffSkappa U alpha *
-            ((fourier ((alpha q0 : Nat) : Int) x : ℂ) * Phi kappa alpha z) := by rw [hphase]
-      _ = coeffSkappa U alpha * Phi kappa alpha z * circleChar (alpha q0) x := by
-            rw [hchar]
-            ring
+    grind
 
 theorem box_subset_box
     {d : Nat} {J K : MultiIndex d} (hJK : J ≤ K) :
@@ -565,9 +514,7 @@ theorem tendsto_box_atTop
   · intro alpha
     refine ⟨alpha, ?_⟩
     rw [box, Fintype.mem_piFinset]
-    intro q
-    rw [Finset.mem_range]
-    exact Nat.lt_succ_self (alpha q)
+    grind
 
 /-!
 ## Representative bridge stubs
@@ -669,11 +616,8 @@ theorem integrable_evalPkappa_sq
       have hsum_pos : 0 < Finset.sum F.support (fun beta => ‖F beta‖ ^ 2) :=
         lt_of_lt_of_le hterm_pos hle
       change (Real.sqrt (Finset.sum F.support (fun beta => ‖F beta‖ ^ 2))) = 0 at hnorm
-      have hsum_zero : Finset.sum F.support (fun beta => ‖F beta‖ ^ 2) = 0 :=
-        (Real.sqrt_eq_zero (by positivity)).mp hnorm
-      nlinarith
-    have hnorm_pos : 0 < ‖F‖ := lt_of_le_of_ne (Real.sqrt_nonneg _) hnorm_ne.symm
-    nlinarith
+      grind
+    grind
 
 theorem memLp_two_evalPkappa
     {d : Nat} (hd : 0 < d) (kappa : MultiIndex d) (F : Pkappa d kappa) :
@@ -887,11 +831,8 @@ private lemma choose_partial_sum_le_pow_two (k n : ℕ) :
     Finset.sum (Finset.range (min k n + 1)) (fun j => (Nat.choose k j : ℝ))
         ≤ Finset.sum (Finset.range (k + 1)) (fun j => (Nat.choose k j : ℝ)) := by
           apply Finset.sum_le_sum_of_subset_of_nonneg
-          · intro x hx
-            simp at hx ⊢
-            omega
-          · intro j _ _
-            positivity
+          · grind
+          · grind
     _ = (2 : ℝ) ^ k := by exact_mod_cast Nat.sum_range_choose k
 
 private lemma summable_nat_pow_mul_pow_div_factorial_nonneg
@@ -956,8 +897,7 @@ private lemma summable_nat_pow_mul_pow_div_factorial_nonneg
                   ((((m + 1 : ℝ) ^ m) * (((n + m).descFactorial m : ℕ) : ℝ) *
                       x ^ (n + m)) / (Nat.factorial (n + m) : ℝ)) *
                     (Nat.factorial (n + m) : ℝ) := by
-                    have hfacne : (Nat.factorial (n + m) : ℝ) ≠ 0 := by positivity
-                    field_simp [hfacne]
+                    grind
       _ = ((m + 1 : ℝ) ^ m * x ^ m) * (x ^ n / (Nat.factorial n : ℝ)) := hcalc
   · simpa [pow_add, mul_assoc, mul_left_comm, mul_comm] using
       (Real.summable_pow_div_factorial x).mul_left ((m + 1 : ℝ) ^ m * x ^ m)
@@ -1001,8 +941,7 @@ private lemma summable_phiMajorant_sq
   have : phiMajorant k n R ^ 2 =
       C * ((((n + 1 : ℝ) ^ k) ^ 2 * (R ^ n) ^ 2) / (Nat.factorial n : ℝ)) := by
     dsimp [phiMajorant, C]
-    field_simp [hsqrt_ne]
-    rw [Real.sq_sqrt (by positivity)]
+    grind
   exact this.le
 
 private lemma phi1D_norm_le_majorant
@@ -1021,11 +960,9 @@ private lemma phi1D_norm_le_majorant
   have hterm_bound : ∀ j ∈ S, ‖term j‖ ≤ (Nat.choose k j : ℝ) * common := by
     intro j hj
     have hjk : j ≤ k := by
-      simp [S] at hj
-      omega
+      grind
     have hjn : j ≤ n := by
-      simp [S] at hj
-      omega
+      grind
     have hratio := factorial_ratio_le_pow_succ hjn hjk
     have hz1 : ‖z‖ ^ (n - j) ≤ R ^ n :=
       le_trans (pow_le_pow_left₀ (norm_nonneg _) hz _) (pow_le_pow_right₀ hR (Nat.sub_le _ _))
@@ -1040,8 +977,7 @@ private lemma phi1D_norm_le_majorant
             simp [norm_pow]
       _ ≤ (Nat.choose k j : ℝ) * ((n + 1 : ℝ) ^ k) * R ^ n * R ^ k := by gcongr
       _ = (Nat.choose k j : ℝ) * common := by
-            dsimp [common]
-            ring
+            grind
   have hsum_bound :
       Finset.sum S (fun j => ‖term j‖) ≤
         Finset.sum S (fun j => (Nat.choose k j : ℝ) * common) :=
@@ -1076,8 +1012,7 @@ private lemma phi1D_norm_le_majorant
           simpa [S] using choose_partial_sum_le_pow_two k n
     _ = phiMajorant k n R := by
           dsimp [phiMajorant, common]
-          rw [div_eq_mul_inv]
-          ring
+          grind
 
 private lemma phiMajorant_multi_sq_summable
     {d : Nat} (kappa : MultiIndex d) {R : ℝ} (hR : 1 ≤ R) :
@@ -1162,13 +1097,10 @@ private theorem uniformCauchySeqOn_of_summable_bound
       unfold partialSum
       have hsum :=
         Finset.sum_sdiff (s₁ := box J0) (s₂ := box N) (f := term) hsubset
-      dsimp [term] at hsum ⊢
-      rw [← hsum]
-      abel
+      grind
     have hdisj : Disjoint (box N \ box J0) E0 := by
       rw [Finset.disjoint_left]
-      intro alpha halpha hαE0
-      exact (Finset.mem_sdiff.mp halpha).2 (hE0J0 hαE0)
+      grind
     have htail_lt : ‖∑ alpha ∈ box N \ box J0, M alpha‖ < ε / 2 := hE0 _ hdisj
     rw [dist_eq_norm, htail_eq]
     calc
@@ -1176,8 +1108,7 @@ private theorem uniformCauchySeqOn_of_summable_bound
           ≤ ∑ alpha ∈ box N \ box J0, ‖term alpha‖ := norm_sum_le _ _
       _ ≤ ∑ alpha ∈ box N \ box J0, M alpha := by
             refine Finset.sum_le_sum ?_
-            intro alpha halpha
-            exact hbound alpha z hzK
+            grind
       _ = ‖∑ alpha ∈ box N \ box J0, M alpha‖ := by
             rw [Real.norm_eq_abs]
             exact (abs_of_nonneg (Finset.sum_nonneg fun alpha halpha =>
@@ -1277,9 +1208,7 @@ theorem l2_tsum_represents_toFun
     have hpartial_lim_S :
         Filter.Tendsto (fun n : ℕ => partialSum kappa U (ns n) z) Filter.atTop
           (nhds (S z)) := by
-      convert hSlim using 1
-      funext n
-      exact (hpartial n).symm
+      grind
     have hpartial_lim_toFun :
         Filter.Tendsto (fun n : ℕ => partialSum kappa U (ns n) z) Filter.atTop
           (nhds (toFun kappa U z)) :=
@@ -1398,10 +1327,8 @@ theorem coeff_recovery
             simp only [coeffPkappa, coeffSkappa, truncateFinset]
             rw [Finsupp.finsetSum_apply, Finset.sum_eq_single beta]
             · simp
-            · intro alpha halpha hne
-              simp [Finsupp.single_eq_of_ne hne.symm]
-            · intro hnot
-              exact False.elim (hnot hbetaJ)
+            · grind
+            · grind
   have hlim_coeff :
       Filter.Tendsto
         (fun J : MultiIndex d =>
@@ -1427,8 +1354,7 @@ theorem skappa_ext_of_coeff_eq
   cases V
   simp only [coeffSkappa] at hcoeff
   congr
-  funext alpha
-  exact hcoeff alpha
+  grind
 
 theorem continuous_toFun
     {d : Nat} (hd : 0 < d) (kappa : MultiIndex d) (U : Skappa d kappa) :

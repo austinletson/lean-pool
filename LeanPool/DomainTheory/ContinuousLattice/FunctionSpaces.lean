@@ -155,8 +155,7 @@ theorem preservesDirectedSup_comp {f : D' → D''} {g : D → D'} (hf : Preserve
     exact ⟨g c, Set.mem_image_of_mem g hc, hmono hac, hmono hbc⟩
   have hne : (g '' S).Nonempty := Set.image_nonempty.2 hS
   rw [Function.comp_apply, hg hS hSdir, hf hne hdir']
-  congr 1
-  exact (Set.image_comp f g S).symm
+  grind
 
 /-- Composition of Scott-continuous maps. -/
 def comp (f : ScottMap D' D'') (g : ScottMap D D') : ScottMap D D'' :=
@@ -171,9 +170,7 @@ def const (c : D') : ScottMap D D' :=
     apply le_antisymm
     · exact le_sSup ⟨x, hx, rfl⟩
     · apply sSup_le
-      intro b hb
-      obtain ⟨y, hy, rfl⟩ := hb
-      exact le_rfl⟩
+      grind⟩
 
 theorem pointwise_sup_preservesDirectedSup (f g : ScottMap D D') :
     PreservesDirectedSup (fun x => f x ⊔ g x) := by
@@ -536,8 +533,7 @@ theorem wayBelow_le_finset_sup_step (hD : IsContinuousLattice D) (hD' : IsContin
       {F | ∀ p ∈ F, (p.2 : D') ≪ (g : D → D') p.1} with hSg
   have hSgne : Sg.Nonempty := by
     refine ⟨_, ∅, ?_, rfl⟩
-    intro p hp
-    exact absurd hp (Finset.notMem_empty p)
+    grind
   have hSgdir : DirectedOn (· ≤ ·) Sg := by
     rintro _ ⟨F₁, hF₁, rfl⟩ _ ⟨F₂, hF₂, rfl⟩
     refine ⟨(F₁ ∪ F₂).sup (fun p => stepMap p.1 p.2), ⟨F₁ ∪ F₂, fun p hp => ?_, rfl⟩,
@@ -667,15 +663,7 @@ theorem corollary_3_4_jointly_continuous :
 theorem sSup_image_prod_mk_left (x : D) (S : Set D') (hS : S.Nonempty) :
     sSup (Set.image (fun y => (x, y)) S) = (x, sSup S) := by
   have himage : Set.image (fun y => (x, y)) S = ({x} : Set D) ×ˢ S := by
-    ext ⟨a, b⟩
-    simp only [Set.mem_image, Set.mem_prod, Set.mem_singleton_iff]
-    constructor
-    · rintro ⟨y, hy, h⟩
-      obtain ⟨ha, hb⟩ := Prod.ext_iff.mp h
-      subst hb
-      exact ⟨ha.symm, hy⟩
-    · rintro ⟨ha, hb⟩
-      refine ⟨b, hb, Prod.ext_iff.mpr ⟨ha.symm, rfl⟩⟩
+    grind
   have hx : sSup ({x} : Set D) = x := by
     apply le_antisymm
     · exact sSup_le fun z hz => by rw [Set.mem_singleton_iff] at hz; rw [hz]
@@ -698,8 +686,7 @@ theorem curry_right_preservesDirectedSup (f : ScottMap (D × D') D'') (x : D) :
   rw [show (fun y => f (x, y)) (sSup S) = f (x, sSup S) from rfl,
     ← sSup_image_prod_mk_left x S hS,
     f.preservesDirectedSup_coe (Set.image (fun y => (x, y)) S) hS'ne hS']
-  congr 1
-  simp [Set.image_image]
+  grind
 
 /-- **Scott 1972, Proposition 3.5 (right).** Currying in the `y`-variable is
 Scott-continuous. -/
@@ -709,15 +696,7 @@ noncomputable def scottLambdaAt (f : ScottMap (D × D') D'') (x : D) : ScottMap 
 theorem sSup_image_prod_mk_right (y : D') (S : Set D) (hS : S.Nonempty) :
     sSup (Set.image (fun x => (x, y)) S) = (sSup S, y) := by
   have himage : Set.image (fun x => (x, y)) S = S ×ˢ ({y} : Set D') := by
-    ext ⟨a, b⟩
-    simp only [Set.mem_image, Set.mem_prod, Set.mem_singleton_iff]
-    constructor
-    · rintro ⟨x, hx, h⟩
-      obtain ⟨ha, hb⟩ := Prod.ext_iff.mp h
-      subst ha
-      exact ⟨hx, hb.symm⟩
-    · rintro ⟨ha, hb⟩
-      exact ⟨a, ha, Prod.ext_iff.mpr ⟨rfl, hb.symm⟩⟩
+    grind
   have hy : sSup ({y} : Set D') = y := by
     apply le_antisymm
     · exact sSup_le fun z hz => by rw [Set.mem_singleton_iff] at hz; rw [hz]
@@ -743,8 +722,7 @@ theorem curry_left_preservesDirectedSup (f : ScottMap (D × D') D'') (y : D') :
   rw [show (fun x => f (x, y)) (sSup S) = f (sSup S, y) from rfl,
     ← sSup_image_prod_mk_right y S hS,
     f.preservesDirectedSup_coe (Set.image (fun x => (x, y)) S) hS'ne hS']
-  congr 1
-  simp [Set.image_image]
+  grind
 
 /-- The outer half of currying: `x ↦ (y ↦ f (x, y))` preserves directed suprema
 (so `lambda f` is a
@@ -1330,8 +1308,7 @@ theorem scottSubspaceExtendInf_le_of_mem {f' : ScottMap Y D} {U : Set Y} {y : Y}
 theorem sInf_image_le_sInf_image_of_subset {α : Type*} {f : α → D} {S T : Set α}
     (hST : S ⊆ T) : sInf (Set.image f T) ≤ sInf (Set.image f S) :=
   sInf_le_sInf fun _ hd => by
-    obtain ⟨s, hs, rfl⟩ := hd
-    exact ⟨s, hST hs, rfl⟩
+    grind
 
 omit [TopologicalSpace Y] in
 theorem scottMap_eq_sSup_openInfs (hD : IsContinuousLattice D) (f' : ScottMap Y D) (y : Y) :
@@ -1351,9 +1328,7 @@ theorem scottMap_eq_sSup_openInfs (hD : IsContinuousLattice D) (f' : ScottMap Y 
       isOpen_iff_scottOpen.mpr hUScott
     have ha' : a ≤ sInf (Set.image (f' : Y → D) ((f' : Y → D) ⁻¹' V)) := by
       apply le_sInf
-      intro d hd
-      obtain ⟨z, hzV, rfl⟩ := hd
-      exact Set.mem_Ici.1 (hVsub hzV)
+      grind
     have hmem : sInf (Set.image (f' : Y → D) ((f' : Y → D) ⁻¹' V)) ∈
         { d | ∃ U, @IsOpen Y scottTopologicalSpace U ∧ y ∈ U ∧
           d = sInf (Set.image (f' : Y → D) U) } :=
@@ -1369,16 +1344,7 @@ theorem scottSubspaceExtendInf_eq_of_comp {e : X → Y} {f : X → D} {U : Set Y
     (f' : ScottMap Y D) (h : ∀ x, f' (e x) = f x) :
     scottSubspaceExtendInf e f U = sInf (Set.image (f' : Y → D) (Set.image e Set.univ ∩ U)) := by
   have hset : f '' (e ⁻¹' U) = Set.image (f' : Y → D) (Set.image e Set.univ ∩ U) := by
-    ext d
-    simp only [Set.mem_image, Set.mem_preimage, Set.mem_inter_iff, Set.mem_univ, true_and]
-    constructor
-    · rintro ⟨x, hxU, heq⟩
-      refine ⟨e x, ⟨?_, hxU⟩, ?_⟩
-      · exact ⟨x, rfl⟩
-      · rw [h x, heq]
-    · rintro ⟨y, ⟨hex, hyU⟩, heq⟩
-      obtain ⟨x, _, rfl⟩ := hex
-      exact ⟨x, hyU, (h x).symm.trans heq⟩
+    grind
   rw [scottSubspaceExtendInf, hset]
 
 /-- **Scott 1972, Proposition 3.8 (subspace variant).** `fbar` (with the Scott
@@ -1434,8 +1400,7 @@ theorem scottSubspaceExtendInf_eq_of_ext {e : X → Y}
     scottSubspaceExtendInf e f U = scottSubspaceExtendInf e g' U := by
   unfold scottSubspaceExtendInf
   congr 1
-  ext d
-  simp [Set.mem_image, Set.mem_preimage, h]
+  grind
 
 omit [TopologicalSpace X] [TopologicalSpace Y] in
 theorem scottSubspaceExtend_eq_of_ext {e : X → Y} {f g' : X → D} (h : ∀ x, f x = g' x) (y : Y) :
@@ -1575,16 +1540,7 @@ theorem isProjection_directedSup {S : Set (ScottMap D D)} (hSne : S.Nonempty)
     apply le_antisymm
     · rw [hsSx, ScottMap.sSup_apply]
       refine sSup_le ?_
-      rintro _ ⟨k, hk, rfl⟩
-      change (k : D → D) (sSup A) ≤ sSup A
-      rw [k.preservesDirectedSup_coe A hAne hAdir]
-      refine sSup_le ?_
-      rintro _ ⟨_, ⟨j, hj, rfl⟩, rfl⟩
-      obtain ⟨m, hm, hjm, hkm⟩ := hSdir j hj k hk
-      calc (k : D → D) (j x) ≤ (m : D → D) (j x) := hkm (j x)
-        _ ≤ (m : D → D) (m x) := m.monotone (hjm x)
-        _ = (m : D → D) x := hidem m hm x
-        _ ≤ sSup A := le_sSup (Set.mem_image_of_mem _ hm)
+      grind
     · rw [hsSx, ScottMap.sSup_apply]
       refine sSup_le ?_
       rintro _ ⟨j, hj, rfl⟩
@@ -1595,8 +1551,7 @@ theorem isProjection_directedSup {S : Set (ScottMap D D)} (hSne : S.Nonempty)
               le_sSup (Set.mem_image_of_mem _ hj)
   · rw [ScottMap.sSup_apply]
     refine sSup_le ?_
-    rintro _ ⟨j, hj, rfl⟩
-    exact hle j hj x
+    grind
 
 /-- **Scott 1972, Proposition 3.12 (`⊔`-closure).** `J_D` is closed under
 arbitrary suprema in
@@ -1620,8 +1575,7 @@ namespace Projections
 
 noncomputable instance instSupSet : SupSet (Projections D) :=
   ⟨fun T => ⟨sSup (Set.image Subtype.val T), isProjection_sSup (by
-    rintro j ⟨p, _, rfl⟩
-    exact p.2)⟩⟩
+    grind)⟩⟩
 
 theorem isLUB_sSup (T : Set (Projections D)) : IsLUB T (sSup T) := by
   constructor

@@ -82,19 +82,9 @@ def Cnat : ScottSys where
       master := {([false] : Str), ([] : Str)}
       master_mem := Or.inr rfl
       inter_mem := by
-        have hAB : ({([false] : Str)} : Set Str) ⊆ {([false] : Str), ([] : Str)} :=
-          Set.singleton_subset_iff.mpr (Set.mem_insert _ _)
-        rintro X Y Z (rfl | rfl) (rfl | rfl) _ _
-        · exact Or.inl (Set.inter_self _)
-        · exact Or.inl (Set.inter_eq_self_of_subset_left hAB)
-        · exact Or.inl (Set.inter_eq_self_of_subset_right hAB)
-        · exact Or.inr (Set.inter_self _)
+        grind
       sub_master := by
-        have hAB : ({([false] : Str)} : Set Str) ⊆ {([false] : Str), ([] : Str)} :=
-          Set.singleton_subset_iff.mpr (Set.mem_insert _ _)
-        rintro X (rfl | rfl)
-        · exact hAB
-        · exact subset_rfl }
+        grind }
   ne := by
     rintro X (rfl | rfl)
     · exact ⟨[false], rfl⟩

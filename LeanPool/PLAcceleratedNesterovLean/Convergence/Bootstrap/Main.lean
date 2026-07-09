@@ -695,8 +695,7 @@ private abbrev bootstrapTotalDisplacementGenProof
       -- Need velocity bound at step n+1 from hypothesis at step n
       have hn_mem := (hinduction n).1
       have hLn_R : Ln n ≤ R ^ 2 := by
-        linarith [mul_le_of_le_one_left hL₀_nonneg
-          (pow_le_one₀ hc_nonneg hc_le_one (n := n))]
+        grind
       have hv_bound_n := hvel_bound s₀ n hn_mem.1 hn_mem.2 hLn_R
       have hvel_small : C_mov * Real.sqrt (Ln n) ≤ r / 4 := by
         calc C_mov * Real.sqrt (Ln n)
