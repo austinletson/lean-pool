@@ -125,8 +125,7 @@ theorem superdense_coding_componentwise
       CommunicationProfile.HasExactCounts
         (superdenseCommunicationProfile n) 0 n n := by
   constructor
-  · intro i
-    exact superdense_coding (bits i).1 (bits i).2
+  · exact fun i => superdense_coding_block (bits i).1 (bits i).2
   · exact superdenseCommunicationProfile_exact n
 
 /-- Global `n`-block superdense-coding theorem: Alice's `2n` classical bits,

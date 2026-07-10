@@ -137,10 +137,7 @@ lemma quadratic_approx_of_contDiffAt_two
       Set.abs_sub_left_of_mem_uIcc hs
     have hs_lt : |s - t₀| < δ₁ :=
       lt_of_le_of_lt hs_bound ht_lt_δ₁
-    calc ‖deriv γ s - L‖
-        ≤ M * |s - t₀| := h_deriv_dev s hs_lt
-      _ ≤ M * |t - t₀| :=
-        mul_le_mul_of_nonneg_left hs_bound hM_nonneg
+    exact le_mul_of_le_mul_of_nonneg_left (h_deriv_dev s hs_lt) hs_bound hM_nonneg
   have h_bound :=
     Convex.norm_image_sub_le_of_norm_deriv_le h_diff
       h_deriv_bound (convex_uIcc t₀ t)

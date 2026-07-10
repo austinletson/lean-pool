@@ -314,8 +314,7 @@ private def close_up_aux_factor_proof
         letI : NormalizationMonoid R.carrier :=
           UniqueFactorizationMonoid.normalizationMonoid
         have ha_not_s' : a ∉ s' := by
-          rw [hs'_def]
-          simp [Finset.mem_erase]
+          exact Not.imp hpa (_hp_dvd a)
         unfold gcdComplexity
         rw [hs_insert, Finset.sum_insert ha_not_s',
             Finset.sum_insert ha_t]

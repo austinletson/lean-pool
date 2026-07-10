@@ -27,13 +27,7 @@ namespace PLAcceleratedNesterovLean
 theorem geometric_decay (f : ℕ → ℝ) (c : ℝ) (hc : 0 ≤ c)
     (hstep : ∀ n, f (n + 1) ≤ c * f n) :
     ∀ n, f n ≤ c ^ n * f 0 := by
-  intro n
-  induction n with
-  | zero => simp only [pow_zero, one_mul, le_refl]
-  | succ n ih =>
-    calc f (n + 1) ≤ c * f n := hstep n
-      _ ≤ c * (c ^ n * f 0) := by gcongr
-      _ = c ^ (n + 1) * f 0 := by ring
+  exact fun n => le_geom hc n fun k a => hstep k
 
 /-- Geometric decay with invariant: if contraction holds whenever P(n) is true,
     and P is preserved, then both the invariant and the decay hold for all n. -/

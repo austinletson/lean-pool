@@ -214,8 +214,7 @@ private theorem open_neighborhood_from_local_balls
   choose α hα using hlocal
   let α' : E d → ℝ := fun m => if hm : m ∈ S then α m hm else 1
   have hα'_spec : ∀ m (hm : m ∈ S), α' m = α m hm := by
-    intro m hm
-    simp only [α', dif_pos hm]
+    exact fun m hm => dif_pos hm
   refine ⟨⋃ m ∈ S, Metric.ball m (α' m), ?_, ?_, ?_, ?_⟩
   · exact isOpen_biUnion (fun m _ => Metric.isOpen_ball)
   · intro m hm
@@ -484,8 +483,7 @@ private theorem nesterov_pl_accelerated_rate_theta_tubular
     · have hsqrt_le_one : Real.sqrt (μ / ↑L) ≤ 1 := by
         rw [← Real.sqrt_one]
         apply Real.sqrt_le_sqrt
-        rw [div_le_iff₀ hL]
-        simpa only [one_mul] using hμ_le_L
+        exact (div_le_one₀ hL).mpr hμ_le_L
       have hθ_le_quarter : θ ≤ 1 / 4 := by
         calc θ ≤ Real.sqrt (μ / ↑L) / 8 := hθ_le
           _ ≤ 1 / 8 := by nlinarith

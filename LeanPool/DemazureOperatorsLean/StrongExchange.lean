@@ -70,9 +70,7 @@ theorem permutationMap_orderTwo (i : B) : cs.permutationMap i ∘ cs.permutation
   apply Prod.ext
   · simp[conjOfReflection, mul_assoc]
   · rw [← cs.eta_eq_eta_of_simpleConj i t]
-    ring_nf
-    rw [show (2 : ZMod 2) = 0 by decide]
-    simp
+    exact CharTwo.add_cancel_right z (cs.eta i t)
 
 lemma leftInvSeq_repeats : ∀ (k : ℕ) (h : k < M i j),
     (cs.leftInvSeq (alternatingWord i j (2 * M i j)))[M i j + k]'(by
@@ -111,8 +109,7 @@ lemma leftInvSeq_repeats' : ∀ (k : ℕ) (h : k < M i j),
     (cs.leftInvSeq (alternatingWord i j (2 * M i j)))[k]'(by
       simp
       linarith) := by
-  intro k h'
-  exact leftInvSeq_repeats cs k h'
+  exact fun k h => leftInvSeq_repeats cs k h
 
 lemma nReflectionOccurrences_even_braidWord (t : cs.Reflection) :
   Even (reflectionMemLeftInvSeqCount cs (alternatingWord i j (2 * M i j)) t) := by
@@ -147,8 +144,7 @@ lemma nReflectionOccurrences_even_braidWord (t : cs.Reflection) :
             (cs.leftInvSeq (alternatingWord i j (2 * M.M i j)))).length := by
       simp[h, m_le_two_m]
     rw[List.getElem_append_left this]
-    rw[List.getElem_take']
-    exact h
+    exact List.getElem_take' hk h
   · have h_k_le : k - M i j < M i j := by
       have hk_bound : k < 2 * M i j := by
         simpa using hk
@@ -382,10 +378,7 @@ lemma odd_iff_parity_eq_one (n : ℕ) : Odd n ↔ (n : ZMod 2) = 1 := by
   simpa [eq_comm] using (ZMod.natCast_eq_one_iff_odd (n := n)).symm
 
 lemma gt_one_of_odd (n : ℕ) : Odd n → n > 0 := by
-  intro h
-  rcases h with ⟨m, rfl⟩
-  suffices m ≥ 0 from by linarith
-  exact Nat.zero_le m
+  exact fun a => Odd.pos a
 
 lemma isInLeftInvSeq_of_parityReflectionOccurrences_eq_one
     (l : List B) (t : cs.Reflection)
@@ -470,8 +463,7 @@ lemma permutationMap_lift_of_reflection (t : cs.Reflection) : ∀ (z : ZMod 2),
             cs.simple i =
               cs.simple i * cs.wordProd l * cs.simple p * (cs.wordProd l)⁻¹ *
                 cs.simple i := by
-          rw [h']
-          simp
+          exact right_eq_mul.mpr h'
         rw [if_pos first_eq]
         have : cs.simple i = cs.wordProd l * cs.simple p * (cs.wordProd l)⁻¹ := by
           apply (mul_right_inj (cs.simple i)).mpr at h'
@@ -485,10 +477,7 @@ lemma permutationMap_lift_of_reflection (t : cs.Reflection) : ∀ (z : ZMod 2),
             ¬cs.simple i =
               cs.simple i * cs.wordProd l * cs.simple p * (cs.wordProd l)⁻¹ *
                 cs.simple i := by
-          intro h''
-          apply h'
-          have hmul := congrArg (fun x => x * cs.simple i) h''
-          simpa [mul_assoc, cs.simple_mul_simple_self] using hmul.symm
+          exact right_ne_mul.mpr h'
         have second_ne : ¬cs.simple i = cs.wordProd l * cs.simple p * (cs.wordProd l)⁻¹ := by
           intro h''
           apply h'

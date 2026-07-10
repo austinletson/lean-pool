@@ -134,9 +134,7 @@ lemma inner_sq_le_quadForm_mul (hS : S.IsPositive) (x y : H) :
       field_simp; ring
     rw [this] at key
     have h1 : (@inner ℝ H _ x (S y)) ^ 2 / quadForm S y ≤ quadForm S x := by linarith
-    calc (@inner ℝ H _ x (S y)) ^ 2
-        = (@inner ℝ H _ x (S y)) ^ 2 / quadForm S y * quadForm S y := by field_simp
-      _ ≤ quadForm S x * quadForm S y := mul_le_mul_of_nonneg_right h1 (le_of_lt hcpos)
+    exact (div_le_iff₀ hcpos).mp h1
 
 /-- Triangle inequality for the Sazonov seminorm:
     √⟪x+y, S(x+y)⟫ ≤ √⟪x, Sx⟫ + √⟪y, Sy⟫.

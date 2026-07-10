@@ -163,9 +163,7 @@ private lemma partitionPoly_split_concrete (K : Type*) [CommRing K] (m : ℕ) {s
     (ξ : Nat.Partition s) :
     partitionPoly K ξ = polyP K m ^ countMaxParts m ξ * nonMaxPartsPoly K m ξ := by
   simp only [partitionPoly, nonMaxPartsPoly, countMaxParts]
-  conv_lhs => rw [(Multiset.filter_add_not (· = m) ξ.parts).symm]
-  rw [Multiset.map_add, Multiset.prod_add, Multiset.filter_eq', Multiset.map_replicate,
-    Multiset.prod_replicate]
+  exact partitionPoly_split_aux K m ξ
 
 lemma polyP_map {R S : Type*} [CommRing R] [CommRing S] (f : R →+* S) (n : ℕ) :
     Polynomial.map f (polyP R n) = polyP S n := by
@@ -286,8 +284,7 @@ private lemma chebyshev_S_eval_pos_at_cos (m : ℕ) (hm : 2 ≤ m) (j : ℕ) (hj
   have hsin_jθ : 0 < Real.sin ((↑j + 1) * θ) := Real.sin_pos_of_pos_of_lt_pi hangle_pos hangle_lt
   have hprod : 0 < Polynomial.eval (2 * Real.cos θ) (Polynomial.Chebyshev.S ℝ ↑j) * Real.sin θ := by
     simp_all
-  exact (mul_pos_iff.mp hprod).elim (fun h => h.1)
-    (fun h => absurd hsin_θ (not_lt.mpr (le_of_lt h.2)))
+  exact (pos_iff_pos_of_mul_pos hprod).mpr hsin_θ
 
 private lemma polyP_eval_eq_chebyshev_S (n : ℕ) (y : ℝ) (hy : y ≠ 0) :
     Polynomial.eval (1 / y ^ 2) (polyP ℝ n) =
@@ -480,8 +477,7 @@ lemma candidate_is_root (m : ℕ) (hm : 2 ≤ m) (j : Fin (m / 2)) :
       show (↑(j : ℕ) + 1 : ℝ) * Real.pi = (↑((j : ℕ) + 1) : ℤ) * Real.pi from by norm_cast]
     exact Real.sin_int_mul_pi _
   rw [h_sin_zero] at h_trig
-  rw [hz_def]
-  exact (mul_eq_zero.mp h_trig).resolve_right hsin_ne
+  exact (mul_eq_zero_iff_right hsin_ne).mp h_trig
 
 lemma angle_strict_mono (m k_ρ k_x : ℕ) (_hm : 2 ≤ m) (hk_lt : k_ρ < k_x) :
     ↑k_ρ * Real.pi / (↑m + 1) < ↑k_x * Real.pi / (↑m + 1) := by
@@ -596,8 +592,7 @@ lemma splits_of_distinct_pos_roots_and_deg_le {p : Polynomial ℝ} {d : ℕ}
     Polynomial.eq_C_of_natDegree_eq_zero (by omega)
   have hg_splits : (∏ j : Fin d, (Polynomial.X - Polynomial.C (r j))).Splits := by
     apply Polynomial.Splits.prod
-    intro j _
-    exact Polynomial.Splits.X_sub_C (r j)
+    exact fun i a => Polynomial.Splits.X_sub_C (r i)
   rw [hpq, hq_const, mul_comm]
   exact hg_splits.C_mul _
 
@@ -1411,8 +1406,7 @@ lemma L_part_eventually_pos
   have hqr : 0 < q.eval (r : ℝ) := hN₁ r hr₁
   have hρr : (0 : ℝ) < ρ ^ r := pow_pos hρ_pos r
   rw [← hq_eq r hr₀] at hqr
-  exact (mul_pos_iff.mp hqr).elim (fun ⟨_, hb⟩ => hb)
-    (fun ⟨ha', _⟩ => absurd ha' (not_lt_of_gt hρr))
+  exact (pos_iff_pos_of_mul_pos hqr).mp hρr
 
 /-! ## Coefficient Bounds and Asymptotic Analysis -/
 
@@ -1890,8 +1884,7 @@ lemma S_part_coeff_bound
         ((↑M_poly : PowerSeries ℝ) * ((↑S : PowerSeries ℝ) ^ k)⁻¹)| ≤
         C * (↑r + 1) ^ D * (1/ρ₂) ^ r := by
   have hS_ne : S ≠ 0 := by
-    rintro rfl
-    simp at hS_pos
+    exact Polynomial.ne_zero_of_natDegree_gt hS_nconst
   obtain ⟨ρ₁, hρ_lt_ρ₁, hρ₁_pos, hρ₁_le⟩ :=
     exists_min_root_gt S ρ hρ_pos hS_ne hS_splits hS_nconst hS_roots_larger
   obtain ⟨C₁, D₁, hC₁, hbound₁⟩ :=
@@ -1981,8 +1974,7 @@ lemma divide_by_rho_pow (ρ : ℝ) (hρ : 0 < ρ) (c : ℝ) (d r : ℕ) (x : ℝ
     c * (r : ℝ) ^ d * (1/ρ) ^ r ≤ x := by
   have h_pos : 0 < (ρ : ℝ) ^ r := by positivity
   have h_div : c * (r : ℝ) ^ d / (ρ : ℝ) ^ r ≤ x := by
-    rw [div_le_iff₀ h_pos]
-    linarith
+    exact (div_le_iff₀' h_pos).mpr h
   rw [one_div, inv_pow, ← div_eq_mul_inv]
   exact h_div
 
@@ -1995,8 +1987,7 @@ lemma poly_lower_bound_at_point (q : Polynomial ℝ) (hq : 0 < q.leadingCoeff)
   have h1 := poly_eval_lower_bound q hdeg x hx
   have h2 : lc * x / 2 ≤ lc * x - S := by
     have : 2 * S < lc * x := by
-      rw [div_lt_iff₀ hq] at hxS
-      linarith
+      exact (div_lt_iff₀' hq).mp hxS
     linarith
   have h3 : x ^ (q.natDegree - 1) * (lc * x / 2) = lc / 2 * x ^ q.natDegree := by
     have : q.natDegree - 1 + 1 = q.natDegree := by omega
@@ -2072,8 +2063,7 @@ lemma L_part_coeff_lower_bound
   have h_poly_bound := hc_bound r hr1
   have h_combined : c * (r : ℝ) ^ (k - 1) ≤ ρ ^ r *
     (PowerSeries.coeff r) ((↑N_poly : PowerSeries ℝ) * ((↑L : PowerSeries ℝ) ^ k)⁻¹) := by
-    rw [h_scaled]
-    exact h_poly_bound
+    exact le_of_le_of_eq (hc_bound r hr1) (id (Eq.symm h_scaled))
   exact divide_by_rho_pow ρ hρ_pos c (k - 1) r _ h_combined
 
 lemma bound_transfer

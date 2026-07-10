@@ -79,29 +79,8 @@ theorem generalizedResidueTheorem (U : Set ℂ) (hU : IsOpen U)
         (∫ t in γ.a..γ.b, cauchyPrincipalValueIntegrandOn S0
           (fun z => ∑ s ∈ S0, residueAt f s / (z - s)) γ.toFun ε t))
       (𝓝[>] 0) (𝓝 0) := by
-    apply hCancel_h.congr'
-    filter_upwards [self_mem_nhdsWithin] with ε (hε : (0 : ℝ) < ε)
-    symm
-    have h_int_f : IntervalIntegrable
-        (cauchyPrincipalValueIntegrandOn S0 f γ.toFun ε) volume γ.a γ.b :=
-      intervalIntegrable_cpvIntegrandOn_of_continuousOn_diff
-        U S0 f hf.continuousOn γ h_null.image_subset ε hε
-    have h_int_fres : IntervalIntegrable
-        (cauchyPrincipalValueIntegrandOn S0
-          (fun z => ∑ s ∈ S0, residueAt f s / (z - s)) γ.toFun ε)
-        volume γ.a γ.b := by
-      have hfres_cont : ContinuousOn (fun z => ∑ s ∈ S0, residueAt f s / (z - s))
-          (U \ ↑S0) := by
-        apply continuousOn_finsetSum; intro s _
-        apply ContinuousOn.div continuousOn_const (continuousOn_id.sub continuousOn_const)
-        intro z ⟨_, hz_not_S0⟩
-        exact sub_ne_zero.mpr
-          (fun heq => by subst heq; exact hz_not_S0 (Finset.mem_coe.mpr ‹_›))
-      exact intervalIntegrable_cpvIntegrandOn_of_continuousOn_diff
-        U S0 _ hfres_cont γ h_null.image_subset ε hε
-    rw [← intervalIntegral.integral_sub h_int_f h_int_fres]
-    congr 1; ext t
-    exact cpvIntegrandOn_sub S0 f (fun z => ∑ s ∈ S0, residueAt f s / (z - s)) γ.toFun ε t
+    exact conditionsAB_imply_higherOrderCancel_nh U hU S0 f hf γ h_null hMero hCondA hCondB hγ_meas
+        h_no_endpt_cross h_unique_cross hS0_in_U
   set f_res := fun z => ∑ s ∈ S0, residueAt f s / (z - s) with hf_res_def
   have hSimple_res : ∀ s ∈ S0, HasSimplePoleAt f_res s :=
     fun s hs => hasSimplePoleAt_sum_div_sub S0 (residueAt f) s hs

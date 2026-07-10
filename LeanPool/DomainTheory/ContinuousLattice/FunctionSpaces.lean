@@ -636,9 +636,7 @@ theorem corollary_3_4_preservesDirectedSup :
   rw [proposition_2_6]
   constructor
   · intro y S hS hSdir
-    change ((sSup S : ScottMap D D') : D → D') y
-        = sSup ((fun x : ScottMap D D' => (x : D → D') y) '' S)
-    rw [ScottMap.sSup_apply]
+    exact ScottMap.sSup_apply S (sSup S, y).2
   · intro x
     exact (proposition_2_5 _).mp x.continuous
 
@@ -1081,8 +1079,7 @@ theorem directedOn_finsetSupOf (S : Set D) :
   exact hx.elim (hT₁ x) (hT₂ x)
 
 theorem directedOn_wayBelow (a : D) : DirectedOn (· ≤ ·) { z | z ≪ a } := by
-  intro p hp q hq
-  exact ⟨p ⊔ q, WayBelow.sup hp hq, le_sup_left, le_sup_right⟩
+  exact ContinuousLattice.directedOn_wayBelow a
 
 /-- **Scott 1972, Proposition 3.10(i).** Projections preserve arbitrary suprema. -/
 theorem incl_sSup (P : IsContinuousLatticeProjection D D') (S : Set D) :
@@ -1122,9 +1119,7 @@ theorem incl_wayBelow (P : IsContinuousLatticeProjection D D') (hD' : IsContinuo
     intro p hp q hq
     exact ⟨p ⊔ q, @WayBelow.sup D' _ p q (P.incl y) hp hq, le_sup_left, le_sup_right⟩
   have hy : y = sSup (Set.image (P.retr : D' → D) W) := by
-    rw [← P.retr.preservesDirectedSup_coe W hWne hWdir,
-      @IsContinuousLattice.sSup_wayBelow D' _ hD' (P.incl y),
-      P.retr_incl y]
+    exact Eq.symm (IsContinuousLatticeRetraction.sSup_image_retr_wayBelow P.toIsContinuousLatticeRetraction hD' y)
   have hImgne : (Set.image (P.retr : D' → D) W).Nonempty := by
     simp_all
   have hImgdir : DirectedOn (· ≤ ·) (Set.image (P.retr : D' → D) W) := by
@@ -1627,10 +1622,7 @@ noncomputable def con : ScottMap D (ScottMap D D) :=
 value `f(⊥)`. -/
 noncomputable def min : ScottMap (ScottMap D D) D :=
   ⟨fun f => (f : D → D) ⊥, continuous_of_preservesDirectedSup (by
-    intro F _ _
-    change ((sSup F : ScottMap D D) : D → D) ⊥
-      = sSup (Set.image (fun f : ScottMap D D => (f : D → D) ⊥) F)
-    rw [ScottMap.sSup_apply])⟩
+    intro F exact fun a a_1 => ScottMap.sSup_apply F ⊥)⟩
 
 @[simp] theorem con_apply (x y : D) : ((con x : ScottMap D D) : D → D) y = x := rfl
 

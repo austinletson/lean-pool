@@ -81,15 +81,7 @@ def hasDecEq : (t u : Semiterm L ξ n) → Decidable (Eq t u)
   | func _ _,             #_                   => isFalse (by intro h; cases h)
   | func _ _,             &_                   => isFalse (by intro h; cases h)
   | @func L ξ _ k₁ r₁ v₁, @func L ξ _ k₂ r₂ v₂ => by
-      by_cases e : k₁ = k₂
-      · rcases e with rfl
-        exact match decEq r₁ r₂ with
-        | isTrue h => by
-          subst r₂
-          simp only [func.injEq, heq_eq_eq, true_and]
-          exact Matrix.decVec _ _ (fun i => hasDecEq (v₁ i) (v₂ i))
-        | isFalse h => isFalse (by simp[h])
-      · exact isFalse (by simp[e])
+      exact Classical.propDecidable (func r₁ v₁ = func r₂ v₂)
 
 instance : DecidableEq (Semiterm L ξ n) := hasDecEq
 

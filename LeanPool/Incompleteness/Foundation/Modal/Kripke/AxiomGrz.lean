@@ -180,8 +180,7 @@ lemma WCWF_of_validate_Grz (h : F ⊧ Axioms.Grz (.atom 0)) : WCWF F := by
             | refl => exact (hf x).2;
             | step _ ih => exact F_trans.trans _ _ _ ih (hf _).2;
           by_cases h : j + 1 = k;
-          · subst_vars
-            exact F_refl.refl (f (j + 1));
+          · exact of_eq (congrArg f h)
           · have : j + 1 < k := by omega;
             exact H this;
       intro x hx hbox
@@ -221,8 +220,7 @@ instance
     · assumption;
     · apply WCWF_of_finite_trans_antisymm;
       · exact F.world_finite;
-      · intro _ _ _
-        exact hTrans.trans _ _ _;
+      · exact fun ⦃x y z⦄ a a_1 => Trans.simple a a_1
       · exact hAntisymm.antisymm;
   · rintro h;
     replace h : ValidOnFiniteFrame F (Axioms.Grz (.atom 0)) := by simpa using h;

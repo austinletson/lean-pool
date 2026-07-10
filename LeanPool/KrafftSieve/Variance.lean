@@ -105,8 +105,7 @@ lemma sum_exp_orthogonality (n : ℕ) (k : ZMod (q n)) :
           rw [ div_eq_iff ] at hm <;> norm_cast at * <;> simp_all only [ZMod.natCast_val]
           · replace hm := congr_arg ( fun x : ℤ => x : ℤ → ZMod ( q n ) ) hm
             simp_all
-          · exact Nat.ne_of_gt <| Finset.prod_pos fun p hp =>
-              Nat.Prime.pos <| Finset.mem_filter.mp hp |>.2.2
+          · exact NeZero.ne (q n)
         -- The sum of a geometric series with
         -- ratio $z$ is zero when $z \neq 1$.
         have h_geo_series : ∑ x ∈ Finset.range (q n), z ^ x = 0 := by
@@ -121,10 +120,7 @@ lemma sum_exp_orthogonality (n : ℕ) (k : ZMod (q n)) :
         rw [ ← Complex.exp_nat_mul ]
         rw [ Nat.mod_eq_of_lt ( Finset.mem_range.mp ‹_› ) ]; ring_nf
         simp +decide [ mul_assoc, mul_comm, mul_left_comm ]
-    · exact fun x hx y hy hxy =>
-        Nat.mod_eq_of_lt hx.out ▸ Nat.mod_eq_of_lt hy.out ▸ by
-          rw [ ZMod.natCast_eq_natCast_iff ] at hxy
-          exact hxy
+    · exact CharP.natCast_injOn_Iio (ZMod (q n)) (q n)
   · simp +zetaDelta only [Finset.mem_univ, Finset.mem_image, Finset.mem_range, not_exists,
     not_and, ZMod.natCast_val, Complex.exp_ne_zero, imp_false, not_forall,
     Decidable.not_not, forall_const] at *

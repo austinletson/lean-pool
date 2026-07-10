@@ -194,10 +194,7 @@ theorem minlos_theorem {E : Type*} [AddCommGroup E] [Module ℝ E]
     intro f
     exact (charFunctional_map_projection Φ ν h_cf_joint h_continuous f).symm
   · -- Uniqueness: μ' = μ via pushforward factoring through embed
-    intro μ' hμ'
-    have h_eq := uniqueness_via_projection Φ h_continuous h_positive_definite h_normalized
-      ν rfl μ' hμ'
-    exact h_eq
+    exact fun y a => uniqueness_via_projection Φ h_continuous h_positive_definite h_normalized ν rfl y a
 
 /-! ## Derived results -/
 

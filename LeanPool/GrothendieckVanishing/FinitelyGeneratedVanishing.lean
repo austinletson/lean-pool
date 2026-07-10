@@ -157,8 +157,7 @@ theorem cohomology_vanishing_of_finitelyGenerated_vanishing
     haveI : Subsingleton (Sheaf.H (TopCat.Presheaf.finsetGeneratedSheaf hK S) m) := hfg S
     change IsZero
       (AddCommGrpCat.of (Sheaf.H (TopCat.Presheaf.finsetGeneratedSheaf hK S) m))
-    exact AddCommGrpCat.isZero_of_subsingleton
-      (AddCommGrpCat.of (Sheaf.H (TopCat.Presheaf.finsetGeneratedSheaf hK S) m))
+    exact AddCommGrpCat.isZero_of_iff_subsingleton.mpr (hfg S)
   have hZeroColim :
       IsZero (colimit (finsetGenFunctor hK ⋙ sheafCohomologyFunctor X m)) :=
     (colimit.isColimit _).isZero_pt hZeroDiagram

@@ -36,8 +36,7 @@ noncomputable def liftSucc (g : AugmentedForm.{u}) : AugmentedForm.{u + 1} :=
 theorem moves_liftSucc (p : Player) (g : AugmentedForm.{u}) :
     moves p (liftSucc g) = liftSucc '' moves p g := by
   rw [liftSucc, moves_ofSetsWithTombs]
-  ext x
-  simp only [Set.mem_range, Subtype.exists, exists_prop, Set.mem_image]
+  exact Eq.symm (Set.image_eq_range liftSucc (moves p g))
 
 @[simp]
 theorem hasTombstone_liftSucc (p : Player) (g : AugmentedForm.{u}) :

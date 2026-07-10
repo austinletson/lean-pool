@@ -693,8 +693,7 @@ instance : Module.Finite F (ι →₀ SM) := .trans C (ι →₀ SM)
 
 instance : SMulCommClass C F SM where
   smul_comm c f a := by
-    change c • algebraMap F C f • a = algebraMap F C f • _
-    rw [← mul_smul, ← Algebra.commutes, mul_smul]
+    exact smul_comm c f a
 
 /-- Endomorphisms of a finite power are matrix algebras over endomorphisms of the summand. -/
 def isoDagger (m : ℕ) :
@@ -774,8 +773,7 @@ lemma M_directSum : ∃ (ιM : Type) (_ : Fintype ιM), Nonempty (M α β ≃ₗ
   replace ineq : Module.rank F K * (Module.rank F K * Module.rank F K) < Cardinal.aleph0 := by
     apply Cardinal.mul_lt_aleph0
     · assumption
-    apply Cardinal.mul_lt_aleph0 <;>
-    assumption
+    exact Cardinal.mul_lt_aleph0 ineq ineq
   rw [eq] at ineq
   simp only [Cardinal.lift_id] at ineq
   haveI : Nontrivial SM := IsSimpleModule.nontrivial C SM
@@ -815,8 +813,7 @@ lemma SM_F_dim : Fintype.card ι * finrank F SM = finrank F K ^ 2 := by
   simp_all
 
 instance : Module.Finite C (Fin (Fintype.card ι * finrank F K) → SM) := by
-  have := Finsupp.linearEquivFunOnFinite C SM (Fin (Fintype.card ι * finrank F K))
-  exact .equiv this
+  exact Finite.pi
 
 variable (α β) in
 lemma MIsoPowAux : Nonempty (M α β ≃ₗ[C] Fin (finrank F K * Fintype.card ι) → SM) := by
@@ -846,13 +843,11 @@ def endCMIso :
   left_inv x := by
     simp only [← LinearMap.comp_assoc, LinearEquiv.comp_coe, LinearEquiv.self_trans_symm,
       LinearEquiv.refl_toLinearMap, LinearMap.id_comp]
-    simp only [LinearMap.comp_assoc, LinearEquiv.comp_coe, LinearEquiv.self_trans_symm,
-      LinearEquiv.refl_toLinearMap, LinearMap.comp_id]
+    exact LinearEquiv.symm_comp_cancel_right (MIsoPow α β) x
   right_inv x := by
     simp only [← LinearMap.comp_assoc, LinearEquiv.comp_coe, LinearEquiv.symm_trans_self,
       LinearEquiv.refl_toLinearMap, LinearMap.id_comp]
-    simp only [LinearMap.comp_assoc, LinearEquiv.comp_coe, LinearEquiv.symm_trans_self,
-      LinearEquiv.refl_toLinearMap, LinearMap.comp_id]
+    exact LinearEquiv.comp_symm_cancel_right (MIsoPow α β) x
   map_mul' x y := by
     refine DFunLike.ext _ _ fun z ↦ ?_
     simp only [LinearMap.coe_comp, LinearEquiv.coe_coe, Function.comp_apply, Module.End.mul_apply,

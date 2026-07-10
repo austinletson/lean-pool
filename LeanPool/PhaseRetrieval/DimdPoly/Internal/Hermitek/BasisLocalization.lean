@@ -63,9 +63,7 @@ private theorem charlier_coeff_nat (k n s' : ℕ) :
     n * ((k + 1).choose (s' + 1) * n.descFactorial (s' + 1)) := by
   have hpascal : (k + 2).choose (s' + 2) =
       (k + 1).choose (s' + 1) + (k + 1).choose (s' + 2) := by
-    rw [show k + 2 = (k + 1) + 1 from by omega,
-        show s' + 2 = (s' + 1) + 1 from by omega]
-    exact Nat.choose_succ_succ (k + 1) (s' + 1)
+    exact Nat.choose_succ_succ' (k + 1) (s' + 1)
   have hsuff : (k + 1).choose (s' + 1) * n.descFactorial (s' + 2) +
       (k + 1) * n * (k.choose s' * (n - 1).descFactorial s') =
       n * ((k + 1).choose (s' + 1) * n.descFactorial (s' + 1)) := by
@@ -370,8 +368,7 @@ private lemma normSq_finiteHermiteSum_circlePoint
         circleLeadingFactor k r *
           (fourier (-(k : ℤ)) (QuotientAddGroup.mk θ : Circle) : ℂ) *
             finiteCirclePoly k r a (QuotientAddGroup.mk θ : Circle) := by
-    simpa using
-      (finiteHermiteSum_circle (k := k) (a := a) hr (QuotientAddGroup.mk θ : Circle))
+    exact finiteHermiteSum_circle a hr ↑θ
   have hfour : ‖(fourier (-(k : ℤ)) (QuotientAddGroup.mk θ : Circle) : ℂ)‖ ^ 2 = 1 := by
     rw [fourier_mk_norm]; norm_num
   rw [hcircle, norm_mul, norm_mul, mul_pow, mul_pow, hfour, norm_sq_circleLeadingFactor]
@@ -430,10 +427,7 @@ private lemma setIntegral_radialStrip_eq_intervalIntegral (j : ℕ) (f : ℝ →
   rw [MeasureTheory.setIntegral_congr_set hIoiIco_ae,
     intervalIntegral.integral_of_le
       (show (j : ℝ) ≤ (((j + 1 : ℕ) : ℝ)) by exact_mod_cast Nat.le_succ j)]
-  simpa using
-    (MeasureTheory.setIntegral_congr_set
-      (f := f) (μ := volume)
-      (Ico_ae_eq_Ioc (a := (j : ℝ)) (b := (((j + 1 : ℕ) : ℝ)))))
+  exact integral_Ico_eq_integral_Ioc
 
 private lemma continuous_mk_addCircle :
     Continuous (fun θ : ℝ => (QuotientAddGroup.mk θ : Circle)) :=
@@ -1000,7 +994,6 @@ private theorem annulusIntegralSq_phi0_eq
           F (Complex.polarCoord.symm (r, θ))
             =
           (((r ^ k / Real.sqrt (Nat.factorial k : ℝ)) ^ 2) * ‖g 0‖ ^ 2) * Real.exp (-r ^ 2) := by
-        dsimp [F]
         exact phi0_polar_norm_formula k hpolar hrpos'
       rw [hFpolar]
       simp [phi0AnnulusIntegrand, mul_left_comm, mul_comm]
@@ -1197,8 +1190,7 @@ theorem phi0_localization :
       dsimp [x, posPart]
       exact le_max_left _ _
     have hkcast : (((k + 6 : ℕ) : ℝ)) = ((k + 5 : ℕ) : ℝ) + 1 := by
-      push_cast
-      ring
+      exact Nat.cast_add_one (k + 5)
     have hsum' : (j : ℝ) + 1 ≤ x + (((k + 6 : ℕ) : ℝ)) := by
       rw [hkcast]
       linarith
@@ -2045,9 +2037,7 @@ private lemma radial_density_large_step (k n : ℕ) (hkn_strict : k < n) (r : �
   have hk_nat : 1 ≤ Nat.factorial k := Nat.succ_le_of_lt (Nat.factorial_pos k)
   have hk_inv_le_one : (1 / (Nat.factorial k : ℝ)) ≤ (1 : ℝ) := by
     have hk_one : (1 : ℝ) ≤ (Nat.factorial k : ℝ) := by exact_mod_cast hk_nat
-    have htmp : (1 : ℝ) / (Nat.factorial k : ℝ) ≤ (1 : ℝ) / 1 :=
-      one_div_le_one_div_of_le (by positivity : (0 : ℝ) < 1) hk_one
-    simpa using htmp
+    exact (div_le_one₀ hkfact_pos).mpr hk_one
   have hpow_step :
       (1 + |r - Real.sqrt ((α + 1 : ℕ) : ℝ)|) ^ (4 * k) ≤
         (1 + |r - Real.sqrt ((α + 1 : ℕ) : ℝ)|) ^ (4 * k + 1) := by
@@ -2491,9 +2481,7 @@ private theorem gaussian_rStar_to_posPart (k n : ℕ) (hn : 1 ≤ n) (hkn : k �
   -- Need: |r-√n|-(k+3) ≤ |r-√m|
   have htri : |r - Real.sqrt (n : ℝ)| ≤
       |r - Real.sqrt m| + |Real.sqrt m - Real.sqrt (n : ℝ)| := by
-    calc |r - Real.sqrt (n : ℝ)|
-        = |(r - Real.sqrt m) + (Real.sqrt m - Real.sqrt (n : ℝ))| := by ring_nf
-      _ ≤ |r - Real.sqrt m| + |Real.sqrt m - Real.sqrt (n : ℝ)| := abs_add_le _ _
+    exact abs_sub_le r √m √↑n
   -- Bound |√m - √n|. Since m = n-k+1, |√m-√n| ≤ k+1 ≤ k+3.
   have hshift : |Real.sqrt m - Real.sqrt (n : ℝ)| ≤ ((k + 1 : ℕ) : ℝ) := by
     -- m = (n:ℝ)-(k:ℝ)+1.

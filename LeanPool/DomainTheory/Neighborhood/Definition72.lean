@@ -135,8 +135,7 @@ theorem comp_isComputable {U : NeighborhoodSystem γ}
   · rintro ⟨Y, hfY, hgY⟩
     obtain ⟨l, rfl⟩ := Q.surj (g.rel_dom hgY)
     exact ⟨l, hfY, hgY⟩
-  · rintro ⟨l, hfl, hgl⟩
-    exact ⟨Q.X l, hfl, hgl⟩
+  · exact fun a => Exists.imp' Q.X (fun a a_1 => a_1) a
 
 /-- **Proposition 7.3 (consequence) (Scott 1981, PRG-19).** "If `f : 𝒟 → ℰ` is
 computable and
@@ -156,8 +155,7 @@ theorem apply_isComputableElement {P : ComputablePresentation V} {Q : Computable
   · rintro ⟨X, hX, hfX⟩
     obtain ⟨n, rfl⟩ := P.surj (x.sub hX)
     exact ⟨n, hX, hfX⟩
-  · rintro ⟨n, hxn, hfn⟩
-    exact ⟨P.X n, hxn, hfn⟩
+  · exact fun a => Exists.imp' P.X (fun a a_1 => a_1) a
 
 /-- **Every finite (principal) element is computable** (Scott's remark after 7.2:
 "If `y` were

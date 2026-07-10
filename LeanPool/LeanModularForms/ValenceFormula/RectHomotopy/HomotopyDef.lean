@@ -92,9 +92,7 @@ lemma hasDerivAt_chordSegment_shift (a b : ℂ) (c t : ℝ) :
   have h_shift : HasDerivAt (fun t' : ℝ => t' - c) (1 : ℝ) t := (hasDerivAt_id t).sub_const c
   have h1 : HasDerivAt (fun t' : ℝ => (1 - (t' - c)) • a) (-a) t := by
     have h_coef : HasDerivAt (fun t' : ℝ => (1 - (t' - c) : ℝ)) (-1 : ℝ) t := by
-      have := (hasDerivAt_const t (1 : ℝ)).sub h_shift
-      simp only [zero_sub] at this
-      exact this
+      exact HasDerivAt.const_sub 1 h_shift
     have := h_coef.smul_const a
     simpa only [neg_one_smul] using this
   have h2 : HasDerivAt (fun t' : ℝ => (t' - c) • b) b t := by

@@ -77,10 +77,7 @@ private lemma doubleCoset_eq_of_mem' (g δ : GL (Fin 2) ℚ)
     (h : g ∈ DoubleCoset.doubleCoset δ (SLnZSubgroup 2) (SLnZSubgroup 2)) :
     DoubleCoset.doubleCoset g (SLnZSubgroup 2) (SLnZSubgroup 2) =
       DoubleCoset.doubleCoset δ (SLnZSubgroup 2) (SLnZSubgroup 2) := by
-  obtain ⟨h₁, hh₁, h₂, hh₂, heq⟩ := DoubleCoset.mem_doubleCoset.mp h
-  rw [heq]
-  exact (doubleCoset_mul_right_eq_self (GLPair 2) ⟨h₂, hh₂⟩ (h₁ * δ)).trans
-    (doset_mul_left_eq_self (GLPair 2) ⟨h₁, hh₁⟩ δ)
+  exact doubleCoset_eq_of_mem h
 
 /-- For p prime, T(p) = TAd(1,p). -/
 lemma T_sum_prime : TSum ⟨p, hp.pos⟩ = TAd 1 p := by
@@ -194,8 +191,7 @@ private lemma mem_mulSupport_right_scalar (b : Fin 2 → ℕ) (hb_pos : ∀ i, 0
     true_and, Prod.exists]
   have ⟨i₀⟩ : Nonempty (decompQuot (GLPair 2) (HeckeCoset.rep D_b)) :=
     Fintype.card_pos_iff.mp (by
-      have := HeckeRing.HeckeCoset_deg_pos (GLPair 2) D_b
-      simp only [HeckeRing.HeckeCosetDeg] at this; omega)
+      exact Fintype.card_pos)
   have h_card : Fintype.card (decompQuot (GLPair 2) (HeckeCoset.rep D_c)) = 1 := by
     have := HeckeCoset_deg_scalar 2 c hc
     simp only [HeckeRing.HeckeCosetDeg] at this; exact_mod_cast this
@@ -301,8 +297,7 @@ include hp in
 lemma T_pp_pow (i : ℕ) : TPp p ^ i = TElem (fun _ : Fin 2 => p ^ i) := by
   induction i with
   | zero =>
-    simp only [pow_zero]; symm
-    exact (T_elem_congr_diag 2 (funext fun _ => by simp)).trans T_elem_ones_eq
+    simp only [pow_zero]; exact Eq.symm T_elem_ones_eq
   | succ i ih =>
     rw [pow_succ', ih, T_pp_of_pos p hp, T_diag_scalar_mul 2 p hp.pos (fun _ => p ^ i)
       (fun _ => pow_pos hp.pos i) (divChain_const 2 _)]

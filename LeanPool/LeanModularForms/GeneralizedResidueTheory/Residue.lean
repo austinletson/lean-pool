@@ -336,11 +336,8 @@ private lemma continuousAt_g_at_pole
     have hsum_split : ∑ s ∈ S0, residueSimplePole f s / (w - s) =
         ∑ s ∈ S0.filter (· = z), residueSimplePole f s / (w - s) +
         ∑ s ∈ S0.filter (· ≠ z), residueSimplePole f s / (w - s) := by
-      rw [← Finset.sum_union]
-      · congr 1; ext x; simp only [Finset.mem_union, Finset.mem_filter]
-        exact ⟨fun hx => by by_cases hxz : x = z <;> tauto,
-               fun hx => by rcases hx with ⟨hx1, _⟩ | ⟨hx1, _⟩ <;> exact hx1⟩
-      · exact Finset.disjoint_filter.mpr fun x _ hxz hx_ne_z => hx_ne_z hxz
+      exact Eq.symm
+          (Finset.sum_filter_add_sum_filter_not S0 (fun x => x = z) fun x => residueSimplePole f x / (w - x))
     have hfilter_eq : S0.filter (· = z) = {z} := by
       ext x; simp_all
     have hsingleton : ∑ s ∈ S0.filter (· = z), residueSimplePole f s / (w - s) =
@@ -442,10 +439,7 @@ private lemma singular_sum_eq_winding_residues
       ∑ s ∈ S0, residueSimplePole f s / (γ.toFun t - s) * deriv γ.toFun t =
     ∑ s ∈ S0, ∫ t in γ.a..γ.b,
       residueSimplePole f s / (γ.toFun t - s) * deriv γ.toFun t from by
-    rw [intervalIntegral.integral_finsetSum]; intro s hs
-    exact continuousOn_mul_deriv_intervalIntegrable γ
-      (continuousOn_const.div (γ.continuous_toFun.sub continuousOn_const)
-        fun t ht => sub_ne_zero.mpr (hγ_avoids s hs t ht)) hγ'_bdd]
+    rw [intervalIntegral.integral_finsetSum]; exact fun i a => singular_term_intervalIntegrable f i γ (hγ_avoids i a) hγ'_bdd]
   exact Finset.sum_congr rfl fun s hs =>
     integral_singular_term_eq_winding_times_coeff γ s
       (residueSimplePole f s) (fun t ht => hγ_avoids s hs t ht)
@@ -531,8 +525,7 @@ lemma cauchyPrincipalValueOn_empty
   apply limUnder_eventually_eq_const
   filter_upwards [Ioo_mem_nhdsGT (show (0 : ℝ) < 1 by norm_num)]
     with ε _
-  apply intervalIntegral.integral_congr; intro t _
-  exact cauchyPrincipalValueIntegrandOn_empty f γ ε t
+  apply intervalIntegral.integral_congr; intro t exact fun a => cauchyPrincipalValueIntegrandOn_empty f γ ε t
 
 private lemma cpv_eq_classical_eventually_of_avoids
     (S0 : Finset ℂ) (f : ℂ → ℂ) (γ : PiecewiseC1Curve)

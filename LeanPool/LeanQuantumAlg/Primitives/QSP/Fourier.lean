@@ -977,21 +977,12 @@ theorem qspYZZYZ_mem_unitaryGroup (φ θ₀ φ₀ : ℝ) (ps : List (ℝ × ℝ)
     (x : ℝ) :
     (qspYZZYZ φ θ₀ φ₀ ps x : HilbertOperator 1) ∈
       Matrix.unitaryGroup (Fin (2 ^ 1)) ℂ := by
-  induction ps using List.reverseRecOn with
-  | nil =>
-      rw [qspYZZYZ_nil]
-      exact mul_mem (rotZStd_mem_unitaryGroup φ)
-        (mul_mem (rotY_mem_unitaryGroup θ₀) (rotZStd_mem_unitaryGroup φ₀))
-  | append_singleton ps p ih =>
-      rw [qspYZZYZ_concat]
-      exact mul_mem ih (mul_mem (rotZStd_mem_unitaryGroup x)
-        (mul_mem (rotY_mem_unitaryGroup p.1) (rotZStd_mem_unitaryGroup p.2)))
+  exact (qspYZZYZ φ θ₀ φ₀ ps x).unitary
 
 theorem qspYZY_mem_unitaryGroup (θ₀ : ℝ) (θs : List ℝ) (x : ℝ) :
     (qspYZY θ₀ θs x : HilbertOperator 1) ∈
       Matrix.unitaryGroup (Fin (2 ^ 1)) ℂ := by
-  rw [qspYZY_eq_qspYZZYZ]
-  exact qspYZZYZ_mem_unitaryGroup 0 θ₀ 0 _ x
+  exact (qspYZY θ₀ θs x).unitary
 
 /-- **Trigonometric QSP, YZZYZ (W-Z-W) form**
 [YYLW22, neurips_2022.tex:333] (`lem:qnn_yzzyz`, encoded form): a pair

@@ -490,8 +490,7 @@ instance _root_.LO.IntProp.Kripke.AllFrameClass.DefinedBy :
     AllFrameClass.DefinedByFormula (Axioms.EFQ (.atom 0)) :=
   FrameClass.definedByFormula_of_iff_mem_validate <| by
     simp only [Set.mem_univ, true_iff];
-    intro F;
-    exact Formula.Kripke.ValidOnFrame.efq;
+    exact fun F => Kripke.ValidOnFrame.efq
 
 instance _root_.LO.IntProp.Kripke.AllFrameClass.IsNonempty : AllFrameClass.IsNonempty := by
   use pointFrame;

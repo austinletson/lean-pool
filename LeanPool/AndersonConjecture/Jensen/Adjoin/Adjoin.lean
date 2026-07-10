@@ -75,11 +75,7 @@ private def adjoin_surjectivity_proof
       intro P hP hle
       have hP_prime := hC_prime P hP
       have hM_le_P : IsLocalRing.maximalIdeal T ≤ P := by
-        intro x hx
-        have hx2 : x * x ∈ IsLocalRing.maximalIdeal T ^ 2 := by
-          rw [sq]
-          exact Ideal.mul_mem_mul hx hx
-        exact (hP_prime.mem_or_mem (hle hx2)).elim id id
+        exact IsPrime.le_of_pow_le hle
       exact hC_ne_max P hP (le_antisymm (IsLocalRing.le_maximalIdeal hP_prime.ne_top) hM_le_P)
     have hM_ne_bot : IsLocalRing.maximalIdeal T ≠ ⊥ := hM_ne_bot
     let C' : Set (Ideal T) := C ∪ {⊥}
@@ -101,11 +97,7 @@ private def adjoin_surjectivity_proof
       · rw [mem_singleton_iff.mp hP] at hle
         apply hM_ne_bot
         rw [eq_bot_iff]
-        intro x hx
-        have hx2 : x * x ∈ IsLocalRing.maximalIdeal T ^ 2 := by
-          rw [sq]
-          exact Ideal.mul_mem_mul hx hx
-        exact (mul_self_eq_zero.mp (Ideal.mem_bot.mp (hle hx2))) ▸ Ideal.zero_mem _
+        exact IsPrime.le_of_pow_le hle
     let φ : (P : Ideal T) → R.carrier →+* T ⧸ P :=
       fun P => (Ideal.Quotient.mk P).comp R.carrier.subtype
     let liftQ : (P : Ideal T) → T ⧸ P → T :=
@@ -147,8 +139,7 @@ private def adjoin_surjectivity_proof
                   mem_iUnion.mpr
                     ⟨f, Polynomial.mem_rootSet.mpr ⟨hf, hy⟩⟩)
             apply Set.countable_iUnion
-            intro f
-            exact (Polynomial.rootSet_finite f T).countable
+            exact fun i => to_countable (i.rootSet T)
           · apply Set.Countable.biUnion hC_countable
             intro P hPC
             apply Set.countable_iUnion
@@ -158,11 +149,7 @@ private def adjoin_surjectivity_proof
             apply Set.Finite.countable
             apply Set.Finite.image
             haveI : P.IsPrime := hC_prime P hPC
-            haveI : IsDomain (T ⧸ P) := Ideal.Quotient.isDomain P
-            letI : DecidableEq (T ⧸ P) := Classical.decEq _
-            apply Set.Finite.subset (f.map (φ P)).roots.toFinset.finite_toSet
-            intro α hα
-            exact Multiset.mem_toFinset.mpr ((Polynomial.mem_roots hfne).mpr hα)
+            exact finite_setOf_isRoot hfne
         right
         exact ⟨Set.Countable.union hC_countable (Set.countable_singleton _), hD'_countable⟩
       · left

@@ -58,15 +58,13 @@ instance : LT Outcome where
     (lhs = Outcome.R ∧ rhs = Outcome.P)
 
 instance : DecidableLT Outcome := by
-  simp only [DecidableLT, DecidableRel, LT.lt]
-  infer_instance
+  exact Classical.decRel LT.lt
 
 instance instLE : LE Outcome where
   le lhs rhs := (lhs = rhs) ∨ (lhs < rhs)
 
 instance : DecidableLE Outcome := by
-  simp only [DecidableLE, DecidableRel, LE.le]
-  infer_instance
+  exact Classical.decRel LE.le
 
 instance : Preorder Outcome where
   le_refl _ := Or.inl rfl

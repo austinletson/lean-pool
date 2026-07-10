@@ -277,9 +277,7 @@ theorem main_theorem (p q d k f : ℕ) (hp : p.Prime) (hf : 1 ≤ f) (hq : q = p
     have hkey := hnc t
     rw [getD_eq_dig hp2] at hkey ⊢
     have hdle : dig p (k - 1) t ≤ dig p k t := dig_pred_le hp2 hk hpk t
-    rw [Finset.sum_congr rfl (fun i _ => getD_eq_dig hp2 (m i) t)] at hkey
-    rw [Finset.sum_congr rfl (fun i _ => getD_eq_dig hp2 (m i) t)]
-    omega
+    exact add_le_of_add_le_right hkey hdle
   -- image inclusion
   have himg : objective d '' Tset p q d k ⊆ objective d '' Tset p q d (k - 1) :=
     Set.image_mono hsubset
@@ -290,8 +288,7 @@ theorem main_theorem (p q d k f : ℕ) (hp : p.Prime) (hf : 1 ≤ f) (hq : q = p
   have hMd : Md p q d (k - 1) ≤ Md p q d k := by
     obtain ⟨v, hv, hval⟩ := Nat.sInf_mem hnek
     change sInf (objective d '' Tset p q d (k - 1)) ≤ sInf (objective d '' Tset p q d k)
-    rw [← hval]
-    exact Nat.sInf_le (himg ⟨v, hv, rfl⟩)
+    exact csInf_le_csInf' hnek himg
   -- conclude
   unfold sd
   simp only [Nat.add_sub_cancel]

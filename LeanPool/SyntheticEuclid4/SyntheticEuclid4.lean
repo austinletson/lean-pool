@@ -1930,8 +1930,7 @@ theorem square_of_len (ab : a ≠ b) (aL : OnLine a L) (bL : OnLine b L) (fL : �
     (by perma[dbN]) paraLM
   have bdc := interior_rightangles_of_para aL bL bO dO dM cM (sameside_of_sameside_diffside bL bP bO
     aL cP dO (sameside_of_para_online' cM dM paraLM) <| by
-    perma[diffside_of_sameside_sameside cM cP cN dM bP aN (sameside_of_para_online aL bL paraLM)
-          dbN]) paraLM
+    exact diffside_of_paragram bP cP pgram) paraLM
   refine ⟨c, d, M, N, O, pgram, by splitAll; repeat linperm, diffside_of_B_sameside Beac aL efL⟩
 
 lemma ne_of_perp_ineq (Bxdy : B x d y) (tri_abc : triangle a b c) (bL : OnLine b L)
@@ -1989,8 +1988,7 @@ theorem pythagoras_construct (tri_abc : triangle a b c) : ∃ d e f g h k L M N 
     ⟨h, k, V, U, W, ⟨aM, cM, cW, kW, kV, hV, hU, aU, paraMV, paraWU⟩, sq3, hbM⟩
   exact ⟨d, e, f, g, h, k, L, M, N, O, P, Q, R, S, T, U, V, W, sq1, sq2, sq3, ⟨bL, cL, cO, dO, dP,
     eP, eQ, bQ, paraLP, para_symm paraQO⟩, ⟨gT, aT, aN, bN, bR, fR, fS, gS, para_symm paraRT,
-    paraNS⟩, ⟨hU, aU, aM, cM, cW, kW, kV, hV, para_symm paraWU, paraMV⟩, by perma[daL], by perma
-    [hbM], by perma[gcN]⟩
+    paraNS⟩, ⟨hU, aU, aM, cM, cW, kW, kV, hV, para_symm paraWU, paraMV⟩, by perma[daL], by exact diffside_symm hbM, by perma[gcN]⟩
 
 /-- Euclid I.47, the Pythagorean theorem -/
 theorem pythagoras (tri_abc : triangle a b c) (ang : angle c a b = rightangle)

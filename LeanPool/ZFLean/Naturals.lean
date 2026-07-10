@@ -234,18 +234,12 @@ theorem succ_inj {m n} (h : succ m = succ n) : m = n := by
   let ⟨m, hm⟩ := m
   let ⟨n, hn⟩ := n
   simp only [succ, Subtype.mk.injEq] at *
-  ext1
-  exact ⟨succ_inj_aux h, succ_inj_aux (Eq.symm h)⟩
+  exact succ_inj_aux' h
 
 /-- Any inductive set `a` separated by an inductive predicate `P` is inductive. -/
 theorem sep_of_ind_is_ind (P : ZFSet → Prop) {a} (h : inductiveSet a)
   (h₀ : P ∅) (ih : ∀ n, n ∈ a → P n → P (insert n n)) : inductiveSet (a.sep P) := by
-  unfold inductiveSet at *
-  apply And.intro
-  · exact mem_sep.mpr ⟨h.left, h₀⟩
-  · simp only [mem_sep, and_imp]
-    intros
-    exact ⟨h.right _ ‹_›, ih _ ‹_› ‹_›⟩
+  exact inductive_sep P h h₀ ih
 
 /-! ## Recursion on natural numbers -/
 
@@ -267,8 +261,7 @@ open Function in
 theorem mem_wf' : @WellFounded ZFNat (·.1 ∈ ·.1) := by
   have : (fun x y : ZFNat => x.1 ∈ y.1) = ((fun x y : ZFSet => x ∈ y) on Subtype.val) := rfl
   rw [this]
-  apply WellFounded.onFun
-  exact mem_wf
+  exact IsWellFounded.wf
 
 /-- The relation built over the successor function is a subrelation of the membership relation. -/
 theorem succ_subrelation_mem : Subrelation (succ · = ·) (·.1 ∈ ·.1) := by
@@ -400,28 +393,13 @@ theorem succ_lt_mono {x y : ZFNat} : succ x < succ y → x < y := by
 theorem le_mono {x y : ZFNat} : x ≤ y → x.succ ≤ y.succ := by
   rintro (h | rfl)
   · left
-    induction y using induction with
-    | zero =>
-      absurd not_lt_zero h
-      trivial
-    | succ y ih =>
-      rcases lt_le_iff.mpr h with (h | rfl)
-      · exact lt_trans (ih h) lt_succ
-      · exact lt_succ
+    exact lt_mono h
   · right; rfl
 
 theorem succ_le_mono {x y : ZFNat} : x.succ ≤ y.succ → x ≤ y := by
   rintro (h | h)
   · left
-    induction y using induction with
-    | zero =>
-      rcases lt_le_iff.mpr h with (h | h)
-      · absurd not_lt_zero h; trivial
-      · absurd succ_ne_zero x h; trivial
-    | succ y ih =>
-      rcases lt_le_iff.mpr h with (h | h)
-      · exact lt_trans (ih h) lt_succ
-      · rw [← h]; exact lt_succ
+    exact succ_lt_mono h
   · replace h := succ_inj h; subst h; right; rfl
 
 theorem le_lt_iff {n m} : succ n ≤ m ↔ n < m := by
@@ -452,8 +430,7 @@ theorem le_total {x y : ZFNat} : x ≤ y ∨ y ≤ x := by
         · right; right; congr; exact le_antisymm (lt_le_iff.mpr r) (lt_le_iff.mpr h)
         · replace h := lt_le_iff.mpr h
           left
-          apply le_mono
-          exact h
+          exact le_mono h
       · subst_eqs; right; exact le_succ
       · right
         simpa only [lt_le_iff] using lt_trans (lt_trans h lt_succ) lt_succ
@@ -487,8 +464,7 @@ theorem strong_induction {P : ZFNat → Prop} (n : ZFNat)
       intros m hm
       unfold Q at ih
       by_cases h : m = n
-      · subst h
-        exact ind _ ih
+      · exact cast (congrArg P (id (Eq.symm h))) (ind n ih)
       · have h' : m < n := by
           rcases lt_le_iff.mpr hm with (_ | rfl)
           · assumption
@@ -510,14 +486,12 @@ theorem not_zero_imp_succ {n : ZFNat} : n ≠ 0 → ∃ m, n = succ m := by
   induction n using induction with
   | zero => intro h; contradiction
   | succ n _ =>
-    intro
-    exact exists_apply_eq_apply' succ n
+    exact fun a => exists_apply_eq_apply' succ n
 
 lemma sUnion_insert_nat {x : ZFSet} (h : x ∈ Nat) : (⋃₀ (insert x x) : ZFSet) = x := by
   apply ind _ h
   · rw [sUnion_insert, sUnion_empty]
-    ext1
-    simp only [mem_union, notMem_empty, or_self]
+    exact empty_union
   · intros n _ ih
     rw [sUnion_insert, ih]
     ext1
@@ -680,8 +654,7 @@ theorem pos_of_ne_zero {n : ZFNat} : 0 ≠ n → 0 < n := by
   induction n with
   | zero => intro h; nomatch h
   | succ x ih =>
-    intro
-    exact zero_lt_succ
+    exact fun a => zero_lt_succ
 
 instance : Preorder ZFNat where
   le := natLe.le
@@ -741,8 +714,7 @@ lemma succ_add {n m : ZFNat} : succ (n + m) = n + succ m := by
   | zero => rw [addInst_eq, addInst_eq, ZFNat.add, rec_zero, ZFNat.add, rec_zero]
   | succ n ih =>
     rw [add_succ, ih]
-    dsimp [addInst_eq]
-    conv => rhs; rw [ZFNat.add, rec_succ]
+    exact Eq.symm add_succ
 
 lemma add_comm (n m : ZFNat) : n + m = m + n := by
   induction n with
@@ -769,8 +741,7 @@ theorem add_left_cancel {n m k : ZFNat} : n + m = n + k ↔ m = k := by
     apply Iff.intro
     · intro h
       exact ih.mp (succ_inj h)
-    · intro h
-      rw [h]
+    · exact fun a => succ_inj (congrArg succ (congrArg succ (congrArg (HAdd.hAdd n) a)))
 
 theorem add_right_cancel {n m k : ZFNat} : n + m = k + m ↔ n = k := by
   rw [add_comm n, add_comm k]
@@ -924,10 +895,7 @@ theorem pred_le_pred {n m : ZFNat} : n ≤ m → (pred n) ≤ (pred m) := by
   induction n <;> induction m
   · right; rfl
   · simp only [pred_zero, pred_succ]
-    rcases h with (_ | _)
-    · exact lt_le_iff.mpr ‹_›
-    · absurd (succ_ne_zero _ (Eq.symm ‹_›))
-      trivial
+    exact zero_le
   · rcases h with (h | h)
     · absurd not_lt_zero h
       trivial
@@ -936,17 +904,10 @@ theorem pred_le_pred {n m : ZFNat} : n ≤ m → (pred n) ≤ (pred m) := by
     exact succ_le_mono h
 
 theorem le_of_succ_le_succ {n m : ZFNat} : (succ n) ≤ (succ m) → n ≤ m := by
-  intro h
-  replace h := pred_le_pred h
-  simp only [pred_succ] at h
-  assumption
+  exact fun a => succ_le_mono a
 
 theorem lt_of_succ_lt_succ {n m : ZFNat} : succ n < succ m → n < m := by
-  intro h
-  rcases le_of_succ_le_succ (Or.inl h) with (h | rfl)
-  · assumption
-  · absurd lt_irrefl h
-    trivial
+  exact fun a => succ_lt_mono a
 
 theorem add_self_ne_one {n : ZFNat} : n + n ≠ 1 := by
   intro h
@@ -1181,14 +1142,7 @@ theorem pos_mul_pos {k n : ZFNat} (h : 0 < k) : 0 < k*n → 0 < n := by
   induction n with
   | zero => rwa [mul_zero] at h'
   | succ m ih =>
-    obtain ⟨l, rfl⟩ := not_zero_imp_succ (zero_lt_ne_zero h)
-    rcases lt_le_iff.mpr h with (_ | rfl)
-    · by_contra contr
-      rw [not_lt] at contr
-      replace contr := le_zero_imp_eq contr
-      nomatch succ_ne_zero m contr
-    · rw [← natOne_eq, one_mul] at h'
-      assumption
+    exact zero_lt_succ
 
 theorem mul_lt_mono {n m k : ZFNat} (h : 0 < k) : n < m → k*n < k*m := by
   intro h'
@@ -1199,8 +1153,7 @@ theorem mul_lt_mono {n m k : ZFNat} (h : 0 < k) : n < m → k*n < k*m := by
     rcases lt_le_iff.mpr h' with (h' | rfl)
     · have := add_lt_add_of_le_of_lt (@zero_le k) (ih h')
       rwa [zero_add, add_comm] at this
-    · conv => lhs; rw [← @zero_add (k*n), add_comm]
-      exact add_lt_add_left h (k*n)
+    · exact lt_add_of_pos_right h
 
 theorem mul_le_mono {k m n : ZFNat} : n ≤ m → k*n ≤ k*m := by
   intro h
@@ -1237,8 +1190,7 @@ lemma left_distrib_mul_sub_one {n m : ZFNat} : n * (m - 1) = n * m - n := by
   | zero => rw [zero_sub, mul_zero, zero_sub]
   | succ _ _ =>
     rw [natOne_eq, succ_sub_succ, sub_zero, succ_mul', add_sub_assoc, sub_self, add_zero]
-    right
-    rfl
+    exact Std.IsPreorder.le_refl n
 
 lemma left_distrib_mul_sub_aux {n m k : ZFNat} (h : k < m) : n * (m - k) = n * m - n * k := by
   induction k with
@@ -1263,8 +1215,7 @@ lemma sub_eq_zero_imp_le {a b : ZFNat} : a - b = 0 ↔ a ≤ b := by
         rw [not_le] at contr
         absurd sub_ne_zero_of_lt contr
         assumption
-  · intro
-    exact sub_lt_eq_zero ‹_›
+  · exact fun a_1 => sub_lt_eq_zero a_1
 
 lemma sub_eq_zero_mul {n a b : ZFNat} : a - b = 0 → n * a - n * b = 0 := by
   intro
@@ -1285,19 +1236,7 @@ lemma right_distrib_mul_sub {n m k : ZFNat} : (m - k)*n = m*n - k*n := by
 
 lemma add_eq_zero_iff {n m : ZFNat} : n + m = 0 ↔ n = 0 ∧ m = 0 := by
   constructor
-  · intro h
-    induction n with
-    | zero =>
-      rw [zero_add] at h
-      exact ⟨rfl, h⟩
-    | succ n ih =>
-      induction m with
-      | zero =>
-        rw [add_zero] at h
-        exact ⟨h, rfl⟩
-      | succ m ih' =>
-        rw [add_succ] at h
-        nomatch succ_ne_zero _ h
+  · exact fun a => eq_zero_of_add_eq_zero a
   · rintro ⟨rfl, rfl⟩
     rw [zero_add]
 
@@ -1317,15 +1256,7 @@ lemma mul_eq_zero_iff {n m : ZFNat} : n * m = 0 ↔ n = 0 ∨ m = 0 := by
     · rw [mul_zero]
 
 lemma eq_le_le_iff {n m : ZFNat} : n = m ↔ n ≤ m ∧ m ≤ n := by
-  constructor
-  · rintro rfl
-    exact ⟨le_refl _, le_refl _⟩
-  · rintro ⟨n_le_m, m_le_n⟩
-    rcases n_le_m with n_le_m | rfl
-    · rcases m_le_n with m_le_n | rfl
-      · nomatch lt_irrefl <| lt_trans n_le_m m_le_n
-      · rfl
-    · rfl
+  exact Iff.symm Std.le_antisymm_iff
 
 lemma mul_left_cancel_iff {n m k : ZFNat} (k_pos : k ≠ 0) : k * m = k * n ↔ m = n := by
   constructor
@@ -1523,8 +1454,7 @@ theorem _root_.ZFSet.ZFNat.toNat_iff {n m : ZFNat} : n = m ↔ n.toNat = m.toNat
       | succ m =>
         rw [ZFNat.toNat, ZFNat.rec_succ, _root_.Nat.succ_inj, ←toNat, ←toNat] at h
         rw [add_one_eq_succ]
-        obtain rfl := ih h
-        rfl
+        exact succ_inj (congrArg succ (congrArg succ (ih h)))
 
 /-- The equivalence between ZF natural numbers and Lean natural numbers. -/
 def _root_.ZFSet.ZFNat.instEquivZFNatNat : ZFNat ≃ ℕ where

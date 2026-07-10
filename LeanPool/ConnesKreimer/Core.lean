@@ -92,12 +92,7 @@ theorem _root_.CK.perm_middle_swap {α} (A B C D : List α) :
 open List in
 theorem _root_.CK.flatMap_append_distrib {α β} (l : List α) (X Y : α → List β) :
     (l.flatMap (fun a => X a ++ Y a)).Perm (l.flatMap X ++ l.flatMap Y) := by
-  induction l with
-  | nil => simp
-  | cons a as ih =>
-    simp only [List.flatMap_cons]
-    refine (List.Perm.append_left (X a ++ Y a) ih).trans ?_
-    exact perm_middle_swap (X a) (Y a) (as.flatMap X) (as.flatMap Y)
+  exact Perm.symm (flatMap_append_perm l X Y)
 
 open List in
 theorem _root_.CK.flatMap_const_nil {α β} (l : List α) :
@@ -106,9 +101,7 @@ theorem _root_.CK.flatMap_const_nil {α β} (l : List α) :
 
 theorem _root_.CK.flatMap_singleton_eq_map {α β} (g : α → β) (l : List α) :
     l.flatMap (fun a => [g a]) = l.map g := by
-  induction l with
-  | nil => rfl
-  | cons a as ih => simp [List.flatMap_cons, ih]
+  exact Eq.symm List.map_eq_flatMap
 
 open List in
 theorem _root_.CK.flatMap_comm {α β γ} (l1 : List α) (l2 : List β)
@@ -125,9 +118,7 @@ theorem _root_.CK.flatMap_comm {α β γ} (l1 : List α) (l2 : List β)
 
 theorem _root_.CK.Perm.flatMap_congr_right {α β} (l : List α) {f g : α → List β}
     (h : ∀ a, (f a).Perm (g a)) : (l.flatMap f).Perm (l.flatMap g) := by
-  induction l with
-  | nil => simp
-  | cons a as ih => simp only [List.flatMap_cons]; exact (h a).append ih
+  exact List.Perm.flatMap_left l fun a a_1 => h a
 
 /-- Formal sums of triple tensor monomials, represented by forest triples. -/
 abbrev _root_.CK.Tens3 := List (Forest × Forest × Forest)
@@ -185,10 +176,9 @@ mutual
           (List.map (fun x => (x.fst, [RTree.node x.snd], [])) (coprodForest F)
             ++ List.flatMap (fun a => List.map (fun x => (a.fst, x.fst, [RTree.node x.snd]))
                 (coprodForest a.snd)) (coprodForest F)) := by
-        have h := flatMap_append_distrib (coprodForest F)
-          (fun a => [(a.fst, [RTree.node a.snd], [])])
-          (fun a => List.map (fun x => (a.fst, x.fst, [RTree.node x.snd])) (coprodForest a.snd))
-        rwa [flatMap_singleton_eq_map] at h
+        exact List.Perm.symm
+            (List.map_append_flatMap_perm (coprodForest F) (fun x => (x.1, [RTree.node x.2], [])) fun a =>
+              List.map (fun x => (a.1, x.1, [RTree.node x.2])) (coprodForest a.2))
       have hkey :
           (List.flatMap (fun a => List.map (fun x => (x.fst, x.snd, [RTree.node a.snd]))
               (coprodForest a.fst)) (coprodForest F)).Perm
@@ -325,8 +315,7 @@ theorem _root_.CK.rhs_core (f : Forest) :
   rw [linmap_list_sum, coRight, E3_flatMap]
   apply congrArg List.sum
   apply List.map_congr_left
-  intro pr _
-  exact elem_lemma_R k pr
+  exact fun a a_1 => elem_lemma_R k a
 
 /-- The combinatorial coassoc, transported to `E3`. -/
 theorem _root_.CK.perm_E3 (f : Forest) :
@@ -381,9 +370,7 @@ theorem _root_.CK.ε_single (f : Forest) (b : k) :
 /-- Scalar smul commutes with a `List.sum`. -/
 theorem _root_.CK.smul_list_sum {M : Type*} [AddCommMonoid M] [Module k M] (c : k) (l : List M) :
     c • l.sum = (l.map (fun x => c • x)).sum := by
-  induction l with
-  | nil => simp
-  | cons a as ih => simp [smul_add, ih]
+  exact List.smul_sum
 
 /-- Smul through a mapped `List.sum`. -/
 theorem _root_.CK.smul_list_sum' {α M : Type*} [AddCommMonoid M] [Module k M]
@@ -400,8 +387,7 @@ theorem _root_.CK.tmul_scalar_right (m : H k) (c : k) :
 /-- Pull a base-ring scalar out of the left tensor leg. -/
 theorem _root_.CK.tmul_scalar_left (c : k) (m : H k) :
     (c : k) ⊗ₜ[k] m = c • ((1 : k) ⊗ₜ[k] m) := by
-  conv_lhs => rw [show c = c • (1 : k) from by rw [smul_eq_mul, mul_one]]
-  rw [TensorProduct.smul_tmul']
+  exact TensorProduct.tmul_eq_smul_one_tmul c m
 
 /-- Generic map-over-`flatMap` `List.sum` distribution. -/
 theorem _root_.CK.map_flatMap_sum {α β : Type*} {M : Type*} [AddCommMonoid M]
@@ -1193,8 +1179,7 @@ theorem _root_.CK.adams_primitive (n : ℕ) {x : H k} (hx : IsPrimitive k x) :
     rw [adams_succ_apply, hx, map_add, TensorProduct.map_tmul, TensorProduct.map_tmul,
         LinearMap.id_apply, LinearMap.id_apply, adams_unit, map_add, LinearMap.mul'_apply,
         LinearMap.mul'_apply, mul_one, one_mul, ih]
-    conv_rhs => rw [succ_nsmul]
-    exact add_comm _ _
+    exact Eq.symm (succ_nsmul' x (m + 1))
 
 /-! ### The first Eulerian idempotent `e⁽¹⁾ = log_⋆(id)` as a linear map.
 

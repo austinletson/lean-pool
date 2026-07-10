@@ -322,9 +322,7 @@ lemma length_eq_dist_add_one_of_isStandard {l : List (Lattice R)} (hl : l.IsBTSt
     simpa [List.getLast_eq_getElem, hsub] using hlast
   rw [h1, h2, Basis.ntwist₂_zero_zero]
   rw [dist_symm, dist_ntwist₂]
-  have : 1 ≤ l.length := by
-    match l with | (_ :: l) => simp
-  omega
+  exact Eq.symm (Nat.sub_one_add_one_eq_of_pos hlen)
 
 end «Chain»
 
@@ -545,8 +543,7 @@ lemma _root_.BruhatTits.Lattice.exists_GL_forall_smul_eq_ntwist₂_of_isSimpleCh
       List.forall_cons, List.Forall, and_true] at hl
     rw [hl]
     have : b.ntwist₂ hϖ 0 0 = b := by
-      ext i
-      fin_cases i <;> simp
+      exact Basis.ntwist₂_zero_zero b hϖ
     rw [this]
     have hbLM : b.toSubmodule = L.M := by simp [hl, this]
     have hstd : IsStandardNeighbour M L := List.isChain_pair.mp hMl.isStandardNeighbour

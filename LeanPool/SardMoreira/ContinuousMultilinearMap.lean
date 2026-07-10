@@ -127,10 +127,8 @@ theorem compContinuousLinearMap_sub_compContinuousLinearMap_isBigO
     refine .mono_le ?_ (.of_forall fun _ ↦ norm_compContinuousLinearMapL_le _ _)
     simp only [← Asymptotics.isBigO_one_iff ℝ] at hg₁_bdd
     simpa using Asymptotics.IsBigO.finsetProd fun i (_ : i ∈ Finset.univ) ↦ (hg₁_bdd i).norm_left
-  · apply const_apply_sub_const_apply_isBigO
-    · exact hg₁_bdd
-    · exact hg₂_bdd
-    · exact hg_sub
+  · exact const_apply_sub_const_apply_isBigO (compContinuousLinearMapContinuousMultilinear 𝕜 E F G) hg₁_bdd
+        hg₂_bdd hg_sub
   · exact hf₂_bdd
   · exact hf_sub
 

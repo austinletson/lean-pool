@@ -493,9 +493,7 @@ theorem epi_unit_of_closedImmersion
   by_cases hxZ : (x : X) ∈ Z
   · haveI : IsIso ((TopCat.Presheaf.stalkFunctor AddCommGrpCat.{u}
         ((TopCat.closedIncl hZ) ⟨x, hxZ⟩)).map (adj.unit.app F).hom) := by
-      simpa using
-        (TopCat.closedIncl_unit_stalk_isIso (C := AddCommGrpCat.{u})
-          (hs := hZ) F ⟨x, hxZ⟩)
+      exact TopCat.closedIncl_unit_stalk_isIso hZ F ⟨x, hxZ⟩
     exact (ConcreteCategory.bijective_of_isIso
       ((TopCat.Presheaf.stalkFunctor AddCommGrpCat.{u} ((TopCat.closedIncl hZ) ⟨x, hxZ⟩)).map
         ((TopCat.Sheaf.pullbackPushforwardAdjunction AddCommGrpCat.{u}

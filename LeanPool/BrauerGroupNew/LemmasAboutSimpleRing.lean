@@ -23,9 +23,7 @@ lemma IsSimpleRing.left_of_tensor (B C : Type u)
   have hC : Subsingleton C ∨ Nontrivial C := subsingleton_or_nontrivial C
   rcases hB with hB|hB
   · have : Subsingleton (B ⊗[K] C) := by
-      rw [← subsingleton_iff_zero_eq_one, show (0 : B ⊗[K] C) = 0 ⊗ₜ 0 by simp,
-        show (1 : B ⊗[K] C) = 1 ⊗ₜ 1 by rfl, show (1 : B) = 0 from Subsingleton.elim _ _]
-      simp only [tmul_zero, zero_tmul]
+      exact Unique.instSubsingleton
     have : Subsingleton (TwoSidedIdeal (B ⊗[K] C)) :=
       ⟨fun I J ↦ SetLike.ext fun x ↦ by simp [Subsingleton.elim x 0]⟩
     have H := hbc.1.1
@@ -61,9 +59,7 @@ lemma IsSimpleRing.left_of_tensor (B C : Type u)
       intro x
       simp only [Set.mem_range, LinearMap.zero_apply, exists_const]
       rw [← show F 0 = 0 by simp, @Eq.comm _ 0 x]
-      constructor
-      · apply hF
-      · rintro rfl; simp
+      exact Function.Injective.eq_iff hF
     have : Function.Exact (0 : PUnit.{u + 1} →ₗ[K] _) f :=
       Module.FaithfullyFlat.iff_exact_iff_rTensor_exact K C|>.1 inferInstance
         (l12 := (0 : PUnit →ₗ[K] _) ) (l23 := f.toLinearMap) |>.2

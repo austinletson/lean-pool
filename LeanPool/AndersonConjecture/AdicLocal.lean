@@ -117,13 +117,7 @@ lemma isUnit_of_evalOneₐ_isUnit (x : AdicCompletion I R) (hu : IsUnit (evalOne
     IsUnit x := by
   have hu_all := evalₐ_isUnit_of_evalOneₐ_isUnit I x hu
   have hmul : mkInverse I x hu_all * x = 1 := mkInverse_mul I x hu_all
-  have hmul' : x * mkInverse I x hu_all = 1 := by
-    apply ext_evalₐ
-    intro n
-    simp only [map_mul, map_one]
-    rw [evalₐ_mkInverse]
-    exact (hu_all n).mul_val_inv
-  exact ⟨⟨x, mkInverse I x hu_all, hmul', hmul⟩, rfl⟩
+  exact IsUnit.of_mul_eq_one_right (mkInverse I x hu_all) hmul
 
 end AdicCompletion
 end InverseConstruction

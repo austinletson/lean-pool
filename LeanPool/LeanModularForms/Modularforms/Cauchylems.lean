@@ -63,9 +63,7 @@ lemma cc (f : ℤ → ℂ) (hc : CauchySeq fun N : ℕ => ∑ m ∈ Finset.Icc (
 lemma sum_Icc_eq_sum_Ico_succ {α : Type*} [AddCommMonoid α] (f : ℤ → α)
     {l u : ℤ} (h : l ≤ u) :
     ∑ m ∈ Finset.Icc l u, f m = (∑ m ∈ Finset.Ico l u, f m) + f u := by
-  rw [Finset.Icc_eq_cons_Ico h]
-  simp only [Finset.cons_eq_insert, Finset.mem_Ico, lt_self_iff_false, and_false,
-    not_false_eq_true, Finset.sum_insert, add_comm]
+  exact Eq.symm (Finset.sum_Ico_add_eq_sum_Icc h)
 
 lemma CauchySeq_Icc_iff_CauchySeq_Ico (f : ℤ → ℂ) (hs : ∀ n, f n = f (-n))
   (hc : CauchySeq (fun N : ℕ => ∑ m ∈ Finset.Icc (-N : ℤ) N, f m) ) :
@@ -93,9 +91,7 @@ lemma CauchySeq_Icc_iff_CauchySeq_Ico (f : ℤ → ℂ) (hs : ∀ n, f n = f (-n
   refine ⟨b + a, ?_, ?_, ?_⟩
   · intro n
     simp only [Pi.add_apply]
-    apply add_nonneg
-    · exact hb n
-    apply ha n
+    exact add_nonneg (hb n) (ha n)
   · intro n m N hn hm
     have H3 := H n m N hn hm
     simp only [zero_mul, dist_eq_norm, Pi.add_apply, ge_iff_le] at *
@@ -154,15 +150,7 @@ theorem extracted_3 (z : ℍ) (b : ℤ) : CauchySeq fun N : ℕ ↦
   conv => enter [1]; intro d; rw [telescope_aux]
   apply Filter.Tendsto.cauchySeq (x := 0)
   have h1 : Tendsto (fun d : ℕ ↦ 1 / ((b : ℂ) * ↑z - ↑d)) atTop (𝓝 0) := by
-    have := tendsto_zero_inv_linear z (-b)
-    rw [← tendsto_const_smul_iff₀ (c := (-1 : ℂ))] at this
-    · simp only [Int.cast_neg, neg_mul, one_div, smul_eq_mul, one_mul, mul_zero] at *
-      apply this.congr
-      intro x
-      rw [neg_inv]
-      congr
-      ring
-    · norm_cast
+    exact tendsto_zero_inv_linear_sub (↑z) b
   have h2 : Tendsto (fun d : ℕ ↦ 1 / ((b : ℂ) * ↑z + ↑d)) atTop (𝓝 0) :=
     tendsto_zero_inv_linear z b
   simpa using Filter.Tendsto.sub h1 h2
@@ -206,8 +194,7 @@ lemma cauchy_seq_mul_const (f : ℕ → ℂ) (c : ℂ) (hc : c ≠ 0) :
     simp only [dist_eq_norm, gt_iff_lt] at *
     rw [← mul_sub]
     simp only [Complex.norm_mul]
-    rw [lt_div_iff₀' (by simp [hc])] at h1
-    exact h1⟩
+    exact (lt_div_iff₀' hC).mp (hN n hn)⟩
 
 
 lemma auxer (a c : ℂ) : a + 2*2*c - 2*c = a + 2*c := by ring

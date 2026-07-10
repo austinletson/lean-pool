@@ -123,8 +123,7 @@ lemma continuous_weakDualToWeak : Continuous (weakDualToWeak (𝕜 := 𝕜) (E :
   intro l
   have h_eval :
       Continuous (fun f : WeakDual 𝕜 E => f ((InnerProductSpace.toDual 𝕜 E).symm l)) := by
-    simpa using
-      (WeakDual.eval_continuous (𝕜 := 𝕜) (E := E) ((InnerProductSpace.toDual 𝕜 E).symm l))
+    exact WeakDual.eval_continuous ((InnerProductSpace.toDual 𝕜 E).symm l)
   have h_conj : Continuous (fun z : 𝕜 => (starRingEnd 𝕜) z) := by
     have h : (fun z : 𝕜 => (starRingEnd 𝕜) z) = fun z : 𝕜 => star z := by
       simp_all

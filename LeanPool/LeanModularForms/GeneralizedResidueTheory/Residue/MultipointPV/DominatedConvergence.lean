@@ -82,9 +82,7 @@ private lemma dominated_convergence_empty_case (f g_reg : ℂ → ℂ) (γ : Pie
   have hA_eq_M : ∀ ε, A ε = M ε := by
     intro ε; simp only [A, S', Finset.attach_empty, Finset.sum_empty, sub_zero]
   have hM_eq : ∀ ε > 0, M ε = ∫ t in γ.a..γ.b, f (γ.toFun t) * deriv γ.toFun t := by
-    intro ε _hε; apply intervalIntegral.integral_congr; intro t _
-    simp only [cauchyPrincipalValueIntegrandOn, Finset.notMem_empty, false_and,
-      exists_false, ↓reduceIte]
+    intro ε _hε; apply intervalIntegral.integral_congr; intro t exact fun a => cauchyPrincipalValueIntegrandOn_empty f γ.toFun ε t
   have hf_eq_g : ∀ z, f z = g_reg z := by
     simp_all
   have hM_eq_G : ∀ ε > 0, M ε = G := by
@@ -304,8 +302,7 @@ private lemma A_int_aEStronglyMeasurable (S0 : Finset ℂ) (f g_reg : ℂ → �
     · rfl
     · push Not at h_near
       have h_not_in_S0 : γ.toFun t ∉ (S0 : Set ℂ) := by
-        intro h_in; have := h_near (γ.toFun t) h_in
-        simp only [sub_self, norm_zero] at this; linarith
+        exact γt_not_mem_S0_of_all_far hε h_near
       rw [hg_decomp (γ.toFun t) h_not_in_S0]
   have h_meas1 := aEStronglyMeasurable_pv_integrand_decomposed S0
     (residueSimplePole f) hε hg_cont hγ_cont hγ'_off_P
@@ -343,9 +340,7 @@ private lemma pvIntegrand_intervalIntegrable_of_nonempty (S0 : Finset ℂ) (f g_
     · simp only [norm_zero]; linarith
     · push Not at h
       have hγt_notin : γ.toFun t ∉ (S0 : Set ℂ) := by
-        intro hmem; simp only [Finset.mem_coe] at hmem
-        have hdist := h (γ.toFun t) hmem
-        simp only [sub_self, norm_zero] at hdist; linarith
+        exact γt_not_mem_S0_of_all_far hε h
       rw [hg_decomp (γ.toFun t) hγt_notin]
       calc ‖(g_reg (γ.toFun t) + ∑ s ∈ S0, residueSimplePole f s / (γ.toFun t - s)) *
               deriv γ.toFun t‖
@@ -522,28 +517,14 @@ lemma multipointPV_diff_tendsto
     let G := ∫ t in γ.a..γ.b,
       g_reg (γ.toFun t) * deriv γ.toFun t
     Tendsto A (𝓝[>] 0) (𝓝 G) := by
-  intro M S' A G
-  have h_S'_eq :
-      S' = fun ε =>
-        ∑ s ∈ S0,
-          ∫ t in γ.a..γ.b,
-            if ‖γ.toFun t - s‖ > ε
-            then (residueSimplePole f s /
-              (γ.toFun t - s)) *
-                deriv γ.toFun t
-            else 0 := by
-    ext ε
-    simp only [S']
-    rw [Finset.sum_attach S0
-      (fun s => ∫ t in γ.a..γ.b,
-        if ‖γ.toFun t - s‖ > ε
-        then (residueSimplePole f s /
-          (γ.toFun t - s)) * deriv γ.toFun t
-        else 0)]
-  exact
-    dominated_convergence_multipoint_helper S0 f γ
-      g_reg _h_crossing_null _hg_decomp hg_cont
-      hS0_sep
+  exact let M := fun ε => ∫ (t : ℝ) in γ.a..γ.b, cauchyPrincipalValueIntegrandOn S0 f γ.toFun ε t;
+      let S' := fun ε =>
+        ∑ s ∈ S0.attach,
+          ∫ (t : ℝ) in γ.a..γ.b,
+            if ‖γ.toFun t - ↑s‖ > ε then residueSimplePole f ↑s / (γ.toFun t - ↑s) * deriv γ.toFun t else 0;
+      let A := fun ε => M ε - S' ε;
+      let G := ∫ (t : ℝ) in γ.a..γ.b, g_reg (γ.toFun t) * deriv γ.toFun t;
+      dominated_convergence_multipoint_helper S0 f γ g_reg _h_crossing_null _hg_decomp hg_cont hS0_sep
 
 /-- Multi-point PV equals sum of single-point PVs
 when the regular part integral vanishes. -/

@@ -53,8 +53,7 @@ theorem classification (h : Module.finrank K L = 1) :
     invFun := fun x ↦ x • B 0,
     left_inv := by
       intro x
-      simp only
-      rw [← Basis.repr_fin_one B x]
+      exact Eq.symm (Basis.repr_fin_one B x)
     right_inv := fun _ => by simp
     map_add' := by simp
     map_smul' := by simp

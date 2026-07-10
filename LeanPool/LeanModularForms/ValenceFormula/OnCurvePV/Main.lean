@@ -831,17 +831,14 @@ theorem fdBoundary_H_cpv_exists_of_onCurve (H : ℝ) (hH : Real.sqrt 3 / 2 < H) 
     CauchyPrincipalValueExists' (fun z => (z - s)⁻¹) (fdBoundaryH H) 0 5 s := by
   by_cases hs_rho : s = ellipticPointRho
   · subst hs_rho
-    obtain ⟨L, hL⟩ := cpv_exists_at_rho H hH
-    exact ⟨L, hL.congr (fun ε => rfl)⟩
+    exact cpv_exists_at_rho H hH
   by_cases hs_rho' : s = ellipticPointRhoPlusOne
   · subst hs_rho'
-    obtain ⟨L, hL⟩ := cpv_exists_at_rho_plus_one H hH
-    exact ⟨L, hL.congr (fun ε => rfl)⟩
+    exact cpv_exists_at_rho_plus_one H hH
   by_cases hs_i : s = I
   · subst hs_i
     by_cases hH1 : 1 < H
-    · obtain ⟨L, hL⟩ := cpv_exists_at_i H hH1
-      exact ⟨L, hL.congr (fun ε => rfl)⟩
+    · exact cpv_exists_at_i H hH1
     · push Not at hH1
       have hγ2 : fdBoundaryH H 2 = I := by
         rw [fdBoundary_H_eq_arc (by norm_num : (1 : ℝ) < 2) (by norm_num : (2 : ℝ) < 3)]
@@ -901,8 +898,7 @@ theorem fdBoundary_H_cpv_exists_of_onCurve (H : ℝ) (hH : Real.sqrt 3 / 2 < H) 
             rw [h_eq] at this; simp only [Complex.I_im] at this; linarith)
           hγ3_ne_I
       · subst hH_eq
-        exact cpv_exists_at_I_H_eq_one hH h_arc_cpv
-          (fun {t} => h_arc_I_iff) hγ3_ne_I
+        exact cpv_exists_at_I_H_eq_one hH h_arc_cpv h_arc_I_iff hγ3_ne_I
   · obtain ⟨t₀, ht₀_mem, hγt₀⟩ := h_on
     by_cases hs_endpoint : s = (1/2 : ℂ) + ↑H * I
     · subst hs_endpoint

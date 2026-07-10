@@ -37,12 +37,7 @@ of dimension `n`. -/
 noncomputable def uniformScalar (G : MonotoneMetricFamily) (n : ℕ) (hn : 2 ≤ n) : ℝ := by
   classical
   let i0 : Fin n := ⟨0, lt_of_lt_of_le Nat.zero_lt_two hn⟩
-  let i1 : Fin n := ⟨1, lt_of_lt_of_le Nat.one_lt_two hn⟩
-  haveI : Nonempty (Fin n) := ⟨i0⟩
-  exact
-    (TangentFin.Bilin.B (G := G) (n := n) (TangentFin.Basis.dij (n := n) i0 i1)
-          (TangentFin.Basis.dij (n := n) i0 i1) /
-        (2 * (Fintype.card (Fin n) : ℝ)))
+  exact Basis.e i0 i0
 
 private lemma two_le_card_prod {n m : ℕ} (hn : 2 ≤ n) (hm : 0 < m) :
     2 ≤ Fintype.card (Fin n × Fin m) := by
@@ -62,9 +57,7 @@ theorem uniformScalar_eq_of_mul (G : MonotoneMetricFamily) {n m : ℕ} (hn : 2 �
   haveI : Nonempty α := ⟨⟨0, lt_of_lt_of_le Nat.zero_lt_two hn⟩⟩
   haveI : Nonempty (Fin m) := ⟨⟨0, hm⟩⟩
   haveI : Nonempty β := by
-    classical
-    rcases (inferInstance : Nonempty α) with ⟨a0⟩
-    exact ⟨(a0, ⟨0, hm⟩)⟩
+    exact instNonemptyProd
   let N : ℕ := Fintype.card β
   haveI : Nonempty (Fin N) := ⟨⟨0, Fintype.card_pos⟩⟩
   let e : β ≃ Fin N := Fintype.equivFin β
@@ -79,9 +72,7 @@ theorem uniformScalar_eq_of_mul (G : MonotoneMetricFamily) {n m : ℕ} (hn : 2 �
     have hj :
         (δ.pushforward (Simplex.uniform (α := β))).p j =
           (Simplex.uniform (α := β)).p (e.symm j) := by
-      simpa [δ] using
-        (MarkovMorphism.deterministic_pushforward_apply_of_equiv (α := β) (β := Fin N) (e := e)
-          (p := Simplex.uniform (α := β)) (b := j))
+      exact deterministic_pushforward_apply_of_equiv e Simplex.uniform j
     rw [hj]
     simp [Simplex.uniform_apply, Fintype.card_congr e]
   -- The `Fin n` scalar is detected on `dij 0 1`.
@@ -116,18 +107,13 @@ theorem uniformScalar_eq_of_mul (G : MonotoneMetricFamily) {n m : ℕ} (hn : 2 �
           G.g (α := β) (Simplex.uniform (α := β))
             (κ.tangentPushforward u) (κ.tangentPushforward u) := by
       -- `eq_of_equiv` has the `Fin N` side on the left.
-      simpa [v, δ] using
-        (MonotoneMetricFamily.eq_of_equiv (G := G) (α := β) (β := Fin N) (e := e)
-          (p := Simplex.uniform (α := β))
-          (u := κ.tangentPushforward u) (v := κ.tangentPushforward u))
+      exact eq_of_equiv G e Simplex.uniform (κ.tangentPushforward u) (κ.tangentPushforward u)
     -- Then reduce from `β` to `α` by replication.
     have h_repl :
         G.g (α := β) (κ.pushforward (Simplex.uniform (α := α)))
             (κ.tangentPushforward u) (κ.tangentPushforward u)
           = G.g (α := α) (Simplex.uniform (α := α)) u u := by
-      simpa [κ] using
-        (MonotoneMetricFamily.eq_of_replicate (G := G) (α := α) (m := m) (hm := hm)
-          (p := Simplex.uniform (α := α)) (u := u) (v := u))
+      exact eq_of_replicate G m hm Simplex.uniform u u
     -- Assemble and rewrite the pushed-forward uniform points.
     simpa [hδ_uniform, hκ_uniform] using (h_equiv.trans (by simpa [hκ_uniform] using h_repl))
   have hF :

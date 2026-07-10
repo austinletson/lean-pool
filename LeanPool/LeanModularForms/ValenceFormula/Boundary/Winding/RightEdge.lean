@@ -203,14 +203,7 @@ private lemma rightEdge_h₀_eq {H : ℝ} {s : ℂ} (hs_re : s.re = 1 / 2) (t : 
 lemma hasDerivAt_arc_rep (s : ℂ) (t : ℝ) :
     HasDerivAt (fun t => exp (↑(Real.pi * (1 + t) / 6) * I) - s)
       (↑(Real.pi / 6) * I * exp (↑(Real.pi * (1 + t) / 6) * I)) t := by
-  have hf : HasDerivAt (fun s : ℝ => Real.pi * (1 + s) / 6) (Real.pi / 6) t :=
-    ((hasDerivAt_id t).add_const (1 : ℝ) |>.const_mul (Real.pi / 6)).congr_of_eventuallyEq
-      (Eventually.of_forall fun s => show _ from by simp [id]; ring)
-      |>.congr_deriv (by ring)
-  have hci : HasDerivAt (fun s : ℝ => (↑(Real.pi * (1 + s) / 6) : ℂ) * I)
-      ((↑(Real.pi / 6) : ℂ) * I) t :=
-    (hf.ofReal_comp.mul_const I).congr_deriv (by norm_num [smul_eq_mul])
-  exact (hci.cexp.sub (hasDerivAt_const t s)).congr_deriv (by simp only [sub_zero]; ring)
+  exact hasDerivAt_arc s t
 
 private lemma norm_fdBoundary_H_arc (H : ℝ) (t : ℝ) (ht1 : 1 < t) (ht3 : t < 3) :
     ‖fdBoundaryH H t‖ = 1 := by
@@ -1006,10 +999,7 @@ def rightEdgeCrossingData (H : ℝ) (hH_sqrt : Real.sqrt 3 / 2 < H)
     have ht₀_lt : t₀ < 1 := by
       rw [div_lt_one hα_pos]; change H - s.im < H - Real.sqrt 3 / 2; linarith
     have ht₀_mul : t₀ * α = H - s.im := div_mul_cancel₀ _ (ne_of_gt hα_pos)
-    set threshold := min (min (min (‖s‖ - 1) 1) (H - s.im)) (min (t₀ * α) ((1 - t₀) * α))
-    have hthresh_pos : 0 < threshold := lt_min (rightEdge_min_dist_pos s hs_norm hs_im)
-      (lt_min (mul_pos ht₀_pos hα_pos) (mul_pos (by linarith) hα_pos))
-    exact rightEdge_E_tendsto H s hs_re α hα_def hα_pos t₀ ht₀_mul threshold hthresh_pos
+    exact rightEdge_E_tendsto H s hs_re α hα_def hα_pos ((H - s.im) / α) ht₀_mul α hα_pos
 
 /-- Alternative proof of the right edge gWN via the `SingleCrossingData` framework.
 

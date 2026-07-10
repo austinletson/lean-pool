@@ -307,11 +307,7 @@ theorem kerBdSubsetImJStar (f : π_rel (n + 1) X A a) :
             apply f'.property.right
             apply Cube.mem_boundaryJar_of_exists_eq_zero
             use Fin.last n
-            simp only [Cube.splitAtLast, ne_eq, Homeomorph.trans_apply,
-              Homeomorph.funSplitAt_apply, Homeomorph.coe_prodCongr,
-              Homeomorph.refl_apply, Prod.map_apply, id_eq, Homeomorph.symm_trans_apply,
-              Homeomorph.prodCongr_symm, Homeomorph.refl_symm, Homeomorph.symm_symm,
-              Homeomorph.apply_symm_apply, Homeomorph.funSplitAt_symm_apply, ↓reduceDIte]
+            exact Cube.splitAtLast_symm_apply_last 0 (Cube.splitAtLast y).2
           · -- `y` is on the sides of the (n+1)-dimensional cube
             obtain ⟨i, hi⟩ := Cube.splitAtLast_snd_mem_boundary_of_last_neq_zero hy hbot
             by_cases hyn : (Cube.splitAtLast y).fst.val ≤ (1 + t) / 2
@@ -362,10 +358,7 @@ theorem ker_iStar_supset_im_bd (f : π_ n A a) :
         apply g'.property.right (Cube.splitAtLast.symm ⟨0, y⟩)
         apply Cube.mem_boundaryJar_of_exists_eq_zero
         use Fin.last _
-        simp only [Cube.splitAtLast, ne_eq, Homeomorph.symm_trans_apply,
-          Homeomorph.prodCongr_symm, Homeomorph.refl_symm, Homeomorph.symm_symm,
-          Homeomorph.coe_prodCongr, Homeomorph.refl_apply, Prod.map_apply, id_eq,
-          Homeomorph.funSplitAt_symm_apply, ↓reduceDIte]
+        exact Cube.splitAtLast_symm_apply_last 0 y
       map_one_left y := by
         simp only [comp_apply, Function.comp_apply, coe_mk]
         congr 1

@@ -116,12 +116,7 @@ lemma pinv_pullback_eq
       have hk := hmv v
       rw [Matrix.mulVec_sub] at hk
       exact (sub_eq_zero.mp hk).symm
-    ext i j
-    have := congr_fun (key (Pi.single j 1)) i
-    simp only [Matrix.mulVec, dotProduct, Pi.single_apply,
-               mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
-               Finset.mem_univ, ite_true] at this
-    exact this
+    exact ext_iff_mulVec.mpr key
   have hLS_sym : L_S.IsHermitian := (inducedLaplacian_posSemidef G S).isHermitian
   have hPL : P * L_S = L_S := by
     have h := congr_arg Matrix.conjTranspose hLP

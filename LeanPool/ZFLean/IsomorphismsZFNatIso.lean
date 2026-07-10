@@ -39,8 +39,7 @@ theorem deletePointIsoMap_isFunc {k : ZFNat} {ℓ : ZFSet} :
       and_intros <;> beta_reduce
       · exact x_mem_k
       · rw [add_one_eq_succ, succ, mem_insert_iff]
-        right
-        exact x_mem_k
+        exact Or.inr x_mem_k
       · rintro rfl
         nomatch mem_irrefl _ x_mem_ℓ
       · rfl
@@ -152,8 +151,7 @@ theorem deletePointIsoMap_bijective {k : ZFNat} {ℓ : ZFSet}
           · exact lt_succ
           · rw [add_one_eq_succ]
             exact lt_succ
-          · rintro rfl
-            contradiction
+          · exact Ne.intro y_ne_ℓ
           · rw [←lt_le_iff] at L_lt_k
             conv =>
                 enter [1]
@@ -191,9 +189,7 @@ theorem deletePointIsoMap_bijective {k : ZFNat} {ℓ : ZFSet}
           and_intros
           · change s < k
             rw [Y_eq] at y_mem_k
-            trans s.succ
-            · exact lt_succ
-            · exact y_mem_k
+            exact lt_of_succ_lt y_mem_k
           · rw [Y_eq] at y_mem_k y_lt_ℓ
             unfold Y at Y_eq
             rw [succ, Subtype.ext_iff] at Y_eq
@@ -203,9 +199,7 @@ theorem deletePointIsoMap_bijective {k : ZFNat} {ℓ : ZFSet}
               intro eq
               unfold L at eq
               rw [succ, Subtype.ext_iff] at eq
-              dsimp at eq
-              subst ℓ
-              nomatch y_ne_ℓ
+              exact Ne.elim y_ne_ℓ eq
             rcases y_lt_ℓ with L_lt_s | L_eq_s
             · rw [← lt_le_iff] at L_lt_s
               rcases L_lt_s with L_lt_s | L_eq_s
@@ -287,8 +281,7 @@ theorem iso_eq_iff_proof {n m : ZFNat} : ↑n ≅ᶻ ↑m ↔ n = m where
         · intro z zn
           have : z ∈ (↑(n+1) : ZFSet) := by
             rw [add_one_eq_succ, ZFNat.succ, mem_insert_iff]
-            right
-            exact zn
+            exact Or.inr zn
           obtain ⟨y, hy, y_unq⟩ := isfunc.2 z this
           use y
           and_intros <;> beta_reduce
@@ -334,8 +327,7 @@ theorem iso_eq_iff_proof {n m : ZFNat} : ↑n ≅ᶻ ↑m ↔ n = m where
                 apply bij k (by rw [add_one_eq_succ]; exact lt_succ) |>.unique
                 · and_intros
                   · rw [add_one_eq_succ, succ, mem_insert_iff]
-                    right
-                    exact y_k_f.1.1
+                    exact Or.inr yn
                   · exact y_k_f.2
                 · and_intros
                   · rw [add_one_eq_succ, succ, mem_insert_iff]
@@ -367,8 +359,7 @@ theorem iso_eq_iff_proof {n m : ZFNat} : ↑n ≅ᶻ ↑m ↔ n = m where
                 apply bij y ?_ |>.unique
                 · and_intros
                   · rw [add_one_eq_succ, succ, mem_insert_iff]
-                    right
-                    exact z_k_f.1.1
+                    exact Or.inr zn
                   · exact z_k_f.2
                 · and_intros
                   · rw [add_one_eq_succ, succ, mem_insert_iff]
@@ -379,13 +370,11 @@ theorem iso_eq_iff_proof {n m : ZFNat} : ↑n ≅ᶻ ↑m ↔ n = m where
                   right
                   exact y_mem_k
           · rw [add_one_eq_succ, succ, mem_insert_iff]
-            right
-            exact y_mem_k
+            exact Or.inr y_mem_k
       have k_iso : ↑k ≅ᶻ (↑(k+1) \ {ℓ}) := isIso_delete_singleton ℓ_mem_m
       trans ↑(k+1) \ {ℓ}
       · use f', this
-      · apply ZFSet.isIso_symm
-        exact k_iso
+      · exact isIso_symm k_iso
   mpr := by
     rintro rfl
     apply isIso_refl

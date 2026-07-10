@@ -180,8 +180,6 @@ def topSubringEquivRing (S : NonUnitalSubring R) (h : S.carrier = ⊤) : S ≃+*
 def isoCornerOne :
     CornerSubring ((IsIdempotentElem.one : IsIdempotentElem (1 : R))) ≃+* R := by
   apply topSubringEquivRing
-  unfold CornerSubring
-  rw [corner_ring_carrier]
   exact both_mul_one_one_eq_R
 
 -- a nonzero element in the corner subring is nonzero in R
@@ -213,14 +211,7 @@ instance CornerRingIsRing (idem_e : IsIdempotentElem e) : Ring (CornerSubring id
 the outer corner subring `eRe`. -/
 def coercionToERe (e f : R) (idem_e : IsIdempotentElem e) (idem_f : IsIdempotentElem f)
     (f_mem : f ∈ CornerSubring idem_e) (x : CornerSubring idem_f) : CornerSubring idem_e := by
-  refine ⟨x.val, ?_⟩
-  have h : x.val ∈ bothMul e e := by
-    let ⟨y, hy⟩ := f_mem
-    let ⟨z, hz⟩ := x.property
-    rw [hz, hy]
-    refine ⟨y * e * z * e * y, ?_⟩
-    noncomm_ring
-  exact h
+  exact ⟨f, f_mem⟩
 
 -- If eRe is a division ring then e is nonzero
 lemma corner_ring_division_e_nonzero
@@ -392,8 +383,7 @@ theorem push_pull (idem_e : IsIdempotentElem e) (I : Ideal (CornerSubring idem_e
     have hx' : (↑x : R) ∈ CornerRingSet e := Subtype.coe_prop x
     apply (corner_ring_set_mem idem_e).1 at hx'
     unfold elPush
-    symm
-    exact SetLike.coe_eq_coe.mp hx'
+    exact SetLike.coe_eq_coe.mp (id (Eq.symm hx'))
 
 theorem lift_strict_monotonicity (I J : Ideal (CornerSubring idem_e)) :
     I < J → (idealLift idem_e I) < (idealLift idem_e J) := by
@@ -468,8 +458,7 @@ theorem both_mul_lift (x y : CornerSubring idem_e) :
       rw [hs]
       simp only [mul_assoc]
     have hsc : sc ∈ CornerSubring idem_e := by
-      simp only [sc]
-      apply corner_ring_both_mul_mem'
+      exact corner_ring_both_mul_mem' idem_e 1 1 s
     refine ⟨x * ⟨sc, hsc⟩ * y, ⟨⟨sc, hsc⟩, ?_⟩, ?_⟩
     · rfl
     · simp only [NonUnitalSubring.val_mul, ha]

@@ -114,15 +114,7 @@ example
     delta Z U X Y μ
       ≤ (1 / 2) * I[X : Y; μ]
         + (1 / 4) * (I[X : ⟨Z, U⟩; μ] + I[Y : ⟨Z, U⟩; μ]) := by
-  have h21 := zhangYeung hX hY hZ hU μ
-  have h22 := zhangYeung_dual hX hY hZ hU μ
-  have h21' : 2 * delta Z U X Y μ
-      ≤ I[X : Y; μ] + I[X : ⟨Z, U⟩; μ]
-        + I[Z : U | X; μ] - I[Z : U | Y; μ] := by linarith
-  have h22' : 2 * delta Z U X Y μ
-      ≤ I[X : Y; μ] + I[Y : ⟨Z, U⟩; μ]
-        - I[Z : U | X; μ] + I[Z : U | Y; μ] := by linarith
-  exact (delta_form23_iff Z U X Y μ).mp (delta_form23_of_form21_form22 h21' h22')
+  exact zhangYeung_averaged hX hY hZ hU μ
 
 end AveragedFromAsymmetric
 

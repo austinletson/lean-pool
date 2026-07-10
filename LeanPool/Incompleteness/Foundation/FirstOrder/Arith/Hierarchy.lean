@@ -77,8 +77,7 @@ namespace Hierarchy
   · simp only [Matrix.conjVec, verum, IsEmpty.forall_iff]
   · simp only [Matrix.conjVec, Matrix.vecTail, Nat.succ_eq_add_one, and_iff,
       Function.comp_apply, *]
-    exact ⟨by rintro ⟨hz, hs⟩ i; cases i using Fin.cases <;> simp[*],
-          by intro h; exact ⟨h 0, fun _ => h _⟩⟩
+    exact Iff.symm Fin.forall_fin_succ
 
 lemma zero_eq_alt {φ : Semiformula L ξ n} : Hierarchy Γ 0 φ → Hierarchy Γ.alt 0 φ := by
   generalize hz : 0 = z

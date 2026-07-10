@@ -456,6 +456,5 @@ theorem proof_otp : ∀ (p k c l: UInt64),
     · simpSetEq
     -- end 0 → 4 proof
     -- start 4 → 14 proof
-  · intro l' h_l'
-    exact proof_otp_loop p k c l l' h_l'
+  · exact fun l' a => proof_otp_loop p k c l l' a
   · simpSetEq

@@ -39,27 +39,7 @@ section «Action»
 
 lemma isSimilar_smul_of_isSimilar (g : GL (Fin 2) K) (L M : Lattice R) (h : L.IsSimilar R M) :
     (g • L).IsSimilar R (g • M) := by
-  obtain ⟨a, rfl⟩ := h
-  have : g • a • L = a • g • L := by
-    apply Lattice.ext
-    simp only [Lattice.smul_M, Lattice.smul_module, Units.smul_def]
-    ext x
-    simp only [Matrix.GeneralLinearGroup.mem_smul]
-    constructor
-    · rintro ⟨y, ⟨z, hz, rfl⟩, rfl⟩
-      simp only [DistribSMul.toLinearMap_apply, Matrix.mulVec_smul]
-      refine ⟨g.val.mulVec z, ?_, rfl⟩
-      simp only [SetLike.mem_coe, Matrix.GeneralLinearGroup.mem_smul]
-      use z, hz
-    · rintro ⟨y, hy, rfl⟩
-      simp only [SetLike.mem_coe, Matrix.GeneralLinearGroup.mem_smul] at hy
-      obtain ⟨z, hz, rfl⟩ := hy
-      refine ⟨a.val • z, ?_, ?_⟩
-      · use z, hz
-        rfl
-      · simp [Matrix.mulVec_smul]
-  rw [this]
-  exact Lattice.isSimilar_smul R (g • L) a
+  exact (smul_isSimilar_iff g L M).mpr h
 
 /-- The action of `GL₂(K)` on vertices induced by its action on lattices. -/
 def smulGL (g : GL (Fin 2) K) : Vertices R → Vertices R :=
@@ -273,17 +253,7 @@ lemma _root_.Matrix.GL.mem_range_map_iff {R K : Type*} [CommRing R]
     g ∈ Set.range (Matrix.GeneralLinearGroup.map f) ↔
       (∀ (i j : ι), g i j ∈ Set.range f) ∧
         ↑g.det⁻¹ ∈ Set.range f := by
-  refine ⟨fun ⟨k, hk⟩ ↦ hk ▸ by simp [Matrix.GeneralLinearGroup.map_det], fun ⟨h1, ⟨u, hu⟩⟩ ↦ ?_⟩
-  choose r hr using h1
-  refine ⟨.mk'' r ?_, by ext; simp [Matrix.GeneralLinearGroup.mk'', Matrix.nonsingInvUnit, hr]⟩
-  rw [isUnit_iff_exists_inv]
-  use u
-  apply hf
-  simp only [map_mul, RingHom.map_det, RingHom.mapMatrix_apply, map_one]
-  rw [hu]
-  convert (Matrix.GeneralLinearGroup.det g).val_inv using 2
-  · congr; ext; simp [hr]
-  · exact (Units.inv_eq_val_inv _).symm
+  exact «GL».mem_range_map_iff hf g
 
 lemma mem_stabilizer_twist_iff_mem {ϖ : R} (hϖ : Irreducible ϖ) (g : GL (Fin 2) R)
     (f : Fin 2 → ℤ) :

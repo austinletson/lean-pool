@@ -173,9 +173,7 @@ theorem gaussian_pairing_product_integrable_free_2point
   -- For L² × L² → L¹, we use Hölder's inequality: p⁻¹ + q⁻¹ = 1⁻¹ gives 2⁻¹ + 2⁻¹ = 1⁻¹
   have h_holder : ENNReal.HolderTriple (2 : ENNReal) 2 1 := by
     -- Need to prove 2⁻¹ + 2⁻¹ = 1⁻¹, i.e., 1/2 + 1/2 = 1
-    apply ENNReal.HolderTriple.mk
-    -- Use the fact that inv_one gives us 1⁻¹ = 1
-    simpa only [inv_one] using ENNReal.inv_two_add_inv_two
+    exact ENNReal.HolderConjugate.instTwoTwo
   have h_ac_bd : Integrable (fun ω => distributionPairing ω φRe * distributionPairing ω ψRe -
     distributionPairing ω φIm * distributionPairing ω ψIm)
                    (gaussianFreeFieldFree m).toMeasure := by

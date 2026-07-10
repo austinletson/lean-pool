@@ -68,11 +68,7 @@ def ωₛ := Ordinal.toZFSet ω
 
 instance instNatCastM : NatCast M where
   natCast (n : ℕ) := by
-    split_vonNeumann hM
-    · refine ⟨Ordinal.toZFSet n, ?_⟩
-      erw [mem_vonNeumann, rank_toZFSet]
-      exact natCast_lt_of_isSuccLimit hμ _
-    · exact ↓(Ordinal.toZFSet n)
+    exact Classical.ofNonempty
 
 instance instOfNatM {n} : OfNat M n where
   ofNat := (n : M)

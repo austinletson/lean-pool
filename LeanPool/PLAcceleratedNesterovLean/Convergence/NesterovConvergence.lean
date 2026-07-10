@@ -93,8 +93,7 @@ theorem nesterov_rate_bound_theta
   rw [h_target_eq]
   have h_sqrt_lb : Real.sqrt (1 - θ) ≥ 1 - θ := by
     have hle : (1 - θ) ^ 2 ≤ 1 - θ := by nlinarith [mul_nonneg hθ_pos.le h1θ_nn]
-    calc (1 : ℝ) - θ = Real.sqrt ((1 - θ) ^ 2) := (Real.sqrt_sq h1θ_nn).symm
-      _ ≤ Real.sqrt (1 - θ) := Real.sqrt_le_sqrt hle
+    exact (Real.le_sqrt h1θ_nn h1θ_nn).mpr hle
   have h_prod_lb : (1 - θ) * Real.sqrt (1 - θ) ≥ 1 - 2 * θ := by
     nlinarith [mul_le_mul_of_nonneg_left h_sqrt_lb h1θ_nn, sq_nonneg θ]
   have h_rate_ub : 1 - (1 - θ) * (a * Real.sqrt (1 - θ)) ≤
@@ -185,9 +184,7 @@ theorem nesterov_convergence_at_base_point_position_params
     have hπ₀_cont := tubularProj_continuousAt_of_mem hTub hne hmstar
     apply hπ₀_cont.congr
     exact (hTub.isOpen.eventually_mem (hTub.subset hmstar)).mono fun x hx => by
-      have ⟨h1, h2⟩ := hπ_on_U x hx
-      have ⟨h3, h4⟩ := tubularProj_mem hTub hne x hx
-      exact ((hTub.uniqueProj x hx).unique ⟨h3, h4⟩ ⟨h1, h2⟩)
+      exact Eq.symm (tubularProj_unique hTub hne x hx (π x) (hπ_on_U x hx))
   have hU_open := hTub.isOpen
   have hm_U : mstar ∈ U := hTub.subset hmstar
   have hf_cont : ContinuousAt f mstar :=

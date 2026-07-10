@@ -57,8 +57,7 @@ lemma MultipliableEtaProductExpansion (z : ℍ) :
   have := Complex.summable_nat_multipliable_one_add (fun (n : ℕ) =>
     (-cexp (2 * π * Complex.I * (n + 1) * z)) ) ?_
   · apply this.congr
-    intro n
-    ring
+    exact fun b => Eq.symm (SubNegMonoid.sub_eq_add_neg 1 (cexp (2 * ↑π * Complex.I * (↑b + 1) * ↑z)))
   rw [←summable_norm_iff]
   simpa using summable_exp_pow z
 
@@ -76,8 +75,7 @@ lemma MultipliableEtaProductExpansion_pnat (z : ℍ) :
     rw [show (n : ℂ) + 1 = (((n + 1) : ℕ) : ℂ) by simp]
   rw [ ← multipliable_pnat_iff_multipliable_succ (f := g)] at this
   apply this.congr
-  intro b
-  rfl
+  exact fun b => SubNegMonoid.sub_eq_add_neg 1 (cexp (2 * ↑π * Complex.I * ↑↑b * ↑z))
 
 
 
@@ -90,9 +88,7 @@ lemma tprod_ne_zero (x : ℍ) (f : ℕ → ℍ → ℂ) (hf : ∀ i x, 1 + f i x
 
 lemma Multipliable_pow {ι : Type*} (f : ι → ℂ) (hf : Multipliable f) (n : ℕ) :
      Multipliable (fun i => f i ^ n) := by
-  induction n with
-  | zero => simp
-  | succ n hn => simpa only [pow_succ] using hn.mul hf
+  exact Multipliable.pow hf n
 
 
 
@@ -103,10 +99,7 @@ lemma MultipliableDeltaProductExpansion_pnat (z : ℍ) :
 
 lemma tprod_pow (f : ℕ → ℂ) (hf : Multipliable f) (n : ℕ) : (∏' (i : ℕ), f i) ^ n = ∏' (i : ℕ),
     (f i) ^ n := by
-  induction n with
-  | zero => simp
-  | succ n hn =>
-    simp only [pow_succ, hn, ← Multipliable.tprod_mul (Multipliable_pow f hf n) hf]
+  exact Eq.symm (Multipliable.tprod_pow hf n)
 
 
 
@@ -115,8 +108,7 @@ variable {a a₁ a₂ : ℝ} {ι : Type*}
 theorem hasProd_le_nonneg (f g : ι → ℝ) (h : ∀ i, f i ≤ g i) (h0 : ∀ i, 0 ≤ f i)
   (hf : HasProd f a₁) (hg : HasProd g a₂) : a₁ ≤ a₂ := by
   apply le_of_tendsto_of_tendsto' hf hg
-  intro s
-  exact Finset.prod_le_prod (fun i _ => h0 i) (fun i _ => h i)
+  exact fun x => Finset.prod_le_prod (fun i a => h0 i) fun i a => h i
 
 theorem HasProd.le_one_nonneg (g : ℕ → ℝ) (h : ∀ i, g i ≤ 1) (h0 : ∀ i, 0 ≤ g i)
     (ha : HasProd g a) : a ≤ 1 := by

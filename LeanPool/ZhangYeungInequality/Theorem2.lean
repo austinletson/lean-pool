@@ -765,8 +765,7 @@ marginal lemmas.
 private lemma sum_rotate3 {α β γ : Type*} [Fintype α] [Fintype β] [Fintype γ]
     (f : α → β → γ → ℝ) :
     (∑ a, ∑ b, ∑ c, f a b c) = ∑ c, ∑ a, ∑ b, f a b c := by
-  rw [Finset.sum_comm (γ := γ)]
-  exact Finset.sum_congr rfl fun _ _ => Finset.sum_comm
+  exact Finset.sum_comm_cycle
 
 omit [Fintype S₁] in
 /--

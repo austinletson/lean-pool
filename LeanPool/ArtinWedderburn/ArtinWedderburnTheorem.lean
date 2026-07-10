@@ -51,11 +51,8 @@ theorem ArtinWedderburnForPrime {R : Type u} [Ring R] [h_nontriv : Nontrivial R]
   unfold e00Cornerring at iso
   unfold CornerSubring at iso ⊢
   apply iso.trans
-  apply equalElIsoMatrixRings
-  · unfold IsIdempotentElem
-    exact mu.mul_ij_kl_eq_kron_delta_jk_mul_es_il ⟨0, n_pos⟩ ⟨0, n_pos⟩ ⟨0, n_pos⟩ ⟨0, n_pos⟩
-  · exact R_ort_idem.h ⟨0, n_pos⟩
-  · exact h
+  exact equalElIsoMatrixRings' (hasMatrixUnits.es ⟨0, n_pos⟩ ⟨0, n_pos⟩) (R_ort_idem.f ⟨0, n_pos⟩) ⋯ ⋯ h
+      R_ort_idem.n
 
 -- Just an application
 theorem ArtinWedderburnForSimple {R : Type u} [Ring R] [IsSimpleRing R] [h_art : IsArtinian R R] :

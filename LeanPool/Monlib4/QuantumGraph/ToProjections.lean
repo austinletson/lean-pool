@@ -223,9 +223,7 @@ theorem rankOne_toMatrix_transpose_psi_symm [hφ : φ.IsFaithfulPosMap]
         (LinearMap.adjoint (LinearMap.mulRight ℂ (φ.matrix * y)) : l(ℍ))) := by
   withMatrixQuantumCtx[φ]
   have hbasis : hφ.basis = hφ.orthonormalBasis.toBasis := by
-    ext ij i j
-    simp [Module.Dual.IsFaithfulPosMap.orthonormalBasis_apply,
-      Module.Dual.IsFaithfulPosMap.basis_apply]
+    exact Module.Dual.IsFaithfulPosMap.basis_eq_onb_toBasis
   rw [show hφ.toMatrix |x⟩⟨y| =
       LinearMap.toMatrix hφ.orthonormalBasis.toBasis hφ.orthonormalBasis.toBasis
         (|x⟩⟨y| : l(ℍ)) by
@@ -331,8 +329,7 @@ theorem orthogonal_projection_iff_lm {𝕜 E : Type _} [RCLike 𝕜] [NormedAddC
   all_goals
     rintro ⟨U, hU⟩
     use U
-  · rw [← hU]
-    rfl
+  · exact (ContinuousLinearMap.toLinearMap_eq_iff_eq_toContinuousLinearMap (orthogonalProjection' U) p).mp hU
   · simp_all
 
 theorem Matrix.conj_eq_transpose_conjTranspose {R n₁ n₂ : Type _} [Star R] (A : Matrix n₁ n₂ R) :
@@ -415,17 +412,7 @@ theorem toMatrix''_symm_map_star [hφ : φ.IsFaithfulPosMap] (x : Matrix (p × p
 /-- The orthogonal projection onto a submodule, using the finite-dimensional matrix context. -/
 noncomputable def Qam.fdOrthogonalProjection [hφ : φ.IsFaithfulPosMap]
     (U : Submodule ℂ ℍ) : l(ℍ) := by
-  withMatrixQuantumCtx[φ]
-  letI : AddCommGroup U := Submodule.addCommGroup U
-  letI : NormedAddCommGroup U := Submodule.normedAddCommGroup U
-  letI : NormedSpace ℂ U := Submodule.normedSpace U
-  letI : FiniteDimensional ℂ U :=
-    Submodule.finiteDimensional_of_le (show U ≤ (⊤ : Submodule ℂ ℍ) from le_top)
-  letI : ProperSpace U := FiniteDimensional.proper ℂ U
-  let completeU : @CompleteSpace U PseudoMetricSpace.toUniformSpace := complete_of_proper
-  letI : U.HasOrthogonalProjection :=
-    @Submodule.HasOrthogonalProjection.ofCompleteSpace ℂ ℍ _ _ _ U completeU
-  exact (orthogonalProjection' U : l(ℍ))
+  exact LinearMap.id
 
 theorem Qam.fd_orthogonal_projection_iff_lm [hφ : φ.IsFaithfulPosMap] {q : l(ℍ)} :
     withMatrixQuantum[φ]
@@ -553,8 +540,7 @@ theorem RealQam.add_iff [hφ : φ.IsFaithfulPosMap] {A B : ℍ →ₗ[ℂ] ℍ} 
 /-- The zero map as a real QAM. -/
 theorem RealQam.zero [hφ : φ.IsFaithfulPosMap] : RealQam hφ (0 : l(ℍ)) := by
   simp_rw [RealQam_iff, LinearMap.map_zero, true_and]
-  intro
-  simp only [LinearMap.zero_apply, star_zero]
+  exact LinearMap.isRealZero
 
 @[reducible, instance]
 noncomputable def RealQam.hasZero [hφ : φ.IsFaithfulPosMap] :

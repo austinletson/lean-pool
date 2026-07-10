@@ -207,22 +207,12 @@ theorem sw_otp : ∀ (p k c l : UInt64),
               unfold iPre' at h_I_pre'
               simp_all
           · rw [h_x0, h_x2]
-            unfold iPre' at h_I_pre'
-            rcases h_I_pre' with ⟨h_pk, h_kc, _⟩
-            simp only [ne_eq, UInt64.add_left_inj]
-            intros neq
-            rw [←neq] at h_pk
-            exact UInt64.lt_irrefl c (UInt64.lt_trans h_pk h_kc)
+            exact help_I_pre' p k c l h_I_pre'
       · repeat (constructor; try assumption)
         · rw [h_x0, h_x5, h_x0]
           rw [t_update_neq]
           rw [h_x2, h_x3]
-          intros neq
-          simp only [UInt64.add_left_inj] at neq
-          unfold iPre' at h_I_pre'
-          rcases h_I_pre' with ⟨pk, kc, _⟩
-          rw [neq] at kc
-          exact UInt64.lt_asymm pk kc
+          exact help_I_pre' p k c l h_I_pre'
         · constructor
           · rw [h_x2, h_x3]
             rw [t_update_neq]
@@ -564,5 +554,4 @@ theorem beqz_otp : ∀ (p k c l : UInt64),
   · simpCurrInstr
   · assumption
   · repeat (constructor <;> try assumption)
-    apply UInt64.gt_zero_neq_zero
-    exact h_cond
+    exact UInt64.pos_iff_ne_zero.mp h_cond

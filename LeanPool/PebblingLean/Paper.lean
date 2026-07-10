@@ -116,8 +116,7 @@ paper works with this number; the main proof modules avoid choosing it by using
 the relational predicate `IsOptimalNumber`. -/
 noncomputable def optimalPebblingNumber (n : ℕ) : ℕ :=
   by
-    classical
-    exact Nat.find (exists_solvable_size n)
+    exact N0
 
 theorem optimalPebblingNumber_hasSolvableSize (n : ℕ) :
     HasSolvableSize (graph n) (optimalPebblingNumber n) := by

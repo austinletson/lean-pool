@@ -90,11 +90,7 @@ open Matrix
 
 theorem Matrix.kronecker_eq_sum_std_basis (x : Matrix (m × n) (m × n) R) :
     x = ∑ i, ∑ j, ∑ k, ∑ l, x (i, k) (j, l) • single i j 1 ⊗ₖ single k l 1 := by
-  ext a b
-  rcases a with ⟨a₁, a₂⟩
-  rcases b with ⟨b₁, b₂⟩
-  simp [Matrix.sum_apply, Matrix.kroneckerMap, Matrix.of_apply,
-    Matrix.single, mul_ite, mul_one, mul_zero, ite_and, eq_comm]
+  exact kmul_representation x
 
 theorem TensorProduct.matrix_eq_sum_std_basis (x : Matrix m m R ⊗[R] Matrix n n R) :
     x =

@@ -57,12 +57,7 @@ lemma EqOn_of_EqOn_deriv {f g : ℂ → ℂ} (hU : IsOpen U) (hU' : IsPreconnect
     (hf : DifferentiableOn ℂ f U) (hg : DifferentiableOn ℂ g U)
     (hfg : EqOn (deriv f) (deriv g) U) (hz₀ : z₀ ∈ U) (hfgz₀ : f z₀ = g z₀) :
     EqOn f g U := by
-  refine fun z hz => sub_eq_zero.1 ?_
-  have h2 : EqOn (deriv (fun y => f y - g y)) 0 U := fun z hz => by
-    rw [deriv_fun_sub (hf.differentiableAt (hU.mem_nhds hz))
-      (hg.differentiableAt (hU.mem_nhds hz)), hfg hz, sub_self]
-    rfl
-  exact EqOn_zero_of_deriv_eq_zero hU hU' (hf.sub hg) h2 hz₀ (by simp [hfgz₀]) hz
+  exact IsOpen.eqOn_of_deriv_eq hU hU' hf hg hfg hz₀ hfgz₀
 
 lemma hasLogs.hasSqrt (h : hasLogs U) : hasSqrt U := by
   rintro f hfz hf

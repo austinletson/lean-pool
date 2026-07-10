@@ -36,8 +36,7 @@ theorem singleton_subset_mem_iff {x y : ZFSet} : {x} ⊆ y ↔ x ∈ y := by
   simp [subset_def]
 
 theorem insert_def {x y : ZFSet} : insert x y = {x} ∪ y := by
-  ext1 z
-  rw [mem_insert_iff, mem_union, mem_singleton]
+  exact insert_eq x y
 
 theorem sInter_pair {a b : ZFSet} : ⋂₀ {a, b} = a ∩ b := by
   ext1 x

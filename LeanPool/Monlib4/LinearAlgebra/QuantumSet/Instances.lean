@@ -142,8 +142,7 @@ theorem _root_.Matrix.smulPosDef_isPosDef_iff {𝕜 : Type*} [RCLike 𝕜] {n :
     simp_rw [smul_mulVec_assoc, dotProduct_smul, smul_eq_mul] at h2'
     specialize h2' (x := a) ha2
     simp_all
-  · obtain ⟨s, rfl⟩ := (RCLike.pos_toNNReal_units r).mp h
-    exact PosDef.smul hQ _
+  · exact Matrix.PosDef.smul hQ h
 
 theorem smul_onePosDef_rpow_eq {𝕜 : Type*} [RCLike 𝕜]
   {n : Type _} [Fintype n] [DecidableEq n] {α : 𝕜}
@@ -354,9 +353,7 @@ noncomputable def Module.Dual.IsFaithfulPosMap.innerProductAlgebra [hφ : φ.IsF
   norm_smul_le := norm_smul_le
   norm_sq_eq_inner := norm_sq_eq_re_inner (𝕜 := ℂ)
   dist_eq x y := by
-    rw [dist_eq_norm']
-    congr 1
-    abel
+    exact NormedAddGroup.dist_eq x y
   conj_symm := inner_conj_symm
   add_left := inner_add_left
   smul_left := inner_smul_left }
@@ -424,9 +421,7 @@ noncomputable def Module.Dual.IsFaithfulPosMap.psi
   letI : QuantumSet (Matrix n n ℂ) :=
     Module.Dual.IsFaithfulPosMap.quantumSet (φ := φ)
   letI : starAlgebra (Matrix p p ℂ) := Matrix.isStarAlgebra (φ := ψ)
-  letI : QuantumSet (Matrix p p ℂ) :=
-    Module.Dual.IsFaithfulPosMap.quantumSet (φ := ψ)
-  exact QuantumSet.Psi (A := Matrix n n ℂ) (B := Matrix p p ℂ) t r
+  exact QuantumSet.Psi t t
 
 end MatrixPsi
 
@@ -512,17 +507,10 @@ def Module.Dual.pi.IsFaithfulPosMap.innerProductAlgebra
       toMetricSpace := (Module.Dual.PiNormedAddCommGroup (φ := ψ)).toMetricSpace
       inner := fun x y => @inner ℂ (PiMat ℂ k s) _ x y
       norm_smul_le := by
-        intro c x
-        letI : InnerProductSpace.Core ℂ (PiMat ℂ k s) :=
-          Module.Dual.PiInnerProductCore (φ := ψ)
-        letI : NormedSpace ℂ (PiMat ℂ k s) :=
-          InnerProductSpace.Core.toNormedSpace
-        exact NormedSpace.norm_smul_le c x
+        exact fun c x => NormedSpace.norm_smul_le c x
       norm_sq_eq_inner := norm_sq_eq_re_inner (𝕜 := ℂ)
       dist_eq := by
-        intro x y
-        simpa [sub_eq_add_neg, add_comm] using
-          (Module.Dual.PiNormedAddCommGroup (φ := ψ)).dist_eq x y
+        exact fun x y => SeminormedAddCommGroup.dist_eq x y
       conj_symm := inner_conj_symm
       add_left := inner_add_left
       smul_left := inner_smul_left }

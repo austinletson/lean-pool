@@ -46,8 +46,7 @@ lemma unitArc_t₀_mem_Ioo (s : ℂ) (hs_re : |s.re| < 1 / 2) (_hs_im_pos : 0 < 
     exact Real.arccos_cos (by positivity) (by linarith [Real.pi_pos])
   have hcos_two_third : Real.arccos (-1/2 : ℝ) = 2 * Real.pi / 3 := by
     rw [show (-1/2 : ℝ) = Real.cos (2 * Real.pi / 3) from by
-      rw [show (2 : ℝ) * Real.pi / 3 = Real.pi - Real.pi / 3 from by ring,
-          Real.cos_pi_sub, Real.cos_pi_div_three]; ring]
+      exact Eq.symm cos_two_pi_div_three]
     exact Real.arccos_cos (by linarith [Real.pi_pos]) (by linarith [Real.pi_pos])
   have hθ₀_lower : Real.pi / 3 < θ₀ := by
     rw [← hcos_third]
@@ -419,25 +418,15 @@ lemma unitArc_ftc_value (H : ℝ) (hH : 1 < H) (s : ℂ)
   have hslit_arc_before : ∀ t ∈ Icc (1 : ℝ) (t₀ - δ), h_arc t ∈ Complex.slitPlane := by
     intro t ⟨ht1, ht_td⟩
     have htt₀ : t < t₀ := by linarith
-    rcases eq_or_lt_of_le ht1 with h_eq | h_lt
-    · rw [← h_eq]; rw [← hep_1]; exact hslit_seg1 1 ⟨by norm_num, le_refl _⟩
-    · exact unitArc_g_slitPlane_before s hs_norm hs_re hs_im_pos t₀ ht₀_Ioo h_s_arc t
-        (le_of_lt h_lt) htt₀
+    exact unitArc_g_slitPlane_before s hs_norm hs_re hs_im_pos t₀ ht₀_Ioo h_s_arc t ht1 htt₀
   have hslit_arc_after : ∀ t ∈ Icc (t₀ + δ) (3 : ℝ), -(h_arc t) ∈ Complex.slitPlane := by
     intro t ⟨ht_td, ht3⟩
     have htt₀ : t₀ < t := by linarith
-    rcases eq_or_lt_of_le ht3 with h_eq | h_lt
-    · rw [h_eq, hep_3]
-      exact unitArc_neg_g_slitPlane_seg4 s hs_re H 3 le_rfl (by norm_num)
-    · exact unitArc_neg_g_slitPlane_after s hs_norm hs_re hs_im_pos t₀ ht₀_Ioo h_s_arc t
-        htt₀ (le_of_lt h_lt)
+    exact unitArc_neg_g_slitPlane_after s hs_norm hs_re hs_im_pos t₀ ht₀_Ioo h_s_arc t htt₀ ht3
   have hslit_seg4 : ∀ t ∈ Icc (3 : ℝ) 4, -(h₃ t) ∈ Complex.slitPlane := by
     intro t ht; exact unitArc_neg_g_slitPlane_seg4 s hs_re H t ht.1 ht.2
   have hslit_seg5 : ∀ t ∈ Icc (4 : ℝ) 5, -(h₅ t) ∈ Complex.slitPlane := by
-    intro t ⟨ht4, ht5⟩
-    have : -(fdBoundarySeg5H H t - s) ∈ Complex.slitPlane :=
-      unitArc_neg_g_slitPlane_seg5 s hs_norm H hH t
-    simpa [h₅]
+    exact fun t a => unitArc_neg_g_slitPlane_seg5 s hs_norm H hH t
   have piece₀ := ftc_log (by norm_num : (0 : ℝ) ≤ 1)
     ((continuous_fdBoundary_seg1_H H).sub continuous_const).continuousOn
     (fun t _ => (hd₀ t).differentiableAt)

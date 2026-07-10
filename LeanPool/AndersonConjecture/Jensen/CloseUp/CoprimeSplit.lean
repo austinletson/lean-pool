@@ -306,10 +306,7 @@ private def close_up_aux_b2_nonzero_proof
             rw [show s₁' = (insert a s'_div).image liftR₁' from rfl,
                 Finset.sum_image hinj₁]
             apply Finset.sum_congr rfl
-            intro x _
-            exact normalizedFactors_card_inclusion R S₁
-              ⟨hAext₁.le, hAext₁.primes_preserved, hAext₁.card_le⟩
-              hle₁ x
+            exact fun x a => normalizedFactors_card_inclusion R S₁ hAext₁ hle₁ x
           have hstrict : gcdComplexity (insert a s'_div) < gcdComplexity s :=
             gcdComplexity_div_prime_strict hs_insert hs'_def
               (by

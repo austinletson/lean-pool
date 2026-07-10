@@ -82,9 +82,7 @@ lemma bold_sigma_one_completeness {n} {φ : Semiformula ℒₒᵣ ξ n} (hp : Hi
     simp_all
   case hOr =>
     simp only [LogicalConnective.HomClass.map_or, LogicalConnective.Prop.or_eq]
-    rintro n φ ψ _ _ ihp ihq e (hp | hq)
-    · left; exact ihp hp
-    · right; exact ihq hq
+    exact fun n φ ψ a a_1 a_2 a_3 {e} a_4 => Or.imp a_2 a_3 a_4
   case hBall =>
     simp only [Semiformula.eval_ball, Nat.succ_eq_add_one, Semiformula.eval_operator₂,
       Semiterm.val_bvar, Matrix.cons_val_zero, Semiterm.val_bShift, Structure.LT.lt, val_numeral]

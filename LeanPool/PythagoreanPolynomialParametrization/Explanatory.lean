@@ -209,8 +209,7 @@ theorem single_intValued_parametrization_yields_finite_intPoly_parametrization
       ∀ (i : Fin k) (s : Fin n →₀ ℕ),
         (Int.cast (MvPolynomial.coeff s (P i)) : ℚ) =
           D_total * MvPolynomial.coeff s (F i) := by
-    intro i s
-    exact coeff_mapRange_scaled_rat (F i) D_total hf_map (hD_total_div i) s
+    exact fun i s => coeff_mapRange_scaled_rat (F i) D_total hf_map (hD_total_div i) s
   have hP_eval :
       ∀ (i : Fin k) (a : Fin n → ℤ),
         (eval a (P i) : ℚ) = D_total * eval (fun j => (a j : ℚ)) (F i) := by
@@ -241,10 +240,7 @@ theorem single_intValued_parametrization_yields_finite_intPoly_parametrization
       intro j
       have hnonneg : 0 ≤ a j % D_total := Int.emod_nonneg (a j) (by positivity)
       have hlt : a j % D_total < D_total := Int.emod_lt_of_pos (a j) (by positivity)
-      have htoNat : (a j % D_total).toNat = a j % D_total :=
-        Int.toNat_of_nonneg hnonneg
-      simp [r_nat]
-      omega
+      exact (Int.toNat_lt hnonneg).mpr hlt
     let r_fin : Fin n → Fin D_total := fun j => ⟨r_nat j, hr_nat j⟩
     let idx : Fin m := e.symm r_fin
     refine ⟨idx, b, ?_⟩
@@ -405,10 +401,7 @@ theorem integerValued_polynomial_ring_not_uniqueFactorization :
       rw [hp]
       have hwq : (1 : ℚ) = (z : ℚ) * (w : ℚ) := by
         exact_mod_cast hw
-      calc
-        (1 : RatPoly 1) = C (1 : ℚ) := by simp
-        _ = C ((z : ℚ) * (w : ℚ)) := by rw [hwq]
-        _ = C (z : ℚ) * C (w : ℚ) := by simp
+      exact Eq.symm (map_mul_eq_one C (id (Eq.symm hwq)))
   intro hUFM
   haveI := hUFM
   have hirr : Irreducible (2 : IntegerValuedPoly 1) := by
@@ -425,11 +418,9 @@ theorem integerValued_polynomial_ring_not_uniqueFactorization :
       have hprod_ne : (a.1 * c.1 : RatPoly 1) ≠ 0 := by
         simp_all
       have ha_ne : (a.1 : RatPoly 1) ≠ 0 := by
-        intro ha
-        exact hprod_ne (by simp [ha])
+        exact left_ne_zero_of_mul hprod_ne
       have hc_ne : (c.1 : RatPoly 1) ≠ 0 := by
-        intro hc
-        exact hprod_ne (by simp [hc])
+        exact (mul_ne_zero_iff_left ha_ne).mp hprod_ne
       have htd :=
         MvPolynomial.totalDegree_mul_of_isDomain
           (f := (a.1 : RatPoly 1)) (g := (c.1 : RatPoly 1)) ha_ne hc_ne
@@ -476,11 +467,7 @@ theorem integerValued_polynomial_ring_not_uniqueFactorization :
       have hIz : IsUnit za ∨ IsUnit zc := by
         have hp : Prime (2 : ℤ) := by norm_num
         exact hp.irreducible.isUnit_or_isUnit hintprod.symm
-      rcases hIz with hzaunit | hzcunit
-      · left
-        exact isUnit_of_val_C_int a za ha_const_z hzaunit
-      · right
-        exact isUnit_of_val_C_int c zc hc_const_z hzcunit
+      exact Or.imp (isUnit_of_val_C_int a za ha_const_z) (isUnit_of_val_C_int c zc hc_const_z) hIz
   exact hnotprime (UniqueFactorizationMonoid.irreducible_iff_prime.mp hirr)
 
 end LeanPool.PythagoreanPolynomialParametrization

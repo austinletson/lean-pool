@@ -477,8 +477,7 @@ lemma ift_gives_graph_impl₂ (f : E → ℝ) (μ : ℝ) (x₀ : E) (hμ : 0 < �
     have h : (↑(orthogonalProjectionOnto T (x - x₀)) : E) +
         ↑(orthogonalProjectionOnto N (x - x₀)) = x - x₀ :=
       T.starProjection_add_starProjection_orthogonal (x - x₀)
-    rw [h]
-    abel
+    exact add_eq_of_eq_sub' h
   have h_fwd_local :
       ∀ᶠ p in 𝓝 (0 : ↥T × ↥N), F p = F (0, 0) ↔ φ p.1 = p.2 := by
     rw [hφ_def]

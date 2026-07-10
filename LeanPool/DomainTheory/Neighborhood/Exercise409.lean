@@ -103,9 +103,7 @@ theorem bigPsi_least (V : NeighborhoodSystem α) (θ : (funSpace (funSpace V V) 
   -- conclude `fix ⊑ θ` pointwise via Theorem 4.1's minimality.
   apply (funSpaceEquiv (funSpace V V) V).le_iff_le.mp
   rw [funSpaceEquiv_apply, funSpaceEquiv_apply, toApproxMap_toFilter_fixMap, le_iff_toElementMap_le]
-  intro f
-  rw [fixMap_toElementMap]
-  exact fixElement_le_of_toElementMap_le (toApproxMap f) (hpre f)
+  exact fun x => fixMap_least V x (hpre x)
 
 /-- **Exercise 4.9 (Scott 1981, PRG-19).** `fix = fix(Ψ)`: `fix` is the least
 fixed point of `Ψ`,

@@ -175,8 +175,7 @@ theorem teleportation_correct (α β : ℂ) :
           = teleportInput α β := by
   constructor
   · exact teleportation_premeasurement α β
-  · intro a b
-    exact teleportation_correction_correct a b α β
+  · exact fun a b => teleportation_correction_correct a b α β
 
 /-- The proposition proved by one teleportation block. -/
 def TeleportationBlockCorrect (α β : ℂ) : Prop :=
@@ -241,8 +240,7 @@ theorem teleportation_componentwise_correct
       CommunicationProfile.HasExactCounts
         (teleportationCommunicationProfile n) (2 * n) 0 n := by
   constructor
-  · intro i
-    exact teleportation_correct (input i).1 (input i).2
+  · exact fun i => teleportation_correct_block (input i).1 (input i).2
   · exact teleportationCommunicationProfile_exact n
 
 /-- Global `n`-block teleportation theorem: Alice's `n` input qubits,

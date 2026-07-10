@@ -83,8 +83,7 @@ theorem existQuantify_mono {f g : BitString (k + m) → Bool}
     (h : ∀ z, f z = true → g z = true) {y : BitString m} :
     existQuantify f y = true → existQuantify g y = true := by
   simp only [existQuantify_eq_true]
-  rintro ⟨x, hx⟩
-  exact ⟨x, h _ hx⟩
+  exact fun a => Exists.imp (fun a => h (Fin.append a y)) a
 
 /-- Monotonicity for universal quantification. -/
 theorem forallQuantify_mono {f g : BitString (k + m) → Bool}

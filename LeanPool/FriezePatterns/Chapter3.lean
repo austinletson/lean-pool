@@ -100,8 +100,7 @@ def friezeToFlute (f : ℕ × ℕ → ℚ) (n m : ℕ) (hn : 2 ≤ n) [arith_fp 
           have h₄ : 0 ≤ (f (2,m+1)).num := by
             linarith [Rat.num_pos.mpr (@arith_fp.positive f n _ 2 (m+1) (by omega) (by omega))]
           zify; rw [Int.toNat_of_nonneg h₃, Int.toNat_of_nonneg h₄, this.num]
-        nth_rewrite 2 [← this.num.toNat]
-        simp                                              --finish if n=3, i_even
+        exact Dvd.intro (f (2, m + 1)).num.toNat this.num.toNat                                              --finish if n=3, i_even
       · have i_plus_one_even : (i+1)%2 = 0 := by omega
         simp only [n_eq_three, Nat.add_one_sub_one, i_plus_one_even, zero_add, Nat.add_mod_right]
         rw[@pattern_n.topBordOnes ℚ _ f n _ m]
@@ -179,8 +178,7 @@ def friezeToFlute (f : ℕ × ℕ → ℚ) (n m : ℕ) (hn : 2 ≤ n) [arith_fp 
       -- finish boundary' case if (i + 2) % (n - 1) = 0
       simp[continuant3.num.toNat]
     have i_plus_one_mod_n_sub_one_bd_below : 1 ≤ (i + 1) % (n - 1) := by
-        rw[Nat.one_le_iff_ne_zero]
-        simp[boundary]
+        exact Nat.one_le_iff_ne_zero.mpr boundary
     have i_mod_n_sub_one_bd_above : (i) % (n - 1) < (n - 1) := Nat.mod_lt (i) (by omega)
     -- These three feed some linarith's below, don't delete
     have i_plus_one_mod_n_sub_one_bd_above : (i + 1) % (n - 1) < (n - 1) :=
@@ -537,6 +535,5 @@ theorem main3 (n : ℕ) (hn : n ≠ 0) : ∃ (g : ℕ × ℕ → ℚ) (_ : arith
     have h : f (i,m) ≤ g b := by
       calc f (i,m) ≤ Nat.fib n := main1 n hn f hf (i,m)
       _ = g b := by rw [hb]
-    intro h'
-    linarith
+    exact fun a => Rat.le_antisymm h a
   · exact hb

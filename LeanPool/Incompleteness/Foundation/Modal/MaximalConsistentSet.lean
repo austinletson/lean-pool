@@ -309,17 +309,13 @@ lemma exists_consistent_maximal_of_consistent (T_consis : Consistent 𝓢 T)
         · intro φ hp; exact hUs hp;
         · assumption;
       contradiction;
-    · intro s a;
-      exact Set.subset_sUnion_of_mem a;
+    · exact fun s a => Set.subset_sUnion_of_mem a
   ) T T_consis;
   use Z;
   simp_all only [Set.mem_setOf_eq, Set.le_eq_subset, true_and];
   constructor;
   · assumption;
-  · intro U hU hZU;
-    apply Set.eq_of_subset_of_subset;
-    · exact h₃ hU hZU;
-    · assumption;
+  · exact fun U a a_1 => Set.Subset.antisymm (h₃ a a_1) a_1
 
 protected alias lindenbaum := exists_consistent_maximal_of_consistent
 
@@ -349,9 +345,7 @@ lemma maximal' (Ω : MaximalConsistentSet 𝓢) {φ : Formula α} (hp : φ ∉ �
   Ω.maximal (Set.ssubset_insert hp)
 
 lemma equality_def : Ω₁ = Ω₂ ↔ Ω₁.1 = Ω₂.1 := by
-  constructor;
-  · intro h; cases h; rfl;
-  · intro h; cases Ω₁; cases Ω₂; simp_all;
+  exact Subtype.ext_iff
 
 variable [DecidableEq α]
 
@@ -422,9 +416,7 @@ lemma iff_mem_neg : (∼φ ∈ Ω) ↔ (φ ∉ Ω) := by classical
   · intro hp;
     have : Consistent 𝓢 (insert (∼φ) Ω.1) := by
       haveI := provable_iff_insert_neg_not_consistent.not.mpr <| membership_iff.not.mp hp;
-      unfold FormulaSet.Inconsistent at this;
-      push Not at this;
-      exact this;
+      exact not_not_not.mp this
     have := not_imp_not.mpr (@maximal (Ω := Ω) (U := insert (∼φ) Ω.1)) (by simpa);
     have : insert (∼φ) Ω.1 ⊆ Ω.1 := by simpa [Set.ssubset_def] using this;
     apply this;
@@ -659,12 +651,7 @@ variable {Γ : List (Formula α)}
 omit [DecidableEq α] in
 lemma iff_mem_multibox_conj : (□^[n]⋀Γ ∈ Ω) ↔ (∀ φ ∈ Γ, □^[n]φ ∈ Ω) := by classical
   simp only [iff_mem_multibox, iff_mem_conj];
-  constructor;
-  · intro h φ hφ Ω' hΩ';
-    exact h hΩ' _ hφ;
-  · intro h Ω' hΩ' φ hφ;
-    apply h _ hφ;
-    tauto;
+  exact forall₂_comm
 
 omit [DecidableEq α] in
 lemma iff_mem_box_conj : (□⋀Γ ∈ Ω) ↔ (∀ φ ∈ Γ, □φ ∈ Ω) := by classical

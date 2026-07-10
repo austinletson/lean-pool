@@ -74,15 +74,11 @@ theorem map_move [DecidableEq V] [DecidableEq W]
       · have hsymm_u : iso.toEquiv.symm w ≠ u := by
           intro h
           exact hwu (by
-            calc
-              w = iso.toEquiv (iso.toEquiv.symm w) := by simp
-              _ = iso.toEquiv u := by rw [h])
+            exact (Equiv.symm_apply_eq iso.toEquiv).mp h)
         have hsymm_v : iso.toEquiv.symm w ≠ v := by
           intro h
           exact hwv (by
-            calc
-              w = iso.toEquiv (iso.toEquiv.symm w) := by simp
-              _ = iso.toEquiv v := by rw [h])
+            exact (Equiv.symm_apply_eq iso.toEquiv).mp h)
         simp [mapDistribution, Pebbling.moveDistribution, hwu, hwv, hsymm_u, hsymm_v]
 
 theorem map_reaches [DecidableEq V] [DecidableEq W]

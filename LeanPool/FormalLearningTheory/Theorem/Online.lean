@@ -221,8 +221,7 @@ private theorem ldim_strict_decrease_on_mistake {X : Type}
       | coe n => exact ⟨n, rfl⟩
   -- c x = !b (since c x ≠ b and Bool has exactly two values)
   have hcx_eq_notb : c x = !b := by
-    change c x = !(SOA X C).predict history x
-    cases hcx : c x <;> cases hbv : (SOA X C).predict history x <;> simp_all
+    exact Bool.eq_not.mpr hcx_ne_b
   -- Handle d = 0: Path B dissolves Γ₂₁ (M-CaseElimination)
   -- When Ldim(V)=0, all concepts agree → SOA predicts correctly → no mistake possible
   cases hd0 : d with

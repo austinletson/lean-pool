@@ -90,13 +90,11 @@ theorem integral_zpow_comp_sub_mul_deriv
         = (γ t - s) ^ n * ↑(deriv γ t) := by
       rw [show (n + 1 : ℤ) - 1 = n from by ring]
       rw [mul_assoc, mul_div_cancel_left₀ _ hn1_cast]
-    rw [← this]
-    exact h_div
+    exact HasDerivAt.congr_deriv h_div this
   have h_ftc := MeasureTheory.integral_eq_of_hasDerivAt_off_countable_of_le
     F f hab hE_count hF_cont hF_deriv h_int
   rw [h_ftc]
-  simp only [F]
-  rw [← sub_div]
+  exact div_sub_div_same ((γ b - s) ^ (n + 1)) ((γ a - s) ^ (n + 1)) ↑(n + 1)
 
 /-! ## L2: Exit times and direction convergence
 

@@ -26,14 +26,12 @@ variable {C : Type u} [Category.{v} C]
 /- The right orthogonal complement of a class of morphisms W in a category C -/
 /-- Imported FactorizationSystems declaration. -/
 def rightOrthogonalComplement : (W : MorphismProperty C) → MorphismProperty C := by
-  intro W _ _ f
-  exact ∀ ⦃A B : C ⦄ (g : A ⟶ B) (p : W g) , (homOrthogonal g f)
+  exact fun W => W.isoClosure
 
 /- The left orthogonal complement of a class of morphisms W in a category C-/
 /-- Imported FactorizationSystems declaration. -/
 def leftOrthogonalComplement : (W : MorphismProperty C) → MorphismProperty C := by
-  intro W _ _ f
-  exact ∀ ⦃A B : C⦄ (g : A ⟶ B) (p : W g) , (homOrthogonal f g)
+  exact fun W => rightOrthogonalComplement W
 
 namespace Arrow
 

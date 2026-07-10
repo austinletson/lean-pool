@@ -71,9 +71,7 @@ theorem isomorphic_ring_div {R' : Type*} [Ring R'] (f : R ≃+* R') (h_div : IsD
   obtain ⟨a, rfl⟩ : ∃ a : R, f a = x' := ⟨f.symm x', f.right_inv x'⟩
   obtain ⟨b, hb1, hb2⟩ := h_div.2 a ((RingEquiv.map_ne_zero_iff f).mp hx')
   refine ⟨f b, ?_, ?_⟩
-  · rw [map_mul_eq_one]
-    exact hb1
-  · rw [map_mul_eq_one]
-    exact hb2
+  · exact map_mul_eq_one f hb1
+  · exact map_mul_eq_one f hb2
 
 end LeanPool.ArtinWedderburn

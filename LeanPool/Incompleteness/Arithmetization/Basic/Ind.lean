@@ -25,8 +25,7 @@ lemma mem_iOpen_of_qfree {φ : Semiformula ℒₒᵣ ℕ 1} (hp : φ.Open) :
 
 lemma indScheme_subset (h : ∀ {φ : Semiformula ℒₒᵣ ℕ 1}, C φ → C' φ) :
     indScheme ℒₒᵣ C ⊆ indScheme ℒₒᵣ C' := by
-  rintro _ ⟨φ, hp, rfl⟩
-  exact ⟨φ, h hp, rfl⟩
+  exact Theory.indScheme_subset h
 
 lemma iSigma_subset_mono {s₁ s₂} (h : s₁ ≤ s₂) : 𝐈Sg s₁ ⊆ 𝐈Sg s₂ :=
   Set.union_subset_union_right _ (indScheme_subset (fun H ↦ H.mono h))

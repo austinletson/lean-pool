@@ -122,8 +122,7 @@ theorem ClosedCurvesHomotopicAvoiding.toPiecewise
   obtain ⟨H, hcont, hH0, hH1, hclosed, havoid, hdiff, hderiv_cont⟩ := h
   refine ⟨H, hcont, hH0, hH1, hclosed, havoid, ?_, ?_, ?_⟩
   · simp_all
-  · intro p₁ p₂ _hp _hvac _hI
-    exact hderiv_cont.continuousOn.mono (Set.subset_univ _)
+  · exact fun p₁ p₂ a_1 a_2 a => Continuous.continuousOn hderiv_cont
   · have hK : IsCompact (Set.Icc a b ×ˢ Set.Icc (0 : ℝ) 1) :=
       isCompact_Icc.prod isCompact_Icc
     have hf_cont : Continuous (fun p : ℝ × ℝ => ‖deriv (fun t' => H (t', p.2)) p.1‖) :=
@@ -543,8 +542,7 @@ private lemma gFunc_constant_smooth
       (hF_hasDerivAt t ht).neg.cexp).deriv.trans (by
       have := sub_ne_zero.mpr (hγ_avoid t (Ioo_subset_Icc_self ht)); field_simp; ring)
   have h_Ioo_mem : Ioo a b ∈ nhdsWithin a (Ioi a) := by
-    rw [mem_nhdsWithin]
-    exact ⟨Iio b, isOpen_Iio, mem_Iio.mpr hab, fun x ⟨hxb, hxa⟩ => ⟨hxa, hxb⟩⟩
+    exact Ioo_mem_nhdsGT hab
   have hG_deriv_right : ∀ t ∈ Ico a b, HasDerivWithinAt G 0 (Ici t) t := by
     intro t ht
     by_cases ha_eq : t = a

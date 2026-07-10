@@ -67,15 +67,7 @@ open CategoryTheory TopologicalSpace Abelian Limits Opposite
 
 instance : HasSeparator AddCommGrpCat.{u} where
   hasSeparator := by
-    use AddCommGrpCat.of (ULift ℤ)
-    intro A B f g h
-    simp_all only [ObjectProperty.singleton_iff, AddCommGrpCat.ext_iff,
-      AddCommGrpCat.hom_comp, AddMonoidHom.coe_comp, Function.comp_apply, forall_eq',
-      ULift.forall]
-    intro x
-    specialize h (AddCommGrpCat.ofHom
-      (AddMonoidHom.mk' (fun y ↦ y • x) fun y z ↦ by simp only [add_smul])) 1
-    aesop
+    exact HasSeparator.hasSeparator
 
 instance : IsGrothendieckAbelian.{u} AddCommGrpCat.{u} where
 
@@ -166,35 +158,7 @@ private lemma extClass_naturality {S₁ S₂ : ShortComplex C'} (hS₁ : S₁.Sh
     (hS₂ : S₂.ShortExact) (φ : S₁ ⟶ S₂) :
     (Ext.mk₀ φ.τ₃).comp hS₂.extClass (zero_add 1) =
     hS₁.extClass.comp (Ext.mk₀ φ.τ₁) (add_zero 1) := by
-  letI := HasDerivedCategory.standard C'
-  ext
-  simp only [Ext.comp_hom, Ext.mk₀_hom, ShortComplex.ShortExact.extClass_hom]
-  rw [ShiftedHom.mk₀_comp, ShiftedHom.comp_mk₀]
-  have comm₂ : hS₁.singleTriangle.mor₂ ≫ (DerivedCategory.singleFunctor C' 0).map φ.τ₃ =
-      (DerivedCategory.singleFunctor C' 0).map φ.τ₂ ≫ hS₂.singleTriangle.mor₂ := by
-    change (DerivedCategory.singleFunctor C' 0).map S₁.g ≫
-      (DerivedCategory.singleFunctor C' 0).map φ.τ₃ =
-      (DerivedCategory.singleFunctor C' 0).map φ.τ₂ ≫
-      (DerivedCategory.singleFunctor C' 0).map S₂.g
-    simp [← Functor.map_comp, φ.comm₂₃]
-  obtain ⟨a', ha₁, ha₃⟩ := Pretriangulated.complete_distinguished_triangle_morphism₁
-    hS₁.singleTriangle hS₂.singleTriangle
-    hS₁.singleTriangle_distinguished hS₂.singleTriangle_distinguished
-    ((DerivedCategory.singleFunctor C' 0).map φ.τ₂)
-    ((DerivedCategory.singleFunctor C' 0).map φ.τ₃) comm₂
-  simp only [ShortComplex.ShortExact.singleTriangle_mor₃] at ha₃
-  have ha' : a' = (DerivedCategory.singleFunctor C' 0).map φ.τ₁ := by
-    obtain ⟨a'', rfl⟩ := (DerivedCategory.singleFunctor C' 0).map_surjective a'
-    congr 1
-    have h : S₁.f ≫ φ.τ₂ = a'' ≫ S₂.f := by
-      have := ha₁
-      simp only [ShortComplex.ShortExact.singleTriangle_mor₁] at this
-      exact (DerivedCategory.singleFunctor C' 0).map_injective <| by
-        rwa [Functor.map_comp, Functor.map_comp]
-    haveI : Mono S₂.f := hS₂.mono_f
-    exact (cancel_mono S₂.f).mp (by rw [← φ.comm₁₂.symm, h])
-  rw [ha'] at ha₃
-  exact ha₃.symm
+  exact Eq.symm (ShortComplex.ShortExact.extClass_naturality hS₁ hS₂ φ)
 
 /-- Internal helper: if `Y` is zero in an abelian category, `Ext X Y n` is subsingleton
     for all `X`, `n`.
@@ -291,11 +255,7 @@ private theorem stalkFunctor_map_f_mono {X : TopCat.{u}}
     (J := Opens.grothendieckTopology X) (D := AddCommGrpCat.{u}) S.f).2
     ((Sheaf.Hom.mono_iff_presheaf_mono
       (J := Opens.grothendieckTopology X) (D := AddCommGrpCat.{u}) S.f).1 hS.mono_f)
-  haveI := TopCat.Presheaf.stalkFunctor_preserves_mono (C := AddCommGrpCat.{u}) (X := X) x
-  exact show Mono ((TopCat.Sheaf.forget AddCommGrpCat.{u} X ⋙
-    TopCat.Presheaf.stalkFunctor AddCommGrpCat.{u} x).map S.f) from
-    Functor.map_mono (TopCat.Sheaf.forget AddCommGrpCat.{u} X ⋙
-      TopCat.Presheaf.stalkFunctor AddCommGrpCat.{u} x) S.f
+  exact TopCat.Presheaf.stalk_mono_of_mono S.f x
 
 /-- In a short exact sequence `X₁ → X₂ → X₃`, if the stalk map of `g` at `x` is an
 isomorphism, then the stalk of `X₁` at `x` vanishes. -/
@@ -541,9 +501,7 @@ theorem sheafH_subsingleton_of_injective
     [HasSheafify J AddCommGrpCat.{w}] [HasExt.{w'} (Sheaf J AddCommGrpCat.{w})]
     (I : Sheaf J AddCommGrpCat.{w}) [Injective I] (n : ℕ) :
     Subsingleton (Sheaf.H I (n + 1)) := by
-  simpa [Sheaf.H] using
-    (Ext.subsingleton_of_injective
-      ((constantSheaf J AddCommGrpCat.{w}).obj (AddCommGrpCat.of (ULift.{w} ℤ))) I n)
+  exact Sheaf.instSubsingletonHHAddNatOfNat I
 
 /-- `H¹` vanishing criterion with injective middle term. -/
 theorem sheafH_subsingleton_H1_of_injective_of_epi_app_top {X : TopCat.{u}}
@@ -606,8 +564,7 @@ theorem sheafH_dimension_shift_X₃_of_locallySurjective {X : TopCat.{u}}
   letI : Balanced (CategoryTheory.Sheaf (Opens.grothendieckTopology X)
       AddCommGrpCat.{u}) := balanced_of_strongEpiCategory
   haveI : Epi f := by
-    rw [← TopCat.Sheaf.isLocallySurjective_iff_epi f]
-    simpa using hf
+    exact (TopCat.Sheaf.isLocallySurjective_iff_epi f).mp hf
   let S := ShortComplex.mk (kernel.ι f) f (kernel.condition f)
   have hS : S.ShortExact := ShortComplex.ShortExact.mk'
     (ShortComplex.exact_of_f_is_kernel _ (kernelIsKernel f)) inferInstance inferInstance
@@ -704,9 +661,7 @@ theorem sheafH1_cokernel_iso_of_subsingleton_middle_natural {X : TopCat.{u}}
       ((((sheafH0EquivSections S₁.X₃).symm s).comp hS₁.extClass rfl).comp
         (Ext.mk₀ φ.τ₁) (add_zero 1))
   rw [← hs]
-  simpa using
-    (sheafH_comp_extClass_naturality hS₁ hS₂ φ 0
-      ((sheafH0EquivSections S₁.X₃).symm s)).symm
+  exact Eq.symm (sheafH_comp_extClass_naturality hS₁ hS₂ φ 0 ((sheafH0EquivSections S₁.X₃).symm s))
 
 /-- The degree-`0` sheaf cohomology functor is naturally isomorphic to taking sections on `⊤`. -/
 noncomputable def sheafH0NatIsoSections {X : TopCat.{u}} :

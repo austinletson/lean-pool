@@ -172,9 +172,7 @@ private def close_up_aux_factor_intersection_large_proof
           rw [show s₁' = (insert a rest'2).image liftR₁' from rfl,
               Finset.sum_image hinj₁]
           apply Finset.sum_congr rfl
-          intro x _
-          exact normalizedFactors_card_inclusion R S₁
-            ⟨hAext₁.le, hAext₁.primes_preserved, hAext₁.card_le⟩ hle₁ x
+          exact fun x a => normalizedFactors_card_inclusion R S₁ hAext₁ hle₁ x
         have hstrict : gcdComplexity (insert a rest'2) < gcdComplexity (insert a rest) := by
           letI : NormalizationMonoid R.carrier :=
             UniqueFactorizationMonoid.normalizationMonoid

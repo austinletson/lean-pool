@@ -136,8 +136,7 @@ private lemma not_acyclic_of_cycle_witness
     have hv_eq : p ⟨iv.val + (k.val + 1) % (m - iv.val), h_bnd (k.val + 1)⟩ = v := by
       have : (⟨iv.val + (k.val + 1) % (m - iv.val), h_bnd (k.val + 1)⟩ : Fin m) = iv := by
         apply Fin.ext
-        change iv.val + (k.val + 1) % (m - iv.val) = iv.val
-        rw [h_next]; rfl
+        exact Nat.add_eq_left.mpr h_next
       rw [this, hpv]
     change G.Adj (p ⟨iv.val + k.val % (m - iv.val), h_bnd k.val⟩)
                (p ⟨iv.val + (k.val + 1) % (m - iv.val), h_bnd (k.val + 1)⟩)
@@ -262,8 +261,7 @@ lemma depth_le_image_card (G : Digraph V)
           Finset.univ.image ℓ := by
       intro x hx
       simp only [Finset.mem_image, Finset.mem_univ, true_and] at hx ⊢
-      obtain ⟨i, hi⟩ := hx
-      exact ⟨p i, hi⟩
+      exact Exists.imp' p (fun a a_1 => a_1) hx
     have hcard :
         ((Finset.univ : Finset (Fin m)).image (fun i => ℓ (p i))).card = m := by
       rw [Finset.card_image_of_injective _ hinj, Finset.card_univ, Fintype.card_fin]
@@ -418,8 +416,7 @@ private lemma exists_r_subset_sum_le
       have h_rhs_expand :
           r * (∑ i ∈ s', a i + a jmax) = r * (∑ i ∈ s', a i) + r * a jmax := by ring
       rw [h_lhs_expand, h_rhs_expand]
-      have hih_step : n' * (∑ i ∈ I, a i) ≤ r * (∑ i ∈ s', a i) := hI_le
-      omega
+      exact Nat.add_le_add hI_le hsumI_le
 
 /-- **Averaging.** There is a choice of `r` levels whose total edge
 count is at most `r * S / k` (equivalently, `k * total ≤ r * S`). -/

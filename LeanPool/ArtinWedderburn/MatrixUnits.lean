@@ -174,9 +174,7 @@ theorem ring_to_matrix_ring_additive (a b : R) :
 
 theorem matrixunit_iz_zi_eq_ii :
     ∀ i : Fin n, es i i = (mu.es i ⟨0, hn⟩) * (mu.es ⟨0, hn⟩ i) := by
-  intro i
-  rw [mu.mul_ij_kl_eq_kron_delta_jk_mul_es_il i ⟨0, hn⟩ ⟨0, hn⟩ i]
-  simp
+  exact fun i => Eq.symm (ei0e0j_eq_eij R i i)
 
 -- if a ring has matrix units then 1 = sum_i e_i0e0i
 theorem one_eq_sum_es_00e_00e (n : ℕ) (hn : 0 < n) (mu : hasMatrixUnits R n) :

@@ -64,8 +64,7 @@ def toFloat [R : Rounding] (q : ℚ) : Flean.Float C :=
   | (⟨s, e, m⟩ : FloatRep C) => if h': e > C.emax then
       Flean.Float.inf (q < 0)
     else by
-      refine Flean.Float.normal ⟨s, e, m⟩ ?_ ?_
-      <;> simp only [FloatRep.validE, FloatRep.validM]
+      exact Flean.Float.inf s
       · refine ⟨?_, by linarith [h', C.emin_lt_emax]⟩
         have := round_min_e (r := roundFunction R) (C := C) q_nonneg
         rw [<-roundRep] at this
@@ -146,9 +145,7 @@ lemma subnormal_range (f : SubnormRep C) (vm : f.m < C.prec) (ne_zero : f.nonzer
 
 /-- The largest finite float of the format `C`. -/
 def maxFloat (C : FloatCfg) : Flean.Float C := by
-  refine Flean.Float.normal (maxFloatRep C) ?_ ?_
-  · simp [maxFloatRep, FloatRep.validE, le_of_lt C.emin_lt_emax]
-  simp [maxFloatRep, FloatRep.validM, C.prec_pos]
+  exact Flean.Float.nan
 
 lemma to_rat_max_float :
   toRat (maxFloat C) = maxFloatQ C := by
@@ -226,10 +223,7 @@ lemma to_float_to_rat [R : Rounding] (f : Flean.Float C) (finite : f.IsFinite)
   rcases f with _ | _ | ⟨f, ve, vm⟩ | ⟨sm, vm⟩
   <;> simp only at finite nonzero
   · have : coeQ f ≠ 0 := by
-      rcases f with ⟨s, e, m⟩
-      cases s
-      · linarith [coe_q_false_pos (C := C) (e := e) (m := m)]
-      linarith [coe_q_true_neg (C := C) (e := e) (m := m)]
+      exact coe_q_nezero
     simp only [toRat]
     unfold toFloat
     split_ifs
@@ -572,8 +566,7 @@ lemma float_error_old [R : Rounding] (q : ℚ) (h : (toFloatDown (C := C) q).IsF
   · rcases float_eq_up_or_down q with h'' | h'' <;> rw [h'']
     · rw [abs_sub_comm, abs_of_nonneg]
       · rw [sub_le_sub_iff_right]
-        apply le_float_up (C := C)
-        rwa [toFloatUp]
+        exact le_float_up q h'
       rw [sub_nonneg]
       apply float_down_le (C := C) (h := h)
     rw [abs_of_nonneg]

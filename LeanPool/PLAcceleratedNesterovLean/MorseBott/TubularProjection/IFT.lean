@@ -466,8 +466,7 @@ lemma tubularProj_contDiffAt_S {S U : Set E}
   have h_ift_uniq :
       ∀ᶠ p in 𝓝 (0, (0 : V)),
         optimalityEqn φ m p = optimalityEqn φ m (0, (0 : V)) ↔ v_impl p.1 = p.2 := by
-    rw [hv_impl_def]
-    exact hF_cda.eventually_apply_eq_iff_implicitFunction one_ne_zero hF_partial_inv
+    exact ContDiffAt.eventually_apply_eq_iff_implicitFunction hF_cda one_ne_zero hF_partial_inv
   -- Pull back through h_tend_pair
   have h_uniq_pulled := h_tend_pair.eventually h_ift_uniq
   -- For y near m with y ∈ U, π(y) in chart: F(y−m, w_y) = 0

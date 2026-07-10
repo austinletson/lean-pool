@@ -437,8 +437,7 @@ private theorem explicitPhaseOptimizedDistanceSq_attained
   have hobjective :
       ∀ θ : UnitPhase,
         explicitGaussianL2DistanceSq P (fun z => θ.1 * Q z) = objective θ := by
-    intro θ
-    exact explicitGaussianL2DistanceSq_phase_eq_l2_norm_sq P Q hP hQ θ
+    exact fun θ => explicitGaussianL2DistanceSq_phase_eq_l2_norm_sq P Q hP hQ θ
   refine ⟨θ₀.1, θ₀.2, ?_⟩
   have hbdd :
       BddBelow (Set.range fun θ : UnitPhase =>
@@ -574,14 +573,10 @@ private theorem explicitPhaseOptimized_bound_of_l2_closure
     have hQn_mem : MeasureTheory.MemLp (Qn n) 2 (explicitGamma d) :=
       memLp_of_explicitHermitePoly hd (hQn_poly n)
     have hθQ_mem : MeasureTheory.MemLp (fun z => θ * Q z) 2 (explicitGamma d) := by
-      refine MeasureTheory.MemLp.ae_eq ?_ (hQ_mem.const_smul θ)
-      filter_upwards with z
-      simp only [Pi.smul_apply, smul_eq_mul]
+      exact MeasureTheory.MemLp.const_mul' hQ_mem θ
     have hθQn_mem :
         MeasureTheory.MemLp (fun z => θ * Qn n z) 2 (explicitGamma d) := by
-      refine MeasureTheory.MemLp.ae_eq ?_ (hQn_mem.const_smul θ)
-      filter_upwards with z
-      simp only [Pi.smul_apply, smul_eq_mul]
+      exact MeasureTheory.MemLp.const_mul' hQn_mem θ
     have hPQθ_mem : MeasureTheory.MemLp (fun z => P z - θ * Q z) 2
         (explicitGamma d) :=
       hP_mem.sub hθQ_mem
@@ -720,18 +715,7 @@ private theorem explicitPhaseOptimized_bound_of_l2_closure
         have hsqrtM_nonneg : 0 ≤ Real.sqrt M := Real.sqrt_nonneg _
         dsimp [B]
         nlinarith [hC_P_pos, hδ_nonneg, hsqrtM_nonneg]
-      have hg_nonneg :
-          0 ≤ explicitGaussianL2DistanceSq P (fun z => θ * Q z) :=
-        explicitGaussianL2DistanceSq_nonneg P (fun z => θ * Q z)
-      have habs :
-          |Real.sqrt (explicitGaussianL2DistanceSq P (fun z => θ * Q z))| ≤ |B| := by
-        simpa [abs_of_nonneg (Real.sqrt_nonneg _), abs_of_nonneg hB_nonneg, B]
-          using hsqrt_total
-      have hsquares :
-          Real.sqrt (explicitGaussianL2DistanceSq P (fun z => θ * Q z)) ^ 2 ≤
-            B ^ 2 :=
-        (sq_le_sq).2 habs
-      simpa [B, Real.sq_sqrt hg_nonneg] using hsquares
+      exact (Real.sqrt_le_left hB_nonneg).mp hsqrt_total
     exact hphase_inf.trans htarget_sq
   have hlim_rhs :
       Filter.Tendsto

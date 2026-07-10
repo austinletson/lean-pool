@@ -61,12 +61,9 @@ structure MonotoneMetricFamily : Type _ where
 noncomputable def fisherMetricFamily : MonotoneMetricFamily where
   g := fun {α} _ => fisherBilin
   symm := by
-    intro α _ p u v
-    exact fisherBilin.comm (p := p) u v
+    exact fun {α} [Fintype α] p u v => fisherBilin.comm p u v
   pos := by
-    intro α _ p u hu
-    exact fisherBilin.pos (p := p) u hu
+    exact fun {α} [Fintype α] p u a => fisherBilin.pos p u a
   monotone := by
-    intro α β _ _ κ p u
-    exact fisherBilin_pushforward_le_of_markovMorphism (κ := κ) p u
+    exact fun {α β} [Fintype α] [Fintype β] κ p u => fisherBilin_pushforward_le_of_markovMorphism κ p u
 end LeanPool.CencovPetz

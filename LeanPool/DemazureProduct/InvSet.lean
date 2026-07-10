@@ -306,8 +306,7 @@ private lemma finsum_sigmaIndicator (m_le_n : m ≤ n) :
   let U := Finset.Ico m n ∪
     (asps.inset m ∪ (asps.outset m ∪ (asps.inset n ∪ asps.outset n)))
   have hIco : Finset.Ico m n ⊆ U := by
-    intro k hk
-    simp only [Finset.mem_union, hk, Set.Finite.mem_toFinset, Set.mem_setOf_eq, true_or, U]
+    exact Finset.subset_union_left
   have hin_m : asps.inset m ⊆ U := by
     intro k hk
     simp only [Finset.mem_union, Finset.mem_Ico, hk, Set.Finite.mem_toFinset,
@@ -350,11 +349,9 @@ private lemma finsum_postIndicator :
   -- Proof written by GPT 5.5.
   let U := asps.post_Ico m n ∪ asps.post_Ico n m
   have hmn : asps.post_Ico m n ⊆ U := by
-    intro k hk
-    simp only [U, Finset.mem_union, hk, true_or]
+    exact Finset.subset_union_left
   have hnm : asps.post_Ico n m ⊆ U := by
-    intro k hk
-    simp only [U, Finset.mem_union, hk, or_true]
+    exact Finset.subset_union_right
   rw [finsum_eq_sum_of_support_subset
     (f := fun k : ℤ => postIndicator asps m n k) (s := U)]
   · calc

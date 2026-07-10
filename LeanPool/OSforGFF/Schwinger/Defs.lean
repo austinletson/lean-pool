@@ -126,8 +126,7 @@ lemma CovarianceBilinear_of_integrable
   have hint₃ : Integrable (fun ω => u₁ ω * u₂ ω) dμ_config.toMeasure := by simpa using h_int φ₁ φ₂
   have hlin : ∫ ω, c • (u₁ ω * v ω) ∂dμ_config.toMeasure
               = c • ∫ ω, u₁ ω * v ω ∂dμ_config.toMeasure := by
-    simpa using (integral_smul (μ := dμ_config.toMeasure)
-      (f := fun ω => u₁ ω * v ω) c)
+    exact integral_smul c fun a => u₁ a * v a
   -- 1) Scalar multiplication in the first argument
   have h_smul_left_integrand :
       (fun ω => distributionPairingℂReal ω (c • φ₁) * distributionPairingℂReal ω ψ)
@@ -212,8 +211,7 @@ lemma CovarianceBilinear_of_integrable
     ring
   have hsum_right : ∫ ω, (u₁ ω * v ω + u₁ ω * u₂ ω) ∂dμ_config.toMeasure
       = ∫ ω, u₁ ω * v ω ∂dμ_config.toMeasure + ∫ ω, u₁ ω * u₂ ω ∂dμ_config.toMeasure := by
-    have hint₁₂ : Integrable (fun ω => u₁ ω * u₂ ω) dμ_config.toMeasure := hint₃
-    simpa using (integral_add (hf := hint₁) (hg := hint₁₂))
+    exact integral_add (h_int φ₁ ψ) (h_int φ₁ φ₂)
   have h4 :
       SchwingerFunctionℂ₂ dμ_config φ₁ (ψ + φ₂)
         = SchwingerFunctionℂ₂ dμ_config φ₁ ψ + SchwingerFunctionℂ₂ dμ_config φ₁ φ₂ := by

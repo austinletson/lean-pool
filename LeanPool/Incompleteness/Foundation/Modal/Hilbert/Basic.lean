@@ -148,8 +148,7 @@ lemma weakerThan_of_dominate_axioms (hMaxm : ∀ {φ : Formula α}, φ ∈ H₁.
     H₁ wkn H₂ := by
   apply weakerThan_of_dominate_axiomInstances;
   rintro φ ⟨ψ, hψ, ⟨s, rfl⟩⟩;
-  apply subst!;
-  apply hMaxm hψ;
+  exact subst! s (hMaxm hψ)
 
 end Hilbert
 

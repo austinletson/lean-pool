@@ -211,8 +211,7 @@ lemma Apos_ratio_logb_close
       |ratioA - ratioL|
         ≤ (((m + 1 : ℕ) : ℝ) / nR) - ((m : ℝ) / nR) :=
     abs_sub_le_of_mem_interval hA_left hA_right hL_left hL_right
-  have habs' : |ratioA - ratioL| ≤ 1 / nR := habs.trans_eq hwidth
-  simpa [ratioA, ratioL, nR] using habs'
+  exact le_of_le_of_eq habs hwidth
 
 lemma Apos_ratio_eq_logb
     (H : {α : Type} → [Fintype α] → ProbDist α → ℝ)

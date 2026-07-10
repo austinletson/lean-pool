@@ -413,8 +413,7 @@ lemma _root_.IsCentralSimple.TensorProduct.map_comap_le_span_of_isSimple_isCentr
           exact Finset.sum_attach _ _ |>.symm
       _ = 𝒜 i₀ ⊗ₜ[K] 1 + ∑ i ∈ (s.erase i₀).attach, 𝒜 i ⊗ₜ[K] algebraMap _ _ (k i.1 i.2) := by
           congr 1
-          refine Finset.sum_congr rfl fun i _ => ?_
-          rw [hk i.1 i.2]
+          exact Eq.symm (Finset.sum_congr rfl fun x a => congrArg (TensorProduct.tmul K (𝒜 ↑x)) (hk (↑x) x.property))
       _ = 𝒜 i₀ ⊗ₜ[K] 1 +  ∑ i ∈ (s.erase i₀).attach, 𝒜 i ⊗ₜ[K] (k i.1 i.2 • (1 : B) : B) := by
           congr 1
           refine Finset.sum_congr rfl fun i _ => ?_

@@ -122,15 +122,12 @@ lemma dedekindEtaFun'_ne_zero (z : ℍ) : η z ≠ 0 := by
 
 lemma logDeriv_one_sub_cexp (r : ℂ) : logDeriv (fun z ↦ 1 - r * cexp z) =
     fun z ↦ -r * cexp z / (1 - r * cexp ( z)) := by
-  ext z
-  simp [logDeriv]
+  exact logDeriv_one_sub_exp r
 
 lemma logDeriv_one_sub_mul_cexp_comp (r : ℂ) {g : ℂ → ℂ} (hg : Differentiable ℂ g) :
     logDeriv ((fun z ↦ 1 - r * cexp z) ∘ g) =
     fun z ↦ -r * (deriv g z) * cexp (g z) / (1 - r * cexp (g z)) := by
-  ext y
-  rw [logDeriv_comp (by fun_prop) (hg y), logDeriv_one_sub_exp]
-  ring
+  exact logDeriv_one_sub_exp_comp r g hg
 
 
 theorem one_add_eta_logDeriv_eq (z : ℂ) (i : ℕ) :
@@ -286,17 +283,7 @@ lemma eta_logDeriv_eql' (z : ℍ) : (logDeriv (η ∘ (fun z : ℂ => -1/z))) z 
     · rw [mul_comm]
   · simp only [csqrt, one_div, ne_eq, Complex.exp_ne_zero, not_false_eq_true]
   · apply dedekindEtaFun'_ne_zero z
-  · unfold csqrt
-    rw [show (fun a ↦ cexp (1 / 2 * Complex.log a)) = cexp ∘ (fun a ↦ 1 / 2 * Complex.log a) by rfl]
-    apply DifferentiableAt.comp
-    · simp
-    · apply DifferentiableAt.const_mul
-      apply Complex.differentiableAt_log
-      rw [@mem_slitPlane_iff]
-      right
-      have hz := z.2
-      simp only [coe_im] at hz
-      exact Ne.symm (ne_of_lt hz)
+  · exact csqrt_differentiableAt z
   · apply eta_DifferentiableAt_UpperHalfPlane' z
 
 lemma eta_logderivs' : {z : ℂ | 0 < z.im}.EqOn (logDeriv (η ∘ (fun z : ℂ => -1/z)))

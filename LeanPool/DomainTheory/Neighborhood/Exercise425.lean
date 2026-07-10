@@ -122,10 +122,7 @@ theorem nestedOrDisjoint : NestedOrDisjoint memC1 := by
     · exact Or.inr (Or.inl h)
     · exact Or.inl h
     · exact Or.inr (Or.inr (by rw [Set.inter_comm]; exact h))
-  · rcases singleton_tail_nd m n with h | h | h
-    · exact Or.inl h
-    · exact Or.inr (Or.inl h)
-    · exact Or.inr (Or.inr h)
+  · exact singleton_tail_nd m n
   · by_cases h : n = m
     · subst h; exact Or.inl (Set.Subset.refl _)
     · simp_all

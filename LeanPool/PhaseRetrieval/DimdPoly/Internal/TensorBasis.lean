@@ -147,8 +147,7 @@ private theorem Phi_eq_PhiKappaAlpha
     Phi kappa alpha z = Hermite1DimdLEAN.PhiKappaAlpha kappa alpha z := by
   unfold Phi Hermite1DimdLEAN.PhiKappaAlpha
   refine Finset.prod_congr rfl ?_
-  intro q hq
-  exact phi1D_eq_oneDimPhi (kappa q) (alpha q) (z q)
+  exact fun x a => phi1D_eq_oneDimPhi (kappa x) (alpha x) (z x)
 
 private lemma oneDimPhi_phaseLaw
     (k n : Nat) (t : ℝ) (z : ℂ) :
@@ -446,8 +445,7 @@ theorem summable_sq_Phi_eval
     symm
     rw [Finset.prod_univ_sum]
     refine Finset.sum_congr rfl ?_
-    intro alpha halpha
-    exact (Phi_norm_sq_eq_prod kappa alpha z).symm
+    exact fun x a => Eq.symm (Phi_norm_sq_eq_prod kappa x z)
   have hprod_le :
       Finset.prod Finset.univ
           (fun q : Fin d =>
@@ -778,8 +776,7 @@ theorem PhiL2_orthonormal_family
     Orthonormal ℂ (fun alpha : Idx d => PhiL2 kappa alpha) := by
   classical
   rw [orthonormal_iff_ite]
-  intro alpha beta
-  exact PhiL2_orthonormal hd kappa alpha beta
+  exact fun i j => PhiL2_orthonormal hd kappa i j
 
 theorem summable_PhiL2_coeff_smul
     {d : Nat} (hd : 0 < d) (kappa : MultiIndex d) (U : Skappa d kappa) :
@@ -928,17 +925,7 @@ private lemma summable_nat_pow_mul_pow_div_factorial_nonneg
                   ((m + 1 : ℝ) ^ m * (((n + m).descFactorial m : ℕ) : ℝ)) *
                     x ^ (n + m) := mul_le_mul_of_nonneg_right hpow_real (pow_nonneg hx _)
             have hfacpos : 0 < (Nat.factorial (n + m) : ℝ) := by positivity
-            rw [div_le_iff₀ hfacpos]
-            calc
-              ((n + m + 1 : ℝ) ^ m) * x ^ (n + m) ≤
-                  ((m + 1 : ℝ) ^ m * (((n + m).descFactorial m : ℕ) : ℝ)) *
-                    x ^ (n + m) := hpowx
-              _ =
-                  ((((m + 1 : ℝ) ^ m) * (((n + m).descFactorial m : ℕ) : ℝ) *
-                      x ^ (n + m)) / (Nat.factorial (n + m) : ℝ)) *
-                    (Nat.factorial (n + m) : ℝ) := by
-                    have hfacne : (Nat.factorial (n + m) : ℝ) ≠ 0 := by positivity
-                    field_simp [hfacne]
+            exact (div_le_div_iff_of_pos_right hfacpos).mpr hpowx
       _ = ((m + 1 : ℝ) ^ m * x ^ m) * (x ^ n / (Nat.factorial n : ℝ)) := hcalc
   · simpa [pow_add, mul_assoc, mul_left_comm, mul_comm] using
       (Real.summable_pow_div_factorial x).mul_left ((m + 1 : ℝ) ^ m * x ^ m)
@@ -1104,8 +1091,7 @@ private lemma phiMajorant_multi_sq_summable
     symm
     rw [Finset.prod_univ_sum]
     refine Finset.sum_congr rfl ?_
-    intro alpha halpha
-    simp [Finset.prod_pow]
+    exact fun x a => Finset.prod_pow Finset.univ 2 fun x_1 => phiMajorant (kappa x_1) (x x_1) R
   have hprod_le :
       Finset.prod Finset.univ
           (fun q : Fin d =>
@@ -1155,9 +1141,7 @@ private theorem uniformCauchySeqOn_of_summable_bound
       ‖∑ alpha ∈ box N \ box J0, term alpha‖
           ≤ ∑ alpha ∈ box N \ box J0, ‖term alpha‖ := norm_sum_le _ _
       _ ≤ ∑ alpha ∈ box N \ box J0, M alpha := by
-            refine Finset.sum_le_sum ?_
-            intro alpha halpha
-            exact hbound alpha z hzK
+            exact Finset.sum_le_sum fun i a => hbound i z hzK
       _ = ‖∑ alpha ∈ box N \ box J0, M alpha‖ := by
             rw [Real.norm_eq_abs]
             exact (abs_of_nonneg (Finset.sum_nonneg fun alpha halpha =>
@@ -1286,8 +1270,7 @@ theorem partialSum_locallyUniform
   let _ := hd
   have hCauchy : ∀ K : Set (Cd d), IsCompact K ->
       UniformCauchySeqOn (fun J : MultiIndex d => partialSum kappa U J) Filter.atTop K := by
-    intro K hK
-    exact partialSum_uniformCauchy_on_compact kappa U hK
+    exact fun K a => partialSum_uniformCauchy_on_compact kappa U a
   refine ⟨hCauchy, ?_⟩
   change TendstoLocallyUniformly
     (fun J : MultiIndex d => partialSum kappa U J) (toFun kappa U) Filter.atTop
@@ -1403,8 +1386,7 @@ theorem skappa_ext_of_coeff_eq
   cases V
   simp only [coeffSkappa] at hcoeff
   congr
-  funext alpha
-  exact hcoeff alpha
+  exact funext hcoeff
 
 theorem continuous_toFun
     {d : Nat} (hd : 0 < d) (kappa : MultiIndex d) (U : Skappa d kappa) :

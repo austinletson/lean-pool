@@ -41,8 +41,7 @@ theorem exists_compact
   refine ⟨K, hK_compact, hK_closed, hKA, ?_⟩
   rw [measure_sdiff hKA hK_closed.nullMeasurableSet (measure_ne_top (P J) _)]
   have h_le := h_lt.le
-  rw [tsub_le_iff_left] at h_le ⊢
-  rwa [add_comm]
+  exact tsub_le_iff_tsub_le.mp h_le
 
 local notation "Js" => measurableCylinders.finset
 
@@ -60,12 +59,7 @@ lemma innerRegular_projectiveFamilyContent (hP : IsProjectiveMeasureFamily P)
     · exact cylinder_mem_closedCompactCylinders _ _ hK'_closed hK'_compact
     · conv_rhs => rw [measurableCylinders.eq_cylinder hs]
       simp_rw [cylinder]
-      rw [Function.Surjective.preimage_subset_preimage_iff]
-      · exact hK'_subset
-      · intro y
-        let x := (inferInstance : Nonempty (Π i, α i)).some
-        classical
-        exact ⟨fun i ↦ if hi : i ∈ Js hs then y ⟨i, hi⟩ else x i, by ext; simp⟩
+      exact preimage_mono hK'_subset
     · have : (s \ cylinder (Js hs) K') = (cylinder (Js hs) (As hs) \ cylinder (Js hs) K') := by
         congr
         exact measurableCylinders.eq_cylinder hs

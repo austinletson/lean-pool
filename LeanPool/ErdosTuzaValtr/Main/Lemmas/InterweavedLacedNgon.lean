@@ -107,7 +107,5 @@ theorem Config.hasInterweavedLaced_hasNGon {n : ℕ} {S : Finset α} (cap4_free 
     apply C.join_n2_n2 S cap4_free hc1 c1_in_S hc2 c2_in_S q c1_last c2_head
   have label := cap4FreeLabel cap4_free
   by_cases sqr : label.Slope q r
-  · revert h
-    apply C.hasInterweavedLaced_hasNGon_tt <;> assumption
-  · revert h
-    apply C.hasInterweavedLaced_hasNGon_ff <;> assumption
+  · exact hasInterweavedLaced_hasNGon_tt C cap4_free label q_lt_r sqr h
+  · exact hasInterweavedLaced_hasNGon_ff C cap4_free label q_lt_r sqr h

@@ -200,8 +200,7 @@ lemma rel_def {x y : (F.TransitiveTreeUnravelling r).World} :
       · exact hy₂;
       · rw [←hzs]; simp only [List.length_cons, List.length_append, List.length_nil, zero_add,
           add_lt_add_iff_right, add_lt_add_iff_left, lt_add_iff_pos_left];
-        by_contra hC;
-        simp_all;
+        exact List.length_pos_iff.mpr h
       · simp_all;
 
 lemma rooted : (F.TransitiveTreeUnravelling r).isRooted ⟨[r], by tauto⟩ := by

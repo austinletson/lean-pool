@@ -571,21 +571,17 @@ private lemma poincare_per_interval {N L : ℕ} (hN : 1 ≤ N)
         ‖Q (↑t : AddCircle T) - qAvg b N k‖ ^ 2 =
       ∫ x in (0 : ℝ)..h,
         ‖f x - qAvg b N k‖ ^ 2 := by
-    simp only [f]
-    exact integral_shift (fun t =>
-      ‖Q (↑t : AddCircle T) - qAvg b N k‖ ^ 2) a h
+    exact integral_shift (fun t => ‖Q ↑t - qAvg b N k‖ ^ 2) a h
   have h_shift_rhs :
       ∫ t in a..a + h, ‖Q' t‖ ^ 2 =
       ∫ x in (0 : ℝ)..h, ‖f' x‖ ^ 2 := by
-    simp only [f']
     exact integral_shift (fun t => ‖Q' t‖ ^ 2) a h
   have h_ak : iLeft N (k.val + 1) = a + h := by simp only [a, h]; linarith [iLeft_diff N k.val]
   rw [h_ak, h_shift_lhs, h_shift_rhs]
   have hf_deriv :
       ∀ x ∈ Set.Icc 0 h,
         HasDerivAt f (f' x) x := by
-    intro x _
-    simpa only [f, f', Q, Q'] using hasDerivAt_slowFactor_shift b a x
+    exact fun x a_1 => hasDerivAt_slowFactor_shift b a x
   have hf_cont : ContinuousOn f (Set.Icc 0 h) :=
     ((slowFactor_continuous b).comp
       (AddCircle.continuous_mk' T |>.comp

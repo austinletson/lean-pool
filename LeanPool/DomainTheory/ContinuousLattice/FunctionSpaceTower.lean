@@ -626,8 +626,7 @@ theorem embInfInf_comp_projInfInf :
   have hfz : f z = ⨆ n, r n (f (r n z)) :=
     calc f z = ⨆ k, r k (f z) := hA (f z)
       _ = ⨆ k, r k (f (⨆ m, r m z)) := by
-            refine iSup_congr (fun k => ?_)
-            rw [← hA z]
+            exact iSup_congr fun i => congrArg (↑(r i)) (congrArg (↑f) (hA z))
       _ = ⨆ k, r k (⨆ m, f (r m z)) := by
             refine iSup_congr (fun k => ?_)
             rw [hcont f (fun m => r m z) (hr_mono z)]

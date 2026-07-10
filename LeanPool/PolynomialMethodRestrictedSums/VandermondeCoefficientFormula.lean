@@ -148,8 +148,7 @@ lemma det_fallingFactorial_eq_det_vandermonde (c : Fin (k + 1) → ℕ) :
                       simp)]
             symm
             apply Finset.prod_eq_zero (i := (⟨c i, hi⟩ : Fin j)) (Finset.mem_univ _)
-            change (↑(c i) - ↑↑(⟨c i, hi⟩ : Fin j) : ℚ) = 0
-            simp
+            exact Rat.sub_self
           · exact Eq.trans
               (Finset.prod_congr rfl fun _ _ => by
                 rw [Nat.cast_sub (by linarith [Fin.is_lt ‹_›])])
@@ -273,8 +272,7 @@ lemma symmetricSumFixed_eq_expectedValue (c : Fin (k + 1) → ℕ) (m : ℕ) :
         (∏ i, (fallingFactorial (c i) (σ i).val : ℚ)) := by
       rw [Matrix.det_apply']
       refine Finset.sum_bij (fun σ _ => σ.symm) ?_ ?_ ?_ ?_
-      · intro a ha
-        simp_all only [mem_univ]
+      · exact fun a ha => mem_univ (Equiv.symm a)
       · intro a₁ ha₁ a₂ ha₂ a
         simp_all only [mem_univ]
         simpa using congr_arg Equiv.symm a
@@ -340,8 +338,7 @@ private lemma sum_X_pow_eq_multinomial_sum (m : ℕ) :
   case h_inj =>
     intro a₁ _ a₂ _ heq
     apply Sym.coe_injective
-    apply Multiset.ext.mpr
-    exact fun i => congr_fun heq i
+    exact Multiset.ext.mpr (congrFun heq)
   case h_surj =>
     intro b hb
     simp only [Finset.mem_filter, Finset.mem_Iic] at hb
@@ -461,7 +458,6 @@ lemma coeff_term (c : Fin (k + 1) → ℕ) (m : ℕ) (σ : Equiv.Perm (Fin (k + 
                   · simp +decide [MvPolynomial.monomial_eq]
                     rfl
                 · rw [← h_coeff]
-                  norm_num +zetaDelta at *
                   exact Nat.prod_factorial_dvd_factorial_sum univ fun i => c i - ↑(σ i)
               · intro d hd hd'; rw [MvPolynomial.coeff_smul]
                 simp_all (config := { decide := Bool.true }) only [nsmul_eq_mul, mul_eq_zero,
@@ -505,10 +501,7 @@ lemma coeff_term (c : Fin (k + 1) → ℕ) (m : ℕ) (σ : Equiv.Perm (Fin (k + 
                       (MvPolynomial.monomial (Finsupp.single i (σ i : ℕ)) 1 :
                         MvPolynomial (Fin (k + 1)) ℚ) =
                       MvPolynomial.monomial (∑ i, Finsupp.single i (σ i : ℕ)) 1 := by
-                    induction (Finset.univ : Finset (Fin (k + 1))) using Finset.induction
-                    · simp_all only [prod_empty, sum_empty, monomial_zero', C_1]
-                    · simp_all only [not_false_eq_true, prod_insert, monomial_mul, mul_one,
-                          sum_insert]
+                    exact Eq.symm (monomial_sum_one univ fun i => fun₀ | i => ↑(σ i))
                   simp_all only [coeff_monomial, ite_eq_right_iff, one_ne_zero, imp_false,
                       Decidable.not_not]
                 exact h_snd_support

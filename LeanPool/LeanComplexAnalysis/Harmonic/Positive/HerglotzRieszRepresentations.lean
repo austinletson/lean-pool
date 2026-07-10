@@ -459,8 +459,7 @@ lemma u_n_mean_value (p : ℂ → ℂ) (r : ℕ → ℝ) (n : ℕ)
       exact integral_re (hf.integrableOn_Ioc)
     rw [h_real_part_integral]; focus norm_num [mul_assoc, mul_comm, mul_left_comm]
     refine ContinuousOn.comp_continuous (s := ball 0 1) ?_ ?_ ?_
-    · refine hp_analytic.continuousOn.mono fun x hx => ?_
-      exact hx
+    · exact AnalyticOn.continuousOn hp_analytic
     · continuity
     · norm_num [circleMap, abs_of_pos hr.1]
       linarith [hr.2]
@@ -534,8 +533,7 @@ lemma u_approx_eq_Lambda (p : ℂ → ℂ) (r : ℕ → ℝ) (n : ℕ)
     (z : ℂ) (hz : z ∈ ball 0 1) :
     u p (r n * z) = ΛNVal p r n (poissonKernelFunc z hz) := by
   have : HarmonicOnNhd (u p) (ball (0 : ℂ) 1) := by
-    refine harmonic_of_analytic_real (u p) p hp_analytic ?_
-    simp [u]
+    exact harmonic_of_analytic_real (u p) p hp_analytic fun z => congrFun rfl
   convert poisson_formula_of_harmonicOn_scaled_unitDisc_re_kernel this hr hz using 1
   unfold poissonKernelFunc ΛNVal; norm_num [circleMap]
 
@@ -733,8 +731,7 @@ lemma riesz_rep (Λ : WeakDual ℝ CUnitCircle)
     obtain ⟨f_c, hf_c⟩ : ∃ f_c : CompactlySupportedContinuousMap (sphere (0 : ℂ) 1) ℝ,
       ∀ z : sphere (0 : ℂ) 1, f_c z = f z := by
       refine ⟨⟨f, ?_⟩, ?_⟩
-      · rw [hasCompactSupport_iff_eventuallyEq]
-        simp [Filter.EventuallyEq]
+      · exact HasCompactSupport.of_compactSpace f.toFun
       · exact fun z ↦ rfl
     convert RealRMK.integral_rieszMeasure Λ_c f_c using 1
     · rw [RealRMK.integral_rieszMeasure]
@@ -1033,24 +1030,7 @@ theorem HerglotzRiesz_representation_harmonic
       have h := @integral_re _ _ ↑μ ℂ _
           (fun x : sphere (0 : ℂ) 1 => ((x : ℂ) + z) / ((x : ℂ) - z)) ?integrable
       · exact h.symm
-      refine Integrable.mono' (g := fun _ => 2 / (1 - ‖z‖)) ?_ ?_ ?_
-      · simp
-      · refine Measurable.aestronglyMeasurable ?_; fun_prop
-      · have hz' : ‖z‖ < 1 := by rw [mem_ball_zero_iff] at hz; exact hz
-        simp only [Complex.norm_div]
-        refine Filter.Eventually.of_forall fun x => ?_
-        have hx : ‖(x : ℂ)‖ = 1 := by exact mem_sphere_zero_iff_norm.mp x.2
-        have h_num : ‖(x : ℂ) + z‖ ≤ 2 :=
-          le_trans (norm_add_le _ _) (by linarith [hx])
-        have h_denom : 1 - ‖z‖ ≤ ‖(x : ℂ) - z‖ := by
-          have := norm_sub_norm_le (x : ℂ) z
-          simpa [hx] using this
-        have h_denom_pos : 0 < ‖(x : ℂ) - z‖ := lt_of_lt_of_le (by linarith) h_denom
-        rw [div_le_div_iff₀ h_denom_pos (by linarith : (0 : ℝ) < 1 - ‖z‖)]
-        have h_pos : (0 : ℝ) ≤ 1 - ‖z‖ := by linarith
-        calc ‖(x : ℂ) + z‖ * (1 - ‖z‖)
-            ≤ 2 * (1 - ‖z‖) := by gcongr
-          _ ≤ 2 * ‖(x : ℂ) - z‖ := by gcongr
+      exact herglotz_integrable μ z hz
     have h_real_part_eq : ∀ z ∈ unitDisc, ∀ x : unitCircle,
       ((x + z) / (x - z)).re = (1 - ‖z‖^2) / ‖(x : ℂ) - z‖^2 := by
       intros z hz x;
@@ -1064,8 +1044,7 @@ theorem HerglotzRiesz_representation_harmonic
     symm
     set g : ℂ → ℂ := fun z => ∫ x : unitCircle, (x + z) / (x - z) ∂ν
     have hg : AnalyticOn ℂ g unitDisc ∧ g 0 = 1 ∧ MapsTo g unitDisc {w : ℂ | 0 < w.re} := by
-      have := HerglotzRiesz_realPos ν
-      exact this
+      exact HerglotzRiesz_realPos ν
     obtain ⟨hg_analytic, hg0, hg_map⟩ := hg
     have h_fg_equal : ∀ z ∈ unitDisc, F z = g z := by
       apply analytic_unique_of_real_part F g hF_analytic hg_analytic
@@ -1074,16 +1053,7 @@ theorem HerglotzRiesz_representation_harmonic
         have hg_real_part : (g z).re = ∫ x : unitCircle, (1 - ‖z‖^2) / ‖(x : ℂ) - z‖^2 ∂ν := by
           have hg_real_part' : (g z).re = ∫ x : unitCircle, ((x + z) / (x - z)).re ∂ν := by
             have h_integrable : Integrable (fun x : unitCircle => ((x + z) / (x - z))) ν := by
-              refine Integrable.mono' (g := fun x => 2 / (1 - ‖z‖)) ?_ ?_ ?_
-              · simp
-              · refine Measurable.aestronglyMeasurable ?_
-                fun_prop
-              · filter_upwards with x
-                rw [norm_div]
-                have hx : ‖(x : ℂ)‖ = 1 := by exact mem_sphere_zero_iff_norm.mp x.2
-                gcongr
-                · exact le_trans (norm_add_le _ _) (by linarith [hz', hx])
-                · simpa [hx] using norm_sub_norm_le (x : ℂ) z
+              exact herglotz_integrable ν z hz
             exact (integral_re h_integrable) ▸ rfl
           rw [hg_real_part']
           refine integral_congr_ae ?_

@@ -43,10 +43,7 @@ def SwapVariablesFun (i j : Fin n) (p : MvPolynomial (Fin n) ℂ) : (MvPolynomia
 @[simp]
 lemma swap_variables_map_zero (i j : Fin n) : SwapVariablesFun i j 0 = 0 := by
   rw[SwapVariablesFun]
-  have : (0 : MvPolynomial (Fin n) ℂ) = C 0 := by
-    refine C_0.symm
-  rw[this]
-  exact rename_C (Equiv.swap i j) 0
+  exact map_zero (renameEquiv ℂ (Equiv.swap i j))
 
 @[simp]
 lemma swap_variables_map_one {i j : Fin n} : SwapVariablesFun i j 1 = 1 := by
@@ -157,8 +154,7 @@ lemma wario_number_one {n : ℕ} {a : ℕ} {h : a < n} {a' : ℕ} {h' : a' < n} 
   constructor
   · intro h_ne haa
     exact h_ne (Fin.ext haa)
-  · intro haa h_eq
-    exact haa (congrArg Fin.val h_eq)
+  · exact fun a_1 => Fin.ne_of_val_ne a_1
 
 
 lemma i_ne_i_plus_1 {i : ℕ} {h : i < n + 1} {h' : i + 1 < n + 1} :
@@ -257,11 +253,7 @@ def DemazureFun (i : Fin n) (p : MvPolynomial (Fin (n + 1)) ℂ) : MvPolynomial 
 /- Some auxiliary lemmas for the multivariate polynomial ring -/
 lemma poly_mul_cancel {p q r : Polynomial (MvPolynomial (Fin n) ℂ)} (hr : r ≠ 0) :
     p = q ↔ (r * p) = (r * q) := by
-  constructor
-  · intro h
-    exact congrArg (HMul.hMul r) h
-  · intro h
-    exact mul_left_cancel₀ hr h
+  exact Iff.symm (mul_right_inj' hr)
 
 lemma poly_cancel_left {p q r : MvPolynomial (Fin n) ℂ} (hr : r ≠ 0) :
     (r * p) = (r * q) → p = q := by

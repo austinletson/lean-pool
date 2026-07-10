@@ -561,8 +561,7 @@ private lemma modFormComp_ne_zero_at_height
     modularFormCompOfComplex f z ≠ 0 := by
   have hz_pos : 0 < z.im := hz_im ▸ hH_pos
   have h_bridge : modularFormCompOfComplex f z = f ⟨z, hz_pos⟩ := by
-    simp only [modularFormCompOfComplex, Function.comp_apply]
-    congr 1; exact UpperHalfPlane.ofComplex_apply_of_im_pos hz_pos
+    exact UpperHalfPlane.comp_ofComplex_of_im_pos (⇑f) z hz_pos
   intro h_zero
   have h_qmem : Function.Periodic.qParam (1 : ℝ) (↑(⟨z, hz_pos⟩ : ℍ) : ℂ) ∈
       Metric.closedBall (0 : ℂ) (seg5QRadiusH H) := by

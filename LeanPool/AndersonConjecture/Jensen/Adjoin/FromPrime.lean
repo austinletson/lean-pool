@@ -184,11 +184,7 @@ private def adjoin_from_prime_proof
               apply Set.Finite.countable
               apply Set.Finite.image
               haveI : P.IsPrime := hC_prime P hPC
-              haveI : IsDomain (T ⧸ P) := Ideal.Quotient.isDomain P
-              letI : DecidableEq (T ⧸ P) := Classical.decEq _
-              apply Set.Finite.subset (f.map (φ P)).roots.toFinset.finite_toSet
-              intro α hα
-              exact Multiset.mem_toFinset.mpr ((Polynomial.mem_roots hfne).mpr hα))⟩
+              exact finite_setOf_isRoot hfne)⟩
       · -- R uncountable: use cardinality bound
         left
         push Not at hR_le

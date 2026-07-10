@@ -312,8 +312,7 @@ theorem Coalgebra.comul_mul_of_gns (gns : k A = 0) (a b : A) :
         simp_rw [PhiMap_apply, TensorProduct.toIsBimoduleMap_apply_coe,
           rmulMapLmul_apply_Upsilon_eq, LinearMap.lTensor_id,
           LinearMap.rTensor_id, LinearMap.id_comp]
-        exact (@FrobeniusAlgebra.lTensor_mul_comp_rTensor_comul_eq_comul_comp_mul _ _ _ _
-          (QuantumSet.isFrobeniusAlgebra)).symm
+        exact Eq.symm QuantumSet.lTensor_mul_comp_rTensor_comul_eq_comul_comp_mul
   _ = rmulMapLmul (Upsilon (1 : A →ₗ[ℂ] A)) (a ⊗ₜ b) := rfl
   _ = LinearMap.adjoint (rmulMapLmul (Upsilon (1 : A →ₗ[ℂ] A))) (a ⊗ₜ b) := by
         congr 1
@@ -365,23 +364,17 @@ noncomputable def InnerProductAlgebra.mulOpposite {A :
     Type*} [starAlgebra A] [InnerProductAlgebra A] :
     InnerProductAlgebra (Aᵐᵒᵖ) where
   norm_smul_le c x := by
-    change ‖c • x.unop‖ ≤ ‖c‖ * ‖x.unop‖
-    exact InnerProductAlgebra.norm_smul_le c x.unop
+    exact _root_.norm_smul_le c x
   norm_sq_eq_inner x := by
-    rw [MulOpposite.inner_eq]
-    change ‖x.unop‖ ^ 2 = RCLike.re ⟪x.unop, x.unop⟫_ℂ
-    exact InnerProductAlgebra.norm_sq_eq_inner x.unop
+    exact Eq.symm (inner_self_eq_norm_sq x)
   dist_eq x y := by
-    change dist x.unop y.unop = ‖-x.unop + y.unop‖
-    exact InnerProductAlgebra.dist_eq x.unop y.unop
+    exact NormedAddGroup.dist_eq x y
   conj_symm x y := by
     simp_all
   add_left x y z := by
-    simp only [MulOpposite.inner_eq, MulOpposite.unop_add]
-    exact InnerProductAlgebra.add_left x.unop y.unop z.unop
+    exact InnerProductSpace.add_left x y z
   smul_left x y r := by
-    simp only [MulOpposite.inner_eq, MulOpposite.unop_smul]
-    exact InnerProductAlgebra.smul_left x.unop y.unop r
+    exact InnerProductSpace.smul_left x y r
 attribute [local instance] InnerProductAlgebra.mulOpposite
 noncomputable instance QuantumSet.mulOpposite {A : Type*} [starAlgebra A] [QuantumSet A]
   [kms : Fact (k A = -(1 / 2))] :

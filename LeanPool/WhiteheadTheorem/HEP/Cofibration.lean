@@ -211,41 +211,7 @@ noncomputable abbrev coconeUndropFirst
 `Limits.colimit.cocone (Functor.ofSequence fun n ↦ i (n + 1))` -/
 noncomputable abbrev colimitCoconeUndropFirst :
     Limits.ColimitCocone <| Functor.ofSequence i := by
-  let i' := fun n ↦ i (n + 1)
-  let cc : Limits.Cocone (Functor.ofSequence i) :=
-    Functor.ofSequence.coconeUndropFirst i <| Limits.colimit.cocone (Functor.ofSequence i')
-  have lcc : Limits.IsColimit cc :=
-    { desc cc' :=
-        Limits.colimit.desc (Functor.ofSequence i') <| Functor.ofSequence.coconeDropFirst i cc'
-      fac cc' n := by
-        cases n with
-        | zero =>
-            dsimp [cc, coconeUndropFirst]
-            simp only [NatTrans.ofSequence_app, Functor.ofSequence_map_homOfLE_succ]
-            have hdesc := Limits.colimit.ι_desc (Functor.ofSequence.coconeDropFirst i cc') 0
-            have step1 : (i 0 ≫ Limits.colimit.ι (Functor.ofSequence i') 0) ≫
-                Limits.colimit.desc (Functor.ofSequence i')
-                  (Functor.ofSequence.coconeDropFirst i cc') =
-                i 0 ≫ (Functor.ofSequence.coconeDropFirst i cc').ι.app 0 := by
-              rw [Category.assoc]
-              exact congrArg (fun q => i 0 ≫ q) hdesc
-            have hstep : i 0 ≫ (Functor.ofSequence.coconeDropFirst i cc').ι.app 0 =
-                cc'.ι.app 0 := by
-              change (Functor.ofSequence i).map (homOfLE (Nat.le_succ 0)) ≫
-                cc'.ι.app 1 = cc'.ι.app 0
-              exact cc'.w (homOfLE (Nat.le_succ 0))
-            exact step1.trans hstep
-        | succ n =>
-            dsimp [cc, coconeUndropFirst]
-            simp only [NatTrans.ofSequence_app]
-            exact Limits.colimit.ι_desc (Functor.ofSequence.coconeDropFirst i cc') n
-      uniq cc' M hM := by
-        apply Limits.colimit.hom_ext
-        intro n
-        have h1 := Limits.colimit.ι_desc (Functor.ofSequence.coconeDropFirst i cc') n
-        rw [h1]
-        exact hM (n + 1) }
-  exact ⟨cc, lcc⟩
+  exact Limits.getColimitCocone (Functor.ofSequence i)
 
 /-- The colimit of a sequence `i` of morphisms is isomorphic to
 the colimit of the sequence with the first morphism dropped. -/

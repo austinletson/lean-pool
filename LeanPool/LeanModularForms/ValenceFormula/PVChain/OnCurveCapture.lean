@@ -204,8 +204,7 @@ theorem oncurve_full_capture (S : Finset ℍ) (_hS : ∀ p ∈ S, p ∈ 𝒟)
   · rcases (eq_or_lt_of_le ht.1 : 0 = t ∨ 0 < t) with rfl | h0
     · exfalso
       have h_re : |((fdBoundaryH H 0)).re| ≤ 1/2 := by
-        rw [fdBoundary_H_eq_seg1_H (by norm_num : (0 : ℝ) ≤ 1)]
-        simp [fdBoundarySeg1H, add_re, mul_re, I_re, I_im, ofReal_re, ofReal_im]
+        exact fdBoundary_H_re_abs_le_half H 0 ht
       have h_im : (fdBoundaryH H 0).im = H := by
         rw [fdBoundary_H_eq_seg1_H (by norm_num : (0 : ℝ) ≤ 1)]
         simp [fdBoundarySeg1H, add_im, mul_im, I_re, I_im, ofReal_re, ofReal_im]
@@ -225,15 +224,12 @@ theorem oncurve_full_capture (S : Finset ℍ) (_hS : ∀ p ∈ S, p ∈ 𝒟)
         have h_norm : ‖fdBoundaryH H t‖ = 1 := by
           rw [fdBoundary_H_eq_arc h1 h3s]
           exact Complex.norm_exp_ofReal_mul_I _
-        exact oncurve_arc_capture f hf S hS_complete hH_sqrt3
-          ⟨by linarith, by linarith [ht.2]⟩ h_norm h_zero
+        exact oncurve_arc_capture f hf S hS_complete hH_sqrt3 ht h_norm h_zero
     · rcases le_or_gt t 4 with h4 | h4
       · rcases (eq_or_lt_of_le h4 : t = 4 ∨ t < 4) with rfl | h4s
         · exfalso
           have h_re : |(fdBoundaryH H 4).re| ≤ 1/2 := by
-            rw [fdBoundary_H_eq_seg4_H (by norm_num : (3 : ℝ) < 4) (le_refl 4)]
-            simp [fdBoundarySeg4H, add_re, neg_re, mul_re, I_re, I_im, ofReal_re, ofReal_im,
-              div_ofNat]; norm_num
+            exact fdBoundary_H_re_abs_le_half H 4 ht
           have h_im : (fdBoundaryH H 4).im = H := by
             rw [fdBoundary_H_eq_seg4_H (by norm_num : (3 : ℝ) < 4) (le_refl 4)]
             simp [fdBoundarySeg4H, add_im, neg_im, mul_im, I_re, I_im, ofReal_re, ofReal_im,
@@ -243,10 +239,7 @@ theorem oncurve_full_capture (S : Finset ℍ) (_hS : ∀ p ∈ S, p ∈ 𝒟)
           exact oncurve_seg4_capture f hf S hS_complete hH_sqrt3 ⟨h3, h4s⟩ h_zero
       · exfalso
         have h_re : |(fdBoundaryH H t).re| ≤ 1/2 := by
-          rw [fdBoundary_H_eq_seg5_H (by linarith : (4 : ℝ) < t)]
-          simp only [fdBoundarySeg5H, add_re, sub_re, ofReal_re, div_ofNat_re, re_ofNat, mul_re,
-            I_re, mul_zero, ofReal_im, I_im, mul_one, sub_self, add_zero, one_div]
-          rw [abs_le]; constructor <;> linarith [ht.2]
+          exact fdBoundary_H_re_abs_le_half H t ht
         have h_im : (fdBoundaryH H t).im = H := by
           rw [fdBoundary_H_eq_seg5_H (by linarith : (4 : ℝ) < t)]
           simp [fdBoundarySeg5H, add_im, sub_im, mul_im, I_re, I_im, ofReal_re, ofReal_im]

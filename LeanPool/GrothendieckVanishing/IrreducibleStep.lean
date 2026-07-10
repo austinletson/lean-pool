@@ -551,8 +551,7 @@ theorem epiImage_zeroOutsideInt_vanishing_of_locallySurjective
         (⟨G, hG⟩ : TopCat.Sheaf AddCommGrpCat.{u} X) := ObjectProperty.homMk f
     have hkernel : Subsingleton (Sheaf.H (kernel fsh) (m + 1)) := by
       have hMonoKernel : Mono (kernel.ι fsh) := by
-        change Mono (equalizer.ι fsh 0)
-        infer_instance
+        exact equalizer.ι_mono
       letI : Mono (kernel.ι fsh).hom :=
         (Sheaf.Hom.mono_iff_presheaf_mono
           (J := Opens.grothendieckTopology X) (D := AddCommGrpCat.{u})

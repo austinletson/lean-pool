@@ -378,11 +378,7 @@ theorem sstepFun_append (L L' : List (Set α × Set β)) :
     (sstepFun (L ++ L') : Set (StrictMap V₀ V₁)) = sstepFun L ∩ sstepFun L' := by
   ext f
   simp only [mem_sstepFun, List.mem_append, Set.mem_inter_iff]
-  constructor
-  · intro h; exact ⟨fun p hp => h p (Or.inl hp), fun p hp => h p (Or.inr hp)⟩
-  · rintro ⟨hL, hL'⟩ p (hp | hp)
-    · exact hL p hp
-    · exact hL' p hp
+  exact forall₂_or_left
 
 theorem sstepFun_singleton (X : Set α) (Y : Set β) :
     (sstepFun [(X, Y)] : Set (StrictMap V₀ V₁)) = sstep X Y := by

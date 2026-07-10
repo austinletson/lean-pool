@@ -128,13 +128,7 @@ lemma continuousOn_weakClosedBall_reApplyInnerSelf_of_isCompactOperator
   intro x hx
   let l : Filter (WeakSpace 𝕜 E) := 𝓝[weakClosedBall (𝕜 := 𝕜) (E := E) r] x
   have hx_ball : ∀ᶠ y in l, y ∈ weakClosedBall (𝕜 := 𝕜) (E := E) r := by
-    have : weakClosedBall (𝕜 := 𝕜) (E := E) r ∈ l := by
-      have :
-          weakClosedBall (𝕜 := 𝕜) (E := E) r ∈
-            (𝓟 (weakClosedBall (𝕜 := 𝕜) (E := E) r) : Filter (WeakSpace 𝕜 E)) := by
-        simp
-      simpa [l, nhdsWithin] using (Filter.mem_inf_of_right this)
-    simpa [Filter.eventually_iff] using this
+    exact eventually_mem_nhdsWithin
   have hid : Tendsto (fun y : WeakSpace 𝕜 E => y) l (𝓝 x) := by
     simp [Filter.Tendsto, l, nhdsWithin]
   have hTt : Tendsto (fun y : WeakSpace 𝕜 E => T (y : E)) l (𝓝 (T (x : E))) := by
@@ -146,8 +140,7 @@ lemma continuousOn_weakClosedBall_reApplyInnerSelf_of_isCompactOperator
     have hdiff :
         Tendsto (fun y : WeakSpace 𝕜 E =>
             ‖T (y : E) - T (x : E)‖) l (𝓝 (0 : ℝ)) := by
-      have h := (hTt.sub (tendsto_const_nhds (x := T (x : E)))).norm
-      simpa using h
+      exact tendsto_iff_norm_sub_tendsto_zero.mp hTt
     have hnorm_inner :
         Tendsto
           (fun y : WeakSpace 𝕜 E =>
@@ -300,8 +293,7 @@ lemma exists_reApplyInnerSelf_ne_zero_of_isSelfAdjoint
   have hinner0 : ∀ x : E, inner 𝕜 (T x) x = 0 := by
     intro x
     have hRe : (T.reApplyInnerSelf x : 𝕜) = inner 𝕜 (T x) x := by
-      simpa [ContinuousLinearMap.reApplyInnerSelf_apply] using
-        (LinearMap.IsSymmetric.coe_re_inner_apply_self (T := (T : E →ₗ[𝕜] E)) hSym x)
+      exact LinearMap.IsSymmetric.coe_reApplyInnerSelf_apply hSym x
     simp_all
   have hinner : ∀ x y : E, inner 𝕜 ((T : E →ₗ[𝕜] E) x) y = 0 := by
     intro x y

@@ -79,8 +79,7 @@ lemma isHom_find
     · intro h
       use Nat.find (q (φ r))
       use h
-      use Nat.find_spec (q (φ r))
-      use Nat.find_min (q (φ r))
+      exact (Nat.find_eq_iff (q (φ r))).mp rfl
     · rintro ⟨n, hn₁, hn₂, hn₃⟩
       suffices Nat.find (q (φ r)) = n by simp_all only [MeasurableSpace.measurableSet_top]
       rw [Nat.find_eq_iff]

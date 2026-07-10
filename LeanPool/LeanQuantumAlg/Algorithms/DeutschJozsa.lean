@@ -253,8 +253,7 @@ theorem main (f : WalshHadamard.Oracle n)
     rcases hf with hconstant | hbalanced
     · exact hconstant
     · exact False.elim ((not_reportsConstant_of_balanced f hbalanced) hreport)
-  · intro hconstant
-    exact reportsConstant_of_constant f hconstant
+  · exact fun a => reportsConstant_of_constant f a
 
 /-- Deutsch-Jozsa correctness, phrased through the TimeM return value. -/
 theorem timedFinalJointState_correct

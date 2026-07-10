@@ -86,11 +86,7 @@ instance
     : MeasurableQuasiBorelSpace (A × B) where
   isHom_iff_measurable φ := by
     simp only [isHom_iff, isHom_iff_measurable]
-    apply Iff.intro
-    · rintro ⟨h₁, h₂⟩
-      exact Measurable.prodMk h₁ h₂
-    · intro h
-      exact ⟨by fun_prop, by fun_prop⟩
+    exact Iff.symm measurable_fun_prod
 
 @[fun_prop]
 lemma isHom_map {f : A → B} {g : C → D} (hf : IsHom f) (hg : IsHom g) : IsHom (Prod.map f g) := by

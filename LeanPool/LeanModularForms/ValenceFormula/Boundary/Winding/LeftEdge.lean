@@ -688,9 +688,7 @@ private lemma leftEdge_winding_aux (H : ℝ) (hH_sqrt : Real.sqrt 3 / 2 < H)
     have hE_const : ∀ ε, 0 < ε → ε < threshold →
         Complex.log (fdBoundarySeg4H H (t₀ - ε / α) - s) -
         Complex.log (fdBoundarySeg4H H (t₀ + ε / α) - s) = -(↑Real.pi * I) := by
-      intro ε hε_pos hε_lt
-      have hδ_pos : 0 < ε / α := div_pos hε_pos hα_pos
-      exact leftEdge_final_log H s hs_re α hα_def (ε / α) hδ_pos hα_pos t₀ ht₀_mul
+      exact fun ε a a_1 => leftEdge_final_log H s hs_re α hα_def (ε / α) (hδ_fn ε a a_1) hα_pos t₀ ht₀_mul
     exact tendsto_const_nhds.congr' (by
       filter_upwards [Ioo_mem_nhdsGT hthresh_pos] with ε hε
       exact (hE_const ε hε.1 hε.2).symm)

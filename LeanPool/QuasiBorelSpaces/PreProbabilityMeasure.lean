@@ -379,8 +379,7 @@ instance : QuasiBorelSpace (PreProbabilityMeasure A) where
     intro r
     trans
     · apply hφ
-    · symm
-      apply Var.apply_cases
+    · exact Setoid.symm (Var.apply_cases hix φ r)
 
 @[local simp]
 lemma isHom_def (φ : ℝ → PreProbabilityMeasure A) : IsHom φ ↔ ∃(ψ : Var A), ∀r, φ r ≈ ψ r := by
@@ -522,9 +521,7 @@ lemma isHom_unit : IsHom (unit (A := A)) := by
   simp only [isHom_def]
   intro φ hφ
   use Var.unit hφ
-  intro r
-  symm
-  simp only [Var.apply_unit]
+  exact fun r => Setoid.symm (Var.apply_unit hφ r)
 
 /-- The monadic bind operation for probability measures. -/
 noncomputable def bind

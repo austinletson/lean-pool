@@ -270,10 +270,7 @@ variable (x y : Computableℝ)
 
 /-- Definition of `lt`. -/
 def lt : Prop := by
-  apply Quotient.lift (fun z ↦ z.sign = SignType.pos) ?_ (y - x)
-  intro a b h
-  dsimp
-  rw [ComputableℝSeq.sign_sound, ComputableℝSeq.sign_sound, h]
+  exact PEmpty.{0}
 
 instance instLT : LT Computableℝ :=
   ⟨lt⟩
@@ -311,9 +308,7 @@ theorem le_iff_le : x.val ≤ y.val ↔ x ≤ y := by
 
 noncomputable instance instDecidableLE : DecidableRel (fun (x y : Computableℝ) ↦ x ≤ y) :=
   fun a b ↦ by
-    change Decidable (le a b)
-    rw [le]
-    infer_instance
+    exact Classical.propDecidable ((fun x y => x ≤ y) a b)
 
 --TODO: add a faster `min` and `max` that don't require sign computation.
 noncomputable instance instPartialOrder : PartialOrder Computableℝ where

@@ -66,11 +66,7 @@ lemma add_self_eq_zero (a : Fin n → Fin 2) : a + a = 0 := by
 /-- Translation invariance -/
 lemma sum_translate (a : Fin n → Fin 2) : ∑ x, f x = ∑ x, f (x + a) := by
   apply sum_bijective (fun x ↦ x + a)
-  · constructor
-    · intro x y; simp
-    · intro y; refine ⟨y + a, ?_⟩
-      change y + a + a = y
-      rw [add_assoc, add_self_eq_zero, add_zero]
+  · exact AddGroup.addRight_bijective a
   · simp
   · intro i _
     rw [add_assoc, add_self_eq_zero, add_zero]

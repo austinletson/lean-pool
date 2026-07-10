@@ -179,17 +179,12 @@ lemma exists_balance {d m : ℕ} (hd : 0 < d) (hm : 0 < m)
   apply discrete_ivt (fun k => Defc U (u.val % m) (u.val / m) u.val k) (u.val / m - 1)
   · exact Defc_bot_nonpos hd hm hcanon hu hlu
   · exact Defc_top_nonneg U (u.val % m) (u.val / m) u.val hlu
-  · intro k _
-    exact Defc_step hm U (u.val % m) (u.val / m) u.val k
+  · exact fun k a => Defc_step hm U (u.val % m) (u.val / m) u.val k
 
 /-- Every position has level `< d`. -/
 lemma level_lt_d {d m : ℕ} (_hm : 0 < m) (x : ZMod (d * m)) [NeZero (d * m)] : x.val / m < d := by
   have hlt : x.val < d * m := ZMod.val_lt x
-  have hdiv : (x.val / m) * m ≤ x.val := Nat.div_mul_le_self x.val m
-  by_contra hge
-  push Not at hge
-  have : d * m ≤ (x.val / m) * m := Nat.mul_le_mul_right m hge
-  omega
+  exact (Nat.div_lt_iff_lt_mul _hm).mpr hlt
 
 /-! ## Layer 3: the balance index `betaK`, parent value and parent point. -/
 
@@ -233,12 +228,7 @@ lemma betaParentVal_lt {d m : ℕ} (hd : 0 < d) (hm : 0 < m)
   unfold betaParentVal
   have hφ : u.val % m < m := Nat.mod_lt _ hm
   have hlud : u.val / m < d := by
-    have hlt : u.val < d * m := ZMod.val_lt u
-    have hdiv : (u.val / m) * m ≤ u.val := Nat.div_mul_le_self u.val m
-    by_contra hge
-    push Not at hge
-    have : d * m ≤ (u.val / m) * m := Nat.mul_le_mul_right m hge
-    omega
+    exact level_lt_d hm u
   have hK : betaK U u ≤ u.val / m - 1 := betaK_le U u
   -- betaK ≤ d - 2, so φ + betaK*m < m + (d-1)*m = d*m
   have hKd : betaK U u ≤ d - 1 := by omega
@@ -480,9 +470,7 @@ lemma betaParent_inj {d m : ℕ} (hd : 0 < d) (hm : 0 < m)
       rw [hlevA] at hll; exact hll
     -- a.val < b.val, same fiber ⇒ level a < level b
     have hlevab : a.val / m < b.val / m := by
-      rcases lt_or_eq_of_le ((val_le_iff_level_le_of_sameFiber hfibab).mp hab.le) with h | h
-      · exact h
-      · exact absurd (level_injOn_fiber hfibab h) (fun heq2 => by rw [heq2] at hab; omega)
+      exact level_lt_of_val_lt hfibab hab
     -- the balance identities
     have hbalA := betaParent_balance hd hm hcanon haU hla
     have hbalB := betaParent_balance hd hm hcanon hbU hlb
@@ -824,8 +812,7 @@ lemma betaBlock_critical {d m : ℕ} (hd : 0 < d) (hm : 0 < m)
     (hv : v ∈ bVerts U) : IsCriticalSet d m (betaBlock U v) := by
   haveI : NeZero (d*m) := ⟨by positivity⟩
   refine ⟨⟨v.val % m, Nat.mod_lt _ hm, ?_⟩, betaBlock_two_le hd hm hcanon hv⟩
-  intro y hy
-  exact betaBlock_sameFiber hd hm hcanon hy
+  exact fun x a => betaBlock_sameFiber hd hm hcanon a
 
 /-! ## Layer 11: blocks determined by reachability; Disjoint. -/
 
@@ -1240,23 +1227,19 @@ lemma noEscape {d m : ℕ} (hd : 0 < d) (hm : 0 < m)
     have hjL : ly + L = ls - 1 := by omega
     simp only [hEdef]
     rw [hjL]
-    rw [hlsdef] at *
-    exact Defc_top_nonneg U ψ (s.val / m) s.val hls
+    exact Defc_top_nonneg U ψ ls s.val hls
   have hEstep : ∀ i, i < L → E (i + 1) ≤ E i + 1 := by
     intro i _
     simp only [hEdef]
     have : ly + (i + 1) = (ly + i) + 1 := by omega
     rw [this]
-    rw [hlsdef] at *
-    exact Defc_step hm U ψ (s.val / m) s.val (ly + i)
+    exact Defc_step hm U ψ ls s.val (ly + i)
   obtain ⟨i, hiL, hEi⟩ := discrete_ivt E L hE0 hEL hEstep
   have hzero : Defc U ψ ls s.val (ly + i) = 0 := by simpa [hEdef] using hEi
   -- betaK s ≥ ly + i ≥ ly
   have hkle : ly + i ≤ s.val / m - 1 := by rw [← hlsdef]; omega
   have hge : ly + i ≤ betaK U s := by
-    apply betaK_ge (k := ly + i)
-    · rw [hψdef, hlsdef] at hzero; exact hzero
-    · exact hkle
+    exact betaK_ge hEi hkle
   have hbetaKge : ly ≤ betaK U s := by omega
   -- (betaParent U s).val = ψ + betaK s * m ≥ ψ + ly*m ≥ v
   have hspval : (betaParent U s).val = ψ + betaK U s * m := by

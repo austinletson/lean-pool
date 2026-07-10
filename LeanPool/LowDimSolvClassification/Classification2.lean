@@ -190,8 +190,7 @@ theorem _root_.LieAlgebra.Dim2.solvable (dim2 : finrank K L = 2) :
       exact Basis.ne_zero B 1
      have comsol : IsSolvable (commutator K L) := by
       apply Dim1.solvable (L := commutator K L) dimcomm
-     apply solvable_of_commutator_solvable (K := K)
-     exact comsol
+     exact solvable_of_commutator_solvable comsol
 
 theorem _root_.LieAlgebra.solvable_of_dim_comm_le_two [fin : FiniteDimensional K L]
     (dimcomm : finrank K (commutator K L) ≤ 2) :
@@ -201,11 +200,9 @@ theorem _root_.LieAlgebra.solvable_of_dim_comm_le_two [fin : FiniteDimensional K
   · simp [LieAlgebra.abelian_iff_dim_comm_zero] at s
     apply ofAbelianIsSolvable
   · apply solvable_of_commutator_solvable (K := K)
-    apply Dim1.solvable (K := K)
-    assumption
+    exact Dim1.solvable s
   · apply solvable_of_commutator_solvable (K := K)
-    apply Dim2.solvable (K := K)
-    assumption
+    exact Dim2.solvable s
 
 end corollaries_dim_2
 

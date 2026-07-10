@@ -50,8 +50,7 @@ theorem eq_smul_fisher_of_isSplitRepresentable (G : MonotoneMetricFamily)
   haveI : Nonempty β := ⟨⟨a0, ⟨0, hm a0⟩⟩⟩
   have h_uniform :
       (split (α := α) m hm).pushforward p = Simplex.uniform (α := β) := by
-    simpa [β] using
-      split_pushforward_eq_uniform_of_apply_eq_div_card (α := α) (m := m) (hm := hm) (p := p) hp
+    exact split_pushforward_eq_uniform_of_apply_eq_div_card m hm p hp
   -- Reduce the uniform point on `β` to the uniform point on `Fin n`.
   let n : ℕ := Fintype.card β
   let e : β ≃ Fin n := Fintype.equivFin β
@@ -63,8 +62,7 @@ theorem eq_smul_fisher_of_isSplitRepresentable (G : MonotoneMetricFamily)
   have hn : 2 ≤ n := by
     have h : 1 < Fintype.card β :=
       (Fintype.one_lt_card_iff).2 ⟨b0, b1, hb01⟩
-    have h' : 1 < n := by simpa [n] using h
-    exact Nat.succ_le_iff.2 h'
+    exact Nat.succ_le_of_lt h
   let i0 : Fin n := ⟨0, lt_of_lt_of_le Nat.zero_lt_two hn⟩
   let i1 : Fin n := ⟨1, lt_of_lt_of_le Nat.one_lt_two hn⟩
   have hi01 : i0 ≠ i1 := by
@@ -86,9 +84,7 @@ theorem eq_smul_fisher_of_isSplitRepresentable (G : MonotoneMetricFamily)
               (Simplex.uniform (α := β))).p j
           =
           (Simplex.uniform (α := β)).p (e.symm j) := by
-      simpa using
-        (MarkovMorphism.deterministic_pushforward_apply_of_equiv (α := β) (β := Fin n) (e := e)
-          (p := Simplex.uniform (α := β)) (b := j))
+      exact deterministic_pushforward_apply_of_equiv e Simplex.uniform j
     -- Both sides are `1 / |β| = 1 / n`.
     rw [hj]
     simp [Simplex.uniform_apply, Fintype.card_congr e]
@@ -110,8 +106,7 @@ theorem eq_smul_fisher_of_isSplitRepresentable (G : MonotoneMetricFamily)
         G.g (α := β) ((split (α := α) m hm).pushforward p)
             ((split (α := α) m hm).tangentPushforward u)
             ((split (α := α) m hm).tangentPushforward v) := by
-    simpa [β] using
-      (MonotoneMetricFamily.eq_of_split (G := G) (α := α) (m := m) (hm := hm) (p := p) u v).symm
+    exact Eq.symm (eq_of_split G m hm p u v)
   have hF_split :
       fisherBilin p u v
         =
@@ -146,12 +141,8 @@ theorem eq_smul_fisher_of_isSplitRepresentable (G : MonotoneMetricFamily)
               (g := (e : β → Fin n))
               e.surjective).tangentPushforward
               ((split (α := α) m hm).tangentPushforward v)) := by
-    symm
-    simpa using
-      (MonotoneMetricFamily.eq_of_equiv (G := G) (α := β) (β := Fin n) (e := e)
-        (p := Simplex.uniform (α := β))
-        ((split (α := α) m hm).tangentPushforward u)
-        ((split (α := α) m hm).tangentPushforward v))
+    exact Eq.symm
+        (eq_of_equiv G e Simplex.uniform ((split m hm).tangentPushforward u) ((split m hm).tangentPushforward v))
   have hF_equiv :
       fisherBilin (Simplex.uniform (α := β))
           ((split (α := α) m hm).tangentPushforward u)

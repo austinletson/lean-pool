@@ -165,8 +165,7 @@ end «lp_section_1»
 section «lp_section_2»
 
 lemma le_mul_self_of_pos_left (hy : 0 < b) : a ≤ b * a := by
-  have : 1 * a ≤ b * a := mul_le_mul_of_nonneg_right (one_le_of_zero_lt b hy) (by simp)
-  simpa using this
+  exact le_mul_of_pos_left hy
 
 lemma le_mul_self_of_pos_right (hy : 0 < b) : a ≤ a * b := by
   simpa [mul_comm a b] using le_mul_self_of_pos_left hy

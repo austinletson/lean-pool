@@ -316,15 +316,7 @@ private lemma hasDerivAt_rho'_seg0 (H : ℝ) (t : ℝ) :
 private lemma hasDerivAt_rho'_arc (t : ℝ) :
     HasDerivAt (fun s : ℝ => exp (↑(Real.pi * (1 + s) / 6) * I) - ellipticPointRhoPlusOne)
       (↑(Real.pi / 6) * I * exp (↑(Real.pi * (1 + t) / 6) * I)) t := by
-  have hf : HasDerivAt (fun s : ℝ => Real.pi * (1 + s) / 6) (Real.pi / 6) t :=
-    ((hasDerivAt_id t).add_const (1 : ℝ) |>.const_mul (Real.pi / 6)).congr_of_eventuallyEq
-      (Eventually.of_forall fun s => show _ from by simp [id]; ring)
-      |>.congr_deriv (by ring)
-  have hci : HasDerivAt (fun s : ℝ => (↑(Real.pi * (1 + s) / 6) : ℂ) * I)
-      ((↑(Real.pi / 6) : ℂ) * I) t :=
-    (hf.ofReal_comp.mul_const I).congr_deriv (by norm_num [smul_eq_mul])
-  exact (hci.cexp.sub (hasDerivAt_const t (ellipticPointRhoPlusOne : ℂ))).congr_deriv
-    (by simp only [sub_zero]; ring)
+  exact hasDerivAt_arc ellipticPointRhoPlusOne t
 
 private lemma hasDerivAt_rho'_seg3 (H : ℝ) (t : ℝ) :
     HasDerivAt (fun s : ℝ => -1 + ↑((s - 3) * (H - Real.sqrt 3 / 2)) * I)
@@ -353,8 +345,7 @@ private lemma ftc_logDeriv_telescope_rho_plus_one (H : ℝ) (hH : Real.sqrt 3 / 
   set h₂ : ℝ → ℂ := fun t => -1 + ↑((t - 3) * (H - Real.sqrt 3 / 2)) * I
   set h₃ : ℝ → ℂ := fun t => ↑(t - 5) + ↑(H - Real.sqrt 3 / 2) * I
   have hg_eq_h₀ : ∀ t, t ≤ 1 → g t = h₀ t := by
-    intro t ht; change fdBoundaryH H t - ρ' = h₀ t
-    rw [g_rho'_seg0_value ht]
+    exact fun t a => g_rho'_seg0_value a
   have hg_eq_h₁ : ∀ t, 1 < t → t < 3 → g t = h₁ t := by
     intro t ht1 ht3; change fdBoundaryH H t - ρ' = h₁ t
     rw [g_rho'_arc_value ht1 ht3]
@@ -362,11 +353,9 @@ private lemma ftc_logDeriv_telescope_rho_plus_one (H : ℝ) (hH : Real.sqrt 3 / 
       UpperHalfPlane.coe_mk]
     push_cast; ring
   have hg_eq_h₂ : ∀ t, 3 < t → t ≤ 4 → g t = h₂ t := by
-    intro t ht3 ht4; change fdBoundaryH H t - ρ' = h₂ t
-    rw [g_rho'_seg3_value ht3 ht4]
+    exact fun t a a_1 => g_rho'_seg3_value a a_1
   have hg_eq_h₃ : ∀ t, 4 < t → g t = h₃ t := by
-    intro t ht4; change fdBoundaryH H t - ρ' = h₃ t
-    rw [g_rho'_seg4_value ht4]
+    exact fun t a => g_rho'_seg4_value a
   have hg0 : g 0 = h₀ 0 := hg_eq_h₀ 0 (by norm_num)
   have hg1mδ : g (1 - δ_L) = h₀ (1 - δ_L) := hg_eq_h₀ (1 - δ_L) (by linarith)
   have hg1pδ : g (1 + δ_R) = h₁ (1 + δ_R) := hg_eq_h₁ (1 + δ_R) (by linarith) (by linarith)
@@ -686,9 +675,7 @@ theorem pv_integral_at_rho_plus_one_tendsto (H : ℝ) (hH : Real.sqrt 3 / 2 < H)
     have ht_lt_one : t < 1 := by linarith [div_pos hε_pos hH_gap]
     rw [g_rho'_norm_seg0 hH ht0 ht_lt_one]
     have h_key : ε / (H - Real.sqrt 3 / 2) < 1 - t := by linarith
-    calc ε = ε / (H - Real.sqrt 3 / 2) * (H - Real.sqrt 3 / 2) :=
-              (div_mul_cancel₀ ε (ne_of_gt hH_gap)).symm
-        _ < (1 - t) * (H - Real.sqrt 3 / 2) := mul_lt_mul_of_pos_right h_key hH_gap
+    exact (div_lt_iff₀ hH_gap).mp h_key
   · -- h_far_right: ε < ‖γ t - s‖ for t ∈ Ioc (1 + δ_right ε) 5
     intro ε hε_pos hε_lt t ht_mem
     have hε_lt_gap : ε < H - Real.sqrt 3 / 2 := lt_of_lt_of_le hε_lt (min_le_left _ _)

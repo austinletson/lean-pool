@@ -178,9 +178,7 @@ noncomputable def LinearMap.IsBimoduleMaps (R H₁ H₂ : Type _) [CommSemiring 
 
 theorem LinearMap.IsBimoduleMap.add_smul (a b : R) (x : (IsBimoduleMaps R H₁ H₂)) :
     (a + b) • x = a • x + b • x := by
-  rw [← Subtype.coe_inj]
-  simp_rw [IsBimoduleMaps.coe_smul, IsBimoduleMaps.coe_add, _root_.add_smul]
-  rfl
+  exact Module.add_smul a b x
 
 
 

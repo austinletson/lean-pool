@@ -238,10 +238,7 @@ lemma _root_.VML.VMLInput.hJ_def' (p : VMLInput X) :
     intro v
     rw [p.hMaxwellianForm x v, p.hc_const x, p.hb_const x]
   -- The b field is constant, so we use the constant b₀
-  have hform' : ∀ x, ∃ a₀, ∀ v,
-      p.f x v = Real.exp (a₀ + dotProduct ((fun _ => p.b₀) x) v + p.c₀ * normSq v) :=
-    hform
-  exact p.hJ_from_maxwellian (fun _ => p.b₀) p.c₀ hform'
+  exact fun x => p.hJ_from_maxwellian (fun x => p.b₀) p.c₀ hform x
 
 /-- The drift parameter b₀ vanishes.
     Proof: Ampère + Stokes on T³ gives |u₀|² ∫ ρ = 0, and ∫ ρ > 0,

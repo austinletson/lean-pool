@@ -105,8 +105,7 @@ private lemma integrable_productBasis_cross
       (fun q z => oneDimPhi (κ q) (α q) z)
       (fun q z => oneDimPhi (κ q) (β q) z)
       (fun q => by
-        simpa [oneDimLift] using
-          integrable_oneDimPhi_cross_gaussian (κ q) (α q) (β q))).1
+        exact integrable_oneDimPhi_cross_gaussian (κ q) (α q) (β q))).1
 
 private lemma gaussianInner_finite_sum_basis
     {d : ℕ} (κ β : MultiIndex d)
@@ -233,8 +232,7 @@ theorem productBasisOrthonormal
     (fun q z => oneDimPhi (κ q) (α q) z)
     (fun q z => oneDimPhi (κ q) (β q) z)
     (fun q => by
-      simpa [oneDimLift] using
-        integrable_oneDimPhi_cross_gaussian (κ q) (α q) (β q))
+      exact integrable_oneDimPhi_cross_gaussian (κ q) (α q) (β q))
   have hprod :
       (∏ q : Fin d,
           gaussianInner (d := 1) (fun z : CSpace 1 => oneDimPhi (κ q) (α q) (z 0))
@@ -440,9 +438,7 @@ theorem partitionOfGaussianNorm
         = ∫ z in ⋃ j : MultiIndex d, productAnnulus j, ‖F z‖ ^ 2 ∂ gaussianMeasure d := by
             simp [gaussianL2NormSq, hcover]
     _ = ∑' j : MultiIndex d, ∫ z in productAnnulus j, ‖F z‖ ^ 2 ∂ gaussianMeasure d := by
-          simpa [hcover] using
-            MeasureTheory.integral_iUnion
-              (f := fun z : CSpace d => ‖F z‖ ^ 2) hmeas hdisj hfi
+          exact integral_iUnion hmeas hdisj hfi
     _ = ∑' j : MultiIndex d, annulusMass j F := by
           congr with j
           simpa [annulusMass, Set.indicator] using
@@ -726,8 +722,7 @@ private lemma rotate_one_volume_preserving
       MeasurePreserving
         (fun z : CSpace d => fun i => f i (z i))
         (volume : Measure (CSpace d)) (volume : Measure (CSpace d)) := by
-    simpa [MeasureTheory.Measure.pi, f] using
-      (MeasureTheory.volume_preserving_pi (f := f) hf)
+    exact volume_preserving_pi hf
   have hfun :
       (fun z : CSpace d => fun i => f i (z i)) =
         fun z => Function.update z q0 ((ω : ℂ) * z q0) := by
@@ -810,17 +805,7 @@ private lemma PhiKappaAlpha_rotate_one
 theorem annulusRotationAveraging
     {d : ℕ} (j : MultiIndex d) (F : CSpace d → ENNReal) (hF : Measurable F) :
     by
-      classical
-      exact
-        ∫⁻ z : CSpace d,
-            if _h : z ∈ productAnnulus j then
-              ∫⁻ t : Hermite1DimdLEAN.Circle,
-                  F (fun q => (fourier (T := Hermite1DimdLEAN.T) (1 : ℤ) t : ℂ) * z q)
-                    ∂ AddCircle.haarAddCircle
-            else 0
-          ∂ gaussianMeasure d
-          =
-        ∫⁻ z : CSpace d, if _h : z ∈ productAnnulus j then F z else 0 ∂ gaussianMeasure d := by
+      exact String.Pos.Raw := by
   classical
   let G : CSpace d → ENNReal := fun z => if z ∈ productAnnulus j then F z else 0
   have hG : Measurable G := hF.piecewise (measurableSet_productAnnulus j) measurable_const
@@ -922,8 +907,7 @@ theorem annulusOrthogonality
     intro z
     by_cases hz : z ∈ productAnnulus j
     · have hzrot : rot z ∈ productAnnulus j := by
-        simpa [rot, hω] using
-          (productAnnulus_rotate_one_iff (j := j) (q0 := q0) (ω := ω) (z := z)).2 hz
+        exact (productAnnulus_rotate_one_iff j q0 ω z).mpr hz
       have hαrot :=
         PhiKappaAlpha_rotate_one (κ := κ) (α := α) (q0 := q0) (t := t) (z := z)
       have hβrot :=

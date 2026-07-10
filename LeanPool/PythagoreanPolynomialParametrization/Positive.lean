@@ -457,8 +457,7 @@ theorem exists_16_param_parametrization :
       nlinarith [sq_nonneg (a (12 : Fin 16)), sq_nonneg (a (13 : Fin 16)),
         sq_nonneg (a (14 : Fin 16)), sq_nonneg (a (15 : Fin 16))]
     have hinput : lift16ToPosInput a = mkRatPolyInput4 x' y' z' w' := by
-      funext i
-      fin_cases i <;> simp [lift16ToPosInput, mkRatPolyInput4, x', y', z', w']
+      exact List.ofFn_inj.mp rfl
     refine ⟨x', y', z', w', hxpos, hypos, hzpos, hwnonneg, ?_, ?_, ?_⟩
     · simp_all
     · simp_all

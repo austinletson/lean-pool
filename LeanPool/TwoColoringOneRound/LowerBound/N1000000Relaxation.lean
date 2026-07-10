@@ -81,16 +81,14 @@ def LabelsDistinct (t : LabelTriple) : Prop :=
   t.1 ≠ t.2.1 ∧ t.1 ≠ t.2.2 ∧ t.2.1 ≠ t.2.2
 
 instance (t : LabelTriple) : Decidable (LabelsDistinct t) := by
-  unfold LabelsDistinct
-  infer_instance
+  exact Classical.propDecidable (LabelsDistinct t)
 
 /-- Imported auxiliary declaration for the 2-coloring one-round formalization. -/
 def LabelsInRange (t : LabelTriple) : Prop :=
   t.1 < n ∧ t.2.1 < n ∧ t.2.2 < n
 
 instance (t : LabelTriple) : Decidable (LabelsInRange t) := by
-  unfold LabelsInRange
-  infer_instance
+  exact Classical.propDecidable (LabelsInRange t)
 
 lemma labelGetNat_lt (t : LabelTriple) (hr : LabelsInRange (t := t)) (i : Fin 3) :
     labelGetNat t i < n := by

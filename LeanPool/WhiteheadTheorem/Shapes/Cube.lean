@@ -113,8 +113,7 @@ def homeoNeqLast {n : ℕ} : (I^ Fin n) ≃ₜ I^{ j : Fin (n + 1) // j ≠ Fin.
         simp_all ⟩
       invFun i := ⟨i, by
         have := i.2
-        simp only [ne_eq] at this
-        exact Fin.lt_last_iff_ne_last.mpr this ⟩
+        exact Fin.val_lt_last this ⟩
       left_inv i := by simp only [Fin.val_castSucc, Fin.eta]
       right_inv i := by simp only [ne_eq, Fin.castSucc_mk, Fin.eta, Subtype.coe_eta] }
     fun _ ↦ Homeomorph.refl _
@@ -326,8 +325,7 @@ def inclToBoundaryJarSides {n : ℕ} : C((∂I^n) × I, ⊔I^(n+1)) where
         simpa [Fin.castSucc_ne_last, Fin.castSucc_lt_last]  ⟩
   continuous_toFun := by
     refine Continuous.subtype_mk ?_ _
-    simp only [ContinuousMap.coe_comp, ContinuousMap.coe_coe, Homeomorph.comp_continuous_iff]
-    apply ContinuousMapClass.map_continuous
+    exact ContinuousMap.continuous ((↑splitAtLastComm.symm).comp ((boundaryIncl n).prodMap (ContinuousMap.id ↑I)))
 
 /-- The inclusion `(y, t) ↦ (y₀, y₁, …, yₙ₋₁, t)` to the sides of
 the $(n+1)$-dimensional cube. -/

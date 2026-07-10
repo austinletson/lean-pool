@@ -28,10 +28,4 @@ instance IsLocallyFiniteMeasure.prod {X Y : Type*} [TopologicalSpace X] [Topolog
     [IsLocallyFiniteMeasure μ] [IsLocallyFiniteMeasure ν] :
     IsLocallyFiniteMeasure (μ.prod ν) where
   finiteAtNhds := by
-    rintro ⟨x, y⟩
-    -- TODO: add FiniteAtFilter _ (_ ×ˢ _)
-    rcases finiteAt_nhds μ x with ⟨s, hs, hμs⟩
-    rcases finiteAt_nhds ν y with ⟨t, ht, hνt⟩
-    use s ×ˢ t, prod_mem_nhds hs ht
-    grw [prod_prod_le]
-    exact ENNReal.mul_lt_top hμs hνt
+    exact fun x => IsLocallyFiniteMeasure.finiteAtNhds x

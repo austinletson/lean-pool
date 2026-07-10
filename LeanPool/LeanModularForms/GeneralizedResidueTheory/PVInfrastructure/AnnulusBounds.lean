@@ -81,8 +81,7 @@ private lemma remainder_annulus_zero_of_far
       exact absurd hcond.1 (not_lt.mpr hε₂_pos.le)
     exact not_lt.mpr
       (annulus_t_measure_bound hL hε₁_pos h_lower
-        (fun s hs hγs => by simp only [min_self]
-                            exact lt_of_lt_of_le (h_localize s hs hγs) (min_le_right _ _))
+        (fun s hs hγs => by exact gt_iff_lt.mp (h_localize s hs hγs))
         t ht_in_Icc ht_eq hcond.1 hcond.2) h_far
   · simp only [hcond, ↓reduceIte]
 
@@ -477,8 +476,7 @@ lemma annulus_symmDiff_measure_bound
     have h2 : 2 * ε₁ < ‖L‖ * δ₁ := by
       have : ε₁ < ‖L‖ * δ₁ / 2 := hε₁_lt
       linarith
-    linarith [div_lt_div_of_pos_right h2 hL_norm_pos,
-      show ‖L‖ * δ₁ / ‖L‖ = δ₁ from by field_simp]
+    exact (div_lt_iff₀' hL_norm_pos).mpr h2
   have h2ε₁_over_L_lt_δ₀ : 2 * ε₁ / ‖L‖ < δ₀ :=
     lt_of_lt_of_le h2ε₁_over_L_lt_δ₁ hδ₁_le_δ₀
   have h_lower_bound : ∀ t, |t - t₀| < δ₁ → ‖γ t - γ t₀‖ ≥ ‖L‖ / 2 * |t - t₀| :=

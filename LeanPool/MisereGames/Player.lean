@@ -83,8 +83,7 @@ instance : LE Player where
   le lhs rhs := (lhs = .right) ∨ (lhs = .left ∧ rhs = .left)
 
 instance : DecidableLE Player := by
-  simp only [DecidableLE, DecidableRel, LE.le]
-  infer_instance
+  exact Classical.decRel LE.le
 
 theorem le_right_eq (p : Player) (h1 : p ≤ .right) : p = .right := by
   simp only [LE.le, reduceCtorEq, and_false, or_false] at h1

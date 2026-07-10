@@ -330,10 +330,7 @@ lemma WeightedCollection.mixedInter_itemFreq_le
   rw [ WeightedCollection.itemFreq ];
   rw [
     div_le_iff₀ (by
-      exact (by
-        exact
-          WeightedCollection.mixedInter_totalWeight C ℓ τ hτ hτ1 ▸
-            pow_pos C.totalWeight_pos _))
+      exact totalWeight_pos (C.mixedInter ℓ τ hτ hτ1))
     ];
   have h_mixed_freq : (∑ x : Fin ℓ → C.J, (∏ k : Fin ℓ, C.weight (x k)) * (if i ∈ finsetInter (fun k
     => C.sets (x k)) then 1 else 0)) ≤ t ^ ℓ * (∑ j : C.J, C.weight j) ^ ℓ ∧ (∑ x : Fin (ℓ + 1) →

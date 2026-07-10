@@ -445,8 +445,7 @@ lemma EF.mul_smul (k l : F≥0) (r : F∞) :
         smul_zero]
     else
       have l_pos : 0 < l := by
-        apply lt_of_le_of_ne l.property
-        exact l_eq_0 ∘ eq_zero_of_zero_eq_val
+        exact pos_of_NN_not_zero l_eq_0
       rw [EF.pos_smul_top l_pos]
       if k_eq_0 : k = 0 then
         rw [k_eq_0, EF.zero_smul_nonbot top_ne_bot, zero_mul, EF.zero_smul_nonbot top_ne_bot]
@@ -854,8 +853,7 @@ private lemma ValidELP.strongDuality_aux_caseY (P : ValidELP I J F)
     else
       have hyb : P.b ᵥ⬝ y < 0 := by
         push Not at hxc
-        by_contra! contr
-        exact (hbc.trans_le (add_nonneg contr hxc)).false
+        exact lt_of_add_lt_of_nonneg_left hbc hxc
       exact P.dualize.infeasible_of_unbounded
         (P.dualize.unbounded_of_feasible_of_neg hQ hyb hy) (P.dualize_dualize ▸ hP)
   match hcx : P.c ᵥ⬝ x with

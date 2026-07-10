@@ -271,11 +271,7 @@ lemma mem_of_mem_closure_in_U {S U : Set E}
   obtain ⟨p, ⟨hpS, hpdist⟩, _⟩ := hTN.uniqueProj x hxU
   suffices dist x p = 0 by rwa [dist_eq_zero.mp this]
   rw [hpdist]
-  by_contra h
-  have hpos : 0 < Metric.infDist x S :=
-    lt_of_le_of_ne Metric.infDist_nonneg (Ne.symm h)
-  obtain ⟨y, hyS, hxy⟩ := Metric.mem_closure_iff.mp hx_cl _ hpos
-  exact absurd hxy (not_lt.mpr (Metric.infDist_le_dist_of_mem hyS))
+  exact infDist_zero_of_mem_closure hx_cl
 
 omit [FiniteDimensional ℝ E] in
 /-- `S ∩ C` is closed whenever `C` is closed and `C ⊆ U`.

@@ -269,13 +269,7 @@ private lemma iter_mem_smulOrbit_mulMap (g₂ g₁ : P.Δ) (β : P.Δ)
   have hn_coe : (r.out : G) = h₁ * (n : G) := by
     simpa [Subgroup.coe_mul] using congr_arg (Subtype.val : ↥P.H → G) hn_eq
   have hn_conj : g_D⁻¹ * (n : G)⁻¹ * g_D ∈ P.H := by
-    have hn := n.2
-    rw [Subgroup.mem_subgroupOf, Subgroup.mem_pointwise_smul_iff_inv_smul_mem,
-      ConjAct.smul_def] at hn
-    have hsimp : ConjAct.ofConjAct (ConjAct.toConjAct g_D)⁻¹ = g_D⁻¹ := by
-      rw [map_inv, ConjAct.ofConjAct_toConjAct]
-    rw [hsimp] at hn
-    have := P.H.inv_mem hn; convert this using 1; group
+    exact conjAct_inv_mem_of_subgroupOf P g_D n
   suffices hsuff : (⟦⟨α * (r.out : G) * g_D,
       delta_mul_mem P.H P.Δ r.out β (HeckeCoset.rep D) P.h₀⟩⟧ :
         HeckeLeftCoset P) =

@@ -114,13 +114,7 @@ theorem pac_bayes_per_hypothesis {X : Type u} [MeasurableSpace X]
         by_contra h_not_le
         push Not at h_not_le
         linarith [Real.log_pos h_not_le]
-      have h_ge : 1 ≤ 1 / (P.prob h₀ * δ) := by
-        by_contra h_not_ge
-        push Not at h_not_ge
-        have := Real.log_neg (by linarith [h_inv_pos]) h_not_ge
-        linarith [h_log_nonneg]
-      have h_inv_eq_one : 1 / (P.prob h₀ * δ) = 1 := le_antisymm h_le h_ge
-      rw [div_eq_one_iff_eq (ne_of_gt hPδ_pos)] at h_inv_eq_one; linarith
+      exact (div_le_one₀ hPδ_pos).mp h_le
     calc μ { S | TrueErrorReal X (hs h₀) c D >
             EmpiricalError X Bool (hs h₀) (fun i => (S i, c (S i)))
               (zeroOneLoss Bool) + t }
@@ -233,8 +227,7 @@ theorem pac_bayes_all_hypotheses {X : Type u} [MeasurableSpace X]
         have h_true_le_one : TrueErrorReal X (hs h) c D ≤ 1 := by
           simp only [TrueErrorReal, TrueError]
           have h_le : D {x | hs h x ≠ c x} ≤ 1 := by
-            calc D {x | hs h x ≠ c x} ≤ D Set.univ := MeasureTheory.measure_mono (Set.subset_univ _)
-              _ = 1 := MeasureTheory.IsProbabilityMeasure.measure_univ
+            exact prob_le_one
           exact ENNReal.toReal_le_of_le_ofReal one_pos.le
             (by rw [ENNReal.ofReal_one]; exact h_le)
         -- EmpiricalError ≥ 0

@@ -199,9 +199,7 @@ noncomputable instance : InnerProductAlgebra ℂ where
   norm_smul_le _ _ := norm_smul_le _ _
   norm_sq_eq_inner := norm_sq_eq_re_inner
   dist_eq x y := by
-    rw [dist_eq_norm']
-    congr 1
-    abel
+    exact NormedAddGroup.dist_eq x y
   conj_symm := inner_conj_symm
   add_left := inner_add_left
   smul_left := inner_smul_left
@@ -224,8 +222,7 @@ noncomputable instance Complex.quantumSet : QuantumSet ℂ where
 
 theorem RCLike.inner_tmul {𝕜 : Type*} [RCLike 𝕜] (x y z w : 𝕜) :
     ⟪x ⊗ₜ[𝕜] y, z ⊗ₜ[𝕜] w⟫_𝕜 = ⟪x * y, z * w⟫_𝕜 := by
-  simp only [TensorProduct.inner_tmul, inner_apply, map_mul]
-  rw [mul_mul_mul_comm]
+  exact inner_tmul_eq x y z w
 
 theorem TensorProduct.singleton_tmul
     {R : Type*} {E : Type*} {F : Type*} [CommSemiring R]
@@ -292,13 +289,7 @@ theorem lmul_adjoint [hB : QuantumSet B] (a : B) :
 
 lemma QuantumSet.inner_eq_counit' [QuantumSet B] :
     (⟪(1 : B), ·⟫_ℂ) = Coalgebra.counit := by
-  simp_rw [Coalgebra.counit]
-  ext
-  apply ext_inner_left ℂ
-  intro a
-  simp_rw [LinearMap.adjoint_inner_right, Algebra.linearMap_apply,
-    Algebra.algebraMap_eq_smul_one, inner_smul_left]
-  rw [RCLike.inner_apply']
+  exact Coalgebra.inner_eq_counit'
 
 lemma QuantumSet.inner_eq_counit [QuantumSet B] (x y : B) :
     ⟪x, y⟫_ℂ = Coalgebra.counit (star x * modAut (k B) y) := by
@@ -625,8 +616,7 @@ lemma _root_.QuantumSet.counit_mul_rTensor_ket_eq_bra_star [hA : QuantumSet A] (
     Coalgebra.counit_eq_unit_adjoint, adjoint_adjoint, comp_assoc]
   rw [← QuantumSet.rTensor_bra_comul_unit_eq_ket_star x]
   congr
-  ext
-  rfl
+  exact IsScalarTower.Algebra.ext_iff.mpr fun r => congrFun rfl
 
 theorem ket_real {𝕜 A : Type*} [RCLike 𝕜] [NormedAddCommGroup A]
     [InnerProductSpace 𝕜 A] [StarAddMonoid A] [StarModule 𝕜 A] (x : A) :

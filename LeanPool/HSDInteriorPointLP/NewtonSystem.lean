@@ -65,8 +65,7 @@ large product goal. -/
 theorem finset_sum_smul_simple {ι : Type*} [Fintype ι]
     (a : ℝ) (f : ι → ℝ) :
     (∑ x : ι, a * f x) = a * ∑ x : ι, f x := by
-  simpa using
-    (Finset.mul_sum (s := (Finset.univ : Finset ι)) (f := f) (a := a)).symm
+  exact Eq.symm (Finset.mul_sum Finset.univ f a)
 
 /-- Scalar multiplication in the vector argument of `matVec`. -/
 theorem matVec_smul_apply {m n : Nat}
@@ -326,8 +325,7 @@ theorem HLPNewtonBlockOperator_eq_rhs_iff_block_system {m n : Nat}
 theorem finiteDimensional_surjective_of_injective_self
     {V : Type*} [AddCommGroup V] [Module ℝ V] [FiniteDimensional ℝ V]
     (L : V →ₗ[ℝ] V) (hinj : Function.Injective L) : Function.Surjective L := by
-  classical
-  exact (LinearMap.injective_iff_surjective).1 hinj
+  exact LinearMap.surjective_of_injective hinj
 
 /-- The concrete HLP nullspace equations imply the reduced skew-operator
 nullspace condition.  This is the explicit place where the skew-symmetry of the
@@ -410,8 +408,7 @@ theorem HLPNullDirection_from_full_nullspace {m n : Nat}
     have hcbar_comm : dot D.dx (cbar P) = dot (cbar P) D.dx := by
       unfold dot
       apply Finset.sum_congr rfl
-      intro i _
-      ring
+      exact fun x a => mul_comm' (D.dx x) (cbar P x)
     simp_all
   have hc_comm : dot D.dx P.c = dot P.c D.dx := by
     unfold dot
@@ -802,11 +799,7 @@ theorem HLP_newton_block_system_solvable_from_kernel_trivial {m n : Nat}
               exact hds i
             · exact hdkappa
   have hinj : Function.Injective L := by
-    intro u v huv
-    have hsub : L (u - v) = 0 := by
-      simpa [map_sub] using congrArg (fun y => y - L v) huv
-    have hzero := hker_op (u - v) hsub
-    exact sub_eq_zero.mp hzero
+    exact (injective_iff_map_eq_zero L).mpr hker_op
   have hsurj : Function.Surjective L :=
     finiteDimensional_surjective_of_injective_self L hinj
   rcases hsurj (HLPNewtonBlockRhs w γ m) with ⟨u, hu⟩
@@ -1055,8 +1048,7 @@ theorem dot_comm {n : Nat} (u v : Vec n) :
     dot u v = dot v u := by
   unfold dot
   apply Finset.sum_congr rfl
-  intro i _
-  ring
+  exact fun x a => mul_comm' (u x) (v x)
 
 /-- Linearity of the first argument of `dot` for the update `u + α du`. -/
 theorem dot_add_smul_left {n : Nat} (u du v : Vec n) (α : ℝ) :

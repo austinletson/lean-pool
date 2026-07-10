@@ -212,8 +212,7 @@ private lemma fubini_double_int_bound_coulomb
                      f v * |vGrad f w j|)) := by
                 ext w; rw [Finset.mul_sum]
               rw [this]
-              exact integrable_finsetSum _ fun j _ =>
-                h_each_int j
+              exact integrable_finsetSum univ fun i a => h_each_int i
             · exact ae_of_all _ (h_pw_bound v)
         _ = 3 * Cg * (1 + ‖v‖) ^ Kg * ∫ w, ‖v - w‖⁻¹ *
               ∑ j : Fin 3,

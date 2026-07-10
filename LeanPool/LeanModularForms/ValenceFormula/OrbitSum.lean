@@ -99,10 +99,7 @@ private theorem G_analyticAt (p : ℍ) :
 
 private theorem G_eval_eq_f (p : ℍ) :
     (fun w : ℂ => if h : 0 < w.im then f ⟨w, h⟩ else 0) (p : ℂ) = f p := by
-  simp only []
-  split_ifs with h
-  · congr 1
-  · exact absurd p.im_pos h
+  exact dif_pos p.coe_im_pos
 
 /-- If `f p ≠ 0`, then `orderOfVanishingAt' f p = 0`. -/
 theorem orderOfVanishingAt'_eq_zero_of_ne_zero' (p : ℍ) (hp : f p ≠ 0) :
@@ -242,7 +239,6 @@ theorem orb_rho_plus_one_eq_orb_rho :
   change Quotient.mk'' ellipticPointRhoPlusOne' = Quotient.mk'' ellipticPointRho'
   rw [Quotient.eq'', MulAction.orbitRel_apply, MulAction.mem_orbit_iff]
   exact ⟨ModularGroup.T, by
-    rw [UpperHalfPlane.modular_T_smul]; ext
-    simp [ellipticPointRho', ellipticPointRhoPlusOne', UpperHalfPlane.coe_vadd]; ring⟩
+    rw [UpperHalfPlane.modular_T_smul]; exact vAdd_one_rho_eq_rho_plus_one⟩
 
 end

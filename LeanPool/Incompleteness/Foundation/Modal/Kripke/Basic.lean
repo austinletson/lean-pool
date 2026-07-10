@@ -116,8 +116,7 @@ protected instance : Semantics.Tarski (M.World) where
   realize_and := Satisfies.and_def;
 
 lemma iff_def : x ⊧ φ <=> ψ ↔ (x ⊧ φ ↔ x ⊧ ψ) := by
-  simp [Satisfies]
-  tauto
+  exact Semantics.realize_iff
 
 @[simp 1100] lemma negneg_def : Kripke.Satisfies M x (∼∼φ) ↔ x ⊧ φ := by
   classical
@@ -448,8 +447,7 @@ instance _root_.LO.Modal.Kripke.AllFrameClass.DefinedBy :
     AllFrameClass.DefinedByFormula (Axioms.K (.atom 0) (.atom 1)) :=
   FrameClass.definedByFormula_of_iff_mem_validate <| by
     simp only [Set.mem_univ, true_iff];
-    intro F;
-    exact Formula.Kripke.ValidOnFrame.axiomK;
+    exact fun F => Formula.Kripke.ValidOnFrame.axiomK
 
 instance _root_.LO.Modal.Kripke.AllFrameClass.IsNonempty : AllFrameClass.IsNonempty := by
   use ⟨Unit, fun _ _ => True⟩;

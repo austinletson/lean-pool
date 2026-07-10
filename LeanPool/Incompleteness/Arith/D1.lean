@@ -179,9 +179,7 @@ open Derivation2
 lemma quote_image_shift
     [L.DecidableEq] (Γ : Finset (SyntacticFormula L)) : (L.codeIn V).setShift (⌜Γ⌝ :
     V) = ⌜Γ.image Rewriting.shift⌝ := by
-  induction Γ using Finset.induction
-  case empty => simp
-  case insert φ Γ _ ih => simp [ih]
+  exact setShift_quote Γ
 
 @[simp] lemma derivation_quote [L.DecidableEq] {Γ : Finset (SyntacticFormula L)} (d : T ⊢₂ Γ) :
     (T.codeIn V).Derivation ⌜d⌝ := by

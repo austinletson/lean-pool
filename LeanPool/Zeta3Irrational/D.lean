@@ -192,8 +192,7 @@ theorem d_factorization_eq_div_log' (n p : ℕ) (hp : Nat.Prime p) :
           linarith
         · norm_cast
           exact Nat.Prime.one_lt hp
-        · norm_cast
-          omega
+        · exact Nat.cast_add_one_pos n
       · rw [← sub_lt_iff_lt_add]
         · by_contra! h
           rw [Finset.max'_le_iff] at h
@@ -218,8 +217,7 @@ theorem d_factorization_eq_div_log' (n p : ℕ) (hp : Nat.Prime p) :
             aesop
           · norm_cast
             exact Nat.Prime.one_lt hp
-          · norm_cast
-            omega
+          · exact Nat.cast_add_one_pos n
   · apply Real.logb_nonneg
     · norm_cast
       exact Nat.Prime.one_lt hp

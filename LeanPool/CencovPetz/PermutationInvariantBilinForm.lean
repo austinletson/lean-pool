@@ -76,17 +76,11 @@ noncomputable abbrev κ (σ : Equiv.Perm (Fin n)) : MarkovMorphism (Fin n) (Fin 
 
 lemma κ_tangentPushforward_apply (σ : Equiv.Perm (Fin n)) (u : V n) (k : Fin n) :
     ((κ (n := n) σ).tangentPushforward u : Fin n → ℝ) k = (u : Fin n → ℝ) (σ.symm k) := by
-  classical
-  simpa [κ] using
-    (MarkovMorphism.deterministic_tangentPushforward_apply_of_equiv (α := Fin n) (β := Fin n)
-      (e := σ) (u := u) (b := k))
+  exact MarkovMorphism.deterministic_tangentPushforward_apply_of_equiv σ u k
 
 lemma κ_pushforward_apply (σ : Equiv.Perm (Fin n)) (p : Simplex (Fin n)) (k : Fin n) :
     ((κ (n := n) σ).pushforward p).p k = p.p (σ.symm k) := by
-  classical
-  simpa [κ] using
-    (MarkovMorphism.deterministic_pushforward_apply_of_equiv (α := Fin n) (β := Fin n)
-      (e := σ) (p := p) (b := k))
+  exact MarkovMorphism.deterministic_pushforward_apply_of_equiv σ p k
 
 lemma e_apply_symm (σ : Equiv.Perm (Fin n)) (i k : Fin n) :
     e (n := n) i (σ.symm k) = e (n := n) (σ i) k := by

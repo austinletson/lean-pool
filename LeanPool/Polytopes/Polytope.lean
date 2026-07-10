@@ -77,8 +77,7 @@ lemma mem_Hpolytope {H_ : Set (Halfspace E)} (hH_ : H_.Finite) (x : E) :
     unfold Hpolytope
     rw [Set.mem_sInter]
     rintro _ ⟨ Hi_, hHi_, rfl ⟩
-    specialize h Hi_ hHi_
-    rwa [Halfspace_mem]
+    exact (Halfspace_mem Hi_ x).mpr (h Hi_ hHi_)
 
 lemma empty_Hpolytope [Nontrivial E] :
   ∃ (H_ : Set (Halfspace E)) (hH_ : H_.Finite), Hpolytope hH_ = ∅ := by

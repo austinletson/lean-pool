@@ -91,17 +91,14 @@ private lemma psd_resolvent_trace_le (U B Uhalf K : Matrix V V ℝ) (hU : U.PosD
     conv_lhs => rw [show (1 : Matrix V V ℝ) = eigQ * star eigQ from hQ_mul_star.symm]
     rw [show eigQ * star eigQ - eigQ * Matrix.diagonal eig * star eigQ =
         eigQ * ((1 : Matrix V V ℝ) - Matrix.diagonal eig) * star eigQ from by
-          conv_lhs =>
-            rw [show eigQ * star eigQ = eigQ * 1 * star eigQ from by rw [Matrix.mul_one]]
-          rw [← Matrix.sub_mul, ← Matrix.mul_sub]]
+          exact Eq.symm (mul_one_sub_mul eigQ (diagonal eig) (star eigQ))]
     congr 1
     congr 1
     rw [D_def]
     ext i j; simp only [Matrix.sub_apply, Matrix.one_apply, Matrix.diagonal_apply]
     split_ifs <;> simp
   have h_diag_det : IsUnit D.det := by
-    rw [D_def, Matrix.det_diagonal]
-    exact IsUnit.mk0 _ (Finset.prod_ne_zero_iff.mpr fun i _ => ne_of_gt (h_1_sub_pos i))
+    exact isUnit_det_of_right_inverse hD_invD
   have hIK_inv : ((1 : Matrix V V ℝ) - K)⁻¹ = eigQ * invD * star eigQ := by
     rw [hIK_eq]
     apply Matrix.inv_eq_right_inv

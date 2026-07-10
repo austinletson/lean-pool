@@ -104,8 +104,7 @@ def monochromatic {n : Nat} (f : Vertex n → Bool) (e : Edge n) : Prop :=
   f (src e) = f (dst e)
 
 instance {n : Nat} (f : Vertex n → Bool) (e : Edge n) : Decidable (monochromatic f e) := by
-  dsimp [monochromatic]
-  infer_instance
+  exact Classical.propDecidable (monochromatic f e)
 
 end Edge
 
@@ -183,8 +182,7 @@ lemma monoFraction_eq_one_add_edgeCorrelation_div_two {n : Nat} (f : Coloring n)
           / (edgeCount n : ℚ) := by
           refine congrArg (fun z => z / (edgeCount n : ℚ)) ?_
           refine Finset.sum_congr rfl ?_
-          intro e _
-          simpa [z] using (monoIndicator_eq_one_add_sign_mul_div_two (n := n) f e)
+          exact fun x a => monoIndicator_eq_one_add_sign_mul_div_two f x
     _ = ((((Finset.univ : Finset (Edge n)).sum (fun _e => (1 : ℚ))
             + (Finset.univ : Finset (Edge n)).sum z) / 2))
           / (edgeCount n : ℚ) := by

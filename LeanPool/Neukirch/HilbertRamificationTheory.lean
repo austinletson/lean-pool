@@ -122,8 +122,7 @@ injectivity condition with the condition `Polynomial.map f p ≠ 0`. -/
 theorem roots_map_of_card_eq_natDegree {A B : Type*} [CommRing A] [CommRing B]
     [IsDomain A] [IsDomain B] {p : A[X]} {f : A →+* B} (h : p.map f ≠ 0)
     (hroots : card p.roots = p.natDegree) : p.roots.map f  = (map f p).roots := by
-  apply eq_of_le_of_card_le (map_roots_le h)
-  simpa only [card_map, hroots] using (card_roots' (map f p)).trans natDegree_map_le
+  exact roots_map_of_map_ne_zero_of_card_eq_natDegree f h hroots
 
 end Polynomial
 
@@ -226,14 +225,7 @@ instance extension_ringOfIntegers_isIntegralClosure [NumberField L] :
     IsIntegralClosure (𝓞 L) (𝓞 K) L where
   algebraMap_injective := IsFractionRing.injective (𝓞 L) L
   isIntegral_iff := by
-    intro x
-    constructor
-    · intro hx
-      use ⟨x, isIntegral_tower x hx⟩
-      rfl
-    · intro ⟨⟨y,hy⟩, hxy⟩
-      rw [← hxy]
-      exact IsIntegral.tower_top hy
+    exact fun {x} => IsIntegralClosure.isIntegral_iff
 
 /-- Any Extension between ring of integers is integral. -/
 instance extension_ringOfIntegers_isIntegral [NumberField L] : Algebra.IsIntegral (𝓞 K) (𝓞 L) :=
@@ -258,12 +250,7 @@ instance instIsScalarTower_IntermediateField_ringOfIntegers (E : IntermediateFie
 instance instIsScalarTower_ringOfIntegers (E L : Type*) [Field E] [NumberField E] [Field L]
     [NumberField L] [Algebra K E] [Algebra E L] [Algebra K L] [IsScalarTower K E L] :
     IsScalarTower (𝓞 K) (𝓞 E) (𝓞 L) := by
-  refine IsScalarTower.of_algebraMap_eq (fun x ↦ ?_)
-  apply Subtype.val_inj.mp
-  calc _ = algebraMap K L x.1 := rfl
-    _ = _ := by
-      rw [IsScalarTower.algebraMap_eq K E L]
-      rfl
+  exact RingOfIntegers.inst_isScalarTower K E L
 
 variable {L : Type*} [Field L] [Algebra K L] (P : Ideal (𝓞 L)) (p : Ideal (𝓞 K))
 

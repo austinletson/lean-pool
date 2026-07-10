@@ -249,8 +249,7 @@ theorem differentiableAt_inv_special' (c x y z : ℝ) (n : ℕ) (hc : c ≠ 0)
   set d := min (q / 2 + y) (1 / |x * z| + y)
   set d' := min (q / 2) (1 / |x * z|)
   have h' : d = d' + y := by
-    simp only [d, d']
-    rw [min_add_add_right]
+    exact min_add_add_right (q / 2) (1 / |x * z|) y
   have hd : |d - y| < q := by
     rw [h', show d' + y - y = d' by ring]
     suffices |d'| ≤ q / 2 by linarith
@@ -359,10 +358,7 @@ lemma shiftedLegendre_poly_eval_zero_eq_zero {m : ℕ} (h : m < n) :
   right
   suffices n - (m - x) > 0 by linarith
   simp only [gt_iff_lt, tsub_pos_iff_lt]
-  rw [Nat.lt_add_one_iff] at hx
-  calc
-    m - x ≤ m := by simp
-    _ < n := by exact h
+  exact Nat.sub_lt_of_lt h
 
 lemma shiftedLegendre_poly_eval_one_eq_zero {m : ℕ} (h : m < n) :
     eval 1 ((⇑derivative)^[m] (X ^ n * (1 - X) ^ n) : ℝ[X]) = 0 := by

@@ -86,8 +86,7 @@ theorem Config.join_n2_n2_case_tt (S : Finset α) (n : ℕ) (a x b : α) (c1 c2 
   have Mirrored_goal :=
     C.Mirror.join_n2_n2_case_ff S.Mirror n (toDual b) (toDual x) (toDual a) c2.Mirror c1.Mirror
       lab.Mirror b_in_S x_in_S a_in_S hc2 c2_in_S hc1 c1_in_S hba
-  rw [Mirror.hasNGon] at Mirrored_goal
-  tauto
+  exact Mirror.hasNGon.mp Mirrored_goal
 
 theorem Config.join_n2_n2 (S : Finset α) {n : ℕ} (cap4_free : ¬C.HasNCap 4 S) {c1 : List α}
     (hc1 : C.NCup (n + 2) c1) (c1_in_S : c1.In S) {c2 : List α} (hc2 : C.NCup (n + 2) c2)

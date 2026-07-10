@@ -479,10 +479,8 @@ private theorem subposition_mem_of_mem_closedUnderNegClosure [EndLikeClosed p A]
   have hAC : A ≤ C := fun g hg => Or.inl hg
   rcases ClosedUnderNeg.closure_min hAC g hg with hgA | ⟨a, ha, rfl⟩
   · constructor
-    · intro h hsub hEnd
-      exact EndLikeClosed.mem_of_subposition_isEndLike hgA hsub hEnd
-    · intro h hsub hEnd
-      exact EndLikeClosed.neg_mem_of_subposition_isEndLike_neg hgA hsub hEnd
+    · exact fun h a a_1 => EndLikeClosed.mem_of_subposition_isEndLike hgA a a_1
+    · exact fun h a a_1 => EndLikeClosed.neg_mem_of_subposition_isEndLike_neg hgA a a_1
   · constructor
     · intro h hsub hEnd
       have hnegSub : Subposition (-h) a := by

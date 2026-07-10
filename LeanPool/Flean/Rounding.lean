@@ -400,8 +400,7 @@ lemma roundf_down_le {q : ℚ} (q_nezero : q ≠ 0) :
   simp only [not_lt] at h
   nth_rw 4 [<-abs_of_nonneg h]
   simp only [rounddown, round0_apply, Bool.false_eq_true, ↓reduceIte]
-  apply floatrep_floor_le_q
-  exact q_nezero
+  exact floatrep_floor_le_q q_nezero
 
 lemma le_roundf_up {q : ℚ} (q_nezero : q ≠ 0) :
   q ≤ coeQ (roundf roundup (C := C) q) := by
@@ -486,36 +485,25 @@ lemma round_max_e (r : IntRounder) [rh : ValidRounder r] {q : ℚ} (q_nezero : q
     exact this
   rw [abs_of_pos h'] at h
   have q'pos : 0 < q' := by
-    rw [this]
-    apply mul_pos
-    · apply sub_pos.mpr
-      rw [div_lt_iff₀ (by exact_mod_cast C.prec_pos)]
-      norm_cast
-      have := C.prec_pos
-      omega
-    positivity
+    exact coe_q_false_pos
   apply le_roundf_of_le (C := C) r q q' q_nezero (ne_of_gt q'pos) at h
   have h : |coeQ (roundf (C := C) r q)| ≤ |coeQ (roundf (C := C) r q')| := by
     rw [abs_of_pos, abs_of_pos]
     · exact h
-    · apply roundf_of_pos
-      exact q'pos
-    apply roundf_of_pos
-    apply h'
+    · exact roundf_of_pos r q' q'pos
+    exact roundf_of_pos r q h'
   have log_le : Int.log 2 |coeQ (roundf (C := C) r q)|
       ≤ Int.log 2 |coeQ (roundf (C := C) r q')| := by
     apply Int.log_mono_right
     · apply abs_pos_of_pos
-      apply roundf_of_pos
-      apply h'
+      exact roundf_of_pos r q h'
     exact h
   rw [<-e_le_iff_log] at log_le
   · convert log_le
     rw [q'_def]
     rw [roundf_coe]
     simp [FloatRep.validM, C.prec_pos]
-  · apply roundf_valid
-    exact q_nezero
+  · exact roundf_valid r q q_nezero
   apply roundf_valid
   exact ne_of_gt q'pos
 
@@ -597,8 +585,7 @@ lemma roundf_near_close {q : ℚ} (q_nezero : q ≠ 0) :
         apply mul_le_mul_of_nonneg_right
         · apply div_le_div_of_nonneg_right
           · exact this
-          apply le_of_lt
-          exact_mod_cast C.prec_pos
+          exact Rat.natCast_nonneg
         positivity
       _ = 2^(e - 1) / C.prec := by
         rw [zpow_sub₀ (by norm_num)]

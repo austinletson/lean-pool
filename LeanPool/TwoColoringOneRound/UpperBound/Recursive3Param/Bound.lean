@@ -385,8 +385,7 @@ lemma lintegral_triangle_Iio (B : Rand) (f : Rand → ℝ≥0∞) (hf : Measurab
           ({p : Rand × Rand | p.1 < B ∧ p.2 < p.1} :
               Set (Rand × Rand)) =
             {p : Rand × Rand | p.1 < B} ∩ {p : Rand × Rand | p.2 < p.1} := by
-        ext p
-        simp
+        exact Set.setOf_and
       simpa [hEq] using h1.inter h2
     refine Measurable.ite (hp := hpred) ?_ measurable_const
     exact hf.comp (measurable_snd : Measurable fun p : Rand × Rand => p.2)
@@ -499,8 +498,7 @@ lemma lintegral_b_above_t :
       (∫⁻ b in Set.Ico t (1 : Rand), ∫⁻ c in (Set.Iio (1 : Rand) : Set Rand), innerBC b c ∂μ ∂μ) =
         ∫⁻ b in Set.Ioo t (1 : Rand),
           ∫⁻ c in (Set.Iio (1 : Rand) : Set Rand), innerBC b c ∂μ ∂μ := by
-    simpa using (MeasureTheory.setLIntegral_congr (μ := μ) (f := fun b =>
-      ∫⁻ c in (Set.Iio (1 : Rand) : Set Rand), innerBC b c ∂μ) hIoo.symm)
+    exact setLIntegral_congr (id (Filter.EventuallyEq.symm hIoo))
   rw [hcongr]
   have hs : MeasurableSet (Set.Ioo t (1 : Rand) : Set Rand) := by measurability
   have hconst :

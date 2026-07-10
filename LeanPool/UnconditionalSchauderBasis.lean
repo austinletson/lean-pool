@@ -130,8 +130,7 @@ private theorem exists_perm_subseq_range_image_of_monotone_finset
   have hL_succ (n : ℕ) : L (n + 1) = L n ++ block n := by
     simp [L]
   have hL_prefix_succ (n : ℕ) : L n <+: L (n + 1) := by
-    rw [hL_succ n]
-    exact (L n).prefix_append (block n)
+    exact List.prefix_append (L n) (block n)
   have hL_prefix : ∀ {n m : ℕ}, n ≤ m → L n <+: L m := by
     intro n m hnm
     induction hnm with
@@ -415,12 +414,7 @@ theorem isUnconditional_iff_tendsto_ordered_rearranged (b : SchauderBasis 𝕜 E
   constructor
   · exact b.isUnconditional_tendsto_rearranged
   · intro h x
-    let f : ℕ → E := fun n => b.coeff n x • b.basis n
-    have hf : HasSum f x :=
-      hasSum_of_forall_tendsto_sum_nat_rearranged (a := x) (f := f) (by
-        intro σ
-        simpa [f] using h x σ)
-    simpa [f] using hf
+    exact hasSum_of_forall_tendsto_sum_nat_rearranged (h x)
 
 end SchauderBasis
 
@@ -603,11 +597,7 @@ noncomputable def toUnconditionalSchauderBasis
                       exact hmn (e.injective h)
                     simp [c, hmn, coeff_basis_ne b hemn]
           _ = a n := by
-                  exact
-                    (Finset.sum_eq_single (s := Finset.range k) (a := n)
-                      (f := fun m : ℕ => if m = n then a n else 0)
-                      (fun m _hm hmn => if_neg hmn)
-                      (fun hn => False.elim (hn hnmem))).trans (by simp)
+                  exact Finset.sum_ite_eq_of_mem' (Finset.range k) n (fun x => a n) hnmem
       have hscalar :
           Filter.Tendsto
             (fun k : ℕ => c (∑ m ∈ Finset.range k, a m • b.basis (e m)))
@@ -706,8 +696,7 @@ def toUnconditionalSchauderBasisAbstractIndex (b : UnconditionalSchauderBasis �
   basis := b.basis
   coeff := b.coeff
   hasSum_repr := by
-    intro x
-    exact b.unconditional x
+    exact fun x => hasSum_repr_apply b x
   unique_coeff := by
     intro x a ha
     exact b.toSchauderBasis.unique_coeff x a (by simpa [basis] using! ha.tendsto_sum_nat)
@@ -855,8 +844,7 @@ private lemma signed_sum_eq_two_projection_sub_sum
             change (∑ i ∈ t, ((2 : 𝕜) * a i) • x i)
               = ∑ i ∈ t, (2 : 𝕜) • (a i • x i)
             refine Finset.sum_congr rfl ?_
-            intro i _hi
-            rw [mul_smul]
+            exact fun x_2 a_1 => mul_smul 2 (a x_2) (x x_2)
   rw [← hproj, ← Finset.sum_sub_distrib]
   refine Finset.sum_congr rfl ?_
   intro i _hi
@@ -974,9 +962,7 @@ private lemma linearIndependent_of_finiteProjectionBound
   have hsingleton :
       ‖∑ j ∈ ({i} : Finset Index), a j • x j‖ ≤ K * ‖∑ j ∈ s, a j • x j‖ :=
     h_proj s ({i} : Finset Index) (by
-      intro j hj
-      have hji : j = i := by simpa using hj
-      simpa [hji] using hi) a
+      exact Finset.singleton_subset_iff.mpr hi) a
   have hsingleton_zero : ∑ j ∈ ({i} : Finset Index), a j • x j = 0 := by
     have hnorm_le_zero : ‖∑ j ∈ ({i} : Finset Index), a j • x j‖ ≤ 0 := by
       simpa [hsum] using hsingleton
@@ -1043,9 +1029,7 @@ private lemma exists_coordMaps_of_finiteProjectionBound
       exact mul_nonneg (div_nonneg hK_nonneg (norm_nonneg _)) (norm_nonneg _)
     · have hnmem : n ∈ c.support := Finsupp.mem_support_iff.mpr hcn
       have hsingleton_subset : ({n} : Finset Index) ⊆ c.support := by
-        intro j hj
-        have hji : j = n := by simpa using hj
-        simpa [hji] using hnmem
+        exact Finset.singleton_subset_iff.mpr hnmem
       have hproj_single :
           ‖∑ j ∈ ({n} : Finset Index), c j • x j‖
             ≤ K * ‖∑ j ∈ c.support, c j • x j‖ :=
@@ -1174,9 +1158,7 @@ private lemma coordMaps_tendsto_finite_partial_sums_of_finiteProjectionBound
     calc
       P s (z : E)
           = ∑ n ∈ s, (if n ∈ c.support then c n else 0) • x n := by
-            refine Finset.sum_congr rfl ?_
-            intro n _hn
-            rw [hcoord n]
+            exact Finset.sum_congr rfl fun x_1 a => congrFun (congrArg HSMul.hSMul (hcoord x_1)) (x x_1)
       _ = ∑ n ∈ s, c n • x n := by
             refine Finset.sum_congr rfl ?_
             intro n hn
@@ -1210,9 +1192,7 @@ private lemma coordMaps_tendsto_finite_partial_sums_of_finiteProjectionBound
       calc
         P s (z : E)
             = ∑ n ∈ s, (if n ∈ c.support then c n else 0) • x n := by
-              refine Finset.sum_congr rfl ?_
-              intro n _hn
-              rw [hcoord n]
+              exact Finset.sum_congr rfl fun x_1 a => congrFun (congrArg HSMul.hSMul (hcoord x_1)) (x x_1)
         _ = ∑ n ∈ s ∩ c.support, (if n ∈ c.support then c n else 0) • x n := by
               exact (Finset.sum_subset (Finset.inter_subset_left) (by
                 intro n _hns hninter

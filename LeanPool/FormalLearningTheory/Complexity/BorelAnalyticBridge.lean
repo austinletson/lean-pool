@@ -167,7 +167,6 @@ theorem analyticSet_nullMeasurableSet_ghostPairs
     (hs : MeasureTheory.AnalyticSet s)
     (D : MeasureTheory.Measure X) [MeasureTheory.IsProbabilityMeasure D] :
     MeasureTheory.NullMeasurableSet s (GhostPairMeasure D m) := by
-  haveI : MeasureTheory.IsFiniteMeasure (GhostPairMeasure D m) := inferInstance
   exact analyticSet_nullMeasurableSet hs
 
 /-! ## Theorem D: Positive bridge - bad event is NullMeasurableSet -/

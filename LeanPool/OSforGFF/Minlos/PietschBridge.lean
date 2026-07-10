@@ -105,10 +105,7 @@ def hilbertianLift (f : ℕ → (E →L[ℝ] ℝ)) (c : ℕ → ℝ)
         add_nonneg (Real.sqrt_nonneg A) (Real.sqrt_nonneg B)
       -- Suffices: S ≤ (√A + √B)²
       suffices hS : S ≤ (Real.sqrt A + Real.sqrt B) ^ 2 by
-        calc Real.sqrt S ≤ Real.sqrt ((Real.sqrt A + Real.sqrt B) ^ 2) :=
-              Real.sqrt_le_sqrt hS
-          _ = |Real.sqrt A + Real.sqrt B| := Real.sqrt_sq_eq_abs _
-          _ = Real.sqrt A + Real.sqrt B := abs_of_nonneg hab_nn
+        exact (Real.sqrt_le_left hab_nn).mpr hS
       -- Summability hypotheses
       have hSx := summable_sq_mul_of_bounded f c hc_nn hc_sum q hfq x
       have hSy := summable_sq_mul_of_bounded f c hc_nn hc_sum q hfq y
@@ -528,9 +525,7 @@ theorem isHilbertSchmidtEmbedding_of_nuclear
                   · exact hc_sum
                 exact hSqSum.tsum_mono hc_sum (fun n => by
                   have hbessel := bessel_hilbertian R hR (f n) (hfR n) e hv
-                  calc c n * ∑ j, (f n (e j)) ^ 2
-                      ≤ c n * 1 := mul_le_mul_of_nonneg_left hbessel (hc_nn n)
-                    _ = c n := mul_one _)
+                  exact mul_le_of_le_one_right (hc_nn n) hbessel)
             _ = (∑' n, c n) ^ 2 := (sq (∑' n, c n)).symm
 
 /-! ### Recursive Hilbertian Family Construction -/
@@ -638,8 +633,7 @@ private lemma doublePietsch_step
 private theorem seminorm_continuous_sup [IsTopologicalAddGroup E]
     (p q : Seminorm ℝ E) (hp : Continuous p) (hq : Continuous q) :
     Continuous (p ⊔ q) := by
-  change Continuous (fun x => (p ⊔ q) x)
-  simp only [Seminorm.sup_apply]; exact hp.sup hq
+  exact Continuous.sup' hp hq
 
 /-- Bundled recursive construction carrying continuity for the next step. -/
 private noncomputable def buildHilbertianBundle

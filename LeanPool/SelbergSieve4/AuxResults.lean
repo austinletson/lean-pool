@@ -106,9 +106,7 @@ theorem gcd_dvd_mul (m n : ℕ) : m.gcd n ∣ m * n := by
 theorem multiplicative_zero_of_zero_dvd (f : ArithmeticFunction ℝ)
     (h_mult : IsMultiplicative f) {m n : ℕ}
     (h_sq : Squarefree n) (hmn : m ∣ n) (h_zero : f m = 0) : f n = 0 := by
-  rcases hmn with ⟨k, rfl⟩
-  simp only [MulZeroClass.zero_mul, h_mult.map_mul_of_coprime
-    (coprime_of_squarefree_mul h_sq), h_zero]
+  exact IsMultiplicative.eq_zero_of_squarefree_of_dvd_eq_zero h_mult h_sq hmn h_zero
 
 theorem primeDivisors_nonempty (n : ℕ) (hn : 2 ≤ n) : n.primeFactors.Nonempty := by
   unfold Finset.Nonempty
@@ -127,17 +125,12 @@ theorem div_mult_of_dvd_squarefree (f : ArithmeticFunction ℝ) (h_mult : IsMult
 theorem inv_sub_antitoneOn_gt {R : Type*} [Field R] [LinearOrder R] [IsStrictOrderedRing R]
     (c : R) :
     AntitoneOn (fun x : R ↦ (x-c)⁻¹) (Set.Ioi c) := by
-  refine antitoneOn_iff_forall_lt.mpr ?_
-  intro a ha b hb hab
-  rw [Set.mem_Ioi] at ha hb
-  gcongr
+  exact sub_inv_antitoneOn_Ioi
 
 theorem inv_sub_antitoneOn_Icc {R : Type*} [Field R] [LinearOrder R] [IsStrictOrderedRing R]
     (a b c : R) (ha : c < a) :
     AntitoneOn (fun x ↦ (x-c)⁻¹) (Set.Icc a b) := by
-  by_cases hab : a ≤ b
-  · exact inv_sub_antitoneOn_gt c |>.mono <| (Set.Icc_subset_Ioi_iff hab).mpr ha
-  · simp [hab, Set.Subsingleton.antitoneOn]
+  exact sub_inv_antitoneOn_Icc_right ha
 
 theorem inv_antitoneOn_pos {R : Type*} [Field R] [LinearOrder R] [IsStrictOrderedRing R] :
     AntitoneOn (fun x:R ↦ x⁻¹) (Set.Ioi 0) := by
@@ -256,8 +249,7 @@ theorem sum_pow_cardDistinctFactors_div_self_le_log_pow {P k : ℕ} (x : ℝ) (h
         apply Nat.le_mul_of_pos_left
         rw [Fintype.mem_piFinset] at ha
         apply prod_pos
-        intro j hj
-        apply pos_of_mem_divisors (ha j)
+        exact fun i_2 a_1 => pos_of_mem_divisors (ha i_2)
       rw [if_pos hai_le_x]
     · apply prod_nonneg; intro j _
       split_ifs
@@ -277,8 +269,7 @@ theorem sum_pow_cardDistinctFactors_div_self_le_log_pow {P k : ℕ} (x : ℝ) (h
           · exact hd.2
           · exact le_of_lt hx_pos
       · norm_num
-    apply sum_inv_le_log_real
-    linarith
+    exact sum_inv_le_log_real x hx
 
 theorem sum_pow_cardDistinctFactors_le_self_mul_log_pow {P h : ℕ} (x : ℝ) (hx : 1 ≤ x)
     (hP : Squarefree P) :

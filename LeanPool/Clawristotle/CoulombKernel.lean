@@ -57,9 +57,7 @@ lemma schwartz_log_bound
     fun x v => Real.log_le_log (hf_pos x v) (hf_le x v)
   -- log(f x v) ≥ -C_exp * (1 + ‖v‖)^K_exp from exp lower bound
   have hlog_lower : ∀ x v, -C_exp * (1 + ‖v‖) ^ K_exp ≤ Real.log (f x v) := by
-    intro x v
-    rw [← Real.log_exp (-C_exp * (1 + ‖v‖) ^ K_exp)]
-    exact Real.log_le_log (Real.exp_pos _) (hbound_low x v)
+    exact fun x v => (fun {x y} hy => (le_log_iff_exp_le hy).mpr) (hf_pos x v) (hbound_low x v)
   -- |log(f x v)| ≤ (|log C_up| + |C_exp|) * (1 + ‖v‖)^K_exp
   refine ⟨|Real.log C_up| + |C_exp| + 1, K_exp, fun x v => ?_⟩
   rw [abs_le]

@@ -35,9 +35,7 @@ lemma bijective_of_dim_eq_of_isCentralSimple
     Function.Bijective f := by
   obtain hA|hA := subsingleton_or_nontrivial A
   · have eq1 : Module.finrank K A = 0 := by
-      rw [finrank_zero_iff_forall_zero]
-      intro x
-      apply Subsingleton.elim
+      exact Module.finrank_eq_zero_of_subsingleton K A
     rw [eq1] at h
     replace h : Subsingleton B := by
       constructor
@@ -59,8 +57,7 @@ lemma bijective_of_dim_eq_of_isCentralSimple
         rw [LinearMap.ker_eq_bot (f := f.toLinearMap) |>.2 H] at hx
         simp_all, add_zero, h] at this
       rw [← LinearMap.range_eq_top]
-      apply Submodule.eq_top_of_finrank_eq
-      exact this
+      exact Submodule.eq_top_of_finrank_eq this
     · have : (1 : A) ∈ TwoSidedIdeal.ker f.toRingHom := by
         simp only [AlgHom.toRingHom_eq_coe, TwoSidedIdeal.mem_ker, map_one]
         exact Subsingleton.elim _ _
@@ -220,8 +217,7 @@ def mul (A B : CSA K) : CSA K where
 /-- Finite-dimensionality is preserved by passing to the opposite algebra. -/
 theorem isFinDimOfMop (A : Type*) [Ring A] [Algebra K A] [FiniteDimensional K A] :
     FiniteDimensional K Aᵐᵒᵖ := by
-  have f:= MulOpposite.opLinearEquiv K (M:= A)
-  exact Module.Finite.equiv f
+  exact Module.Finite.instMulOpposite
 
 /-- The opposite algebra representative used for inversion in the Brauer group. -/
 def inv (A : CSA K) : CSA K := {
@@ -564,17 +560,7 @@ lemma e3Aux3 (hm : m = 0) :
   suffices ∀ a : (E ⊗[K] A) ⊗[E] (E ⊗[K] Matrix (Fin m) (Fin m) K), a = 0 by
     exact ⟨fun a b => by rw [this a, this b]⟩
   subst hm
-  intro x
-  induction x using TensorProduct.induction_on with
-  | zero => rfl
-  | add e a he ha => rw [he, ha, zero_add]
-  | tmul e a =>
-    induction a using TensorProduct.induction_on with
-    | zero => simp
-    | add _ _ hx hy => rw [TensorProduct.tmul_add, hx, hy, add_zero]
-    | tmul e' mat =>
-      rw [show mat = 0 from Subsingleton.elim _ _]
-      simp
+  exact fun a => Subsingleton.eq_zero a
 
 /-- The algebra homomorphism underlying `e3`. -/
 def e3Aux4 :

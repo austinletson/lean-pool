@@ -556,12 +556,7 @@ lemma Subalgebra.conj_simple_iff {B : Subalgebra F A} {x : Aˣ} :
         simp only [toConj, TwoSidedIdeal.mem_comap, AlgHom.coe_mk, RingHom.coe_mk, MonoidHom.coe_mk,
           OneHom.coe_mk] at this
         exact this
-      · intro H ⟨a, ha1⟩ ha2
-        simp only [toConj, TwoSidedIdeal.mem_comap, AlgHom.coe_mk, RingHom.coe_mk, MonoidHom.coe_mk,
-          OneHom.coe_mk] at ha2
-        simp only [toConj, TwoSidedIdeal.mem_comap, AlgHom.coe_mk, RingHom.coe_mk, MonoidHom.coe_mk,
-          OneHom.coe_mk]
-        exact H ha2 }
+      · exact fun a => TwoSidedIdeal.comap_le_comap (B.toConj x) a }
   rw [OrderIso.isSimpleOrder_iff e]
 
 omit [FiniteDimensional F A] [Algebra.IsCentral F A] [IsSimpleRing A] in
@@ -598,8 +593,7 @@ open FiniteDimensional
 
 instance :
     Algebra.IsCentral F (Matrix (Fin (Module.finrank F B)) (Fin (Module.finrank F B)) F) := by
-  haveI : NeZero (Module.finrank F B) := ⟨Module.finrank_pos.ne'⟩
-  infer_instance
+  exact Algebra.IsCentral.matrix F F (Fin (finrank F ↥B))
 
 instance : Algebra.IsCentral F (Module.End F B) :=
   algEquivMatrix (Module.finBasis F B) |>.symm.isCentral
@@ -656,11 +650,7 @@ instance : IsSimpleRing (A ⊗[F] Module.End.rightMul F B) := by
       (Algebra.TensorProduct.comm F A Bᵐᵒᵖ)
   have := TwoSidedIdeal.orderIsoOfRingEquiv eqv.toRingEquiv
   rw [OrderIso.isSimpleOrder_iff this]
-  haveI : IsSimpleRing Bᵐᵒᵖ := by
-    constructor
-    rw [← TwoSidedIdeal.opOrderIso.isSimpleOrder_iff]
-    exact IsSimpleRing.simple
-  apply (IsCentralSimple.TensorProduct.simple F _ _).simple
+  exact IsSimpleRing.simple
 
 lemma step1 {ι : Type*} (ℬ : Basis ι F <| Module.End F B) :
     ∃ (x : (A ⊗[F] Module.End F B)ˣ),
@@ -810,8 +800,7 @@ lemma double_centralizer :
     Subalgebra.centralizer F (Subalgebra.centralizer F (B : Set A) : Set A) = B := by
   symm
   apply Subalgebra.eq_of_le_of_finrank_eq
-  · intro x hx y hy
-    exact hy x hx |>.symm
+  · exact Subalgebra.le_centralizer_centralizer F
   · haveI := centralizerIsSimple B (Module.finBasis F _)
     have eq1 := dim_centralizer F B
     have eq2 := dim_centralizer F (A := A) (Subalgebra.centralizer F B)

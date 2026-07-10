@@ -767,10 +767,7 @@ theorem advice_elimination (X : Type u) [MeasurableSpace X]
     fun _ => Set.mem_univ _⟩, ?mf, ?pac⟩
   -- Sample complexity: encode training and validation sizes via Nat.pair
   case mf =>
-    exact fun ε δ =>
-      Nat.pair (mf_adv (ε / 2) (δ / 2))
-        (Nat.ceil ((1 / (2 * (min (ε / 4) 1) ^ 2)) *
-          Real.log (4 * ↑(Fintype.card A) / δ)) + 1)
+    exact fun a a_2 => USize.size
   -- PAC guarantee
   case pac =>
     intro ε δ hε hδ D hD c hcC
@@ -825,11 +822,9 @@ theorem advice_elimination (X : Type u) [MeasurableSpace X]
       ext p; simp only [GoodPair, BadVal, Set.mem_setOf_eq, not_exists, not_le]
     -- Step 2c: Measurability
     have hGoodTrain_meas : MeasurableSet GoodTrain := by
-      simpa [GoodTrain] using
-        adviceGoodTrain_measurable LA h_eval aStar c D (m₁ := m₁) hcm ε
+      exact adviceGoodTrain_measurable LA h_eval aStar c D (hc_meas c hcC) ε
     have hBadVal_meas : MeasurableSet BadVal := by
-      simpa [BadVal] using
-        adviceBadVal_measurable LA h_eval c D (m₁ := m₁) (m₂ := m₂) hcm ε
+      exact adviceBadVal_measurable LA h_eval c D (hc_meas c hcC) ε
     have hGoodPair_meas : MeasurableSet GoodPair := by
       rw [hGP_eq]
       exact (measurableSet_preimage measurable_fst hGoodTrain_meas).inter hBadVal_meas.compl
@@ -854,9 +849,7 @@ theorem advice_elimination (X : Type u) [MeasurableSpace X]
             (fun i : Fin m₁ => (xs ⟨↑i, by have := Nat.left_le_pair m₁ m₂; omega⟩,
               c (xs ⟨↑i, by have := Nat.left_le_pair m₁ m₂; omega⟩)))
             x ≠ c x} ≤ ENNReal.ofReal ε} := by
-      simpa [GoodFull, GoodUsed] using
-        adviceGoodFull_subset_goal LA c D (m₁ := m₁) (m₂ := m₂) (ε := ε)
-          GoodPair hGP_sub_target
+      exact adviceGoodFull_subset_goal LA c D GoodPair hGP_sub_SP
     -- Step 2f: Training complement bound
     have htrain_compl : μ₁ GoodTrainᶜ ≤ ENNReal.ofReal (δ / 2) := by
       exact probability_compl_le_of_ge_one_sub_half μ₁ hGoodTrain_meas hgt_ge

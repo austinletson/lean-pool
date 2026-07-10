@@ -78,11 +78,7 @@ theorem vcdim_finite_imp_pac (X : Type u) [MeasurableSpace X]
   have hWB := MeasurableConceptClass.hWB C
   -- Route through UC path in Symmetrization.lean:
   -- vcdim_finite_imp_uc' + uc_imp_pac.
-  by_cases hne : C.Nonempty
-  · exact uc_imp_pac X C hne (vcdim_finite_imp_uc' X C hC hmeas_C hc_meas hWB)
-  · rw [Set.not_nonempty_iff_eq_empty] at hne
-    exact ⟨⟨Set.univ, fun _ => fun _ => false, fun _ => Set.mem_univ _⟩,
-           fun _ _ => 0, fun _ _ _ _ _ _ c hcC => by simp [hne] at hcC⟩
+  exact vcdim_finite_imp_pac_via_uc' X C hC hmeas_C hc_meas hWB
 
 /-- Direction →: PAC learnability implies finite VCDim.
 
@@ -165,13 +161,7 @@ theorem pac_lower_bound (X : Type u) [MeasurableSpace X]
     (hδ2 : δ ≤ 1 / 7) (hd_pos : 1 ≤ d)
     [MeasurableConceptClass X C] :
     Nat.ceil ((d - 1 : ℝ) / 2) ≤ SampleComplexity X C ε δ := by
-  have hmeas_C := MeasurableConceptClass.hmeas_C C
-  have hc_meas := MeasurableConceptClass.hc_meas C
-  have hWB := MeasurableConceptClass.hWB C
-  -- M-Pipeline (Gate 4): le_csInf + adversarial counting
-  -- Γ₄₇: PAC lower bound via sInf characterization
-  -- Route through sample_complexity_lower_bound (Generalization.lean)
-  exact sample_complexity_lower_bound X C d hd ε δ hε hε1 hδ hδ1 hδ2 hd_pos hmeas_C hc_meas hWB
+  exact sample_complexity_lower_bound' X C d hd ε δ hε hε1 hδ hδ1 hδ2 hd_pos
 
 /-- Any PAC witness (L, mf) gives an upper bound on SampleComplexity:
     the infimum is at most the witness sample size. -/
@@ -224,8 +214,7 @@ theorem pac_sample_complexity_sandwich (X : Type u) [MeasurableSpace X]
   intro hPAC
   rcases hPAC with ⟨L, mf, hmf⟩
   refine ⟨L, mf, hmf, ?_, ?_⟩
-  · intro ε δ hε hδ
-    exact sample_complexity_upper_of_pac_witness X C L mf hmf ε δ hε hδ
+  · exact fun ε δ a a_1 => sample_complexity_upper_of_pac_witness X C L mf hmf ε δ a a_1
   · intro d hd ε δ hε hε1 hδ hδ1 hδ2 hd_pos
     have hlower :=
       sample_complexity_lower_bound X C d hd ε δ hε hε1 hδ hδ1 hδ2 hd_pos hmeas_C hc_meas hWB
@@ -257,26 +246,7 @@ theorem fundamental_rademacher (X : Type u) [MeasurableSpace X]
   ⟨fun hpac => vcdim_finite_imp_rademacher_vanishing X C
      (pac_imp_vcdim_finite X C hpac),
    fun hrad => by
-     have hmeas_C := MeasurableConceptClass.hmeas_C C
-     have hc_meas := MeasurableConceptClass.hc_meas C
-     have hWB := MeasurableConceptClass.hWB C
-     -- Rademacher vanishing → VCDim < ⊤ (contrapositive) → PAC (via UC')
-     have hvcdim : VCDim X C < ⊤ := by
-       by_contra hvcdim_inf
-       push Not at hvcdim_inf
-       have hvcdim_top : VCDim X C = ⊤ := le_antisymm le_top hvcdim_inf
-       have h_large_shatter : ∀ n : ℕ, ∃ T : Finset X, Shatters X C T ∧ n ≤ T.card := by
-         intro n; by_contra h_neg; push Not at h_neg
-         have hle : VCDim X C ≤ ↑n := by
-           apply iSup₂_le; intro T hT; exact_mod_cast le_of_lt (h_neg T hT)
-         rw [hvcdim_top] at hle; exact absurd hle (by simp)
-       obtain ⟨m₀, hm₀⟩ := hrad (1 / 2) (by norm_num)
-       set m := max m₀ 1
-       obtain ⟨T, hT_shat, hT_card⟩ := h_large_shatter (4 * m ^ 2 + 1)
-       obtain ⟨D, hD, hRad_ge⟩ :=
-         rademacher_lower_bound_on_shattered X C T hT_shat m (by omega) hT_card
-       linarith [hm₀ D hD m (le_max_left m₀ 1)]
-     exact vcdim_finite_imp_pac_via_uc' X C hvcdim hmeas_C hc_meas hWB⟩
+     exact rademacher_vanishing_imp_pac' X C hrad⟩
 
 /-- Fundamental theorem of statistical learning (5-way equivalence, BP₅). -/
 theorem fundamental_theorem (X : Type u) [MeasurableSpace X]

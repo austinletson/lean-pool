@@ -148,8 +148,7 @@ lemma Partition.countable_of_measure_pos {μ : Measure Ω} [IsProbabilityMeasure
   rw [← Set.countable_coe_iff, ← Set.countable_univ_iff]
   convert μ.countable_meas_pos_of_disjoint_iUnion (fun s : P.1 ↦ hP s.1 s.2) ?_ using 1
   · ext ⟨s, hs⟩; simp [hP' s hs]
-  · intro s t hst
-    exact P.2.pairwiseDisjoint s.2 t.2 (fun h ↦ hst (Subtype.ext h))
+  · exact pairwise_disjoint_subtype_val P
 
 lemma Partition.countable_of_pos_measure {μ : Measure Ω} [IsProbabilityMeasure μ]
     (P : Partition Ω) (hP : P.Measurable) (hP' : ∀ s ∈ P, μ s > 0) :

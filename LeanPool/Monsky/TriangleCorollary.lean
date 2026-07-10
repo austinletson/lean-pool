@@ -538,10 +538,7 @@ def invTriangleTranslation (T : Triangle) := translation ( - T 0)
 
 lemma translation_bijective (a : ℝ²) : Function.Bijective (translation a) := by
   unfold translation
-  constructor
-  · intro x y
-    simp
-  · exact fun x ↦ ⟨x - a, by norm_num⟩
+  exact AddGroup.addRight_bijective a
 
 lemma triangleTranslation_bijective (T : Triangle)
     : Function.Bijective (triangleTranslation T) := by
@@ -560,8 +557,7 @@ theorem pre_unitTriangle_to_triangle (T : Triangle) (h : det T ≠ 0) :
     := by
   rw[Set.preimage_eq_iff_eq_image  (linearTransform_bij  T  h )]
   rw[Set.preimage_eq_iff_eq_image (triangleTranslation_bijective T)]
-  symm
-  exact unitTriangle_to_triangle (T : Triangle)
+  exact Eq.symm (unitTriangle_to_triangle T)
 
 -- We can use then use the previous to show that the open hull of the triangle is a preimage of the
 -- open unit triangle
@@ -780,8 +776,7 @@ theorem triangle_det_sum_one (S : Finset Triangle)
   rw[← volume_box]
   rw[area_equal_sum_cover (closedHull unitSquare) S hcover]
   have h: ∀ T ∈  S, |det T|/2 = (MeasureTheory.volume (openHull T)).toReal := by
-    intro T _
-    rw[volume_open_triangle]
+    exact fun T a => Eq.symm (volume_open_triangle T)
   rw[sum_congr (by rfl) h]
   rw[ENNReal.toReal_sum]
   intro a _; rw [volume_open_triangle']; simp

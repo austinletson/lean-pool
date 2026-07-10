@@ -187,8 +187,7 @@ variable {T U : L.TTheory}
 def _root_.LO.Arith.Language.Theory.Derivable.toTDerivation (Γ : L.Sequent) (h :
     T.thy.Derivable Γ.val) :
     T ⊢¹ Γ := by
-  choose a ha using h; choose d hd using ha.2
-  exact ⟨a, ha.1, d, hd⟩
+  choose a ha using h; exact { derivation := a, derivationOf := ha }
 
 lemma _root_.LO.Arith.Language.Theory.TDerivation.toDerivable {Γ : L.Sequent} (d : T ⊢¹ Γ) :
     T.thy.Derivable Γ.val :=
@@ -259,8 +258,7 @@ def ex {p : L.Semiformula (0 + 1)} (t : L.Term) (dp : T ⊢¹ insert (p.substs�
 /-- Imported declaration from the Incompleteness formalization. -/
 def wk (d : T ⊢¹ Δ) (h : Δ ⊆ Γ) : T ⊢¹ Γ :=
   Language.Theory.Derivable.toTDerivation _ <| by
-    simpa using Language.Theory.Derivable.wk (by simp) (Language.Sequent.subset_iff.mp h) (by simpa
-      using d.toDerivable)
+    simpa using Language.Theory.Derivable.wk (by simp) (Language.Sequent.subset_iff.mp h) (by exact toDerivable d)
 
 /-- Imported declaration from the Incompleteness formalization. -/
 def shift (d : T ⊢¹ Γ) : T ⊢¹ Γ.shift :=
@@ -495,8 +493,7 @@ def conjOr' (ps : L.SemiformulaVec 0) (q) (ds : ∀ i, (hi :
     i < len ps.val) → T ⊢ ps.nth (len ps.val - (i + 1)) (sub_succ_lt_self hi) ⋎ q) :
     T ⊢ ps.conj ⋎ q :=
   TDerivation.or <| TDerivation.conj ps <| fun i hi ↦ by
-    simpa [sub_succ_lt_selfs hi] using TDerivation.orInv (ds (len ps.val - (i + 1)) (by simp
-      [tsub_lt_iff_left (succ_le_iff_lt.mpr hi)]))
+    simpa [sub_succ_lt_selfs hi] using TDerivation.orInv (ds (len ps.val - (i + 1)) (by exact sub_succ_lt_self hi))
 
 /-- Imported declaration from the Incompleteness formalization. -/
 def disj (ps : L.SemiformulaVec 0) {i} (hi : i < len ps.val) (d : T ⊢ ps.nth i hi) : T ⊢ ps.disj :=

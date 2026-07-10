@@ -241,12 +241,7 @@ lemma adjoin_height_case_ne_bot
       UniqueFactorizationMonoid.exists_prime_factors a₀ ha₀_ne
     haveI : (P.comap R.carrier.subtype).IsPrime := hP_prime.comap _
     have hprod_in : factors.prod ∈ P.comap R.carrier.subtype := by
-      obtain ⟨u, hu⟩ := hassoc
-      rw [← hu] at ha₀_mem
-      exact ((hP_prime.comap R.carrier.subtype).mem_or_mem ha₀_mem).elim id
-        (fun h => absurd
-          ((P.comap R.carrier.subtype).eq_top_of_isUnit_mem h u.isUnit)
-          (hP_prime.comap R.carrier.subtype).ne_top)
+      exact (mem_iff_of_associated (id (Associated.symm hassoc))).mp ha₀_mem
     have hfactor_in_P : ∃ f ∈ factors, f ∈ P.comap R.carrier.subtype := by
       suffices ∀ (m : Multiset R.carrier), (∀ b ∈ m, Prime b) →
           m.prod ∈ P.comap R.carrier.subtype →
@@ -281,8 +276,7 @@ lemma adjoin_height_case_ne_bot
         intro heq
         exact h_not_dvd (heq ▸ hr |> Ideal.mem_span_singleton.mp)
       haveI : (Ideal.span {p₀}).IsPrime := by
-        rw [Ideal.span_singleton_prime (show p₀ ≠ 0 from hp₀_ne)]
-        exact hp₀_prime_R
+        exact (span_singleton_prime hp₀_ne).mpr hp₀_prime_R
       haveI : (P.comap R.carrier.subtype).IsPrime := hP_prime.comap _
       have hbot_lt_span : (⊥ : Ideal R.carrier) < Ideal.span {p₀} := by
         rw [bot_lt_iff_ne_bot, ne_eq, Ideal.span_singleton_eq_bot]

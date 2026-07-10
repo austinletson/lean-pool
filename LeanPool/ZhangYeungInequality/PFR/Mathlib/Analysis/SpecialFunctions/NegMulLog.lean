@@ -141,8 +141,7 @@ lemma sum_mul_log_div_eq_iff {a b : ι → ℝ} (ha : ∀ i ∈ s, 0 ≤ a i) (h
     · simp [A, B]
   obtain ⟨r, hr⟩ : ∃ r, ∀ i ∈ s', a i = r * (b i) := by
     apply sum_mul_log_div_eq_iff_aux (fun i hi ↦ ha i ?_) (fun i hi ↦ ?_) C
-    · simp only [Finset.mem_filter, s'] at hi
-      exact hi.1
+    · exact Finset.mem_of_mem_filter i hi
     · simp only [Finset.mem_filter, s'] at hi
       exact hi.2
   refine ⟨r, fun i hi ↦ ?_⟩

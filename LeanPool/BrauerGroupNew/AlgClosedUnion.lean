@@ -26,9 +26,7 @@ variable (K L : Type u) [Field K] [Field L] [Algebra K L]
   (V : Type u) [AddCommGroup V] [Module K V] [Module.Finite K V]
 
 lemma dim_eq : Module.finrank K V = Module.finrank L (L ⊗[K] V) := by
-  let b := Module.finBasis K V
-  let b' := Algebra.TensorProduct.basis L b
-  rw [Module.finrank_eq_card_basis b, Module.finrank_eq_card_basis b']
+  exact Eq.symm finrank_baseChange
 
 end
 
@@ -152,7 +150,6 @@ theorem inter_tensor_union :
   |zero => simp
   |tmul x a =>
     have fin0: FiniteDimensional K K⟮x⟯ := IntermediateField.adjoin.finiteDimensional (by
-      observe : IsAlgebraic K x
       exact Algebra.IsIntegral.isIntegral x)
     exact Submodule.mem_sSup_of_directed (SetOfFinite_nonempty K K_bar A) (is_direct K K_bar A) |>.2
       ⟨intermediateTensor K K_bar A K⟮x⟯, ⟨⟨⟨K⟮x⟯, fin0⟩, rfl⟩,

@@ -78,9 +78,7 @@ theorem aut_iter_deriv (d : ℤ) (k : ℕ) :
           · fun_prop
           apply pow_ne_zero (k + 1) (upper_ne_int ⟨x, hx⟩ d)
       · apply IsOpen.uniqueDiffWithinAt _ hx
-        refine isOpen_lt ?_ ?_
-        · fun_prop
-        · fun_prop
+        exact isOpen_upperHalfPlaneSet
     rw [←H]
     apply derivWithin_congr
     · norm_cast at *

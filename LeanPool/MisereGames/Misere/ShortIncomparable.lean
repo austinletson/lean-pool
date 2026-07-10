@@ -124,13 +124,7 @@ theorem misereOutcome_h_add_short {x : AugmentedForm.{u}} (h_isShort : IsShort x
     · exact not_winsGoingFirst_of_misereOutcome_P (misereOutcome_add_adjoint_eq_P x)
 
 theorem g_not_isEndLike (p : Player) : ¬ IsEndLike p g := by
-  rw [AugmentedForm.IsEndLike_iff, not_or]
-  constructor
-  · simp only [g, hasTombstone_ofSets, not_false_eq_true]
-  · cases p <;> simp only [g, adjointsOfShort, Set.coe_setOf, Set.mem_setOf_eq,
-                           isEnd_def, leftMoves_ofSets, rightMoves_ofSets, Set.range_eq_empty_iff,
-                           nonempty_subtype, not_isEmpty_of_nonempty, not_false_eq_true,
-                           Exists.intro 0 Short.zero, ]
+  exact bigG_not_isEndLike p
 
 private theorem not_winsGoingFirst_g_add_g {p : Player} :
     ¬WinsGoingFirst p (g + g) := by

@@ -198,10 +198,7 @@ theorem casesOn {S : ZFSet} (x : Option S) : x = none ∨ (∃ y, x = some y) :=
     rcases hx with hx | hx
     · rw [mem_singleton] at hx
       absurd hx.left
-      unfold ZFBool.false ZFBool.true zftrue zffalse
-      intro contr
-      simp_rw [ZFSet.ext_iff, notMem_empty, iff_false, mem_singleton] at contr
-      nomatch contr ∅
+      exact zftrue_ne_zffalse
     · rw [pair_mem_prod] at hx
       unfold some Sum.inr
       exists ⟨val, hx.right⟩
@@ -305,12 +302,7 @@ theorem _root_.ZFSet.Option.outof.inj {T : ZFSet} :
   · injection heq with heq
     rw [pair_inj] at heq
     absurd heq.1
-    unfold ZFBool.false ZFBool.true zftrue zffalse
-    intro contr
-    rw [Subtype.val_inj] at contr
-    injection contr with contr
-    rw [ZFSet.ext_iff] at contr
-    exact (notMem_empty ∅) <| (mem_singleton.eq ▸ contr ∅).mp rfl
+    exact zftrue_ne_zffalse
   · injection heq with heq
     simp_all
 
@@ -374,16 +366,14 @@ theorem flift_bijective {f A B : ZFSet} (hf : IsFunc A B f) :
         change (ZFSet.Option.some ⟨z, hz⟩ : ZFSet.Option B) =
           ZFSet.Option.some (@ᶻf ⟨x, by rwa [ZFSet.is_func_dom_eq]⟩)
         rw [ZFSet.Option.some.injEq]
-        symm
-        exact fapply.of_pair _ xz
+        exact Eq.symm (fapply.of_pair (is_func_is_pfunc hf) xz)
       · rw [flift, lambda_spec]
         simp only [SetLike.coe_mem, ↓reduceDIte, Subtype.coe_eta, some.injEq, exists_eq',
           Classical.choose_eq', SetLike.coe_eq_coe, true_and]
         change (ZFSet.Option.some ⟨z, hz⟩ : ZFSet.Option B) =
           ZFSet.Option.some (@ᶻf ⟨y, by rwa [ZFSet.is_func_dom_eq]⟩)
         rw [ZFSet.Option.some.injEq]
-        symm
-        exact fapply.of_pair _ yz
+        exact Eq.symm (fapply.of_pair (is_func_is_pfunc hf) yz)
       · have hxy : (⟨x, hx⟩ : {x // x ∈ A}) = ⟨y, hy⟩ := some_val_injEq.mp hinj
         exact Subtype.ext_iff.mp hxy
     · intro y hy

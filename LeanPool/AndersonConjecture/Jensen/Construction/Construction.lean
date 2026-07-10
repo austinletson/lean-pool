@@ -101,8 +101,7 @@ private def jensen_construction_p0_uncountable_proof
       apply Ideal.mem_map_of_mem A.carrier.subtype
       have hmem := SModEq.sub_mem.mp (a.property hle)
       rw [Ideal.smul_eq_mul, Ideal.mul_top] at hmem
-      rw [show a.val n - a.val m = -(a.val m - a.val n) by ring]
-      exact neg_mem hmem
+      exact sub_mem_comm_iff.mp hmem
   -- Lift the compatible system f_n to the canonical map φ : Â → T using completeness of T
   let φ : AdicCompletion (IsLocalRing.maximalIdeal A.carrier) A.carrier →+* T :=
     IsAdicComplete.liftRingHom (IsLocalRing.maximalIdeal T) f_n hcompat
@@ -205,11 +204,9 @@ private def jensen_construction_p0_uncountable_proof
               (r_a : T) * ((dx : T) + x) + (a - (r_a : T)) * x from by ring]
             refine (M ^ (n + 1)).add_mem (Ideal.mul_mem_left _ _ hdx) ?_
             have ha_sub : a - (r_a : T) ∈ M := by
-              have := M.neg_mem ((Ideal.Quotient.eq (I := M)).mp hr_a)
-              rwa [show -((r_a : T) - a) = a - (r_a : T) from by ring] at this
+              exact (Quotient.mk_eq_mk_iff_sub_mem a ↑r_a).mp (id (Eq.symm hr_a))
             rw [show M ^ (n + 1) = M * M ^ n from by
-              rw [mul_comm]
-              exact (pow_succ M n).symm]
+              exact IsTwoSided.pow_succ n]
             exact Ideal.mul_mem_mul ha_sub hx_in
         intro q
         obtain ⟨t, rfl⟩ := Ideal.Quotient.mk_surjective q

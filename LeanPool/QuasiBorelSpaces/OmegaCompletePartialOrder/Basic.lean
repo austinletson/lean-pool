@@ -42,16 +42,7 @@ lemma ωScottContinuous_const (x : B) : ωScottContinuous (fun _ : A ↦ x) := �
 lemma ωScottContinuous_mk
     {f : A → B} {g : A → C} (hf : ωScottContinuous f) (hg : ωScottContinuous g)
     : ωScottContinuous (fun x ↦ (f x, g x)) := by
-  rw [ωScottContinuous_iff_monotone_map_ωSup]
-  refine ⟨?_, fun c ↦ ?_⟩
-  · simp only [monotone_prodMk_iff, hf.monotone, hg.monotone, and_self]
-  · ext : 1
-    · simp only [Prod.ωSup_fst]
-      rw [hf.map_ωSup]
-      rfl
-    · simp only [Prod.ωSup_snd]
-      rw [hg.map_ωSup]
-      rfl
+  exact Prod.ωScottContinuous.prodMk hf hg
 
 @[fun_prop]
 lemma ωScottContinuous_fst

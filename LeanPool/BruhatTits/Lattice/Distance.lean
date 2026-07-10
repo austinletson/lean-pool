@@ -344,8 +344,7 @@ lemma exists_repr_dist (M L : BruhatTits.Lattice R) :
     ∃ (ϖ : R) (bM : Basis (Fin 2) R M.M) (bL : Basis (Fin 2) R L.M) (f : Fin 2 → ℤ),
       Irreducible ϖ ∧ Antitone f ∧
         (∀ i, (bL i).val = (ϖ ^ f i : K) • (bM i).val) ∧ f 0 - f 1 = dist M L := by
-  set n := dist M L with hn
-  exact (eq_dist_iff M L n).mp hn.symm
+  exact (eq_dist_iff M L (dist M L)).mp rfl
 
 /-- The distance on lattices is symmetric. -/
 lemma dist_symm (M L : BruhatTits.Lattice R) :
@@ -444,8 +443,7 @@ lemma dist_smul_eq_dist (M L : BruhatTits.Lattice R) (a : Kˣ) :
   rw [this]
   rw [mul_comm] at ha
   have : ϖ.val ^ n ≠ 0 := by
-    apply zpow_ne_zero
-    simpa using hϖ.ne_zero
+    exact zpow_ne_zero n h0
   let bM' : Basis (Fin 2) R ((Units.mk0 ϖ.val h0) ^ n • M).M :=
     mulBasisScalar ((Units.mk0 ϖ.val h0) ^ n) bM
   have hbM' (i : Fin 2) : ϖ.val ^ (-n) • (bM' i).val = bM i := by

@@ -70,8 +70,7 @@ omit f hf in
 /-- CPV exists at every on-curve singular point. -/
 theorem fdBoundary_H_onCurvePVProvider (S : Finset UpperHalfPlane) :
     onCurvePVProvider S := by
-  intro H hH s _ h_on
-  exact fdBoundary_H_cpv_exists_of_onCurve H hH s h_on
+  intro H hH s exact fun a a_1 => fdBoundary_H_cpv_exists_of_onCurve H hH s a_1
 
 omit f hf in
 lemma sArcOfS_rho_in (S : Finset UpperHalfPlane) :
@@ -234,10 +233,8 @@ lemma sArcOfS_im_pos (S : Finset UpperHalfPlane) (s : ℂ) (hs : s ∈ sArcOfS S
     simp only [neg_im, neg_neg]
     exact div_pos p.2 (Complex.normSq_pos.mpr (neg_ne_zero.mpr hz_ne))
   · rcases hs with rfl | rfl
-    · change (0 : ℝ) < (-1/2 + (Real.sqrt 3 / 2) * I : ℂ).im
-      simp only [add_im, neg_im, one_im, div_im, mul_im, I_re, I_im]; norm_num
-    · change (0 : ℝ) < (1/2 + (Real.sqrt 3 / 2) * I : ℂ).im
-      simp only [add_im, one_im, div_im, mul_im, I_re, I_im]; norm_num
+    · exact ellipticPointRho'.coe_im_pos
+    · exact ellipticPointRhoPlusOne'.coe_im_pos
 
 omit f hf in
 /-- All elements of `sVertOfS S` have positive imaginary part. -/

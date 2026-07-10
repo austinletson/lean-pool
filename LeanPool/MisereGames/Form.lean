@@ -650,8 +650,7 @@ theorem isEnd_right_intCast_iff {n : ℤ} : IsEnd Player.right (n : G) ↔ 0 ≤
 
 @[simp]
 theorem isEnd_right_natCast {n : ℕ} : IsEnd Player.right (n : G) := by
-  rw [<-Form.intCast_nat, isEnd_right_intCast_iff]
-  exact Int.natCast_nonneg n
+  exact natCast_isEnd_right n
 
 theorem isEnd_of_not_mem {p : Player} {g : G} (h1 : ∀ (gr : G), gr ∉ moves p g) : IsEnd p g := by
   rw [isEnd_def]

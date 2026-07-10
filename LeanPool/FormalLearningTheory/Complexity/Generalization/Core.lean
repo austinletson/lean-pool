@@ -382,9 +382,7 @@ theorem erm_consistent_realizable (X : Type u) [MeasurableSpace X] [DecidableEq 
       have hsum : (Finset.univ.sum fun i : Fin m =>
           loss (c (S' i).1) (S' i).2) = 0 := by
         apply Finset.sum_eq_zero
-        intro i _
-        simp only [hS'_def]
-        exact hfaith.loss_self_zero _
+        exact fun x a => hfaith.loss_self_zero (S' x).2
       rw [hsum, zero_div]
   -- Step 2: EmpiricalError is nonneg for any h (since loss is nonneg)
   have hEmp_nonneg : ∀ h' : Concept X Bool, 0 ≤ EmpiricalError X Bool h' S' loss := by
@@ -877,8 +875,7 @@ theorem uc_imp_pac (X : Type u) [MeasurableSpace X]
   have hne_top : D {x | h₀ x ≠ c x} ≠ ⊤ := MeasureTheory.measure_ne_top D _
   -- Convert: (D S).toReal < ε → D S < ENNReal.ofReal ε → D S ≤ ENNReal.ofReal ε
   have hlt : D {x | h₀ x ≠ c x} < ENNReal.ofReal ε := by
-    rw [← ENNReal.ofReal_toReal hne_top]
-    exact (ENNReal.ofReal_lt_ofReal_iff hε).mpr hxs_h₀
+    exact (ENNReal.lt_ofReal_iff_toReal_lt hne_top).mpr hxs_h₀
   exact le_of_lt hlt
 
 end UniformConvergence
@@ -1094,8 +1091,7 @@ theorem agreement_count_markov {α : Type*} [Fintype α] [DecidableEq α]
   have hn1 : 1 ≤ n := hn
   have hpow : 2 * 2 ^ (n - 1) = 2 ^ n := by
     have hne : n ≠ 0 := by omega
-    have ⟨k, hk⟩ := Nat.exists_eq_succ_of_ne_zero hne
-    rw [hk]; simp [pow_succ]; ring
+    exact mul_pow_sub_one hne 2
   have hsum_agree : ∑ f : α → Bool, (n - disagree_count f) = n * 2 ^ (n - 1) := by
     have hcard_fun : Fintype.card (α → Bool) = 2 ^ n := by
       rw [Fintype.card_fun, Fintype.card_bool]
@@ -1558,9 +1554,7 @@ theorem pac_lower_bound_good_event_le_half
       MeasurableSpace.pi valProd := {
     injective := fun a b hab => funext fun i => Subtype.val_injective (congr_fun hab i)
     measurable := by
-      rw [@measurable_pi_iff]; intro i
-      exact hval_meas.comp (@measurable_pi_apply (Fin m) (fun _ => ↥T)
-        (fun _ => (⊤ : MeasurableSpace ↥T)) i)
+      exact Measurable.of_discrete
     measurableSet_image' := fun {s} _ =>
       (Set.toFinite s |>.image valProd).measurableSet }
   have hpi_map : MeasureTheory.Measure.pi (fun _ : Fin m => D) =

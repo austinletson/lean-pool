@@ -138,8 +138,7 @@ theorem lsmooth_qub {d : ℕ} (f : E d → ℝ) (L : ℝ≥0)
       simp [ψ]
   -- ψ continuous on [0,1]
   have hψ_cont : ContinuousOn ψ (Set.Icc 0 1) := by
-    intro t ht
-    exact (hψ_da t ht).continuousAt.continuousWithinAt
+    exact HasDerivAt.continuousOn hψ_da
   -- ψ differentiable on interior [0,1]
   have hψ_diff : DifferentiableOn ℝ ψ (interior (Set.Icc 0 1)) := by
     rw [interior_Icc]; intro t ht

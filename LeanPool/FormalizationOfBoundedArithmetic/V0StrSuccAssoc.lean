@@ -60,8 +60,7 @@ lemma len_le_len_succ : ∀ {X : str}, (len X : num) ≤ len (succ X) := by
         · apply ps.1
           · exact px
           · constructor
-            · rw [B11]
-              exact jp
+            · exact (B11 j p).mpr jp
             · rw [<- B11] at jp
               intro contr
               apply hj
@@ -93,9 +92,7 @@ lemma exists_lowest_order_zero (X : str) : ∃ m : num, LowestOrderZero X m := b
       rw [hX'.2]
       · exact len_not_in
       · exact lt_succ (len X)
-    apply @lt_of_le_of_lt _ _ _ (len X)
-    · exact B9 (len X)
-    · exact L1 lenX_in_X'
+    exact len_pos_of_exists lenX_in_X'
   obtain ⟨min, hmin⟩ := xmin len_X'_ne_zero
   exists min
   have min_le_lenx : min <= len X := by
@@ -108,8 +105,7 @@ lemma exists_lowest_order_zero (X : str) : ∃ m : num, LowestOrderZero X m := b
   · constructor
     · rw [<- hX'.2]
       · exact hmin.2.1
-      · rw [<- B11]
-        exact min_le_lenx
+      · exact (B11 min (len X)).mp min_le_lenx
     · intro j hj
       rw [@in_iff_not_notin]
       rw [<- hX'.2]
@@ -134,8 +130,7 @@ lemma exists_lowest_order_one {X : str} : (0 : num) < len X -> ∃ m : num, Lowe
 
 /-- The discrete-successor step: `a < b` upgrades to `a + 1 ≤ b`. -/
 lemma succ_le_of_lt {a b : num} (h : a < b) : a + (1 : num) ≤ b := by
-  rw [B11]
-  exact (add_lt_add_iff_right (1 : num)).mpr h
+  exact IDelta0Model.lt_iff_succ_le.mp h
 
 lemma succ_bit_eq {X : str} {m : num} : LowestOrderZero X m -> m ∈ succ X := by
   intro h
@@ -863,36 +858,11 @@ lemma add_succ_of_succ_add : ∀ {X Y : str}, ∀ {y : num}, y ∈ succ (X + Y) 
         · exact False.elim (h_j_notC h3.2.2)
         · exact False.elim (h_j_notC h4.2.2)
       have h_Carry_new : Carry y X (succ Y) := by
-        unfold Carry
-        refine ⟨m, h_m_lt_y, h_mX, succ_bit_eq hm, ?_⟩
-        intro j h_j_lt_y h_m_lt_j
-        rcases h_or_after_m j h_m_lt_j h_j_lt_y with h_jX | h_jY
-        · exact Or.inl h_jX
-        · exact Or.inr ((succ_bit_gt hm j h_m_lt_j).2 h_jY)
+        exact carry_succ_of_all_lt_mem_add_of_lowest_zero_lt hm h_m_lt_y h_prefix_one
       have h_notC : ¬ Carry y X Y := not_carry_of_all_lt_mem_add h_prefix_one
       have h_X_pos : (0 : num) < len X := len_pos_of_exists h_mX
       have h_y_lt_new : y < len X + len (succ Y) := by
-        have h_pred_or : pred_y ∈ X ∨ pred_y ∈ succ Y := by
-          have h_y_maj : Maj (Carry pred_y X (succ Y)) (pred_y ∈ X) (pred_y ∈ succ Y) := by
-            have h_y_carry : Carry (pred_y + 1) X (succ Y) := by
-              simpa [hpred_y_eq] using h_Carry_new
-            exact (carry_rec (i := pred_y) (X := X) (Y := succ Y)).2.1 h_y_carry
-          unfold Maj at h_y_maj
-          rcases h_y_maj with h1 | h2 | h3 | h4
-          · exact Or.inl h1.2.1
-          · exact Or.inr h2.2.2
-          · exact Or.inl h3.2.1
-          · exact Or.inl h4.2.1
-        rcases h_pred_or with h_predX | h_predSY
-        · have h_y_le_lenX : y ≤ len X := by
-            rw [<- hpred_y_eq, B11]
-            exact (add_lt_add_iff_right 1).mpr (L1 h_predX)
-          exact lt_of_le_of_lt h_y_le_lenX (lt_add_of_pos_right (len X) len_succ_pos)
-        · have h_y_le_lenSY : y ≤ len (succ Y) := by
-            rw [<- hpred_y_eq, B11]
-            exact (add_lt_add_iff_right 1).mpr (L1 h_predSY)
-          exact lt_of_le_of_lt h_y_le_lenSY (by
-            simpa [_root_.add_comm] using (lt_add_of_pos_right (len (succ Y)) h_X_pos))
+        exact carry_lt_add_len h_Carry_new
       by_cases h_yY : y ∈ Y
       · have h_X : y ∈ X := by
           by_contra h_notX

@@ -37,8 +37,7 @@ def IsBaseBDeadEnd (b : ℕ) (N : ℕ) : Prop :=
   0 < N ∧ Squarefree N ∧ ∀ d ∈ Finset.range b, ¬Squarefree (b * N + d)
 
 instance (b N : ℕ) : Decidable (IsBaseBDeadEnd b N) := by
-  unfold IsBaseBDeadEnd
-  infer_instance
+  exact Classical.propDecidable (IsBaseBDeadEnd b N)
 
 /-- The number of base-`b` dead ends in `[1, X]`. -/
 def countBaseBDeadEnds (b : ℕ) (X : ℕ) : ℕ :=
@@ -312,10 +311,8 @@ lemma tprod_compl_le_one (b : ℕ) (_hb : 2 ≤ b) (T : Finset ℕ) (_hT : T ⊆
   · exact le_refl 1
   · intro s
     apply Finset.prod_le_one
-    · intro i _
-      exact localDensityFactor_nonneg (i : ℕ) b T
-    · intro i _
-      exact localDensityFactor_le_one (i : ℕ) b T
+    · exact fun i a => localDensityFactor_nonneg (↑↑i) b T
+    · exact fun i a => localDensityFactor_le_one (↑↑i) b T
 
 
 end LeanPool.DeadEnds

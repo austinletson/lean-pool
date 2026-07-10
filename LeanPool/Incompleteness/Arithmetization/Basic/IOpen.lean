@@ -154,8 +154,7 @@ lemma div_mul (a b c : V) : a / (b * c) = a / b / c := by
 @[simp] lemma mul_div_le (a b : V) : b * (a / b) ≤ a := by
   have : 0 ≤ b := zero_le b
   rcases this with (rfl | pos) <;> simp [*]
-  rcases eq_mul_div_add_of_pos a pos with ⟨v, _, e⟩
-  simpa [← e] using show b * (a / b) ≤ b * (a / b) + v from le_self_add
+  exact mul_div_le_pos a pos
 
 @[simp] lemma div_le (a b : V) : a / b ≤ a := by
   have : 0 ≤ b := zero_le b
@@ -172,9 +171,7 @@ instance div_definable : Sg0-Function₂ ((· / ·) : V → V → V) := div_defi
 @[simp] lemma div_mul_le (a b : V) : a / b * b ≤ a := by rw [mul_comm]; exact mul_div_le _ _
 
 lemma lt_mul_div (a : V) {b} (pos : 0 < b) : a < b * (a / b + 1) := by
-  rcases eq_mul_div_add_of_pos a pos with ⟨v, hv, e⟩
-  calc a = b * (a / b) + v := e
-       _ < b * (a / b + 1) := by simp [mul_add, hv]
+  exact lt_mul_div_succ a pos
 
 @[simp] lemma div_one (a : V) : a / 1 = a :=
   le_antisymm (by simp) (le_iff_lt_succ.mpr <| by simpa using lt_mul_div a one_pos)
@@ -765,8 +762,7 @@ theorem fin4 {n} : (2 : Fin (n + 3)).succ = 3 := rfl
 @[simp] theorem _root_.LO.Arith.Fin.succ_two_eq_three {n} : (2 : Fin (n + 3)).succ = 3 := fin4
 
 theorem ss (v : Fin 4 → ℕ) : v (Fin.succ (0 : Fin (Nat.succ 1))).succ = v 2 := by
-  { simp [Nat.succ_eq_add_one, Nat.reduceAdd, Fin.isValue, Fin.succ_zero_eq_one,
-    Fin.succ_one_eq_two] }
+  { exact fegergreg v
 
 lemma pair₃_defined : Sg0-Function₃ ((⟪·, ·, ·⟫) : V → V → V → V) via pair₃Def := by
   intro v

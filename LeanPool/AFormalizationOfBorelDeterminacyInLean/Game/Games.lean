@@ -34,8 +34,7 @@ namespace Game
   (hp : Subtype.val '' G.payoff = Subtype.val '' G'.payoff) : G = G' := by
   ext1
   · exact ht
-  · apply Set.hEq_of_image_eq _ hp
-    rw [ht]
+  · exact Set.hEq_of_image_eq (congrArg body ht) hp
 /-- The residual game starting in position x -/
 @[simps tree] def residual (G : Game A) (x : List A) : Game A where
   tree := subAt G.tree x
@@ -196,8 +195,7 @@ lemma AllWinning.residual (hW : G.AllWinning p) x :
         Game.residual_payoff_odd G x hx1]
       ext a
       constructor
-      · intro _
-        exact Set.mem_univ a
+      · exact fun a_1 => Set.mem_univ a
       · simp_all
 /-- a game is determined if some player has a winning strategy -/
 def IsDetermined (G : Game A) := ∃ p, G.ExistsWinning p

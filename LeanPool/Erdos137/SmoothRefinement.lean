@@ -93,24 +93,7 @@ theorem not_powerful_of_large' (hBlock : BlockRadLB) {k n : ℕ}
 `n ^ k ≤ (k^{2k})^3 · P^6`). -/
 theorem not_powerful_finite' (hBlock : BlockRadLB) {k : ℕ} (hk : 3 ≤ k) :
     {n : ℕ | 1 ≤ n ∧ Powerful (F k n)}.Finite := by
-  apply Set.Finite.subset (Set.finite_Iic ((k ^ (2 * k)) ^ 3 * P k ^ 6))
-  intro n hn
-  simp only [Set.mem_setOf_eq] at hn
-  simp only [Set.mem_Iic]
-  obtain ⟨hn1, hPow⟩ := hn
-  by_contra hcon
-  push Not at hcon
-  -- if n > bound then n^k·L^3 > bound, contradicting not_powerful_of_large'.
-  have hthr : ((k ^ (2 * k)) ^ 3 * P k ^ 6 : ℕ) < n ^ k * L k ^ 3 := by
-    have hkpos : 0 < k := by omega
-    have hbase : (k ^ (2 * k)) ^ 3 * P k ^ 6 < n := hcon
-    have hn1k : 1 ≤ n ^ k := Nat.one_le_pow _ _ (by omega)
-    have hL1 : 1 ≤ L k ^ 3 := Nat.one_le_pow _ _ (L_pos k)
-    calc (k ^ (2 * k)) ^ 3 * P k ^ 6
-        < n := hbase
-      _ ≤ n ^ k := Nat.le_self_pow (by omega) n
-      _ ≤ n ^ k * L k ^ 3 := Nat.le_mul_of_pos_right _ (by omega)
-  exact not_powerful_of_large' hBlock hk hn1 hthr hPow
+  exact not_powerful_finite hBlock hk
 
 end  -- noncomputable section
 

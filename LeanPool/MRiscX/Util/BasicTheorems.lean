@@ -38,8 +38,7 @@ theorem Nat.le_sub_one_le : ∀ (n m : Nat), n ≤ m → n - 1 ≤ m := by
 
 theorem Nat.gt_zero_le_one : ∀ (n : ℕ),
   (0 < n) ↔ 1 ≤ n := by
-  intros n
-  omega
+  exact fun n => Iff.symm add_one_le_iff
 
 
 theorem Nat.add_gt_zero_gt_zero : ∀ (n m: ℕ) ,
@@ -147,11 +146,7 @@ instance instPreorderUInt64LeanPool : Preorder UInt64 where
   le_refl := by simp
   le_trans := by apply UInt64.le_trans
   lt_iff_le_not_ge := by
-    intros a b
-    constructor
-    · intro h
-      simpa only [UInt64.not_le] using ⟨UInt64.le_of_lt h, h⟩
-    · simp
+    exact fun a b => Std.LawfulOrderLT.lt_iff a b
 
 
 instance : WellFoundedLT UInt64 where

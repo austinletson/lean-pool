@@ -291,8 +291,7 @@ termination_by (x, y)
 decreasing_by form_wf
 
 theorem ofGameForm_Injective : Function.Injective ofGameForm := by
-  intro _ _ h1
-  exact ofGameForm_Injective' h1
+  intro _ exact fun ⦃a₂⦄ a => ofGameForm_Injective' a
 
 theorem ofGameForm_moves_mem_iff {g gp : GameForm} {p : Player}
     : (ofGameForm gp ∈ moves p (ofGameForm g)) ↔ (gp ∈ moves p g) := by
@@ -604,10 +603,7 @@ private lemma add_zero' (x : AugmentedForm) : x + !{fun _ ↦ ∅} = x := by
 
 noncomputable instance : Form AugmentedForm where
   moves_neg' := by
-    intro p x
-    simp only [neg_eq']
-    simp only [←neg'_eq, ←Set.neg_range, Subtype.range_coe_subtype, Set.setOf_mem_eq,
-               moves_ofSetsWithTombs]
+    exact fun p x => moves_neg' p x
   moves_add' := private moves_add'
   moves_small' := instSmallElemMoves
   IsEndLike p g := g.hasTombstone p ∨ (Form.IsEnd p g)
@@ -702,8 +698,7 @@ theorem ofGameFormHom_injective : Function.Injective ofGameFormHom := by
 
 theorem hasTombstone_neg_iff {g : AugmentedForm} {p : Player}
     : hasTombstone p (-g) ↔ hasTombstone (-p) g := by
-  rw [neg_eq']
-  exact Eq.to_iff rfl
+  exact hasTombstone_neg' g p
 
 @[simp]
 theorem hasTombstone_add {x y : AugmentedForm} {p : Player} :
@@ -737,10 +732,7 @@ theorem mem_ofGameForm_exists_mem {g : GameForm} {gp : AugmentedForm} {p : Playe
   (h1 : AugmentedForm.TombstoneFree gp)
   (h2 : gp ∈ Form.moves p (AugmentedForm.ofGameForm g))
     : ∃ gp', gp' ∈ Form.moves p g ∧ AugmentedForm.ofGameForm gp' = gp := by
-  have ⟨gp', h4⟩ := AugmentedForm.ofGameForm_exists_preimage h1
-  rw [<-h4] at h2
-  have h5 := AugmentedForm.ofGameForm_moves_mem_iff.mp h2
-  use gp'
+  exact mem_moves_ofGameForm h2
 
 end AugmentedForm
 

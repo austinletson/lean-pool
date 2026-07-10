@@ -806,14 +806,10 @@ theorem deriv_hermiteFunction (n : ℕ) (x : ℝ) :
   have hpoly_hasderiv : HasDerivAt (fun u => (hermiteR n).eval (u * Real.sqrt 2))
       (Real.sqrt 2 * (Polynomial.derivative (hermiteR n)).eval (x * Real.sqrt 2)) x := by
     have h_inner : HasDerivAt (fun u : ℝ => u * Real.sqrt 2) (Real.sqrt 2) x := by
-      have := (hasDerivAt_id x).mul_const (Real.sqrt 2)
-      simpa using this
+      exact hasDerivAt_mul_const √2
     have h_outer : HasDerivAt (fun u => (hermiteR n).eval u)
         ((Polynomial.derivative (hermiteR n)).eval (x * Real.sqrt 2)) (x * Real.sqrt 2) := by
-      have : (fun u => (hermiteR n).eval u) = fun u => Polynomial.aeval u (hermiteR n) := by
-        ext u; simp [Polynomial.aeval_def, Polynomial.eval₂_eq_eval_map, Polynomial.map_id]
-      rw [this]
-      exact Polynomial.hasDerivAt_aeval (hermiteR n) (x * Real.sqrt 2)
+      exact Polynomial.hasDerivAt (hermiteR n) (x * √2)
     have hcomp := h_outer.comp x h_inner
     rwa [mul_comm] at hcomp
   -- Compute HasDerivAt for the exponential part
@@ -830,8 +826,7 @@ theorem deriv_hermiteFunction (n : ℕ) (x : ℝ) :
   have hprod : HasDerivAt (fun u => (hermiteR n).eval (u * Real.sqrt 2) * Real.exp (-(u ^ 2) / 2))
       (Real.sqrt 2 * (Polynomial.derivative (hermiteR n)).eval (x * Real.sqrt 2) * e +
        (hermiteR n).eval (x * Real.sqrt 2) * (-x * e)) x := by
-    have h := hpoly_hasderiv.mul hexp_hasderiv
-    rwa [he_def] at h
+    exact HasDerivAt.fun_mul hpoly_hasderiv hexp_hasderiv
   -- Compute HasDerivAt for the full hermiteFunction = c_n * (poly * exp)
   have hfn_eq : hermiteFunction n = fun u =>
       hermiteFunctionNormConst n * ((hermiteR n).eval (u * Real.sqrt 2) * Real.exp (-(u ^ 2) / 2))
@@ -1055,11 +1050,7 @@ theorem hermiteFunction_sup_bound :
       _ ≤ |f a| := le_abs_self _
       _ = |∫ t in Set.Iic a, f' t| := by rw [hFTC]
       _ ≤ ∫ t in Set.Iic a, |f' t| := by
-          rw [show |∫ t in Set.Iic a, f' t| = ‖∫ t in Set.Iic a, f' t‖ from
-              (Real.norm_eq_abs _).symm]
-          exact le_trans (norm_integral_le_integral_norm _)
-            (le_of_eq (integral_congr_ae (Filter.Eventually.of_forall
-              (fun t => Real.norm_eq_abs (f' t)))))
+          exact abs_integral_le_integral_abs
       _ ≤ ∫ t, |f' t| :=
           MeasureTheory.setIntegral_le_integral hf'_abs_int
             (Filter.Eventually.of_forall (fun t => abs_nonneg _))
@@ -1116,8 +1107,7 @@ theorem hermiteFunction_sup_bound :
   have habs_sq : |hermiteFunction n a| ^ 2 ≤ 2 * (1 + ↑n) := by rw [sq_abs, sq]; exact h_sq_le
   -- |f| ≤ √(2*(1+n))
   have h_abs_le : |hermiteFunction n a| ≤ Real.sqrt (2 * (1 + ↑n)) := by
-    rw [← Real.sqrt_sq (abs_nonneg _)]
-    exact Real.sqrt_le_sqrt habs_sq
+    exact le_sqrt_of_sq_le habs_sq
   -- √(2*(1+n)) = √2 * √(1+n)
   have h_sqrt_split : Real.sqrt (2 * (1 + ↑n)) = Real.sqrt 2 * Real.sqrt (1 + ↑n) :=
     Real.sqrt_mul (by norm_num : (0:ℝ) ≤ 2) _
@@ -1648,11 +1638,7 @@ private lemma fourierIntegral_f_mul_gaussian_eq_zero
       _ = ‖g x‖ * Real.exp (2 * π * |ξ| * |x|) := mul_comm _ _
   -- Step 4: Bound is integrable
   have h_bound_int : Integrable bound volume := by
-    have key := integrable_g_mul_exp_linear f hf (2 * π * |ξ|)
-    -- key : Integrable (fun x => ‖f x * exp(-x²/2)‖ * exp((2π|ξ|) * |x|))
-    -- bound x = ‖g x‖ * exp(2π|ξ| * |x|)
-    -- These are the same since g = f * exp(-x²/2) and mul is assoc
-    exact key.congr (by filter_upwards with x; simp [hbound_def, g, mul_assoc])
+    exact integrable_g_mul_exp_linear f hf (2 * π * |ξ|)
   -- Step 5: F N is measurable
   have hg_ℂ_meas : AEStronglyMeasurable g_ℂ volume :=
     RCLike.continuous_ofReal.comp_aestronglyMeasurable

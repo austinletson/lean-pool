@@ -46,8 +46,7 @@ lemma prime_sq_coprime (p q : Nat.Primes) (hne : p ≠ q) :
 
 lemma pairwise_coprime_prime_squares (S : Finset Nat.Primes) :
     (S : Set Nat.Primes).Pairwise (fun p q => ((p : ℕ) ^ 2).Coprime ((q : ℕ) ^ 2)) := by
-  intro p _ q _ hpq
-  exact prime_sq_coprime p q hpq
+  intro p exact fun a ⦃y⦄ a_1 a_2 => prime_sq_coprime p y a_2
 
 /-- The list S.toList satisfies pairwise coprimality for the map p ↦ p².
     Uses `pairwise_coprime_prime_squares` and transfers the set pairwise property to the list.
@@ -207,8 +206,7 @@ lemma crt_inverse_mapsTo (b : ℕ) (T : Finset ℕ) (S : Finset Nat.Primes)
     have hp_pos : 0 < (p : ℕ) ^ 2 := pow_pos (Nat.Prime.pos p.2) 2
     constructor
     · exact not_dvd_of_mod_eq_not_dvd (p : ℕ) r (f p hp) hp_pos hr_eq hf_ndiv
-    · intro d hd
-      exact not_dvd_shift_of_mod_eq (p : ℕ) b r (f p hp) d hp_pos hr_eq (hf_shift d hd)
+    · exact fun d a => not_dvd_shift_of_mod_eq (↑p) b r (f p hp) d hp_pos (hr_mod p hp) (hf_shift d a)
 
 lemma validResidues_equiv_pi (b : ℕ) (T : Finset ℕ) (S : Finset Nat.Primes) :
     Nonempty ((validResiduesMod b T S) ≃ (S.pi (fun p => localValidResidues (p : ℕ) b T))) := by
@@ -217,8 +215,7 @@ lemma validResidues_equiv_pi (b : ℕ) (T : Finset ℕ) (S : Finset Nat.Primes) 
           by
     intro r hr
     rw [Finset.mem_pi]
-    intro p hp
-    exact crtMap_mapsTo_pi b T S r hr p hp
+    exact fun a h => crtMap_mapsTo_pi b T S r hr a h
   let f : (validResiduesMod b T S) → (S.pi (fun p => localValidResidues (p : ℕ) b T)) :=
     fun ⟨r, hr⟩ => ⟨fun p hp => r % ((p : ℕ) ^ 2), hfwd r hr⟩
   have hf_inj : Function.Injective f := by
@@ -230,9 +227,7 @@ lemma validResidues_equiv_pi (b : ℕ) (T : Finset ℕ) (S : Finset Nat.Primes) 
       Finset.mem_filter.mp hr₂ |>.1 |> Finset.mem_range.mp
     apply crtMap_injective_on_range S hr₁_lt hr₂_lt
     have heq' := Subtype.mk.injEq _ _ _ _ |>.mp heq
-    ext p hp
-    have := congrFun₂ heq' p hp
-    exact this
+    exact funext (congrFun heq')
   have hf_surj : Function.Surjective f := by
     intro ⟨g, hg⟩
     have hg' : ∀ p (hp : p ∈ S), g p hp ∈ localValidResidues (p : ℕ) b T := by
@@ -273,10 +268,8 @@ lemma localDensityProduct_le_one (b : ℕ) (T : Finset ℕ) (S : Finset Nat.Prim
     localDensityProduct b T S ≤ 1 := by
   unfold localDensityProduct
   apply Finset.prod_le_one
-  · intro p _
-    exact localDensityFactor_nonneg p b T
-  · intro p _
-    exact localDensityFactor_le_one p b T
+  · exact fun i a => localDensityFactor_nonneg (↑i) b T
+  · exact fun i a => localDensityFactor_le_one (↑i) b T
 
 lemma prime_sq_dvd_primeSquareProduct (S : Finset Nat.Primes) (p : Nat.Primes) (hp : p ∈ S) :
     (p : ℕ) ^ 2 ∣ primeSquareProduct S :=

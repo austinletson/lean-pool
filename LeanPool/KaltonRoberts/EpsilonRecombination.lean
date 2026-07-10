@@ -229,8 +229,7 @@ lemma approx_avgDeficit_le (N : ℕ) (f : Finset U → ℝ) (hf : IsApproxAdditi
           intro j
           have h_floorCount_le_frac : (C.floorCount N j : ℝ) ≤ (N : ℝ) * C.weight j / C.totalWeight
             := by
-            exact Nat.floor_le ( div_nonneg ( mul_nonneg ( Nat.cast_nonneg _ ) ( C.weight_nonneg j )
-              ) ( Finset.sum_nonneg fun _ _ => C.weight_nonneg _ ) );
+            exact floorCount_le_frac C N j
           rwa [ le_div_iff₀ ( C.totalWeight_pos ) ] at h_floorCount_le_frac;
         simpa only [ Finset.sum_mul _ _ _, mul_assoc, mul_comm, mul_left_comm ] using
           Finset.sum_le_sum fun j _ => mul_le_mul_of_nonneg_right ( h_floorCount_le_frac j ) (

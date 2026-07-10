@@ -96,9 +96,7 @@ lemma Asymptotics.IsBigO.zify {α β : Type*} [Norm α] [Norm β] {f : ℤ → �
 
 lemma Asymptotics.IsBigO.of_neg {α β : Type*} [Norm α] [Norm β] {f : ℤ → α} {g : ℤ → β}
     (hf : f =O[cofinite] g) : (fun n => f (-n)) =O[cofinite] fun n => g (-n) := by
-  rw [← Equiv.neg_apply]
-  apply Asymptotics.IsBigO.comp_tendsto hf
-  refine Injective.tendsto_cofinite (Equiv.injective (Equiv.neg ℤ))
+  exact comp_neg_int hf
 
 lemma linear_bigO_nat (m : ℤ) (z : ℍ) : (fun (n : ℕ) => ((m : ℂ) * z + n)⁻¹) =O[cofinite]
     fun n => (|(n : ℝ)|⁻¹) :=

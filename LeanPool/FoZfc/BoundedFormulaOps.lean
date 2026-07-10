@@ -248,9 +248,7 @@ theorem realize_liftAt' {n' m : ℕ} {h_n_prime_nezero : n' > 0} {s : ℕ → V}
         s (fixedSnoc xs a) := by
       rw [realize_castLE_of_eq (h := h_bar_n)]
       have h1_1 : (fixedSnoc xs a ∘ Fin.cast h_bar_n) = xs1 := by
-        funext k
-        unfold xs1
-        simp
+        exact Function.comp_def (fixedSnoc xs a) (Fin.cast h_bar_n)
       rw [h1_1]
     rw [← h1]
     have h2 : (xs1 ∘ fun (i : Fin (_n+1)) ↦ if ↑i < m then Fin.castAdd n' i

@@ -113,9 +113,7 @@ lemma bra_comp_continuousLinearMap {𝕜 E₁ E₂ : Type*} [RCLike 𝕜] [Norme
   [CompleteSpace E₁] [CompleteSpace E₂]
   (x : E₂) (f : E₁ →L[𝕜] E₂) :
   bra 𝕜 x ∘L f = bra 𝕜 (ContinuousLinearMap.adjoint f x) := by
-  ext
-  simp only [ContinuousLinearMap.comp_apply, bra_apply_apply,
-    ContinuousLinearMap.adjoint_inner_left]
+  exact ContinuousLinearMap.innerSL_apply_comp x f
 
 /-- we define the rank one operator $| x \rangle\langle y |$ by
   $x \mapsto \langle y,z\rangle x$ -/
@@ -334,8 +332,7 @@ theorem ket_eq_ket_iff {x y : E₁} :
   simp only [← smul_sub, smul_eq_zero, forall_or_right,
     or_iff_right_iff_imp]
   intro h
-  specialize h 1
-  simp only [one_ne_zero] at h
+  exact inner_self_eq_zero.mp (h ⟪x - y, x - y⟫_𝕜)
 
 theorem bra_eq_bra_iff {x y : E₁} :
   bra 𝕜 x = bra 𝕜 y ↔ x = y := by

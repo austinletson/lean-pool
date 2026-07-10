@@ -88,8 +88,7 @@ theorem preimage_singleton_measure_zero_of_deriv_ne_zero
       (Set.inter_union_sdiff S ↑P).symm
     rw [h_eq]
     apply Set.Countable.union
-    · exact (P.finite_toSet.subset
-        Set.inter_subset_right).countable
+    · exact to_countable (S ∩ ↑P)
     · have h_iso : ∀ t ∈ S \ ↑P, ∃ ε > 0,
           ∀ s ∈ S \ ↑P, s ≠ t → |s - t| ≥ ε := by
         intro t ⟨ht_S, ht_nP⟩

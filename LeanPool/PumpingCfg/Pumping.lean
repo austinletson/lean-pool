@@ -25,24 +25,7 @@ This file contains the proof of the pumping lemma for context-free grammars
 
 theorem pidgeonhole {α β : Type*} {A : Finset α} {B : Finset β} {f : A → B}
     (hf : f.Injective) : A.card ≤ B.card := by
-  if emptiness : A = ∅ then
-    simp_all
-  else
-    obtain ⟨a₀, ha₀⟩ := Finset.nonempty_iff_ne_empty.mpr emptiness
-    clear emptiness
-    classical
-    let f' : α → β := fun a => f (if ha : a ∈ A then ⟨a, ha⟩ else ⟨a₀, ha₀⟩)
-    apply Finset.card_le_card_of_injOn f'
-    · intro a ha
-      rw [Finset.mem_coe] at ha
-      simp only [f', dif_pos ha]
-      exact (f ⟨a, ha⟩).2
-    · intro a₁ ha₁ a₂ ha₂ haa
-      have haa' : f ⟨a₁, ha₁⟩ = f ⟨a₂, ha₂⟩ := by
-        rw [Finset.mem_coe] at ha₁ ha₂
-        simp only [f', ha₁, ha₂] at haa
-        exact Subtype.ext haa
-      simpa using hf haa'
+  exact Finset.card_le_card_of_injective hf
 
 universe uT uN
 
@@ -72,10 +55,7 @@ lemma pumping_string {u v : List (Symbol T g.NT)} {n : g.NT}
 lemma subtree_height_le {n₁ n₂ : g.NT} {p₁ : parseTree n₁} {p₂ : parseTree n₂}
     (hpp : p₂.IsSubtreeOf p₁) :
     p₂.height ≤ p₁.height := by
-  induction hpp with
-  | eq => rfl
-  | left_sub _ _ _ _ _ ih => exact Nat.le_add_right_of_le (le_sup_of_le_left ih)
-  | right_sub _ _ _ _ _ ih => exact Nat.le_add_right_of_le (le_sup_of_le_right ih)
+  exact parseTree.subtree_height hpp
 
 variable [DecidableEq g.NT]
 

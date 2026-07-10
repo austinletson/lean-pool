@@ -120,10 +120,7 @@ theorem lfpSet_eq_closure (a b : S) :
     have ha : a ∈ lfpSet (F a b) := hfix (a_mem_F a b _)
     have hb : b ∈ lfpSet (F a b) := hfix (b_mem_F a b _)
     have hmem : ({a, b} : Set S) ⊆ lfpSet (F a b) := by
-      intro s hs
-      rcases Set.mem_insert_iff.mp hs with h | h
-      · rw [h]; exact ha
-      · rw [Set.mem_singleton_iff.mp h]; exact hb
+      exact Set.pair_subset ha hb
     exact (Submonoid.closure_le (S := preFixSubmonoid a b hfix)).mpr hmem
 
 /-! ### Non-uniqueness. -/

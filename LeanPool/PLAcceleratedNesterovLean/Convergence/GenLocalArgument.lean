@@ -200,14 +200,7 @@ private abbrev localConvergenceAtBasePointGenProof
     have h_nn : (0:ℝ) ≤ ε * η := mul_nonneg (le_of_lt hε_pos) (le_of_lt hη_pos)
     rw [Real.le_sqrt h_nn (mul_nonneg (by linarith : (0:ℝ) ≤ μ_minus) (le_of_lt hη_pos))]
     have hε_sq : ε ^ 2 ≤ μ_minus / η := by
-      have h1 := hε_le
-      have h2 := Real.sq_sqrt (div_nonneg
-          (by linarith : (0:ℝ) ≤ μ_minus) (le_of_lt hη_pos))
-      have h3 := sq_abs ε
-      have h4 := sq_abs (Real.sqrt (μ_minus / η))
-      have h5 := abs_of_nonneg (le_of_lt hε_pos)
-      have h6 := abs_of_nonneg (Real.sqrt_nonneg (μ_minus / η))
-      nlinarith
+      exact (Real.le_sqrt' hε_pos).mp hε_le
     have h_sq_η := sq_nonneg η
     have h_prod_sq : (ε * η) ^ 2 = ε ^ 2 * η ^ 2 := by ring
     have h_cancel : (μ_minus / η) * η ^ 2 = μ_minus * η := by field_simp

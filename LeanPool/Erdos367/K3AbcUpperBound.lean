@@ -279,10 +279,7 @@ theorem real_analytic_rearrangement (habc : ABCConjecture) (ε : ℝ) (hε : 0 <
             ((n * (n + 1) * (n + 2)) ^ 2) /
               ((Nat.powerfulPart n * Nat.powerfulPart (n + 1) *
                 Nat.powerfulPart (n + 2)) : ℝ) := by
-        rw [le_div_iff₀]
-        · norm_cast at *
-          simp_all +decide only [CanonicallyOrderedAdd.mul_pos]
-        · exact h_powerful_pos_real
+        exact (le_div_iff₀ h_powerful_pos_real).mpr (h_triple_lemma_star n hn)
       convert
         Real.rpow_le_rpow (by positivity) h_bound_step
           (show 0 ≤ (1 + ε / 4) / 2 by positivity)

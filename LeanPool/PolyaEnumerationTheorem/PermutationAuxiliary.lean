@@ -129,14 +129,7 @@ lemma forall_exists_lt_perm_pow_eq_perm_pow {n : ℕ} {f : Equiv.Perm X} {x : X}
     have hint_h : ((f : Equiv.Perm X) ^ ((n + 1) : ℤ)) x = x := by
       rwa [show ((n + 1) : ℤ) = ((n + 1 : ℕ) : ℤ) from by push_cast; ring, zpow_natCast]
     have hfix : ∀ q : ℤ, ((f ^ ((n + 1) : ℤ)) ^ q) x = x := by
-      intro q
-      induction q with
-      | zero => simp
-      | succ m hm => rw [zpow_add_one, Equiv.Perm.mul_apply, hint_h, hm]
-      | pred m hm =>
-        have hinv_fix : (f ^ ((n + 1) : ℤ))⁻¹ x = x :=
-          Equiv.Perm.inv_eq_iff_eq.mpr hint_h.symm
-        rw [zpow_sub_one, Equiv.Perm.mul_apply, hinv_fix, hm]
+      exact fun q => Equiv.Perm.zpow_apply_eq_self_of_apply_eq_self hint_h q
     have key : ∀ (q r : ℤ), ((f ^ ((n + 1) : ℤ)) ^ q) ((f ^ r) x) = (f ^ r) x := by
       intro q r
       have hcomm : (f ^ ((n + 1) : ℤ)) ^ q * f ^ r = f ^ r * (f ^ ((n + 1) : ℤ)) ^ q := by

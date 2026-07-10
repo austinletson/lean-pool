@@ -142,8 +142,7 @@ lemma T_scalar_pow (c : ℕ) (hc : 0 < c) (k : ℕ) :
     TElem (fun _ : Fin n => c) ^ k = TElem (fun _ : Fin n => c ^ k) := by
   induction k with
   | zero =>
-    simp only [pow_zero]; symm
-    exact (T_elem_congr_diag n (funext fun _ => by simp)).trans (T_elem_ones_eq_one n)
+    simp only [pow_zero]; exact Eq.symm (T_elem_ones_eq_one n)
   | succ k ih =>
     rw [pow_succ', ih, T_diag_scalar_mul n c hc (fun _ => c ^ k)
       (fun _ => pow_pos hc k) (divChain_const n _)]
@@ -340,8 +339,7 @@ lemma evalHom_mem_R_p (n : ℕ) [NeZero n] (p : ℕ) (hp : p.Prime)
     have : evalHom n p (MvPolynomial.C a) = (Int.castRingHom (HeckeAlgebra n)) a := by
       unfold evalHom; exact MvPolynomial.eval₂Hom_C _ _ a
     rw [this]; change (a : HeckeAlgebra n) ∈ RP n p hp
-    rw [show (a : HeckeAlgebra n) = a • (1 : HeckeAlgebra n) from (zsmul_one a).symm]
-    exact (RP n p hp).zsmul_mem (RP n p hp).one_mem a
+    exact intCast_mem (RP n p hp) a
   · intro f g hf hg; rw [map_add]; exact (RP n p hp).add_mem hf hg
   · intro f i hf
     rw [map_mul]

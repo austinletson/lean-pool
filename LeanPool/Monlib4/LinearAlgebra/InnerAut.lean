@@ -357,9 +357,7 @@ theorem innerAut_isHermitian_iff (U : unitaryGroup n 𝕜) (x : Matrix n n 𝕜)
 
 theorem _root_.Matrix.unitaryGroup.injective_hMul (U : unitaryGroup n 𝕜) (x y : Matrix n n 𝕜) :
     x = y ↔ x * (U : Matrix n n 𝕜) = y * (U : Matrix n n 𝕜) := by
-  refine ⟨fun h => by rw [h], fun h => ?_⟩
-  have h' := congrArg (fun z : Matrix n n 𝕜 => z * (U⁻¹ : unitaryGroup n 𝕜)) h
-  simpa [Matrix.mul_assoc, UnitaryGroup.inv_apply] using h'
+  exact Iff.symm (Unitary.mul_left_inj U)
 
 lemma unitaryGroup_conjTranspose (U : unitaryGroup n 𝕜) :
     (↑U)ᴴ = (↑(U⁻¹ : unitaryGroup n 𝕜) : Matrix n n 𝕜) :=

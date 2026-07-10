@@ -171,19 +171,13 @@ lemma digit_sub_self (q x n r : ℕ) (hq : 1 ≤ q) (hr : r ≤ digit q x n) :
   have hrle : r ≤ x / q ^ n := le_trans hr (Nat.mod_le _ _)
   have hdiv : (x - r * q ^ n) / q ^ n = x / q ^ n - r := by
     have hle : r * q ^ n ≤ x := by
-      calc r * q ^ n ≤ (x / q ^ n) * q ^ n := Nat.mul_le_mul_right _ hrle
-        _ ≤ x := Nat.div_mul_le_self x (q ^ n)
+      exact (Nat.le_div_iff_mul_le hpos).mp hrle
     have key : (x - r * q ^ n) / q ^ n + r = x / q ^ n := by
       rw [← Nat.add_mul_div_right _ r hpos]
       congr 1; omega
     omega
   rw [hdiv]
-  set y := x / q ^ n with hy
-  conv_lhs => rw [← Nat.div_add_mod y q]
-  rw [Nat.mul_comm, Nat.add_sub_assoc hr, Nat.add_comm, Nat.add_mul_mod_self_right]
-  have hlt : y % q - r < q := by
-    have := Nat.mod_lt y (show 0 < q by omega); omega
-  exact Nat.mod_eq_of_lt hlt
+  exact Eq.symm (Nat.mod_sub_of_le hr)
 
 /-- **Digit no-cascade, other positions.** Subtracting `r * q ^ n` from `x`, where
 `r ≤ digit q x n`, leaves every digit at a position `m ≠ n` unchanged. -/
@@ -195,8 +189,7 @@ lemma digit_sub_other (q x n r m : ℕ) (hq : 1 ≤ q) (hr : r ≤ digit q x n) 
   have hle : r * q ^ n ≤ x := by
     have hpos : 0 < q ^ n := pow_pos hq0 n
     have hrle : r ≤ x / q ^ n := le_trans hr (Nat.mod_le _ _)
-    calc r * q ^ n ≤ (x / q ^ n) * q ^ n := Nat.mul_le_mul_right _ hrle
-      _ ≤ x := Nat.div_mul_le_self x (q ^ n)
+    exact (Nat.le_div_iff_mul_le hpos).mp hrle
   rcases lt_or_gt_of_ne hmn with hlt | hgt
   · -- Case m < n: q ^ (m + 1) ∣ r*q ^ n, subtraction invisible mod q ^ (m + 1)
     have hdvd : q ^ (m + 1) ∣ r * q ^ n := by
@@ -219,8 +212,7 @@ lemma digit_sub_other (q x n r m : ℕ) (hq : 1 ≤ q) (hr : r ≤ digit q x n) 
       have hh : x % q ^ (n + 1) / q ^ n = (x / q ^ n) % q := by
         rw [pow_succ]; exact Nat.mod_mul_right_div_self x (q ^ n) q
       have hr2 : r ≤ x % q ^ (n + 1) / q ^ n := by rw [hh]; exact hr
-      calc r * q ^ n ≤ (x % q ^ (n + 1) / q ^ n) * q ^ n := Nat.mul_le_mul_right _ hr2
-        _ ≤ x % q ^ (n + 1) := Nat.div_mul_le_self _ _
+      exact Nat.mul_le_of_le_div (q ^ n) r (x % q ^ (n + 1)) hr2
     -- (x - r*q ^ n) / q ^ (n+1) = x / q ^ (n+1)
     have hdiv : (x - r * q ^ n) / q ^ (n + 1) = x / q ^ (n + 1) := by
       have hdm := Nat.div_add_mod x (q ^ (n + 1))
@@ -519,9 +511,7 @@ theorem repr_preserved (q d m : ℕ) (_hq : 1 ≤ q) (kk : Fin (d + 1) → ℕ)
       intro i _
       by_cases hi : (i : ℕ) ≤ m
       · have hpp : q ^ (m - (i : ℕ)) * q ^ (i : ℕ) = q ^ m := by
-          rw [← pow_add]
-          congr 1
-          omega
+          exact Nat.pow_sub_mul_pow q hi
         rw [mul_assoc, hpp, Nat.mul_comm]
       · push Not at hi; simp [hr0 i hi]
     rw [heq, hrsum, pow_succ]
@@ -560,10 +550,7 @@ theorem row_select_j (q d : ℕ) (hq : 2 ≤ q) (r : Fin (d + 1) → ℕ)
       · intro i _ hi
         simp only [Finset.mem_singleton] at hi
         apply hall
-        have := i.2
-        rcases Nat.lt_or_ge (i : ℕ) d with h | h
-        · exact h
-        · exfalso; apply hi; apply Fin.ext; simp only [Fin.val_last]; omega
+        exact Fin.val_lt_last hi
     rw [hsplit] at hrsum; omega
   set j := S.max' hSne with hj
   have hjS : j ∈ S := S.max'_mem hSne
@@ -626,8 +613,7 @@ lemma exchange_carryfree (q d m : ℕ) (hq2 : 2 ≤ q) (kk : Fin (d + 1) → ℕ
     omega
   -- precondition for digit_add_self / digit_add_other at jj
   have hadd_pre : digit q (x jj) (m - jv) + 1 < q := by
-    have := hsub_le jj (m - jv)
-    omega
+    exact add_lt_of_add_lt_right hkk_jj_bound (hsub_le jj (m - jv))
   -- rewrite kk' via hkk'
   intro n
   -- We'll do two cases on n.
@@ -644,8 +630,7 @@ lemma exchange_carryfree (q d m : ℕ) (hq2 : 2 ≤ q) (kk : Fin (d + 1) → ℕ
     -- jrow's digit: digit q (kk' jrow)(m-jv) = digit q (x jrow)(m-jv)
     have hjrow_val_eq : digit q (x jrow) (m - jv) = digit q (kk jrow) (m - jv) - r jrow := by
       rw [hx, ← hjrow_pos_pos]
-      exact digit_sub_self q (kk jrow) (m - (jrow : ℕ)) (r jrow) hq1
-        (by rw [hjrow_pos_pos]; exact hjrow_dig)
+      exact digit_sub_self q (kk jrow) (m - ↑jrow) (r jrow) hq1 (hrdig jrow)
     have hjrow_val : digit q (kk' jrow) (m - jv) = digit q (kk jrow) (m - jv) - r jrow := by
       rw [hkk' jrow, if_neg (Ne.symm hjj_ne_jrow), add_zero, ← hjrow_val_eq]
     -- It suffices to show ∑ i, digit q (kk' i)(m-jv) ≤ ∑ i, digit q (kk i)(m-jv) ≤ q-1
@@ -830,8 +815,7 @@ lemma exchange_phi_gain (q d k m : ℕ) (hq2 : 2 ≤ q) (kk : Fin (d + 1) → �
         ≤ ∑ i ∈ Finset.univ.erase jrow, gWeight q d (i : ℕ) * r i := by
       rw [Finset.mul_sum]
       apply Finset.sum_le_sum
-      intro i _
-      exact Nat.mul_le_mul_right _ (hgmin i)
+      exact fun i a => Nat.mul_le_mul_right (r i) (hgmin i)
     have hsumrest : ∑ i ∈ Finset.univ.erase jrow, r i = q - r jrow := by
       have hh := Finset.sum_erase_add (Finset.univ) r (Finset.mem_univ jrow)
       rw [hrsum] at hh
@@ -949,8 +933,7 @@ lemma carry_exchange_improves (q d k : ℕ) (hq : q.Prime) (kk : Fin (d + 1) →
   refine ⟨kk', ⟨?_, ?_⟩, ?_⟩
   · -- representation
     rw [hrep]
-    simp only [hkk']
-    exact (repr_preserved q d m hq1 kk r jj jv hjjval hjm hrdig hr0 hrsum).symm
+    exact Eq.symm (repr_preserved q d m hq1 kk r jj jv hjjval hjm hrdig hr0 hrsum)
   · -- carry-free preservation
     exact exchange_carryfree q d m hq2 kk hcf r jrow jj jv hjv hjjval hjm hrdig hr0 hjpos kk'
       (fun i => by rw [hkk'])
@@ -1028,11 +1011,7 @@ theorem digit_ext (q : ℕ) (hq : 2 ≤ q) : ∀ x y : ℕ, (∀ n, digit q x n 
       simp only [Nat.zero_mod] at h0
       omega
     · have hxq : x / q < x := Nat.div_lt_self (by omega) hq
-      have hkey := ih (x / q) hxq (y / q) hrec
-      have hx2 := Nat.div_add_mod x q
-      have hy2 := Nat.div_add_mod y q
-      rw [hkey] at hx2
-      omega
+      exact Nat.ext_div_mod (ih (x / q) hxq (y / q) hrec) h0
 
 /-- The potential `Φ(kk) = q ^ {d+1}·∑ᵢ kkᵢ + (q - 1)·∑ᵢ i·qⁱ·kkᵢ` (matches the form used by
 `F_lt_of_Phi_lt`). Minimizing `Φ` over equal-representation admissible tuples is equivalent
@@ -1079,8 +1058,7 @@ lemma gWeight_anti (q d i j : ℕ) (hq : 2 ≤ q) (hij : i < j) (hjd : j ≤ d) 
           have hlt : e + m < d := by omega
           have hs := step (e + m) hlt
           have heq : e + m + 1 = e + (m + 1) := by omega
-          rw [heq] at hs
-          exact hs
+          exact lt_of_eq_of_lt (congrArg (gWeight q d) (id (Eq.symm heq))) (step (e + m) hlt)
         have h2 : gWeight q d (e + m) < gWeight q d e := ih e (by omega) hm
         exact lt_trans h1 h2
   have hj : j = i + (j - i) := by omega
@@ -2011,8 +1989,7 @@ lemma column_sum_eq (q d k : ℕ) (hq : q.Prime) (kk : Fin (d + 1) → ℕ)
       intro mm _
       rw [Finset.sum_mul]
       apply Finset.sum_congr rfl
-      intro i _
-      rw [ite_mul, zero_mul]
+      exact fun x a => ite_zero_mul (↑x ≤ mm) (digit q (kk x) (mm - ↑x)) (q ^ mm)
     rw [step1]
     have step2 : ∀ i : Fin (d + 1),
         (∑ mm ∈ Finset.range M,
@@ -2290,8 +2267,7 @@ lemma parallelogram_exists (q d k : ℕ) (hq : q.Prime)
     have hidx : (⟨j₀ + t, by omega⟩ : Fin (d + 1)) = r := by
       apply Fin.ext; simp [ht]; omega
     rw [hidx] at hcell
-    simp only [hf]
-    omega
+    exact Nat.lt_one_iff.mp hcell
   -- Carry-free for `b` at column `nT`.
   have hbcf : (∑ r : Fin (d + 1), g r) ≤ q - 1 := hadmb.2 nT
   -- The full diagonal for `a`.
@@ -2331,9 +2307,7 @@ lemma parallelogram_exists (q d k : ℕ) (hq : q.Prime)
       · exfalso; apply hrne; apply Fin.ext; simp [hJ, h]
     -- column `(r:ℕ) + nT < m₀`.
     have hcol : (r : ℕ) + nT < m₀ := by omega
-    have := hagree r nT hcol
-    simp only [hf, hg]
-    exact this
+    exact Nat.add_right_cancel (congrFun (congrArg HAdd.hAdd (hagree r nT hcol)) q)
   have hsumeq : (∑ r ∈ Sle.erase J, f r) = (∑ r ∈ Sle.erase J, g r) :=
     Finset.sum_congr rfl hagree_erase
   -- `hdef` says `f J < g J`.
@@ -2418,8 +2392,7 @@ lemma maximizer_unique (q d k : ℕ) (hq : q.Prime)
   have hq2 : 2 ≤ q := hq.two_le
   funext ii
   apply digit_ext q hq2
-  intro n
-  exact no_two_distinct_maximizers q d k hq kk₁ hadm₁ hmax₁ kk₂ hadm₂ hmax₂ ii n
+  exact fun n => no_two_distinct_maximizers q d k hq kk₁ hadm₁ hmax₁ kk₂ hadm₂ hmax₂ ii n
 
 -- Main Statement(s)
 
@@ -2452,7 +2425,6 @@ theorem main_theorem (q d k : ℕ) (hq : q.Prime) :
   refine ⟨kstar, hkstarAdm, hkstarDom, ?_⟩
   -- Uniqueness: any admissible maximizer `kk` and `kstar` are both maximizers, so
   -- `maximizer_unique` gives `kk = kstar`.
-  intro kk hkk hkkMax
-  exact maximizer_unique q d k hq kk hkk hkkMax kstar hkstarAdm hkstarDom
+  exact fun kk a a_1 => maximizer_unique q d k hq kk a a_1 kstar hkstarAdm hkstarDom
 
 end ZetaH123.H1

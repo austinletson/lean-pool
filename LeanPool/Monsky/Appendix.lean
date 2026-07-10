@@ -411,8 +411,7 @@ lemma Z_in_S : Z ∈ S := by
   have n_two_eq_one : n*2 = 1 := by omega
   have two_unit : ∃two : ℤˣ, two = (2:ℤ) := by-- implying 2 is a unit in ℤ
     refine CanLift.prf 2 ?_
-    rw[isUnit_iff_exists]
-    use n
+    exact IsUnit.of_mul_eq_one_right n n_two_eq_one
   rcases two_unit with ⟨two, H⟩
   -- We will now use that the only units in ℤ are ±1
   obtain l | l := Int.units_eq_one_or two <;> (rw[l] at H; tauto)
@@ -572,12 +571,7 @@ lemma odd_valuation (Γ₀ : Type) (_ : LinearOrderedCommGroupWithZero Γ₀) (v
         not_false_eq_true, map_mul, map_one, sup_eq_right, ge_iff_le]
       exact le_of_lt vind
     · rw [this2]
-      specialize vind n hn
-      simp_all only [one_div, map_inv₀, gt_iff_lt, ne_eq, mul_eq_one, OfNat.ofNat_ne_one, false_and,
-        not_false_eq_true, map_one, map_mul]
-      apply Aesop.BuiltinRules.not_intro
-      intro a
-      simp_all only [lt_self_iff_false]
+      exact Ne.symm (ne_of_gt (vind n hn))
   intro n odd
   rcases odd with ⟨k, eq⟩
   rw [eq]

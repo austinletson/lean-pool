@@ -93,8 +93,7 @@ lemma card_projectivization_minus_point (n : ℕ) (α : Projectivization F (Fin 
   have h_eq : q ^ (n + 1) - q = (P - 1) * (q - 1) := by
     rw [Nat.sub_mul, one_mul]
     omega
-  rw [eq_comm, Nat.div_eq_iff_eq_mul_left hqsub ⟨P - 1, by rw [mul_comm]; exact h_eq⟩]
-  exact h_eq
+  exact Eq.symm (Nat.div_eq_of_eq_mul_left hqsub h_eq)
 
 /-- The cardinality of `P^n(F)` in the form used by the sharpness example. -/
 lemma card_projectivization_eq_bound_add_one (n : ℕ) :
@@ -156,9 +155,7 @@ lemma theorem_1_aux {X : Type*} [Finite X] (n : ℕ) (f : X → (Fin (n + 1) →
   have hdomain_lt : Fintype.card {x : X // f x ≠ 0} < Fintype.card P := by
     rw [← Nat.card_eq_fintype_card, ← Nat.card_eq_fintype_card]
     have hsub : Nat.card {x : X // f x ≠ 0} ≤ Nat.card X := by
-      rw [Nat.card_eq_fintype_card, Nat.card_eq_fintype_card]
-      exact Fintype.card_le_of_injective (fun x : {x : X // f x ≠ 0} => (x : X))
-        Subtype.val_injective
+      exact Finite.card_subtype_le fun x => f x ≠ 0
     exact lt_of_le_of_lt (hsub.trans hX) hbound_lt
   have hnot_surjective : ¬ Function.Surjective badPoint := by
     intro hsurj
@@ -270,8 +267,7 @@ theorem theorem_1 {X : Type*} [Finite X] (n : ℕ) (S : Set (X → F)) (hS : S.F
     intro k hk
     induction k, hk using Nat.le_induction with
     | base =>
-        intro S hS hcard
-        exact theorem_1_base_case (F := F) n S hS hcard hX
+        exact fun S a a_1 => theorem_1_base_case n S a a_1 hX
     | succ k hk ih =>
         intro S hS hcard
         obtain ⟨f, hf⟩ : ∃ f, f ∈ S := by
@@ -422,8 +418,7 @@ theorem corollary_3 {K : Type*} [Field K] [Finite K] (n : ℕ)
     by_cases hx : x = α
     · subst x
       constructor
-      · intro _ y hy
-        exact hα y hy
+      · exact fun a => Set.mem_of_eq_of_mem rfl hα
       · intro _ u hu
         exact hspan_vanish u (hU_span hu)
     · let x' : X' := ⟨x, hx⟩

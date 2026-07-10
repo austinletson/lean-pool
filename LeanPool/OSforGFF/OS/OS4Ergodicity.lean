@@ -264,8 +264,7 @@ lemma gff_exp_product_time_shift_invariant (m : ℝ) [Fact (0 < m)] (g₁ g₂ :
     ext x; simp [timeTranslationSchwartzℂ_apply]
   simp_rw [h_T_add]
   -- Now both are ∫ exp(⟨ω, T_t h⟩) and ∫ exp(⟨ω, h⟩) for h = g₁ + conjSchwartz g₂
-  exact gff_generating_time_invariant m t
-    (Add.add g₁ (conjSchwartz g₂) : TestFunctionℂ)
+  exact gff_generating_time_invariant m t (g₁ + conjSchwartz g₂)
 
 /-- The L² norm of A_s is constant in s by stationarity.
     Proof: Uses OS2 → gff_exp_product_time_shift_invariant → this result.
@@ -323,9 +322,7 @@ lemma time_average_memLp_two (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) (T :
   have h_uniform : ∀ s, ∫ ω, ‖A s ω‖^2 ∂μ = ∫ ω, ‖A 0 ω‖^2 ∂μ := fun s => by
     rw [gff_exp_L2_norm_constant m f s]
     -- A 0 ω = exp(pairing (T_0 ω) f) = exp(pairing ω f) since T_0 = id
-    congr 1
-    ext ω
-    simp only [A, timeTranslationDistribution_zero]
+    exact Eq.symm (gff_exp_L2_norm_constant m f 0)
   -- Joint measurability on [0,T] × Ω
   have h_joint_meas : AEStronglyMeasurable (Function.uncurry A)
       ((volume.restrict (Set.Icc 0 T)).prod μ) := by
@@ -346,8 +343,7 @@ lemma time_average_memLp_two (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) (T :
     have h_int_meas : AEStronglyMeasurable (fun ω => ∫ s in Set.Icc 0 T, A s ω) μ :=
       AEStronglyMeasurable.integral_prod_right' h_swap
     -- c * f = c • f for ℂ
-    convert AEStronglyMeasurable.const_smul h_int_meas (1/T : ℂ) using 2 with ω
-    simp [Pi.smul_apply, smul_eq_mul]
+    exact AEStronglyMeasurable.const_mul h_int_meas (1 / ↑T)
   -- Apply the proved theorem from L2TimeIntegral
   exact OSforGFF.time_average_memLp_two μ A T hT h_As_L2 h_uniform h_joint_meas h_avg_meas
 
@@ -598,9 +594,7 @@ lemma gff_covariance_continuous (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) :
     -- E[exp(T_{-t}f)] = EA by time translation invariance
     have h_E_shifted : ∀ t, ∫ ω, Complex.exp (distributionPairingℂReal ω (timeTranslationSchwartzℂ
       (-t) f)) ∂μ = EA := by
-      intro t
-      simp only [EA, μ]
-      exact gff_generating_time_invariant m (-t) f
+      exact fun t => gff_generating_time_invariant m (-t) f
     let E_conj := ∫ ω, Complex.exp (distributionPairingℂReal ω (conjSchwartz f)) ∂μ
     -- t ↦ C(T_{-t}f, conjSchwartz f) is continuous
     have h_cov_cont : Continuous (fun t =>
@@ -1029,8 +1023,7 @@ lemma norm_sq_weighted_sum_le {n : ℕ} (w : Fin n → ℂ) (a : Fin n → ℂ) 
   have h2 : ‖∑ j, w j * a j‖^2 ≤ (∑ j, ‖w j‖ * ‖a j‖)^2 :=
     sq_le_sq' (by nlinarith [norm_nonneg (∑ j, w j * a j)]) h1
   have h3 : (∑ j : Fin n, ‖w j‖ * ‖a j‖)^2 ≤ (∑ j, ‖w j‖^2) * (∑ j, ‖a j‖^2) := by
-    have := Finset.sum_mul_sq_le_sq_mul_sq Finset.univ (fun j => ‖w j‖) (fun j => ‖a j‖)
-    exact this
+    exact Finset.sum_mul_sq_le_sq_mul_sq Finset.univ (fun i => ‖w i‖) fun i => ‖a i‖
   linarith
 
 /-- OS4' → OS4: Generating function ergodicity implies full ergodicity.
@@ -1162,8 +1155,7 @@ theorem OS4'_implies_OS4 (m : ℝ) [Fact (0 < m)] :
     -- RHS integrability: Z * ∑ ‖Err_j‖² where each term is integrable
     have h_sum_int : Integrable (fun ω => Z * ∑ j, ‖Err j T ω‖^2) μ := by
       apply Integrable.const_mul
-      apply MeasureTheory.integrable_finsetSum
-      intro j _; exact h_each_int j
+      exact integrable_finsetSum Finset.univ fun i a => h_each_int i
     -- Each Err j T · is AEStronglyMeasurable
     -- We derive this from h_each_int: Integrable (‖Err j T ·‖²) implies AEStronglyMeasurable (Err j
     -- T ·)
@@ -1190,11 +1182,9 @@ theorem OS4'_implies_OS4 (m : ℝ) [Fact (0 < m)] :
         -- ∑ j, z j * Err j T · is AEStronglyMeasurable (finite sum of measurable)
         have h_sum : AEStronglyMeasurable (∑ j : Fin n, fun ω => z j * Err j T ω) μ := by
           apply Finset.aestronglyMeasurable_sum Finset.univ
-          intro j _
-          exact (h_err_meas j).const_smul (z j)
+          exact fun i a => AEStronglyMeasurable.const_mul (h_err_meas i) (z i)
         convert h_sum using 1
-        ext ω
-        simp only [Finset.sum_apply]
+        exact Eq.symm (Finset.sum_fn Finset.univ fun c ω => z c * Err c T ω)
       · simp_all
     -- Integrate
     calc ∫ ω, ‖(1 / T) * ∫ s in Set.Icc (0 : ℝ) T, A (timeTranslationDistribution s ω)

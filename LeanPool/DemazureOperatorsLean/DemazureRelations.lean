@@ -113,7 +113,6 @@ def Dem (i : Fin n) : LinearMap (RingHom.id (MvPolynomial.symmetricSubalgebra (F
     have wah : p = r := by rfl
     have h : MvPolynomial.IsSymmetric p := by
       apply (MvPolynomial.mem_symmetricSubalgebra p).mp
-      rw[wah]
       exact SetLike.coe_mem r
     exact demazure_mul_symm i p x h
 

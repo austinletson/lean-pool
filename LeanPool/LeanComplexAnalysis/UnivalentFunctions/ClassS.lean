@@ -90,9 +90,7 @@ lemma dslope_ne_zero_of_in_S (f : ℂ → ℂ) (hf : f ∈ classS) :
     · have h_inj := hf.2.1
       have h0 : 0 ∈ ball (0 : ℂ) 1 := Metric.mem_ball_self zero_lt_one
       have h_neq : f z ≠ f 0 := by
-        apply fun a => mt a h
-        intro h_eq
-        exact h_inj hz h0 h_eq
+        exact (Set.InjOn.ne_iff h_inj hz h0).mpr h
       rwa [hf.2.2.1] at h_neq
     · exact h
 
@@ -116,8 +114,7 @@ lemma hasDerivAt_integral_of_analytic_mul (f : ℂ → ℂ) (hf : AnalyticOn ℂ
     f ((u : ℂ) * (z + t)) - f ((u : ℂ) * z)) / t) (nhdsWithin 0 {0}ᶜ) (
       nhds (∫ u in (0 : ℝ)..1, deriv f ((u : ℂ) * z) * (u : ℂ))) := by
     refine intervalIntegral.tendsto_integral_filter_of_dominated_convergence ?_ ?_ ?_ ?_ ?_
-    focus use fun x => 2 * (SupSet.sSup (Set.image (fun w => ‖deriv f w‖) (
-      Metric.closedBall 0 (‖z‖ + (1 - ‖z‖) / 2)))) * |x|
+    focus exact fun a => √a
     · norm_num at *
       rw [eventually_nhdsWithin_iff]
       rw [Metric.eventually_nhds_iff]

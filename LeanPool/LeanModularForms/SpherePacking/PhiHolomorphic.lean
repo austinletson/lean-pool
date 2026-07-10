@@ -48,7 +48,6 @@ theorem E₂_differentiableOn :
   have h := eta_logDeriv' ⟨z, hz⟩
   have hpi : (↑Real.pi : ℂ) * Complex.I / 12 ≠ 0 := by
     simp_all
-  change logDeriv dedekindEtaFun' z = _ at h
-  rw [h, inv_mul_cancel_left₀ hpi]
+  exact (eq_inv_mul_iff_mul_eq₀ hpi).mpr (id (Eq.symm h))
 
 end

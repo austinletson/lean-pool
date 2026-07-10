@@ -104,8 +104,7 @@ lemma sum_intExpNegPoly_bound
     fun i => pow_le_pow_left₀ (mul_nonneg (norm_nonneg _) (hM0 i)) (hB i) p
   calc
     _ ≤ ∑ i : Fin n, ‖b i * cexp (a i) * intExpNegPoly (Fp T p) (a i)‖ := by
-          simpa using (norm_sum_le (Finset.univ)
-              (fun i : Fin n => b i * cexp (a i) * intExpNegPoly (Fp T p) (a i)))
+          exact norm_sum_le Finset.univ fun i => b i * cexp (a i) * intExpNegPoly (Fp T p) (a i)
     _ ≤ ∑ i : Fin n, ‖b i‖ * ‖cexp (a i)‖ * ‖intExpNegPoly (Fp T p) (a i)‖ := by simp
     _ ≤ ∑ i : Fin n, ‖b i * cexp (a i)‖ * rexp ‖a i‖ * (‖a i‖ * M i) ^ p := by
       refine Finset.sum_le_sum (fun i hi => by

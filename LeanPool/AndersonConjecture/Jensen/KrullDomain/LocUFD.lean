@@ -195,9 +195,7 @@ theorem localization_submonoid_UFD {S : Type*} [CommRing S]
             ¬ ∀ m ∈ M, ¬ q ∣ (m : R₀) :=
           (Multiset.mem_filter.mp hq).2
         push Not at hq_dvd
-        obtain ⟨m, hm_M, hq_dvd_m⟩ := hq_dvd
-        exact isUnit_of_dvd_unit (map_dvd _ hq_dvd_m)
-          (IsLocalization.map_units _ ⟨m, hm_M⟩)
+        exact (IsLocalization.algebraMap_isUnit_iff M).mpr hq_dvd
     have hmk1_unit :
         IsUnit (IsLocalization.mk' S (1 : R₀) s) :=
       IsUnit.of_mul_eq_one _ (by

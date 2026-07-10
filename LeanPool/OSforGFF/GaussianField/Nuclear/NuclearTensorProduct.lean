@@ -385,12 +385,7 @@ def coeffCLM (m : ℕ) : RapidDecaySeq →L[ℝ] ℝ where
     intro a
     simp only [Seminorm.comp_apply, Finset.sup_singleton, one_smul,
       coe_normSeminorm, coeffLM, LinearMap.coe_mk, AddHom.coe_mk, Real.norm_eq_abs]
-    change |a.val m| ≤ ∑' n, |a.val n| * (1 + (n : ℝ)) ^ 0
-    calc |a.val m|
-        = |a.val m| * (1 + (m : ℝ)) ^ 0 := by simp [pow_zero]
-      _ ≤ ∑' n, |a.val n| * (1 + (n : ℝ)) ^ 0 :=
-          (a.rapid_decay 0).le_tsum m
-            (fun j _ => mul_nonneg (abs_nonneg _) (weight_nonneg j 0))
+    exact coord_le_seminorm0 a m
 
 /-! ### DyninMityaginSpace instance -/
 
@@ -1035,9 +1030,7 @@ private theorem finsetSup_seminorm_ball_mem_nhds
   apply Filter.mem_of_superset hmem
   intro x hx
   simp only [Set.mem_iInter, Set.mem_setOf_eq] at hx ⊢
-  rcases Seminorm.zero_or_exists_apply_eq_finset_sup q t x with h | ⟨i, hi, heq⟩
-  · linarith
-  · linarith [hx i hi]
+  exact Seminorm.finset_sup_apply_lt hε hx
 
 /-- The pure tensor map is jointly continuous on `E₁ × E₂`. -/
 theorem pure_continuous :

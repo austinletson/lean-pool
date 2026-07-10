@@ -64,9 +64,7 @@ lemma fix_eq [OrderBot α] (f : α →𝒄 α) : fix f = f (fix f) := by
     calc
       (⇑f)^[n] ⊥ ≤ (⇑f)^[n + 1] ⊥ := iterate_le_succ f ⊥ bot_le n
       _ = f ((⇑f)^[n] ⊥) := by
-        change ((⇑f)^[n] ∘ ⇑f) ⊥ = (⇑f ∘ (⇑f)^[n]) ⊥
-        rw [← Function.iterate_succ]
-        rw [Function.iterate_succ']
+        exact Function.iterate_succ_apply' (⇑f) n ⊥
   · apply ωSup_le_ωSup_of_le
     intro n
     exists n + 1

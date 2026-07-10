@@ -435,9 +435,7 @@ lemma almostPrimitive_to_nativeAlmostPrimitive {Y : Finset (ExtendedGoods T I)}
     isAlmostPrimitiveNative (IST := IST) Y := by
   rcases h with ⟨τ, D, σ, C, hDoorof, rfl⟩
   have hDoor : IST.isDoor τ D := by
-    cases hDoorof with
-    | idoor _ hD _ _ _ _ => exact hD
-    | odoor _ hD _ _ _ _ => exact hD
+    exact isDoor_of_Doorof hDoorof
   have hRoom : IST.isRoom σ C := IST.isRoom_of_Door hDoorof
   constructor
   · exact card_toAlmostPrimitive_of_door hDoor
@@ -537,10 +535,7 @@ theorem native_internal_almostPrimitive_exactly_two_incident_primitives
         ∀ X, isPrimitiveNative (IST := IST) X → Y ⊆ X → X = X₁ ∨ X = X₂ := by
   have hY' : isAlmostPrimitive (IST := IST) Y :=
     nativeAlmostPrimitive_to_almostPrimitive hY
-  obtain ⟨X₁, X₂, hNe, hPrim₁, hPrim₂, hSub₁, hSub₂, hUnique⟩ :=
-    internal_almostPrimitive_exactly_two_incident_primitives hY' hInternal
-  exact ⟨X₁, X₂, hNe, hPrim₁, hPrim₂, hSub₁, hSub₂, fun X hX hSub =>
-    hUnique X hX hSub⟩
+  exact internal_almostPrimitive_exactly_two_incident_primitives hY' hInternal
 /--
 Native Scarf main lemma in the "remove one point" form: after removing a
 point from a primitive set, either the resulting face lies in the slack
@@ -557,10 +552,7 @@ theorem native_primitive_erase_mainLemma
   have hYnative : isAlmostPrimitiveNative (IST := IST) Y := by
     constructor
     · have hcardErase : Y.card + 1 = X.card := by
-        change (X.erase x).card + 1 = X.card
-        rw [Finset.card_erase_of_mem hx]
-        have hpos : 0 < X.card := Finset.card_pos.mpr ⟨x, hx⟩
-        omega
+        exact card_erase_add_one hx
       exact hcardErase.trans hX.1
     · exact ⟨X, hX, Finset.erase_subset x X⟩
   by_cases hInternal : (fromGoods (T := T) (I := I) Y).Nonempty
@@ -570,8 +562,7 @@ theorem native_primitive_erase_mainLemma
     have hXmem := hUnique X hX (Finset.erase_subset x X)
     rcases hXmem with hXX₁ | hXX₂
     · refine ⟨X₂, ⟨hPrim₂, hSub₂, ?_⟩, ?_⟩
-      · intro hX₂
-        exact hNe (hXX₁.symm.trans hX₂.symm)
+      · exact Ne.symm (ne_of_eq_of_ne hXX₁ hNe)
       · intro Z hZ
         rcases hZ with ⟨hPrimZ, hSubZ, hZneX⟩
         rcases hUnique Z hPrimZ hSubZ with hZ₁ | hZ₂
@@ -584,8 +575,7 @@ theorem native_primitive_erase_mainLemma
         rcases hUnique Z hPrimZ hSubZ with hZ₁ | hZ₂
         · exact hZ₁
         · simp_all
-  · left
-    exact hInternal
+  · exact Or.intro_left (∃! X', isPrimitiveNative X' ∧ X.erase x ⊆ X' ∧ X' ≠ X) hInternal
 
 /--
 Scarf's main lemma in the paper's replacement form: after removing `x` from
@@ -620,11 +610,7 @@ theorem native_primitive_erase_replacement_mainLemma
     · intro z hz
       rcases hz with ⟨hzNotX, hzPrim⟩
       have hNez : insert z Y ≠ X := by
-        intro hEq
-        have hzX : z ∈ X := by
-          rw [← hEq]
-          exact Finset.mem_insert_self z Y
-        exact hzNotX hzX
+        exact Ne.symm (ne_insert_of_notMem X Y hzNotX)
       have hEqToX' : insert z Y = X' :=
         hUniqueX (insert z Y) ⟨hzPrim, Finset.subset_insert z Y, hNez⟩
       have hEqInsert : insert z Y = insert y Y := hEqToX'.trans hyInsert.symm
@@ -1460,9 +1446,7 @@ theorem scarfAlgorithmTrace_exists [Inhabited I] (c : T → I) (i : I) :
     · have hwEqOutside := outsideDoor_endpoint_cell_eq_slackBoundary
         (IST := IST) hOutside.1 hOutside.2
       have hwEq : w = outsideSub := by
-        apply Subtype.ext
-        change w.1 = outside
-        simpa [outside] using hwEqOutside
+        exact Subtype.coe_eq_of_eq_mk hwEqOutside
       exact False.elim (hwNe hwEq)
     · exact hColorful
   let X : Finset (ExtendedGoods T I) := toPrimitiveSet (I := I) w.1.1 w.1.2
@@ -2192,8 +2176,7 @@ theorem nativePrimitive_to_coordinatePrimitive {u : I → T → ℝ} {M : I → 
         | inr k =>
             have hkNotC : k ∉ C := by simpa [C] using hz
             have hik : i ≠ k := by
-              intro hEq
-              exact hkNotC (hEq ▸ hiC)
+              exact ne_of_mem_of_not_mem hiC hkNotC
             letI : LinearOrder (ExtendedGoods T I) := (coordinateIndexedLOrder (T := T) (I := I)
                 u M hCoord) i
             exact le_of_lt (show ((coordinateIndexedLOrder (T := T) (I := I) u M hCoord) i).lt

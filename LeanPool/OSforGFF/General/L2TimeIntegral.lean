@@ -506,8 +506,7 @@ theorem double_integral_polynomial_decay_bound_proved (α : ℝ) (hα : α > 1) 
     calc (0 : ℝ)
       < ∫ t in (0:ℝ)..1, g t := by
           apply intervalIntegral.intervalIntegral_pos_of_pos_on
-          · exact (Continuous.rpow_const (by continuity) (fun _ => by left; positivity))
-              |>.intervalIntegrable 0 1
+          · exact IntervalIntegrable.symm (Integrable.intervalIntegrable h_integrable)
           · intro t _; positivity
           · norm_num
       _ = ∫ t in Ioc 0 1, g t :=

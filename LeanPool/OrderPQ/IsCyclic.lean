@@ -145,14 +145,7 @@ theorem Nontrivial.of_card_eq_prime {p : ℕ} [hp : Fact p.Prime] {α : Type*} (
 theorem IsCyclic.of_card_eq_prime {p : ℕ} [hp : Fact (Nat.Prime p)]
     {α : Type*} [Group α] (h : Nat.card α = p) :
     IsCyclic α := by
-  have : Finite α := Finite.of_card_eq_neZero h
-  rw [isCyclic_iff_exists_orderOf_eq_natCard]
-  have : Nontrivial α := Nontrivial.of_card_eq_prime h
-  obtain ⟨g, hg⟩ : ∃ g : α, g ≠ 1 := exists_ne 1
-  use g
-  have := orderOf_dvd_natCard g
-  rw [h] at this ⊢
-  exact (hp.elim.dvd_iff_eq (by simp [hg])).mp this |>.symm
+  exact isCyclic_of_prime_card h
 
 open IsCyclic in
 /-- Any two groups of the same prime order are isomorphic. -/

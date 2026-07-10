@@ -29,8 +29,7 @@ theorem leads_to_pure_pred_and (Γ p q : pred σ) (φ : Prop) :
 @[tla_derive]
 theorem leads_to_conseq (p p' q q': pred σ) :
   |-tla- ((p' ⇒ p) → (q ⇒ q') → (p ↝ q) ⇒ (p' ↝ q')) := by
-  tlaUnfoldSimp; intro e h1 h2 k h k' hh'
-  specialize h _ (h1 _ hh'); rcases h with ⟨k1, h⟩; aesop
+  tlaUnfoldSimp; exact fun σ_2 a a_1 k a_2 k_2 a_3 => Exists.imp (fun a => a_1 (k + k_2 + a)) (a_2 k_2 (a (k + k_2) a_3))
 
 @[tla_derive]
 theorem leads_to_trans (p q r : pred σ) :

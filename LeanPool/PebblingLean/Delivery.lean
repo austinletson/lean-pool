@@ -238,10 +238,7 @@ theorem move_add_right [DecidableEq V] {G : Graph V} {D E A : Pebbling V}
     by_cases hxu : x = u
     · subst x
       simp only [moveDistribution_apply_from, Pi.add_apply]
-      calc
-        D u + A u - 2 = A u + D u - 2 := by rw [Nat.add_comm]
-        _ = A u + (D u - 2) := Nat.add_sub_assoc hD (A u)
-        _ = D u - 2 + A u := by rw [Nat.add_comm]
+      exact Nat.sub_add_comm hD
     · by_cases hxv : x = v
       · subst x
         have hvu : v ≠ u := fun h => huv h.symm
@@ -276,11 +273,9 @@ theorem canReachAtLeast_add [DecidableEq V] {G : Graph V} {D₁ D₂ : Pebbling 
   have hsecond₀ : Reaches G (D₂ + E₁) (E₂ + E₁) :=
     reaches_add_right hreach₂
   have hstart : D₂ + E₁ = E₁ + D₂ := by
-    funext v
-    exact Nat.add_comm (D₂ v) (E₁ v)
+    exact AddCommMagma.add_comm D₂ E₁
   have hfinish : E₂ + E₁ = E₁ + E₂ := by
-    funext v
-    exact Nat.add_comm (E₂ v) (E₁ v)
+    exact AddCommMagma.add_comm E₂ E₁
   have hsecond : Reaches G (E₁ + D₂) (E₁ + E₂) := by
     simpa [hstart, hfinish] using hsecond₀
   refine ⟨E₁ + E₂, Relation.ReflTransGen.trans hfirst hsecond, ?_⟩

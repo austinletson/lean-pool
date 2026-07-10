@@ -118,13 +118,7 @@ theorem _root_.Matrix.IsHermitian.of_innerAut {A : Matrix n n 𝕜} (hA : A.IsHe
 omit [Fintype n] [DecidableEq n] in
 theorem isAlmostHermitian_iff_smul {A : Matrix n n 𝕜} :
     A.IsAlmostHermitian ↔ ∀ α : 𝕜, (α • A).IsAlmostHermitian := by
-  constructor
-  · rintro ⟨β, y, rfl, hy⟩ α
-    rw [smul_smul]
-    exact ⟨α * β, y, rfl, hy⟩
-  · intro h
-    specialize h 1
-    rwa [one_smul] at h
+  exact almost_hermitian_iff_smul
 
 omit [Fintype n] [DecidableEq n] in
 theorem _root_.Matrix.IsAlmostHermitian.smul {A : Matrix n n 𝕜} (hA : A.IsAlmostHermitian)

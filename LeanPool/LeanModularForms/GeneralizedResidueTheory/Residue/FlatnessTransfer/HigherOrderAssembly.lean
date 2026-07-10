@@ -222,10 +222,7 @@ private theorem residueAt_ppMinusRes_eq_zero (f : ℂ → ℂ) (s : ℂ)
     have h_sum_eq : ∀ z ∈ Metric.sphere s r,
         (fun z => (meromorphicPrincipalPart f s z - residueAt f s / (z - s)) + g_rp z) z =
         (fun z => f z - residueAt f s / (z - s)) z := by
-      intro z hz
-      have := h_eq_on z hz
-      simp only
-      linear_combination this
+      exact fun z a => add_eq_of_eq_sub (h_eq_on z a)
     have h_int_eq : (∮ z in C(s, r),
         (fun z => (meromorphicPrincipalPart f s z - residueAt f s / (z - s)) + g_rp z) z) =
       (∮ z in C(s, r), (fun z => f z - residueAt f s / (z - s)) z) :=
@@ -280,10 +277,7 @@ private theorem assembly_regNF_differentiableWithinAt_pole
         (hMero s' (Finset.mem_of_mem_erase hs')) z
         (Set.mem_compl_singleton_iff.mpr hne)).differentiableAt
         (isOpen_compl_singleton.mem_nhds (Set.mem_compl_singleton_iff.mpr hne))
-    have h_sum := DifferentiableAt.sum h_each
-    rwa [show (fun w => ∑ s' ∈ S0.erase z, meromorphicPrincipalPart f s' w) =
-        (∑ s' ∈ S0.erase z, meromorphicPrincipalPart f s') from
-      funext (fun w => (Finset.sum_apply w _ _).symm)]
+    exact DifferentiableAt.fun_sum h_each
   have h_corr_diff : DifferentiableAt ℂ
       (fun w => g_corr z hz_S w -
         ∑ s' ∈ S0.erase z, meromorphicPrincipalPart f s' w) z :=
@@ -920,8 +914,7 @@ private theorem cpv_perTerm_dispatch (U : Set ℂ) (S0 : Finset ℂ)
         hγ_in_U hMero hCondA h_unique_cross h_holo_vanish s hs hN_s_pos
         a_s g_loc hg_loc_an hf_eq_loc t₁ ht₁ ht₁_Ioo hcross₁ h_angle
   · push Not at h_crossed
-    exact cpv_perTerm_uncrossed U S0 f γ hγ_in_U hMero hS0_in_U h_finset_vanish
-      s hs (fun t ht => h_crossed t ht)
+    exact cpv_perTerm_uncrossed U S0 f γ hγ_in_U hMero hS0_in_U h_finset_vanish s hs h_crossed
 
 private theorem assembly_abstract_crossings_case (U : Set ℂ) (hU : IsOpen U)
     (S0 : Finset ℂ) (f : ℂ → ℂ) (hf : DifferentiableOn ℂ f (U \ S0))
@@ -1015,13 +1008,7 @@ theorem higherOrderCancel_assembly_abstract (U : Set ℂ) (hU : IsOpen U)
   intro h
   have hfres_diff : DifferentiableOn ℂ
       (fun z => ∑ s ∈ S0, residueAt f s / (z - s)) (U \ ↑S0) := by
-    have h_eq : (fun z => ∑ s ∈ S0, residueAt f s / (z - s)) =
-        (∑ s ∈ S0, fun z => residueAt f s / (z - s)) := funext fun z => by
-      simp only [Finset.sum_apply]
-    rw [h_eq]; exact DifferentiableOn.sum fun s _ =>
-      DifferentiableOn.div (differentiableOn_const _)
-        (differentiableOn_id.sub (differentiableOn_const _)) fun z ⟨_, hz⟩ =>
-        sub_ne_zero.mpr fun heq => by subst heq; exact hz (Finset.mem_coe.mpr ‹_›)
+    exact differentiableOn_sum_div_sub S0 (residueAt f) U
   have hh_diff : DifferentiableOn ℂ h (U \ ↑S0) := hf.sub hfres_diff
   by_cases h_no_crossings : ∀ s ∈ S0, ∀ t ∈ Icc γ.a γ.b, γ.toFun t ≠ s
   · exact tendsto_cpv_of_continuousOn_zero_integral S0 h γ

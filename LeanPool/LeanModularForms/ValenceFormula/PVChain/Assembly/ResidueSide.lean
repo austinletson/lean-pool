@@ -44,15 +44,7 @@ private lemma fd_point_mem_fdBox
   refine ⟨⟨?_, ?_, ?_, by linarith [hH_bound p hp_S]⟩, ?_⟩
   · rw [UpperHalfPlane.coe_re]; linarith [(abs_le.mp h_fd.2).1]
   · rw [UpperHalfPlane.coe_re]; linarith [(abs_le.mp h_fd.2).2]
-  · by_contra h_le
-    have h_le' : (↑p : ℂ).im ≤ 1/2 := le_of_not_gt h_le
-    rw [UpperHalfPlane.coe_im] at h_le'
-    have h_nsq :
-        1 ≤ p.re * p.re + p.im * p.im := by
-      have := Complex.normSq_apply (↑p : ℂ)
-      rw [UpperHalfPlane.coe_re, UpperHalfPlane.coe_im] at this
-      linarith [h_fd.1]
-    nlinarith [(abs_le.mp h_fd.2).1, (abs_le.mp h_fd.2).2, p.im_pos]
+  · exact fd_im_gt_half p (hS p hp_S)
   · simp_all
 
 omit f hf in
@@ -294,8 +286,7 @@ private lemma cpv_residue_side_sum_convert
     have h_not_S : ∀ p ∈ S, (↑p : ℂ) ≠ s := by
       intro p hp h_eq
       have h_mfcc_eq : modularFormCompOfComplex f (↑p : ℂ) = f p := by
-        simp only [modularFormCompOfComplex, Function.comp_apply]
-        congr 1; exact UpperHalfPlane.ofComplex_apply_of_im_pos p.im_pos
+        exact UpperHalfPlane.comp_ofComplex (⇑f) p
       exact hs_ni (Finset.mem_image.mpr ⟨p, Finset.mem_filter.mpr ⟨hp, by
         rw [← h_mfcc_eq, h_eq]
         exact ((mem_allZerosInFdBox_iff f hf hM_half).mp hs).2⟩, h_eq⟩)

@@ -59,8 +59,7 @@ def g : Color → Color → Color → Color
   | _, b, _ => b
 
 lemma measurable_g : Measurable (fun t : Color × Color × Color => g t.1 t.2.1 t.2.2) := by
-  classical
-  exact measurable_of_finite _
+  exact Measurable.of_discrete
 
 /-- Imported auxiliary declaration for the 2-coloring one-round formalization. -/
 noncomputable def simpleUpperAlg : ClassicalAlgorithm where
@@ -186,8 +185,7 @@ theorem p_simpleUpperAlg : ClassicalAlgorithm.p simpleUpperAlg = (1 / 4 : ENNRea
   classical
   let all : Finset (Fin 4 → Color) := Finset.univ
   letI : DecidablePred good := fun w => by
-    simpa [good] using
-      (decEq (g (w 0) (w 1) (w 2)) (g (w 1) (w 2) (w 3)))
+    exact Classical.propDecidable (good w)
   have hcover :
       ClassicalAlgorithm.pEvent simpleUpperAlg =
         ⋃ w ∈ all, ClassicalAlgorithm.pEvent simpleUpperAlg ∩ cell w := by
@@ -252,13 +250,10 @@ theorem p_simpleUpperAlg : ClassicalAlgorithm.p simpleUpperAlg = (1 / 4 : ENNRea
       all.sum (fun w =>
           (volume : Measure (Samples 4)) (ClassicalAlgorithm.pEvent simpleUpperAlg ∩ cell w)) =
           all.sum (fun w => if good w then (1 / 16 : ENNReal) else 0) := by
-            refine Finset.sum_congr rfl ?_
-            intro w _
-            simp [hterm w]
+            exact Fintype.sum_congr (fun a => volume (simpleUpperAlg.pEvent ∩ cell a))
+                (fun a => if good a then 1 / 16 else 0) hterm
       _ = goodSet.sum (fun _ => (1 / 16 : ENNReal)) := by
-            symm
-            simpa [goodSet] using
-              (Finset.sum_filter (s := all) (p := good) (f := fun _ => (1 / 16 : ENNReal)))
+            exact Eq.symm (Finset.sum_filter good fun a => 1 / 16)
       _ = (goodSet.card : ENNReal) * (1 / 16 : ENNReal) := by simp [Finset.sum_const, nsmul_eq_mul]
   have hcard : goodSet.card = 4 := by decide
   calc
@@ -425,10 +420,7 @@ theorem no_algorithm_p_lt_one_fifth :
   have hineq : (1 : ENNReal) ≤ (5 : ENNReal) * ClassicalAlgorithm.p alg := by
     simp_all
   have hbound : (1 / 5 : ENNReal) ≤ ClassicalAlgorithm.p alg := by
-    have hineq' : (1 : ENNReal) ≤ ClassicalAlgorithm.p alg * (5 : ENNReal) := by
-      simpa [mul_comm, mul_left_comm, mul_assoc] using hineq
-    refine (ENNReal.div_le_iff (by norm_num : (5 : ENNReal) ≠ 0)
-      (by norm_num : (5 : ENNReal) ≠ ⊤)).2 hineq'
+    exact ENNReal.div_le_of_le_mul' hineq
   exact (not_lt_of_ge hbound) halg
 
 end Distributed2Coloring

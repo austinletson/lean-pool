@@ -372,8 +372,7 @@ by
     exact (B1 (self := iopen.toBASICModel)) h.symm
   · intro a h hq
     apply h
-    apply B2
-    exact hq
+    exact B2 a (a + 1) hq
 
 theorem add_mul
   : ∀ x y z : M, (x + y) * z = x * z + y * z :=

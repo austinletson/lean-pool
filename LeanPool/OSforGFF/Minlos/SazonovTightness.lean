@@ -206,8 +206,6 @@ private lemma gaussian_fourier_eq' (σ : ℝ) (hσ : 0 < σ) (y : V) :
   set n := Module.finrank ℝ V
   congr 1
   · have hgd : (∫ x : V, gaussDensity σ x) = (π / b) ^ ((n : ℝ) / 2) := by
-      rw [show (∫ x : V, gaussDensity σ x) = ∫ x : V, Real.exp (-b * ‖x‖ ^ 2) from by
-        congr 1]
       exact GaussianFourier.integral_rexp_neg_mul_sq_norm hb
     rw [hgd, ← Complex.ofReal_natCast n, ← Complex.ofReal_ofNat 2,
       ← Complex.ofReal_div, ← Complex.ofReal_div]
@@ -709,8 +707,7 @@ theorem gaussian_averaging_bound
     · push Not at hqf
       have hre_le : (φ x).re ≤ ‖φ x‖ := le_trans (le_abs_self _) (abs_re_le_norm _)
       have hnorm_le : ‖φ x‖ ≤ 1 := by
-        rw [← hφ]; haveI : IsProbabilityMeasure μ.toMeasure := inferInstance
-        exact norm_charFun_le_one x
+        rw [← hφ]; exact norm_charFun_le_one x
       have hneg_re : -(φ x).re ≤ ‖φ x‖ := le_trans (neg_le_abs _) (abs_re_le_norm _)
       linarith
   -- Step 3: Integrability
@@ -876,12 +873,9 @@ theorem orthonormal_diag_le_hilbert_trace (S : H →L[ℝ] H) (hS : S.IsPositive
     ∑ j : Fin n, @inner ℝ H _ (v j) (S (v j)) ≤
       ∑' i, @inner ℝ H _ (b i) (S (b i)) := by
   have sa : ∀ a c : H, @inner ℝ H _ a (S c) = @inner ℝ H _ c (S a) := by
-    intro a c
-    have h := ContinuousLinearMap.adjoint_inner_left S c a
-    rw [hS.isSelfAdjoint.adjoint_eq] at h; rw [← h, real_inner_comm]
+    exact fun a c => inner_self_adjoint_comm S hS a c
   have hnn : ∀ x : H, 0 ≤ @inner ℝ H _ x (S x) := by
-    intro x; have := hS.re_inner_nonneg_left x
-    simp only [RCLike.re_to_real] at this; rwa [real_inner_comm]
+    exact fun x => ContinuousLinearMap.IsPositive.inner_nonneg_right hS x
   set Pv : H → H := fun x => ∑ j, @inner ℝ H _ (v j) x • v j with hPv_def
   suffices hsuff :
       ∑ j, @inner ℝ H _ (v j) (S (v j)) +
@@ -1041,10 +1035,7 @@ theorem sazonov_tightness (φ : H → ℂ) (_hpd : IsPositiveDefinite φ)
   obtain ⟨hpos, ι, b, hsum⟩ := S.traceClass
   set T := ∑' i, @inner ℝ H _ (b i) (S.op (b i)) with hT_def
   have hT_nn : 0 ≤ T := by
-    apply tsum_nonneg; intro i
-    have := hpos.re_inner_nonneg_left (b i)
-    simp only [RCLike.re_to_real] at this
-    rwa [real_inner_comm]
+    apply tsum_nonneg; exact fun i => ContinuousLinearMap.IsPositive.inner_nonneg_right hpos (b i)
   set σ := Real.sqrt (η / (6 * (T + 1))) with hσ_def
   have hT1 : 0 < T + 1 := by linarith
   have hσ_sq_pos : 0 < η / (6 * (T + 1)) := by positivity
@@ -1072,13 +1063,9 @@ theorem sazonov_tightness (φ : H → ℂ) (_hpd : IsPositiveDefinite φ)
     exact hS_bound _ ht
   have h_trace_v := restrictOp_trace_le S.op hpos v hv b hsum
   have h_gauss' := h_gauss h_bound_v T hT_nn (fun ι' _ b' => by
-    calc ∑ i, @inner ℝ _ _ (b' i) (restrictOp S.op v (b' i))
-        ≤ ∑' i, @inner ℝ H _ (b i) (S.op (b i)) := h_trace_v ι' b'
-      _ = T := rfl)
+    exact restrictOp_trace_le S.op hpos v hv b hsum ι' b')
   have h_tail := tail_bound_from_exp_integral μ σ hσ_pos _ (by nlinarith [sq_nonneg σ]) h_gauss' R
     hR
-  calc (μ.toMeasure {y | R ≤ ‖y‖}).toReal
-      ≤ C / (1 - Real.exp (-(σ ^ 2 * R ^ 2 / 2))) := h_tail
-    _ < η := hR_bound
+  exact Std.lt_of_le_of_lt h_tail hR_bound
 
 end

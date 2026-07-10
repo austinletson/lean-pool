@@ -81,8 +81,7 @@ lemma encodeVar_eq {𝕏 : Proof} {Fin_X : Fintype 𝕏.X} {x : 𝕏.X} {n : ℕ
     simp [encodeVar_inv]
   · intro mpp
     subst mpp
-    apply unencodeVar_inv
-    exact h2
+    exact unencodeVar_inv 𝕏 n h1 h2
 
 /-- Auxiliary declaration used in the GL coalgebra development. -/
 noncomputable def equation {𝕏 : Proof} [fin_X : Fintype 𝕏.X] (x : 𝕏.X) :
@@ -489,9 +488,7 @@ private theorem interpolant_strong_prop_loop_other {𝕏 : Proof} [fin_X : Finty
         · intro ⟨y, y_in, y_eq⟩
           subst y_eq
           by_cases y_is_box : y = box_in_Y.choose
-          · subst y_is_box
-            right
-            rfl
+          · exact Or.inr (congrArg encodeVar y_is_box)
           · left
             use y
         · intro mpp

@@ -82,9 +82,7 @@ lemma HasIntEntries.mul {a b : GL (Fin n) ℚ} (ha : HasIntEntries n a) (hb : Ha
 /-- `det (A.map Int.cast) = ↑(det A)` for integer matrices cast to `ℚ`. -/
 lemma det_intMat_cast (A : Matrix (Fin n) (Fin n) ℤ) :
     (A.map (Int.cast : ℤ → ℚ)).det = (A.det : ℚ) := by
-  rw [show A.map (Int.cast : ℤ → ℚ) = (Int.castRingHom ℚ).mapMatrix A from
-    by ext i j; simp [RingHom.mapMatrix_apply, Matrix.map_apply],
-    ← RingHom.map_det, Int.coe_castRingHom]
+  exact Eq.symm (Int.cast_det A)
 
 /-- `(A.map cast) * (B.map cast) = (A * B).map cast` for integer matrices cast to `ℚ`. -/
 private lemma intMat_map_mul (A B : Matrix (Fin n) (Fin n) ℤ) :

@@ -310,9 +310,7 @@ lemma summable_normalizationSmallPrimePart_and_tsum_le {x Y : ℕ} (hx : 3 ≤ x
       _ ≤ ∑ q ∈ Finset.range N,
             if 1 ≤ q ∧ q < Y then coeff q * (2 / Real.log (x : ℝ)) else 0 := by
               refine Finset.sum_le_sum ?_
-              intro q _
-              simpa [coeff] using
-                (sum_range_smallPrimeRow_le (x := x) (q := q) (N := N) (Y := Y) hx)
+              exact fun i a => sum_range_smallPrimeRow_le hx
       _ = ∑ q ∈ (Finset.range N).filter (fun q => 1 ≤ q ∧ q < Y),
             coeff q * (2 / Real.log (x : ℝ)) := by
               rw [← Finset.sum_filter]

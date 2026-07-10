@@ -343,11 +343,7 @@ theorem T_prime_height_le_one (P : Ideal T) [hP : P.IsPrime]
   have hle : (↑P.height : WithBot ℕ∞) ≤ 2 :=
     T_ringKrullDim ▸ (ringKrullDim_le_iff_height_le _).mp le_rfl hP
   have hfin : P.FiniteHeight := by
-    rw [Ideal.finiteHeight_iff]
-    right
-    intro htop
-    rw [htop, WithBot.coe_top] at hle
-    exact absurd (top_le_iff.mp hle) (by decide)
+    exact finiteHeight_of_finiteRingKrullDim
   have hstrict := Ideal.height_strict_mono_of_isPrime hlt
   have hmaxht : (IsLocalRing.maximalIdeal T).height = 2 := by
     have h := IsLocalRing.maximalIdeal_height_eq_ringKrullDim (R := T)

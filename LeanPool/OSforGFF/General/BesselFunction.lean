@@ -438,8 +438,7 @@ lemma radial_besselK1_integrable (m : ℝ) (hm : 0 < m) :
       intro r ⟨hr_pos, hr_le⟩
       have hmr_pos : 0 < m * r := by positivity
       have hmr_le : m * r ≤ 1 := by
-        calc m * r ≤ m * (1/m) := by nlinarith
-          _ = 1 := by field_simp
+        exact (le_div_iff₀' hm).mp hr_le
       have h := besselK1_near_origin_bound (m * r) hmr_pos hmr_le
       calc r ^ 2 * besselK1 (m * r)
           ≤ r ^ 2 * (C / (m * r)) := by nlinarith [besselK1_pos (m * r) hmr_pos]
@@ -607,8 +606,7 @@ lemma bessel_symmetry_integral (z : ℝ) (hz : 0 < z) :
       have hu4 : u ≥ 4 := le_trans (le_max_left _ _) hu
       have hu8z : u ≥ 8/z := le_trans (le_max_right _ _) hu
       have hzu : z * u ≥ 8 := by
-        calc z * u ≥ z * (8 / z) := by nlinarith [hu8z]
-          _ = 8 := by field_simp
+        exact (div_le_iff₀' hz).mp hu8z
       have h_cosh_eq : cosh u = (exp u + exp (-u)) / 2 := cosh_eq u
       have h_cosh_lower : cosh u ≥ exp u / 2 := by
         rw [h_cosh_eq]; have := exp_pos (-u); linarith

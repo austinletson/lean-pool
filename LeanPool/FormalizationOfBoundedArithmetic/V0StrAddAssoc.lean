@@ -61,8 +61,7 @@ lemma carry_assoc_induction :
       CarryAssocPred X Y Z (0 : num) ->
       (∀ i : num, CarryAssocPred X Y Z i -> CarryAssocPred X Y Z (i + (1 : num))) ->
       ∀ i : num, CarryAssocPred X Y Z i := by
-  intro X Y Z h_zero h_step
-  exact M.prop_induction_ax (CarryAssocPred X Y Z) h_zero h_step
+  exact fun {X Y Z} a a_1 i => prop_induction_ax (CarryAssocPred X Y Z) a a_1 i
 
 lemma carry_pair_assoc : ∀ {X Y Z : str}, ∀ {i : num},
     ((Carry i Y Z ∧ Carry i X (Y + Z)) ↔ (Carry i X Y ∧ Carry i (X + Y) Z)) ∧

@@ -100,11 +100,7 @@ theorem stepFun_append (L L' : List (Set α × Set β)) :
     (stepFun (L ++ L') : Set (ApproximableMap V₀ V₁)) = stepFun L ∩ stepFun L' := by
   ext f
   simp only [mem_stepFun, List.mem_append, Set.mem_inter_iff]
-  constructor
-  · intro h; exact ⟨fun p hp => h p (Or.inl hp), fun p hp => h p (Or.inr hp)⟩
-  · rintro ⟨hL, hL'⟩ p (hp | hp)
-    · exact hL p hp
-    · exact hL' p hp
+  exact forall₂_or_left
 
 theorem stepFun_singleton (X : Set α) (Y : Set β) :
     (stepFun [(X, Y)] : Set (ApproximableMap V₀ V₁)) = step X Y := by

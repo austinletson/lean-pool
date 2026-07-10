@@ -49,10 +49,7 @@ theorem rhoPointwiseSq
   have h := rhoPointwise a u v
   have hsq : (rho a u) ^ 2 ≤ (rho a v + ‖u - v‖) ^ 2 := by
     have hnonneg : 0 ≤ rho a u := abs_nonneg _
-    have hneg0 : -(rho a v + ‖u - v‖) ≤ 0 := by
-      nlinarith [abs_nonneg (rho a v), norm_nonneg (u - v)]
-    have hneg : -(rho a v + ‖u - v‖) ≤ rho a u := le_trans hneg0 hnonneg
-    exact sq_le_sq' hneg h
+    exact pow_le_pow_left₀ hnonneg h 2
   have hsum : (rho a v + ‖u - v‖) ^ 2 ≤ 2 * rho a v ^ 2 + 2 * ‖u - v‖ ^ 2 := by
     nlinarith [two_mul_le_add_sq (rho a v) ‖u - v‖]
   exact le_trans hsq hsum
@@ -74,8 +71,7 @@ private theorem localDegreeSet_pos
   intro n hn
   have hzero : 0 ∉ localDegreeSet j M G := zeroFrequencyAbsent κ j M G horth
   exact Nat.pos_of_ne_zero (by
-    intro hn0
-    exact hzero (hn0 ▸ hn))
+    exact ne_of_mem_of_not_mem hn hzero)
 
 /-- Local degree support has the exact cardinality bound needed in the low-frequency branch. -/
 private theorem localDegreeSet_card_le_degreeWidth
@@ -456,9 +452,7 @@ private lemma indicator_mass_integrable
         |Complex.normSq (evalHermiteSum κ (localPart j M G) z)| =
           ‖evalHermiteSum κ (localPart j M G) z‖ ^ 2 := by
         have hnonneg : 0 ≤ Complex.normSq (evalHermiteSum κ (localPart j M G) z) := by
-          dsimp [Complex.normSq]
-          nlinarith [sq_nonneg (evalHermiteSum κ (localPart j M G) z).re,
-            sq_nonneg (evalHermiteSum κ (localPart j M G) z).im]
+          exact normSq_nonneg (evalHermiteSum κ (localPart j M G) z)
         rw [abs_of_nonneg hnonneg, Complex.sq_norm]
       simp [indicatorMul, Set.indicator, hz, Complex.mul_conj']
     · simp [indicatorMul, Set.indicator, hz]
@@ -722,14 +716,7 @@ private lemma localOrbit_pointwise_estimate
         0 ≤ circleL2NormSq (fun t : Circle => rho (nuKappa κ z) (localOrbit κ j M G z t)) := by
       unfold circleL2NormSq
       exact integral_nonneg fun t => sq_nonneg _
-    calc
-      circleL2NormSq (localOrbit κ j M G z)
-        ≤ 144 * ((localDegreeSet j M G).card : ℝ) *
-            circleL2NormSq (fun t : Circle => rho (nuKappa κ z) (localOrbit κ j M G z t)) := by
-              simpa [mul_assoc, mul_left_comm, mul_comm] using hbase
-      _ ≤ productAnnulusConstantSq d M *
-            circleL2NormSq (fun t : Circle => rho (nuKappa κ z) (localOrbit κ j M G z t)) := by
-              gcongr
+    exact le_mul_of_le_mul_of_nonneg_right hbase hcard hnonneg
   · have hhigh : degreeThreshold d M ≤ annulusRadius j := Nat.le_of_not_lt hlow
     have hgap := highFrequencyThreshold (hd := hd) (j := j) (M := M) hhigh
     have hbase :=
@@ -743,13 +730,7 @@ private lemma localOrbit_pointwise_estimate
         0 ≤ circleL2NormSq (fun t : Circle => rho (nuKappa κ z) (localOrbit κ j M G z t)) := by
       unfold circleL2NormSq
       exact integral_nonneg fun t => sq_nonneg _
-    calc
-      circleL2NormSq (localOrbit κ j M G z)
-        ≤ 32 * circleL2NormSq (fun t : Circle => rho (nuKappa κ z) (localOrbit κ j M G z t)) := by
-            simpa using hbase
-      _ ≤ productAnnulusConstantSq d M *
-            circleL2NormSq (fun t : Circle => rho (nuKappa κ z) (localOrbit κ j M G z t)) := by
-            gcongr
+    exact le_mul_of_le_mul_of_nonneg_right hbase hconst hnonneg
 
 /-- Annulus-local circle estimate for the local window. -/
 theorem productAnnulusEstimate

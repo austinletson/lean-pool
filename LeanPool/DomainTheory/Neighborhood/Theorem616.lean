@@ -144,9 +144,7 @@ theorem trianglelefteq_of_isInitial
   -- `iterElem 0 = ⊥`.
   have iterElem_zero : ∀ {γ : Type w} {V : NeighborhoodSystem γ} (f : ApproximableMap V V),
       f.iterElem 0 = V.bot := by
-    intro γ V f
-    change (f.iterMap 0).toElementMap V.bot = V.bot
-    rw [iterMap_zero, toElementMap_idMap]
+    exact fun {γ} {V} f => iterElem_zero f
   -- the recursion equations `hₙ₊₁ = u ∘ T(hₙ) ∘ j`, etc.
   have H_succ : ∀ n, H (n + 1)
       = isoE.hom.comp ((T.map (X := Dalg.carrier) (Y := E) (H n)).comp isoD.inv) := by
@@ -212,8 +210,7 @@ theorem trianglelefteq_of_isInitial
       · intro hK
         rw [hK0] at hK
         obtain ⟨hEX, rfl⟩ := hK
-        exact ⟨Dalg.carrier.sys.master,
-          (hG0).mpr ⟨hEX, rfl⟩, (hH0).mpr ⟨Dalg.carrier.sys.master_mem, rfl⟩⟩
+        exact rel_master ((H 0).comp (G 0)) hEX
     | succ n ih =>
       rw [H_succ n, G_succ n, key, K_succ n, hTcomp (H n) (G n), ih]
   -- the fixed-point maps and their `⊔`-decomposition.
@@ -283,8 +280,7 @@ theorem trianglelefteq_of_isInitial
             (toStrictFilter_toStrictMap _).symm
         _ = toStrictFilter (⟨idMap E.sys, isStrict_idMap⟩ : StrictMap E.sys E.sys) := by
             congr 1
-            apply Subtype.ext
-            rw [hstepeq]
+            exact Subtype.coe_eq_of_eq_mk hstepeq
         _ = toStrictFilter ⟨idMap E.sys, isStrict_idMap⟩ := rfl
     have hle : Opk.fixElement ≤
       toStrictFilter (⟨idMap E.sys, isStrict_idMap⟩ : StrictMap E.sys E.sys) :=

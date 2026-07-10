@@ -241,8 +241,6 @@ theorem minimal_ideal_I_sq_nonzero_exists_idem_and_div (h_atom_I : IsAtom I) (hI
   obtain ⟨e, ⟨he, henz, he_idem, hspan⟩⟩ :=
     minimal_ideal_I_sq_nonzero_exists_idem I h_atom_I hII
   refine ⟨e, he, henz, he_idem, hspan, ?_⟩
-  have h_atom_span : IsAtom (Ideal.span {e}) := hspan ▸ h_atom_I
-  have he_span : e ∈ Ideal.span {e} := Ideal.mem_span_singleton_self e
-  exact corner_ring_div (Ideal.span {e}) h_atom_span e he_span henz he_idem
+  exact corner_ring_div I h_atom_I e he henz he_idem
 
 end LeanPool.ArtinWedderburn

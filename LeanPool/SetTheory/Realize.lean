@@ -36,8 +36,7 @@ variable {α n} {L : Language} {M} [L.Structure M] (v : α → M) (w : Fin n →
 
 lemma realize_isFormula (φ : L.BoundedFormula α 0) (w : Fin 0 → M) :
     φ.Realize v w ↔ Formula.Realize φ v := by
-  simp only [Formula.Realize]
-  convert Iff.rfl
+  exact Formula.boundedFormula_realize_eq_realize φ v w
 
 /-- The `exUnique` declaration. -/
 protected def exUnique (φ : L.BoundedFormula α (n + 1)) : L.BoundedFormula α n :=

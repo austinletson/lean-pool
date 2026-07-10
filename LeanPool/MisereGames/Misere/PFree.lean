@@ -176,9 +176,7 @@ private lemma isSpecial_of_isPFree_not_winsGoingFirst_right_succ {g : GameForm} 
     -- 3. Since gr is a Right move of g, we know that gr+1 is a Right move of
     -- g+1
     have h_gr_plus_one_mem : gr + 1 ∈ moves .right (g + 1) := by
-      rw [moves_add]
-      left
-      use gr, h_gr_mem
+      exact add_right_mem_moves_add h_gr_mem 1
     -- 4. Since Right does not win g+1 going first (by h2), we know that Left
     -- must win gr+1 going first
     have h_left_wins_gr_plus_one : WinsGoingFirst .left (gr + 1) := by

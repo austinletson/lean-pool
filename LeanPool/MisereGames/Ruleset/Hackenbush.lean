@@ -470,8 +470,7 @@ theorem move_not_zero_of_groundCount_zero {hack : Hackenbush V} {p : Player} {e 
   have hne : e' ≠ e := by
     intro heq
     subst heq
-    cases p
-    <;> simp_all only [ne_eq, Player.neg_right, reduceCtorEq]
+    exact Player.absurd hc he'_col
   have h_survive : e' ∈ (hack.remove e).graph.edgeSet := by
     simp only [remove_graph]
     exact groundEdge_mem_groundComp he'_mem hne he'_gnd hack.connected
@@ -621,8 +620,7 @@ theorem hasStride_groundCount (hack : Hackenbush V) (p : Player) :
           (by rw [← he₀_col]; exact toGameForm_remove_mem_moves he₀_mem), ?_, ?_⟩
         · have : (hack.remove e₀).groundCount p = k := by
             rw [groundCount_remove_ground he₀_mem he₀_gnd he₀_col, hk, Nat.add_sub_self_right]
-          rw [← this]
-          exact ih_remove e₀ he₀_mem p
+          exact (hasStride_mk_iff ((hack.remove e₀).groundCount p) (ih_remove e₀ he₀_mem p)).mpr (id (Eq.symm this))
         · intro g'' hg'' m hm
           obtain ⟨e', he', hc', rfl⟩ := mem_moves_toGameForm_iff.mp hg''
           have hs1 := ih_remove e' he' (-p)
@@ -646,8 +644,7 @@ theorem hasStride_groundCount (hack : Hackenbush V) (p : Player) :
         use (hack.remove e).toGameForm, mem_moves_toGameForm_iff.mpr ⟨e, he, hc, rfl⟩
         have hgc_eq : (hack.remove e).groundCount p = k + 1 := by
           rw [groundCount_remove_neg hc, hk]
-        rw [← hgc_eq]
-        exact ih_remove e he p
+        exact (hasStride_mk_iff ((hack.remove e).groundCount p) (ih_remove e he p)).mpr (id (Eq.symm hgc_eq))
 
 instance : Ruleset (Hackenbush V) where
   toGameForm := toGameForm

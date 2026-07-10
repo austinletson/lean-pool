@@ -340,11 +340,7 @@ private def close_up_aux_no_common_nonzero_proof
               rw [Set.mem_iUnion] at hPC'
               obtain ⟨_, hPmem⟩ := hPC'
               exact hPmem.isPrime
-            haveI : IsDomain (T ⧸ P) := Ideal.Quotient.isDomain P
-            letI : DecidableEq (T ⧸ P) := Classical.decEq _
-            apply Set.Finite.subset (f.map (φ P)).roots.toFinset.finite_toSet
-            intro α hα
-            exact Multiset.mem_toFinset.mpr ((Polynomial.mem_roots hfne).mpr hα)
+            exact Polynomial.finite_setOf_isRoot hfne
         exact ⟨hC_countable, Set.Countable.union hD_countable hD_mod_countable⟩
       · left
         push Not at hR_le
@@ -456,15 +452,7 @@ private def close_up_aux_no_common_nonzero_proof
                   _ = Cardinal.mk R.carrier := Cardinal.mul_aleph0_eq hR_inf
             exact (mul_le_mul' hCmain_le (ciSup_le' h_inner)).trans
               (Cardinal.mul_eq_self hR_inf).le
-          calc Cardinal.mk D_mod
-              ≤ Cardinal.mk ↑(⋃ P ∈ C_main, ⋃ (f : Polynomial R.carrier),
-                  ⋃ (_ : Polynomial.map (φ P) f ≠ 0),
-                    (fun α => liftQ P α - t) ''
-                      {α | (Polynomial.map (φ P) f).IsRoot α}) := by
-                apply Cardinal.mk_le_mk_of_subset
-                intro x hx
-                exact hx
-            _ ≤ Cardinal.mk R.carrier := h_biUnion
+          exact le_of_eq_of_le rfl h_biUnion
         have hD'_le : Cardinal.mk D' ≤ Cardinal.mk R.carrier := by
           calc Cardinal.mk D'
               ≤ Cardinal.mk D + Cardinal.mk D_mod := Cardinal.mk_union_le _ _

@@ -37,9 +37,7 @@ lemma largeEigenspace_mem_invtSubmodule_of_isCompactOperator_of_isSelfAdjoint
   intro t
   let s : Set 𝕜 := {μ : 𝕜 | ε ≤ ‖μ‖ ∧ t.HasEigenvalue μ}
   have hsFin : s.Finite := by
-    simpa [s, t] using
-      finite_set_hasEigenvalue_norm_ge_of_isCompactOperator_of_isSelfAdjoint
-        (𝕜 := 𝕜) (E := E) T hT hTc hε
+    exact finite_set_hasEigenvalue_norm_ge_of_isCompactOperator_of_isSelfAdjoint T hT hTc hε
   letI : Fintype s.Elem := hsFin.fintype
   have h_each : ∀ i : s.Elem, t.eigenspace i.1 ∈ t.invtSubmodule := by
     intro i
@@ -85,9 +83,7 @@ lemma finiteDimensional_range_comp_largeEigenspaceProjector
   let t : Module.End 𝕜 E := (T : E →ₗ[𝕜] E)
   have hU_invt :
       U ∈ t.invtSubmodule := by
-    simpa [U, t] using
-      largeEigenspace_mem_invtSubmodule_of_isCompactOperator_of_isSelfAdjoint
-        (𝕜 := 𝕜) (E := E) T hT hTc (ε := ε) hε
+    exact largeEigenspace_mem_invtSubmodule_of_isCompactOperator_of_isSelfAdjoint T hT hTc hε
   have hU_forall : ∀ x ∈ U, (T : E →ₗ[𝕜] E) x ∈ U :=
     (Module.End.mem_invtSubmodule_iff_forall_mem_of_mem (f := (T : E →ₗ[𝕜] E)) (p := U)).1 hU_invt
   have hPdef : P = U.starProjection := by
@@ -96,8 +92,7 @@ lemma finiteDimensional_range_comp_largeEigenspaceProjector
     rintro y ⟨x, rfl⟩
     simp_all
   -- A submodule of a finite-dimensional submodule is finite-dimensional.
-  exact Submodule.finiteDimensional_of_le
-    (S₁ := LinearMap.range ((T ∘L P : E →L[𝕜] E) : E →ₗ[𝕜] E)) (S₂ := U) hrange_le
+  exact Submodule.finiteDimensional_of_le hrange_le
 lemma opNorm_sub_comp_largeEigenspaceProjector_le
     (T : E →L[𝕜] E) (hT : IsSelfAdjoint T) (hTc : IsCompactOperator (T : E → E))
     {ε : ℝ} (hε : 0 < ε) :
@@ -115,14 +110,9 @@ lemma opNorm_sub_comp_largeEigenspaceProjector_le
     -- Work in terms of `P0`.
     let t : Module.End 𝕜 E := (T : E →ₗ[𝕜] E)
     have hU_invt : U ∈ t.invtSubmodule := by
-      simpa [U, t] using
-        CompactSelfAdjoint.largeEigenspace_mem_invtSubmodule_of_isCompactOperator_of_isSelfAdjoint
-          (𝕜 := 𝕜) (E := E) T hT hTc (ε := ε) hε
+      exact largeEigenspace_mem_invtSubmodule_of_isCompactOperator_of_isSelfAdjoint T hT hTc hε
     have hU_orth_invt : U.orthogonal ∈ t.invtSubmodule := by
-      have :=
-        largeEigenspace_orthogonal_mem_invtSubmodule_of_isCompactOperator_of_isSelfAdjoint
-          (𝕜 := 𝕜) (E := E) T hT hTc (ε := ε) hε
-      simpa [U, t] using this
+      exact largeEigenspace_orthogonal_mem_invtSubmodule_of_isCompactOperator_of_isSelfAdjoint T hT hTc hε
     have hV : ∀ v ∈ U.orthogonal, T v ∈ U.orthogonal :=
       (Module.End.mem_invtSubmodule_iff_forall_mem_of_mem
         (f := t) (p := U.orthogonal)).1 hU_orth_invt
@@ -177,9 +167,7 @@ lemma opNorm_sub_comp_largeEigenspaceProjector_le
       have hle : ‖(compress (𝕜 := 𝕜) (E := E) (T := T) (V := V) y : V)‖ ≤ ‖S‖ * ‖y‖ := by
         simpa [S] using (ContinuousLinearMap.le_opNorm S y)
       have hle' : ‖(compress (𝕜 := 𝕜) (E := E) (T := T) (V := V) y : V)‖ ≤ ε * ‖y‖ := by
-        have : ‖S‖ * ‖y‖ ≤ ε * ‖y‖ := by
-          exact mul_le_mul_of_nonneg_right hS_le (norm_nonneg y)
-        exact le_trans hle this
+        exact ContinuousLinearMap.le_of_opNorm_le (compress T V) hS_le y
       -- Rewrite in `E` and use that `‖(y : E)‖ = ‖y‖`.
       simpa [hy, S] using hle'
     have hmain :
@@ -188,16 +176,14 @@ lemma opNorm_sub_comp_largeEigenspaceProjector_le
       intro x
       -- Write the error as `T (x - P0 x)`.
       have hxV : x - P0 x ∈ V := by
-        dsimp [V, P0]
-        exact Submodule.sub_starProjection_mem_orthogonal (K := U) x
+        exact Submodule.sub_starProjection_mem_orthogonal x
       let y : V := ⟨x - P0 x, hxV⟩
       have hy_bound : ‖T (x - P0 x)‖ ≤ ε * ‖x - P0 x‖ := by
         simpa [y] using (hboundV y)
       have hnorm_sub : ‖x - P0 x‖ ≤ ‖x‖ := by
         -- `x - P0 x = Uᗮ.starProjection x`, and star projections are contractive.
         have horth : V.starProjection x = x - P0 x := by
-          dsimp [V, P0]
-          exact Submodule.starProjection_orthogonal_val (K := U) x
+          exact Submodule.starProjection_orthogonal_val x
         -- Take norms.
         have : ‖x - P0 x‖ = ‖V.starProjection x‖ := (congrArg norm horth).symm
         calc

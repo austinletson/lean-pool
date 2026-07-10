@@ -92,8 +92,7 @@ lemma corrAvg_le_one {n : Nat} (f : Coloring n) (u v : Vertex n) : corrAvg f u v
   unfold corrAvg corr
   set s : Finset (G n) := Finset.univ
   have hterm : ∀ σ ∈ s, spin (f (σ • u)) * spin (f (σ • v)) ≤ (1 : Q) := by
-    intro σ _hσ
-    exact corr_le_one (f (σ • u)) (f (σ • v))
+    exact fun σ a => corr_le_one (f (σ • u)) (f (σ • v))
   have hsum : s.sum (fun σ : G n => spin (f (σ • u)) * spin (f (σ • v))) ≤ s.card • (1 : Q) :=
     Finset.sum_le_card_nsmul s _ _ hterm
   have hsum' :
@@ -111,8 +110,7 @@ lemma neg_one_le_corrAvg {n : Nat} (f : Coloring n) (u v : Vertex n) :
   unfold corrAvg corr
   set s : Finset (G n) := Finset.univ
   have hterm : ∀ σ ∈ s, (-1 : Q) ≤ spin (f (σ • u)) * spin (f (σ • v)) := by
-    intro σ _hσ
-    exact neg_one_le_corr (f (σ • u)) (f (σ • v))
+    exact fun σ a => neg_one_le_corr (f (σ • u)) (f (σ • v))
   have hsum : s.card • (-1 : Q) ≤ s.sum (fun σ : G n => spin (f (σ • u)) * spin (f (σ • v))) :=
     Finset.card_nsmul_le_sum s _ _ hterm
   have hpos : 0 < (Fintype.card (G n) : Q) := cardG_pos n
@@ -151,9 +149,7 @@ lemma corrAvg_triangle {n : Nat} (f : Coloring n) (u v w : Vertex n) :
   have avg_le_one (g : G n → Q) (hg : ∀ σ : G n, g σ ≤ (1 : Q)) :
       (∑ σ : G n, g σ) / (Fintype.card (G n) : Q) ≤ 1 := by
     have hsum : (∑ σ : G n, g σ) ≤ ∑ _σ : G n, (1 : Q) := by
-      classical
-      simpa using
-        (Finset.sum_le_sum (s := (Finset.univ : Finset (G n))) fun σ _ => hg σ)
+      exact Finset.sum_le_sum fun i a => hg i
     have hdiv :
         (∑ σ : G n, g σ) / (Fintype.card (G n) : Q)
           ≤ (∑ _σ : G n, (1 : Q)) / (Fintype.card (G n) : Q) :=
@@ -161,8 +157,7 @@ lemma corrAvg_triangle {n : Nat} (f : Coloring n) (u v w : Vertex n) :
     simpa [Finset.sum_const, nsmul_eq_mul, hne] using hdiv
   have avg_le_one_of_eq (g : G n → Q) (hg : ∀ σ : G n, g σ ≤ (1 : Q)) (rhs : Q)
       (hEq : (∑ σ : G n, g σ) / (Fintype.card (G n) : Q) = rhs) : rhs ≤ 1 := by
-    have h := avg_le_one (g := g) hg
-    simpa [hEq] using h
+    exact le_of_eq_of_le (id (Eq.symm hEq)) (avg_le_one g hg)
   have hterm (σ : G n) :
       (-(corr f (σ • u) (σ • v) + corr f (σ • u) (σ • w) + corr f (σ • v) (σ • w) : Q) ≤ 1) ∧
         (corr f (σ • u) (σ • v) + corr f (σ • u) (σ • w) - corr f (σ • v) (σ • w) ≤ 1) ∧

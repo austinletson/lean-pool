@@ -62,34 +62,15 @@ variable {S : Type*} [Monoid S]
 
 /-- Associativity of the pointwise product (membership proof, choice-free). -/
 theorem smul_assoc (a b c : Set S) : a * b * c = a * (b * c) := by
-  ext s; simp only [Set.mem_mul]
-  constructor
-  · rintro ⟨u, ⟨p, hp, q, hq, rfl⟩, w, hw, rfl⟩
-    exact ⟨p, hp, q * w, ⟨q, hq, w, hw, rfl⟩, by rw [mul_assoc]⟩
-  · rintro ⟨p, hp, u, ⟨q, hq, w, hw, rfl⟩, rfl⟩
-    exact ⟨p * q, ⟨p, hp, q, hq, rfl⟩, w, hw, by rw [mul_assoc]⟩
+  exact mul_assoc a b c
 
 /-- Right distributivity `(a ∪ b)·c = a·c ∪ b·c` (choice-free). -/
 theorem sunion_mul (a b c : Set S) : (a ∪ b) * c = a * c ∪ b * c := by
-  ext s; simp only [Set.mem_mul, Set.mem_union]
-  constructor
-  · rintro ⟨u, (hu | hu), w, hw, rfl⟩
-    · exact Or.inl ⟨u, hu, w, hw, rfl⟩
-    · exact Or.inr ⟨u, hu, w, hw, rfl⟩
-  · rintro (⟨u, hu, w, hw, rfl⟩ | ⟨u, hu, w, hw, rfl⟩)
-    · exact ⟨u, Or.inl hu, w, hw, rfl⟩
-    · exact ⟨u, Or.inr hu, w, hw, rfl⟩
+  exact Set.union_mul
 
 /-- Left distributivity `a·(b ∪ c) = a·b ∪ a·c` (choice-free). -/
 theorem smul_union (a b c : Set S) : a * (b ∪ c) = a * b ∪ a * c := by
-  ext s; simp only [Set.mem_mul, Set.mem_union]
-  constructor
-  · rintro ⟨u, hu, w, (hw | hw), rfl⟩
-    · exact Or.inl ⟨u, hu, w, hw, rfl⟩
-    · exact Or.inr ⟨u, hu, w, hw, rfl⟩
-  · rintro (⟨u, hu, w, hw, rfl⟩ | ⟨u, hu, w, hw, rfl⟩)
-    · exact ⟨u, hu, w, Or.inl hw, rfl⟩
-    · exact ⟨u, hu, w, Or.inr hw, rfl⟩
+  exact Set.mul_union
 
 /-! ### The star `z* = ⋃ₙ zⁿ`, by explicit recursion -/
 
@@ -279,8 +260,7 @@ theorem park_least (a b c d : Set S) {x y : Set S}
   -- The eliminated `y`: `a*·(b·x ∪ d) ⊆ y`.
   have hpre : a * y ∪ (b * x ∪ d) ⊆ y := Set.union_subset hay (Set.union_subset hbx hdy)
   have hyy : star a * (b * x ∪ d) ⊆ y := by
-    rw [← arden a (b * x ∪ d)]
-    exact lfpSet_subset (G a (b * x ∪ d)) hpre
+    exact star_mul_subset_prefixed a (b * x ∪ d) y hpre
   -- The decisive identity `(b·a*·b)·x ∪ b·a*·d = b·(a*·(b·x ∪ d))`.
   have key : b * star a * b * x ∪ b * star a * d = b * (star a * (b * x ∪ d)) := by
     simp only [smul_assoc, smul_union]

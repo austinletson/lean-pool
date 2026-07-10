@@ -300,9 +300,7 @@ lemma continuous_timeShift_param (x : SpaceTime) : Continuous (fun s : ℝ => ti
 lemma peetre_weight_bound (x y : SpaceTime) (k : ℕ) :
     (1 + ‖x‖) ^ k ≤ (1 + ‖x + y‖) ^ k * (1 + ‖y‖) ^ k := by
   have h1 : ‖x‖ ≤ ‖x + y‖ + ‖y‖ := by
-    calc ‖x‖ = ‖(x + y) + (-y)‖ := by simp only [add_neg_cancel_right]
-         _ ≤ ‖x + y‖ + ‖-y‖ := norm_add_le _ _
-         _ = ‖x + y‖ + ‖y‖ := by rw [norm_neg]
+    exact norm_le_add_norm_add x y
   have h2 : 1 + ‖x‖ ≤ (1 + ‖x + y‖) * (1 + ‖y‖) := by
     calc 1 + ‖x‖ ≤ 1 + (‖x + y‖ + ‖y‖) := by linarith
          _ = 1 + ‖x + y‖ + ‖y‖ := by ring
@@ -398,8 +396,7 @@ private lemma schwartz_timeTranslation_mvt_bound
           have h_bdd : BddAbove (Set.range fun s : ↑(Set.Icc (0 : ℝ) 1) => D s.1) := by
             use (SchwartzMap.seminorm ℝ 0 (n + 1)) f
             rintro _ ⟨⟨s, _⟩, rfl⟩
-            have := SchwartzMap.le_seminorm ℝ 0 (n + 1) f (x + s • y)
-            simpa only [pow_zero, one_mul] using this
+            exact SchwartzMap.norm_iteratedFDeriv_le_seminorm ℝ f (n + 1) (x + ↑⟨s, property⟩ • y)
           haveI : Nonempty ↑(Set.Icc (0 : ℝ) 1) := ⟨⟨0, by simp⟩⟩
           have h_sSup_le : sSup (∅ : Set ℝ) ≤ ⨆ i : ↑(Set.Icc (0 : ℝ) 1), D i.1 := by
             simp only [Real.sSup_empty]
@@ -588,8 +585,7 @@ theorem schwartz_timeTranslation_lipschitz_seminorm
           simpa only [max_eq_right h3] using h2
       -- Use seminorm bounds
       have h_S0 : ‖iteratedFDeriv ℝ (n + 1) f w‖ ≤ S_0 := by
-        have := SchwartzMap.le_seminorm ℝ 0 (n + 1) f w
-        simpa only [pow_zero, one_mul] using this
+        exact SchwartzMap.norm_iteratedFDeriv_le_seminorm ℝ f (n + 1) w
       have h_Sk : ‖w‖ ^ k * ‖iteratedFDeriv ℝ (n + 1) f w‖ ≤ S_k :=
         SchwartzMap.le_seminorm ℝ k (n + 1) f w
       -- Combine
@@ -650,8 +646,7 @@ theorem schwartz_timeTranslation_lipschitz_seminorm
                 ‖iteratedFDeriv ℝ (n + 1) f (x + t.1 • y)‖) := by
               use S_0
               rintro v ⟨⟨t, ht⟩, rfl⟩
-              have := SchwartzMap.le_seminorm ℝ 0 (n + 1) f (x + t • y)
-              simpa only [pow_zero, one_mul] using this
+              exact SchwartzMap.norm_iteratedFDeriv_le_seminorm ℝ f (n + 1) (x + ↑⟨t, ht⟩ • y)
             -- BddAbove for the product sup
             have h_bdd_prod : BddAbove (Set.range fun t : ↑(Set.Icc (0 : ℝ) 1) =>
                 ‖x‖ ^ k * ‖iteratedFDeriv ℝ (n + 1) f (x + t.1 • y)‖) := by
@@ -676,8 +671,7 @@ theorem schwartz_timeTranslation_lipschitz_seminorm
                 simp only [Real.sSup_empty]
                 apply le_ciSup_of_le h_bdd ⟨0, by simp⟩
                 exact norm_nonneg _
-              exact cbiSup_eq_ciSup_subtype (p := (· ∈ Set.Icc (0 : ℝ) 1))
-                  (f := fun t _ => ‖iteratedFDeriv ℝ (n + 1) f (x + t • y)‖) h_bdd h_sSup_le
+              exact cbiSup_eq_ciSup_subtype h_bdd h_sSup_le
             rw [h_biSup_eq, Real.mul_iSup_of_nonneg hxk_nonneg]
             apply ciSup_le
             intro ⟨t, ht⟩

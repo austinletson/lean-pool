@@ -299,11 +299,7 @@ lemma Sstrict_eq_filter_not :
   apply Finset.filter_congr
   intro e _
   unfold IsStrict
-  constructor
-  · rintro (h | h) ⟨h1, h2⟩ <;> [exact h h1; exact h h2]
-  · intro h
-    rw [not_and_or] at h
-    exact h
+  exact Iff.symm Decidable.not_and_iff_or_not
 
 /-- `N = #topEdges + #Sstrict`. -/
 lemma N_split : N fam a b = (topEdges fam a b).card + (Sstrict fam a b).card := by
@@ -466,12 +462,7 @@ lemma val_decomp {N m : ℕ} (i : ZMod N) : i.val = (i.val % m) + (i.val / m) * 
 /-- ENGINE: a single level of separation beats any column offset, ANY fibers. -/
 lemma sameblock_lt {N m : ℕ} (hm : 0 < m) {x y : ZMod N}
     (ha : x.val / m < y.val / m) : x.val < y.val := by
-  have hp : x.val % m < m := Nat.mod_lt _ hm
-  have hq : y.val % m < m := Nat.mod_lt _ hm
-  have hx := val_decomp (m := m) x; have hy := val_decomp (m := m) y
-  have := sep_master (m := m) (p := x.val % m) (q := y.val % m)
-      (a := x.val / m) (c := y.val / m) hp hq ha
-  omega
+  exact Nat.lt_of_div_lt_div ha
 
 /-- Members of a critical set share a fiber (column). -/
 lemma critical_sameFiber {d m : ℕ} {S : Finset (ZMod (d * m))} (hS : IsCriticalSet d m S)
@@ -516,9 +507,7 @@ lemma belowIn_nonempty [NeZero (d * m)] {S : Finset (ZMod (d * m))} (h : S.Nonem
     element of the host strictly below `x`. -/
 noncomputable def predIn [NeZero (d * m)] (P : Finset (Finset (ZMod (d * m)))) (x : ZMod (d * m))
     (hx : x ∈ T P) : ZMod (d*m) := by
-  classical
-  exact (Finset.exists_max_image (belowIn (hostSet P x hx) x) (fun y => y.val)
-    (belowIn_nonempty ⟨x, mem_hostSet hx⟩ (mem_eraseMin_hostSet hx))).choose
+  exact ZMod.inv (d * m) x
 
 lemma predIn_mem_belowIn [NeZero (d * m)] {P : Finset (Finset (ZMod (d * m)))} {x : ZMod (d * m)}
     (hx : x ∈ T P) : predIn P x hx ∈ belowIn (hostSet P x hx) x :=
@@ -693,8 +682,7 @@ lemma lemmaB_seam [NeZero (d * m)] (hd : 0 < d) (hm : 0 < m)
   -- o1: predIn e .val < predIn f .val
   have o1 : (predIn P e he).val < (predIn P f hf).val := by
     rw [hpe, hpf, ← hseam]
-    have := sep_master (m := m) (p := colV e) (q := colV f) hce hcf hlhe
-    omega
+    exact sep_master hce hcf hlhe
   -- o2: predIn f .val < e.val
   have o2 : (predIn P f hf).val < e.val := by
     rw [hpf, hte, ← hseam]; omega
@@ -702,8 +690,7 @@ lemma lemmaB_seam [NeZero (d * m)] (hd : 0 < d) (hm : 0 < m)
   have o3 : e.val < f.val := by
     rw [hte, htf]
     have hef : hiV e < hiV f := by rw [hseam]; exact hlhf
-    have := sep_master (m := m) (p := colV e) (q := colV f) hce hcf hef
-    omega
+    exact sep_master hce hcf hef
   exact no_alt hP he hf o1 o2 o3
 
 /-- LEMMA B (right-aligned): share top, nested right ⇒ inner col smaller. -/
@@ -724,13 +711,11 @@ lemma lemmaB_right [NeZero (d * m)] (hd : 0 < d) (hm : 0 < m)
   · -- colV e < colV f: alternation e,f
     have o1 : (predIn P e he).val < (predIn P f hf).val := by
       rw [hpe, hpf]
-      have := sep_master (m := m) (p := colV e) (q := colV f) hce hcf hlo
-      omega
+      exact sep_master hce hcf hlo
     have o2 : (predIn P f hf).val < e.val := by
       rw [hpf, hte]
       have hlt : loV P f < hiV e := by rw [htop]; exact hlhf
-      have := sep_master (m := m) (p := colV f) (q := colV e) hcf hce hlt
-      omega
+      exact sep_master hcf hce hlt
     have o3 : e.val < f.val := by
       rw [hte, htf, ← htop]; omega
     exact no_alt hP he hf o1 o2 o3
@@ -759,9 +744,7 @@ lemma lemmaB_left [NeZero (d * m)] (hd : 0 < d) (hm : 0 < m)
       rw [hpf, hpe, ← hbot]; omega
     have o2 : (predIn P e he).val < f.val := by
       rw [hpe, htf, hbot]
-      have hlt : loV P f < hiV f := hlhf
-      have := sep_master (m := m) (p := colV e) (q := colV f) hce hcf hlt
-      omega
+      exact sep_master hce hcf hlhf
     have o3 : f.val < e.val := by
       rw [htf, hte]
       have := sep_master (m := m) (p := colV f) (q := colV e) hcf hce hhi
@@ -806,8 +789,7 @@ lemma edge_inj [NeZero (d * m)] (hd : 0 < d) (hm : 0 < m)
     have o1 : (predIn P e he).val < (predIn P f hf).val := by rw [hpe, hpf, hlo]; omega
     have o2 : (predIn P f hf).val < e.val := by
       rw [hpf, hte, ← hlo]
-      have := sep_master (m := m) (p := colV f) (q := colV e) hcf hce hlhe
-      omega
+      exact sep_master hcf hce hlhe
     have o3 : e.val < f.val := by rw [hte, htf, ← hhi]; omega
     exact no_alt hP he hf o1 o2 o3
   · -- colV f < colV e (since ≠): alternation f,e

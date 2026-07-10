@@ -173,15 +173,13 @@ private lemma B_dij_i_i0_pair (i0 i1 : Fin n) (hi01 : i0 ≠ i1) (c : ℝ)
       intro h
       exact hi h.symm
     have hi0j : i0 ≠ j := by
-      intro h
-      exact hj h.symm
+      exact Ne.symm (Ne.intro hj)
     have hij' : i ≠ j := hij
     have hhalf :
         B (G := G) (n := n) (dij (n := n) i0 i) (dij (n := n) i0 j)
           = (1 / 2 : ℝ) *
             B (G := G) (n := n) (dij (n := n) i0 i) (dij (n := n) i0 i) := by
-      simpa using
-        (B_dij_dij_eq_half_self (G := G) (n := n) (i := i0) (j := i) (k := j) hi0i hij' hi0j)
+      exact B_dij_dij_eq_half_self G i0 i j hi0i hij hi0j
     have hself :
         B (G := G) (n := n) (dij (n := n) i0 i) (dij (n := n) i0 i) = c := by
       simpa [hc] using
@@ -398,9 +396,7 @@ lemma B_eq_smul_fisherBilin_uniform (i0 i1 : Fin n) (hi01 : i0 ≠ i1) :
       rw [← mul_assoc]
       rw [hscale]
     simp_all
-  have hEq :=
-    LinearMap.BilinForm.ext_of_isSymm hSymm₁ hSymm₂ hdiag
-  simpa [c, hc] using hEq
+  exact (LinearMap.BilinForm.ext_iff_of_isSymm hSymm₁ hSymm₂).mpr hdiag
 
 end Bilin
 end TangentFin

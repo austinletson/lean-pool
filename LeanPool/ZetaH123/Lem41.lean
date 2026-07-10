@@ -194,15 +194,12 @@ theorem negChoose_cast_ne_zero_iff (Fq : Type) [Field Fq]
     constructor
     · rintro ⟨_, h2⟩ hdvd
       apply h2
-      have : ((Nat.choose (k+y-1) y : ℕ) : Fq) = 0 := by
-        rw [CharP.cast_eq_zero_iff Fq p]; exact hdvd
-      exact this
+      exact (CharP.cast_eq_zero_iff Fq p ((k + y - 1).choose y)).mpr hdvd
     · intro hndvd
       refine ⟨pow_ne_zero _ (by simp), ?_⟩
       intro hc
       apply hndvd
-      rw [← CharP.cast_eq_zero_iff Fq p]
-      exact hc
+      exact (CharP.cast_eq_zero_iff Fq p ((k + y - 1).choose y)).mp hc
   rw [step1]
   have hkk : k + y - 1 = (k - 1) + y := by omega
   rw [hkk]
@@ -232,8 +229,7 @@ theorem negChoose_cast_ne_zero_iff (Fq : Type) [Field Fq]
       · push Not at hib
         have hilog : Nat.log p N < i := lt_of_lt_of_le hbgt hib
         have hNlt : N < p ^ i := by
-          calc N < p ^ (Nat.log p N + 1) := Nat.lt_pow_succ_log_self hp1 _
-            _ ≤ p ^ i := Nat.pow_le_pow_right (by omega) (by omega)
+          exact Nat.lt_pow_of_log_lt hp1 hilog
         have hy : y < p ^ i := by omega
         have hk1 : k-1 < p ^ i := by omega
         rw [Nat.mod_eq_of_lt hy, Nat.mod_eq_of_lt hk1]; omega
@@ -281,8 +277,7 @@ theorem negChoose_cast_ne_zero_iff (Fq : Type) [Field Fq]
         have h3 : Pe * (p-1) = Pe*p - Pe := by rw [Nat.mul_sub_one]
         have h4 : Pe ≤ Pe * p := Nat.le_mul_of_pos_right _ (by omega)
         omega
-    intro i _
-    exact hno i
+    exact fun i a => Nat.lt_of_lt_of_eq (hno i) rfl
 
 /-- **L4 (Lucas, multinomial).** With `y = ∑ i, m i`, the multinomial coefficient
 `multinomial(y; m_1,…,m_d)` has nonzero image in `F_q` iff the addition
@@ -299,17 +294,14 @@ theorem multinomial_cast_ne_zero_iff (Fq : Type) [Field Fq]
     have h3 := negChoose_cast_ne_zero_iff Fq p (a+1) hp hchar (by omega) s
     have he1 : (a + 1) + s - 1 = a + s := by omega
     have he2 : Nat.choose (a + s) s = Nat.choose (a + s) a := by
-      have := Nat.choose_symm (n := a + s) (k := a) (by omega)
-      rw [show a + s - a = s by omega] at this
-      exact this
+      exact Eq.symm Nat.choose_symm_add
     rw [he1, he2] at h3
     have hsimp : (a + 1) - 1 = a := by omega
     rw [hsimp] at h3
     rw [← h3]
     push_cast
     have hu : ((-1:Fq)) ^ s ≠ 0 := pow_ne_zero _ (by simp)
-    rw [mul_ne_zero_iff]
-    tauto
+    exact Iff.symm (mul_ne_zero_iff_left hu)
   -- Product of factorials divides factorial of sum (so the list multinomial is an
   -- integer).
   have hmultidvd : ∀ L : List ℕ, (L.map Nat.factorial).prod ∣ L.sum.factorial := by
@@ -423,19 +415,12 @@ theorem multinomial_cast_ne_zero_iff (Fq : Type) [Field Fq]
     simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero]
     constructor
     · rintro ⟨h1, h2⟩ e
-      have hc := crux_list L h2 e
-      have h1e := h1 e
-      rw [hc] at h1e
-      exact h1e
+      exact le_of_le_of_eq'' (h1 e) (congrArg (HAdd.hAdd (digit p a e)) (crux_list L h2 e))
     · intro h
       have h2 : ∀ e, (L.map (fun x => digit p x e)).sum ≤ p - 1 := by
         intro e; have := h e; omega
       refine ⟨?_, h2⟩
-      intro e
-      have hc := crux_list L h2 e
-      have he := h e
-      rw [← hc] at he
-      exact he
+      exact fun e => le_of_eq_of_le (congrArg (HAdd.hAdd (digit p a e)) (crux_list L h2 e)) (h e)
   -- Main induction on lists: the list multinomial cast is nonzero iff CarryFree.
   have hmain : ∀ L : List ℕ,
       (((L.sum.factorial / (L.map Nat.factorial).prod : ℕ) : ℤ) : Fq) ≠ 0 ↔ CarryFree p L := by
@@ -565,9 +550,7 @@ theorem carryfree_combine (p kk d : ℕ) (m : Fin d → ℕ) :
   · rintro ⟨h1, h2⟩ e
     have hc := crux_list p (List.ofFn m) h2 e
     rw [hsum] at hc
-    have h1e := h1 e
-    rw [hc] at h1e
-    exact h1e
+    exact le_of_eq_of_le (congrArg (HAdd.hAdd (digit p kk e)) (id (Eq.symm hc))) (h1 e)
   · intro h
     have h2 : ∀ e, ((List.ofFn m).map (fun x => digit p x e)).sum ≤ p - 1 := by
       intro e; have := h e; omega
@@ -575,9 +558,7 @@ theorem carryfree_combine (p kk d : ℕ) (m : Fin d → ℕ) :
     intro e
     have hc := crux_list p (List.ofFn m) h2 e
     rw [hsum] at hc
-    have he := h e
-    rw [← hc] at he
-    exact he
+    exact le_of_eq_of_le (congrArg (HAdd.hAdd (digit p kk e)) hc) (h e)
 
 /-! ### L1 helper lemmas (PowerSeries / LaurentSeries infrastructure)
 
@@ -605,9 +586,7 @@ theorem coeff_inv_one_add_pow
     apply PowerSeries.coeff_of_lt_order
     have h1 : 1 ≤ g.order := PowerSeries.one_le_order_iff_constCoeff_eq_zero.mpr hg
     have h2 : (d : ℕ∞) ≤ (g ^ d).order := by
-      rw [PowerSeries.order_pow]
-      calc (d : ℕ∞) = d • (1 : ℕ∞) := by simp
-        _ ≤ d • g.order := by gcongr
+      exact PowerSeries.le_order_pow_of_constantCoeff_eq_zero d hg
     calc (e : ℕ∞) < d := by exact_mod_cast h
       _ ≤ (g ^ d).order := h2
   have coeff_neg_pow : ∀ d : ℕ,
@@ -691,8 +670,7 @@ theorem phi_monicOf_eq (Fq : Type) [Field Fq] (d : ℕ) (θ : Fin d → Fq) :
     rw [LaurentSeries.algebraMap_apply, HahnSeries.C_apply]
   have hofX : ∀ m : ℕ,
       HahnSeries.ofPowerSeries ℤ Fq (PowerSeries.X ^ m) = HahnSeries.single (m : ℤ) 1 := by
-    intro m
-    rw [map_pow, PowerSeries.coe_X, hpow]; congr 1; simp
+    exact fun m => HahnSeries.ofPowerSeries_X_pow m
   have hLHSterm : ∀ i : Fin d,
       (Polynomial.aeval ((HahnSeries.single (-1) 1 : LaurentSeries Fq)))
           (Polynomial.C (θ i) * Polynomial.X ^ (i : ℕ))
@@ -1165,10 +1143,8 @@ theorem main (Fq : Type) [Field Fq] [Fintype Fq]
   -- The witness is the explicit family `cwit Fq d k`; its two required properties
   -- are exactly the assembly lemmas `cwit_ne_zero` and `Sdk_coeff_eq_finsum`.
   refine ⟨cwit Fq d k, ?_, ?_⟩
-  · intro m hm
-    exact cwit_ne_zero Fq p f d k hp hf hd hk hchar hq m hm
-  · intro n
-    exact Sdk_coeff_eq_finsum Fq p f d k hp hf hd hk hchar hq n
+  · exact fun m a => cwit_ne_zero Fq p f d k hp hf hd hk hchar hq m a
+  · exact fun n => Sdk_coeff_eq_finsum Fq p f d k hp hf hd hk hchar hq n
 
 /-! ## Correctness statements for the definitions
 
@@ -1179,19 +1155,14 @@ enumeration of the monic polynomials of degree exactly `d`, justifying that
 /-- The lower-degree part `∑_{i<d} C(θ i) X ^ i` has degree `< d`. -/
 theorem monicOf_lower_degree (Fq : Type) [Field Fq] (d : ℕ) (θ : Fin d → Fq) :
     (∑ i : Fin d, C (θ i) * X ^ (i : ℕ)).degree < (d : WithBot ℕ) := by
-  apply lt_of_le_of_lt (degree_sum_le Finset.univ _)
-  rw [Finset.sup_lt_iff (WithBot.bot_lt_coe _)]
-  intro i _
-  apply lt_of_le_of_lt (degree_C_mul_X_pow_le _ _)
-  exact_mod_cast i.isLt
+  exact degree_sum_fin_lt θ
 
 /-- `monicOf` always produces a monic polynomial. -/
 theorem monicOf_monic (Fq : Type) [Field Fq] (d : ℕ) (θ : Fin d → Fq) :
     (monicOf Fq d θ).Monic := by
   unfold monicOf
   have hlt := monicOf_lower_degree Fq d θ
-  apply monic_X_pow_add
-  exact hlt
+  exact monic_X_pow_add hlt
 
 /-- `monicOf` produces a polynomial of degree exactly `d`. -/
 theorem monicOf_natDegree (Fq : Type) [Field Fq] (d : ℕ) (θ : Fin d → Fq) :
@@ -1227,9 +1198,7 @@ theorem monicOf_injective (Fq : Type) [Field Fq] (d : ℕ) :
   funext i
   have := monicOf_coeff Fq d θ i
   have h2 := monicOf_coeff Fq d θ' i
-  rw [h] at this
-  rw [this] at h2
-  exact h2
+  exact (rel_congr this h2).mp (congrFun (congrArg coeff h) ↑i)
 
 /-- The parameterization is surjective onto `A_d ^ +`: every monic polynomial of
 degree exactly `d` arises as `monicOf` of its lower coefficients. -/
@@ -1240,8 +1209,7 @@ theorem monicOf_surjective (Fq : Type) [Field Fq] (d : ℕ) (a : Polynomial Fq)
   have hsum : a = ∑ i ∈ Finset.range (d + 1), C (a.coeff i) * X ^ i := by
     conv_lhs => rw [a.as_sum_range' (d + 1) (by rw [hdeg]; omega)]
     apply Finset.sum_congr rfl
-    intro i _
-    rw [C_mul_X_pow_eq_monomial]
+    exact fun x a_1 => Eq.symm C_mul_X_pow_eq_monomial
   have hcoeff_top : a.coeff d = 1 := by
     have := ha.coeff_natDegree
     rwa [hdeg] at this

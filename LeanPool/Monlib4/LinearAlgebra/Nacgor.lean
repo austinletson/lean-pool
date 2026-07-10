@@ -46,5 +46,4 @@ theorem Pi.normedAddCommGroupOfRing.norm_eq_sum {ι : Type*} [Fintype ι] {B : �
     PiNormedAddCommGroupOfRing.norm x = Real.sqrt (∑ i, ‖x i‖ ^ 2) := by
   have h2 : 0 < (2 : ENNReal).toReal := by norm_num
   change ‖WithLp.toLp (2 : ENNReal) x‖ = Real.sqrt (∑ i, ‖x i‖ ^ 2)
-  rw [PiLp.norm_eq_sum h2]
-  simp [Real.sqrt_eq_rpow]
+  exact PiLp.norm_eq_of_L2 (WithLp.toLp 2 x)

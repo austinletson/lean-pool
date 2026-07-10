@@ -41,8 +41,7 @@ private instance instContinuousSMulRealComplex : ContinuousSMul ℝ ℂ :=
 private lemma segment_subset_convex {S : Set ℂ} (hS : Convex ℝ S)
     {c z : ℂ} (hc : c ∈ S) (hz : z ∈ S) :
     ∀ t ∈ Icc (0 : ℝ) 1, c + t • (z - c) ∈ S := fun t ht => by
-  rw [show c + t • (z - c) = (1 - t) • c + t • z from by module]
-  exact hS hc hz (by linarith [ht.2]) ht.1 (by linarith [ht.1])
+  exact Convex.add_smul_sub_mem hS hc hz ht
 
 private lemma integral_t_mul_deriv_eq {f : ℂ → ℂ} {S : Set ℂ}
     {c z : ℂ} (hS_open : IsOpen S)
@@ -357,8 +356,7 @@ private lemma hasDerivAt_segmentIntegral {f : ℂ → ℂ}
       (∫ t in (0 : ℝ)..1,
         f (c + t • (w - c)) * (w - c)) =
       H w * (w - c) := by
-    intro w
-    simpa only [H] using intervalIntegral.integral_mul_const (𝕜 := ℂ) _ _
+    exact fun w => intervalIntegral.integral_mul_const (w - c) fun x => f (c + x • (w - c))
   suffices HasDerivAt (fun w => H w * (w - c)) (f z) z by
     convert this using 1
     ext w; exact hF_eq w

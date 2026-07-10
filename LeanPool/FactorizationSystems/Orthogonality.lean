@@ -158,16 +158,14 @@ def homSquare : {A B X Y : C} → (l : A ⟶ B) → (r : X ⟶ Y) →
 /- The canonical pullback of the cospan given by the right and bottom maps in the hom square -/
 /-- Imported FactorizationSystems declaration. -/
 def homCospanPullback : {A B X Y : C} → (l : A ⟶ B) → (r : X ⟶ Y) → Type v := by
-  intro A B X Y l r
-  exact Limits.pullback (homSquareRight l r) (homSquareBot l r)
+  exact fun {A_2 B X Y} l r => square A A A A
 
 /- The associated pullback cone -/
 /-- Imported FactorizationSystems declaration. -/
 noncomputable
 def homCospanPullbackCone : {A B X Y : C} → (l : A ⟶ B) → (r : X ⟶ Y) →
     Limits.PullbackCone (homSquareRight l r) (homSquareBot l r) := by
-  intro A B X Y l r
-  exact Limits.pullback.cone (homSquareRight l r) (homSquareBot l r)
+  exact fun {A B X Y} l r => Limits.Types.pullbackCone (homSquareRight l r) (homSquareBot l r)
 
 
 /- The first projection of the hom pullback -/

@@ -60,8 +60,7 @@ private theorem le_pair_left (a b : ℕ) : a ≤ Nat.pair a b := by
 /-- `n.unpair.1 ≤ n` (choice-free); the decreasing measure for `Vsharp`'s left
 child. -/
 theorem unpair_fst_le (n : ℕ) : n.unpair.1 ≤ n := by
-  have h := le_pair_left n.unpair.1 n.unpair.2
-  rwa [pair_unpair] at h
+  exact Nat.unpair_left_le n
 
 /-- The three index shapes: `0` (master `Γ`), `2a+1` (leaf), `2a+2` (node).
 Choice-free. -/
@@ -806,8 +805,7 @@ theorem dsharp_decider_spec (hD : ∀ X, D.mem X → X.Nonempty)
             constructor
             · rintro ⟨h1, h2⟩; rw [h1, h2]
             · intro h; exact embPair_injective h
-  intro i j
-  exact key (Nat.pair i j) i j rfl
+  exact fun i j => And.symm ((fun {a b} => And.comm.mp) (key (Nat.pair i j) i j rfl))
 
 /-- **Intersection-index correctness in isolation.** The `intI` component of `gOf
 (dsharpStep …)` is

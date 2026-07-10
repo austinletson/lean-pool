@@ -273,9 +273,8 @@ theorem cone_univ_iff {σ : Str} : cone σ = Set.univ ↔ σ = [] := by
 theorem iterElem_le_fixElement {α : Type*} {V : NeighborhoodSystem α} (f : ApproximableMap V V)
     (n : ℕ) : f.iterElem n ≤ f.fixElement := by
   rw [f.fixElement_eq_iSupDirected]
-  intro Z hZ
-  rw [mem_iSupDirected]
-  exact ⟨n, hZ⟩
+  exact le_iSupDirected f.iterElem
+      (fun i j => Exists.intro (max i j) ⟨iterElem_mono f (le_max_left i j), iterElem_mono f (le_max_right i j)⟩) n
 
 /-- **Property (a), prefix form.** Every Thue–Morse parity prefix is a prefix of
 `t`:

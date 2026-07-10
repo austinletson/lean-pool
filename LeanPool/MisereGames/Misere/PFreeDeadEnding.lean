@@ -50,8 +50,7 @@ private theorem misereOutcome_of_add_LL.aux {g h : GameForm}
         hg_end | ⟨gl, hgl, hgl_not_right⟩
     · rcases (winsGoingFirst_iff h .left).mp hh_out.left with
           hh_end | ⟨hl, hhl, hhl_not_right⟩
-      · exact winsGoingFirst_of_isEnd (IsEnd.add_iff.mpr ⟨isEndLike_iff_isEnd.mp hg_end,
-        isEndLike_iff_isEnd.mp  hh_end⟩)
+      · exact winsGoingFirst_add_of_isEndLike hg_end hh_end
       · have hhl_pfde := Hereditary.of_mem_moves hh hhl
         have hhlL := misereOutcome_of_isPFree_not_winsGoingFirst hhl_pfde.isPFree hhl_not_right
         have hsumL := misereOutcome_of_add_LL.aux hg hhl_pfde hgL hhlL
@@ -222,9 +221,7 @@ theorem _root_.MisereGames.PFreeDeadEnding.a_one_MisereOutcome
   · refine winsGoingFirst_of_moves ⟨1, ?_⟩
     simp only [moves_ofSets, Set.mem_singleton_iff, Player.le_left, Player.neg_right,
       Player.le_left_eq, true_and]
-    rw [not_winsGoingFirst_iff]
-    apply And.intro (by simp)
-    simp
+    exact not_winsGoingFirst_left_one
   · rw [not_winsGoingFirst_iff]
     simp [isEnd_def, h0]
 
@@ -259,12 +256,10 @@ theorem _root_.MisereGames.PFreeDeadEnding.misereGE_of_maintenance_proviso
   refine Hereditary.misereGE_of_maintenance_proviso PFreeDeadEnding h_m_r h_m_l ?_ ?_
   · intro h_isEnd
     rw [GameForm.isEndLike_iff_isEnd] at h_isEnd
-    rw [PFree.strong_right_iff_misereOutcome_L hh]
-    exact h_p_r h_isEnd
+    exact (PFree.strong_right_iff_misereOutcome_L hh).mpr (h_p_r h_isEnd)
   · intro h_isEnd
     rw [GameForm.isEndLike_iff_isEnd] at h_isEnd
-    rw [PFree.strong_left_iff_misereOutcome_R hg]
-    exact h_p_l h_isEnd
+    exact (PFree.strong_left_iff_misereOutcome_R hg).mpr (h_p_l h_isEnd)
 
 theorem _root_.MisereGames.PFreeDeadEnding.reduction_a_one_int {a : ℤ} (h0 : 0 ≤ a)
     : (!{{(a : GameForm)} | {1}}) =m PFreeDeadEnding ((a + 1) : ℤ) := by
@@ -376,8 +371,7 @@ theorem _root_.MisereGames.PFreeDeadEnding.reduction_ab_between_int_right
     {a b : ℤ} (h0 : 0 ≤ a) (h1 : 1 ≤ b)
     : ((a + 1 : ℤ) : GameForm) ≥m PFreeDeadEnding !{{(a : GameForm)}|{(b : GameForm)}} := by
   refine misereGE_rw_left ?_ (reduction_ab_int.auxR a h1)
-  have h2 := reduction_ab_int a 1 h0 Int.le_rfl (by omega)
-  norm_cast at h2
+  exact reduction_a_one_int h0
 
 private theorem reduction_a_eq_neg_ba_c.aux {a b : ℤ} (h1 : 0 ≤ a) (h2 : 0 < b)
     : !{{-(b : GameForm)} | {((a + 1 : ℤ) : GameForm)}} ≥m PFreeDeadEnding (a : GameForm) := by
@@ -467,8 +461,7 @@ theorem _root_.MisereGames.PFreeDeadEnding.reduction_a_eq_neg_ba_c
                  forall_eq]
       apply Or.inr
       norm_cast at h6
-      apply misereGE_rw_left (MisereEQ.symm h6)
-      exact MisereGE.refl ((a' + 1) : GameForm)
+      exact misereGE_of_misereEQ h6
     · simp [Proviso, isEnd_def]
     · simp [Proviso, isEnd_def]
 
@@ -595,10 +588,8 @@ theorem _root_.MisereGames.PFreeDeadEnding.pfreeDeadEnding_ofSets
   apply PFreeSubset.mk
   · refine ⟨?_, ?_⟩
     · refine Short.ofSets h_L_finite ?_ h_R_finite ?_
-      · intro gl h_gl
-        exact (h_L_mem gl h_gl).isShort
-      · intro gr h_gr
-        exact (h_R_mem gr h_gr).isShort
+      · exact fun g a => isShort (h_L_mem g a)
+      · exact fun g a => isShort (h_R_mem g a)
     · unfold IsDeadEnding
       refine ⟨?_, ?_⟩
       · intro p h_isEnd
@@ -608,12 +599,10 @@ theorem _root_.MisereGames.PFreeDeadEnding.pfreeDeadEnding_ofSets
           exact h_L_nonempty.ne_empty h_isEnd
         · rw [isEnd_def, rightMoves_ofSets] at h_isEnd
           exact h_R_nonempty.ne_empty h_isEnd
-      · intro p gp hgp
-        exact (h_moves p gp hgp).isDeadEnding
+      · exact fun p gp a => isDeadEnding (h_moves p gp a)
   · unfold IsPFree
     refine ⟨h_outcome_ne_P, ?_⟩
-    intro p gp h_gp_mem
-    exact (h_moves p gp h_gp_mem).isPFree
+    exact fun p gp a => PFreeSubset.isPFree (h_moves p gp a)
 
 theorem _root_.MisereGames.PFreeDeadEnding.rightSeparating_of_leftSeparating {g h : GameForm}
     (h_h : IsShort h) (h_left : AreLeftSeparating PFreeDeadEnding g h) :

@@ -40,8 +40,7 @@ theorem Entails_add_new {σ : Type u} {hyps : List (NamedPred σ)} {goal : pred 
   refine pred_implies_trans ?_ (by apply h2); clear h2
   simp [repeatedAnd_append, and_pred_implies_split]; constructor
   · rfl
-  · refine pred_implies_trans ?_ (by apply h1); clear h1
-    apply repeatedAnd_subset_implies; grind
+  · refine pred_implies_trans ?_ (by apply h1); exact repeatedAnd_subset_implies subHyps (List.map NamedPred.pred hyps) hinc
 
 local macro "replaceFun" : term => `((fun h => { h with pred := $(mkIdent `newHyp) }))
 

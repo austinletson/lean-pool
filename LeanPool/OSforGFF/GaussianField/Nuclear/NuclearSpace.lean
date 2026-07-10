@@ -103,12 +103,7 @@ lemma exists_CLF_le_seminorm
       simpa only [f₀, LinearPMap.mkSpanSingleton'_apply_self] using h
     -- |g(x)| ≤ q(x) from g(x) ≤ q(x) and g(-x) ≤ q(-x) = q(x)
     have hg_abs : ∀ x, |g x| ≤ q x := by
-      intro x; rw [abs_le]
-      constructor
-      · have h1 := hg_le (-x)
-        rw [map_neg, map_neg_eq_map] at h1
-        linarith
-      · exact hg_le x
+      exact fun x => Seminorm.abs_le_of_le hg_le x
     -- g is continuous: bounded by continuous seminorm, hence continuous at 0
     have hg_cont : Continuous g := by
       apply continuous_of_continuousAt_zero g.toAddMonoidHom
@@ -215,8 +210,7 @@ lemma seminorm_le_nuclear_expansion
         have := (summable_nat_add_iff 1).mpr
           (Real.summable_one_div_nat_pow.mpr (by norm_num : 1 < 2))
         exact this.congr (fun m => by push_cast; ring_nf)
-      exact (hsumm_shift.const_smul (C₂ * (s₂.sup hN.p) f * (C₁ : ℝ) * D)).congr
-        (fun m => by simp [smul_eq_mul])
+      exact Summable.mul_left (C₂ * (s₂.sup DyninMityaginSpace.p) f * ↑C₁ * D) hsumm_shift
   -- Step 3: Summability of the expansion terms
   have hsumm' : Summable (fun m => hN.coeff m f * φ (hN.basis m)) :=
     hsumm.of_norm_bounded (fun m => by
@@ -260,8 +254,7 @@ lemma _root_.GaussianField.DyninMityaginSpace.summable_coeff_seminorm_basis
       have := (summable_nat_add_iff 1).mpr
         (Real.summable_one_div_nat_pow.mpr (by norm_num : 1 < 2))
       exact this.congr (fun m => by push_cast; ring_nf)
-    exact (hsumm_shift.const_smul (C_d * (s_d.sup hN.p) f * C_g)).congr
-      (fun m => by simp [smul_eq_mul])
+    exact Summable.mul_left (C_d * (s_d.sup DyninMityaginSpace.p) f * C_g) hsumm_shift
 
 /-- **Bound on the Schauder expansion remainder via Hahn-Banach.**
 

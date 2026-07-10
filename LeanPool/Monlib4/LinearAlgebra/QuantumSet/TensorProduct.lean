@@ -24,8 +24,7 @@ noncomputable instance tensorStarAlgebra
     starAlgebra (A ⊗[ℂ] B) where
   star_mul x y := x.induction_on (by simp only [zero_mul, star_zero, mul_zero])
     (y.induction_on
-      (by simp only [mul_zero, star_zero, TensorProduct.star_tmul, zero_mul,
-        implies_true])
+      (by exact fun x y => star_mul (x ⊗ₜ[ℂ] y) 0)
       (fun _ _ _ _ => by simp only [Algebra.TensorProduct.tmul_mul_tmul,
         TensorProduct.star_tmul, star_mul])
       (fun _ _ h1 h2 _ _ => by simp only [mul_add, star_add, h1, h2, add_mul]))

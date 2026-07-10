@@ -1013,8 +1013,7 @@ theorem projection_ae_eq [SeparableSpace E] [IsHilbertNuclear E] [Nonempty E]
       rw [← h_normalized]
       apply h_cf_cont.continuousAt.tendsto.comp
       have : Filter.Tendsto (fun k => d (φ k) - f) Filter.atTop (nhds 0) := by
-        rw [show (0 : E) = f - f from (sub_self f).symm]
-        exact Filter.Tendsto.sub hφ tendsto_const_nhds
+        exact tendsto_sub_nhds_zero_iff.mpr hφ
       have h_smul := Filter.Tendsto.const_smul this t
       rwa [smul_zero] at h_smul
     exact tendsto_nhds_unique h_dct h_cf_lim
@@ -1075,11 +1074,7 @@ lemma uniqueness_via_projection [SeparableSpace E] [IsHilbertNuclear E] [Nonempt
         (finsetPiMeasEquiv J) =
         (marginalMeasure Φ h_continuous h_positive_definite h_normalized J :
           Measure _) by
-      have := congr_arg (fun μ => μ.map (finsetPiMeasEquiv J).symm) key
-      simp only [Measure.map_map (finsetPiMeasEquiv J).symm.measurable
-        (finsetPiMeasEquiv J).measurable,
-        (finsetPiMeasEquiv J).symm_comp_self, Measure.map_id] at this
-      exact this
+      exact (MeasurableEquiv.map_apply_eq_iff_map_symm_apply_eq (finsetPiMeasEquiv J)).mp key
     apply Measure.ext_of_charFun
     ext ξ
     rw [marginalMeasure_charFun]

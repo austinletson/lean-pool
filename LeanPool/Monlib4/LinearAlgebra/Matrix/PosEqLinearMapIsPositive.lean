@@ -46,8 +46,7 @@ alias Matrix.posSemidef_mul_star_self := Matrix.posSemidef_self_mul_conjTranspos
 theorem Matrix.toEuclideanLin_eq_piLp_linearEquiv [Fintype n] [DecidableEq n] :
     Matrix.toEuclideanLin (𝕜 := 𝕜) (m := n) (n := n) =
       Matrix.toLin (PiLp.basisFun 2 𝕜 n) (PiLp.basisFun 2 𝕜 n) := by
-  simpa [Matrix.toEuclideanLin] using
-    Matrix.toLpLin_eq_toLin (R := 𝕜) (m := n) (n := n) 2 2
+  exact toLpLin_eq_toLin 2 2
 
 open scoped InnerProductSpace
 
@@ -105,8 +104,7 @@ theorem Matrix.nonneg_eigenvalues_of_posSemidef [Fintype n] [DecidableEq n]
     0 ≤ μ := by
   have hpos := Matrix.isPositive_toEuclideanLin_iff.mpr H
   exact eigenvalue_nonneg_of_nonneg hμ fun v => by
-    rw [← hpos.1 v v]
-    exact hpos.2 v
+    exact LinearMap.IsPositive.re_inner_nonneg_right hpos v
 
 theorem Matrix.IsHermitian.nonneg_eigenvalues_of_posSemidef [Fintype n] [DecidableEq n]
     {A : Matrix n n 𝕜} (hA : A.PosSemidef) (i : n) :
@@ -263,10 +261,9 @@ theorem Matrix.posSemidef_iff_vecMulVec' [Finite n]
       fun i => v ((Fintype.equivFin m).symm i)
     refine ⟨Fintype.card m, v', ?_⟩
     rw [hv]
-    exact Fintype.sum_equiv (Fintype.equivFin m)
-      (fun i => vecMulVec (v i : n → 𝕜) (star (v i : n → 𝕜)))
-      (fun i => vecMulVec (v' i : n → 𝕜) (star (v' i : n → 𝕜)))
-      (by intro i; simp [v'])
+    exact Eq.symm
+        (Fintype.sum_equiv (Fintype.equivFin m).symm (fun x => vecMulVec (v' x).ofLp (star (v' x).ofLp))
+          (fun x => vecMulVec (v x).ofLp (star (v x).ofLp)) (congrFun rfl))
 
 theorem Matrix.posSemidef_iff_replicateCol_mul_conjTranspose_replicateCol' [Finite n]
     {x : Matrix n n 𝕜} :
@@ -528,7 +525,6 @@ theorem conjTranspose_hMul_self_eq_zero {m : Type*} [Fintype n]
 theorem _root_.Matrix.PosSemidef.replicateColMulConjTransposereplicateCol [Finite n]
     (x : n → 𝕜) :
     (replicateCol (Fin 1) x * (replicateCol (Fin 1) x)ᴴ : Matrix n n 𝕜).PosSemidef := by
-  rw [← Matrix.vecMulVec_eq_replicateCol_conjTranspose]
-  exact Matrix.posSemidef_vecMulVec_self_star x
+  exact posSemidef_mul_star_self (replicateCol (Fin 1) x)
 
 end Matrix

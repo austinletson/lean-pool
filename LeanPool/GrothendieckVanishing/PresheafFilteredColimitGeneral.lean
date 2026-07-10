@@ -314,9 +314,7 @@ theorem colimit_exists_gluing_of_compatible_finite_subcover
   let W : ↥t → Opens X := fun k ↦ U k.1
   have hcov_W : iSup W = iSup U := by
     apply le_antisymm
-    · refine iSup_le ?_
-      intro k
-      exact le_iSup U k.1
+    · exact iSup_comp_le U Subtype.val
     · rw [show iSup W = ⨆ k ∈ t, U k from iSup_subtype (p := (· ∈ t))]
       exact hsup_le
   obtain ⟨sW, hsW, _⟩ := (hP j₁).isSheafUniqueGluing W x''
@@ -330,8 +328,7 @@ theorem colimit_exists_gluing_of_compatible_finite_subcover
     rw [← ConcreteCategory.comp_apply, ← (P.obj j₁).map_comp]
     rw [show (eqToHom hcov_W.symm).op ≫ (Opens.leSupr U k).op =
         (Opens.leSupr W ⟨k, hk⟩).op by
-      simpa [W] using congrArg Quiver.Hom.op (Subsingleton.elim
-        (Opens.leSupr U k ≫ eqToHom hcov_W.symm) (Opens.leSupr W ⟨k, hk⟩))]
+      exact Eq.symm eq_of_mono_coequalizer]
     exact hsW ⟨k, hk⟩
   let s : ToType (c.pt.obj (op (iSup U))) :=
     ConcreteCategory.hom ((c.ι.app j₁).app (op (iSup U))) s₀

@@ -106,23 +106,14 @@ theorem ContinuousLinearMap.adjoint_smul {K E₁ E₂ : Type _} [RCLike K] [Norm
     [InnerProductSpace K E₁] [InnerProductSpace K E₂] [CompleteSpace E₁] [CompleteSpace E₂]
     (φ : E₁ →L[K] E₂) (a : K) :
     adjoint (a • φ) = starRingEnd K a • adjoint φ := by
-  ext x
-  apply ext_inner_left K
-  intro y
-  simp_rw [adjoint_inner_right, smul_apply, inner_smul_left, inner_smul_right, adjoint_inner_right]
+  exact LinearIsometryEquiv.map_smulₛₗ adjoint a φ
 
 theorem LinearMap.adjoint_smul {K E₁ E₂ : Type _} [RCLike K] [NormedAddCommGroup E₁]
   [NormedAddCommGroup E₂]
     [InnerProductSpace K E₁] [InnerProductSpace K E₂] [FiniteDimensional K E₁]
     [FiniteDimensional K E₂] (φ : E₁ →ₗ[K] E₂) (a : K) :
     adjoint (a • φ) = starRingEnd K a • adjoint φ := by
-  have :=
-    @ContinuousLinearMap.adjoint_smul K E₁ E₂ _ _ _ _ _
-      (FiniteDimensional.complete K E₁) (FiniteDimensional.complete K E₂)
-      (toContinuousLinearMap φ) a
-  simp_rw [← LinearMap.adjoint_toContinuousLinearMap] at this
-  rw [LinearMap.adjoint_eq_toCLM_adjoint, _root_.map_smul, this]
-  rfl
+  exact LinearEquiv.map_smulₛₗ adjoint a φ
 
 theorem LinearMap.adjoint_one' {K E : Type _} [RCLike K] [NormedAddCommGroup E]
     [InnerProductSpace K E] [FiniteDimensional K E] : adjoint (1 : E →ₗ[K] E) = 1 :=
@@ -145,9 +136,7 @@ lemma _root_.isometry_iff_norm {E F : Type _} [SeminormedAddCommGroup E]
   [AddMonoidHomClass e E F]
   (f : e) :
   Isometry f ↔ ∀ x, ‖f x‖ = ‖x‖ := by
-  rw [isometry_iff_dist_eq]
-  simp_rw [dist_eq_norm, ← map_sub]
-  refine ⟨fun h x => by simpa using h x 0, fun h x y => h _⟩
+  exact AddMonoidHomClass.isometry_iff_norm f
 lemma _root_.isometry_iff_norm' {E F : Type _} [_root_.NormedAddCommGroup E]
     [_root_.NormedAddCommGroup F] {e : Type*} [FunLike e E F]
     [AddMonoidHomClass e E F] (f : e) :

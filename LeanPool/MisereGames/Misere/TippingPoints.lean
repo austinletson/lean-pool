@@ -113,8 +113,7 @@ private theorem exists_add_nat_N_of_not_R {g : GameForm} (h0 : IsShort g) (h1 :
     simp_all
   let n : ℕ := r - 1
   have hnsucc : n + 1 = r := by
-    dsimp [n]
-    omega
+    exact Nat.sub_one_add_one_eq_of_pos hrpos
   have hnlt : n < r := by
     omega
   have hnotR_n : MisereOutcome (g + n) ≠ .R := by

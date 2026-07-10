@@ -33,14 +33,7 @@ lemma Submodule.zero_lt_finrank_of_ne_bot (p : Submodule R M) (hp : p ≠ ⊥) :
 omit [Module.Free R M] in
 lemma Submodule.finrank_lt_finrank_of_ne_top (p : Submodule R M) (hp : p ≠ ⊤) :
     Module.finrank R p < Module.finrank R M := by
-  obtain ⟨p', hp'⟩ := ComplementedLattice.exists_isCompl p
-  rw [← Submodule.finrank_add_eq_of_isCompl hp']
-  simp only [lt_add_iff_pos_right]
-  apply Submodule.zero_lt_finrank_of_ne_bot
-  intro hbot
-  rw [hbot] at hp'
-  apply hp
-  exact eq_top_of_isCompl_bot hp'
+  exact finrank_lt hp
 
 omit [Module.Free R M] in
 lemma Submodule.exists_generator_of_finrank_eq_one (p : Submodule R M)
@@ -93,8 +86,7 @@ lemma Submodule.exists_generator_of_finrank_eq_one_basis (b : Basis (Fin 2) R M)
         rw [smul_smul, inv_mul_cancel₀ this, one_smul]
       nth_rw 2 [this]
       apply Submodule.smul_mem
-      apply Submodule.subset_span
-      simp
+      exact mem_span_singleton_self (c 0 • b 0)
   use c 0 / β
   rw [← hvspan, hvr]
   apply le_antisymm
@@ -115,8 +107,7 @@ lemma Submodule.exists_generator_of_finrank_eq_one_basis (b : Basis (Fin 2) R M)
       simp_all
     nth_rw 1 [this]
     apply Submodule.smul_mem
-    apply Submodule.subset_span
-    simp
+    exact mem_span_singleton_self ((c 0 / β) • b 0 + b 1)
 
 end
 
@@ -191,8 +182,7 @@ lemma lt_of_ne_top (p : Submodule R M) {p' : Submodule R p}
     (q : { q : Submodule R p // p' ≤ q})
     (h : q ≠ ⊤) : Submodule.map p.subtype q.val < p := by
   apply lt_of_le_of_ne
-  · rw [Submodule.map_le_iff_le_comap]
-    simp
+  · exact Submodule.map_subtype_le p ↑q
   · intro hc
     absurd h
     rw [eq_top_iff]
@@ -237,8 +227,7 @@ lemma ideal_smul_lt_of_ne_bot {I : Ideal R} (p : Submodule R M)
     rw [Submodule.comap_map_eq_self (by simp)] at hc
     simp at hc
     absurd h
-    rw [Submodule.quotient_equiv_eq_bot_iff]
-    exact hc.symm
+    exact (Submodule.quotient_equiv_eq_bot_iff (I • ⊤) q).mpr (id (Eq.symm hc))
 
 end
 

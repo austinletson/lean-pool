@@ -223,12 +223,9 @@ lemma freeCovarianceFormR_reflection_expansion
       _ = -freeCovarianceFormR m u v := by
             simp [freeCovarianceFormR_symm]
   have h_cross : freeCovarianceFormR m θg f = Cfg := by
-    simpa [θf, θg, Cfg]
-      using
-        (freeCovarianceFormR_reflection_cross (m := m) (f := f) (g := g)).symm
+    exact freeCovarianceFormR_reflection_cross m g f
   have h_invariant : freeCovarianceFormR m θg θg = Cg := by
-    simpa [θg, Cg]
-      using freeCovarianceFormR_reflection_invariant (m := m) (f := g) (g := g)
+    exact freeCovarianceFormR_reflection_invariant m g g
   have h_term₁ :
       freeCovarianceFormR m f (f - θg) = Cf - Cfg := by
     have h_add :=
@@ -422,9 +419,7 @@ lemma gaussianFreeField_OS3_matrix_real
       (GJGeneratingFunctional (gaussianFreeFieldFree m)
         ((f i).val - QFT.compTimeReflectionReal (f j).val)).re
       = Z i * Z j * E i j := by
-    intro i j
-    have h_entry := gaussianFreeField_real_entry_factor (m := m) (f := f i) (g := f j)
-    simpa [Z, E, R] using h_entry
+    exact fun i j => gaussianFreeField_real_entry_factor m
   -- Step 2: Rewrite the sum using the factorisation
   have h_sum₁ :
       (∑ i, ∑ j, c i * c j *
@@ -670,10 +665,7 @@ private lemma posSemidef_hadamard_complex
     {n : ℕ} {A B : Matrix (Fin n) (Fin n) ℂ}
     (hA : A.PosSemidef) (hB : B.PosSemidef) :
     (Matrix.hadamard A B).PosSemidef := by
-  let diag : Fin n → Fin n × Fin n := fun i => (i, i)
-  suffices h : (Matrix.hadamard A B) = (A ⊗ₖ B).submatrix diag diag by
-    rw [h]; exact (hA.kronecker hB).submatrix diag
-  ext i j; simp [Matrix.hadamard, Matrix.submatrix, Matrix.kroneckerMap, diag]
+  exact PosSemidef.hadamard hA hB
 
 /-- Entrywise exponential preserves IsRePSD for Hermitian matrices.
     Complex extension of `entrywiseExp_posSemidef_of_posSemidef`.
@@ -775,8 +767,7 @@ private lemma entrywiseExp_IsRePSD
       (nhds (∑ i, ∑ j, starRingEnd ℂ (v i) * v j * Complex.exp (M i j))) := by
     apply tendsto_finsetSum _ fun i _ => ?_
     apply tendsto_finsetSum _ fun j _ => ?_
-    exact Filter.Tendsto.mul (Filter.Tendsto.mul tendsto_const_nhds tendsto_const_nhds)
-      (hconv_entry i j)
+    exact Filter.Tendsto.const_mul ((starRingEnd ℂ) (v i) * v j) (hconv_entry i j)
   -- Re is continuous, so Re(quad form) converges too
   have hconv_re := Complex.continuous_re.continuousAt.tendsto.comp hconv_quad
   -- Limit of nonneg reals is nonneg

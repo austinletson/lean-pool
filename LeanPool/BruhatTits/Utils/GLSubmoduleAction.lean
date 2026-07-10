@@ -28,8 +28,7 @@ lemma scalar_smul_GL_smul (M : Submodule R (ι → K))
     simp only [SetLike.mem_coe, Matrix.GeneralLinearGroup.mem_smul] at hy
     obtain ⟨z, hz, rfl⟩ := hy
     refine ⟨a • z, ?_, ?_⟩
-    · use z, hz
-      rfl
+    · exact Submodule.smul_mem_pointwise_smul z a M hz
     · simp [Matrix.mulVec_smul]
   · rintro ⟨y, ⟨z, hz, rfl⟩, rfl⟩
     simp only [DistribSMul.toLinearMap_apply, Matrix.mulVec_smul]

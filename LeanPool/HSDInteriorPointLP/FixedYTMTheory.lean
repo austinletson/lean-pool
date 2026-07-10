@@ -597,7 +597,6 @@ theorem predictor_center_two_square_constant_bound {n : Nat} (μ : ℝ)
   let α : ℝ := predictorFixedAlpha n
   let c : ℝ := ytmStepConstant
   have hα_le : α ≤ (1 / 2 : ℝ) := by
-    dsimp [α]
     exact predictor_fixed_alpha_le_half n
   have hα_nonneg : 0 ≤ α := by
     dsimp [α, predictorFixedAlpha]
@@ -609,14 +608,12 @@ theorem predictor_center_two_square_constant_bound {n : Nat} (μ : ℝ)
     dsimp [c]
     exact le_of_lt ytmStepConstant_pos
   have hc_le : c ≤ (1 / 2 : ℝ) := by
-    dsimp [c]
     exact ytmStepConstant_le_half
   have hc_sq_le_quarter : c ^ 2 ≤ (1 / 4 : ℝ) := by
     nlinarith [sq_nonneg (c - (1 / 2 : ℝ))]
   have hc_four_le : (c ^ 2) ^ 2 ≤ (1 / 16 : ℝ) := by
     nlinarith [sq_nonneg (c ^ 2 - (1 / 4 : ℝ))]
   have hcancel : α ^ 2 * hdim n = c ^ 2 := by
-    dsimp [α, c]
     exact predictor_fixed_alpha_sq_mul_hdim n
   have hq_rewrite :
       2 * (α ^ 2) ^ 2 * ((hdim n * μ / 2) ^ 2) =
@@ -673,15 +670,7 @@ theorem predictor_fixed_center_bound {n : Nat}
         (by simpa [q, η] using hqnew) hcoef_b)
   have hconst := predictor_center_two_square_constant_bound (n := n) (mu w)
     (le_of_lt hmu_pos)
-  calc
-    (∑ i : Fin n, (predictorVecResidualAfter w d i) ^ 2) +
-      (predictorScalarResidualAfter w d) ^ 2
-        ≤ 2 * a ^ 2 * ((∑ i : Fin n, (r i) ^ 2) + ρ ^ 2) +
-          2 * b ^ 2 * ((∑ i : Fin n, (q i) ^ 2) + η ^ 2) := hsplit'
-    _ ≤ 2 * a ^ 2 * ((ytmBetaTight * mu w) ^ 2) +
-          2 * b ^ 2 * ((hdim n * mu w / 2) ^ 2) := hbound
-    _ ≤ (ytmBetaWide * ((1 - predictorFixedAlpha n) * mu w)) ^ 2 := by
-          simpa [a, b] using hconst
+  exact le_imp_le_of_le_of_le hsplit hconst hbound
 
 
 /-!
@@ -737,8 +726,7 @@ theorem YTM_predictor_fixed_scaled_core_estimate {n : Nat}
     exact predictor_weighted_relative_norm_identity w d hneigh hdir
   have hlower_vec : ∀ i : Fin n,
       (3 / 4 : ℝ) * mu w ≤ w.x i * w.s i := by
-    intro i
-    exact neighborhood_component_product_lower_tight w hneigh i
+    exact fun i => neighborhood_component_product_lower_tight w hneigh i
   have hlower_scalar :
       (3 / 4 : ℝ) * mu w ≤ w.tau * w.kappa := by
     exact neighborhood_scalar_product_lower_tight w hneigh
@@ -1189,8 +1177,7 @@ theorem one_sub_pow_le_exp_neg_mul_nat
       simp
   | succ K ih =>
       have hbase : 1 - a ≤ Real.exp (-a) := by
-        have h := Real.add_one_le_exp (-a)
-        linarith
+        exact Real.one_sub_le_exp_neg a
       have hleft_nonneg : 0 ≤ 1 - a := by
         linarith
       have hexp_nonneg : 0 ≤ Real.exp (-(a * (K : ℝ))) :=
@@ -1235,8 +1222,7 @@ theorem ytm_exp_mul_gap_le_of_log_bound {n : Nat}
     calc
       Real.log (gap0 / ε)
           = a * (scale * Real.log (gap0 / ε)) := by
-              dsimp [a, scale]
-              rw [ytm_alpha_mul_log_scale]
+              exact Eq.symm (ytm_alpha_mul_log_scale n (Real.log (gap0 / ε)))
       _ ≤ a * (K : ℝ) := hmul
   have hratio_pos : 0 < gap0 / ε := div_pos hgap0 hε_pos
   have h_exp_le :
@@ -1248,14 +1234,7 @@ theorem ytm_exp_mul_gap_le_of_log_bound {n : Nat}
       _ = ε / gap0 := by
               rw [Real.exp_neg, Real.exp_log hratio_pos]
               field_simp [ne_of_gt hgap0, ne_of_gt hε_pos]
-  calc
-    Real.exp (-(ytmStepConstant / Real.sqrt (hdim n) * (K : ℝ))) * gap0
-        = Real.exp (-(a * (K : ℝ))) * gap0 := by
-            rfl
-    _ ≤ (ε / gap0) * gap0 := by
-            exact mul_le_mul_of_nonneg_right h_exp_le (le_of_lt hgap0)
-    _ = ε := by
-            field_simp [ne_of_gt hgap0]
+  exact (le_div_iff₀ hgap0).mp h_exp_le
 
 
 /-- Pair bound written using `L = log(gap0 / ε)`. -/

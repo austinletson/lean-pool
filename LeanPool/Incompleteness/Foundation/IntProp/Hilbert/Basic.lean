@@ -93,11 +93,7 @@ noncomputable def «rec!»
   (orIntroR   : ∀ {φ ψ},   motive (ψ ==> φ ⋎ ψ) <| ⟨orIntroR φ ψ⟩)
   (orElim     : ∀ {φ ψ χ}, motive ((φ ==> χ) ==> (ψ ==> χ) ==> φ ⋎ ψ ==> χ) <| ⟨orElim φ ψ χ⟩)
   : ∀ {φ}, (d : H ⊢! φ) → motive φ d := by
-  intro φ d;
-  induction d.some with
-  | maxm h => exact maxm h
-  | mdp hpq hp ihpq ihp => exact mdp (ihpq ⟨hpq⟩) (ihp ⟨hp⟩)
-  | _ => aesop
+  refine fun {φ} d => ?_
 
 /-- Imported declaration from the Incompleteness formalization. -/
 lemma «subst!» {φ} (s) (h : H ⊢! φ) : H ⊢! φ⟦s⟧ := by

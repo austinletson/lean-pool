@@ -210,10 +210,7 @@ lemma gff_exp_abs_pairing_memLp (f : TestFunction) (p : ENNReal) (hp : p ≠ ⊤
       ENNReal.ofReal_rpow_of_nonneg (Real.exp_pos _).le ENNReal.toReal_nonneg, ← Real.exp_mul]
     ring_nf
   simp_rw [h_eq]
-  have h_fin := h_exp_p_integrable.hasFiniteIntegral
-  rw [HasFiniteIntegral] at h_fin
-  convert h_fin using 1
-  exact lintegral_congr fun ω => by rw [Real.enorm_eq_ofReal (Real.exp_pos _).le]
+  exact Integrable.lintegral_lt_top h_exp_p_integrable
 
 /-- Integrability of exp(|ω f|) under the GFF measure.
     This is the L¹ special case of gff_exp_abs_pairing_memLp.

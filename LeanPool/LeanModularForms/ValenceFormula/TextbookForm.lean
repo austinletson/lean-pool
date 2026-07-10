@@ -254,8 +254,7 @@ private theorem orb_repCanon_nonEll (p : ℍ) (hp : p ∈ repCanon f hf) :
 private lemma denom_formula_general (h : SL(2, ℤ)) (p : ℍ) :
     UpperHalfPlane.denom h p = ((h : Matrix (Fin 2) (Fin 2) ℤ) 1 0 : ℂ) * ↑p +
       ((h : Matrix (Fin 2) (Fin 2) ℤ) 1 1 : ℂ) := by
-  simp only [UpperHalfPlane.denom, Matrix.SpecialLinearGroup.toGL,
-    Matrix.SpecialLinearGroup.map, RingHom.mapMatrix_apply]; rfl
+  exact ModularGroup.denom_apply h p
 
 private lemma normSq_denom_expand_general (h : SL(2, ℤ)) (p : ℍ) :
     Complex.normSq (UpperHalfPlane.denom h p) =

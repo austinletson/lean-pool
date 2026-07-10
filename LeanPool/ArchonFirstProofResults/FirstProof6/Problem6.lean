@@ -753,8 +753,7 @@ lemma good_pair_exists [Nonempty V]
   -- Step N: tr(U²)/gap ≤ n/ε
   have htrU2_over_gap : (U * U).trace / gap ≤ (n : ℝ) / ε := by
     have h1 : gap ≥ (ε / (n : ℝ)) * (U * U).trace := by
-      calc gap ≥ (u' - u_t) * (U * U).trace := hgap_bound
-        _ = (ε / (n : ℝ)) * (U * U).trace := by rw [hu_diff]
+      exact le_of_eq_of_le (congrFun (congrArg HMul.hMul (id (Eq.symm hu_diff))) (U * U).trace) hgap_bound
     have htrU2_nn : 0 ≤ (U * U).trace := hU_sq_psd.trace_nonneg
     rw [div_le_div_iff₀ hgap_pos hε]
     -- Goal: (U * U).trace * ε ≤ ↑n * gap

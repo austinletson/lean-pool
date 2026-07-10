@@ -125,8 +125,7 @@ lemma odd_part_nat_pos (x : ℕ) : x ≠ 0 → 0 < (valBinNat x).2 := by
   cases x with
   | zero => exact fun h => absurd rfl h
   | succ x =>
-    intro _
-    exact odd_part_succ_pos x
+    exact fun a => odd_part_succ_pos x
 
 /-- The Kronecker symbol `(x / 2)`, which depends only on `x mod 8`. -/
 def kronecker_2 (x : ℕ) : ℤ := match x % 8 with

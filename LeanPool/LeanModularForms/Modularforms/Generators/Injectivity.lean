@@ -139,8 +139,7 @@ private lemma per_weight_injective_unique_monomial {n : ℕ} (p : MvPolynomial (
     map_mul, map_pow, map_pow, evalE₄E₆_X0, evalE₄E₆_X1,
     DirectSum.smul_apply] at heval
   rcases smul_eq_zero.mp heval with hc | hmz
-  · rw [show MvPolynomial.monomial d₀ (MvPolynomial.coeff d₀ p) =
-      MvPolynomial.monomial d₀ 0 from by rw [hc], MvPolynomial.monomial_zero]
+  · exact MvPolynomial.monomial_eq_zero.mpr hc
   · exact absurd hmz hmf_ne
 
 private lemma Delta_poly_isWeightedHomogeneous :

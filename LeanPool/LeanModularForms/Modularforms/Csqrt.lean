@@ -34,8 +34,7 @@ noncomputable def csqrt : ℂ → ℂ := (fun a : ℂ => cexp ((1 / (2 : ℂ))* 
 lemma csqrt_deriv (z : ℍ) : deriv (fun a : ℂ => cexp ((1 / (2 : ℂ))* (log a))) z =
     (2 : ℂ)⁻¹ • (fun a : ℂ => cexp (-(1 / (2 : ℂ)) * (log a))) z:= by
   have : (fun a ↦ cexp (1 / 2 * Complex.log a)) = cexp ∘ (fun a ↦ (1 / 2 * Complex.log a)) := by
-    ext z
-    simp
+    exact Eq.symm (comp_def cexp fun a => 1 / 2 * log a)
   have hzz : ↑z ∈ slitPlane := mem_slitPlane_iff.mpr (Or.inr (ne_of_lt z.2).symm)
   rw [this, deriv_comp]
   · simp only [one_div, Complex.deriv_exp, deriv_const_mul_field', neg_mul,

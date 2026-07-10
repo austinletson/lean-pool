@@ -253,13 +253,11 @@ def toSum (x : (sumTok D₀ D₁ h₀ h₁).Element) : (sum D₀ D₁ h₀ h₁)
       · refine Or.inr (Or.inl ⟨X', hX', rfl, ?_⟩)
         exact x.up_mem hzX (sumTok_mem_embF hX') (embBit_subset.mpr (inj₀_subset_inj₀.mp hsub))
       · exfalso
-        obtain ⟨a, ha⟩ := h₀ X hX
-        exact absurd (hsub (il_mem_inj₀.mpr ha)) il_mem_inj₁
+        exact not_inj₀_subset_inj₁ (h₀ X hX) hsub
     · rcases hW' with rfl | ⟨X', hX', rfl⟩ | ⟨Y', hY', rfl⟩
       · exact Or.inl rfl
       · exfalso
-        obtain ⟨b, hb⟩ := h₁ Y hY
-        exact absurd (hsub (ir_mem_inj₁.mpr hb)) ir_mem_inj₀
+        exact not_inj₁_subset_inj₀ (h₁ Y hY) hsub
       · refine Or.inr (Or.inr ⟨Y', hY', rfl, ?_⟩)
         exact x.up_mem hzY (sumTok_mem_embT hY') (embBit_subset.mpr (inj₁_subset_inj₁.mp hsub))
 

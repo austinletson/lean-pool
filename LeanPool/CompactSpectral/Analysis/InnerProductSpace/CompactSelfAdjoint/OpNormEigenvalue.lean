@@ -41,9 +41,7 @@ lemma continuousOn_weakClosedBall_norm_apply_of_isCompactOperator
   have hx_mem :
       ∀ᶠ y in 𝓝[weakClosedBall (𝕜 := 𝕜) (E := E) r] x,
         y ∈ weakClosedBall (𝕜 := 𝕜) (E := E) r := by
-    simpa using
-      (eventually_mem_nhdsWithin : ∀ᶠ y in 𝓝[weakClosedBall (𝕜 := 𝕜) (E := E) r] x,
-        y ∈ weakClosedBall (𝕜 := 𝕜) (E := E) r)
+    exact eventually_mem_nhdsWithin
   have hid :
       Tendsto (fun y : WeakSpace 𝕜 E => y)
         (𝓝[weakClosedBall (𝕜 := 𝕜) (E := E) r] x) (𝓝 x) := by
@@ -192,10 +190,7 @@ theorem exists_hasEigenvector_norm_eq_opNorm_of_isCompactOperator_of_isSelfAdjoi
     have hle_sq : ‖T y‖ ^ 2 ≤ ‖T‖ ^ 2 := by
       -- Avoid lemma name drift: prove by expanding `pow_two` and using `mul_le_mul`.
       have hy0 : 0 ≤ ‖T y‖ := norm_nonneg _
-      have hT0 : 0 ≤ ‖T‖ := ContinuousLinearMap.opNorm_nonneg T
-      have : ‖T y‖ * ‖T y‖ ≤ ‖T‖ * ‖T‖ :=
-        mul_le_mul hle hle hy0 hT0
-      simpa [pow_two] using this
+      exact pow_le_pow_left₀ hy0 hle 2
     simp_all
   have hsup : (⨆ x : { x : E // x ≠ 0 }, A.rayleighQuotient x) = ‖T‖ ^ 2 := by
     classical
@@ -213,9 +208,7 @@ theorem exists_hasEigenvector_norm_eq_opNorm_of_isCompactOperator_of_isSelfAdjoi
       have hT0 : 0 ≤ ‖T‖ * ‖x‖ := by
         exact mul_nonneg (ContinuousLinearMap.opNorm_nonneg T) (norm_nonneg x)
       have hle_sq : ‖T x‖ ^ 2 ≤ (‖T‖ * ‖x‖) ^ 2 := by
-        have : ‖T x‖ * ‖T x‖ ≤ (‖T‖ * ‖x‖) * (‖T‖ * ‖x‖) :=
-          mul_le_mul hle hle hx0 hT0
-        simpa [pow_two] using this
+        exact (sq_le_sq₀ hx0 hT0).mpr hle
       have hx2_pos : 0 < ‖x‖ ^ 2 := by
         simp_all
       have := (div_le_div_of_nonneg_right hle_sq (le_of_lt hx2_pos))
@@ -259,9 +252,7 @@ theorem exists_hasEigenvector_norm_eq_opNorm_of_isCompactOperator_of_isSelfAdjoi
   have ha_ne0 : a ≠ 0 := by
     have : (‖T‖ : ℝ) ≠ 0 := by
       simp_all
-    have : ((‖T‖ : ℝ) : 𝕜) ≠ 0 := by
-      exact_mod_cast this
-    simpa [a] using this
+    exact RCLike.ofReal_ne_zero.mpr this
   let u : E := (a⁻¹ : 𝕜) • T x0
   have hTx0_u : T x0 = a • u := by
     simp [u, smul_smul, ha_ne0]

@@ -63,8 +63,7 @@ lemma level_lt {d m : ℕ} (hd : 0 < d) (hm : 0 < m) (i : ZMod (d * m)) :
     i.val / m < d := by
   haveI : NeZero (d * m) := ⟨by positivity⟩
   have hi : i.val < d * m := ZMod.val_lt i
-  have hi' : i.val < m * d := by rw [Nat.mul_comm m d]; exact hi
-  exact Nat.div_lt_of_lt_mul hi'
+  exact (Nat.div_lt_iff_lt_mul hm).mpr hi
 
 /-- The shift element `t*m` reduces to `(t%d)*m` in `ZMod (d*m)`. -/
 lemma shift_cast {d m : ℕ} (t : ℕ) :
@@ -160,9 +159,7 @@ lemma cyc_round (a b d : ℕ) (_hd : 0 < d) (ha : a < d) (hb : b < d) :
   have h3 : (a + d) ≡ a [MOD d] := Nat.add_mod_right a d
   have h4 : (((a + (d - b)) % d) + b) ≡ a [MOD d] := by
     rw [h2] at h1; exact h1.trans h3
-  have hlt : (((a + (d - b)) % d) + b) % d = a % d := h4
-  rw [Nat.mod_eq_of_lt ha] at hlt
-  exact hlt
+  exact Nat.mod_eq_of_modEq h4 ha
 
 /-- The inverse cyclic relation. -/
 lemma cyc_inv (a b c d : ℕ) (_hd : 0 < d) (ha : a < d) (hb : b < d) (_hc : c < d)
@@ -172,9 +169,7 @@ lemma cyc_inv (a b c d : ℕ) (_hd : 0 < d) (ha : a < d) (hb : b < d) (_hc : c <
   have h2 : (a + b) + (d - b) = a + d := by omega
   have h3 : (a + d) ≡ a [MOD d] := Nat.add_mod_right a d
   have h4 : (c + (d - b)) ≡ a [MOD d] := by rw [h2] at h1; exact h1.trans h3
-  have hlt : (c + (d - b)) % d = a % d := h4
-  rw [Nat.mod_eq_of_lt ha] at hlt
-  exact hlt.symm
+  exact Eq.symm (Nat.mod_eq_of_modEq h4 ha)
 
 /-- `t`-fold rotation: translate every element by `+(t*m)`. -/
 def rhoPow {d m : ℕ} (t : ℕ) (S : Finset (ZMod (d * m))) : Finset (ZMod (d * m)) :=

@@ -100,9 +100,7 @@ lemma forall_fin_iff_zero_and_forall_succ {P : Fin (k + 1) → Prop} : (∀ i, P
     Fin k, P i.succ :=
   ⟨fun h ↦ ⟨h 0, fun i ↦ h i.succ⟩, by
     rintro ⟨hz, hs⟩ i
-    cases i using Fin.cases with
-    | zero => exact hz
-    | succ i => exact hs i⟩
+    exact Fin.inductionOn i hz fun i a => hs i⟩
 
 lemma exists_fin_iff_zero_or_exists_succ {P : Fin (k + 1) → Prop} : (∃ i, P i) ↔ P 0 ∨ ∃ i :
     Fin k, P i.succ :=
@@ -116,9 +114,7 @@ lemma exists_fin_iff_zero_or_exists_succ {P : Fin (k + 1) → Prop} : (∃ i, P 
 
 lemma forall_vec_iff_forall_forall_vec {P : (Fin (k + 1) → α) → Prop} :
     (∀ v : Fin (k + 1) → α, P v) ↔ ∀ x, ∀ v : Fin k → α, P (x :> v) := by
-  constructor
-  · intro h x v; exact h _
-  · intro h v; simpa using h (v 0) (v ·.succ)
+  exact Matrix.forall_vecCons_iff P
 
 lemma exists_vec_iff_exists_exists_vec {P : (Fin (k + 1) → α) → Prop} :
     (∃ v : Fin (k + 1) → α, P v) ↔ ∃ x, ∃ v : Fin k → α, P (x :> v) := by

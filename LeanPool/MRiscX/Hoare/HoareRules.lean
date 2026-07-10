@@ -161,9 +161,7 @@ theorem S_SEQ {L_b'' : Set UInt64} :
     constructor <;> try assumption
     · exact Nat.add_gt_zero _ _ HFW1
     · constructor <;> try assumption
-      · rw [<- HFW2] at HSW2
-        simp only [MState.run_n_m_steps_comp] at HSW2
-        exact HSW2
+      · exact MState.runNSteps_add s s' s'' m m' HFW2 HSW2
       · constructor <;> try assumption
         · intros m'' Hm''
           rw [def_L_b'']

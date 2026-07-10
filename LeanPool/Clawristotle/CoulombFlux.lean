@@ -45,9 +45,7 @@ lemma landau_flux_integrable_coulomb
           Integrable (fun w => ‖v - w‖⁻¹ * (vGrad f w) j) := by
         constructor
         · apply inv_norm_schwartz_integrable
-          · intro N
-            obtain ⟨C, hC, hb⟩ := hf_schwartz (k := 0) N (by omega)
-            exact ⟨C, hC, fun w => by simpa [iteratedFDeriv_zero_eq_comp] using hb w⟩
+          · exact fun N => schwartz_pointwise_decay hf_schwartz N
           · exact hf_smooth.continuous.aestronglyMeasurable
         · apply inv_norm_schwartz_integrable
           · intro N
@@ -97,8 +95,7 @@ lemma landau_flux_integrable_coulomb
           (coulomb_landauMatrix_entry_le_pi _ _ _ hw) (abs_nonneg _)
   exact integrable_pi_iff.mpr fun i => by
     simp only [mulVec, dotProduct]
-    exact integrable_finsetSum Finset.univ fun j _ => by
-      convert h_comp i j using 2 with w
+    exact integrable_finsetSum univ fun i_1 a => h_comp i i_1
 
 -- ============================================================================
 -- Schwartz partial decay helper

@@ -66,8 +66,7 @@ lemma SF_ext (s t : SlipFace) : s = t ↔ ∀ a b, s a b = t a b := by
     cases t
     rw [SlipFace.mk.injEq]
     constructor
-    · funext a b
-      exact h a b
+    · exact funext₂ h
     · exact hχ
 
 namespace SlipFace
@@ -258,9 +257,7 @@ lemma sf_of_D_props {s t : ℤ → ℤ → ℤ} {χ : ℤ}
         rw [← hB B (le_refl B)]
         exact mono_a_of_D_props t tp B b a hb
     small_a := by
-      intro b
-      obtain ⟨A, hA⟩ := sp.small_a b
-      use A
+      exact fun b => sp.small_a b
     large_a := by
       intro b
       obtain ⟨A, hA⟩ := tp.large_b b
@@ -278,9 +275,7 @@ lemma sf_of_D_props {s t : ℤ → ℤ → ℤ} {χ : ℤ}
       specialize h a b
       rwa [hB, sub_zero] at h
     large_b := by
-      intro a
-      obtain ⟨B, hB⟩ := sp.large_b a
-      use B
+      exact fun a => sp.large_b a
   }
   use sf
   constructor
@@ -524,15 +519,11 @@ instance : PartialOrder SlipFace where
   le_refl := by
     simp_all
   le_trans := by
-    intro s t u hst htu a b
-    exact le_trans (hst a b) (htu a b)
+    exact fun a b c a_2 a_3 a_4 b_2 => Int.le_trans (a_2 a_4 b_2) (a_3 a_4 b_2)
   le_antisymm := by
     intro s t hst hts
     apply (SF_ext s t).mpr
-    intro a b
-    have le1 : s a b ≤ t a b := hst a b
-    have le2 : t a b ≤ s a b := hts a b
-    exact le_antisymm le1 le2
+    exact fun a b => Int.le_antisymm (hst a b) (hts a b)
 
 lemma star_val_le (s t : SlipFace) (a b l : ℤ) : (s ⋆ t) a b ≤ s a l + t l b := by
   let v := SlipValley s t a b

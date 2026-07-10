@@ -158,8 +158,7 @@ theorem int_test [ModelPR V] (s : ℕ → V) (xs : Fin 0 → V) :
       funext i
       exact Fin.elim0 i
     simpa [hxs] using hb
-  intro a
-  exact ext_test s xs a
+  exact fun a => ext_test s xs a
 
 /-- Model of ZF: all the standard axioms together. -/
 class ModelZF (V : Type u) extends ModelEmptyset V, ModelPairing V,

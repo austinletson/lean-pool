@@ -211,8 +211,7 @@ theorem local_stability
       simpa [Yfun] using lpNorm_norm_l2 μ F
     have hsubnorm : ‖X - Y‖ = defect h := by
       have hsub : X - Y = (hX_mem.sub hY_mem).toLp (Xfun - Yfun) := by
-        dsimp [X, Y]
-        exact (MeasureTheory.MemLp.toLp_sub hX_mem hY_mem).symm
+        exact Eq.symm (MemLp.toLp_sub hX_mem hY_mem)
       rw [hsub, MeasureTheory.Lp.norm_toLp, MeasureTheory.toReal_eLpNorm (hX_mem.sub hY_mem).1]
       rfl
     have hsum_bound : ‖X + Y‖ ≤ 2 + ‖h‖ := by

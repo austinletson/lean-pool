@@ -421,8 +421,7 @@ theorem freeCovarianceℂ_bilinear_add_smul_left
     integral_congr_ae h_add_smul_ae
   -- Apply linearity of the outer integral.
   have hF₁_smul : Integrable (fun x => c * F₁ x) volume := by
-    apply Integrable.const_mul
-    exact hF₁
+    exact Integrable.const_mul hF₁ c
   have h_sum := integral_add hF₁_smul hF₂
   calc
     ∫ x, F x ∂volume

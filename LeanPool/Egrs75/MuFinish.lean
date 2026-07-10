@@ -169,8 +169,7 @@ theorem egrs_move {p q : ℕ} (hp : p.Prime) (_hq : q.Prime)
   have hmun : muVal q hq3 n = i * q + ((q - 1) / 2 - n / q ^ i % q) := by
     simp only [muVal, dif_pos hbad, ← hidef]
   have hq_le_iq : q ≤ i * q := by
-    calc q = 1 * q := (one_mul q).symm
-      _ ≤ i * q := Nat.mul_le_mul_right _ hi1
+    exact le_mul_of_one_le_left' hi1
   rcases Nat.lt_or_ge T S with hTS | hST
   · -- ════════════ ADD branch (T < S; condition (3) fires) ════════════
     have hTS' : T < (p ^ m + 1) / 2 := by omega
@@ -237,7 +236,6 @@ theorem egrs_move {p q : ℕ} (hp : p.Prime) (_hq : q.Prime)
     have hlt_n : n - S < n := by omega
     have hST' : S ≤ n % q ^ i := by omega
     have hpn' : LowDigits p (n - S) := by
-      rw [hSdef, hmdef]
       exact ClearingP3.sub_preserves_lowDigits hp hpo hpn hn0
     have hfrozen : ∀ idx, i ≤ idx → (n - S) / q ^ idx % q = n / q ^ idx % q :=
       fun idx hidx => ClearingP3.sub_high_digits_frozen (by omega) hST' hidx
@@ -364,8 +362,7 @@ theorem align_finish_mu {p q : ℕ} (hp : p.Prime) (hq : q.Prime)
   have hsp : LowDigits p (p ^ α) := seed_lowDigits_pow hp3 α
   -- seed magnitude
   have hBmul : q ^ (e + 3) ≤ (q - 1) / 2 * q ^ (e + 3) := by
-    have h := Nat.mul_le_mul_right (q ^ (e + 3)) hBq1
-    omega
+    exact le_mul_of_one_le_left' hBq1
   have hsN : N < p ^ α := by omega
   -- seed digit structure
   have hpow13 : q ^ (e + 1) ≤ q ^ (e + 3) := Nat.pow_le_pow_right (by omega) (by omega)

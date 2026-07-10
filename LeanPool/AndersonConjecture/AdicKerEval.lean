@@ -40,8 +40,7 @@ lemma smul_eq_zero_of_quotient (I : Ideal R) (n : ℕ)
 instance quotientIsHausdorff (I : Ideal R) (n : ℕ) :
     IsHausdorff I (R ⧸ (I ^ n • ⊤ : Submodule R R)) where
   haus' x hx := smul_eq_zero_of_quotient I n x (by
-    have := hx n
-    rwa [SModEq.sub_mem, sub_zero] at this)
+    exact SModEq.zero.mp (hx n))
 
 instance quotientIsPrecomplete (I : Ideal R) (n : ℕ) :
     IsPrecomplete I (R ⧸ (I ^ n • ⊤ : Submodule R R)) where

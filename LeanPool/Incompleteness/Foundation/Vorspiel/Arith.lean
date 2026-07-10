@@ -367,9 +367,7 @@ protected lemma sqrt {n} (i : Fin n) : Arith₁ (fun v => sqrt (v.get i)) := by
   exact this.of_eq <| by
     intro v; simp only [Bool.decide_and, PFun.coe_val, eq_some_iff, mem_rfind, mem_some_iff]
     constructor
-    · symm; simp only [Bool.and_eq_true, decide_eq_true_eq]; constructor
-      · exact sqrt_le (List.Vector.get v i)
-      · exact lt_succ_sqrt (List.Vector.get v i)
+    · symm; simp only [Bool.and_eq_true, decide_eq_true_eq]; exact eq_sqrt.mp rfl
     · intro m hm; symm
       simp only [Bool.and_eq_false_eq_eq_false_or_eq_false, decide_eq_false_iff_not, not_le, not_lt]
       right; exact Iff.mp le_sqrt hm
@@ -442,8 +440,7 @@ lemma dvd (i j : Fin n) : Arith₁ (fun v => isDvdNat (v.get i) (v.get j)) := by
       ((lt 0 1).comp₂ _ (proj j.succ) head)
   have : @Arith₁ (n + 1) (fun v => isLeNat v.head (v.tail.get j)) :=
     (le 0 1).comp₂ _ head ((proj j.succ).of_eq <| by
-      intro v
-      exact (List.Vector.get_tail_succ v j).symm)
+      exact fun i => Eq.symm (get_tail_succ i j))
   have := ArithPart₁.map (fun v x => isLeNat x (v.get j)) this (ArithPart₁.rfindPos hr)
   exact this.of_eq <| by
     intro v

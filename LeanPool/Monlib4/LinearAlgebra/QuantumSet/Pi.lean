@@ -101,10 +101,7 @@ noncomputable instance piInnerProductAlgebra : InnerProductAlgebra (PiQ A) where
   norm_smul_le := norm_smul_le
   norm_sq_eq_inner := norm_sq_eq_re_inner
   dist_eq x y := by
-    rw [dist_eq_norm']
-    congr 1
-    ext i
-    simp [sub_eq_add_neg, add_comm]
+    exact NormedAddGroup.dist_eq x y
   conj_symm := inner_conj_symm
   add_left := inner_add_left
   smul_left := inner_smul_left
@@ -140,8 +137,7 @@ noncomputable instance Pi.quantumSet [Fact (∀ i, (hQ i).k = 0)] : QuantumSet (
     simpa [hk] using (hQ i).inner_conj_left (x i) (y i) (z i)
   n := (i : ι) × n (A i)
   nIsFintype := by
-    letI : (i : ι) -> Fintype (n (A i)) := fun i => (hQ i).nIsFintype
-    infer_instance
+    exact Sigma.instFintype
   nIsDecidableEq := Classical.typeDecidableEq ((i : ι) × n (A i))
   onb := by
     letI : (i : ι) -> Fintype (n (A i)) := fun i => (hQ i).nIsFintype

@@ -55,9 +55,7 @@ private lemma inner_div_norm_complex (a b : ℂ) :
 private lemma complex_div_norm_eq_exp_arg {w : ℂ} (hw : (‖w‖ : ℂ) ≠ 0) :
     w / ↑‖w‖ = Complex.exp (↑(Complex.arg w) * I) := by
   have key := Complex.norm_mul_exp_arg_mul_I w
-  calc w / ↑‖w‖
-      = (↑‖w‖ * Complex.exp (↑(Complex.arg w) * I)) / ↑‖w‖ := by rw [key]
-    _ = Complex.exp (↑(Complex.arg w) * I) := by field_simp [hw]
+  exact Eq.symm (EuclideanDomain.eq_div_of_mul_eq_right hw key)
 
 /-- The nonzero right one-sided derivative limit of an immersion at an interior point. -/
 private lemma immersion_right_deriv_limit (γ : PiecewiseC1Immersion) {t₀ : ℝ}
@@ -222,9 +220,7 @@ lemma piecewiseC1Immersion_norm_strictMono_near_crossing
       rw [hsmul]; erw [real_inner_smul_left]; rw [real_inner_self_eq_norm_sq]
       field_simp
     rw [hLR_inner]
-    convert (continuous_inner (E := ℂ) (𝕜 := ℝ)).continuousAt.tendsto.comp
-        (hdir_R.prodMk_nhds htend_R) using 1
-    rfl
+    exact Tendsto.inner hdir_R htend_R
   have hinner_tend_L : Filter.Tendsto
       (fun t => inner ℝ (γ.toFun t - z₀) (deriv γ.toFun t) /
         ‖γ.toFun t - z₀‖) (𝓝[<] t₀) (𝓝 (-‖L_L‖)) := by
@@ -238,9 +234,7 @@ lemma piecewiseC1Immersion_norm_strictMono_near_crossing
         simp only [div_eq_mul_inv, Complex.real_smul, Complex.ofReal_neg, Complex.ofReal_inv]; ring
       rw [neg_div, hsmul]; erw [real_inner_smul_left]; rw [real_inner_self_eq_norm_sq]; field_simp
     rw [hLL_inner]
-    convert (continuous_inner (E := ℂ) (𝕜 := ℝ)).continuousAt.tendsto.comp
-        (hdir_L.prodMk_nhds htend_L) using 1
-    rfl
+    exact Tendsto.inner hdir_L htend_L
   -- Step 7: Eventually positive/negative inner product ratio near t₀
   have hev_R : ∀ᶠ t in 𝓝[>] t₀,
       0 < inner ℝ (γ.toFun t - z₀) (deriv γ.toFun t) / ‖γ.toFun t - z₀‖ :=

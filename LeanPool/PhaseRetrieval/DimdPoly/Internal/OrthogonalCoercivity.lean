@@ -133,8 +133,7 @@ private theorem orthogonalToPk_smul_right_wip
           = c * Finset.sum G.support (fun alpha => G alpha * star (F alpha)) := by
             rw [Finset.mul_sum]
             refine Finset.sum_congr rfl ?_
-            intro alpha halpha
-            ring
+            exact fun x a => mul_assoc c (G x) (star (F x))
       _ = 0 := by simp [horth]
 
 private theorem phi1D_eq_oneDimPhi_wip
@@ -170,16 +169,12 @@ private theorem phi1D_eq_oneDimPhi_wip
 private lemma continuous_Phi_wip
     {d : Nat} (kappa alpha : MultiIndex d) :
     Continuous (Phi kappa alpha) := by
-  unfold Phi phi1D complexHermite
-  continuity
+  exact continuous_Phi kappa alpha
 
 private lemma continuous_evalPkappa_wip
     {d : Nat} (kappa : MultiIndex d) (F : Pkappa d kappa) :
     Continuous (evalPkappa kappa F) := by
-  unfold evalPkappa
-  refine continuous_finsetSum _ ?_
-  intro alpha halpha
-  exact continuous_const.mul (continuous_Phi_wip kappa alpha)
+  exact continuous_evalPkappa kappa F
 
 private lemma integrable_oneDimPhi_cross_gaussian_wip
     (k m n : Nat) :
@@ -327,12 +322,7 @@ private theorem gaussianL2Norm_eq_lpNorm_wip
 private theorem memLp_two_evalPkappa_wip
     (hd : 0 < d) (kappa : MultiIndex d) (F : Pkappa d kappa) :
     MeasureTheory.MemLp (evalPkappa kappa F) 2 (gammaD d) := by
-  let _ := hd
-  have hmeas :
-      AEStronglyMeasurable (evalPkappa kappa F) (gammaD d) :=
-    (continuous_evalPkappa_wip kappa F).stronglyMeasurable.aestronglyMeasurable
-  refine (MeasureTheory.memLp_two_iff_integrable_sq_norm hmeas).2 ?_
-  simpa [pow_two, norm_mul] using (integrable_evalPkappa_cross_wip kappa F F).norm
+  exact memLp_two_evalPkappa hd kappa F
 
 private theorem evalPkappa_lpNorm_eq_norm_wip
     (hd : 0 < d) (kappa : MultiIndex d) (F : Pkappa d kappa) :
@@ -417,8 +407,7 @@ private theorem evalPkappa_add_apply_wip
   unfold evalPkappa
   rw [Finsupp.sum_add_index]
   · simp
-  · intro alpha halpha b1 b2
-    ring
+  · exact fun a a_1 b₁ b₂ => Semiring.right_distrib b₁ b₂ (Phi kappa a z)
 
 private lemma evalPkappa_pointwise_bound_wip
     {d : Nat} (kappa : MultiIndex d) (F G : Pkappa d kappa) (z : Cd d) :
@@ -512,7 +501,6 @@ theorem orthogonal_coercivity
   let delta : ℝ := min delta_high delta_low
   let C_F_perp : ℝ := max 2 delta⁻¹
   have hdelta_pos : 0 < delta := by
-    dsimp [delta]
     exact lt_min hdelta_high_pos hdelta_low_pos
   have hC_F_perp_pos : 0 < C_F_perp := by
     dsimp [C_F_perp]
@@ -544,11 +532,9 @@ theorem orthogonal_coercivity
     by_cases hlt4 : t < 4
     · by_cases hsmall : defectPk kappa F G ≤ delta * t
       · have hdelta_le_high : delta ≤ delta_high := by
-          dsimp [delta]
-          exact min_le_left _ _
+          exact Std.min_le_left
         have hdelta_le_low : delta ≤ delta_low := by
-          dsimp [delta]
-          exact min_le_right _ _
+          exact Std.min_le_right
         have hdefect_high : defect F (t • H) ≤ delta_high * t := by
           have hstep : defectPk kappa F G ≤ delta_high * t := by
             refine le_trans hsmall ?_
@@ -571,8 +557,7 @@ theorem orthogonal_coercivity
           simp_all
         linarith
       · have hdelta_inv_le : delta⁻¹ ≤ C_F_perp := by
-          dsimp [C_F_perp]
-          exact le_max_right _ _
+          exact Std.right_le_max
         have hstrict : delta * t < defectPk kappa F G := lt_of_not_ge hsmall
         have ht_le_delta : t ≤ delta⁻¹ * defectPk kappa F G := by
           have haux : t ≤ defectPk kappa F G / delta := by
@@ -588,8 +573,7 @@ theorem orthogonal_coercivity
       have htwo_defect : t ≤ 2 * defectPk kappa F G := by
         nlinarith [defect_nonneg_wip hd F G]
       have htwo_le_C : 2 ≤ C_F_perp := by
-        dsimp [C_F_perp]
-        exact le_max_left _ _
+        exact Std.left_le_max
       calc
         ‖G‖ = t := rfl
         _ ≤ 2 * defectPk kappa F G := htwo_defect

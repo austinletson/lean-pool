@@ -394,8 +394,7 @@ private lemma tsum_arrivalMass_eq_initial_add_parentSum {x Y : ℕ} (chain : Mar
               else 0) := by
             congr 1
             apply tsum_congr
-            intro k
-            exact arrivalMass_succ_sum_parents chain hn
+            exact fun b => arrivalMass_succ_sum_parents chain hn
     _ = initialMass x Y n +
           n.divisors.sum (fun m =>
             ∑' k : ℕ,
@@ -552,9 +551,7 @@ private theorem tsum_indicator_ofReal_visitProbability_eq_visitMass {x Y : ℕ}
           rw [ENNReal.tsum_comm]
     _ = ∑' k : ℕ, firstHitMassAtStep chain A k := by
           apply tsum_congr
-          intro k
-          simpa using
-            (PrimitiveSet.firstHitMassAtStep_eq_tsum_indicator_arrivalMass chain hA hY k).symm
+          exact fun b => Eq.symm (firstHitMassAtStep_eq_tsum_indicator_arrivalMass chain hA hY b)
     _ = visitMass chain A := by rw [visitMass]
 
 /--
@@ -571,8 +568,7 @@ theorem summable_indicator_visitProbability_and_tsum_le_one_of_visitMass_le_one
     A.indicator (fun n => ENNReal.ofReal (chain.visitProbability n)) n
   have hmass :
       (∑' n : ℕ, f n) = visitMass chain A := by
-    simpa [f] using
-      PrimitiveSet.tsum_indicator_ofReal_visitProbability_eq_visitMass chain hA hAx hx hY hB
+    exact tsum_indicator_ofReal_visitProbability_eq_visitMass chain hA hAx hx hY hB
   have htop :
       (∑' n : ℕ, f n) ≠ ⊤ := by
     rw [hmass]
@@ -586,8 +582,7 @@ theorem summable_indicator_visitProbability_and_tsum_le_one_of_visitMass_le_one
       · simp [f, hnA, ENNReal.toReal_ofReal, visitProbability_nonneg chain hx hB (hAx hnA)]
       · simp [f, hnA]
     · rw [← hmass, ENNReal.tsum_toReal_eq]
-      intro n
-      by_cases hnA : n ∈ A <;> simp [f, hnA]
+      exact fun a => ENNReal.ne_top_of_tsum_ne_top htop a
   refine ⟨hseries.summable, ?_⟩
   rw [hseries.tsum_eq]
   exact ENNReal.toReal_le_of_le_ofReal zero_le_one (by simpa using hVisitMass)
@@ -641,8 +636,7 @@ private lemma firstHitMassAtStep_succ_add_tsum_survivingArrivalMass_le {x Y : �
           refine ENNReal.tsum_le_tsum ?_
           intro m
           by_cases hm : x ≤ m
-          · gcongr
-            exact hkernel hm
+          · exact mul_le_mul_right (hkernel hm) (survivingArrivalMass chain A k m)
           · rw [survivingArrivalMass_eq_zero_of_lt chain A hx hY k (lt_of_not_ge hm)]
             simp
     _ = ∑' m : ℕ, survivingArrivalMass chain A k m := by simp

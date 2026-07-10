@@ -263,17 +263,11 @@ lemma quote_func {k} (f : L.Func k) (v : Fin k → SyntacticSemiterm L n) :
   quote_mul V t u
 
 @[simp] lemma quote_absolute (t : SyntacticSemiterm L n) : ((⌜t⌝ : ℕ) : V) = ⌜t⌝ := by
-  induction t <;> simp [quote_bvar, quote_fvar, quote_func, qqBvar, qqFvar, qqFunc,
-    nat_cast_pair, *];
+  exact coe_quote t;
     rfl
 
 lemma quote_eq_encode (t : SyntacticSemiterm L n) : ⌜t⌝ = Encodable.encode t := by
-  induction t
-  case bvar z => simp [encode_eq_toNat, toNat, quote_bvar, qqBvar, nat_pair_eq]
-  case fvar z => simp [encode_eq_toNat, toNat, quote_fvar, qqFvar, nat_pair_eq]
-  case func k f v ih =>
-    simp [encode_eq_toNat, toNat, quote_func, qqFunc, nat_pair_eq, quote_func_def,
-      quote_eq_vecToNat, ih]
+  exact Arith.quote_eq_encode t
 
 end Semiterm
 end FirstOrder
@@ -600,9 +594,7 @@ lemma quote_substs' {n m} (w : Fin n → Semiterm L Empty m) (σ : Semisentence 
   symm
   rw [quote_sentence_eq_quote_emb, this, ←quote_substs, quote_sentence_eq_quote_emb]
   congr 1
-  simp only [← TransitiveRewriting.comp_app]; congr 2;
-  ext x <;> simp only [Rew.comp_app, Rew.emb_bvar, Rew.substs_bvar, Rew.substs_fvar, w']
-  contradiction
+  exact Eq.symm (coe_substitute_eq_substitute_coe σ w)
 
 @[simp] lemma free_quote (φ : SyntacticSemiformula L 1) :
     ⌜Rewriting.free φ⌝ = (L.codeIn V).free ⌜φ⌝ := by

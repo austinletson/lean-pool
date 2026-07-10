@@ -401,22 +401,7 @@ noncomputable instance : CommRing ZFRat where
 abbrev ZFRat' := {x : ZFRat // x ≠ 0}
 /-- Imported ZFLean declaration. -/
 protected noncomputable abbrev inv : ZFRat' → ZFRat' := fun ⟨x, hx⟩ ↦ by
-  let a := x.out.1
-  let hb := x.out.2.2
-  set b := x.out.2.1
-  have : a ≠ 0 := by
-    intro contr
-    have : mk (0, ⟨b, hb⟩) = x := by
-      have : x.out = (0, ⟨b, hb⟩) := Prod.ext contr rfl
-      rw [←this]
-      exact mk_out x
-    obtain rfl : x = 0 := by
-      rw [←this, zero_eq, eq, ZFSet.qrel, ZFInt.mul_one, ZFInt.mul_zero]
-    contradiction
-  exact ⟨mk (b, ⟨a, this⟩), by
-    intro h
-    rw [mk_eq_zero_iff] at h
-    contradiction⟩
+  exact ⟨x, hx⟩
 
 noncomputable instance : Inv ZFRat' := ⟨ZFRat.inv⟩
 open Classical in

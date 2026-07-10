@@ -124,11 +124,7 @@ instance _root_.LO.Modal.Kripke.TransitiveIrreflexiveFiniteFrameClass.DefinedByL
   · rintro ⟨hTrans, hIrrefl⟩ φ ⟨_, rfl⟩;
     apply validate_L_of_trans_and_cwf;
     · assumption;
-    · apply Finite.converseWellFounded_of_trans_irrefl'
-      · exact F.world_finite;
-      · intro _ _ _
-        exact hTrans.trans _ _ _
-      · exact hIrrefl.irrefl;
+    · exact Finite.converseWellFounded_of_trans_irrefl
   · intro h;
     simp only [Set.mem_singleton_iff, forall_eq] at h;
     refine ⟨?_, ?_⟩;

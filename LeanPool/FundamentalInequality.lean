@@ -116,9 +116,7 @@ lemma Valuation.sum_eq_zero_implies_val_eq
   have h_val := Valuation.map_sum_eq_of_lt vL hj h_strict
   rw [h_sum, Valuation.map_zero] at h_val
   have h_val_nz : vL (f j) ≠ 0 := by
-    intro h_zero
-    apply h_nz j
-    exact vL.zero_iff.mp h_zero
+    exact (ne_zero_iff vL).mpr (h_nz j)
   exact h_val_nz h_val.symm
 
 /-- Elements with valuations in strictly distinct cosets modulo v(K×) are linearly independent
@@ -137,10 +135,7 @@ lemma Valuation.linearIndependent_of_val_distinct_coset
   classical
   set s_nz := s.filter (fun i => g i ≠ 0) with hs_nz
   have h_snz_nonempty : s_nz.Nonempty := by
-    obtain ⟨x, hx, hgx⟩ := h_not_zero
-    use x
-    rw [hs_nz, Finset.mem_filter]
-    exact ⟨hx, hgx⟩
+    exact Finset.filter_nonempty_iff.mpr h_not_zero
   haveI : Nonempty s_nz := h_snz_nonempty.to_subtype
   let f : s_nz → L := fun ⟨i, _⟩ => (algebraMap K L (g i)) * z i
   have hf_sum : ∑ i : s_nz, f i = 0 := by
@@ -159,8 +154,7 @@ lemma Valuation.linearIndependent_of_val_distinct_coset
     rw [h2]
     have h3 : ∑ i ∈ s, algebraMap K L (g i) * z i = ∑ i ∈ s, g i • z i := by
       apply Finset.sum_congr rfl
-      intro i _
-      exact (Algebra.smul_def (g i) (z i)).symm
+      exact fun x a => Eq.symm (Algebra.smul_def (g x) (z x))
     rw [h3]
     exact hg
   have hf_nz : ∀ i : s_nz, f i ≠ 0 := by
@@ -194,8 +188,7 @@ lemma Valuation.linearIndependent_of_val_no_cancel
   have hd_sum : ∑ j, algebraMap K L (d j) * u j = 0 := by
     have h_smul : ∑ j, algebraMap K L (d j) * u j = ∑ j, d j • u j := by
       apply Finset.sum_congr rfl
-      intro j _
-      exact (Algebra.smul_def (d j) (u j)).symm
+      exact fun x a => Eq.symm (Algebra.smul_def (d x) (u x))
     rw [h_smul, hd]
   rw [hd_sum, Valuation.map_zero] at hj0_eq
   obtain ⟨j_nz, hj_nz_d⟩ := h_not_zero
@@ -235,8 +228,7 @@ lemma Valuation.valuation_independence
     have h1 : ∑ (ij : I × J), c ij • (z ij.1 * u ij.2) =
         ∑ (ij : I × J), algebraMap K L (c ij) * (z ij.1 * u ij.2) := by
       apply Finset.sum_congr rfl
-      intro ij _
-      exact Algebra.smul_def (c ij) (z ij.1 * u ij.2)
+      exact fun x a => Algebra.smul_def (c x) (z x.1 * u x.2)
     rw [h1] at hc
     have h2 : ∑ (ij : I × J), algebraMap K L (c ij) * (z ij.1 * u ij.2) =
         ∑ i, ∑ j, algebraMap K L (c (i, j)) * (z i * u j) := by
@@ -248,8 +240,7 @@ lemma Valuation.valuation_independence
       have h4 : ∑ j, algebraMap K L (c (i, j)) * (z i * u j) =
           ∑ j, z i * (algebraMap K L (c (i, j)) * u j) := by
         apply Finset.sum_congr rfl
-        intro j _
-        ring
+        exact fun x a => Eq.symm (Algebra.left_comm (z i) (c (i, x)) (u x))
       rw [h4, ← Finset.mul_sum]
     rw [h3] at hc
     exact hc
@@ -327,8 +318,7 @@ lemma Valuation.valuation_independence
     have h_g_zero : g i1 = 0 := vL.zero_iff.mp h_v_zero
     have h_f_nz := hf_nz ⟨i1, hi1⟩
     have h_f_eq : f ⟨i1, hi1⟩ = 0 := by
-      change z i1 * g i1 = 0
-      rw [h_g_zero, mul_zero]
+      exact (mul_eq_zero_iff_left (hz_nz i1)).mpr h_g_zero
     exact h_f_nz h_f_eq
   have h_c2_nz : c (i2, j2_0) ≠ 0 := by
     intro hc_zero
@@ -337,8 +327,7 @@ lemma Valuation.valuation_independence
     have h_g_zero : g i2 = 0 := vL.zero_iff.mp h_v_zero
     have h_f_nz := hf_nz ⟨i2, hi2⟩
     have h_f_eq : f ⟨i2, hi2⟩ = 0 := by
-      change z i2 * g i2 = 0
-      rw [h_g_zero, mul_zero]
+      exact (mul_eq_zero_iff_left (hz_nz i2)).mpr h_g_zero
     exact h_f_nz h_f_eq
   have hval' : vL (algebraMap K L (c (i1, j1_0)) * z i1) =
       vL (algebraMap K L (c (i2, j2_0)) * z i2) := by
@@ -461,8 +450,7 @@ lemma Valuation.exists_max_val_no_cancel
       exact one_ne_zero h_j0_zero
     have h_sum_unit : IsUnit (∑ j : J, c_sub j * u_sub j) := by
       rw [← IsLocalRing.residue_ne_zero_iff_isUnit, IsLocalRing.residue_def]
-      rw [h_res_sum]
-      exact h_lin_comb_nz
+      exact Ne.symm (Eq.mpr_not (congrArg (Eq 0) h_res_sum) (id (Ne.symm h_lin_comb_nz)))
     rw [h_sum_eq_coe]
     have h_val_sub := ValuationSubring.valuation_eq_one_iff vL.valuationSubring
         (∑ j : J, c_sub j * u_sub j)
@@ -546,11 +534,9 @@ theorem Valuation.fundamentalInequality [FiniteDimensional K L] :
     have h_vj : vL (z j) = ((z_sub j).val : ΓL) := hz j
     rw [h_vi, h_vj] at h_eq
     have h_vc : vL (algebraMap K L c) ≠ 0 := by
-      intro h
-      exact hc_alg_nz (vL.zero_iff.mp h)
+      exact (ne_zero_iff vL).mpr hc_alg_nz
     have h_vd : vL (algebraMap K L d) ≠ 0 := by
-      intro h
-      exact hd_alg_nz (vL.zero_iff.mp h)
+      exact (ne_zero_iff vL).mpr hd_alg_nz
     have h_c_unit : IsUnit (vL (algebraMap K L c)) := IsUnit.mk0 _ h_vc
     have h_d_unit : IsUnit (vL (algebraMap K L d)) := IsUnit.mk0 _ h_vd
     have h_eq_unit : h_c_unit.unit * (z_sub i).val = h_d_unit.unit * (z_sub j).val := by
@@ -613,7 +599,6 @@ theorem Valuation.fundamentalInequality [FiniteDimensional K L] :
   have h_indep := Valuation.valuation_independence vL z hz_nz hz_dist u hu_val_one hu_no_cancel
   have h_card := LinearIndependent.fintype_card_le_finrank h_indep
   have h_card_prod : Fintype.card (Fin e × Fin f) = e * f := by simp
-  rw [h_card_prod] at h_card
-  exact h_card
+  exact le_of_eq_of_le (id (Eq.symm h_card_prod)) h_card
 
 end FundamentalInequality

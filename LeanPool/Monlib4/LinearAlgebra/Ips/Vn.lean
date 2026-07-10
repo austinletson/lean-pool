@@ -25,18 +25,7 @@ variable {H : Type _} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complete
 
 lemma star_commutant_iff {M : VonNeumannAlgebra H} {e : H →L[ℂ] H} :
   star e ∈ M.commutant ↔ e ∈ M.commutant := by
-  simp only [mem_commutant_iff]
-  constructor
-  · rintro h g hg
-    have : star g ∈ M := by aesop
-    specialize h (star g) this
-    simp_rw [← star_mul, star_inj] at h
-    exact h.symm
-  · rintro h g hg
-    have : star g ∈ M := by aesop
-    specialize h (star g) this
-    rw [← star_star g]
-    simp_rw [← star_mul, h]
+  exact star_mem_iff
 
 /-- a continuous linear map `e` is in the von Neumann algebra `M`
 if and only if `e.ker` and `e.range` are `M'`

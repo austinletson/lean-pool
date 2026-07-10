@@ -35,9 +35,7 @@ abbrev Mask := Distributed2Coloring.LowerBound.Mask
 abbrev DirIdx := N1000000StructureConstants.DirIdx
 
 instance : DecidablePred IsPartialPermMask := by
-  intro m
-  unfold IsPartialPermMask
-  infer_instance
+  exact Classical.decPred IsPartialPermMask
 
 /-- Imported auxiliary declaration for the 2-coloring one-round formalization. -/
 def partialPermMasks : Finset Mask :=

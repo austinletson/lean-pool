@@ -88,8 +88,7 @@ theorem E₂_holo' : MDiff E₂ := by
   have hη : DifferentiableOn ℂ η {z : ℂ | 0 < z.im} := by
     intro z hz
     have hz' : DifferentiableAt ℂ η z := by
-      simpa [ModularForm.eta] using
-        (ModularForm.differentiableAt_eta_of_mem_upperHalfPlaneSet (z := z) hz)
+      exact ModularForm.differentiableAt_eta_of_mem_upperHalfPlaneSet hz
     exact hz'.differentiableWithinAt
   have hlog : DifferentiableOn ℂ (logDeriv η) {z | 0 < z.im} :=
     (hη.deriv isOpen_upperHalfPlaneSet).div hη fun z hz => by
@@ -170,9 +169,7 @@ lemma MDifferentiable_div {F G : ℍ → ℂ}
     MDiff (fun z => F z / G z) := by
   intro τ
   suffices h : DifferentiableAt ℂ ((fun z => F z / G z) ∘ ofComplex) ↑τ by
-    have h_eq : ((fun z => F z / G z) ∘ ofComplex) ∘ UpperHalfPlane.coe = fun z => F z / G z := by
-      ext x; simp [Function.comp, ofComplex_apply]
-    rw [← h_eq]; exact DifferentiableAt_MDifferentiableAt h
+    exact UpperHalfPlane.mdifferentiableAt_iff.mpr h
   have h_eq : (fun z => F z / G z) ∘ ofComplex =ᶠ[nhds ↑τ]
       (F ∘ ofComplex) / (G ∘ ofComplex) := by
     filter_upwards [isOpen_upperHalfPlaneSet.mem_nhds τ.2] with w hw

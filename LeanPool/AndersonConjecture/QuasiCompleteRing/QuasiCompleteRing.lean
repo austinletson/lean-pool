@@ -61,8 +61,7 @@ lemma Mhat_isMaximal
     Ideal.comap_isMaximal_of_surjective _ heval_surj
   have hcomap_bot : Ideal.comap (AdicCompletion.evalₐ M 1).toRingHom ⊥ =
       RingHom.ker (AdicCompletion.evalₐ M 1).toRingHom := by
-    ext x
-    simp [RingHom.mem_ker, Ideal.mem_comap]
+    exact Eq.symm (RingHom.ker_eq_comap_bot (AdicCompletion.evalₐ M 1).toRingHom)
   rw [hcomap_bot] at hker_max
   -- ker(evalₐ 1) = M̂
   have hker_eq : RingHom.ker (AdicCompletion.evalₐ M 1).toRingHom = Mhat := by
@@ -152,9 +151,7 @@ lemma wqc_implies_ideals_meet
     rwa [Ideal.map_pow] at this
   have hdiff_Mk : a - f r ∈ (Mhat ^ k : Ideal (AdicCompletion M R)) :=
     Ideal.pow_le_pow_right (le_max_right s k) hdiff
-  have : a = f r + (a - f r) := by ring
-  rw [this]
-  exact Ideal.add_mem _ hfr_Mk hdiff_Mk
+  exact (Submodule.sub_mem_iff_left (Mhat ^ k) hfr_Mk).mp hdiff_Mk
 
 lemma not_wqc_exists_maximal_zero_contraction
     (R : Type*) [CommRing R] [IsLocalRing R] [IsNoetherianRing R] [IsDomain R]
@@ -280,8 +277,7 @@ theorem isWeaklyQuasiComplete_iff_primes_meet
         P.IsPrime → P ≠ ⊥ →
         Ideal.comap (algebraMap R (AdicCompletion (IsLocalRing.maximalIdeal R) R)) P ≠ ⊥ := by
   constructor
-  · intro hwqc P _ hPne
-    exact wqc_implies_ideals_meet R hwqc P hPne
+  · exact fun a P a_1 a_2 => wqc_implies_ideals_meet R a P a_2
   · -- Contrapositive: ¬WQC gives a nonzero prime with zero contraction
     intro hprimes
     by_contra hnwqc
@@ -477,8 +473,7 @@ theorem dim1_wqc_iff_analyticallyIrreducible
   · exact IsWeaklyQuasiComplete.isAnalyticallyIrreducible R
   · intro hAI
     apply (isWeaklyQuasiComplete_iff_primes_meet R).mpr
-    intro P hPprime hPne
-    exact dim1_ai_nonzero_prime_contracts R hdim hAI P hPprime hPne
+    exact fun P a a_1 => dim1_ai_nonzero_prime_contracts R hdim hAI P a a_1
 
 theorem dim1_qc_iff_wqc
     (R : Type*) [CommRing R] [IsLocalRing R] [IsNoetherianRing R] [IsDomain R]
@@ -509,9 +504,7 @@ theorem dim1_qc_iff_wqc
         have h1 : (1 : WithBot ℕ∞) ≤ ringKrullDim (R ⧸ Ideal.span {r}) :=
           Order.succ_le_of_lt hc
         have h3 : (1 : WithBot ℕ∞) + 1 ≤ (1 : WithBot ℕ∞) := by
-          have h2 : (1 : WithBot ℕ∞) + 1 ≤ ringKrullDim (R ⧸ Ideal.span {r}) + 1 :=
-            add_le_add_left h1 1
-          exact h2.trans hdim_span
+          exact add_le_of_add_le_right hdim_span h1
         norm_num at h3
       have hdim_I : ringKrullDim (R ⧸ I) ≤ 0 :=
         (ringKrullDim_le_of_surjective (Ideal.Quotient.factor hle_span)
@@ -543,8 +536,7 @@ theorem dim1_qc_iff_wqc
           Ideal.Quotient.mk_surjective).mp hyn
         have h_diff : z - y ∈ I := Ideal.Quotient.eq.mp hzy
         have h_diff_An : z - y ∈ A n := iInf_le (A ·) n h_diff
-        have := (A n).sub_mem hz h_diff_An
-        rwa [sub_sub_cancel] at this
+        exact (Submodule.sub_mem_iff_right (A n) hz).mp h_diff_An
       have hBN_eq : B N = ⨅ n, B n := le_antisymm
         (le_iInf fun n => by
           rcases le_or_gt N n with hle | hlt
@@ -575,8 +567,7 @@ theorem isQuasiComplete_iff_quotients_wqc
           IsLocalRing.of_surjective' (Ideal.Quotient.mk I) Ideal.Quotient.mk_surjective
         IsWeaklyQuasiComplete (R ⧸ I) := by
   constructor
-  · intro hqc I hI
-    exact IsQuasiComplete.quotient_isWeaklyQuasiComplete R hqc I hI
+  · exact fun a I hI => IsQuasiComplete.quotient_isWeaklyQuasiComplete R a I hI
   · intro hall A hA k
     set I := ⨅ n, A n
     by_cases hI_top : I = ⊤
@@ -611,8 +602,7 @@ theorem isQuasiComplete_iff_quotients_wqc
         intro n
         obtain ⟨y, hy, hry⟩ := (Ideal.mem_map_iff_of_surjective mk hmk_surj).mp (hx n)
         have h_yr : y - r ∈ A n := iInf_le A n (Ideal.Quotient.eq.mp hry)
-        have := (A n).sub_mem hy h_yr
-        rwa [sub_sub_cancel] at this
+        exact (Submodule.sub_mem_iff_right (A n) hy).mp h_yr
       obtain ⟨s, hs⟩ := hall I hI_top B hB_anti hBinf k
       refine ⟨s, fun x hx => ?_⟩
       have hmkx : mk x ∈ (IsLocalRing.maximalIdeal (R ⧸ I)) ^ k :=
@@ -620,6 +610,5 @@ theorem isQuasiComplete_iff_quotients_wqc
       rw [hM_eq, ← Ideal.map_pow, Ideal.mem_map_iff_of_surjective mk hmk_surj] at hmkx
       obtain ⟨y, hy, hxy⟩ := hmkx
       have h_mem_I : x - y ∈ I := by
-        have := I.neg_mem (Ideal.Quotient.eq.mp hxy)
-        rwa [neg_sub] at this
+        exact (Ideal.Quotient.mk_eq_mk_iff_sub_mem x y).mp (id (Eq.symm hxy))
       exact Submodule.mem_sup.mpr ⟨x - y, h_mem_I, y, hy, sub_add_cancel x y⟩

@@ -191,10 +191,7 @@ lemma _root_.Dipath.Dihomotopy.hcomp_first_case (F : Dihomotopy p₀ q₀) (G : 
   set p := Dipath.dipathProduct γ₁ (Dipath.stretchUp γ₂ ht₁)
   set p' := p.map (F.toDirectedMap)
   have h : ∀ (s t : I), (h : (t : ℝ) ≤ 2⁻¹) → Γ (s, t) = F (s, ⟨2 * (t : ℝ), double_mem_I h⟩) := by
-    intros s t ht
-    rw [Path.Homotopy.hcomp_apply (dihomToHom F) (dihomToHom G) (s, t)]
-    simp [ht]
-    rfl
+    exact fun s t h => hcomp_apply_left F G s t h
   have ht₀ : (t₀ : ℝ) ≤ 2⁻¹ := by
     have h_le : t₀ ≤ t₁ := directed_path_source_le_target γ_dipath.2
     exact le_trans (Subtype.coe_le_coe.mpr h_le) ht₁
@@ -222,12 +219,7 @@ lemma _root_.Dipath.Dihomotopy.hcomp_second_case (F : Dihomotopy p₀ q₀) (G :
   set p' := p.map G.toDirectedMap
   have h : ∀ (s t : I), (h : (2⁻¹ : ℝ) ≤ ↑t) →
     Γ (s, t) = G (s, ⟨2 * (t : ℝ) - 1, double_sub_one_mem_I h⟩) := by
-    intros s t ht
-    rw [Path.Homotopy.hcomp_apply (dihomToHom F) (dihomToHom G) (s, t)]
-    split_ifs with ht'
-    · simp at ht'
-      simp [show (t : ℝ) = 2⁻¹ by linarith]
-    · rfl
+    exact fun s t h => hcomp_apply_right F G s t h
   have ht₁ : 2⁻¹ ≤ (t₁ : ℝ) := by
     have h_le : t₀ ≤ t₁ := directed_path_source_le_target γ_dipath.2
     exact le_trans ht₀ (Subtype.coe_le_coe.mpr h_le)
@@ -336,9 +328,7 @@ def _root_.Dipath.Dihomotopy.hcomp (F : Dihomotopy p₀ q₀) (G : Dihomotopy p�
                 then Fₕ.eval (a₂ x).1 ⟨2 * ((a₂ x).2 : ℝ),
                   by { apply double_mem_I; convert h using 1; norm_num }⟩
                 else Gₕ.eval (a₂ x).1 ⟨2 * ((a₂ x).2 : ℝ) - 1,
-                  by { apply double_sub_one_mem_I (le_of_lt _)
-                       convert h using 1
-                       norm_num }⟩
+                  by { exact double_sub_one_mem_I this⟩
               := rfl
         _ = (Fₕ.hcomp Gₕ) (a₂ x)
               := (Path.Homotopy.hcomp_apply Fₕ Gₕ (a₂ x)).symm
@@ -616,12 +606,7 @@ lemma _root_.Dipath.Dihomotopic.hcomp {p₀ p₁ : Dipath x y} {q₀ q₁ : Dipa
         hq
     )
     (fun p => by
-      exact Relation.EqvGen.rec
-          (fun _ _ h => hcomp_aid_right p (Relation.EqvGen.rel _ _ h))
-          (fun q => Relation.EqvGen.refl (p.trans q))
-          (fun _ _ _ h => Relation.EqvGen.symm _ _ h)
-          (fun _ _ _ _ _ h₁ h₂ => Relation.EqvGen.trans _ _ _ h₁ h₂)
-        hq
+      exact hcomp_aid_right p hq
     )
     (fun p₀ p₁ hp₀_p₁ _ => by
       have hp₁_p₀ := Relation.EqvGen.symm _ _ hp₀_p₁

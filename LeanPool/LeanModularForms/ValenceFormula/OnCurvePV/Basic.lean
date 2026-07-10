@@ -177,7 +177,6 @@ lemma cpv_extend_to_full_interval (H : ℝ) (hH : Real.sqrt 3 / 2 < H)
         Set.uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)]
       exact Set.Icc_subset_Icc_right hb')
   apply cpv_concat _ _ 0 b' 5 s h_cpv_0b' h_cpv_right (le_trans ha' (le_of_lt hab')) hb'
-  intro ε hε
-  exact fdBoundary_H_cutout_ii H hH s ε hε
+  exact fun ε a => fdBoundary_H_cutout_ii H hH s ε a
 
 end

@@ -241,8 +241,7 @@ private lemma cpv_integrand_intervalIntegrable_arc (S : Finset UpperHalfPlane)
   have h_int_union : MeasureTheory.IntegrableOn F (Set.uIoc (1 : ℝ) 3) := by
     have := h_int_K.union h_int_compl
     rwa [Set.union_sdiff_cancel (fun t ht => ht.1)] at this
-  rw [intervalIntegrable_iff_integrableOn_Ioc_of_le (by norm_num : (1 : ℝ) ≤ 3)]
-  rwa [Set.uIoc_of_le (by norm_num : (1 : ℝ) ≤ 3)] at h_int_union
+  exact intervalIntegrable_iff.mpr h_int_union
 
 /-! ### Arc preimage subsingleton -/
 
@@ -495,8 +494,7 @@ private lemma arc_re_strictly_between (H : ℝ) (t : ℝ) (ht : t ∈ Set.Ioo (1
   constructor
   · have h1 := Real.strictAntiOn_cos hθ_Icc h23_Icc hθ_hi
     have h2 : Real.cos (2 * Real.pi / 3) = -1 / 2 := by
-      rw [show 2 * Real.pi / 3 = Real.pi - Real.pi / 3 from by ring,
-          Real.cos_pi_sub, Real.cos_pi_div_three]; ring
+      exact cos_two_pi_div_three
     linarith
   · have h1 := Real.strictAntiOn_cos hpi3_Icc hθ_Icc hθ_lo
     rw [Real.cos_pi_div_three] at h1; linarith

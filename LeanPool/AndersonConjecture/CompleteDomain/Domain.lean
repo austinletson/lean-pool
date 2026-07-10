@@ -128,12 +128,7 @@ lemma ψMap_prod_eq (d : Fin 3 →₀ ℕ) :
     rw [Finsupp.prod]
     rw [Finset.prod_subset (Finset.subset_univ _) (fun i _ hi => by
       simp_all)]
-    have huniv : (Finset.univ : Finset (Fin 3)) = {0, 1, 2} := by decide
-    rw [huniv]
-    rw [Finset.prod_insert (show (0 : Fin 3) ∉ ({1, 2} : Finset (Fin 3)) by decide)]
-    rw [Finset.prod_insert (show (1 : Fin 3) ∉ ({2} : Finset (Fin 3)) by decide)]
-    rw [Finset.prod_singleton]
-    ring
+    exact Fin.prod_univ_three fun i => ψMap i ^ d i
   rw [hprod]
   change ((MvPowerSeries.X 0 * MvPowerSeries.X 1 : MvPowerSeries (Fin 2) ℂ) ^ d 0 *
     ((MvPowerSeries.X 0) ^ 2) ^ d 1 *
@@ -264,19 +259,16 @@ lemma ψBar_injective : Function.Injective ψBar := by
     · exact MvPowerSeries.X_pow_eq 0 2
     · rw [show (MvPowerSeries.X (1 : Fin 3) : MvPowerSeries (Fin 3) ℂ) =
           MvPowerSeries.monomial (Finsupp.single 1 1) 1 from by
-        rw [← MvPowerSeries.X_pow_eq (1 : Fin 3) 1]
-        simp,
+        exact X_def 1,
         show (MvPowerSeries.X (2 : Fin 3) : MvPowerSeries (Fin 3) ℂ) =
           MvPowerSeries.monomial (Finsupp.single 2 1) 1 from by
-        rw [← MvPowerSeries.X_pow_eq (2 : Fin 3) 1]
-        simp,
+        exact X_def 2,
         MvPowerSeries.monomial_mul_monomial, one_mul]
   ext m
   rw [hgen_eq, sub_mul]
   simp only [map_sub, MvPowerSeries.coeff_monomial_mul, one_mul]
   have hd₀_iff : d₀ ≤ m ↔ 2 ≤ m 0 := by
-    simp only [d₀, Finsupp.le_iff, Finsupp.support_single _ (by omega : (2 : ℕ) ≠ 0),
-      Finset.mem_singleton, forall_eq, Finsupp.single_eq_same]
+    exact Finsupp.single_le_iff
   have hd₁₂_iff : d₁₂ ≤ m ↔ 1 ≤ m 1 ∧ 1 ≤ m 2 := by
     constructor
     · intro h

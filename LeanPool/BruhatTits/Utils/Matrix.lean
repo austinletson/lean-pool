@@ -444,8 +444,7 @@ lemma toBasis_coe_apply (g : GL ι K) (i : ι) : g.toBasis i = (fun j ↦ g j i)
   have h : Pi.single i 1 = g.inv *ᵥ (fun j ↦ g j i) := by
     simp only [Units.inv_eq_val_inv, coe_units_inv]
     rw [show (fun j ↦ g j i) = g.val *ᵥ Pi.single i 1 from by ext; simp]
-    have : Nonempty ι := ⟨ i ⟩
-    rw [mulVec_mulVec, coe_inv_mul, one_mulVec]
+    exact Eq.symm (inv_mulVec_eq_vec rfl)
   rw [h]
   erw [← toLin_apply g]
   simp_all
@@ -520,8 +519,7 @@ open Pointwise in
 lemma diagonal_smul (f : ι → Kˣ) (M : Submodule R (ι → K)) (hf : ∀ i j, f i = f j) (i : ι) :
     GL.diagonal f • M = f i • M := by
   have : f = fun _ ↦ f i := by
-    ext : 1
-    apply hf
+    exact funext fun x => hf x i
   rw [this, SetLike.ext'_iff]
   ext x
   simp [mem_smul, Set.mem_smul_set, Units.smul_def]

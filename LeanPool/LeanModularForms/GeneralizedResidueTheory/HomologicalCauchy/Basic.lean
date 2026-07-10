@@ -220,10 +220,7 @@ theorem integrand_intervalIntegrable_of_avoids (γ : PiecewiseC1Immersion)
   · intro t ht
     have h1 : ‖(γ.toFun t - z)⁻¹‖ ≤ M_inv := by
       simpa only [Real.norm_eq_abs, abs_norm] using hM_inv t ht
-    calc ‖(γ.toFun t - z)⁻¹ * deriv γ.toFun t‖
-        = ‖(γ.toFun t - z)⁻¹‖ * ‖deriv γ.toFun t‖ := norm_mul _ _
-      _ ≤ M_inv * M_d :=
-          mul_le_mul h1 (hM_d t ht) (norm_nonneg _) (le_trans (norm_nonneg _) h1)
+    exact norm_mul_le_of_le h1 (hM_d t ht)
 
 /-- Every closed curve in a convex open set is null-homologous.
 

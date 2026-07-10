@@ -227,11 +227,7 @@ end WinningPrefix
 variable (G p)
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
 noncomputable def winAsap : PreStrategy G.tree p := by
-  classical
-  exact fun x hp ↦
-    if h : WinningPrefix G p x.val then
-      {ExtensionsAt.drop.symm <| h.strat (Tree.drop _ h.num x) (by synthIsPosition)}
-    else Set.univ
+  exact G.defensivePre p
 lemma mem_winAsap_subtree_of_no_prefix
   {x} {a} (h : ¬ WinningPrefix G p x) (ha : x ++ [a] ∈ G.tree) :
   x ++ [a] ∈ (winAsap G p).subtree := by

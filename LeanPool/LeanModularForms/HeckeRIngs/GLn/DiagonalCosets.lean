@@ -337,8 +337,7 @@ theorem exists_diagonal_of_posdet (A : Matrix (Fin n) (Fin n) ℤ) (hdet : 0 < A
   have hss : Matrix.diagonal sv * Matrix.diagonal sv = 1 := by
     simp_all
   have hs_det_unit : IsUnit (Matrix.diagonal sv).det := by
-    rw [Matrix.det_diagonal]; exact IsUnit.of_mul_eq_one _
-      (by rw [← Finset.prod_mul_distrib]; exact Finset.prod_eq_one (fun i _ => hsv_sq i))
+    exact isUnit_det_of_left_inverse hss
   set L_mat := Matrix.diagonal sv * P_mat⁻¹ with hL_def
   have hL_eq : L_mat * A * Q_mat = Matrix.diagonal d := by
     rw [hL_def, show Matrix.diagonal sv * P_mat⁻¹ * A * Q_mat =

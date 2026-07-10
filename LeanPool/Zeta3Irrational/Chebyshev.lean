@@ -175,9 +175,7 @@ private lemma floor_div_bounds {y : ℝ} (hy : 0 ≤ y) {k : ℕ} (hk : 1 ≤ k)
   refine ⟨Nat.le_floor ?_, ?_⟩
   · push_cast
     have := Nat.floor_le hdivnn
-    calc ((k : ℝ) * ⌊y / k⌋₊) = k * (y / k) - k * (y / k - ⌊y / k⌋₊) := by ring
-      _ ≤ k * (y / k) := by nlinarith [Nat.floor_le hdivnn]
-      _ = y := mul_div_cancel₀ _ hk'.ne'
+    exact (le_div_iff₀' hk').mp this
   · have hlt : y / k < ⌊y / k⌋₊ + 1 := Nat.lt_floor_add_one (y / k)
     have hy_lt : y < (k : ℝ) * (⌊y / k⌋₊ + 1) := by linarith [(div_lt_iff₀ hk').mp hlt]
     have : (⌊y⌋₊ : ℝ) < (k : ℝ) * (⌊y / k⌋₊ + 1) := (Nat.floor_le hy).trans_lt hy_lt
@@ -437,12 +435,7 @@ theorem psi_upper_coarse (x : ℝ) (hx : 30 ≤ x) :
           · norm_num
           · refine Nat.floor_le <| div_nonneg ?_ ?_ <;> apply log_nonneg <;> linarith
           · norm_cast
-        · apply Nat.le_floor
-          norm_cast
-          apply le_div_iff₀ (log_pos (by norm_num : (1 : ℝ) < 6)) |>.mpr
-          rw [one_mul]
-          gcongr
-          linarith
+        · exact Nat.one_le_of_lt hi
       · exact rpow_key.le
   simp_rw [← add_sub, sum_add_distrib, sum_const, Nat.Ico_zero_eq_range, Finset.card_range,
     nsmul_eq_mul, tsub_le_iff_right] at bound

@@ -209,8 +209,7 @@ theorem PiMat.orthogonalProjection_trace {k : Type*} {n : k → Type*} [Fintype 
 lemma Matrix.isIdempotentElem_toEuclideanCLM {n : Type*} [Fintype n] [DecidableEq n]
   (x : Matrix n n ℂ) :
   IsIdempotentElem x ↔ IsIdempotentElem (toEuclideanCLM (𝕜 := ℂ) x) := by
-  simp_rw [IsIdempotentElem, ← _root_.map_mul]
-  exact Iff.symm (EmbeddingLike.apply_eq_iff_eq toEuclideanCLM)
+  exact Iff.symm (IsIdempotentElem.starAlgEquiv toEuclideanCLM)
 
 lemma Matrix.CLM_apply_orthogonalProjection {U : Submodule ℂ (EuclideanSpace ℂ n)} :
   Matrix.toEuclideanCLM (𝕜 := ℂ) (Matrix.orthogonalProjection U)
@@ -882,40 +881,13 @@ theorem isSelfAdjoint_iff_selfAdjointDecompositionRight_eq_zero
   [Module ℂ B] [StarModule ℂ B] [IsScalarTower ℂ B B]
   [SMulCommClass ℂ B B] (p : B) :
     IsSelfAdjoint p ↔ aR p = 0 := by
-  simp only [isSelfAdjoint_iff, RCLike.I_to_complex, isUnit_iff_ne_zero, ne_eq, Complex.I_ne_zero,
-    not_false_eq_true, IsUnit.smul_eq_zero, one_div, inv_eq_zero, OfNat.ofNat_ne_zero, sub_eq_zero]
+  exact Iff.symm (selfAdjointDecompositionRight_eq_zero_iff p)
 
 theorem IsIdempotentElem.isSelfAdjoint_iff_isStarNormal
   {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℂ V]
   (p : V →L[ℂ] V) (hp : IsIdempotentElem p) [CompleteSpace V] :
     IsSelfAdjoint p ↔ IsStarNormal p := by
-  constructor
-  · intro h
-    rw [isStarNormal_iff, h]
-  · intro h
-    have h : IsStarNormal (1 - p) := by
-    { simp only [isStarNormal_iff, commute_iff_eq, star_sub, star_one,
-        mul_sub, sub_mul, mul_one, one_mul]
-      simp only [sub_eq_add_neg, add_assoc, neg_add, neg_neg]
-      rw [(isStarNormal_iff _).mp h]
-      rw [← add_assoc, add_add_add_comm, add_assoc] }
-    have := (ContinuousLinearMap.IsStarNormal.norm_eq_adjoint _).mp h
-    have :=
-      calc
-        p = Star.star p * p ↔ ∀ x, ‖(p - (Star.star p * p)) x‖ = 0 := by
-          simp only [norm_eq_zero, sub_apply, sub_eq_zero]
-          rw [@ContinuousLinearMap.ext_iff]
-        _ ↔ ∀ x, ‖(ContinuousLinearMap.adjoint (1 - p)) (p x)‖ = 0 := by
-          simp only [← ContinuousLinearMap.star_eq_adjoint, star_sub, star_one,
-            sub_apply, mul_apply_eq_comp]
-          rfl
-        _ ↔ ∀ x, ‖(1 - p) (p x)‖ = 0 := by simp only [this]
-        _ ↔ ∀ x, ‖(p - p * p) x‖ = 0 := by simp
-        _ ↔ p - p * p = 0 := by
-          simp only [norm_eq_zero, ContinuousLinearMap.ext_iff, zero_apply]
-        _ ↔ IsIdempotentElem p := by simp only [sub_eq_zero, IsIdempotentElem, eq_comm]
-    rw [this.mpr hp]
-    exact IsSelfAdjoint.star_mul_self _
+  exact ContinuousLinearMap.IsIdempotentElem.isSelfAdjoint_iff_isStarNormal hp
 
 open scoped InnerProductSpace
 theorem LinearMap.IsPositive'.add_ker_eq_inf_ker
@@ -1084,5 +1056,4 @@ theorem LinearMap.isSymmetric_adjoint_mul_self'
   [FiniteDimensional 𝕜 V] [FiniteDimensional 𝕜 W]
   (T : V →ₗ[𝕜] W) :
     IsSymmetric (LinearMap.adjoint T ∘ₗ T) := by
-  intro x y
-  simp only [coe_comp, Function.comp_apply, adjoint_inner_left, adjoint_inner_right]
+  exact isSymmetric_adjoint_comp_self T

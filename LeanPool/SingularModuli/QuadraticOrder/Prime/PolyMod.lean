@@ -74,8 +74,7 @@ nontrivial). -/
 lemma polyMod_natDegree [Fact p.Prime] : (polyMod d p).natDegree = 2 := by
   unfold polyMod
   rw [(poly_monic d).natDegree_map]
-  unfold poly
-  compute_degree!
+  exact poly_natDegree d
 
 /-- Coefficient of `X²` in `polyMod d p` is `1`. -/
 @[simp] lemma polyMod_coeff_two : (polyMod d p).coeff 2 = 1 := by

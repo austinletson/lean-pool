@@ -1015,12 +1015,7 @@ def pathRelation (Γ : Sequent) (strat : Strategy coalgebraGame Builder)
 lemma Relation.TransGen.swap_eq_swap_rel {α : Type} (r : α → α → Prop) :
   Function.swap (Relation.TransGen r) = Relation.TransGen (Function.swap r) := by
   ext x y
-  constructor
-  all_goals
-    intro mp
-    induction mp
-    case single x y_x => exact Relation.TransGen.single y_x
-    case tail x z y_x x_z ih => exact Relation.TransGen.head x_z ih
+  exact Iff.symm Relation.transGen_swap
 
 lemma maximal_path_refl_trans_gen (as) (ne : as ≠ []) (chain : List.IsChain nonBoxMove as) :
   Relation.ReflTransGen Move (as.head ne) (as.getLast ne) := by
@@ -1178,8 +1173,7 @@ lemma diamond_in_last_of_diamond_in_first {Γ : Sequent} {strat : Strategy coalg
       rcases π with ⟨π, ne, chain, max, head_cases, in_cone⟩
       have ne_zero : π.length ≠ 0 := by grind
       have length_gt_two : π.length > 2 := by
-        simp at lt
-        grind
+        exact Nat.lt_of_add_left_lt lt
       have eq3 : π.length - (i + 1 + 1) - 1 = π.length - i - 3 := by omega
       have eq2 : π.length - (i + 1 + 1) - 1 + 1 = π.length - i - 2 := by
         simp_all
@@ -1413,10 +1407,7 @@ private lemma maximal_path_first_reverse_index_turn {Γ : Sequent}
     omega
   convert (maximal_path_starts_in_prover_turn π)
   simp only [MaximalPath.first, idx_zero]
-  rcases π with ⟨π, ne, chain, max, head_cases, in_cone⟩
-  cases π with
-  | nil => contradiction
-  | cons x xs => cases x; rfl
+  exact List.getElem_zero_eq_head (idx_zero ▸ maximal_path_first_reverse_index_lt π)
 
 /-- Convert membership in the first sequent to membership at the final reverse index. -/
 private lemma first_sequent_mem_at_reverse_index {Γ : Sequent}
@@ -1752,13 +1743,7 @@ theorem builder_win_builds_model {Γ : Sequent}
   · rcases π with ⟨π, ne, chain, max, head_cases, in_cone⟩
     simp
     grind
-  · rcases π with ⟨π, ne, chain, max, head_cases, in_cone⟩
-    have h : (π[π.length - (π.length - 1) - 1]'(by grind)) = π.head ne := by
-      grind
-    rw [h]
-    change π.head ne = (Sum.inl Γ, [], []) at π_head_eq
-    rw [π_head_eq]
-    rfl
+  · exact maximal_path_first_reverse_index_turn π
   · rcases π with ⟨π, ne, chain, max, head_cases, in_cone⟩
     have h : (π[π.length - (π.length - 1) - 1]'(by grind)) = π.head ne := by
       grind

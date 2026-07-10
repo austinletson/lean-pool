@@ -300,9 +300,7 @@ theorem Theorem42
     hmin := hmin
     hPB_eq := hPB
     hNormalization := fun a₀ c₀ hc₀ hf_form hdens => by
-      intro x v
-      exact gaussian_normalization_maxwellian ρIon a₀ c₀ hρ_ion hc₀
-        (f x) (hf_form x) (by rw [← hdens x]) v
+      exact fun x v => gaussian_normalization_maxwellian ρIon a₀ c₀ hρ_ion hc₀ (f x) (hf_form x) (hdens x) v
   }
   obtain ⟨eq, hf_eq, hE, hB⟩ := result
   exact ⟨eq.T, eq.B₀, eq.hT, hf_eq, hE, hB⟩

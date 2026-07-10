@@ -532,9 +532,7 @@ lemma pd_l1_fourier_nonneg (φ : V → ℂ) (hpd : IsPositiveDefinite φ)
       (fun v => (↑(𝐞 (⟪v, ξ⟫_ℝ)) : ℂ) * φ (-v)) (volume : Measure V)
     simp_all
   have him : (𝓕 φ ξ).im = 0 := by
-    have := congr_arg Complex.im hft_conj
-    simp only [Complex.conj_im] at this
-    linarith
+    exact conj_eq_iff_im.mp hft_conj
   exact ⟨pd_l1_fourier_re_nonneg φ hpd hint hcont ξ, him⟩
 
 /-- The Fourier transform of an L¹ PD function is real and nonneg. -/
@@ -881,11 +879,7 @@ theorem gaussianRegularize_ft_integrable (φ : V → ℂ)
       rw [show (0 : ℂ) = (↑(0 : ℝ) : ℂ) from by simp]
       exact Complex.continuous_ofReal.continuousAt.tendsto.comp
         (show Tendsto tn atTop (𝓝 0) from by
-          simp only [tn]
-          have h := (tendsto_const_div_atTop_nhds_zero_nat (1 : ℝ)).comp
-            (tendsto_add_atTop_nat 1)
-          simp only [Function.comp_def, Nat.cast_add, Nat.cast_one] at h
-          exact h)
+          exact tendsto_one_div_add_atTop_nhds_zero_nat)
     have hf_liminf : ∀ ξ, liminf (fun n => f n ξ) atTop = (‖𝓕 φ_ε ξ‖₊ : ENNReal) :=
       fun ξ => (hf_tendsto ξ).liminf_eq
     -- Bound: for each n, ∫⁻ f_n ≤ ENNReal.ofReal (φ 0).re
@@ -1090,10 +1084,7 @@ theorem gaussianRegularize_measures_tight (φ : V → ℂ)
     -- r² > 16‖y‖²/δ since r > sqrt(16‖y‖²/δ)
     have hsqrt_le : Real.sqrt (16 * ‖y‖ ^ 2 / δ) < r := by linarith
     have hr_sq : 16 * ‖y‖ ^ 2 / δ < r ^ 2 := by
-      calc 16 * ‖y‖ ^ 2 / δ
-          ≤ Real.sqrt (16 * ‖y‖ ^ 2 / δ) ^ 2 :=
-            le_of_eq (Real.sq_sqrt (by positivity)).symm
-        _ < r ^ 2 := pow_lt_pow_left₀ hsqrt_le (Real.sqrt_nonneg _) (by norm_num)
+      exact (Real.sqrt_lt' hr_pos).mp hsqrt_le
     rw [inv_pow, mul_inv_lt_iff₀ (sq_pos_of_pos hr_pos)]
     -- hr_sq: 16 * ‖y‖² / δ < r², i.e. 16 * ‖y‖² < δ * r²
     rw [div_lt_iff₀ hδ_pos] at hr_sq
@@ -1182,8 +1173,7 @@ private theorem bochner_charFun_eq (φ : V → ℂ) {μ : ProbabilityMeasure V}
         tendsto_natCast_atTop_atTop.comp hf_strict.tendsto_atTop
       have hfn1 : Tendsto (fun n => (↑(f n) : ℝ) + 1) atTop atTop :=
         Filter.tendsto_atTop_add_const_right atTop 1 hfn
-      simp_rw [one_div]
-      exact tendsto_inv_atTop_zero.comp hfn1
+      exact Tendsto.const_div_atTop hfn1 1
     · exact Eventually.of_forall (fun n => Set.mem_Ioi.mpr (by positivity))
   have hgr_conv : Tendsto (fun n => gaussianRegularize φ (1 / (↑(f n) + 1)) ξ) atTop (𝓝 (φ ξ)) :=
     (gaussianRegularize_tendsto φ ξ).comp heps_tendsto

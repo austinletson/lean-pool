@@ -187,8 +187,7 @@ theorem unitary_commutes_with_hφ_matrix_iff_isIsometry (hφ : φ.IsFaithfulPosM
     change LinearMap.adjoint (innerAutStarAlg U).toLinearMap =
         (innerAutStarAlg U).symm.toLinearMap ↔
       StarAlgEquiv.IsIsometry (innerAutStarAlg U)
-    rw [this, StarAlgEquiv.IsIsometry, iff_comm]
-    exact isometry_iff_norm _)
+    exact Iff.symm QuantumSet.starAlgEquiv_isometry_iff_adjoint_eq_symm)
 
 theorem Qam.symm_apply_starAlgEquiv_conj [hφ : φ.IsFaithfulPosMap] [Nontrivial n]
     {f : (Matrix n n ℂ) ≃⋆ₐ[ℂ] (Matrix n n ℂ)}
@@ -328,8 +327,7 @@ theorem Qam.iso_preserves_spectrum (A B : l((Matrix n n ℂ))) (h : @Qam.Iso n _
     simp [f', f'', StarAlgEquiv.symm_apply_apply]
   have : B = f'' ∘ₗ A ∘ₗ f' := by rw [hf, ← LinearMap.comp_assoc, hh', LinearMap.id_comp]
   have hh'' : f' ∘ₗ f'' = LinearMap.id := by
-    ext x
-    simp [f', f'', StarAlgEquiv.apply_symm_apply]
+    exact (LinearMap.comp_eq_id_comm ℂ (Matrix n n ℂ)).mp hh'
   rw [this, spectrum.comm f'' (A ∘ₗ f'), LinearMap.comp_assoc,
     hh'', LinearMap.comp_id]
 

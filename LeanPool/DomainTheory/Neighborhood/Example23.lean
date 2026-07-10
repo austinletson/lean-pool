@@ -136,8 +136,7 @@ def parityMap : ApproximableMap B T where
   rel_cod := fun ⟨_, _, hY⟩ => (valElt _).sub hY
   master_rel := by
     refine ⟨[], cone_nil.symm, ?_⟩
-    change (botElt).mem Example12.master
-    rfl
+    exact (valElt (scan [])).master_mem
   inter_right := by
     rintro X Y Y' ⟨σ, hX, hY⟩ ⟨σ', hX', hY'⟩
     have hσ : σ = σ' := cone_injective (hX ▸ hX')

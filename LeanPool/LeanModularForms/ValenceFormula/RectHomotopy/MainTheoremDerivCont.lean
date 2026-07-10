@@ -48,19 +48,7 @@ private lemma seg2_deriv_eq (s t : ℝ) (ht1 : 1 < t) (ht2 : t < 2) :
     exact h_comp
   have h_chord : HasDerivAt (fun t' : ℝ => chordSegment rho' iPoint (t' - 1))
       (iPoint - rho') t := by
-    simp only [chordSegment]
-    have h_shift : HasDerivAt (fun t' : ℝ => t' - 1) (1 : ℝ) t := (hasDerivAt_id t).sub_const 1
-    have h1 : HasDerivAt (fun t' : ℝ => (1 - (t' - 1)) • rho') (-rho') t := by
-      have h_coef : HasDerivAt (fun t' : ℝ => (1 - (t' - 1) : ℝ)) (-1 : ℝ) t := by
-        have := (hasDerivAt_const t (1 : ℝ)).sub h_shift
-        simp only [zero_sub] at this
-        exact this
-      have := h_coef.smul_const rho'
-      simpa only [neg_one_smul] using this
-    have h2 : HasDerivAt (fun t' : ℝ => (t' - 1) • iPoint) iPoint t := by
-      have := h_shift.smul_const iPoint
-      simpa only [one_smul] using this
-    exact (h1.add h2).congr_deriv (by ring)
+    exact hasDerivAt_chordSegment_shift rho' iPoint 1 t
   exact ((h_arc.const_smul (1 - s)).add (h_chord.const_smul s)).deriv
 
 /-- On `(2, 3)`, the homotopy's `t`-derivative equals the arc/chord formula at `(t, s)`. -/
@@ -94,19 +82,7 @@ private lemma seg3_deriv_eq (s t : ℝ) (ht2 : 2 < t) (ht3 : t < 3) :
     exact h_comp
   have h_chord : HasDerivAt (fun t' : ℝ => chordSegment iPoint rho (t' - 2))
       (rho - iPoint) t := by
-    simp only [chordSegment]
-    have h_shift : HasDerivAt (fun t' : ℝ => t' - 2) (1 : ℝ) t := (hasDerivAt_id t).sub_const 2
-    have h1 : HasDerivAt (fun t' : ℝ => (1 - (t' - 2)) • iPoint) (-iPoint) t := by
-      have h_coef : HasDerivAt (fun t' : ℝ => (1 - (t' - 2) : ℝ)) (-1 : ℝ) t := by
-        have := (hasDerivAt_const t (1 : ℝ)).sub h_shift
-        simp only [zero_sub] at this
-        exact this
-      have := h_coef.smul_const iPoint
-      simpa only [neg_one_smul] using this
-    have h2 : HasDerivAt (fun t' : ℝ => (t' - 2) • rho) rho t := by
-      have := h_shift.smul_const rho
-      simpa only [one_smul] using this
-    exact (h1.add h2).congr_deriv (by ring)
+    exact hasDerivAt_chordSegment_shift iPoint rho 2 t
   exact ((h_arc.const_smul (1 - s)).add (h_chord.const_smul s)).deriv
 
 private lemma deriv_cont_seg1 (p₁ p₂ : ℝ) (_hp₁p₂ : p₁ < p₂) (h_seg1 : p₂ ≤ 1) :
@@ -131,8 +107,7 @@ private lemma deriv_cont_seg1 (p₁ p₂ : ℝ) (_hp₁p₂ : p₁ < p₂) (h_se
       have h3 : HasDerivAt (fun t' : ℝ =>
             (HHeight : ℂ) - (↑t' : ℂ) * ((HHeight : ℂ) - Real.sqrt 3 / 2))
           (-((HHeight : ℂ) - Real.sqrt 3 / 2)) q.1 := by
-        have := (hasDerivAt_const q.1 (HHeight : ℂ)).sub h2
-        simp only [zero_sub] at this; exact this
+        exact HasDerivAt.const_sub (↑HHeight) h2
       have h5 := (hasDerivAt_const q.1 ((1/2 : ℂ))).add (h3.mul_const I)
       simp only [zero_add] at h5; convert h5.deriv using 2
       all_goals rfl

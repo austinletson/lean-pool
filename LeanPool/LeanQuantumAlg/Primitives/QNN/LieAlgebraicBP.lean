@@ -189,10 +189,7 @@ theorem dlaDim_diagonalFamily (n : ℕ) :
     exact mul_comm _ _
   -- the generators are linearly independent (reflected by the `diag` linear map)
   have hbasis : LinearIndependent ℂ (fun i : Fin n => Pi.single i (1 : ℂ)) := by
-    have h := (Pi.basisFun ℂ (Fin n)).linearIndependent
-    have heqb : (fun i : Fin n => Pi.single i (1 : ℂ)) = ⇑(Pi.basisFun ℂ (Fin n)) := by
-      funext i; rw [Pi.basisFun_apply]
-    rw [heqb]; exact h
+    exact Pi.linearIndependent_single_one (Fin n) ℂ
   let D : Matrix (Fin n) (Fin n) ℂ →ₗ[ℂ] (Fin n → ℂ) :=
     { toFun := Matrix.diag, map_add' := fun _ _ => rfl, map_smul' := fun _ _ => rfl }
   have hLI : LinearIndependent ℂ g := by

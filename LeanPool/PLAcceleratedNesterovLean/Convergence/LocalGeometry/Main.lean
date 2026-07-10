@@ -364,9 +364,7 @@ private abbrev localFiberwiseGeometryProof
               = (fderiv ℝ (fderiv ℝ f) m) w u' := hbridge
           _ = 0 := by rw [hw_hess_zero, zero_apply]
           _ = @inner ℝ (E d) _ (0 : E d) u' := by rw [inner_zero_left]
-      have hξK := hξ_orth
-      rw [K.mem_orthogonal] at hξK
-      exact hξK w hwK
+      exact Submodule.inner_right_of_mem_orthogonal hwK hξ_orth
     have hPL_ext : ExternalThm3.PolyakLojasiewicz f μ U :=
       ⟨hμ, fun x hxU => by
         have := hPL.2.2 x hxU

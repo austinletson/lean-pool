@@ -67,19 +67,7 @@ variable (f : CornerSubring idem_e)
 theorem double_corner_set_eq :
     (Subtype.val '' (CornerSubringNonUnital f).carrier) =
       (CornerSubringNonUnital (f : R)).carrier := by
-  rw [corner_ring_carrier, corner_ring_carrier]
-  ext x
-  constructor
-  · rintro ⟨y, ⟨⟨z, ⟨hz, rfl⟩⟩, rfl⟩⟩
-    simp only [NonUnitalSubring.val_mul]
-    exact ⟨z, rfl⟩
-  · rintro ⟨y, hy, rfl⟩
-    let a : CornerSubring idem_e := ⟨e * y * e, ⟨y, rfl⟩⟩
-    refine ⟨f * a * f, ⟨a, rfl⟩, ?_⟩
-    simp only [NonUnitalSubring.val_mul]
-    have heff : e * (f : R) = f := by nth_rewrite 2 [show f = 1 * f by simp]; rfl
-    have hffe : f = f * e := by nth_rewrite 1 [show f = f * 1 by simp]; rfl
-    rw [mul_assoc, mul_assoc, heff, ← mul_assoc, ← mul_assoc, ← hffe]
+  exact both_mul_lift idem_e f f
 
 -- auxiliary lemma since there is a problem with direct application
 /-- Specialisation of `nonUnitalSubringEq` to the corner subrings of `f` and `f.val`,
@@ -106,7 +94,6 @@ variable (idem_f : IsIdempotentElem f)
 isomorphic to the corner subring of `f.val` in `R`. -/
 def cornerRingUnitalEq :
     CornerSubring idem_f ≃+* CornerSubring (e_idem_to_e_val_idem idem_f) := by
-  unfold CornerSubring
-  apply cornerRingNonUnitalEq
+  exact cornerRingNonUnitalEq f
 
 end LeanPool.ArtinWedderburn

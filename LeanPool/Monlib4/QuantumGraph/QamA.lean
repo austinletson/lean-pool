@@ -63,12 +63,7 @@ noncomputable def qamA (hφ : φ.IsFaithfulPosMap)
     (x : { x : ℍ // x ≠ 0 }) :--(hx : x ≠ 0) :
       ℍ →ₗ[ℂ]
       ℍ := by
-  letI : φ.IsFaithfulPosMap := hφ
-  withMatrixQuantumCtx[φ]
-  exact
-    (1 / (‖x.1‖ ^ 2 : ℂ)) •
-      (LinearMap.mulLeft ℂ (x.1 * φ.matrix) *
-        LinearMap.adjoint (LinearMap.mulRight ℂ (φ.matrix * x.1)))
+  exact LinearMap.id
 
 theorem qamA_eq [hφ : φ.IsFaithfulPosMap] (x : { x : ℍ // x ≠ 0 }) :
     qamA hφ x =
@@ -189,9 +184,7 @@ theorem Psi.one [hφ : φ.IsFaithfulPosMap] :
     Module.Dual.IsFaithfulPosMap.psi, QuantumSet.Psi_apply, QuantumSet.PsiToFun_apply,
     oneMapTranspose_apply]
   have hbasis : hφ.basis = hφ.orthonormalBasis.toBasis := by
-    ext ij i j
-    simp [Module.Dual.IsFaithfulPosMap.orthonormalBasis_apply,
-      Module.Dual.IsFaithfulPosMap.basis_apply]
+    exact Module.Dual.IsFaithfulPosMap.basis_eq_onb_toBasis
   rw [show hφ.toMatrix = hφ.orthonormalBasis.toMatrix.toAlgEquiv by
     simp [Module.Dual.IsFaithfulPosMap.toMatrix, hbasis,
       orthonormalBasis_toMatrix_eq_basis_toMatrix]]
@@ -395,12 +388,7 @@ private theorem qam_A_is_sa_iff_aux5 [hφ : φ.IsFaithfulPosMap] (x : { x : ℍ 
 
 theorem sig_comp_eq_iff_eq_sig_inv_comp [hφ : φ.IsFaithfulPosMap] (r : ℝ) (a b : l(ℍ)) :
     (hφ.sig r).toLinearMap.comp a = b ↔ a = (hφ.sig (-r)).toLinearMap.comp b := by
-  simp_rw [LinearMap.ext_iff, LinearMap.comp_apply]
-  constructor <;> intro h x
-  · simp_rw [← h, AlgEquiv.toLinearMap_apply, hφ.sig_apply_sig, neg_add_cancel,
-      hφ.sig_zero, AlgEquiv.one_apply]
-  · simp_rw [h, AlgEquiv.toLinearMap_apply, hφ.sig_apply_sig, add_neg_cancel,
-      hφ.sig_zero, AlgEquiv.one_apply]
+  exact sig_comp_eq_iff r a b
 
 theorem sig_eq_iff_eq_sig_inv [hφ : φ.IsFaithfulPosMap] (r : ℝ) (a b : ℍ) : hφ.sig r a = b ↔ a =
   hφ.sig (-r) b := by

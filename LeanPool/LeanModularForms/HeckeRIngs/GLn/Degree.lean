@@ -127,22 +127,7 @@ private lemma invTransposeEquiv_invol (σ : SL(n, ℤ)) :
 
 private lemma relIndex_eq_comap_index (K : Subgroup (GL (Fin n) ℚ)) :
     K.relIndex (SLnZSubgroup n) = (K.comap (mapGL ℚ : SL(n, ℤ) →* GL (Fin n) ℚ)).index := by
-  set f := (mapGL ℚ : SL(n, ℤ) →* GL (Fin n) ℚ)
-  set H := SLnZSubgroup n
-  have h_inj : Function.Injective f := by
-    intro x y hxy; ext i j
-    have h := congr_arg (fun g => (Units.val g) i j) hxy
-    simp only [f, mapGL_coe_matrix, map_apply_coe, RingHom.mapMatrix_apply,
-      Matrix.map_apply] at h; exact_mod_cast h
-  have h_H_eq : H = Subgroup.map f ⊤ := by
-    simp only [H, SLnZSubgroup]; exact MonoidHom.range_eq_map f
-  have h_inf : K ⊓ H = Subgroup.map f (K.comap f) := by
-    rw [h_H_eq, ← MonoidHom.range_eq_map f, inf_comm, Subgroup.map_comap_eq]
-  calc K.relIndex H
-      = (K ⊓ H).relIndex H := (Subgroup.inf_relIndex_right _ _).symm
-    _ = (Subgroup.map f (K.comap f)).relIndex (Subgroup.map f ⊤) := by rw [h_inf, h_H_eq]
-    _ = (K.comap f).relIndex ⊤ := Subgroup.relIndex_map_map_of_injective _ _ h_inj
-    _ = (K.comap f).index := (K.comap f).relIndex_top_right
+  exact Eq.symm (Subgroup.index_comap K (mapGL ℚ))
 
 private lemma transpose_mul_diagMat (a : Fin n → ℕ) (ha : ∀ i, 0 < a i) (σ ρ : SL(n, ℤ))
     (h : (σ : GL (Fin n) ℚ) * diagMat n a = diagMat n a * (ρ : GL (Fin n) ℚ)) :
@@ -406,10 +391,7 @@ private lemma conjDiag_relIndex_eq_Gamma0_index
   set α := diagMat 2 a
   set f := (mapGL ℚ : SL(2, ℤ) →* GL (Fin 2) ℚ)
   have h_inj : Function.Injective f := by
-    intro σ₁ σ₂ h; ext i j
-    have heq := congr_arg (fun g => (Units.val g) i j) h
-    simp only [f, mapGL_coe_matrix, map_apply_coe, RingHom.mapMatrix_apply,
-      Matrix.map_apply] at heq; exact_mod_cast heq
+    exact mapGL_injective
   have h_H_eq : H = Subgroup.map f ⊤ := by simp only [H, f, MonoidHom.range_eq_map]
   have h_gamma0_iff : ∀ σ : SL(2, ℤ),
       σ ∈ Gamma0 (p ^ k) ↔ α⁻¹ * f σ * α ∈ H := by
@@ -520,9 +502,7 @@ theorem HeckeCoset_deg_T_diag_two_scalar (a : Fin 2 → ℕ) (ha : ∀ i, 0 < a 
   have h_smul_diag : ConjAct.toConjAct (diagMat 2 a) • H = H := by
     ext x; simp only [Subgroup.mem_pointwise_smul_iff_inv_smul_mem, ConjAct.smul_def,
       map_inv, ConjAct.ofConjAct_toConjAct, inv_inv]
-    constructor
-    · intro hx; rwa [h_diag_conj] at hx
-    · intro hx; rwa [h_diag_conj]
+    exact Eq.to_iff (congrArg (Membership.mem H) (h_diag_conj x))
   rw [h_smul_diag]
   exact conjAct_smul_eq_of_mem H (H.mul_mem hh₁ hh₂)
 

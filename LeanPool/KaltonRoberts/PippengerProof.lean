@@ -524,8 +524,7 @@ theorem bad_sum_split
               have hmD : m ≤ D := (Finset.mem_filter.mp hm).2
               rcases Finset.mem_Icc.mp hs with ⟨hm1, _⟩
               exact Finset.mem_Icc.mpr ⟨hm1, hmD⟩
-            · intro m hmD hnot
-              positivity
+            · exact fun i a a_1 => pow_nonneg hq0 i
       _ ≤ q / (1 - q) := sum_Icc_one_pow_le_geom D q hq0 hq1
   · calc
       ∑ x ∈ s.filter (fun m => ¬m ≤ D), T x
@@ -756,9 +755,7 @@ theorem pippenger_entropy_exponent_eq_phi
   have hx_lt_θ : x < θ := by
     have hmLr : (m : ℝ) < (L : ℝ) := by exact_mod_cast hmL
     rw [hLθ] at hmLr
-    rw [hx]
-    rw [div_lt_iff₀ hn_pos]
-    simpa [hn, mul_comm] using hmLr
+    exact (div_lt_iff₀ hn_pos).mpr hmLr
   have hr_posR : 0 < (r : ℝ) := by exact_mod_cast hr
   have hr_ne : (r : ℝ) ≠ 0 := ne_of_gt hr_posR
   have hθ_ne : θ ≠ 0 := ne_of_gt hθ0
@@ -785,8 +782,7 @@ theorem pippenger_entropy_exponent_eq_phi
     have hab_ne : (r : ℝ) * x / θ - (r : ℝ) * x ≠ 0 := by
       have hpos : 0 < (r : ℝ) * x / θ - (r : ℝ) * x := by
         have : 1 < 1 / θ := by
-          rw [one_lt_div hθ0]
-          exact hθ1
+          exact one_lt_one_div hθ0 hθ1
         have hcoef : 0 < 1 / θ - 1 := by linarith
         have hrx : 0 < (r : ℝ) * x := mul_pos hr_posR hx_pos
         have heq : (r : ℝ) * x / θ - (r : ℝ) * x =
@@ -852,19 +848,7 @@ theorem exists_superset_card_eq {α : Type*} [Fintype α]
     (B : Finset α) (m : ℕ)
     (hBm : B.card ≤ m) (hmA : m ≤ Fintype.card α) :
     ∃ T : Finset α, B ⊆ T ∧ T.card = m := by
-  classical
-  -- Since $m \leq \text{Fintype.card } \alpha$, we can choose $m - B.card$ elements from the
-  -- complement of $B$ to form $T$.
-  obtain ⟨S, hS⟩ : ∃ S : Finset α, S ⊆ Finset.univ \ B ∧ S.card = m - B.card := by
-    exact Finset.exists_subset_card_eq ( by simpa [ Finset.card_sdiff ] using by omega );
-  use B ∪ S
-  rw [
-    Finset.card_union_of_disjoint
-      (Finset.disjoint_left.mpr fun x hx₁ hx₂ =>
-        Finset.mem_sdiff.mp (hS.1 hx₂) |>.2 hx₁),
-    hS.2,
-    add_tsub_cancel_of_le hBm]
-  simp +decide
+  exact Finset.exists_superset_card_eq hBm hmA
 
 /-! ## Counting constrained permutations with arbitrary subsets -/
 
@@ -1235,9 +1219,7 @@ theorem good_matching_exists_of_ratio_sum_lt_one
     constructor
     · rw [hleft_card, hright_card, hScard, hTcard]
       simpa [Nat.mul_comm] using Nat.mul_le_mul_right i.1 hc.le
-    · rw [hright_card, hTcard]
-      have hmLc : c * i.1 ≤ c * L := Nat.mul_le_mul_left c hmL
-      simpa [M, hNL, Nat.mul_comm] using hmLc
+    · exact card_finset_fin_le (rightSet i.snd.2)
   obtain ⟨τ, hτ⟩ :=
     good_perm_indexed_of_sum_lt M triples
       (fun i => leftSet i.2.1) (fun i => rightSet i.2.2) hsum_index hpairs

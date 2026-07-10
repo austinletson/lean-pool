@@ -95,9 +95,7 @@ theorem nagata_criterion [WfDvdMonoid R₀]
   · exact ⟨p, hpP, hp⟩
   -- Case p ∉ P: the image Q of P in R[p⁻¹] is a nonzero prime; extract a prime from Q
   · have hdisj : Disjoint (Submonoid.powers p : Set R₀) (P : Set R₀) := by
-      rw [Set.disjoint_left]
-      rintro x ⟨n, rfl⟩ hxP
-      exact hpP (hPprime.mem_of_pow_mem n hxP)
+      exact (disjoint_powers_iff_notMem_of_isPrime p).mpr hpP
     have hQ_prime := IsLocalization.isPrime_of_isPrime_disjoint
       (Submonoid.powers p) (Localization.Away p) P hPprime hdisj
     have hQ_ne_bot : Ideal.map (algebraMap R₀ (Localization.Away p)) P ≠ ⊥ := by

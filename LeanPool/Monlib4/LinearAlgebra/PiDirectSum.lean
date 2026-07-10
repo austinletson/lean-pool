@@ -224,15 +224,12 @@ noncomputable def directSumTensorAlgEquiv (R : Type _) {ι₁ ι₂ : Type _} [C
   toFun x i := directSumTensorToFun x i
   invFun x := (directSumTensorInvFun : _ →ₗ[R] _) (x : ∀ i : ι₁ × ι₂, M₁ i.fst ⊗[R] M₂ i.snd)
   right_inv x := by
-    simp only
-    rw [directSumTensorToFun_apply_inv_fun]
+    exact directSumTensorToFun_apply_inv_fun x
   left_inv x := by
-    simp only
-    rw [directSumTensorInvFun_apply_to_fun]
+    exact directSumTensorInvFun_apply_to_fun x
   map_add' x y := by simp only [map_add]
   map_mul' x y := by
-    ext
-    rw [directSumTensorToFun.map_mul]
+    exact directSumTensorToFun.map_mul x y
   commutes' r := by
     ext
     simp_rw [Algebra.algebraMap_eq_smul_one, LinearMap.map_smul, Pi.smul_apply,
@@ -315,8 +312,7 @@ def LinearMap.lrsum (R : Type _) {ι₁ ι₂ : Type _} [Semiring R] (φ : ι₁
     (∀ i : ι₁ × ι₂, φ i.1 →ₗ[R] ψ i.2) ≃ₗ[S] (∀ i, φ i) →ₗ[R] ∀ i, ψ i := by
   let h₂ : (∀ (j : ι₂) (i : ι₁), φ i →ₗ[R] ψ j) ≃ₗ[S] ∀ j, (∀ i, φ i) →ₗ[R] ψ j := by
     apply LinearEquiv.piCongrRight
-    intro j
-    exact LinearMap.lsum R φ S
+    exact fun i => lsum R φ S
   exact
     (((LinearMap.piPiProd R φ ψ S).trans (LinearMap.piProdSwap R φ ψ S)).trans h₂).trans
       (LinearMap.rsum R ψ S)

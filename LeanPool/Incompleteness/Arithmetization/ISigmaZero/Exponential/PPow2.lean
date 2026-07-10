@@ -158,8 +158,7 @@ lemma one_lt {i : V} (ppi : PPow2 i) : 1 < i := by
 
 lemma sq_sqrt_eq {i : V} (ppi : PPow2 i) (ne2 : i ≠ 2) : (√i) ^ 2 = i := by
   rcases ppi with ⟨pi, m, _, sppm, lb⟩
-  exact ((sppm.lenbit_iff lb.le pi (lt_of_le_of_ne (one_lt_iff_two_le.mp <|
-      sppm.one_lt lb) (Ne.symm ne2))).mp lb).1
+  exact SPPow2.sq_sqrt_eq sppm lb pi ne2
 
 lemma sqrt {i : V} (ppi : PPow2 i) (ne2 : i ≠ 2) : PPow2 (√i) := by
   rcases ppi with ⟨pi, m, _, sppm, him⟩
@@ -293,8 +292,7 @@ lemma four_lt {i : V} (hi : PPow2 i) (ne2 : i ≠ 2) (ne4 : i ≠ 4) : 4 < i :=
   Ne.lt_of_le (Ne.symm ne4) (hi.four_le ne2)
 
 lemma sq_ne_two {i : V} (hi : PPow2 i) : i ^ 2 ≠ 2 := by
-  intro e; have : i < 2 := by simpa [←e] using lt_square_of_lt hi.one_lt
-  exact not_le.mpr this hi.two_le
+  exact Ne.symm (two_ne_square i)
 
 lemma sqrt_ne_two {i : V} (hi : PPow2 i) (ne2 : i ≠ 2) (ne4 : i ≠ 4) : √i ≠ 2 := by
   intro e

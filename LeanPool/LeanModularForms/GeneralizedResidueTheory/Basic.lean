@@ -184,9 +184,7 @@ private theorem eq_on_Ioo_of_deriv_zero
       (fun x hx => ⟨le_of_lt (lt_of_le_of_lt ht.1 hx.1),
         le_of_lt (lt_of_lt_of_le hx.2 h_smin_le_b)⟩)
   haveI : (𝓝[Ioo t s_min] t).NeBot := by
-    rw [← mem_closure_iff_nhdsWithin_neBot,
-      closure_Ioo (ne_of_lt ht_lt_s)]
-    exact ⟨le_refl t, le_of_lt ht_lt_s⟩
+    exact left_nhdsWithin_Ioo_neBot ht_lt_s
   have h_ft : f t = f ((t + s_min) / 2) := tendsto_nhds_unique
     (h_cont_Ioo.tendsto.congr' (by
       filter_upwards [self_mem_nhdsWithin]

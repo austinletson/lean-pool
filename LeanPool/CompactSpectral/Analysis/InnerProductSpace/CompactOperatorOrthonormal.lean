@@ -67,15 +67,11 @@ lemma tendsto_zero_weakSpace_of_orthonormal {e : ℕ → E} (he : Orthonormal �
   intro l
   let y : E := (InnerProductSpace.toDual 𝕜 E).symm (l : StrongDual 𝕜 E)
   have hl : ∀ x : E, l x = inner 𝕜 y x := by
-    intro x
-    -- Riesz representation: evaluation by `l` is inner product with the representing vector.
-    exact (InnerProductSpace.toDual_symm_apply (𝕜 := 𝕜) (x := x) (y := l)).symm
+    exact fun x => Eq.symm InnerProductSpace.toDual_symm_apply
   have hsq : Tendsto (fun n => ‖inner 𝕜 (e n) y‖ ^ 2) atTop (𝓝 (0 : ℝ)) := by
     have hsum : Summable (fun n => ‖inner 𝕜 (e n) y‖ ^ 2) :=
       he.inner_products_summable y
-    have hcof : Tendsto (fun n => ‖inner 𝕜 (e n) y‖ ^ 2) cofinite (𝓝 (0 : ℝ)) :=
-      hsum.tendsto_cofinite_zero
-    simpa [Nat.cofinite_eq_atTop] using hcof
+    exact Summable.tendsto_atTop_zero hsum
   have hsqrt :
       Tendsto (fun n => Real.sqrt (‖inner 𝕜 (e n) y‖ ^ 2)) atTop (𝓝 (Real.sqrt (0 : ℝ))) :=
     (Real.continuous_sqrt.tendsto 0).comp hsq

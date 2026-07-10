@@ -170,9 +170,7 @@ noncomputable def goodStrat (i : Player) : Strategy g i := fun p turn nempty =>
   have := Classical.dec
   if W : good i p
     then by
-      unfold good at W
-      have E := And.right <| W.resolve_right (not_and_of_not_left _ <| not_eq_other_eq_i.mpr turn)
-      exact ⟨E.choose, E.choose_spec.choose⟩
+      exact chooseMove nempty
     else chooseMove nempty
 
 /-! ## Cones -/
@@ -279,13 +277,7 @@ lemma not_in_cone_of_move {i g} {p q : g.Pos} (q_in : q ∈ g.moves p) (sI : Str
   have claim : Relation.TransGen g.wf.rel p p := by
     have m_to_p := g.move_rel _ q q_in
     have := game_wf_rel_of_cone _ hyp
-    rw [Relation.reflTransGen_iff_eq_or_transGen] at this
-    cases this
-    · subst_eqs
-      absurd m_to_p
-      exact WellFoundedRelation.asymmetric m_to_p
-    · apply Relation.TransGen.trans _ (Relation.TransGen.single m_to_p)
-      aesop
+    exact Relation.TransGen.tail' this m_to_p
   absurd claim
   exact Std.Irrefl.irrefl p
 
@@ -352,8 +344,7 @@ lemma winning_of_in_cone_winning {g : Game} {i : Player} {p q : g.Pos} {sI : Str
   induction in_cone
   case nil => exact h
   case myStep q q_in_cone has_moves my_turn ih =>
-    apply winning_of_winning_move
-    exact ih
+    exact winning_of_winning_move my_turn ih
   case oStep q q' q_in_cone o_turn in_moves ih =>
     exact @winning_of_whatever_other_move i g sI q o_turn ih ⟨q', in_moves⟩
 end Lean4GlCoalgebras

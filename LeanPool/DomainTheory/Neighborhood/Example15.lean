@@ -55,9 +55,7 @@ def neighborhoodSystem : NeighborhoodSystem Token where
   master_mem := by rw [master]; exact Set.univ_nonempty
   sub_master := fun _ => Set.subset_univ _
   inter_mem := by
-    intro X Y Z _ _ hZ hZsub
-    obtain ⟨z, hz⟩ := hZ
-    exact ⟨z, hZsub hz⟩
+    exact fun {X Y Z} a a_1 a_2 a_3 => Set.Nonempty.mono a_3 a_2
 
 /-- The neighbourhoods of Example 1.5 are exactly the non-empty subsets. -/
 theorem mem_iff_nonempty (X : Set Token) : neighborhoodSystem.mem X ↔ X.Nonempty := Iff.rfl

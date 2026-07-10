@@ -51,8 +51,7 @@ theorem corrAvgMatrix_posSemidef {n : Nat} (f : Coloring n) : (corrAvgMatrix f).
       ext u v
       simp [corrMat, corr, Matrix.vecMulVec_apply]
     -- `Matrix.posSemidef_sum` is stated for a finset-indexed sum.
-    have hsum' := Matrix.posSemidef_sum (s := (Finset.univ : Finset G)) (x := corrMat) hterm
-    simpa [corrMat] using hsum'
+    exact Matrix.posSemidef_sum Finset.univ hterm
   have havg :
       corrAvgMatrix f =
         ((Fintype.card (Correlation.G n) : Correlation.Q)⁻¹) •

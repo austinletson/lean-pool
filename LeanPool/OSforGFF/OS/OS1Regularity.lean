@@ -325,9 +325,7 @@ lemma covariance_imaginary_L2_bound (m : ℝ) [Fact (0 < m)] (f : TestFunction�
       have : 0 ≤ (2 * Real.pi)^2 * ‖k‖^2 := by positivity
       linarith
     -- 0 < m^2 and m^2 ≤ (2π)²‖k‖² + m^2 ⇒ 1 / ((2π)²‖k‖² + m^2) ≤ 1 / m^2
-    have := one_div_le_one_div_of_le (a := m^2) (b := (2 * Real.pi)^2 * ‖k‖^2 + m^2) (by exact
-      hm2pos) hden
-    simpa [one_div] using this
+    exact one_div_le_one_div_of_le hm2pos hden
   -- Show integrability of ‖F‖² via MemLp → Integrable (square norm)
   have hF_memLp : MemLp F 2 volume := F.memLp 2 volume
   have hF_meas : AEStronglyMeasurable F volume := hF_memLp.1
@@ -361,10 +359,7 @@ lemma covariance_imaginary_L2_bound (m : ℝ) [Fact (0 < m)] (f : TestFunction�
         = (1 / m^2) * ∫ k, ‖F k‖^2 ∂volume :=
       integral_const_mul_eq (μ := volume) (c := (1 / m^2))
         (f := fun k => ‖F k‖^2) hF_sq_int
-    calc
-      ∫ k, ‖F k‖^2 * freePropagatorMomentumMathlib m k ∂volume
-          ≤ ∫ k, (1 / m^2) * ‖F k‖^2 ∂volume := h_int_le
-      _ = (1 / m^2) * ∫ k, ‖F k‖^2 ∂volume := h_const_pull
+    exact le_of_le_of_eq h_int_le h_const_pull
   -- Combine with Parseval to reach a bound in terms of ‖F‖²
   have : (freeCovarianceℂBilinear m (toComplex fIm) (toComplex fIm)).re ≤
       (1 / m^2) * (∫ k, ‖F k‖^2 ∂volume) := by
@@ -507,6 +502,4 @@ theorem gaussianFreeField_satisfies_OS1_revised (m : ℝ) [Fact (0 < m)] :
       _ ≤ Real.exp ((1 / (2 * m^2)) * (∫ x, ‖f x‖ ∂volume + ∫ x, ‖f x‖^(2:ℝ) ∂volume)) :=
           Real.exp_le_exp.mpr hmono
   · -- Two-point integrability for p = 2
-    intro hp2
-    -- `hp2` is unused since we picked `p = 2` explicitly
-    simpa using gff_two_point_locally_integrable m
+    exact fun a => gff_two_point_locally_integrable m

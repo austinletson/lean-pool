@@ -50,11 +50,7 @@ lemma measurable_fold
   intro i
   induction i with
   | zero =>
-    have {x : Fin 0 → A} : ⟨0, x⟩ = Encoding.nil := by
-      simp only [Encoding.nil, Sigma.mk.injEq, heq_eq_eq, true_and]
-      ext i
-      apply Fin.elim0 i
-    simp only [this, foldr_nil, measurable_const]
+    exact Measurable.of_discrete
   | succ n ih =>
     have {x : Fin (n + 1) → A} : ⟨n + 1, x⟩ = Encoding.cons (x 0) ⟨n, x ∘ Fin.succ⟩ := by
       simp only [Encoding.cons, Sigma.mk.injEq, heq_eq_eq, true_and]

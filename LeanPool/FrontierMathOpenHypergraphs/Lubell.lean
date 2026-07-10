@@ -864,8 +864,7 @@ private lemma lubell_decomp (t n : ℕ) :
   unfold lubellQ lubellR
   calc
     n = n % (t * M t) + (t * M t) * (n / (t * M t)) := by
-          symm
-          exact Nat.mod_add_div n (t * M t)
+          exact Eq.symm (Nat.mod_add_div n (t * M t))
     _ = n % (t * M t) + t * (n / (t * M t) * M t) := by ring
     _ = t * (n / (t * M t) * M t) + n % (t * M t) := by ring
 
@@ -920,9 +919,7 @@ private lemma lubellRem_le_M (t n : ℕ) (ht : 2 ≤ t) (i : Fin t) :
     unfold lubellR
     exact Nat.mod_lt _ (Nat.mul_pos ht_pos hM_pos)
   have hdiv_lt : lubellR t n / t < M t := by
-    exact
-      (Nat.div_lt_iff_lt_mul ht_pos).2
-        (by simpa [Nat.mul_comm, Nat.mul_left_comm, Nat.mul_assoc] using hr_lt)
+    exact Nat.div_lt_of_lt_mul hr_lt
   by_cases hi : i.1 < lubellR t n % t
   · simp only [lubellRem, hi, ↓reduceIte, ge_iff_le]
     exact Nat.succ_le_of_lt hdiv_lt
@@ -1520,8 +1517,7 @@ private lemma card_degreeOneSubsets_eq
               intro e he
               symm
               refine Finset.card_bij (fun B hB => insert e B) ?_ ?_ ?_
-              · intro B hB
-                exact mem_image.mpr ⟨B, hB, rfl⟩
+              · exact fun a ha => mem_image_of_mem (insert e) ha
               · intro B1 hB1 B2 hB2 hEq
                 have he_not_mem1 : e ∉ B1 := fun heB =>
                   (mem_filter.mp ((mem_powersetCard.mp hB1).1 heB)).2 ((mem_filter.mp he).2)
@@ -1802,9 +1798,7 @@ private theorem vertex_card_le_harmonic
                       have hsplitCard :
                           (edges.filter fun e => v ∈ e).card +
                             (edges.filter fun e => v ∉ e).card = edges.card := by
-                        simpa using
-                          (Finset.card_filter_add_card_filter_not (s := edges)
-                            (p := fun e => v ∈ e))
+                        exact card_filter_add_card_filter_not fun e => v ∈ e
                       have hnoncard :
                           (edges.filter fun e => v ∉ e).card = m - degree edges v := by
                         dsimp [m, degree]
@@ -1993,8 +1987,7 @@ theorem asymptotic_lower_bound :
       k_upper_bound n hn
     have haux : y * (Real.logb 2 (n : ℝ) / 2 + 2) ≤ a * Real.logb 2 (n : ℝ) - C := by
       have hmul : C + 2 * y ≤ Real.logb 2 (n : ℝ) * (a - y / 2) := by
-        dsimp [B] at hlog
-        exact (div_le_iff₀ hdelta_pos).1 hlog
+        exact (div_le_iff₀ hdelta_pos).mp hlog
       linarith
     have hyk : y * (k n : ℝ) ≤ (H n : ℝ) := by
       calc

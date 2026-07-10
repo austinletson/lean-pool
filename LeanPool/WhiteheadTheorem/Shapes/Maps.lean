@@ -82,10 +82,7 @@ lemma set_neq_zero_eq_compl_range_i₀ (X : TopCat.{u}) :
   · intro z hz
     simp only [Set.mem_setOf_eq] at hz ⊢
     obtain ⟨fst, snd⟩ := z
-    obtain ⟨val, property⟩ := snd
-    simp only [Prod.mk.injEq, not_and, forall_eq] at hz ⊢
-    intro a
-    simp_all only [not_true_eq_false]
+    exact Not.imp (hz fst) fun a => congrArg (Prod.mk fst) (id (Eq.symm a))
 
 /-- `i₁ToComplRangeI₀` -/
 def i₁ToComplRangeI₀ (X : TopCat.{u}) :

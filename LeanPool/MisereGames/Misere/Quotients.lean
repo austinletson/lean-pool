@@ -91,9 +91,7 @@ theorem add_misereEQ_add [ClosedUnderAdd A] {g g' h h' : G} (hh : A h) (hg' : A 
 
 theorem add_misereGE_add_right [ClosedUnderAdd A] {k : G} (hk : A k) {g h : G}
     (hgh : g ≥m A h) : MisereGE A (g + k) (h + k) := by
-  intro x hx
-  have hkx : A (k + x) := ClosedUnderAdd.has_add _ _ hk hx
-  simpa only [add_assoc, add_comm, add_left_comm] using hgh (k + x) hkx
+  exact misereGE_add_right hk hgh
 
 instance instAdd [ClosedUnderAdd A] : Add (MisereQuotient A) where
   add x y :=

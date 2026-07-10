@@ -243,9 +243,7 @@ lemma conjFactorCompCoeff_spec'' (x : A.conjFactor σ) (y : A.conjFactor τ)
     (z : A.conjFactor (σ * τ)) :
     A.ι (conjFactorCompCoeff x y z) = x.1 * y.1 * z.1⁻¹ := by
   suffices A.ι (conjFactorCompCoeff x y z) * z.val.val = x.val.val * y.val.val by simp [← this]
-  rw [← A.conjFactorCompCoeff_spec' x y z]
-  simp only [conjFactorCompCoeff, ← _root_.mul_assoc, ← map_mul, conjFactorTwistCoeff_swap, map_one,
-    _root_.one_mul]
+  exact Eq.symm (conjFactorCompCoeff_spec x y z)
 
 lemma conjFactorCompCoeff_inv (x : A.conjFactor σ) (y : A.conjFactor τ) (z : A.conjFactor (σ * τ)) :
     A.ι ((conjFactorCompCoeff x y z)⁻¹) = z.1 * (y.1⁻¹ * x.1⁻¹) := by
@@ -275,11 +273,7 @@ lemma conjFactorCompCoeff_comp_comp₁
 
 lemma conjFactorCompCoeff_eq (x : A.conjFactor σ) (y : A.conjFactor τ) (z : A.conjFactor (σ * τ)) :
     A.ι (conjFactorCompCoeff x y z) = (x.1 * y.1) * z.1⁻¹ := by
-  have := conjFactorTwistCoeff_spec' (mul' x y) z
-  simp only [AlgEquiv.mul_apply, mul'_coe] at this
-  rw [this]
-  simp only [AlgEquiv.mul_apply, Units.mul_inv_cancel_right]
-  rfl
+  exact conjFactorCompCoeff_spec'' x y z
 
 lemma conjFactorCompCoeff_comp_comp₂
     (xρ : A.conjFactor ρ) (xσ : A.conjFactor σ) (xτ : A.conjFactor τ)
@@ -523,8 +517,7 @@ lemma compare_toCocycles₂ (x_ : Π σ, A.conjFactor σ) (y_ : Π σ, B.conjFac
 lemma compare_toCocycles₂' (x_ : Π σ, A.conjFactor σ) (y_ : Π σ, B.conjFactor σ) :
     IsMulCoboundary₂ (B.toCocycles₂ y_ / A.toCocycles₂ x_) := by
   fconstructor
-  · refine fun σ =>
-      A.pushConjFactorCoeffAsUnit B (x_ σ) (y_ σ)
+  · exact fun a => conjFactorTwistCoeffAsUnit (x_ a) (x_ a)
   intro σ τ
   dsimp only [AlgEquiv.smul_units_def, Pi.div_apply]
   symm

@@ -181,11 +181,7 @@ theorem hasSolvableAtMostSize_split_product_of_demand_cost
         Pebbling.HasSolvableAtMostSize (graph a) T (demandCost T)) :
     Pebbling.HasSolvableAtMostSize (graph (a + m)) 1
       (∑ z : HypercubeVertex m, if E z = 0 then 0 else demandCost (E z)) := by
-  classical
-  exact hasSolvableAtMostSize_split_product_of_fiber_demands
-    (a := a) (m := m) (E := E)
-    (cost := fun z : HypercubeVertex m => demandCost (E z))
-    hE (fun z hz => hcost (E z) hz)
+  exact hasSolvableAtMostSize_split_product_of_fiber_demands hE fun z => hcost (E z)
 
 /-- Linear fiber-demand recurrence: if every demand `T` in `Q_a` can be solved
 with at most `K*T` pebbles, then using a solvable distribution `E` on `Q_m` as

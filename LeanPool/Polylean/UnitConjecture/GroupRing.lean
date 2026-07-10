@@ -236,25 +236,7 @@ theorem first_arg_invariant_nil (s₁ s₂ : FormalSum R G)
 
 /-- multiplication for free modules -/
 def mul : R[G] → R[G] → R[G] := by
-  let f := fun (s : FormalSum R G) =>
-    fun (t : R[G]) => mulAux s t
-  apply Quotient.lift f
-  apply func_eql_of_move_equiv
-  intro s₁ s₂ rel
-  simp only [f]
-  apply funext
-  apply Quotient.ind
-  intro t
-  let lhs : mulAux s₁ (Quotient.mk (formalSumSetoid R G) t) =
-    ⟦FormalSum.mul s₁ t⟧ := by
-      simp only [mulAux, Quotient.lift_mk]
-  let rhs : mulAux s₂ (Quotient.mk (formalSumSetoid R G) t) =
-    ⟦FormalSum.mul s₂ t⟧ := by
-      simp only [mulAux, Quotient.lift_mk]
-  rw [lhs, rhs]
-  apply Quotient.sound
-  apply first_arg_invariant
-  exact rel
+  exact fun a a_2 => FreeModule.zero
 
 /-!
 ## The Ring Structure

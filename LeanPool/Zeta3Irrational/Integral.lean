@@ -181,8 +181,7 @@ lemma log_rpow_integrable (n : ℝ) (hn : n > -1) :
             · positivity
           · linarith
         · apply Real.rpow_pos_of_pos
-          simp only [one_div, inv_pos]
-          linarith
+          exact Nat.one_div_pos_of_nat
       · constructor
         · positivity
         · rw [div_le_one] <;> linarith
@@ -365,9 +364,7 @@ lemma sub_mul_mul_ne_zero (y : ℝ) (x : ℝ × ℝ)
     suffices (1 - x.1 * x.2) * y < y by linarith
     rwa [mul_lt_iff_lt_one_left]
     rcases hy with ⟨hy1, _⟩
-    by_contra! h
-    suffices y = 0 by tauto
-    linarith
+    exact lt_of_le_of_ne' hy1 hy'
 
 lemma integrableOn_aux (x : ℝ × ℝ)
     (h1 : 0 < 1 - (1 - x.1 * x.2)) (h2 : 1 - (1 - x.1 * x.2) < 1) :
@@ -381,8 +378,7 @@ lemma integrableOn_aux (x : ℝ × ℝ)
     apply ContinuousOn.log
     · apply ContinuousOn.sub continuousOn_const
       apply ContinuousOn.mul continuousOn_const continuousOn_id
-    · intro y hy
-      exact sub_mul_mul_ne_zero y x hy h1
+    · exact fun x_2 a => sub_mul_mul_ne_zero x_2 x a h1
   · intro y hy
     have h : 1 / (1 - (1 - x.1 * x.2) * y) =
       -(-(1 - x.1 * x.2)) / (1 - (1 - x.1 * x.2) * y) / (1 - x.1 * x.2) := by
@@ -398,8 +394,7 @@ lemma integrableOn_aux (x : ℝ × ℝ)
     apply HasDerivAt.neg
     apply HasDerivAt.log
     · apply HasDerivAt.const_sub
-      nth_rw 2 [← mul_one (a := 1 - x.1 * x.2)]
-      apply HasDerivAt.const_mul _ (hasDerivAt_id' y)
+      exact hasDerivAt_const_mul (1 - x.1 * x.2)
     · exact sub_mul_mul_ne_zero y x (Set.mem_Icc_of_Ioo hy) h1
   · intro y hy
     simp at hy
@@ -738,8 +733,7 @@ lemma J_ENN_rs_eq_tsum (r s : ℕ) : JENN r s = ∑' (k : ℕ), ENNReal.ofReal
   _ = ∑' (k : ℕ), ∫⁻ (x : ℝ × ℝ) in Set.Ioo 0 1 ×ˢ Set.Ioo 0 1,
     ENNReal.ofReal (- (x.1 * x.2).log * x.1 ^ (k + r) * x.2 ^ (k + s)) := by
     rw [MeasureTheory.lintegral_tsum]
-    intro n
-    exact AEMeasurable_aux'
+    exact fun i => AEMeasurable_aux'
   _ = ∑' (k : ℕ), ENNReal.ofReal
     (1 / ((k + r + 1) ^ 2 * (k + s + 1)) + 1 / ((k + r + 1) * (k + s + 1) ^ 2)) := by
     simp_rw [J_ENN_rs_eq_tsum_aux_intergal r s]

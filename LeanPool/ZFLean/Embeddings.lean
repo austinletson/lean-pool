@@ -82,13 +82,6 @@ theorem embedding_trans {A B C : ZFSet} (hAB : A ↪ᶻ B) (hBC : B ↪ᶻ C) : 
   obtain ⟨f, hf, injf⟩ := hAB
   obtain ⟨g, hg, injg⟩ := hBC
   use composition g f A B C, IsFunc_of_composition_IsFunc hg hf
-  intro x y z hx hy hz xz yz
-  simp only [mem_composition, pair_inj, existsAndEq, and_true,
-    exists_and_left, exists_eq_left'] at xz yz
-  obtain ⟨xA, zC, w, wB, xw, wz⟩ := xz
-  obtain ⟨-, -, w', w'B, xw', w'z⟩ := yz
-  obtain rfl := injg _ _ _ wB w'B hz wz w'z
-  obtain rfl := injf _ _ _ hx hy wB xw xw'
-  rfl
+  exact IsInjective.composition_of_injective injf injg
 
 end ZFSet

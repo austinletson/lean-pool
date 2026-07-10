@@ -403,8 +403,7 @@ lemma computeUnitPairs_iff {n₁ n₂ : g.NT} :
   · intro hn
     apply mem_addUnitPairIter_unitPair g.generatorsProdDiag
       generatorsProdDiag_subset_generators_prod _ _ hn
-    intro
-    exact generatorsProdDiag_unitPairs
+    exact fun p a => generatorsProdDiag_unitPairs a
   · intro hnn
     apply unitPair_mem_addUnitPairsIter _ _ hnn
     rfl

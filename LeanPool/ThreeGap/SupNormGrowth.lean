@@ -43,8 +43,7 @@ theorem abs_sub_le_of_same_sign {a b r : ℝ} (hsign : (0 ≤ a) ↔ (0 ≤ b))
   rw [abs_le] at ha hb ⊢
   rcases lt_or_ge a 0 with h | h
   · have hb0 : b < 0 := by
-      by_contra hb'
-      exact absurd (hsign.mpr (not_lt.mp hb')) (not_le.mpr h)
+      exact (lt_iff_lt_of_le_iff_le hsign).mp h
     exact ⟨by linarith, by linarith⟩
   · have hb0 : 0 ≤ b := hsign.mp h
     exact ⟨by linarith [ha.1, ha.2, hb.1, hb.2], by linarith [ha.1, ha.2, hb.1, hb.2]⟩
@@ -95,13 +94,10 @@ theorem supNorm_growth_doubling (α : Fin d → ℝ) (q : ℕ → ℤ) (p : ℕ 
     have hsub : ‖ε j2 - ε j1‖ ≤ delta α (q N) :=
       norm_sub_le_of_sameOrthant (fun i => (hsign i).symm) hnorm2 hnorm1
     have hdd : delta α (q (N + j2) - q (N + j1)) ≤ ‖ε j2 - ε j1‖ := by
-      simp only [hε]
       exact delta_diff_le α (q (N + j2)) (q (N + j1)) (p (N + j2)) (p (N + j1))
     have hdle : delta α (q (N + j2) - q (N + j1)) ≤ delta α (q N) := le_trans hdd hsub
     have hge : q N ≤ q (N + j2) - q (N + j1) := by
-      by_contra hc
-      rw [not_le] at hc
-      exact absurd hdle (not_le.mpr (hbsad N _ hm hc))
+      exact le_imp_le_of_lt_imp_lt (hbsad N (q (N + j2) - q (N + j1)) hm) hdle
     have hj1 : q N ≤ q (N + j1) := hmono.monotone (by omega)
     have hj2 : q (N + j2) ≤ q (N + 2 ^ d) := hmono.monotone (by omega)
     omega

@@ -215,8 +215,7 @@ theorem abc'_char0 [CharZero k]
   have hab : IsCoprime a' b' := by
     rw [← gcd_isUnit_iff]
     apply isUnit_gcd_of_eq_mul_gcd eq_a' eq_b'
-    apply gcd_ne_zero_of_right
-    assumption
+    exact gcd_ne_zero_of_right hb
   rw [eq_a', mul_ne_zero_iff] at ha
   rcases ha with ⟨hd, ha'⟩
   rw [eq_b', mul_ne_zero_iff] at hb
@@ -230,10 +229,7 @@ theorem abc'_char0 [CharZero k]
   have hc' : c' ≠ 0 := by
     rw [eq_c', mul_ne_zero_iff] at hc; exact hc.right
   have hsum' : a' + b' + c' = 0 := by
-    rw [eq_a', eq_b', eq_c', ← mul_add, ← mul_add, mul_eq_zero] at hsum
-    rcases hsum with dz | goal
-    · exact absurd dz hd
-    · exact goal
+    exact add_neg_cancel (a' + b')
   have hbc := rot3_isCoprime hsum' hab
   have hca := rot3_isCoprime (by rw [← rot3_add]; exact hsum') hbc
   rcases LeanPolyABC.Polynomial.abc_char0 ha' hb' hc' hab hsum' with heq | hineq

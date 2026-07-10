@@ -77,39 +77,7 @@ private lemma finset_min_sep (S0 : Finset ℂ)
         s ≠ s' → (0 : ℝ) < ‖s' - s‖ :=
       fun _ _ _ _ hne =>
         norm_pos_iff.mpr (sub_ne_zero.mpr (Ne.symm hne))
-    have h_exists_pair : ∃ s ∈ S0, ∃ s' ∈ S0, s ≠ s' := by
-      obtain ⟨s, hs⟩ := hS0_nonempty
-      by_contra h_all_eq
-      push Not at h_all_eq
-      have hsub : S0 ⊆ {s} := fun x hx =>
-        Finset.mem_singleton.mpr (h_all_eq x hx s hs)
-      have h0 : 0 < S0.card :=
-        Finset.card_pos.mpr ⟨s, hs⟩
-      have := Finset.card_le_card hsub
-      simp only [Finset.card_singleton] at this; omega
-    obtain ⟨s₁, hs₁, s₂, hs₂, hne₁₂⟩ := h_exists_pair
-    have h_finite : (S0 ×ˢ S0 |>.filter
-        (fun p => p.1 ≠ p.2) |>.image
-          (fun p => ‖p.2 - p.1‖)).Nonempty := by
-      refine Finset.Nonempty.image ?_ _
-      exact ⟨(s₁, s₂), Finset.mem_filter.mpr
-        ⟨Finset.mem_product.mpr ⟨hs₁, hs₂⟩, hne₁₂⟩⟩
-    obtain ⟨δ, hδ_mem, hδ_min⟩ :=
-      Finset.exists_min_image _ id h_finite
-    simp only [id] at hδ_min
-    have hδ_mem' := Finset.mem_image.mp hδ_mem
-    obtain ⟨⟨a, b⟩, hab_mem, hab_eq⟩ := hδ_mem'
-    simp only [Finset.mem_filter, Finset.mem_product]
-      at hab_mem
-    refine ⟨δ, ?_, ?_⟩
-    · rw [← hab_eq]
-      exact h_pos a hab_mem.1.1 b hab_mem.1.2 hab_mem.2
-    · intro s hs s' hs' hne
-      exact hδ_min ‖s' - s‖
-        (Finset.mem_image.mpr ⟨(s, s'),
-          Finset.mem_filter.mpr
-            ⟨Finset.mem_product.mpr ⟨hs, hs'⟩, hne⟩,
-          rfl⟩)
+    exact finset_discrete_min_sep S0 hS0_nonempty h_pos
 
 /-- The Cauchy filter argument: if the sum of PV terms converges and the regular part
 tends to its integral, then the full CPV filter is Cauchy (hence converges). -/
@@ -419,10 +387,7 @@ theorem generalizedResidueTheorem'
       ∀ s ∈ S0, ∀ s' ∈ S0,
         s ≠ s' → 0 < ‖s' - s‖ := by
     intro s hs s' hs' hne
-    obtain ⟨ε, hε_pos, hε_sep⟩ :=
-      hS_discrete s (hS0_subset s hs)
-    exact lt_of_lt_of_le hε_pos
-      (hε_sep s' (hS0_subset s' hs') (Ne.symm hne))
+    exact norm_sub_pos_iff.mpr (id (Ne.symm hne))
   have h_decomp :=
     simple_poles_decomposition U hU S0 hS0_in_U f
       hf hSimplePoles hf_ext
@@ -436,14 +401,7 @@ theorem generalizedResidueTheorem'
     intro z ⟨t, ht, htz⟩
     rw [← htz]; exact hγ_in_U t ht
   constructor
-  · by_cases h_avoids :
-        ∀ s ∈ S0, ∀ t ∈ Icc γ.a γ.b,
-          γ.toFun t ≠ s
-    · exact cauchyPrincipalValueExistsOn_avoids S0 f
-        γ.toPiecewiseC1Curve h_avoids
-    · push Not at h_avoids
-      exact cauchyPrincipalValueOn_singular_sum S0 f
-        γ hSimplePoles hPV_singular hg_cont_on_image
+  · exact cauchyPrincipalValueOn_singular_sum S0 f γ hSimplePoles hPV_singular hg_cont_on_image
   · by_cases h_avoids :
         ∀ s ∈ S0, ∀ t ∈ Icc γ.a γ.b,
           γ.toFun t ≠ s
@@ -495,22 +453,7 @@ theorem residueSimplePole_eq_of_decomposition (f : ℂ → ℂ) (z₀ c : ℂ) (
     (hg : AnalyticAt ℂ g z₀)
     (hf_eq : ∀ᶠ z in 𝓝[≠] z₀, f z = c / (z - z₀) + g z) :
     residueSimplePole f z₀ = c := by
-  unfold residueSimplePole
-  apply Filter.Tendsto.limUnder_eq
-  have h_sub : Tendsto (fun z => z - z₀) (𝓝[≠] z₀) (𝓝 0) := by
-    rw [show (0 : ℂ) = z₀ - z₀ from (sub_self z₀).symm]
-    exact tendsto_nhdsWithin_of_tendsto_nhds
-      (continuous_id.sub continuous_const).continuousAt.tendsto
-  have h_g : Tendsto g (𝓝[≠] z₀) (𝓝 (g z₀)) :=
-    hg.continuousAt.tendsto.mono_left nhdsWithin_le_nhds
-  have h_prod : Tendsto (fun z => (z - z₀) * g z) (𝓝[≠] z₀) (𝓝 0) := by
-    simpa only [zero_mul] using h_sub.mul h_g
-  have h_ev : ∀ᶠ z in 𝓝[≠] z₀, (z - z₀) * f z = c + (z - z₀) * g z := by
-    filter_upwards [hf_eq, self_mem_nhdsWithin] with z hz hne
-    rw [hz, mul_add, mul_div_cancel₀ _ (sub_ne_zero.mpr hne)]
-  have h_tend : Tendsto (fun z => c + (z - z₀) * g z) (𝓝[≠] z₀) (𝓝 c) := by
-    simpa only [add_zero] using (tendsto_const_nhds (x := c)).add h_prod
-  exact h_tend.congr' (h_ev.mono fun _ hz => hz.symm)
+  exact residue_simple_pole_eq_laurent f z₀ c g hg hf_eq
 
 /-- The contour integral `(2πi)⁻¹ ∮_{|z-z₀|=r} f(z)dz = c` for small `r`,
 when `f` has decomposition `c/(z-z₀) + g` with `g` analytic. -/

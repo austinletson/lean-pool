@@ -48,13 +48,11 @@ lemma fdPolygon_at_zero : fdPolygon 0 = 1/2 + HHeight * I := by
 
 /-- Polygon vertex at t=1: rho'. -/
 lemma fdPolygon_at_one : fdPolygon 1 = rho' := by
-  simp only [fdPolygon, HHeight, rho', chordSegment]
-  norm_num
+  exact fdPolygon_at_t1
 
 /-- Polygon vertex at t=4: top-left corner (-1/2 + HHeight·i). -/
 lemma fdPolygon_at_four : fdPolygon 4 = -1/2 + HHeight * I := by
-  simp only [fdPolygon, HHeight]
-  norm_num
+  exact fdPolygon_at_t4
 
 /-- Direction from p to z0 is in Q1 (re > 0, im > 0). -/
 lemma v0_quadrant (p : ℂ) (hp_re : |p.re| < 1 / 2) (hp_im : p.im < HHeight) :
@@ -96,8 +94,7 @@ lemma v1_quadrant (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_re : |p.re| < 1 / 2)
 
 /-- Polygon vertex at t=3: rho. -/
 lemma fdPolygon_at_three : fdPolygon 3 = rho := by
-  simp only [fdPolygon, chordSegment, iPoint, rho]
-  norm_num
+  exact fdPolygon_at_t3
 
 /-- Direction from p to fdPolygon 3 (= rho) is in Q3 (re < 0, im < 0). -/
 lemma v3_quadrant (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_re : |p.re| < 1 / 2)
@@ -439,17 +436,14 @@ lemma winding_fdPolygon_center_invariant (p₁ p₂ : ℂ)
   · intro t _ht; simp [H, γ₀]
   · intro t _ht; simp [H, γ₁]
   · intro s _hs; simp only [H]; rw [fdPolygon_closed]
-  · intro t ht s hs
-    simp only [H]; rw [sub_ne_zero]; exact havoid s hs t ht
+  · exact fun t a s a_1 => sub_ne_zero_of_ne (havoid s a_1 t a)
   · intro t ht ht_not_P _s _hs
     exact (fdPolygon_differentiableAt_off_partition t ht ht_not_P
       ).sub_const _
   · intro q₁ q₂ hq₁q₂ hpiece h_sub
     have h_deriv_eq : ∀ q ∈ Ioo q₁ q₂ ×ˢ Icc (0 : ℝ) 1,
         deriv (fun t' => H (t', q.2)) q.1 = deriv fdPolygon q.1 := by
-      intro ⟨t, s⟩ ⟨ht, _hs⟩
-      change deriv (fun t' => fdPolygon t' - ((1 - ↑s) * p₁ + ↑s * p₂)) t = deriv fdPolygon t
-      exact deriv_sub_const _
+      exact fun q a => deriv_sub_const ((1 - ↑q.2) * p₁ + ↑q.2 * p₂)
     suffices h_cont : ContinuousOn (fun q : ℝ × ℝ => deriv fdPolygon q.1)
         (Ioo q₁ q₂ ×ˢ Icc 0 1) by
       exact h_cont.congr (fun q hq => h_deriv_eq q hq)

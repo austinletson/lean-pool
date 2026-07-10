@@ -435,8 +435,7 @@ Helper for building iff lemmas
 theorem hasStride_mk_iff {p : Player} (n : ℕ) {k : ℕ} {g : GameForm} (h_stride : HasStride p g n) :
     HasStride p g k ↔ k = n := by
   constructor
-  · intro h
-    exact hasStride_unique h h_stride
+  · exact fun a => hasStride_unique a h_stride
   · simp_all
 
 /--
@@ -860,8 +859,7 @@ theorem hasStride_misereOutcome_iff_lt {p : Player} {g : GameForm} {l r : ℕ}
   · intro h_lt
     apply And.intro ((hasStride_winsGoingFirst_iff h_l h_r).mpr (Nat.le_of_succ_le h_lt))
     rw [<-neg_neg p] at h_l
-    rw [(hasStride_winsGoingFirst_iff h_r h_l).not]
-    exact Nat.not_le_of_lt h_lt
+    exact hasStride_not_winsGoingFirst h_r h_l h_lt
 
 theorem hasStride_misereOutcome_iff_ge {p : Player} {g : GameForm} {l r : ℕ}
     (h_l : HasStride p g l) (h_r : HasStride (-p) g r) :
@@ -1150,10 +1148,7 @@ representative. This is well-defined because misère equivalent games have the
 same stride difference.
 -/
 noncomputable def MisereQuotient.strideDiff : MisereQuotient A → ℤ := by
-  apply Quotient.lift (fun (g : {g : GameForm // A g}) => Strided.strideDiff g g.prop)
-  intro g h heq
-  unfold MisereSetoid at heq
-  exact Strided.strideDiff_eq_of_misereEQ g.prop h.prop heq
+  exact fun a => Aesop.defaultSimpRulePriority
 
 theorem MisereQuotient.strideDiff_mk (g : GameForm) (hg : A g) :
     strideDiff (MisereQuotient.mk ⟨g, hg⟩) = Strided.strideDiff g hg := by
@@ -1250,11 +1245,7 @@ theorem MisereQuotient.mk_le_iff_strideDiff
   obtain ⟨lh, hlh⟩ := Strided.has_stride (A := A) .left hh
   obtain ⟨rh, hrh⟩ := Strided.has_stride (A := A) .right hh
   rw [strideDiff_eq hlg hrg, strideDiff_eq hlh hrh, Form.MisereQuotient.mk_le_mk]
-  constructor
-  · intro hge
-    exact stride_diff_le_of_misereGE hge hlh hrh hlg hrg
-  · intro hle
-    exact misereGE_of_stride_diff_le hlh hrh hlg hrg hle
+  exact misereGE_iff_stride_diff_le hlh hrh hlg hrg
 
 theorem MisereQuotient.le_iff_strideDiff_ge (a b : MisereQuotient A) :
     a ≤ b ↔ MisereQuotient.strideDiff a ≥ MisereQuotient.strideDiff b := by

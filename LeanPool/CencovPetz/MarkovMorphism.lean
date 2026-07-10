@@ -93,9 +93,7 @@ noncomputable def pushforward (p : Simplex α) : Simplex β := by
     have hcomm :
         (∑ b : β, ∑ a : α, p.p a * κ.K a b) =
           ∑ a : α, ∑ b : β, p.p a * κ.K a b := by
-      simpa using
-        (Finset.sum_comm (s := (Finset.univ : Finset β)) (t := (Finset.univ : Finset α))
-          (f := fun b a => p.p a * κ.K a b))
+      exact Finset.sum_comm
     calc
       (∑ b : β, ∑ a : α, p.p a * κ.K a b)
           = ∑ a : α, ∑ b : β, p.p a * κ.K a b := hcomm
@@ -113,9 +111,7 @@ noncomputable def tangentPushforward (u : tangentSpace (α := α)) : tangentSpac
   have hcomm :
       (∑ b : β, ∑ a : α, ((u : α → ℝ) a) * κ.K a b) =
         ∑ a : α, ∑ b : β, ((u : α → ℝ) a) * κ.K a b := by
-    simpa using
-      (Finset.sum_comm (s := (Finset.univ : Finset β)) (t := (Finset.univ : Finset α))
-        (f := fun b a => ((u : α → ℝ) a) * κ.K a b))
+    exact Finset.sum_comm
   have hu_sum : (∑ a : α, (u : α → ℝ) a) = 0 :=
     (tangentSpace.mem_iff (α := α) (u := (u : α → ℝ))).1 u.property
   refine (tangentSpace.mem_iff (α := β) (u := fun b => ∑ a : α, ((u : α → ℝ) a) * κ.K a b)).2 ?_
@@ -163,9 +159,7 @@ lemma deterministic_pushforward_apply [DecidableEq β] (g : α → β) (hg : Fun
   -- Expand the deterministic kernel, then convert an `if`-sum to a filtered sum.
   have :
       (∑ a : α, if g a = b then p.p a else 0) = ∑ a with g a = b, p.p a := by
-    simpa using
-      (Finset.sum_filter (s := (Finset.univ : Finset α)) (p := fun a : α => g a = b)
-        (f := fun a => p.p a)).symm
+    exact Eq.symm (Finset.sum_filter (fun a => g a = b) p.p)
   simp [deterministic, pushforward, mul_ite, this]
 
 /-- Tangent pushforward along a deterministic morphism is fiberwise summation. -/
@@ -250,9 +244,7 @@ theorem fisherBilin_pushforward_le_of_markovMorphism (κ : MarkovMorphism α β)
   have hcomm :
       (∑ b : β, ∑ a : α, (((u : α → ℝ) a) * (u : α → ℝ) a) / p.p a * κ.K a b)
         = ∑ a : α, ∑ b : β, (((u : α → ℝ) a) * (u : α → ℝ) a) / p.p a * κ.K a b := by
-    simpa using
-      (Finset.sum_comm (s := (Finset.univ : Finset β)) (t := (Finset.univ : Finset α))
-        (f := fun b a => (((u : α → ℝ) a) * (u : α → ℝ) a) / p.p a * κ.K a b))
+    exact Finset.sum_comm
   calc
     (∑ b : β,
           ((∑ a : α, (u : α → ℝ) a * κ.K a b) * ∑ a : α, (u : α → ℝ) a * κ.K a b) /

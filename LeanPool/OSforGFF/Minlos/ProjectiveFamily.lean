@@ -258,8 +258,7 @@ instance marginalProjectiveLimitIsProbability (Φ : E → ℂ) (hΦ_cont : Conti
     (hΦ_pd : IsPositiveDefinite Φ) (hΦ_norm : Φ 0 = 1) [Nonempty E] :
     IsProbabilityMeasure (marginalProjectiveLimit Φ hΦ_cont hΦ_pd hΦ_norm) := by
   unfold marginalProjectiveLimit
-  exact isProbabilityMeasureProjectiveLimit
-    (marginalFamily_isProjective Φ hΦ_cont hΦ_pd hΦ_norm)
+  exact isProbabilityMeasureProjectiveLimit (marginalFamily_isProjective Φ hΦ_cont hΦ_pd hΦ_norm)
 
 /-- The projective limit projects correctly onto each finite-dimensional marginal. -/
 theorem marginalProjectiveLimit_isProjectiveLimit (Φ : E → ℂ) (hΦ_cont : Continuous Φ)

@@ -202,15 +202,13 @@ lemma abcConjecture_iff_countTriples :
       ext ⟨i, j, k⟩
       simp only [Set.mem_iUnion, Set.mem_Icc, Prod.mk_le_mk, exists_and_left, ← Prod.mk_one_one,
         Set.mem_Ici, and_iff_left_iff_imp, and_imp]
-      rintro - - -
-      exact ⟨max i (max j k), by simp⟩
+      exact fun a a_1 a_2 => directed_of₃ LE.le i j k
     rw [← Set.inter_eq_left.2 (abcExceptions_subset_Ici_one ε), ← this]
     refine forall_increasing _ ?_ ?_ hC
     · intro n m hnm
       dsimp
       gcongr
-    · intro n
-      exact (Set.finite_Icc (1, 1, 1) (n, n, n)).inter_of_right _
+    · exact fun n => Set.toFinite (abcExceptions ε ∩ Set.Icc (1, 1, 1) (n, n, n))
 
 open Topology in
 lemma abcConjecture_iff_eventually_countTriples :
@@ -431,8 +429,7 @@ theorem sum_le_card_mul_sup {ι : Type*} (f : ι → ℕ) (s : Finset ι) :
     ∑ i ∈ s, f i ≤ s.card * s.sup f := calc
   ∑ i ∈ s, f i ≤ ∑ i ∈ s, s.sup f := by
     apply Finset.sum_le_sum
-    intro i hi
-    exact Finset.le_sup hi
+    exact fun i a => le_sup a
   _ = s.card * s.sup f := by
     simp
 
@@ -590,8 +587,7 @@ private theorem y_zero : y 0 = 1 := by
 private theorem hy_pos (j : ℕ) : 0 < y j := by
   apply Finset.prod_pos
   simp only [Finset.mem_filter, Nat.mem_primeFactors, ne_eq, and_imp]
-  intro p hp _ _ _
-  exact hp.pos
+  exact fun i a a_1 a_2 a_3 => Nat.Prime.pos a
 
 private theorem prod_y_pow_eq_n_subset {s : Finset ℕ}
     (hs : ∀ p, p.Prime → p ∣ n → n.factorization p ∈ s) :

@@ -128,9 +128,7 @@ lemma _root_.Subalgebra.centralizer_range_includeRight_eq_center_tensorProduct [
       (Algebra.TensorProduct.comm R A B).toAlgHom.comp
       ((Algebra.TensorProduct.map (AlgHom.id R A) (center R B).val)) x
     congr 1
-    ext
-    · rfl
-    · rfl
+    exact Eq.symm (Algebra.TensorProduct.comm_comp_map (AlgHom.id R A) (center R B).val)
   · rintro ⟨y, hy⟩
     refine ⟨(Algebra.TensorProduct.comm R _ _) y, (Algebra.TensorProduct.comm R A B).injective ?_⟩
     calc

@@ -138,8 +138,7 @@ theorem _root_.zeroOutside_openHom_stalk_surj
       ((TopCat.Presheaf.zeroOutsideOpenHom (F := F) h).app (op WV) t) =
     (F.zeroOutside U).germ W x hxW s
   rw [ht]
-  simp only [s_res]
-  convert ((F.zeroOutside U).germ_res_apply (homOfLE hWV_le_W) x hxWV s) using 1
+  exact germ_res_apply (zeroOutside U F) (homOfLE hWV_le_W) x hxWV s
 
 /-- The sheaf stalk map of `sheafifyMap (zeroOutsideOpenHom h)` at `x ∈ V` is surjective.
     Transfers presheaf stalk surjectivity via `toSheafify_naturality` and

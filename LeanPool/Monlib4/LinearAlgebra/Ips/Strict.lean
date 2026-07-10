@@ -77,8 +77,7 @@ theorem TensorProduct.lid_coe' (x : E) (r : R) : r ⊗ₜ[R] x = r • x := by
   rw [TensorProduct.lid_symm_coe, TensorProduct.smul_tmul', smul_eq_mul, mul_one]
 
 theorem TensorProduct.rid_coe' (x : E) (r : R) : x ⊗ₜ[R] r = r • x := by
-  rw [TensorProduct.rid_symm_coe, TensorProduct.smul_tmul', TensorProduct.smul_tmul, smul_eq_mul,
-    mul_one]
+  exact rid_coe x r
 
 theorem TensorProduct.lid_coe_rid_coe (x : E) :
   (x : R ⊗[R] E) = (x : E ⊗[R] R) := by simp only [LinearEquiv.apply_symm_apply]

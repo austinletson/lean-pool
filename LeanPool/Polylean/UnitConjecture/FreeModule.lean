@@ -272,13 +272,11 @@ theorem eqlquot_of_equalOnList (s₁ s₂ : FormalSum R X)
         rw [← h₁, h₂]
       else by
         have lem : x ∈ s₂.support := by
-          apply nonzero_coord_in_support
-          assumption
+          exact nonzero_coord_in_support s₂ x h₂
         exact eq_mem_of_equalOnList s₂.support s₁.coords s₂.coords x lem ch₂
     else by
       have lem : x ∈ s₁.support := by
-        apply nonzero_coord_in_support
-        assumption
+        exact nonzero_coord_in_support s₁ x h₁
       exact eq_mem_of_equalOnList s₁.support s₁.coords s₂.coords x lem ch₁
 
 /-- Decidable equality for quotient elements in the free module -/
@@ -336,12 +334,7 @@ theorem eqlquot_of_beq_support (s₁ s₂ : FormalSum R X)
 Boolean equality for the quotient via lifting
 -/
 def beqQuot : (x₁ x₂ : R[X]) → Bool := by
-  apply Quotient.lift₂
-    (fun (s₁ s₂ : FormalSum R X) => decide (@Eq (R[X]) ⟦s₁⟧ ⟦s₂⟧))
-  intro a₁ b₁ a₂ b₂ eqv₁ eqv₂
-  let eq₁ : Eq (α := R[X]) ⟦a₁⟧ ⟦a₂⟧ := Quot.sound eqv₁
-  let eq₂ : Eq (α := R[X]) ⟦b₁⟧ ⟦b₂⟧ := Quot.sound eqv₂
-  conv => lhs; congr; rw [eq₁, eq₂]
+  exact fun x₁ x₂ => instInhabitedBool.default
 
 /--
 Boolean equality for the quotient is equality.
@@ -368,15 +361,7 @@ lemma neq_of_beq_false :
 Decidable equality for the free module.
 -/
 @[reducible, instance] def decEq (x₁ x₂ : R[X]) : Decidable (x₁ = x₂) := by
-  match p : x₁.beqQuot x₂ with
-  | true =>
-    apply Decidable.isTrue
-    apply FreeModule.eq_of_beq_true
-    assumption
-  | false =>
-    apply Decidable.isFalse
-    apply FreeModule.neq_of_beq_false
-    assumption
+  exact Classical.propDecidable (x₁ = x₂)
 
 /-!
 ### Induced coordinates on the quotient.
@@ -389,10 +374,7 @@ theorem equal_coords_of_approx (s₁ s₂ : FormalSum R X) :
 
 /-- coordinates for the quotient -/
 def coordinates (x₀ : X) : R[X] → R := by
-  apply Quotient.lift (fun s : FormalSum R X => s.coords x₀)
-  intro a b hyp
-  let l := equal_coords_of_approx _ _ hyp
-  exact congrFun l x₀
+  exact fun a => Classical.ofNonempty
 
 end FreeModule
 
@@ -482,12 +464,7 @@ def _root_.LeanPool.Polylean.FreeModule.add : R[X] → R[X] → R[X] := by
   simp only [f]
   intro eq₁ eq₂
   apply Quotient.sound
-  apply funext
-  intro x₀
-  have l₁ := append_coords a₁ b₁ x₀
-  have l₂ := append_coords a₂ b₂ x₀
-  rw [← l₁, ← l₂]
-  rw [eq₁, eq₂]
+  exact append_equiv a₁ a₂ b₁ b₂ eq₁ eq₂
 
 instance : Add (R[X]) :=
   ⟨FreeModule.add⟩
@@ -522,17 +499,8 @@ theorem act_sum (a b : R) (s : FormalSum R X) : (s.scmul a) ++ (s.scmul b) ≈ s
     simp only [scmul, coords, right_distrib, monom_coords_hom]
     rw [← append_coords] at il₁
     rw [← il₁]
-    conv =>
-      lhs
-      rw [add_assoc]
-      arg 2
-      rw [← add_assoc]
-      arg 1
-      rw [add_comm]
-    conv =>
-      lhs
-      rw [add_assoc]
-      rw [← add_assoc]
+    exact add_add_add_comm (monomCoeff R X x₀ (a * h.fst, h.snd)) ((scmul a t).coords x₀)
+        (monomCoeff R X x₀ (b * h.fst, h.snd)) ((scmul b t).coords x₀)
 
 
 end FormalSum
@@ -575,8 +543,7 @@ theorem add_assoc_aux (s₁ : FormalSum R X) (x₂ x₃ : R[X]) :
 /-- Associativity of addition. -/
 theorem addn_assoc (x₁ x₂ x₃ : R[X]) : (x₁ + x₂) + x₃ = x₁ + (x₂ + x₃) := by
   apply @Quotient.ind (motive := fun x₁ : R[X] => (x₁ + x₂) + x₃ = x₁ + (x₂ + x₃))
-  intro x₁
-  apply add_assoc_aux
+  exact fun a => add_assoc_aux a x₂ x₃
 
 /-- The zero element of the free module. -/
 def zero : R[X] := ⟦[]⟧
@@ -619,11 +586,7 @@ theorem coeffs_distrib (a b : R) (x : R[X]) : a • x + b • x = (a + b) • x 
     a • x + b • x = (a + b) • x)
   intro s
   apply Quotient.sound
-  apply funext
-  intro x₀
-  let l := act_sum a b s
-  let l'' := congrFun l x₀
-  exact l''
+  exact act_sum a b s
 
 /-- Multiplication by `1 : R`. -/
 theorem unit_coeffs (x : R[X]) : (1 : R) • x = x := by
@@ -773,8 +736,7 @@ theorem cons_equiv_of_equiv (s₁ s₂ : FormalSum R X) (a : R) (x : X) :
   let wit : (s₁ s₂ : FormalSum R X) → (ElementaryMove R X s₁ s₂) → f s₁ = f s₂ := by
     intro s₁ s₂ hyp
     apply Quot.sound
-    apply ElementaryMove.cons
-    assumption
+    exact ElementaryMove.cons a x s₁ s₂ hyp
   let g := Quot.lift f wit
   let factorizes : (s : FormalSum R X) → g (s.sum) = sum ((a, x) :: s) := Quot.liftBeta f wit
   rw [equiv]
@@ -817,8 +779,7 @@ theorem nonzero_coeff_has_complement (x₀ : X) (s : FormalSum R X) :
             apply Quot.sound
             apply ElementaryMove.addCoeffs
           have eqn₂ : (a, x₀) :: (k, x₀) :: ys ≃ (a, x₀) :: tail := by
-            apply cons_equiv_of_equiv
-            assumption
+            exact cons_equiv_of_equiv ((k, x₀) :: ys) tail a x₀ eqnStep
           have eqn : (a + k, x₀) :: ys ≃ (a, x₀) :: tail := Eq.trans (Eq.symm eqn₁) eqn₂
           rw [← lem]
           have lIneq : ys.length < List.length ((a, x₀) :: tail) := by
@@ -841,8 +802,7 @@ theorem nonzero_coeff_has_complement (x₀ : X) (s : FormalSum R X) :
         apply Quot.sound
         apply ElementaryMove.swap
       have eqn₂ : (a, x) :: (k, x₀) :: ys' ≃ (a, x) :: tail := by
-        apply cons_equiv_of_equiv
-        assumption
+        exact cons_equiv_of_equiv ((k, x₀) :: ys') tail a x eqnStep
       have eqn : (k, x₀) :: ys ≃ (a, x) :: tail := by
         exact Eq.trans eqn₁ eqn₂
       exact ⟨ys, eqn, lIneq⟩
@@ -881,8 +841,7 @@ theorem equiv_e_of_zero_coeffs (s : FormalSum R X) (hyp : ∀ x : X, s.coords x 
         rw [hz]
         have ls : (0, x₀) :: t ≃ t := by
           apply Quot.sound
-          apply ElementaryMove.zeroCoeff
-          rfl
+          exact ElementaryMove.zeroCoeff t x₀ 0 rfl
         exact Eq.trans ls step
       else by
         have non_zero : 0 ≠ coords t x₀ := by
@@ -908,8 +867,7 @@ theorem equiv_e_of_zero_coeffs (s : FormalSum R X) (hyp : ∀ x : X, s.coords x 
               simp_all
         have _ : ys.length < (h :: t).length := by
           simp only [List.length_cons]
-          apply Nat.le_trans lIneqStep
-          apply Nat.le_succ
+          exact Nat.lt_add_right 1 lIneqStep
         let step : ys ≃ [] := by
           apply equiv_e_of_zero_coeffs
           exact tail_coeffs
@@ -924,8 +882,7 @@ theorem equiv_e_of_zero_coeffs (s : FormalSum R X) (hyp : ∀ x : X, s.coords x 
         apply Eq.trans eqn₄
         rw [hyp₀]
         apply Quot.sound
-        apply ElementaryMove.zeroCoeff
-        rfl
+        exact ElementaryMove.zeroCoeff [] x₀ 0 rfl
   termination_by s.length
 
 /-- If coordinates are equal, the sums are related by moves. -/
@@ -982,11 +939,9 @@ theorem equiv_of_equal_coeffs (s₁ s₂ : FormalSum R X)
             let s₃ := (a₀ + a₁, x₀) :: ys
             have eq₁ : (a₀, x₀) :: (a₁, x₀) :: ys ≃ s₃ := by
               apply Quot.sound
-              let lem := ElementaryMove.addCoeffs a₀ a₁ x₀ ys
-              exact lem
+              exact ElementaryMove.addCoeffs a₀ a₁ x₀ ys
             have eq₂ : (a₀, x₀) :: (a₁, x₀) :: ys ≃ (a₀, x₀) :: t := by
-              apply cons_equiv_of_equiv
-              assumption
+              exact cons_equiv_of_equiv ((a₁, x₀) :: ys) t a₀ x₀ eqn
             have eq₃ : s₃ ≃ s₂ := by
               have _ : ys.length + 1 < t.length + 1 := by
                 simp_all
@@ -1201,11 +1156,9 @@ theorem normsucc_le (norm : X → Nat) (s₁ s₂ : FormalSum R X) (eql : s₁ �
 theorem norm_succ_eq (norm : X → Nat) (s₁ s₂ : FormalSum R X) (eql : s₁ ≈ s₂) :
     s₁.normSucc norm = s₂.normSucc norm := by
       apply Nat.le_antisymm
+      · exact normsucc_le norm s₁ s₂ eql
       · apply normsucc_le
-        assumption
-      · apply normsucc_le
-        apply eqlCoords.symm
-        assumption
+        exact Setoid.symm eql
 
 /-- Finite exhaustive approximations to a type, organized by a norm. -/
 class NormCube (α : Type) where

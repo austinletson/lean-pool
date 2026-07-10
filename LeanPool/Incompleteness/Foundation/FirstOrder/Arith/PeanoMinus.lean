@@ -177,8 +177,7 @@ scoped instance : PosMulStrictMono M where
 
 scoped instance : MulPosStrictMono M where
   mul_lt_mul_of_pos_right := by
-    intro z hz x y h
-    exact mul_lt_mul x y z h hz
+    exact fun ⦃c⦄ hc ⦃a b⦄ hab => mul_lt_mul a b c hab hc
 
 scoped instance : IsStrictOrderedRing M where
 

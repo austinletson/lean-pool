@@ -29,8 +29,7 @@ lemma tsum_primes_gt_le_tsum_compl (f : Nat.Primes → ℝ) (hf : ∀ p, 0 ≤ f
     exact Subtype.ext h
   · intro c _
     exact hf c.val
-  · intro i
-    rfl
+  · exact fun i => Std.IsPreorder.le_refl (f ↑i)
   · exact hsum.subtype _
   · exact hsum.subtype _
 
@@ -57,8 +56,7 @@ lemma prime_tail_sum_small (ε : ℝ) (hε : 0 < ε) :
   have h1 : ∑' (p : {q : Nat.Primes // (q : ℕ) > s.sup (·.val)}), f p ≤
             ∑' (p : {q : Nat.Primes // q ∉ s}), f p :=
     tsum_primes_gt_le_tsum_compl f hfnn primes_summable_one_div_sq s
-  simp only [hf] at h1 hs
-  exact lt_of_le_of_lt h1 hs
+  exact Std.lt_of_le_of_lt h1 hs
 
 lemma prime_count_le_sqrt (M : ℕ) :
     (M.sqrt.primesBelow).card ≤ Nat.sqrt M := by
@@ -80,22 +78,13 @@ lemma sqrt_div_X_small (ε : ℝ) (hε : 0 < ε) :
   have hsqrtX : Real.sqrt (X : ℝ) > 1 / ε := by
     nlinarith [Real.sq_sqrt (le_of_lt hXpos), Real.sqrt_nonneg (X : ℝ)]
   have hNatsqrt : (Nat.sqrt X : ℝ) ≤ Real.sqrt (X : ℝ) := by
-    have h₁ : (Nat.sqrt X : ℝ) ^ 2 ≤ (X : ℝ) := by
-      have hcast : (Nat.sqrt X : ℝ) * (Nat.sqrt X : ℝ) ≤ (X : ℝ) := by exact_mod_cast Nat.sqrt_le X
-      nlinarith [sq_nonneg (Nat.sqrt X : ℝ)]
-    nlinarith [Real.sq_sqrt (le_of_lt hXpos), sq_nonneg ((Nat.sqrt X : ℝ) - Real.sqrt (X : ℝ)),
-      Real.sqrt_nonneg (X : ℝ), mul_self_nonneg (Real.sqrt (X : ℝ))]
+    exact Real.nat_sqrt_le_real_sqrt
   have h8 : 1 / Real.sqrt (X : ℝ) < ε := by
     have hsqrtpos : Real.sqrt (X : ℝ) > 0 := Real.sqrt_pos.mpr hXpos
-    calc 1 / Real.sqrt (X : ℝ) < 1 / (1 / ε) := by
-          apply one_div_lt_one_div_of_lt (by positivity)
-          linarith
-      _ = ε := by field_simp
+    exact (one_div_lt hε hsqrtpos).mp hsqrtX
   calc (Nat.sqrt X : ℝ) / X ≤ Real.sqrt (X : ℝ) / X := by gcongr
     _ = 1 / Real.sqrt (X : ℝ) := by
-        have hsqrtpos : Real.sqrt (X : ℝ) > 0 := Real.sqrt_pos.mpr hXpos
-        field_simp
-        nlinarith [Real.sq_sqrt (le_of_lt hXpos)]
+        exact Real.sqrt_div_self'
     _ < ε := h8
 
 lemma card_multiples_Icc (q : ℕ) (X : ℕ) :
@@ -242,8 +231,7 @@ lemma card_union_shifted_bound (b : ℕ) (hb : 2 ≤ b) (T : Finset ℕ) (_hT : 
       exact ⟨hN, d, hd, hdiv⟩
   rw [h_eq]
   apply Finset.card_biUnion_le_card_mul
-  intro d _
-  exact card_shifted_divisible_bound b hb q hq d X
+  exact fun a a_1 => card_shifted_divisible_bound b hb q hq a X
 
 lemma combined_bound_aux (T : Finset ℕ) (X q_sq : ℕ) :
     X / q_sq + T.card * (X / q_sq + 1) ≤ (T.card + 1) * (X / q_sq + 1) := by

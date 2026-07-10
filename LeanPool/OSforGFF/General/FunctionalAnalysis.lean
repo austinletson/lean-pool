@@ -1044,8 +1044,7 @@ theorem double_mollifier_convergence
              simp_all
            rw [← Function.mem_support] at hv htv
            have h_supp_psi : support ψ = Metric.ball 0 (φ i).rOut := by
-             dsimp [ψ]
-             simp only [(φ i).support_normed_eq]
+             exact ContDiffBump.support_normed_eq (φ i)
            rw [h_supp_psi, Metric.mem_ball, dist_zero_right] at hv htv
            dsimp [K, K_t, K_v]
            rw [mem_prod, Metric.mem_closedBall, Metric.mem_closedBall, dist_zero_right,
@@ -1089,8 +1088,7 @@ theorem double_mollifier_convergence
   have h_eq' : ∀ᶠ i in l,
       (bumpSelfConv (φ i) ⋆[ContinuousLinearMap.lsmul ℝ ℝ, volume] C) a =
       (∫ x, ∫ y, (φ i).normed volume (x - a) * C (x - y) * (φ i).normed volume y) := by
-    filter_upwards [h_eq] with i hi
-    exact hi.symm
+    exact Eventually.mono h_eq fun x a_1 => id (Eq.symm a_1)
   exact Tendsto.congr' h_eq' h_selfconv_limit
 
 end DoubleMollifierConvergence

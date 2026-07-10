@@ -229,8 +229,7 @@ theorem main {N x t m r s : ℕ}
   constructor
   · constructor
     · exact modExpOracle_mem_unitaryGroup A
-    · intro a y
-      exact modExpOracle_apply_ket A a y
+    · exact fun a y => modExpOracle_apply_ket A a y
   · exact main_output_with_resources hinput hrt hs
 
 end OrderFinding

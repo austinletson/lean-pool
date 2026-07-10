@@ -59,8 +59,7 @@ lemma isHom_iff {f : A → (i : I) → P i} : IsHom f ↔ ∀i, IsHom (f · i) :
 
 @[simp, fun_prop]
 lemma isHom_eval (i) : IsHom (Function.eval i : (∀ i, P i) → P i) := by
-  unfold Function.eval
-  fun_prop
+  exact isHom_apply i
 
 instance
     [∀ i, MeasurableSpace (P i)]

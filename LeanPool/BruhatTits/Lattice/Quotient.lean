@@ -317,12 +317,10 @@ lemma _root_.BruhatTits.Lattice.mapIntermediateSubmodule_inj_of
   let Q₂ : Submodule R L.M := M₂.comap L.M.subtype
   have hQ₁ : p ≤ Q₁ := by
     rw [hp]
-    apply Submodule.comap_mono
-    exact hge₁
+    exact Submodule.comap_mono hge₁
   have hQ₂ : p ≤ Q₂ := by
     rw [hp]
-    apply Submodule.comap_mono
-    exact hge₂
+    exact Submodule.comap_mono hge₂
   have h' : Q₁.map p.mkQ = Q₂.map p.mkQ := by
     rwa [← SetLike.coe_set_eq] at h ⊢
   have h'' : p.comapMkQRelIso.symm ⟨Q₁, hQ₁⟩ = p.comapMkQRelIso.symm ⟨Q₂, hQ₂⟩ := h'
@@ -493,8 +491,7 @@ lemma _root_.BruhatTits.Lattice.mapIntermediate_ne_top_of (L M : Lattice R)
     · rw [maximalIdeal_smul_eq_uniformizer_smul _ hϖ]
       exact h2
     · rfl
-    · rw [maximalIdeal_smul_eq_uniformizer_smul _ hϖ]
-      exact Submodule.smul_le_self_of_tower ϖ L.M
+    · exact Submodule.smul_le_right
     · exact heq
   simp_all
 
@@ -507,21 +504,17 @@ lemma _root_.BruhatTits.Lattice.mapIntermediate_finrank_eq_one_of
     Module.finrank (ResidueField R) (L.mapIntermediate M) = 1 := by
   have hM'_ne_bot : L.mapIntermediate M ≠ ⊥ := by
     apply Lattice.mapIntermediate_ne_bot_of _ _ hϖ
-    · apply le_of_lt
-      exact h1
+    · exact Std.le_of_lt h1
     · exact h2
   have hM'_ne_top : L.mapIntermediate M ≠ ⊤ := by
     apply Lattice.mapIntermediate_ne_top_of _ _ hϖ
     · exact h1
-    · apply le_of_lt
-      exact h2
+    · exact Std.le_of_lt h2
   have h1' : Module.finrank (ResidueField R) (L.mapIntermediate M) < 2 := by
     rw [← L.quotient_finrank]
-    apply Submodule.finrank_lt_finrank_of_ne_top
-    exact hM'_ne_top
+    exact Submodule.finrank_lt hM'_ne_top
   have h2' : 0 < Module.finrank (ResidueField R) (L.mapIntermediate M) := by
-    apply Submodule.zero_lt_finrank_of_ne_bot
-    exact hM'_ne_bot
+    exact Submodule.zero_lt_finrank_of_ne_bot (L.mapIntermediate M) hM'_ne_bot
   omega
 
 lemma _root_.BruhatTits.Lattice.mapIntermediate_eq_span''
@@ -580,8 +573,7 @@ lemma mapIntermediate_unipotent_smul (b : Basis (Fin 2) K (Fin 2 → K)) (x : R)
     let y' : (b.toLattice (R := R)).M := ⟨b.transvectEquiv x m, by
       simp_all⟩
     have : y = y' := by
-      ext : 1
-      rw [← heq]
+      exact SetLike.coe_eq_coe.mp (id (Eq.symm heq))
     simp only [this, Basis.toLattice_module, Submodule.mem_map, Basis.toLattice_module, y']
     refine ⟨Submodule.Quotient.mk ⟨m, hmL⟩, ?_, ?_⟩
     · rw [Lattice.mem_mapIntermediate]

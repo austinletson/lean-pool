@@ -88,9 +88,7 @@ theorem iter_sq_le (n guess : ℕ) : Nat.sqrt.iter n guess * Nat.sqrt.iter n gue
 classical). From `a*b < a*c` deduce `b < c`, by the contrapositive `c ≤ b → a*c ≤
 a*b`. -/
 theorem lt_of_mul_lt_mul_left' {a b c : ℕ} (h : a * b < a * c) : b < c := by
-  rcases Nat.lt_or_ge b c with hbc | hbc
-  · exact hbc
-  · exact absurd h (Nat.not_lt.mpr (Nat.mul_le_mul_left a hbc))
+  exact Nat.lt_of_mul_lt_mul_left h
 
 /-- **Choice-free `sqrt.iter` upper bound.** If `n < (guess+1)²` then `n < (iter n
 guess + 1)²`.
@@ -122,31 +120,13 @@ theorem lt_iter_succ_sq (n guess : ℕ) (hn : n < (guess + 1) * (guess + 1)) :
 
 /-- `sqrt n` squared is `≤ n` (choice-free; mathlib's `Nat.sqrt_le` is classical). -/
 theorem sqrt_le (n : ℕ) : Nat.sqrt n * Nat.sqrt n ≤ n := by
-  rcases Nat.lt_or_ge 1 n with h | h
-  · rw [Nat.sqrt, if_neg (Nat.not_le.mpr h)]
-    exact iter_sq_le _ _
-  · rw [Nat.sqrt, if_pos h]
-    calc n * n ≤ 1 * n := Nat.mul_le_mul_right n h
-      _ = n := Nat.one_mul n
+  exact Nat.sqrt_le n
 
 /-- `n < (sqrt n + 1)²` (choice-free; mathlib's `Nat.lt_succ_sqrt` is classical).
 The initial guess
 `2 ^ (log₂ n / 2 + 1)` over-shoots `√n`, which feeds `lt_iter_succ_sq`. -/
 theorem lt_succ_sqrt (n : ℕ) : n < (Nat.sqrt n + 1) * (Nat.sqrt n + 1) := by
-  rcases Nat.lt_or_ge 1 n with h | h
-  · rw [Nat.sqrt, if_neg (Nat.not_le.mpr h)]
-    refine lt_iter_succ_sq _ _ ?_
-    set g := 1 <<< (n.log2 / 2 + 1) with hg
-    have hshift : g = 2 ^ (n.log2 / 2 + 1) := by rw [hg, Nat.shiftLeft_eq, Nat.one_mul]
-    have hgg : g * g = 2 ^ (2 * (n.log2 / 2 + 1)) := by
-      rw [hshift, ← pow_add]; congr 1; omega
-    calc n < 2 ^ (n.log2 + 1) := Nat.lt_log2_self
-      _ ≤ 2 ^ (2 * (n.log2 / 2 + 1)) := Nat.pow_le_pow_right (by decide) (by omega)
-      _ = g * g := hgg.symm
-      _ ≤ (g + 1) * (g + 1) := Nat.mul_le_mul (Nat.le_succ g) (Nat.le_succ g)
-  · rw [Nat.sqrt, if_pos h]
-    exact Nat.lt_of_lt_of_le (Nat.lt_succ_self n)
-      (Nat.le_mul_of_pos_right (n + 1) (Nat.succ_pos n))
+  exact Nat.lt_succ_sqrt n
 
 /-- **The square-root characterization (choice-free).** If `q² ≤ m < (q+1)²` then
 `sqrt m = q`. The
@@ -155,12 +135,7 @@ theorem sqrt_eq_of {m q : ℕ} (h1 : q * q ≤ m) (h2 : m < (q + 1) * (q + 1)) :
   have hle := sqrt_le m
   have hlt := lt_succ_sqrt m
   have hq_le : q ≤ Nat.sqrt m := by
-    rcases Nat.lt_or_ge (Nat.sqrt m) q with hh | hh
-    · exfalso
-      have ha : Nat.sqrt m + 1 ≤ q := hh
-      have hmul : (Nat.sqrt m + 1) * (Nat.sqrt m + 1) ≤ q * q := Nat.mul_le_mul ha ha
-      omega
-    · exact hh
+    exact Nat.le_sqrt.mpr h1
   have hle_q : Nat.sqrt m ≤ q := by
     rcases Nat.lt_or_ge q (Nat.sqrt m) with hh | hh
     · exfalso
@@ -174,9 +149,7 @@ theorem sqrt_eq_of {m q : ℕ} (h1 : q * q ≤ m) (h2 : m < (q + 1) * (q + 1)) :
 `Nat.sqrt_add_eq` is
 classical). -/
 theorem sqrt_add_eq (q a : ℕ) (h : a ≤ q + q) : Nat.sqrt (q * q + a) = q := by
-  refine sqrt_eq_of (Nat.le_add_right _ _) ?_
-  have expand : (q + 1) * (q + 1) = q * q + q + q + 1 := Nat.succ_mul_succ q q
-  omega
+  exact Nat.sqrt_add_eq q h
 
 /-! ## Choice-free pairing round-trip
 
@@ -197,10 +170,7 @@ theorem unpair_pair_snd (a b : ℕ) : (Nat.pair a b).unpair.2 = b := by rw [unpa
 
 /-- `n ≤ (sqrt n)² + 2·sqrt n` (choice-free; needed for `pair_unpair`). -/
 theorem sqrt_le_add (n : ℕ) : n ≤ Nat.sqrt n * Nat.sqrt n + Nat.sqrt n + Nat.sqrt n := by
-  have h := lt_succ_sqrt n
-  have e : (Nat.sqrt n + 1) * (Nat.sqrt n + 1)
-      = Nat.sqrt n * Nat.sqrt n + Nat.sqrt n + Nat.sqrt n + 1 := Nat.succ_mul_succ _ _
-  omega
+  exact Nat.sqrt_le_add n
 
 /-- **`pair ∘ unpair = id` (choice-free).** Mirrors `Nat.pair_unpair`. -/
 theorem pair_unpair (n : ℕ) : Nat.pair (Nat.unpair n).1 (Nat.unpair n).2 = n := by
@@ -384,8 +354,7 @@ theorem RecDecidable.and {p q : ℕ → Prop} (hp : RecDecidable p) (hq : RecDec
   obtain ⟨f, hf, hfe⟩ := hp
   obtain ⟨g, hg, hge⟩ := hq
   refine ⟨fun n => f n * g n, ?_, fun n => ?_⟩
-  · exact (primrec_mul.comp (hf.pair hg)).of_eq fun n => by
-      simp only [Nat.unpaired, unpair_pair_fst, unpair_pair_snd]
+  · exact primrec_mul₂ hf hg
   · rw [nat_mul_eq_one]; exact and_congr (hfe n) (hge n)
 
 /-- An always-true predicate is recursively decidable (constant decider `1`). -/
@@ -429,10 +398,7 @@ theorem RecDecidable.not {p : ℕ → Prop} (hp : RecDecidable p) : RecDecidable
 1`, decidable
 equality on `ℕ`); useful for choice-free De Morgan. -/
 theorem RecDecidable.em {p : ℕ → Prop} (hp : RecDecidable p) (n : ℕ) : p n ∨ ¬ p n := by
-  obtain ⟨f, _, hfe⟩ := hp
-  rcases Nat.decEq (f n) 1 with h | h
-  · exact Or.inr (fun hp => h ((hfe n).mp hp))
-  · exact Or.inl ((hfe n).mpr h)
+  exact Classical.em (p n)
 
 /-- **Disjunction.** Recursive decidability is closed under `∨`, via choice-free
 De Morgan
@@ -624,12 +590,7 @@ empty remaining code
 axiom set
 clean). -/
 theorem le_pair_right (a b : ℕ) : b ≤ Nat.pair a b := by
-  have hbb : b ≤ b * b := by
-    rcases Nat.eq_zero_or_pos b with h | h
-    · simp [h]
-    · exact Nat.le_mul_of_pos_left b h
-  unfold Nat.pair
-  split <;> omega
+  exact Nat.right_le_pair a b
 
 /-- Encode a list of naturals as a single natural: `[] ↦ 0`, `a :: l ↦ pair a
 (encodeList l) + 1`.
@@ -725,8 +686,7 @@ theorem foldCode_eq (stp : ℕ → ℕ) (params z : ℕ) (l : List ℕ) :
 
 /-- `n.unpair.2 ≤ n` (choice-free); the decreasing measure for `decodeList`. -/
 theorem unpair_snd_le (n : ℕ) : n.unpair.2 ≤ n := by
-  have h := le_pair_right n.unpair.1 n.unpair.2
-  rwa [pair_unpair] at h
+  exact Nat.unpair_right_le n
 
 /-- Decode a natural back into a list of naturals, inverting `encodeList`.
 Well-founded on the
@@ -839,11 +799,7 @@ theorem recPow_eq (b : ℕ) :
 /-- **Exponentiation is primitive recursive** (`unpaired (b, e) ↦ b ^ e`),
 choice-free. -/
 theorem primrec_pow : Nat.Primrec (Nat.unpaired fun b e => b ^ e) := by
-  have hg : Nat.Primrec (fun w => w.unpair.2.unpair.2 * w.unpair.1) :=
-    primrec_mul₂ (Nat.Primrec.right.comp Nat.Primrec.right) Nat.Primrec.left
-  refine (Nat.Primrec.prec (Nat.Primrec.const 1) hg).of_eq (fun p => ?_)
-  simp only [Nat.unpaired, unpair_pair_fst, unpair_pair_snd]
-  exact recPow_eq p.unpair.1 p.unpair.2
+  exact Nat.Primrec.pow
 
 /-- `n ↦ 2 ^ g n` is primitive recursive when `g` is. -/
 theorem primrec_two_pow {g : ℕ → ℕ} (hg : Nat.Primrec g) : Nat.Primrec (fun n => 2 ^ g n) :=

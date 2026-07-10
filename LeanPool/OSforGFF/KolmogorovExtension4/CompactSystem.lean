@@ -76,9 +76,7 @@ theorem indexProj_le (hs : ∀ n, s n ∈ closedCompactCylinders α) (n : ℕ) (
 lemma surjective_proj_allProj [∀ i, Nonempty (α i)] (hs : ∀ n, s n ∈ closedCompactCylinders α) :
     Function.Surjective (fun (f : Π i, α i) (i : allProj hs) ↦ f (i : ι)) := by
   intro y
-  let x := (inferInstance : Nonempty (Π i, α i)).some
-  classical
-  exact ⟨fun i ↦ if hi : i ∈ allProj hs then y ⟨i, hi⟩ else x i, by ext; simp⟩
+  exact Subtype.exists_pi_extension y
 
 end AllProj
 
@@ -117,11 +115,7 @@ lemma nonempty_projCylinder_iff [∀ i, Nonempty (α i)]
   refine Set.Nonempty.preimage ?_ ?_
   · exact ⟨_, hx⟩
   · intro y
-    let x := (inferInstance : Nonempty (∀ i, α i)).some
-    classical
-    refine ⟨fun i ↦ if hi : i ∈ Js (hs n) then y ⟨i, hi⟩ else x i, ?_⟩
-    ext i
-    simp only [Finset.restrict_def, Finset.coe_mem, dite_true]
+    exact CanLift.prf y trivial
 
 theorem isClosed_projCylinder
     (hs : ∀ n, s n ∈ closedCompactCylinders α) (hs_closed : ∀ n, IsClosed (As (hs n))) (n : ℕ) :
@@ -238,9 +232,7 @@ theorem nonempty_iInter_projCylinder (hs : ∀ n, s n ∈ closedCompactCylinders
   suffices ((⋂ i, projCylinder hs i) ∩ piCylinderSet hs).Nonempty by
     rwa [inter_eq_left.mpr (iInter_subset_piCylinderSet hs)] at this
   have : (⋂ n, projCylinder hs n) = (⋂ n, ⋂ i ≤ n, projCylinder hs i) := by
-    ext x
-    simp only [mem_iInter]
-    exact ⟨fun h i j _ ↦ h j, fun h i ↦ h i i le_rfl⟩
+    exact Eq.symm biInter_le_eq_iInter
   rw [this, iInter_inter]
   have h_closed : ∀ n, IsClosed (⋂ i ≤ n, projCylinder hs i) :=
     fun n ↦ isClosed_biInter (fun i _ ↦ isClosed_projCylinder hs

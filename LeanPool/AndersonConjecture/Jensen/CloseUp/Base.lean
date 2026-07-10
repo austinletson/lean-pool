@@ -90,9 +90,7 @@ theorem close_up_principal
     @eq_of_prime_le_prime_height_le_one R.carrier _ (NSubring.isDomain R) _ _
       hspan_prime hcomap_prime hspan_le hspan_ne_bot hht
   have hc_in_P : (c : T) ∈ P := by
-    obtain ⟨t, ht⟩ := hc
-    rw [ht]
-    exact P.mul_mem_right _ hy_in_P
+    exact mem_of_dvd P hc hy_in_P
   rw [← Ideal.mem_span_singleton, heq]
   exact hc_in_P
 

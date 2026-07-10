@@ -32,12 +32,10 @@ lemma SubField.adjoin_centralizer_mul_comm (L : SubField K D) (a : D)
       obtain hx11 | hx12 | hx13 := hx1
       all_goals obtain hy11 | hy12 | hy13 := hy1
       · obtain ⟨b, rfl⟩ := hx11
-        obtain ⟨c, rfl⟩ := hy11
-        exact Algebra.commutes b ((algebraMap K D) c)
+        exact Algebra.commutes b y1
       · obtain ⟨b, rfl⟩ := hx11
         exact Algebra.commutes b y1
       · obtain ⟨b, rfl⟩ := hx11
-        subst hy13
         exact Algebra.commutes b y1
       · obtain ⟨b, rfl⟩ := hy11
         exact (Algebra.commutes b x1).symm
@@ -497,8 +495,7 @@ theorem exists_finite_galois_split :
       rw [mul_assoc]
       congr 1
       change (normalClosure.algHomEquiv K L K_bar |>.symm IsAlgClosed.lift) _ = _
-      simp only [AlgHom.commutes]
-      rfl }
+      exact AlgHom.commutes ((normalClosure.algHomEquiv K L K_bar).symm IsAlgClosed.lift) k }
   haveI : Algebra.IsSeparable K L' := by
     simpa [L'] using normalClosure_isSeparable (K := K) (Kbar := K_bar) L
   haveI : IsGalois K L' := {

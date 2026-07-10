@@ -208,8 +208,7 @@ private lemma charFun_eq_GJGeneratingFunctional
   simp only [distributionPairingCLM, ContinuousLinearMap.coe_mk', LinearMap.coe_mk, AddHom.coe_mk,
     distributionPairing, map_smul, smul_eq_mul]
   rw [show (inner ℝ (ω φ) t : ℝ) = ω φ * t by
-    rw [real_inner_comm]
-    exact Real.ext_cauchy rfl]
+    exact Real.inner_apply (ω φ) t]
   congr 1
   push_cast
   ring

@@ -113,8 +113,7 @@ lemma log_eq_of_pos {x y : V} (pos : 0 < y) {y'} (H : Exponential x y') (hy' : y
 
 lemma log_two_mul_of_pos {y : V} (pos : 0 < y) : log (2 * y) = log y + 1 := by
   rcases log_pos pos with ⟨y', hy', H, hy⟩
-  exact log_eq_of_pos (by simpa using pos) (Exponential.exponential_succ_mul_two.mpr H) (by simpa
-    using hy') (by simpa using hy)
+  exact log_eq_of_pos (by simpa using pos) (Exponential.exponential_succ_mul_two.mpr H) (by exact _root_.mul_le_mul_right hy' 2) (by simpa using hy)
 
 lemma log_two_mul_add_one_of_pos {y : V} (pos : 0 < y) : log (2 * y + 1) = log y + 1 := by
   rcases log_pos pos with ⟨y', hy', H, hy⟩

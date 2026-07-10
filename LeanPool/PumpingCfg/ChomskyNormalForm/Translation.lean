@@ -79,8 +79,7 @@ lemma restrictTerminals_nonUnit_output (hrₒ : ∀ r ∈ g.rules, NonUnit r.out
   | inr hr' =>
     obtain ⟨s, ⟨_, hsr⟩⟩ := hr'
     cases s <;> simp only [reduceCtorEq, Option.some.injEq] at hsr
-    rw [← hsr]
-    trivial
+    exact cast (congrArg NonUnit (congrArg ContextFreeRule.output hsr)) trivial
 
 lemma restrictTerminals_not_empty_output (hne : ∀ r ∈ g.rules, r.output ≠ []) :
     ∀ r' ∈ g.restrictTerminals.rules, r'.output ≠ [] := by

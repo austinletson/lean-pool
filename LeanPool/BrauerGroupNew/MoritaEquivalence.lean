@@ -474,8 +474,7 @@ lemma isSimpleModule_iff_injective_or_eq_zero
   constructor
   · intros inst1
     constructor
-    · have := inst1.1.1
-      rwa [Submodule.nontrivial_iff] at this
+    · exact IsSimpleModule.nontrivial R ↑M
     · intro N f
       refine inst1.1.2 (LinearMap.ker f.hom) |>.elim
         (fun h => Or.inr <| by rwa [LinearMap.ker_eq_bot] at h) <|

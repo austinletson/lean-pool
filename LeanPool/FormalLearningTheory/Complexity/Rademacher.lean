@@ -353,9 +353,7 @@ theorem rademacher_mgf_bound {m : ℕ} (hm : 0 < m) (a : Fin m → ℝ) (c : ℝ
   -- ∑ σ : (Fin m → Bool), ∏ i, g i (σ i) = ∏ i, ∑ b, g i b
   rw [show ∑ σ : SignVector m, ∏ i : Fin m, Real.exp (t * a i * boolToSign (σ i) / ↑m) =
       ∏ i : Fin m, ∑ b : Bool, Real.exp (t * a i * boolToSign b / ↑m) from by
-    rw [← Fintype.piFinset_univ (β := fun _ : Fin m => Bool)]
-    exact Finset.sum_prod_piFinset Finset.univ
-      (fun (i : Fin m) (b : Bool) => Real.exp (t * a i * boolToSign b / ↑m))]
+    exact Eq.symm (Fintype.prod_sum fun i j => Real.exp (t * a i * boolToSign j / ↑m))]
   -- Step 2b: Distribute (1/card) = (1 / 2)^m into the product
   have hcard_eq : (Fintype.card (SignVector m) : ℝ) = (2 : ℝ) ^ m := by
     simp_all
@@ -1082,10 +1080,7 @@ private theorem empRad_eq_one_of_injective_in_shattered {X : Type u}
   intro σ
   set S := Finset.univ.image xs with hS_def
   have hS_sub : S ⊆ T := by
-    intro x hx
-    simp only [hS_def, Finset.mem_image, Finset.mem_univ, true_and] at hx
-    obtain ⟨i, rfl⟩ := hx
-    exact h_range i
+    exact Finset.image_subset_iff.mpr fun x a => h_range x
   have hS_shat : Shatters X C S := shatters_subset C T S hS_sub hT
   let f : ↥S → Bool := fun ⟨x, hx⟩ => σ (Finset.mem_image.mp hx).choose
   obtain ⟨c, hcC, hc_agree⟩ := hS_shat f
@@ -1199,10 +1194,7 @@ private theorem uniform_injective_tuple_measure_half
     calc μ_sub Cij
         ≤ ∑ t : α, μ_sub {ys : Fin m → α | ys i = t ∧ ys j = t} := by
           rw [hCij_eq]
-          calc μ_sub (⋃ t, {ys : Fin m → α | ys i = t ∧ ys j = t})
-              ≤ ∑' t, μ_sub {ys : Fin m → α | ys i = t ∧ ys j = t} :=
-                MeasureTheory.measure_iUnion_le _
-            _ = ∑ t, μ_sub {ys : Fin m → α | ys i = t ∧ ys j = t} := tsum_fintype _
+          exact MeasureTheory.measure_iUnion_fintype_le μ_sub fun i_1 => {ys | ys i = i_1 ∧ ys j = i_1}
       _ ≤ ∑ _t : α, (1 / (n : ENNReal)) ^ 2 :=
           Finset.sum_le_sum (fun t _ => hfiber_bound t)
       _ = (n : ENNReal) * (1 / (n : ENNReal)) ^ 2 := by
@@ -1372,10 +1364,7 @@ theorem rademacher_lower_bound_on_shattered (X : Type u) [MeasurableSpace X]
       fun s _ => ?_⟩
     -- φ '' s ⊆ {xs | ∀ i, xs i ∈ T} which is finite, so φ '' s is finite, hence measurable.
     apply Set.Finite.measurableSet
-    apply (Set.Finite.pi' (fun _ => T.finite_toSet)).subset
-    intro xs hxs
-    obtain ⟨ys, _, rfl⟩ := hxs
-    exact fun i => (ys i).property
+    exact Set.toFinite (φ '' s)
   -- μ = μ_sub.map φ via pi_map_pi.
   have hμ_eq : μ = μ_sub.map φ := by
     simp only [μ, μ_sub, D, φ]
@@ -1632,9 +1621,7 @@ private theorem analytical_log_sqrt_bound (d m : ℕ) (ε : ℝ)
       _ < t := h_t_large
   have h_4_over_sqrt : 4 / Real.sqrt t < ε ^ 2 / Real.sqrt 2 := by
     rw [div_lt_div_iff₀ (Real.sqrt_pos.mpr ht_pos) (Real.sqrt_pos.mpr (by norm_num : (0:ℝ) < 2))]
-    calc 4 * Real.sqrt 2 = ε ^ 2 * (4 * Real.sqrt 2 / ε ^ 2) := by field_simp
-      _ < ε ^ 2 * Real.sqrt t :=
-          mul_lt_mul_of_pos_left h_sqrt_t_lower hε2_pos
+    exact (div_lt_iff₀' hε2_pos).mp h_sqrt_t_lower
   -- Bound 2/t: t > 32/ε⁴ implies 2/t < ε⁴/16 ≤ ε²/16
   have h_2_over_t : 2 / t < ε ^ 2 / 16 := by
     rw [div_lt_div_iff₀ ht_pos (by norm_num : (0:ℝ) < 16)]
@@ -1720,8 +1707,7 @@ theorem vcdim_finite_imp_rademacher_vanishing (X : Type u) [MeasurableSpace X]
             rw [Real.lt_sqrt (by positivity)]
             simp_all
           -- ε * (1/ε) = 1, and ε * √m > ε * (1/ε) = 1
-          have : ε * (1 / ε) = 1 := by field_simp
-          nlinarith [mul_lt_mul_of_pos_left h_sqrt_m hε]
+          exact (div_lt_iff₀' hε).mp h_sqrt_m
     · -- d > 0: Rad ≤ √(2d·log(em/d)/m) < ε.
       have hd_pos' : 0 < d := Nat.pos_of_ne_zero hd_pos
       have hdm : d ≤ m := by omega

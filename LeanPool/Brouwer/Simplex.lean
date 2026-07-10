@@ -39,11 +39,7 @@ variable {k α} in
 /-- The pure strategy concentrated at `i`, as a point of the standard simplex. -/
 abbrev pure [DecidableEq α] (i : α) : stdSimplex k α := ⟨fun j => if i = j then 1 else 0,
  by
-  constructor
-  · intro j
-    by_cases H : i = j
-    repeat simp [H]
-  · simp only [Finset.sum_ite_eq, Finset.mem_univ, ite_true]⟩
+  exact ite_eq_mem_stdSimplex k i⟩
 
 variable {k α} in
 lemma pure_eval_eq [DecidableEq α] {i j : α} (h : i = j) : pure i j = (1 : k) := by

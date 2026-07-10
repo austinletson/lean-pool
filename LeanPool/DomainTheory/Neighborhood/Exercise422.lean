@@ -156,9 +156,6 @@ def natPeano : PeanoModel ℕ where
   zero_ne_succ n := (Nat.succ_ne_zero n).symm
   succ_injective := Nat.succ_injective
   induction s h0 hstep := by
-    intro n
-    induction n with
-    | zero => exact h0
-    | succ k ih => exact hstep k ih
+    exact fun n => Nat.set_induction h0 hstep n
 
 end Domain.Neighborhood.Exercise422

@@ -247,8 +247,7 @@ theorem numDistinctColorings_mul_card_group_eq_sum_card_pow_numCyclesOfGroup
   haveI : ∀ g : G, Fintype (MulAction.fixedBy (X → Y) g) := fun _ => Fintype.ofFinite _
   rw [numDistinctColorings,
     Fintype.sum_congr _ _ forall_card_pow_numCyclesOfGroup_eq_card_fixedBy]
-  symm
-  exact MulAction.sum_card_fixedBy_eq_card_orbits_mul_card_group G (X → Y)
+  exact Eq.symm (MulAction.sum_card_fixedBy_eq_card_orbits_mul_card_group G (X → Y))
 
 /-- *Pólya's enumeration theorem*: Provides a formula for the number of distinct colorings of `X`
     with colors in `Y`, under the group action of `G` on `X`. -/

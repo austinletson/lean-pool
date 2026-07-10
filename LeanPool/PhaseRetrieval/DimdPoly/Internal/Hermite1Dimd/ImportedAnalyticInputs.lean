@@ -331,11 +331,9 @@ private lemma gaussianInner_finite_sum_basis_one
   simp_rw [Finset.sum_mul, mul_assoc]
   rw [MeasureTheory.integral_finsetSum]
   · refine Finset.sum_congr rfl ?_
-    intro α hα
-    simpa [mul_assoc] using
-      (MeasureTheory.integral_const_mul (c α)
-        (fun z : CSpace 1 =>
-          oneDimLift (oneDimPhi k (α 0)) z * conj (oneDimLift (oneDimPhi k (β 0)) z)))
+    exact fun x a =>
+        integral_const_mul (c x) fun a =>
+          oneDimLift (oneDimPhi k (x 0)) a * (starRingEnd ℂ) (oneDimLift (oneDimPhi k (β 0)) a)
   · intro α hα
     simpa [mul_assoc] using (integrable_oneDimBasis_cross k α β).const_mul (c α)
 
@@ -369,12 +367,9 @@ private lemma gaussianInner_finite_sum_one
     simp [mul_assoc, mul_comm]
   rw [hfun, MeasureTheory.integral_finsetSum]
   · refine Finset.sum_congr rfl ?_
-    intro β hβ
-    simpa [mul_assoc] using
-      (MeasureTheory.integral_const_mul (conj (b β))
-        (fun z : CSpace 1 =>
-          (Finset.sum s (fun α => a α * oneDimLift (oneDimPhi k (α 0)) z)) *
-            conj (oneDimLift (oneDimPhi k (β 0)) z)))
+    exact fun x a_1 =>
+        integral_const_mul ((starRingEnd ℂ) (b x)) fun a_2 =>
+          (∑ α ∈ s, a α * oneDimLift (oneDimPhi k (α 0)) a_2) * (starRingEnd ℂ) (oneDimLift (oneDimPhi k (x 0)) a_2)
   · intro β hβ
     have hsumInt :
         Integrable
@@ -559,8 +554,7 @@ private lemma zero_shift_exp_compare
     have hsq' :
         ((j : ℝ) - ((k + 4 : ℕ) : ℝ)) ^ 2 ≤
           4 * (((j : ℝ) - ((k + 5 : ℕ) : ℝ)) ^ 2 + 1) := by
-      rw [hrel]
-      simpa [y] using hsq
+      exact le_of_eq_of_le (congrFun (congrArg HPow.hPow hrel) 2) hsq
     nlinarith [hc0, hsq']
 
 /-- Imported positive-frequency circle estimate with frozen constant `144`. -/
@@ -585,8 +579,7 @@ theorem positiveFrequencyCircleEstimate
   simpa using
     HermitekLEAN.local_circle_estimate E
       (by
-        intro n hn
-        exact Nat.succ_le_of_lt (hpos n hn))
+        exact fun n a => Nat.one_le_of_lt (hpos n a))
       b
 
 /-- Imported high-frequency band estimate with frozen constants `32` and `1343`. -/
@@ -623,9 +616,7 @@ theorem highFrequencyBandEstimate
             (HermiteLEAN.positiveTrigonometricPolynomial
               (HermiteLEAN.frequencyBand N L) (bandCoeff N L c)) := by
             have hgap_real : 1343 * (L : ℝ) ^ 2 ≤ (N : ℝ) ^ 2 := by exact_mod_cast hgap
-            simpa using
-              HermitekLEAN.high_frequency_circle_estimate N L hN hL (bandCoeff N L c)
-                hgap_real
+            exact HermiteLEAN.high_frequency_circle_estimate N L hN hL (bandCoeff N L c) hgap_real
       _ = 32 * circleL2NormSq (fun t => rho 1 (bandLimitedPolynomial N L c t)) := by
             rw [hBandEq]
             simp [circleL2NormSq, rho, HermiteLEAN.circleRhoNormSq, HermiteLEAN.rho,
@@ -1124,8 +1115,7 @@ theorem tensorGaussianFactorization
             (((1 / Real.pi) * Real.exp (-‖z‖ ^ 2) : ℝ) : ℂ) *
               (F q z * conj (G q z)))
           (volume : Measure ℂ) := by
-    intro q
-    exact integrable_weighted_coord_of_integrable_gaussian (F q) (G q) (hFG q)
+    exact fun q => integrable_weighted_coord_of_integrable_gaussian (F q) (G q) (hFG q)
   have hprod_volume :
       Integrable
         (fun z : CSpace d =>
@@ -1189,8 +1179,6 @@ theorem tensorGaussianFactorization
             gaussianInner (d := 1) (fun z : CSpace 1 => F q (z 0))
               (fun z : CSpace 1 => G q (z 0)) := by
             apply Finset.prod_congr rfl
-            intro q hq
-            symm
-            exact gaussianInner_oneDim_eq_weighted_coord (F q) (G q)
+            exact fun x a => Eq.symm (gaussianInner_oneDim_eq_weighted_coord (F x) (G x))
 
 end Hermite1DimdLEAN

@@ -76,18 +76,7 @@ variable [FiniteDimensional 𝕜 E] [FiniteDimensional 𝕜 F]
 theorem norm_tmul {𝕜 B C : Type*} [RCLike 𝕜] [NormedAddCommGroup B]
     [NormedAddCommGroup C] [InnerProductSpace 𝕜 B] [InnerProductSpace 𝕜 C] [FiniteDimensional 𝕜 B]
     [FiniteDimensional 𝕜 C] (x : B) (y : C) : ‖x ⊗ₜ[𝕜] y‖ = ‖x‖ * ‖y‖ := by
-  symm
-  calc
-    ‖x‖ * ‖y‖ = Real.sqrt (RCLike.re (inner 𝕜 x x)) * Real.sqrt (RCLike.re (inner 𝕜 y y)) := by
-      simp_rw [@norm_eq_sqrt_re_inner 𝕜]
-    _ = Real.sqrt (RCLike.re (inner 𝕜 x x) * RCLike.re (inner 𝕜 y y)) := by
-      rw [Real.sqrt_mul inner_self_nonneg]
-    _ = Real.sqrt (RCLike.re ((inner 𝕜 x x) * (inner 𝕜 y y))) := by
-      congr 1
-      simp only [RCLike.mul_re, @inner_self_im 𝕜, MulZeroClass.zero_mul, sub_zero]
-    _ = Real.sqrt (RCLike.re (inner 𝕜 (x ⊗ₜ[𝕜] y) (x ⊗ₜ[𝕜] y))) := by
-      rw [TensorProduct.inner_tmul]
-    _ = ‖x ⊗ₜ[𝕜] y‖ := by rw [@norm_eq_sqrt_re_inner 𝕜]
+  exact TensorProduct.norm_tmul x y
 
 open scoped InnerProductSpace
 omit [FiniteDimensional 𝕜 E] [FiniteDimensional 𝕜 F] in
@@ -196,8 +185,7 @@ theorem orthogonalProjection'_ortho_eq {𝕜 E : Type*} [RCLike 𝕜]
   calc
     orthogonalProjection' Kᗮ = Kᗮ.starProjection := rfl
     _ = ContinuousLinearMap.id 𝕜 E - K.starProjection := by
-      rw [Submodule.id_eq_sum_starProjection_self_orthogonalComplement (K := K)]
-      abel
+      exact Submodule.starProjection_orthogonal K
     _ = ContinuousLinearMap.id 𝕜 E - orthogonalProjection' K := rfl
 
 theorem TensorProduct.submodule_exists_le_tensorProduct_ofFiniteDimensional
@@ -344,10 +332,7 @@ noncomputable def TensorProduct.lidLinearIsometryEquiv
     (𝕜 ⊗[𝕜] E) ≃ₗᵢ[𝕜] E where
   toLinearEquiv := TensorProduct.lid _ _
   norm_map' x := by
-    rw [norm_eq_sqrt_re_inner (𝕜 := 𝕜)]
-    simp only [← LinearEquiv.coe_toLinearMap, ← LinearMap.adjoint_inner_left,
-      TensorProduct.lid_adjoint]
-    simp only [LinearEquiv.coe_coe, LinearEquiv.symm_apply_apply, ← norm_eq_sqrt_re_inner]
+    exact norm_lid x
 
 /-- Tensor product equivalence for finite Euclidean spaces, using `R ⊗[R] R ≃ R`. -/
 noncomputable abbrev euclideanSpaceTensor' {R : Type*} [RCLike R] {ι₁ ι₂ : Type*}
@@ -374,16 +359,7 @@ lemma euclideanSpaceTensor'_apply {R : Type*} [RCLike R] {ι₁ ι₂ : Type*}
 open scoped FiniteDimensional
 theorem LinearIsometryEquiv.linearMap_adjoint {f : E ≃ₗᵢ[𝕜] F} :
   LinearMap.adjoint f.toLinearMap = f.symm.toLinearMap := by
-  letI := FiniteDimensional.complete 𝕜 E
-  letI := FiniteDimensional.complete 𝕜 F
-  calc
-    LinearMap.adjoint f.toLinearMap =
-        ContinuousLinearMap.adjoint
-          (LinearIsometry.toContinuousLinearMap f.toLinearIsometry) := rfl
-    _ = LinearIsometry.toContinuousLinearMap f.symm.toLinearIsometry := by
-      simp only [ContinuousLinearMap.coe_inj]
-      exact LinearIsometryEquiv.adjoint_eq_symm _
-    _ = f.symm.toLinearMap := rfl
+  exact adjoint_toLinearMap_eq_symm f
 
 theorem TensorProduct.ring_tmul {R : Type*} [CommRing R] (x : R ⊗[R] R) :
   ∃ (a b : R), x = a ⊗ₜ[R] b := by

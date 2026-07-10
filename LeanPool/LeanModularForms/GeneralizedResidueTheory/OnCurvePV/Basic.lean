@@ -69,9 +69,7 @@ lemma pv_limit_via_dyadic {γ : ℝ → ℂ} {a b t₀ : ℝ} {L : ℂ}
     have : Tendsto (fun n : ℕ => K * δ / 2 ^ n) atTop (𝓝 0) := by
       have h_tendsto_pow : Tendsto (fun n : ℕ => (2 : ℝ) ^ n) atTop atTop :=
         tendsto_pow_atTop_atTop_of_one_lt (by norm_num : (1 : ℝ) < 2)
-      have h_tendsto_inv : Tendsto (fun n : ℕ => 1 / (2 : ℝ) ^ n) atTop (𝓝 0) := by
-        simp_rw [one_div]; exact tendsto_inv_atTop_zero.comp h_tendsto_pow
-      convert Tendsto.const_mul (K * δ) h_tendsto_inv using 1 <;> [ext n; skip] <;> ring
+      exact Tendsto.const_div_atTop h_tendsto_pow (K * δ)
     rw [Metric.tendsto_atTop] at this
     obtain ⟨N₂, hN₂⟩ := this (η / 4) (by linarith)
     refine ⟨N₂, ?_⟩
@@ -119,9 +117,7 @@ lemma pv_limit_via_dyadic {γ : ℝ → ℂ} {a b t₀ : ℝ} {L : ℂ}
       · have hM_gt_N : M > N := Nat.lt_of_le_of_ne hM_ge_N (Ne.symm hMN)
         have h_tri_inner : ‖I ε - I (δ / 2 ^ N)‖ ≤
             ‖I ε - I (δ / 2 ^ M)‖ + ‖I (δ / 2 ^ M) - I (δ / 2 ^ N)‖ := by
-          rw [show I ε - I (δ / 2 ^ N) =
-            (I ε - I (δ / 2 ^ M)) + (I (δ / 2 ^ M) - I (δ / 2 ^ N)) from by ring]
-          exact norm_add_le _ _
+          exact norm_sub_le_norm_sub_add_norm_sub (I ε) (I (δ / 2 ^ M)) (I (δ / 2 ^ N))
         let J : ℕ → ℂ := fun n => I (δ / 2 ^ n)
         have h_step_J : ∀ n, ‖J (n + 1) - J n‖ ≤ K * δ / 2 ^ n := fun n => by
           simp only [J]; exact h_step n

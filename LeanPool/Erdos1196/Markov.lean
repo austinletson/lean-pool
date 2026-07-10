@@ -376,8 +376,7 @@ lemma explicitFormula_eq_recurrence_rhs {x Y n : ℕ} (hx : 2 ≤ x) (hn : x ≤
               if Y ≤ q ∧ x ≤ n / q then
                 (1 / ((n : ℝ) * (Real.log (n : ℝ)) ^ 2)) * Λ q
               else 0) := by
-            simpa using
-              formula_eq_initialDistribution_add_filteredVonMangoldt (x := x) (Y := Y) (n := n)
+            exact formula_eq_initialDistribution_add_filteredVonMangoldt
     _ = initialDistribution x Y n +
           n.divisors.sum (fun q =>
             if Y ≤ q ∧ x ≤ n / q then

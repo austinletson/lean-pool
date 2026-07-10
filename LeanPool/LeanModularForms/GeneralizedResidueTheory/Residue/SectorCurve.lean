@@ -189,8 +189,7 @@ theorem deriv_sectorCurve_seg2 (r : ℝ) (α : ℝ) (t : ℝ) (ht : t ∈ Ioo 1 
     exact this.congr_deriv (by ring)
   have h_full : HasDerivAt (fun s => ↑r * exp (I * ↑((s - 1) * α)))
       (↑r * (I * ↑α * exp (I * ↑((t - 1) * α)))) t := by
-    have := (hasDerivAt_const t (↑r : ℂ)).mul h_exp
-    exact this.congr_deriv (by ring)
+    exact HasDerivAt.const_mul (↑r) h_exp
   rw [h_full.deriv]; ring
 
 /-- Derivative on segment 3 (t in (2,3)):
@@ -283,8 +282,7 @@ theorem log_cancellation (r : ℝ) (hr : 0 < r) (ε : ℝ) (hε : 0 < ε) (hεr 
   have hεr_pos : 0 < ε / r := div_pos hε hr
   have hεr_lt1 : ε / r < 1 := by rwa [div_lt_one hr]
   have h1 : ∫ t in (ε / r)..(1 : ℝ), (t⁻¹ : ℝ) = -(Real.log (ε / r)) := by
-    rw [integral_inv_of_pos hεr_pos one_pos, Real.log_div one_ne_zero (ne_of_gt hεr_pos),
-      Real.log_one, zero_sub]
+    exact integral_seg1_eq_neg_log (ε / r) hεr_pos hεr_lt1
   have h2 : ∫ t in (2 : ℝ)..(3 - ε / r), -((3 - t)⁻¹ : ℝ) = Real.log (ε / r) := by
     rw [intervalIntegral.integral_neg]
     have h_sub : ∫ t in (2 : ℝ)..(3 - ε / r), (3 - t)⁻¹ = ∫ u in (ε / r)..1, u⁻¹ := by
@@ -459,12 +457,7 @@ private lemma intervalIntegrable_union_adjacent {f : ℝ → ℂ} {a b c : ℝ}
     (h1 : IntervalIntegrable f volume a b)
     (h2 : IntervalIntegrable f volume b c) :
     IntervalIntegrable f volume a c := by
-  rw [intervalIntegrable_iff]
-  have h1' := h1.def'; rw [Set.uIoc_of_le hab] at h1'
-  have h2' := h2.def'; rw [Set.uIoc_of_le hbc] at h2'
-  rw [Set.uIoc_of_le (le_trans hab hbc)]
-  exact (h1'.union h2').mono_set fun t ht =>
-    (le_or_gt t b).elim (fun h => .inl ⟨ht.1, h⟩) (fun h => .inr ⟨h, ht.2⟩)
+  exact IntervalIntegrable.trans h1 h2
 
 private theorem pv_sector_cutoff_composed_integrabilities (r : ℝ) (hr : 0 < r) (α : ℝ)
     (ε : ℝ) (hε : 0 < ε) (hεr : ε < r) :

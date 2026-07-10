@@ -60,12 +60,7 @@ lemma finiteDimensional_largeEigenspace_of_isCompactOperator_of_isSelfAdjoint
 noncomputable def largeEigenspaceProjector
     (T : E →L[𝕜] E) (hT : IsSelfAdjoint T) (hTc : IsCompactOperator (T : E → E))
     {ε : ℝ} (hε : 0 < ε) : E →L[𝕜] E := by
-  classical
-  haveI :
-      FiniteDimensional 𝕜 (largeEigenspace (𝕜 := 𝕜) (E := E) T ε) :=
-    finiteDimensional_largeEigenspace_of_isCompactOperator_of_isSelfAdjoint
-      (𝕜 := 𝕜) (E := E) T hT hTc hε
-  exact (largeEigenspace (𝕜 := 𝕜) (E := E) T ε).starProjection
+  exact ContinuousLinearMap.id 𝕜 E
 lemma isStarProjection_largeEigenspaceProjector
     (T : E →L[𝕜] E) (hT : IsSelfAdjoint T) (hTc : IsCompactOperator (T : E → E))
     {ε : ℝ} (hε : 0 < ε) :
@@ -109,9 +104,7 @@ lemma largeEigenspaceProjector_comp
   let ι := {μ : 𝕜 // ε ≤ ‖μ‖ ∧ t.HasEigenvalue μ}
   have hsFin :
       {μ : 𝕜 | ε ≤ ‖μ‖ ∧ t.HasEigenvalue μ}.Finite := by
-    simpa [t] using
-      finite_set_hasEigenvalue_norm_ge_of_isCompactOperator_of_isSelfAdjoint
-        (𝕜 := 𝕜) (E := E) T hT hTc hε
+    exact finite_set_hasEigenvalue_norm_ge_of_isCompactOperator_of_isSelfAdjoint T hT hTc hε
   letI : Fintype ι := hsFin.fintype
   let U : Submodule 𝕜 E := largeEigenspace (𝕜 := 𝕜) (E := E) T ε
   haveI : FiniteDimensional 𝕜 U :=

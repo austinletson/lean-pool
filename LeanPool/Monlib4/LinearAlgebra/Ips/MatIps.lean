@@ -106,8 +106,7 @@ theorem blockDiagonal'_includeBlock_trace' {R k : Type _} [CommSemiring R] [Fint
   calc
     (blockDiagonal' (includeBlock x)).trace
       = ∑ i, (includeBlock x i).trace :=
-      by simp_rw [Matrix.trace, Matrix.diag, blockDiagonal'_apply, dif_pos,
-      Finset.sum_sigma']; rfl
+      by exact trace_blockDiagonal' (includeBlock x)
     _ = ∑ i, ∑ a, includeBlock x i a a := rfl
     _ = ∑ i, ∑ a, dite (j = i) (fun h => by rw [← h]; exact x)
       (fun _ => (0 : Matrix (s i) (s i) R)) a a :=
@@ -162,9 +161,7 @@ theorem Module.Dual.pi.apply_eq_of (ψ : ∀ i, Module.Dual ℂ (Matrix (s i) (s
 
 theorem unitary.inj_hMul {A : Type _} [Monoid A] [StarMul A] (U : unitary A) (x y : A) :
     x = y ↔ x * U = y * U := by
-  rw [IsUnit.mul_left_inj]
-  · rw [← Unitary.val_toUnits_apply]
-    exact (Unitary.toUnits U).isUnit
+  exact Iff.symm (Unitary.mul_left_inj U)
 
 section SingleBlock
 
@@ -315,8 +312,7 @@ theorem adjoint_eq (hφ : φ.IsFaithfulPosMap) :
   intro y
   rw [LinearMap.adjoint_inner_left, Algebra.linearMap_apply, Algebra.algebraMap_eq_smul_one,
     inner_smul_left, inner_eq, conjTranspose_one, Matrix.one_mul]
-  rw [mul_comm]
-  rfl
+  exact RCLike.inner_apply' x (φ y)
 
 /-- The adjoint of a star-algebraic equivalence $f$ on matrix algebras is given by
   $$f^*\colon x \mapsto f^{-1}(x Q) Q^{-1},$$
@@ -397,8 +393,7 @@ theorem starAlgEquiv_is_isometry_tFAE [hφ : φ.IsFaithfulPosMap] [Nontrivial n]
     · intro h x
       rw [← Matrix.one_mul x, ← star_one]
       exact h _ _
-    · intro h x y
-      exact h _
+    · exact fun a x y => Complex.ext (congrArg Complex.re (a (star x * y))) (congrArg Complex.im (a (star x * y)))
   rw [tfae_4_iff_3]
   haveI :=  hφ.matrixIsPosDef.invertible
   simp_rw [LinearMap.ext_iff, starAlgEquiv_adjoint_eq, LinearMap.comp_apply,

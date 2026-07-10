@@ -60,9 +60,7 @@ lemma tr231 : triangle a b c ↔ triangle b c a := by
   · dsimp [triangle]; rw [← col231]; tauto
 
 lemma tr312 : triangle a b c ↔ triangle c a b := by
-  constructor
-  · dsimp [triangle]; rw [col312]; tauto
-  · dsimp [triangle]; rw [← col312]; tauto
+  exact Iff.symm tr231
 
 lemma tr321 : triangle a b c ↔ triangle c b a := by
   constructor; all_goals dsimp [triangle]; rw [col321]; tauto

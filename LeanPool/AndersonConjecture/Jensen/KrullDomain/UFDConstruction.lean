@@ -261,8 +261,7 @@ private def build_loc_away_ufd_proof
     apply Subtype.ext
     change aeval x₁ (C r) = (r : T)
     rw [Polynomial.aeval_C]
-    simp [show algebraMap R.carrier T =
-      R.carrier.subtype from rfl]
+    exact Algebra.algebraMap_ofSubsemiring_apply R.carrier r
   have hevalS_s : evalS (C y₁ * C y₂) = s := by
     rw [map_mul, hevalS_C, hevalS_C]
   have hy₂_unit :
@@ -363,9 +362,7 @@ private def build_loc_away_ufd_proof
         have hs_pow_unit :
             IsUnit (A (s ^ nn)) := by
           rw [map_pow]
-          exact IsUnit.pow nn
-            (IsLocalization.Away.algebraMap_isUnit
-              (S := Localization.Away s) (x := s))
+          exact IsLocalization.Away.algebraMap_pow_isUnit s nn
         change z * A (evalS m_poly) =
           A (evalS a_poly)
         have hz' : z * A (s ^ nn) = A w := by
@@ -542,14 +539,11 @@ private def build_ufd_proof_proof
     have hy₁_avoids : ι y₁ ∉ P := hR_avoids_P y₁ hy₁_ne
     have hy₂_avoids : ι y₂ ∉ P := hR_avoids_P y₂ hy₂_ne
     have hs_avoids : s ∉ P := by
-      rw [hs_def]
-      exact fun h => (hP_prime.mem_or_mem h).elim hy₁_avoids hy₂_avoids
+      exact IsPrime.mul_notMem hP_prime (hR_avoids_P y₁ hy₁_ne) (hR_avoids_P y₂ hy₂_ne)
     have hpow_le : Submonoid.powers s ≤ nonZeroDivisors S_sub :=
       powers_le_nonZeroDivisors_of_noZeroDivisors hs_ne
     have hdisj : Disjoint (Submonoid.powers s : Set S_sub) (P : Set S_sub) := by
-      rw [Set.disjoint_left]
-      rintro x ⟨n, rfl⟩ hxP
-      exact hs_avoids (hP_prime.mem_of_pow_mem n hxP)
+      exact (disjoint_powers_iff_notMem_of_isPrime s).mpr hs_avoids
     haveI : IsDomain (Localization.Away s) :=
       IsLocalization.isDomain_localization hpow_le
     set Q := Ideal.map (algebraMap S_sub (Localization.Away s)) P with hQ_def
@@ -632,8 +626,7 @@ private def build_ufd_proof_proof
         have h1 := hfactors_assoc.map ι
         rw [map_multiset_prod] at h1
         have h2 : (Multiset.map ι factors).prod = (pfactors.map ι).prod := by
-          rw [show (factors : Multiset R.carrier) = ↑pfactors from
-            (Multiset.coe_toList factors).symm, Multiset.map_coe, Multiset.prod_coe]
+          exact Eq.symm (Multiset.prod_map_toList factors ⇑ι)
         rw [h2, show ι (y₁ * y₂) = ι y₁ * ι y₂ from map_mul ι y₁ y₂] at h1
         exact h1
       -- Each prime factor of y₁y₂ is either prime-and-avoiding-P or a unit in S_sub
@@ -774,9 +767,7 @@ private def build_ufd_proof_proof
                     (a * (ι p) ^ m) * (List.map ι ps).prod ^ m from by
                       rw [mul_pow]
                       ring] at h
-                have h2 : r' ∣ a * (ι p) ^ m :=
-                  ih (a * (ι p) ^ m) hclass' hndvd' h1
-                exact (hpm_unit.dvd_mul_right).mp h2
+                exact (IsUnit.dvd_mul_right hpm_unit).mp (ih (a * ι p ^ m) hclass' hndvd' h1)
           -- Factor s^m = (prod of primes)^m * unit^m, strip primes, then cancel the unit
           have hr'_dvd_xU : r' ∣ x * ↑u_s ^ m := by
             have hsm_eq : s ^ m = (pfactors.map ι).prod ^ m * ↑u_s ^ m := by

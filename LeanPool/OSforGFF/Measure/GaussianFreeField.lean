@@ -140,15 +140,8 @@ theorem gaussian_satisfies_OS0
         ((h_coord i).mul (h_coord j)).mul analyticOnNhd_const
       have h_outer_sum : ∀ i, AnalyticOnNhd ℂ (fun z : Fin n → ℂ => ∑ j,
         z i * z j * SchwingerFunctionℂ₂ dμ_config (J i) (J j)) Set.univ := fun i => by
-        rw [show (fun z : Fin n → ℂ => ∑ j, z i * z j * SchwingerFunctionℂ₂ dμ_config (J i) (J j)) =
-            (∑ j : Fin n, fun z => z i * z j * SchwingerFunctionℂ₂ dμ_config (J i) (J j)) from by
-          ext z; simp [Finset.sum_apply]]
-        exact Finset.analyticOnNhd_sum _ fun j _ => h_monomial i j
-      rw [show (fun z : Fin n → ℂ => ∑ i, ∑ j,
-          z i * z j * SchwingerFunctionℂ₂ dμ_config (J i) (J j)) =
-          (∑ i : Fin n, fun z => ∑ j, z i * z j * SchwingerFunctionℂ₂ dμ_config (J i) (J j)) from by
-        ext z; simp [Finset.sum_apply]]
-      exact Finset.analyticOnNhd_sum _ fun i _ => h_outer_sum i
+        exact analyticOnNhd_fun_sum univ fun n_1 a => h_monomial i n_1
+      exact analyticOnNhd_fun_sum univ fun n_1 a => h_outer_sum n_1
     -- Convert from AnalyticOnNhd to AnalyticOn
     exact h_sum_analytic.analyticOn
 

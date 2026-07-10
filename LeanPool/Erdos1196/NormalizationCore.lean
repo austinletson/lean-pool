@@ -210,9 +210,7 @@ lemma firstEntryTailApproximation {Y : ℕ} (hY : 2 ≤ Y) :
     |firstEntryTail x Y m - 1 / Real.log (x : ℝ)|
       ≤ |firstEntryTail x Y m - 1 / Real.log ((m * entryThreshold x Y m : ℕ) : ℝ)| +
           |1 / Real.log ((m * entryThreshold x Y m : ℕ) : ℝ) - 1 / Real.log (x : ℝ)| := by
-            simpa [sub_eq_add_neg, add_comm, add_left_comm, add_assoc] using
-              abs_sub_le (firstEntryTail x Y m)
-                (1 / Real.log ((m * entryThreshold x Y m : ℕ) : ℝ)) (1 / Real.log (x : ℝ))
+            exact abs_sub_le (firstEntryTail x Y m) (1 / Real.log ↑(m * entryThreshold x Y m)) (1 / Real.log ↑x)
     _ ≤ C0 / (Real.log (x : ℝ)) ^ 2 + Real.log (Y : ℝ) / (Real.log (x : ℝ)) ^ 2 := by
           gcongr
           · exact htail.trans hlogsq

@@ -294,8 +294,7 @@ private theorem integral_zpow_comp_sub_mul_deriv'
     rwa [this] at h_div
   rw [MeasureTheory.integral_eq_of_hasDerivAt_off_countable_of_le
     F f hab hE_count hF_cont hF_deriv h_int]
-  simp only [F]
-  rw [← sub_div]
+  exact div_sub_div_same ((γ b - s) ^ (n + 1)) ((γ a - s) ^ (n + 1)) ↑(n + 1)
 
 /-! ### Contour integral of zpow on closed curves
 
@@ -384,23 +383,7 @@ private theorem residueAt_zpow_sum (s : ℂ) (N : ℕ) (hN : 0 < N) (c : ℕ →
           simp [dist_self] at hmem
           exact hr_ne (abs_eq_zero.mp hmem.symm))))
       exact h_zpow_ci.const_fun_smul
-    have : ∀ S : Finset ℕ,
-        (∮ z in C(s, r), ∑ k ∈ S, c k * (z - s) ^ ((k : ℤ) - (N : ℤ))) =
-        ∑ k ∈ S, (∮ z in C(s, r), c k * (z - s) ^ ((k : ℤ) - (N : ℤ))) := by
-      intro S; induction S using Finset.induction with
-      | empty => simp [circleIntegral]
-      | @insert a S' ha' ih =>
-        simp_rw [Finset.sum_insert ha']
-        have h_sum_ci : CircleIntegrable
-            (fun z => ∑ k ∈ S', c k * (z - s) ^ ((k : ℤ) - (N : ℤ))) s r := by
-          have := CircleIntegrable.sum S'
-            (f := fun k => fun z => c k * (z - s) ^ ((k : ℤ) - (N : ℤ)))
-            (fun k _ => h_ci k)
-          rwa [show (∑ k ∈ S', (fun z => c k * (z - s) ^ ((k : ℤ) - (N : ℤ)))) =
-            fun z => ∑ k ∈ S', c k * (z - s) ^ ((k : ℤ) - (N : ℤ)) from
-            funext (fun z => Finset.sum_apply z S' _)] at this
-        rw [circleIntegral.integral_add (h_ci a) h_sum_ci, ih]
-    exact this _
+    exact circleIntegral.integral_fun_sum fun i a => h_ci i
   rw [h_sum_eq]
   simp_rw [h_term_integral]
   rw [Finset.sum_ite_eq' (Finset.range N) (N - 1)]

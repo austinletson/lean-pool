@@ -434,8 +434,7 @@ lemma recombination_source_target_ineq
           change edge (v₁, e₁).1 (v₁, e₁).2 =
             perItemMatch edge C threshold hexp hfreq i ⟨v₁, hv₁⟩
           rw [← hlabel₁]
-          simpa [sourceVertices] using
-            assignLabel_spec edge C threshold hexp hfreq (v₁, e₁).1 i hi₁_mem'
+          exact assignLabel_spec edge C threshold hexp hfreq (v₁, e₁).1 i hi₁_mem'
         have hmatch₂ :
             edge v₂ e₂ =
               perItemMatch edge C threshold hexp hfreq i
@@ -443,8 +442,7 @@ lemma recombination_source_target_ineq
           change edge (v₂, e₂).1 (v₂, e₂).2 =
             perItemMatch edge C threshold hexp hfreq i ⟨v₂, hv₂⟩
           rw [← hlabel₂]
-          simpa [sourceVertices] using
-            assignLabel_spec edge C threshold hexp hfreq (v₂, e₂).1 i hi₂_mem'
+          exact assignLabel_spec edge C threshold hexp hfreq (v₂, e₂).1 i hi₂_mem'
         have h_eq :
             perItemMatch edge C threshold hexp hfreq i
                 ⟨v₁, hv₁⟩ =

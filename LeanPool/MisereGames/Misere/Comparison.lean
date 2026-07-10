@@ -322,13 +322,11 @@ theorem Separating.pair_of_not_misereGE
   | inl h_left =>
       refine ⟨h_left, ?_⟩
       refine rightSeparating_of_leftSeparating_of_rightSeparatorCandidate_mem h_isRoot hh ?_ h_left
-      intro x hx
-      exact rightSeparatorCandidate_mem h_root h_sub hh hx
+      exact fun {x} a => rightSeparatorCandidate_mem h_root h_sub hh a
   | inr h_right =>
       refine ⟨?_, h_right⟩
       refine leftSeparating_of_rightSeparating_of_leftSeparatorCandidate_mem h_isRoot hg ?_ h_right
-      intro x hx
-      exact leftSeparatorCandidate_mem h_root h_sub hg hx
+      exact fun {x} a => leftSeparatorCandidate_mem h_root h_sub hg a
 
 /--
 A dicotically closed `A` lying in the ambient space and containing a *root* `r`

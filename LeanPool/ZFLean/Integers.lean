@@ -495,11 +495,7 @@ lemma ind {P : ZFNat → ZFNat → Prop} (n m : ZFNat) (zero : P 0 0)
   (succ_l : ∀ n m, P n m → P (n + 1) m) (succ_r : ∀ n m, P n m → P n (m + 1)) : P n m := by
   induction n using ZFNat.induction with
   | zero =>
-    induction m using ZFNat.induction with
-    | zero => exact zero
-    | succ m ih =>
-      rw [←ZFNat.add_one_eq_succ]
-      exact succ_r 0 m ih
+    exact ZFNat.induction' m zero (succ_r 0)
   | succ n ih =>
     rw [←ZFNat.add_one_eq_succ]
     exact succ_l n m ih
@@ -530,8 +526,7 @@ lemma induction_pos {P : ZFInt → Prop} (n : ZFInt) (n_pos : 0 ≤ n)
   · let k := n - m
     have : n = k + m := by
       apply ZFNat.eq_add_of_sub_eq _ rfl
-      left
-      exact h
+      exact ZFNat.le_of_lt h
     rw [this]
     induction k using ZFNat.induction with
     | zero =>
@@ -596,10 +591,7 @@ theorem cases {P : ZFInt → Prop} (n : ZFInt) (pos : 0 ≤ n → P n) (neg : n 
     | neg h => exact neg h
     | pos h => exact pos (Or.inl h)
 theorem add_eq_add_sub_eq_sub {a b c d : ZFNat} : a + b = c + d → a - c = d - b := by
-  intro h
-  have : a = c + d - b := ZFNat.sub_eq_of_eq_add h.symm |>.symm
-  subst this
-  rw [←ZFNat.sub_add_distrib, ZFNat.add_comm b c, ZFNat.add_sub_add_left c d b]
+  exact fun a_1 => ZFNat.add_eq_add_sub_eq_sub a_1
 theorem le_of_lt_succ (n m : ZFInt) : n < m + 1 → n ≤ m := by
   intro h
   induction n using Quotient.ind

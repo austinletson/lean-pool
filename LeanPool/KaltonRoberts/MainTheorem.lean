@@ -287,10 +287,7 @@ theorem boolean_KR_bound_C₂_delta (α : Type*) [BooleanAlgebra α]
             ring
           rw [hrewrite, abs_mul, abs_of_pos (inv_pos.mpr hΔpos)]
         rw [hscale]
-        calc
-          Δ⁻¹ * |f A + f B - f (A ⊔ B)| ≤ Δ⁻¹ * Δ :=
-            mul_le_mul_of_nonneg_left h (inv_nonneg.mpr hΔ)
-          _ = 1 := by field_simp [hΔpos.ne']
+        exact inv_mul_le_one_of_le₀ h hΔ
     obtain ⟨ν, hνadd, hνclose⟩ := boolean_KR_bound_C₂ α g hg
     let μ : α → ℝ := fun A => Δ * ν A
     refine ⟨μ, ?_, ?_⟩

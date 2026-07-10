@@ -74,18 +74,11 @@ def oracle (s : Fin (2 ^ n)) : WalshHadamard.Oracle n := fun x => dotParity x s
 
 /-- The bitwise inner-product parity is symmetric. -/
 theorem dotParity_comm (x y : Fin (2 ^ n)) : dotParity x y = dotParity y x := by
-  have hset : (Finset.univ.filter fun k : Fin n => bit x k && bit y k)
-      = Finset.univ.filter fun k : Fin n => bit y k && bit x k := by
-    apply Finset.filter_congr
-    intro k _
-    rw [Bool.and_comm]
-  unfold WalshHadamard.dotParity
-  rw [hset]
+  exact WalshHadamard.dotParity_comm x y
 
 /-- The Walsh sign is symmetric. -/
 theorem walshSign_comm (x y : Fin (2 ^ n)) : walshSign x y = walshSign y x := by
-  unfold WalshHadamard.walshSign
-  rw [dotParity_comm]
+  exact WalshHadamard.walshSign_comm x y
 
 /-- A Walsh sign squares to `1`. -/
 theorem walshSign_mul_self (x y : Fin (2 ^ n)) :
@@ -163,15 +156,7 @@ theorem dotParity_flipBit (x z : Fin (2 ^ n)) (k : Fin n) :
 /-- Two distinct labels differ at some bit. -/
 theorem exists_bit_ne {y s : Fin (2 ^ n)} (h : y ≠ s) :
     ∃ k : Fin n, bit y k ≠ bit s k := by
-  by_contra hall
-  push Not at hall
-  refine h (Fin.val_injective (Nat.eq_of_testBit_eq fun i => ?_))
-  by_cases hi : i < n
-  · exact hall ⟨i, hi⟩
-  · push Not at hi
-    have hy : y.val < 2 ^ i := lt_of_lt_of_le y.isLt (Nat.pow_le_pow_right (by norm_num) hi)
-    have hs : s.val < 2 ^ i := lt_of_lt_of_le s.isLt (Nat.pow_le_pow_right (by norm_num) hi)
-    rw [Nat.testBit_lt_two_pow hy, Nat.testBit_lt_two_pow hs]
+  exact WalshHadamard.exists_bit_ne h
 
 private theorem if_xor_true (a : Bool) :
     (if (a ^^ true) = true then (-1 : ℂ) else 1) = -(if a = true then -1 else 1) := by
@@ -198,12 +183,7 @@ theorem walshSign_mul_walshSign_flipBit {y s : Fin (2 ^ n)} {k : Fin n}
 labels cancels in pairs under the bit-flip involution. -/
 theorem sum_walshSign_mul_walshSign {y s : Fin (2 ^ n)} (h : y ≠ s) :
     ∑ x, walshSign y x * walshSign s x = 0 := by
-  obtain ⟨k, hk⟩ := exists_bit_ne h
-  refine Finset.sum_involution (fun x _ => flipBit x k)
-    (fun x _ => ?_) (fun x _ _ => flipBit_ne x k)
-    (fun x _ => Finset.mem_univ _) (fun x _ => flipBit_flipBit x k)
-  rw [walshSign_mul_walshSign_flipBit hk x]
-  ring
+  exact WalshHadamard.sum_walshSign_mul_walshSign h
 
 /-! ### Circuit correctness -/
 

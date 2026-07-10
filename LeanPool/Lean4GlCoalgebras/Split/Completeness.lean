@@ -1230,15 +1230,7 @@ lemma first_SplitSequent_eq_of_first
   unfold MaximalPath.first at hfirst
   unfold firstSplitSequent
   unfold MaximalPath.first
-  cases list with
-  | nil =>
-    contradiction
-  | cons x xs =>
-    simp only [List.head_cons] at hfirst
-    rcases x with ⟨Δ' | R, Δs', Rs'⟩
-    · injection hfirst with hinfo hrest
-      exact Sum.inl.inj hinfo
-    · cases hfirst
+  exact prover_SplitSequent_eq_of_inl (id (Eq.symm hfirst))
 
 /-- Auxiliary declaration used in the GL coalgebra development. -/
 def lastSplitSequent {Γ : SplitSequent} {strat : Strategy coalgebraGame Builder}
@@ -1255,12 +1247,7 @@ def pathRelation (Γ : SplitSequent) (strat : Strategy coalgebraGame Builder)
 lemma Relation.TransGen.swap_eq_swap_rel {α : Type} (r : α → α → Prop) :
   Function.swap (Relation.TransGen r) = Relation.TransGen (Function.swap r) := by
   ext x y
-  constructor
-  all_goals
-    intro mp
-    induction mp
-    case single x y_x => exact Relation.TransGen.single y_x
-    case tail x z y_x x_z ih => exact Relation.TransGen.head x_z ih
+  exact Iff.symm Relation.transGen_swap
 
 lemma maximal_path_refl_trans_gen (as) (ne : as ≠ [])
     (chain : List.IsChain nonBoxMove as) :
@@ -1391,8 +1378,7 @@ lemma diamond_in_last_of_diamond_in_first {Γ : SplitSequent}
       rcases π with ⟨π, ne, chain, max, head_cases, in_cone⟩
       have ne_zero : π.length ≠ 0 := by grind
       have length_gt_two : π.length > 2 := by
-        simp at lt
-        grind
+        exact Nat.lt_of_sub_eq_succ (id (Eq.symm eq2))
       have eq3 : π.length - (i + 1 + 1) - 1 = π.length - i - 3 := by omega
       have eq2 : π.length - (i + 1 + 1) - 1 + 1 = π.length - i - 2 := by simp_all; omega
       have y_u₁ := List.IsChain.getElem chain (π.length - (i + 1 + 1) - 1) (by omega)
@@ -1640,10 +1626,7 @@ private lemma maximal_path_first_reverse_index_turn {Γ : SplitSequent}
     omega
   convert (maximal_path_starts_in_prover_turn π)
   simp only [MaximalPath.first, idx_zero]
-  rcases π with ⟨π, ne, chain, max, head_cases, in_cone⟩
-  cases π with
-  | nil => contradiction
-  | cons x xs => cases x; rfl
+  exact List.getElem_zero_eq_head (idx_zero ▸ maximal_path_first_reverse_index_lt π)
 
 /-- Convert first-sequent membership to membership at the final reverse index. -/
 private lemma first_split_sequent_mem_at_reverse_index {Γ : SplitSequent}
@@ -1696,8 +1679,7 @@ private lemma box_successor_path_of_last_box {Δ : SplitSequent}
   have move_last_next : Move π.last next_move := by
     unfold next_move
     simp only [last_def]
-    apply Move.prover
-    exact R_mem
+    exact Move.prover R_mem
   have B_turn_next : coalgebraGame.turn next_move = Builder := by rfl
   have next_in_moves : next_move ∈ coalgebraGame.moves π.last :=
     move_iff_in_moves.1 move_last_next

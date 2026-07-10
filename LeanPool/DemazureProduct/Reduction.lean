@@ -254,7 +254,6 @@ theorem lres_stingy_beta (α β : AspPerm) :
   set δ := α ◃ β⁻¹ with hδ_def
   set β₁ := δ⁻¹ ▹ α with hβ₁_def
   have h_ler : δ ≤R α := by
-    rw [hδ_def]
     exact Submodular.ler_of_lres α β⁻¹
   have rf : ReducedFact δ β₁ α :=
     ReducedFact.of_ler_rres h_ler hβ₁_def.symm

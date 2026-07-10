@@ -34,11 +34,7 @@ instance : FunLike (NontrivialElementaryEmbedding M) M M where
     simp_all
 
 @[ext] lemma ext (eq : ∀ x, j x = k x) : j = k := by
-  rcases j with ⟨j, hj⟩
-  rcases k with ⟨j, hk⟩
-  congr 1
-  ext1 x
-  exact eq x
+  exact DFunLike.ext_iff.mpr eq
 
 instance : ElementaryEmbeddingClass (NontrivialElementaryEmbedding M) M M where
   map_formula j := j.toElementaryEmbedding.map_formula'

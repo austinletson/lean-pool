@@ -40,8 +40,7 @@ theorem commutes_with_mul'_iff [NonUnitalNonAssocSemiring A] [Module R A]
     (f : A →ₗ[R] B) :
     LinearMap.mul' R B ∘ₗ TensorProduct.map f f = f ∘ₗ LinearMap.mul' R A ↔
       ∀ x y : A, f (x * y) = f x * f y := by
-  simp_rw [TensorProduct.ext_iff', LinearMap.comp_apply, TensorProduct.map_tmul,
-    LinearMap.mul'_apply, eq_comm]
+  exact TensorProduct.mapMul'_commute_iff
 
 end
 
@@ -56,9 +55,7 @@ theorem LinearMap.adjoint_commutes_with_mul_adjoint_iff {𝕜 X Y : Type*} [RCLi
     ↔
       ∀ x y : X, f (x * y) = f x * f y := by
   simp_rw [← TensorProduct.map_adjoint, ← LinearMap.adjoint_comp, ← commutes_with_mul'_iff]
-  refine ⟨fun h => ?_, fun h => by rw [h]⟩
-  apply_fun LinearMap.adjoint at h
-  simpa only [LinearMap.adjoint_adjoint] using h
+  exact EmbeddingLike.apply_eq_iff_eq adjoint
 
 lemma LinearMap.commutes_with_mul_adjoint_iff {𝕜 X Y : Type*} [RCLike 𝕜]
     [NormedAddCommGroupOfRing X] [NormedAddCommGroupOfRing Y] [InnerProductSpace 𝕜 X]
@@ -90,14 +87,7 @@ lemma LinearIsometryEquiv.commutes_with_mul_adjoint_iff_of_surjective_isometry
   haveI : CompleteSpace X := FiniteDimensional.complete 𝕜 _
   haveI : CompleteSpace Y := FiniteDimensional.complete 𝕜 _
   have : LinearMap.adjoint f.toLinearMap = f.symm.toLinearMap := by
-    calc
-      LinearMap.adjoint f.toLinearMap =
-          ContinuousLinearMap.adjoint
-            (LinearIsometry.toContinuousLinearMap f.toLinearIsometry) := rfl
-      _ = LinearIsometry.toContinuousLinearMap f.symm.toLinearIsometry := by
-        simp only [ContinuousLinearMap.coe_inj]
-        exact adjoint_eq_symm _
-      _ = f.symm.toLinearMap := rfl
+    exact adjoint_toLinearMap_eq_symm f
   rw [this]
   constructor
   · intro h x y

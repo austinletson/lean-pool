@@ -63,12 +63,7 @@ is contained in the maximal ideal of R (units in R map to units in T). -/
 private lemma comap_maxIdeal_le_of_local
     (R : Subring T) [IsLocalRing ↥R] :
     (IsLocalRing.maximalIdeal T).comap R.subtype ≤ IsLocalRing.maximalIdeal ↥R := by
-  intro r hr
-  rw [Ideal.mem_comap] at hr
-  rw [IsLocalRing.mem_maximalIdeal, mem_nonunits_iff]
-  exact fun hru => absurd hr (by
-    rw [IsLocalRing.mem_maximalIdeal, mem_nonunits_iff, not_not]
-    exact hru.map R.subtype)
+  exact IsLocalRing.le_maximalIdeal_of_isPrime (comap R.subtype (IsLocalRing.maximalIdeal T))
 
 omit [IsDomain T] in
 /-- Under the hypotheses of Proposition 1, M = M_R · T.
@@ -99,8 +94,7 @@ lemma map_maxIdeal_eq_of_surj_closed
     apply Submodule.add_mem_sup
     · exact Ideal.mem_map_of_mem R.subtype hr_in_MR
     · have hmr : m - (r : T) ∈ IsLocalRing.maximalIdeal T ^ 2 := by
-        rw [show m - (r : T) = -((r : T) - m) from by ring]
-        exact neg_mem hdiff
+        exact (Quotient.mk_eq_mk_iff_sub_mem m ↑r).mp (id (Eq.symm hr))
       rwa [sq] at hmr
 
 /-!
@@ -233,11 +227,9 @@ private lemma heitmann_prop1_surj_pow
           (r_a : T) * ((dx : T) + x) + (a - (r_a : T)) * x from by ring]
         refine (M ^ (n + 1)).add_mem (Ideal.mul_mem_left _ _ hdx) ?_
         have ha_sub : a - (r_a : T) ∈ M := by
-          have := M.neg_mem he
-          rwa [show -((r_a : T) - a) = a - (r_a : T) from by ring] at this
+          exact (Quotient.mk_eq_mk_iff_sub_mem a ↑r_a).mp (id (Eq.symm hr_a))
         rw [show M ^ (n + 1) = M * M ^ n from by
-          rw [mul_comm]
-          exact (pow_succ M n).symm]
+          exact IsTwoSided.pow_succ n]
         exact Ideal.mul_mem_mul ha_sub hx_in
     intro q
     obtain ⟨t, rfl⟩ := Ideal.Quotient.mk_surjective q
@@ -326,8 +318,7 @@ theorem heitmann_prop1
         apply Ideal.mem_map_of_mem R.subtype
         have hmem := SModEq.sub_mem.mp (a.property hle)
         rw [Ideal.smul_eq_mul, Ideal.mul_top] at hmem
-        rw [show a.val n - a.val m = -(a.val m - a.val n) by ring]
-        exact neg_mem hmem
+        exact sub_mem_comm_iff.mp hmem
     let φ : AdicCompletion (IsLocalRing.maximalIdeal ↥R) ↥R →+* T :=
       IsAdicComplete.liftRingHom (IsLocalRing.maximalIdeal T) f_n hcompat
     have hφ_surj : Function.Surjective φ := by

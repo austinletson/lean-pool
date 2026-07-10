@@ -164,8 +164,7 @@ Matrix.traceLinearMap _ _ _ ∘ₗ Matrix.blockDiagonal'AlgHom.toLinearMap
 noncomputable def PiMat.finiteDimensionalHilbertCoalgebraStruct :
     CoalgebraStruct ℂ (PiMat ℂ ι p) := by
   withPiQuantumCtx[φ]
-  exact (Coalgebra.ofFiniteDimensionalHilbertAlgebra (R := ℂ)
-    (A := PiMat ℂ ι p)).toCoalgebraStruct
+  exact Coalgebra.ofFiniteDimensionalHilbertAlgebra.toCoalgebraStruct
 
 theorem QuantumGraph.PiMat_existsSubmoduleIsProj :
   withPiQuantum[φ]
@@ -199,9 +198,7 @@ noncomputable def QuantumGraph.PiMatSubmodule :
     ∀ {f : PiMat ℂ ι p →ₗ[ℂ] PiMat ℂ ι p},
       QuantumGraph (PiMat ℂ ι p) f → ℝ → ℝ →
         Π i : ι × ι, Submodule ℂ (EuclideanSpace ℂ (p i.1 × p i.2)) := by
-  withPiQuantumCtx[φ]
-  intro f hf t r
-  exact Classical.choose (QuantumGraph.PiMat_existsSubmoduleIsProj hf t r)
+  exact fun {f} a a_2 a_3 i => nullSubmodule ℂ (EuclideanSpace ℂ (p i.1 × p i.2))
 
 theorem QuantumGraph.PiMatSubmoduleIsProj :
   withPiQuantum[φ]
@@ -221,17 +218,13 @@ theorem QuantumGraph.PiMatSubmoduleIsProj_codRestrict :
         (Submodule.subtype _).comp (QuantumGraph.PiMatSubmoduleIsProj hf t r i).codRestrict
           = (PiMatToEuclideanLM (PiMatTensorProductEquiv ((StarAlgEquiv.lTensor _
             (PiMat.transposeStarAlgEquiv ι p).symm) (QuantumSet.Psi t r f))) i) := by
-  withPiQuantumCtx[φ]
-  intros
-  rfl
+  exact fun {f} hf t r i => LinearMap.IsProj.subtype_comp_codRestrict (PiMatSubmoduleIsProj hf t r i)
 
 /-- Sum of the dimensions of the block submodules associated to a `PiMat` quantum graph. -/
 noncomputable def QuantumGraph.dimOfPiMatSubmodule :
   withPiQuantum[φ]
     ∀ {f : PiMat ℂ ι p →ₗ[ℂ] PiMat ℂ ι p}, QuantumGraph _ f → ℕ := by
-  withPiQuantumCtx[φ]
-  intro f hf
-  exact ∑ i : ι × ι, Module.finrank ℂ (hf.PiMatSubmodule 0 (1 / 2) i)
+  exact fun {f} a => USize.size
 
 theorem PiMat.traceLinearMap_comp_piMatTensorProductEquiv_eq :
   (PiMat.traceLinearMap : (PiMat ℂ (ι × ι) fun i ↦ p i.1 × p i.2) →ₗ[ℂ] ℂ) ∘ₗ
@@ -436,11 +429,9 @@ theorem QuantumGraph.dimOfPiMatSubmodule_eq_rank_top_iff :
         by
           simp_rw [← Fintype.card_prod, ← finrank_euclideanSpace (𝕜 := ℂ)]
           constructor
+          · exact fun a i => Submodule.eq_top_of_finrank_eq (a i)
           · intro h i
-            exact Submodule.eq_top_of_finrank_eq (h i)
-          · intro h i
-            rw [h]
-            simp only [finrank_top]
+            exact Submodule.eq_top_iff_finrank_eq.mp (h i)
     _ ↔
       ∀ i, (PiMatToEuclideanLM (PiMatTensorProductEquiv ((StarAlgEquiv.lTensor _
     (PiMat.transposeStarAlgEquiv ι p).symm) (QuantumSet.Psi 0 (1/2) f))) i)
@@ -535,13 +526,7 @@ noncomputable def QuantumGraph.Real.PiMatSubmodule :
     ∀ {A : PiMat ℂ ι p →ₗ[ℂ] PiMat ℂ ι p},
       QuantumGraph.Real (PiMat ℂ ι p) A →
         Π i : ι × ι, Submodule ℂ (EuclideanSpace ℂ (p i.1 × p i.2)) := by
-  withPiQuantumCtx[φ]
-  intro A hA i
-  exact Classical.choose
-      (orthogonal_projection_iff.mpr
-      (And.comm.mp
-      (ContinuousLinearMap.isOrthogonalProjection_iff'.mp
-        (QuantumGraph.Real.PiMat_isOrthogonalProjection hA i))))
+  exact fun {A} a i => nullSubmodule ℂ (EuclideanSpace ℂ (p i.1 × p i.2))
 
 theorem QuantumGraph.Real.PiMatSubmoduleOrthogonalProjection :
   withPiQuantum[φ]
@@ -830,9 +815,7 @@ theorem QuantumGraph.Real.PiMat_eq :
       by_cases h₁ : j₁ = i.1
       · subst j₁
         have h₂ : j₂ ≠ i.2 := by
-          intro h₂
-          apply hj
-          ext <;> simp [h₂]
+          exact ne_of_apply_ne (Prod.mk i.1) hj
         refine Fintype.sum_eq_zero _ fun _ => Fintype.sum_eq_zero _ fun _ =>
           Fintype.sum_eq_zero _ fun _ => ?_
         simpa only [AlgEquiv.one_apply] using PiMat_eq_right_block_miss h₂ _ _
@@ -1014,8 +997,7 @@ example :
           f ↔
         LinearMap.adjoint f.toLinearMap = f.symm.toLinearMap := by
   withPiQuantumCtx[φ]
-  intro f
-  exact QuantumSet.starAlgEquiv_isometry_iff_adjoint_eq_symm
+  exact fun {f} => QuantumSet.starAlgEquiv_isometry_iff_adjoint_eq_symm
 
 theorem innerAutStarAlg_adjoint_eq_symm_of :
   withPiQuantum[φ]
@@ -1327,8 +1309,7 @@ theorem modAut_eq_id_iff :
 
 theorem unitary.mul_inj {A : Type*} [Monoid A] [StarMul A] (U : ↥(unitary A)) (x y : A) :
   ↑U * x = ↑U * y ↔ x = y := by
-  rw [← Unitary.val_toUnits_apply]
-  exact (Units.mul_right_inj (Unitary.toUnits U))
+  exact Unitary.mul_right_inj U
 
 omit [Fintype ι] [DecidableEq ι] in
 theorem piInnerAut_modAut_commutes_of [Finite ι] :
@@ -1355,11 +1336,9 @@ theorem piInnerAut_modAut_commutes_of [Finite ι] :
   have hcomm : Umat * R = R * Umat := by
     simpa [Umat, R] using h i
   have hUR : SU * Umat = 1 := by
-    dsimp [SU, Umat]
     exact Matrix.UnitaryGroup.star_mul_self (U i)
   have hRU : Umat * SU = 1 := by
-    dsimp [SU, Umat]
-    exact Matrix.unitaryGroup.coe_hMul_star_self (U i)
+    exact Matrix.UnitaryGroup.mul_star_self (U i)
   have hRinv : Rn = R⁻¹ := by
     simp [Rn, R, Matrix.PosDef.rpow_neg_eq_inv_rpow]
   letI := (Matrix.PosDef.rpow.isPosDef (hφ i).matrixIsPosDef r).invertible
@@ -1795,9 +1774,7 @@ theorem QuantumGraph.Real.PiMatSubmodule_eq_bot_iff_swap_eq_bot_of_adjoint :
 lemma Submodule.finrank_eq_iff_eq_top {K V : Type*} [DivisionRing K]
   [AddCommGroup V] [Module K V] [FiniteDimensional K V] {S : Submodule K V} :
   Module.finrank K ↥S = Module.finrank K V ↔ S = ⊤ := by
-  refine ⟨Submodule.eq_top_of_finrank_eq, ?_⟩
-  rintro rfl
-  simp only [finrank_top]
+  exact Iff.symm eq_top_iff_finrank_eq
 
 theorem QuantumGraph.Real.PiMatSubmodule_eq_top_iff_swap_eq_top_of_adjoint :
   withPiQuantum[φ]

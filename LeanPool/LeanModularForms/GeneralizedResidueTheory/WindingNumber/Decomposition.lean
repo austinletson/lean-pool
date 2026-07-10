@@ -272,14 +272,7 @@ theorem windingNumberWithAngles_union
   any_goals exact hST
   any_goals try infer_instance
   case convert_6 =>
-    exact fun x =>
-      if hx : x ∈ S then
-        (angleAtCrossing γ x (hS_in x hx) : ℂ) /
-          (2 * Real.pi)
-      else if hx : x ∈ T then
-        (angleAtCrossing γ x (hT_in x hx) : ℂ) /
-          (2 * Real.pi)
-      else 0
+    exact fun a => { re := a, im := a }
   · rw [Finset.sum_union hST]
     congr! 1
     · refine Finset.sum_bij (fun x hx => x)

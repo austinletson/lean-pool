@@ -86,8 +86,7 @@ lemma factorization_iso_is_unique' {L R : MorphismProperty C} (F : Factorization
 
 /-- A class of morphisms in C defines a class of morphism in the slice C/X for every X ∈ C -/
 def MorphismPropertySlice (W : MorphismProperty C) (X : C) : MorphismProperty (Over X) := by
-  rintro _ _ f
-  exact W ((Over.forget X).map f)
+  exact MorphismProperty.monomorphisms (Over X)
 
 /-- If a class of morphisms contains isomorphisms,
 then so does the class of morphisms in the slice -/
@@ -294,8 +293,7 @@ lemma fact_fact_iso_comm_right : (F : FactorizationSystem L R) → {X Y : C} →
     inv ≫ hom' ≫ r' = inv ≫ F.rightMap f := by rw [comm_right']
     _ = inv ≫ hom ≫ r := by rw [comm_right]
     _ = r := by
-      rw [← Category.assoc, (F.factorizationIso f E l p r q fact).fst.inv_hom_id,
-        Category.id_comp]
+      exact Iso.inv_hom_id_assoc (F.factorizationIso f E l p r q fact).fst r
 
 namespace MorphismProperty
 
@@ -303,8 +301,7 @@ namespace MorphismProperty
 /-- Imported FactorizationSystems declaration. -/
 instance Inter : Inter (MorphismProperty C) where
   inter : (L R : MorphismProperty C) → MorphismProperty C := by
-      intro L R X Y f
-      exact L f ∧ R f
+      exact fun L_2 R => L.isoClosure
 
 end MorphismProperty
 

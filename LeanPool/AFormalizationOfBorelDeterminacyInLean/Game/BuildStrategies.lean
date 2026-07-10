@@ -146,8 +146,7 @@ noncomputable def firstMove : PreStrategy T Player.zero := by
     | ⟨[], _⟩, _ => {⟨a, h⟩}
     | ⟨b :: x, hx⟩, hp =>
       if heq : a = b then by
-        subst heq
-        exact s ⟨x, hx⟩ (by synthIsPosition)
+        exact Set.univ
       else ∅
 @[simp] lemma firstMove_subtree a' x :
   a' :: x ∈ (s.firstMove a h).subtree ↔ a = a' ∧ x ∈ s.subtree := by
@@ -325,9 +324,7 @@ section «followUntilWon»
 variable (S : PreStrategy G.tree p)
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
 noncomputable def followUntilWon : PreStrategy G.tree p := by
-  classical
-  exact fun x hp ↦
-    if G.WonPosition x.val (p.residual x.val) then Set.univ else S x hp
+  exact G.defensivePre p
 lemma le_followUntilWon : S ≤ S.followUntilWon := by
   intro; unfold followUntilWon; split_ifs <;> simp
 lemma followUntilWon_body : body S.followUntilWon.subtree ≤ body S.subtree ∪ p.payoff G := by

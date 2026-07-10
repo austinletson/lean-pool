@@ -148,12 +148,7 @@ lemma boolTestExpectation_empirical_eq_avg
   conv_lhs => rw [show (∑ t : Fin T, if f (hs t) then (1 : ℝ) else 0) =
     ∑ h : H, ∑ t ∈ univ.filter (fun t => hs t = h),
       (if f (hs t) then (1 : ℝ) else 0) from by
-    rw [← Finset.sum_biUnion (s := univ)]
-    · congr 1; ext t; simp
-    · intro h₁ _ h₂ _ hne
-      simp only [Function.onFun]
-      rw [Finset.disjoint_filter]
-      intro t _ ht1 ht2; exact hne (ht1.symm.trans ht2)]
+    exact Eq.symm (sum_fiberwise univ hs fun i => if f (hs i) = true then 1 else 0)]
   congr 1; ext h
   rw [Finset.sum_congr rfl (fun t ht => by
     simp only [Finset.mem_filter, Finset.mem_univ, true_and] at ht

@@ -282,8 +282,7 @@ lemma UniversalEnvelopingAlgebra.central_of_forall_lie_eq_zero
     Commute (ιUEA 𝕜 Z) a := by
   apply UniversalEnvelopingAlgebra.induction 𝕜 𝓰
         (fun b ↦ Commute (UniversalEnvelopingAlgebra.ι 𝕜 Z) b)
-  · intro r
-    exact Algebra.commute_algebraMap_right r ((UniversalEnvelopingAlgebra.ι 𝕜) Z)
+  · exact fun r => Algebra.commute_algebraMap_right r ((ι 𝕜) Z)
   · intro X
     apply commute_iff_lie_eq.mpr
     rw [← LieHom.map_lie, hZ X, map_zero]

@@ -173,7 +173,6 @@ theorem monoFraction_f9_le_13_63 : monoFraction f9 ≤ (13 : ℚ) / 63 := by
         ≤
           Fintype.card Edge0000
             + (Fintype.card Edge1111 + (Fintype.card Edge1001 + Fintype.card Edge0110)) := by
-    dsimp only [Edge0000, Edge1111, Edge1001, Edge0110]
     exact card_or4_le pat0000 pat1111 pat1001 pat0110
   have hmonoNat : monoCount f9 ≤ 624 := by
     have : monoCount f9 ≤
@@ -345,9 +344,7 @@ private lemma monoCount_le_bound :
           Fintype.card (Edge0000 (n := n) hn)
             + (Fintype.card (Edge1111 (n := n) hn)
               + (Fintype.card (Edge1001 (n := n) hn) + Fintype.card (Edge0110 (n := n) hn))) := by
-    dsimp only [Edge0000, Edge1111, Edge1001, Edge0110]
-    exact card_or4_le (pat0000 (n := n) hn) (pat1111 (n := n) hn) (pat1001 (n := n) hn)
-      (pat0110 (n := n) hn)
+    exact card_or4_le (pat0000 hn) (pat1111 hn) (pat1001 hn) (pat0110 hn)
   have hMono :
       monoCount (f (n := n) hn)
         ≤
@@ -540,10 +537,7 @@ theorem monoFraction_f_le_one_quarter : monoFraction (f (n := n) hn) ≤ (1 : �
         exact_mod_cast (edgeCount_eq_descFactorial (n := 2 * m + 1))
       rw [hEdgeQ]
       rw [hSmall, hBig]
-      simpa
-          [Nat.mul_assoc, Nat.mul_left_comm, Nat.mul_comm, Nat.add_assoc, Nat.add_left_comm,
-            Nat.add_comm]
-        using bound_le_quarter_of_odd (m := m) hm
+      exact bound_le_quarter_of_odd m hm
   have hFracBound :
       monoFraction (f (n := n) hn)
         ≤

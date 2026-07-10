@@ -132,8 +132,7 @@ theorem card_filter_dist_eq {n i : ℕ} (target : HypercubeVertex n) :
   have hsubtype :
       Fintype.card {center : HypercubeVertex n // dist target center = i} =
         (Finset.univ.filter fun center : HypercubeVertex n => dist target center = i).card := by
-    simpa using
-      (Fintype.card_subtype fun center : HypercubeVertex n => dist target center = i)
+    exact Fintype.card_subtype fun x => dist target x = i
   rw [← hsubtype, card_sphere]
 
 /-- Sum of the annulus contribution over one Hamming sphere. -/
@@ -212,10 +211,7 @@ theorem sum_annulusContribution_eq_sum_range {n rIn rOut : ℕ}
         Nat.choose n i *
           if rIn ≤ i ∧ i ≤ rOut then 2 ^ (rOut - i) else 0 := by
           refine Finset.sum_congr rfl ?_
-          intro i _hi
-          simpa using
-            sum_filter_dist_eq_annulusContribution
-              (n := n) (rIn := rIn) (rOut := rOut) (i := i) target
+          exact fun x a => sum_filter_dist_eq_annulusContribution target
 
 /-- Exact one-center expectation as a binomial sphere sum. -/
 theorem oneCenterContributionExpectation_eq_distance_sum {n rIn rOut : ℕ}
@@ -816,8 +812,7 @@ theorem sum_sampleTotalContribution_eq {n N rIn rOut : ℕ}
           ∑ center : HypercubeVertex n,
             (annulusContribution rIn rOut target center : ℚ) := by
           refine Finset.sum_congr rfl ?_
-          intro j _hj
-          exact sum_centerSample_eval j (annulusContribution rIn rOut target)
+          exact fun x a => sum_centerSample_eval x (annulusContribution rIn rOut target)
     _ = (N : ℚ) * ((2 ^ n) ^ (N - 1) : ℚ) *
         ∑ center : HypercubeVertex n,
           (annulusContribution rIn rOut target center : ℚ) := by
@@ -898,8 +893,7 @@ def sampleTargetFails {n N : ℕ} (rIn rOut T : ℕ)
 instance instDecidableSampleTargetFails {n N rIn rOut T : ℕ}
     (target : HypercubeVertex n) (sample : CenterSample n N) :
     Decidable (sampleTargetFails rIn rOut T target sample) := by
-  unfold sampleTargetFails
-  infer_instance
+  exact Classical.propDecidable (sampleTargetFails rIn rOut T target sample)
 
 instance instDecidablePredSampleTargetFails {n N rIn rOut T : ℕ}
     (target : HypercubeVertex n) :
@@ -914,9 +908,7 @@ def sampleFailsSomeTarget {n N : ℕ} (rIn rOut T : ℕ)
 instance instDecidableSampleFailsSomeTarget {n N rIn rOut T : ℕ}
     (sample : CenterSample n N) :
     Decidable (sampleFailsSomeTarget rIn rOut T sample) := by
-  classical
-  unfold sampleFailsSomeTarget
-  infer_instance
+  exact Classical.propDecidable (sampleFailsSomeTarget rIn rOut T sample)
 
 instance instDecidablePredSampleFailsSomeTarget {n N rIn rOut T : ℕ} :
     DecidablePred (sampleFailsSomeTarget (n := n) (N := N) rIn rOut T) :=
@@ -996,9 +988,7 @@ theorem oneCenterNegativeExponentialMoment_le_chord {n rIn rOut : ℕ}
         simpa [B] using (by
           exact_mod_cast
             annulusContribution_le_width (rIn := rIn) (rOut := rOut) target center)
-      simpa [B, q] using
-        exp_neg_mul_le_chord (lam := lam) (B := B)
-          (z := (annulusContribution rIn rOut target center : ℝ)) hBpos hz0 hzB
+      exact exp_neg_mul_le_chord hBpos hz0 hzB
   have hsum_chord_eq :
       (∑ center : HypercubeVertex n,
           (1 - q * ((annulusContribution rIn rOut target center : ℝ) / B))) =
@@ -1119,10 +1109,7 @@ theorem sum_exp_annulusContribution_eq_sum_range {n rIn rOut : ℕ}
             (-(lam *
               ((if rIn ≤ i ∧ i ≤ rOut then 2 ^ (rOut - i) else 0 : ℕ) : ℝ))) := by
           refine Finset.sum_congr rfl ?_
-          intro i _hi
-          simpa using
-            sum_filter_dist_eq_exp_annulusContribution
-              (n := n) (rIn := rIn) (rOut := rOut) (i := i) target lam
+          exact fun x a => sum_filter_dist_eq_exp_annulusContribution target lam
 
 /-- Exact one-center negative exponential moment as a binomial Hamming-sphere
 sum. -/
@@ -1170,10 +1157,7 @@ theorem exp_neg_sampleTotalContribution_eq_prod {n N rIn rOut : ℕ}
     _ = ∏ j : Fin N,
         Real.exp (-(lam *
           (annulusContribution rIn rOut target (sample j) : ℝ))) := by
-          simpa using
-            (Real.exp_sum Finset.univ
-              (fun j : Fin N =>
-                -(lam * (annulusContribution rIn rOut target (sample j) : ℝ))))
+          exact Real.exp_sum Finset.univ fun x => -(lam * ↑(annulusContribution rIn rOut target (sample x)))
 
 /-- The product-space sum of independent one-center exponential factors
 factors as the `N`th power of the one-center sum. -/
@@ -1186,12 +1170,7 @@ theorem sum_prod_oneCenterNegativeExponentialMoment {n N rIn rOut : ℕ}
       (∑ center : HypercubeVertex n,
         Real.exp (-(lam *
           (annulusContribution rIn rOut target center : ℝ)))) ^ N := by
-  classical
-  let f : HypercubeVertex n → ℝ :=
-    fun center => Real.exp (-(lam * (annulusContribution rIn rOut target center : ℝ)))
-  have hprod :=
-    (Fintype.prod_sum (fun _j : Fin N => fun center : HypercubeVertex n => f center)).symm
-  simpa [CenterSample, f, Finset.prod_const] using hprod
+  exact Eq.symm (Fintype.sum_pow (fun a => Real.exp (-(lam * ↑(annulusContribution rIn rOut target a)))) N)
 
 theorem sum_exp_neg_sampleTotalContribution_eq_pow {n N rIn rOut : ℕ}
     (target : HypercubeVertex n) (lam : ℝ) :
@@ -1209,8 +1188,7 @@ theorem sum_exp_neg_sampleTotalContribution_eq_pow {n N rIn rOut : ℕ}
             Real.exp (-(lam *
               (annulusContribution rIn rOut target (sample j) : ℝ))) := by
           refine Finset.sum_congr rfl ?_
-          intro sample _hsample
-          exact exp_neg_sampleTotalContribution_eq_prod target lam sample
+          exact fun x a => exp_neg_sampleTotalContribution_eq_prod target lam x
     _ = (∑ center : HypercubeVertex n,
         Real.exp (-(lam *
           (annulusContribution rIn rOut target center : ℝ)))) ^ N := by
@@ -1256,8 +1234,7 @@ theorem targetLowerTailExponentialMoment_eq
               Real.exp (-(lam *
                 (sampleTotalContribution rIn rOut target sample : ℝ))) := by
             refine Finset.sum_congr rfl ?_
-            intro sample _hsample
-            exact exp_target_sub_sampleTotalContribution target lam sample
+            exact fun x a => exp_target_sub_sampleTotalContribution target lam x
       _ = Real.exp (lam * (T : ℝ)) *
           ∑ sample : CenterSample n N,
             Real.exp (-(lam *
@@ -1303,9 +1280,7 @@ theorem targetLowerTailExponentialMoment_le_exp_chord
     simp_all
   have hmoment_chord :
       oneCenterNegativeExponentialMoment rIn rOut target lam ≤ 1 - u := by
-    simpa [B, m, u] using
-      oneCenterNegativeExponentialMoment_le_chord
-        (rIn := rIn) (rOut := rOut) target lam
+    exact oneCenterNegativeExponentialMoment_le_chord target lam
   have hpow :
       (oneCenterNegativeExponentialMoment rIn rOut target lam) ^ N ≤
         Real.exp (-((N : ℝ) * u)) := by
@@ -1402,29 +1377,8 @@ theorem targetLowerTailExponentialMoment_le_exp_optimized_chord
   have hopt :
       Real.exp (lam * (T : ℝ) - (lam - lam ^ 2 * B) * mu) ≤
         Real.exp (-(gap ^ 2 / (4 * B * mu))) := by
-    exact exp_chord_quadratic_optimized
-      (T := (T : ℝ)) (gap := gap) (B := B) (mu := mu) (lam := lam)
-      hB_pos hmu_pos' hgap (by simpa [mu, m] using hmean) rfl
-  calc
-    targetLowerTailExponentialMoment (N := N) rIn rOut T target
-        (gap /
-          (2 * (2 ^ (rOut - rIn) : ℝ) *
-            ((N : ℝ) * oneCenterContributionExpectationReal rIn rOut target)))
-        = targetLowerTailExponentialMoment (N := N) rIn rOut T target lam := by
-          simp [lam, B, m, mu]
-    _ ≤ Real.exp
-        (lam * (T : ℝ) -
-          (N : ℝ) *
-            ((1 - Real.exp (-(lam * (2 ^ (rOut - rIn) : ℝ)))) *
-              (oneCenterContributionExpectationReal rIn rOut target /
-                (2 ^ (rOut - rIn) : ℝ)))) := hchord
-    _ ≤ Real.exp (lam * (T : ℝ) - (lam - lam ^ 2 * B) * mu) :=
-          hchord_to_quad
-    _ ≤ Real.exp
-        (-(gap ^ 2 /
-          (4 * (2 ^ (rOut - rIn) : ℝ) *
-            ((N : ℝ) * oneCenterContributionExpectationReal rIn rOut target)))) := by
-          simpa [B, m, mu, mul_assoc] using hopt
+    exact exp_chord_quadratic_optimized hB_pos hmu_pos hgap hmean rfl
+  exact le_imp_le_of_le_of_le hchord hopt hchord_to_quad
 
 /-- A target-independent one-center exponential-moment bound for a fixed
 Chernoff parameter.  The default target is arbitrary; the preceding
@@ -1544,15 +1498,7 @@ theorem targetFailureProbability_le_exp_optimized_chord
     targetLowerTailExponentialMoment_le_exp_optimized_chord
       (N := N) (rIn := rIn) (rOut := rOut) (T := T)
       target (gap := gap) hgap_pos.le hmu_pos hmean
-  have hmoment' :
-      targetLowerTailExponentialMoment (N := N) rIn rOut T target lam ≤
-        Real.exp
-          (-(gap ^ 2 /
-            (4 * (2 ^ (rOut - rIn) : ℝ) *
-              ((N : ℝ) * oneCenterContributionExpectationReal rIn rOut target)))) := by
-    simpa [lam, B, mu] using hmoment
-  exact targetFailureProbability_le_of_exponentialMoment_le
-    target hlam_pos (hmoment'.trans hexp)
+  exact targetFailureProbability_le_exp_neg_of_exponentialMoment_le target hlam_pos hmoment hexp
 
 /-- Probability that some target fails. -/
 noncomputable def globalFailureProbability {n N : ℕ} (rIn rOut T : ℕ) : ℚ :=

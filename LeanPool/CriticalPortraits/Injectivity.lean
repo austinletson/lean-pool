@@ -465,8 +465,7 @@ is saturated (`N = d-1`) because every survivor's level lies in `[0, d-1]` — `
 lemma hiV_lt_d [NeZero (d * m)] (_hm : 0 < m) (x : ZMod (d * m)) : hiV x < d := by
   unfold hiV
   have hval : x.val < d * m := ZMod.val_lt x
-  have hval' : x.val < m * d := lt_of_lt_of_le hval (le_of_eq (Nat.mul_comm d m))
-  exact Nat.div_lt_of_lt_mul hval'
+  exact (Nat.div_lt_iff_lt_mul _hm).mpr hval
 
 /-- The window `(0, d-1]` contains every edge of the survivor family. -/
 lemma survivorFamily_contained_eq [NeZero (d * m)] (hd : 0 < d) (hm : 0 < m)
@@ -1016,8 +1015,7 @@ theorem hostSet_forced [NeZero (d * m)] (hd : 0 < d) (hm : 0 < m)
   suffices H : ∀ (Q₁ Q₂ : Finset (Finset (ZMod (d*m)))), Portrait d m Q₁ → Portrait d m Q₂ →
       T Q₁ = T Q₂ → ∀ (y : ZMod (d*m)) (hy₁ : y ∈ T Q₁) (hy₂ : y ∈ T Q₂),
         hostSet Q₁ y hy₁ ⊆ hostSet Q₂ y hy₂ by
-    exact Finset.Subset.antisymm (H P₁ P₂ h₁ h₂ hT x hx₁ hx₂)
-      (H P₂ P₁ h₂ h₁ hT.symm x hx₂ hx₁)
+    exact Subset.antisymm (H P₁ P₂ h₁ h₂ hT x hx₁ hx₂) (H P₂ P₁ h₂ h₁ (id (Eq.symm hT)) x hx₂ hx₁)
   intro Q₁ Q₂ hQ₁ hQ₂ hTQ y hy₁ hy₂ z hz
   by_cases hzT : z ∈ T Q₁
   · -- z survivor of y's block: reachable from y in Q₁; transfer to Q₂.

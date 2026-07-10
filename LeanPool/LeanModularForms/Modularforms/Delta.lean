@@ -304,8 +304,7 @@ lemma Discriminant_zeroAtImInfty :
       tendsto_neg_atBot_iff]
     rw [Filter.tendsto_const_mul_atTop_iff_pos ]
     · exact two_pi_pos
-    rw [atImInfty]
-    exact tendsto_comap
+    exact tendsto_im_atImInfty
   · apply Delta_boundedfactor
 
 /-- The modular discriminant as a weight-12 cusp form on `SL(2, ℤ)`. -/
@@ -319,8 +318,7 @@ def Delta : CuspForm (CongruenceSubgroup.Gamma 1) 12 where
       apply DifferentiableOn.pow
       intro x hx
       apply DifferentiableAt.differentiableWithinAt
-      simpa [ModularForm.eta] using
-        (ModularForm.differentiableAt_eta_of_mem_upperHalfPlaneSet (z := x) hx)
+      exact differentiableAt_eta_of_mem_upperHalfPlaneSet hx
     rw [DiscriminantSIF]
     simp only [SlashInvariantForm.coe_mk]
     apply he2.congr

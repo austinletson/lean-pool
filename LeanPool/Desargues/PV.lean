@@ -246,10 +246,7 @@ rw [independent_iff, rep_comp_3] at BPQcol
 rw [<- independent_pair_iff_ne] at PQ_neq
 rw [independent_iff, rep_comp_2] at PQ_neq
 rw [independent_iff, rep_comp_3]
-apply l2_rep A.rep B.rep P.rep Q.rep
-· exact ABPcol
-· exact BPQcol
-· exact PQ_neq,
+exact l2_rep A.rep B.rep P.rep Q.rep ABPcol BPQcol PQ_neq,
 by
 intro A B C D P PABcol PCDcol
 rw [independent_iff, rep_comp_3] at PABcol PCDcol

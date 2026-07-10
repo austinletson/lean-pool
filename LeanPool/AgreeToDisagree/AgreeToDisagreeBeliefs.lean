@@ -140,8 +140,7 @@ lemma core_bound.atom_evidence {P : Partition Ω} (hP' : ∀ s ∈ P, μ s > 0)
     p * μ s ≤ μ (A ∩ s) := by
   have hbelief : p ≤ μ (A ∩ s) / μ s := by
     rw [← Partition.class_eq_of_mem hs hω.2]; exact hAev hω.1
-  have hμs_top : μ s ≠ ⊤ := ne_top_of_le_ne_top ENNReal.one_ne_top prob_le_one
-  exact (ENNReal.le_div_iff_mul_le (Or.inl (hP' s hs).ne') (Or.inl hμs_top)).mp hbelief
+  exact ENNReal.mul_le_of_le_div hbelief
 
 private lemma atom_real_arith {x αr r p δ : ℝ}
     (hx0 : 0 ≤ x) (hx1 : x ≤ 1) (hα_le_1 : αr ≤ 1) (hp_le_α : p ≤ αr)

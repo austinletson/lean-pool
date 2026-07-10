@@ -156,8 +156,7 @@ private lemma inverse_product_mem_doubleCoset
           ((rep : G) * g₁ * ((j_rep : G) * (HeckeCoset.rep D₂ : G)) * k⁻¹) := by
         rw [show g_D = (rep : G) * g₁ *
             ((j_rep : G) * (HeckeCoset.rep D₂ : G)) * k⁻¹ from by
-          calc g_D = g_D * k * k⁻¹ := by group
-            _ = _ := by rw [hprod']]
+          exact eq_mul_inv_of_mul_eq hprod']
     _ = (j_rep : G) * (HeckeCoset.rep D₂ : G) * k⁻¹ := by group
 
 private lemma conj_mem_of_stabilizer (g : G)

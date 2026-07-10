@@ -300,8 +300,7 @@ theorem exists_isolated_crossing_interval
     have : min u γ.b ≤ γ.b := min_le_right _ _
     linarith
   refine ⟨a', b', ha'_lt, ht₀_lt_b', ?_, ?_, ?_⟩
-  · intro t ht
-    exact ⟨le_trans ha_le_a' ht.1, le_trans ht.2 hb'_le_b⟩
+  · exact Icc_subset_Icc ha_le_a' hb'_le_b
   · intro t ht hγt
     by_contra h_ne
     have ht_Ioo_lu : t ∈ Ioo l u :=
@@ -327,14 +326,7 @@ so the derivative must agree with the nonzero one-sided limits. -/
 private lemma continuousAt_deriv_of_contDiffAt_two
     {f : ℝ → ℂ} {x : ℝ} (h : ContDiffAt ℝ 2 f x) :
     ContinuousAt (deriv f) x := by
-  have h1 : ContDiffAt ℝ 1 f x := h.of_le (by norm_num)
-  obtain ⟨U, hU_nhd, hU_cd⟩ := h1.contDiffOn (le_refl _) (by
-    simp only [WithTop.one_eq_coe, ENat.top_ne_one, WithTop.one_ne_top, imp_self])
-  obtain ⟨V, hVU, hV_open, hxV⟩ := mem_nhds_iff.mp hU_nhd
-  have hV_cd : ContDiffOn ℝ 1 f V := hU_cd.mono hVU
-  have h_cont_on : ContinuousOn (deriv f) V :=
-    hV_cd.continuousOn_deriv_of_isOpen hV_open (le_refl _)
-  exact h_cont_on.continuousAt (hV_open.mem_nhds hxV)
+  exact contAt_deriv_of_contDiffAt_two h
 
 theorem PiecewiseC1Immersion.deriv_ne_zero_of_C2
     (γ : PiecewiseC1Immersion) (t₀ : ℝ)

@@ -155,19 +155,13 @@ lemma entropy_eq_sum_finiteRange' [MeasurableSingletonClass S] (hX : Measurable 
 /-- `H[X | Y=y] = ∑_s P[X=s | Y=y] log 1/(P[X=s | Y=y])`. -/
 lemma entropy_cond_eq_sum (μ : Measure Ω) (y : T) :
     H[X | Y ← y; μ] = ∑' x, negMulLog (((μ[|Y ← y]).map X).real {x}) := by
-  by_cases hy : μ (Y ⁻¹' {y}) = 0
-  · rw [entropy_def, cond_eq_zero_of_meas_eq_zero hy]
-    simp
-  · rw [entropy_eq_sum]
+  exact entropy_eq_sum' μ[|Y ⁻¹' {y}]
 
 lemma entropy_cond_eq_sum_finiteRange [MeasurableSingletonClass S]
     (hX : Measurable X) (μ : Measure Ω) (y : T) [FiniteRange X] :
     H[X | Y ← y; μ] = ∑ x ∈ FiniteRange.toFinset X,
       negMulLog (((μ[|Y ← y]).map X).real {x}) := by
-  by_cases hy : μ (Y ⁻¹' {y}) = 0
-  · rw [entropy_def, cond_eq_zero_of_meas_eq_zero hy]
-    simp
-  · rw [entropy_eq_sum_finiteRange hX]
+  exact entropy_eq_sum_finiteRange hX
 
 /-- If `X`, `Y` are `S`-valued and `T`-valued random variables, and `Y = f(X)` for
 some injection `f : S \to T`, then `H[Y] = H[X]`.
@@ -420,9 +414,7 @@ lemma _root_.ProbabilityTheory.condEntropy_eq_kernel_entropy
   rw [Measure.map_apply hY (.singleton _)] at ht
   simp only [entropy_def]
   congr
-  ext s hs
-  rw [condDistrib_apply' hX hY _ _ ht hs, Measure.map_apply hX hs,
-      cond_apply (hY (.singleton _))]
+  exact Eq.symm (condDistrib_apply hX hY μ t ht)
 
 variable [Countable T] [Nonempty T] [Nonempty S] [MeasurableSingletonClass S] [Countable S]
   [Countable U] [MeasurableSingletonClass U]
@@ -596,8 +588,7 @@ lemma _root_.ProbabilityTheory.chain_rule' (μ : Measure Ω) [IsZeroOrProbabilit
     Kernel.map_const _ hX,
       Kernel.map_const _ (hX.prodMk hY)]
     congr 1
-    · rw [Kernel.entropy, integral_dirac]
-      rfl
+    · exact Eq.symm (entropy_eq_kernel_entropy X μ)
     · simp_rw [condEntropy_eq_kernel_entropy hY hX]
       have : Measure.dirac () ⊗ₘ Kernel.const Unit (μ.map X) = μ.map (fun ω ↦ ((),
         X ω)) := by
@@ -1137,8 +1128,7 @@ lemma _root_.ProbabilityTheory.condMutualInfo_eq_zero (hX : Measurable X) (hY : 
     rw [this]
     apply Filter.eventually_congr
     rw [ae_iff_of_countable]
-    intro z _hz
-    exact mutualInfo_eq_zero hX hY
+    exact fun x a => mutualInfo_eq_zero hX hY
   · intro z
     by_cases hz : μ (Z ⁻¹' {z}) = 0
     · simp [cond_eq_zero_of_meas_eq_zero hz, mutualInfo_def]

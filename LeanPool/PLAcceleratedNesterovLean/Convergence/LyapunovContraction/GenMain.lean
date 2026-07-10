@@ -324,13 +324,7 @@ private abbrev lyapunovContractionGenProof
       div_pos (sq_pos_of_pos h1a_pos) (by linarith)
     -- Ln ≥ 0
     have hLn_nn : 0 ≤ Ln := by
-      change 0 ≤ lyapunovOfState P μ' π f η sn
-      simp only [lyapunovOfState]
-      have hlam_nn : 0 ≤ (1 + Real.sqrt (μ' * η)) ^ 2 / (2 * (1 - Real.sqrt (μ' * η))) :=
-        le_of_lt hlam_pos
-      have h1 := sq_nonneg ‖auxVarOfState P μ' π η sn‖
-      have h2 := mul_nonneg hlam_nn (sq_nonneg ‖P sn.v‖)
-      linarith
+      exact lyapunovOfState_nonneg P μ' π f η sn hμ' hη_pos hμη_lt1 hbdd
     -- ══════════════ Tangential velocity identity ══════════════
     -- P is a CLM, so P(sn1.v) = ρ • (P sn.v - √η • P gn)
     have hPv1 : P sn1.v = ρ • (P sn.v - Real.sqrt η • P gn) := by
@@ -397,8 +391,7 @@ private abbrev lyapunovContractionGenProof
     let wn := un1 - Real.sqrt μ' • ξn
     -- ── AuxVar decomposition: u_{n+1} = w_n + √μ'·ξ_n ──
     have h_un1_eq : un1 = wn + Real.sqrt μ' • ξn := by
-      change un1 = (un1 - Real.sqrt μ' • ξn) + Real.sqrt μ' • ξn
-      abel
+      exact Eq.symm (sub_add_cancel un1 (√μ' • ξn))
     -- ── Perturbation expansion ──
     have h_Un1_expand : Un1 =
         ‖wn‖ ^ 2 + 2 * Real.sqrt μ' * @inner ℝ _ _ wn ξn +
@@ -425,10 +418,7 @@ private abbrev lyapunovContractionGenProof
           Real.sqrt μ' • en - Real.sqrt η • (gn - P gn) := by
         change un1 - Real.sqrt μ' • ξn = _
         have h_av := auxVarOfState_step P μ' η ρ π f sn hρ ha_pos hη_pos hμ'
-        have : (un1 : E d) = ((1 - a) • (sn.v - P sn.v) + Real.sqrt μ' • en -
-            Real.sqrt η • (gn - P gn)) + Real.sqrt μ' • ξn := by
-          change auxVarOfState P μ' π η (nesterovStep f η ρ sn) = _; exact h_av
-        rw [this]; abel
+        exact sub_eq_iff_eq_add.mpr h_av
       -- ═══ B: Projector-freezing decomposition ═══
       -- ⟨g, e⟩ = ⟨P⊥g, e⟩ + ⟨g, Pe⟩ (via self-adjointness of P)
       have h_ipGE_decomp : @inner ℝ _ _ gn en =
@@ -503,10 +493,7 @@ private abbrev lyapunovContractionGenProof
       set Fnprime := f x'n - fStar f with hFnprime_def
       -- Descent bound: Fn1 ≤ Fnprime - η/2·(‖Pg‖² + ‖P⊥g‖²)
       have hFn1_descent : Fn1 ≤ Fnprime - η / 2 * (‖P gn‖ ^ 2 + ‖gn - P gn‖ ^ 2) := by
-        have h_mid : Fn1 ≤ Fnprime - η / 2 * ‖gn‖ ^ 2 := by linarith [hFn'_bound, h_aim]
-        have h_eq : η / 2 * ‖gn‖ ^ 2 = η / 2 * (‖P gn‖ ^ 2 + ‖gn - P gn‖ ^ 2) := by
-          rw [hG_pyth]
-        linarith
+        exact le_of_le_of_eq h_f_upper (congrArg (HSub.hSub Fnprime) (congrArg (HMul.hMul (η / 2)) hG_pyth))
       -- Segment: √η·(⟨Pg,Pv⟩ + ⟨P⊥g,P⊥v⟩) ≥ Fnprime - Fn - εη/2·(‖Pv‖² + ‖P⊥v‖²)
       have h_segment_arith :
           Real.sqrt η * (@inner ℝ _ _ (P gn) (P sn.v) +

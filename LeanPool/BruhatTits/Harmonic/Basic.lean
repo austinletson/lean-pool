@@ -82,10 +82,7 @@ omit [DecidableEq V] [(v : V) → Fintype (X.neighborSet v)] in
 lemma exists_path_eq_append_of_isPath_of_mem_support {v w x : V} (p : X.Walk v w) (hp : p.IsPath)
     (hx : x ∈ p.support) :
     ∃ (r : X.Walk v x) (s : X.Walk x w), r.IsPath ∧ s.IsPath ∧ p = r.append s := by
-  rw [p.mem_support_iff_exists_append] at hx
-  obtain ⟨r, s, hrs⟩ := hx
-  have : (r.append s).IsPath := by rwa [← hrs]
-  exact ⟨r, s, this.of_append_left, this.of_append_right, hrs⟩
+  exact (Walk.IsPath.mem_support_iff_exists_append hp).mp hx
 
 omit [DecidableEq V] [(v : V) → Fintype (X.neighborSet v)] in
 lemma exists_path_eq_cons_of_isPath_of_mem_support {v w : V} (h : X.Adj w v) (p : X.Walk w v₀)
@@ -256,8 +253,7 @@ lemma outwardEdgeCone_nonempty_of_source (e : X.edgeSet) :
 lemma outwardEdgeCone_origin_eq : X.outwardEdgeCone v₀ v₀ = X.incidenceFinset' v₀ := by
   ext e
   simp only [mem_outwardEdgeCone_iff, mem_incidenceFinset', and_iff_left_iff_imp]
-  intro h
-  exact source_eq_origin_of_mem v₀ e h
+  exact fun a => source_eq_origin_of_mem v₀ e a
 
 /-- An arbitrary choice of a distinguished edge pointing away from `v₀`. -/
 def distinguishedEdge (w : V) (hw : (X.outwardEdgeCone v₀ w).Nonempty) : X.edgeSet :=
@@ -308,8 +304,7 @@ lemma exists_edge_dist_source_lt (w : V) (hw : 0 < X.dist v₀ w) :
     have hx : x ∈ e.val := by simp [he]
     have hy : y ∈ e.val := by simp [he]
     have hp' : p.IsPath := by
-      simp only [Walk.cons_isPath_iff] at hp
-      exact hp.left
+      exact Walk.IsPath.of_cons hp
     obtain ⟨q, hq, hqlen⟩ := X.isTree.connected.exists_path_of_dist y z
     let p' : X.Path y z := ⟨p, hp'⟩
     let q' : X.Path y z := ⟨q, hq⟩
@@ -546,8 +541,7 @@ lemma incidenceFinset_eq_union (v : V) (hv : 0 < X.dist v₀ v) :
         rcases eq_source_or_eq_target_of_mem v₀ e v h with h₂ | h₂
         · exact h₂
         · rw [← eq_edgeTowardsOrigin_iff_of_mem v₀ v hv e h] at h₂
-          absurd h₂
-          exact fun hc ↦ heq hc.symm
+          exact absurd (id (Eq.symm h₂)) heq
   · intro h
     simp only [Finset.mem_union, Finset.mem_singleton] at h
     cases h
@@ -696,13 +690,10 @@ lemma laplace_preimage (hinfinite : ∀ v, (X.outwardEdgeCone v₀ v).Nonempty) 
       rcases eq_source_or_eq_target_of_mem v₀ e v he with h | h
       · subst h
         rw [norm_target_eq_norm_source_add_one]
-      · subst h
-        simp
+      · exact Nat.le.intro (congrFun (congrArg HAdd.hAdd (congrArg (X.dist v₀) h)) 1)
     rwa [aux_extends' w f v₀ (X.dist v₀ v + 1)]
   simp_rw [Finset.sum_congr rfl this]
-  rw [aux_spec]
-  · simp
-  · exact hinfinite v
+  exact aux_spec w f v₀ (X.dist v₀ v + 1) v rfl (hinfinite v)
 
 end «Construction»
 

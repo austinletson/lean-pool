@@ -72,8 +72,7 @@ theorem dirMask_swap_eq_maskAt_invDir {u v : V} (d : DirIdx) (h : dirMask u v = 
   · let iNat : Nat := t / 3
     let jNat : Nat := t % 3
     have hi : iNat < 3 := by
-      have : t < 3 * 3 := by simpa using ht
-      simpa [iNat] using (Nat.div_lt_of_lt_mul this)
+      exact Nat.div_lt_of_lt_mul ht
     have hj : jNat < 3 := by
       have : 0 < 3 := by decide
       simpa [jNat] using Nat.mod_lt t this
@@ -113,8 +112,7 @@ theorem coeff_invDir (f : Coloring n) (d : DirIdx) :
           simp [corrAvg_symmetric (f := f) (u := baseVertex) (v := repVertex d)]
     _ = coeff (f := f) (invDir d) := by
           -- Apply `corrAvg_eq_coeff_of_dirMask_eq` on `(repVertex d, baseVertex)`.
-          simpa using (corrAvg_eq_coeff_of_dirMask_eq (f := f) (u := repVertex d) (v := baseVertex)
-            (d := invDir d) hswap)
+          exact corrAvg_eq_coeff_of_dirMask_eq f (invDir d) hswap
 
 -- The transpose constructor used in `ASymm` has the same `.1` as `invDir`, so it defines the same
 -- orbital indicator matrix `A`.

@@ -78,8 +78,7 @@ lemma measurePreserving_pick4 {n : ℕ} (emb : Fin 4 ↪ Fin n) :
       Samples n ≃ᵐ (∀ i : { j // p j }, Rand) × ∀ i : { j // ¬ p j }, Rand :=
     MeasurableEquiv.piEquivPiSubtypeProd (π := fun _ : Fin n => Rand) p
   have hSplit : MeasurePreserving eSplit (volume : Measure (Samples n)) (volume : Measure _) := by
-    simpa [eSplit] using
-      (MeasureTheory.volume_preserving_piEquivPiSubtypeProd (α := fun _ : Fin n => Rand) p)
+    exact volume_preserving_piEquivPiSubtypeProd (fun x => Rand) p
   have hFst :
       MeasurePreserving
         Prod.fst
@@ -98,10 +97,7 @@ lemma measurePreserving_pick4 {n : ℕ} (emb : Fin 4 ↪ Fin n) :
   have hCongr :
       MeasurePreserving eCongr (volume : Measure (∀ i : { j : Fin n // p j }, Rand))
         (volume : Measure (Samples 4)) := by
-    simpa [eCongr] using
-      (MeasureTheory.volume_measurePreserving_piCongrLeft
-        (α := fun _ : Fin 4 => Rand)
-        (f := eRange.symm))
+    exact volume_measurePreserving_piCongrLeft (fun x => Rand) eRange.symm
   have hcomp : (fun S : Samples n => eCongr (Prod.fst (eSplit S))) = pick4 emb := by
     funext S i
     -- `eSplit` is restriction to subtypes (`Equiv.piEquivPiSubtypeProd`);
@@ -306,8 +302,7 @@ theorem p_ge_23879 (alg : ClassicalAlgorithm) :
         (LowerBound.edgeCount n1000000 : ENNReal) * ClassicalAlgorithm.p alg := by
     rwa [hleft] at hbound
   -- Cancel the common positive, finite factor `edgeCount`.
-  rw [mul_comm _ (ENNReal.ofReal _), mul_comm _ (ClassicalAlgorithm.p alg)] at hbound'
-  exact (ENNReal.mul_le_mul_iff_left hedgeCount_ne_zero hedgeCount_ne_top).1 hbound'
+  exact (ENNReal.mul_le_mul_iff_right hedgeCount_ne_zero hedgeCount_ne_top).mp hbound'
 
 theorem exists_algorithm_p_le_24118 :
     ∃ alg : ClassicalAlgorithm, ClassicalAlgorithm.p alg ≤ ENNReal.ofReal (24118 / 100000 : ℝ) := by

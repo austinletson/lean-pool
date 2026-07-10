@@ -186,9 +186,7 @@ theorem compBasis_entry_eq_div (r : Block) (d : DirIdx) (p q : Fin 3) :
   have hinner (k : DirIdx) :
       (Finset.univ.sum fun a : DirIdx => ((num k a : Int) : Q) / (den * den)) =
         (Finset.univ.sum fun a : DirIdx => ((num k a : Int) : Q)) / (den * den) := by
-    simpa using
-      (Finset.sum_div (s := (Finset.univ : Finset DirIdx))
-          (f := fun a : DirIdx => ((num k a : Int) : Q)) (a := den * den)).symm
+    exact Eq.symm (Finset.sum_div Finset.univ (fun i => ↑(num k i)) (den * den))
   have houter :
       (Finset.univ.sum fun k : DirIdx =>
         Finset.univ.sum fun a : DirIdx => ((num k a : Int) : Q) / (den * den)) =
@@ -204,10 +202,7 @@ theorem compBasis_entry_eq_div (r : Block) (d : DirIdx) (p q : Fin 3) :
       _ =
           (Finset.univ.sum fun k : DirIdx =>
               Finset.univ.sum fun a : DirIdx => ((num k a : Int) : Q)) / (den * den) := by
-            simpa using
-              (Finset.sum_div (s := (Finset.univ : Finset DirIdx))
-                  (f := fun k : DirIdx =>
-                    Finset.univ.sum fun a : DirIdx => ((num k a : Int) : Q)) (a := den * den)).symm
+            exact Eq.symm (Finset.sum_div Finset.univ (fun i => ∑ a, ↑(num i a)) (den * den))
   have hcast :
       (Finset.univ.sum fun k : DirIdx =>
         Finset.univ.sum fun a : DirIdx => ((num k a : Int) : Q)) =

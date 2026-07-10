@@ -384,7 +384,6 @@ private lemma star_step_min_eq_oneIf (s : SlipFace) (a b : ℤ) :
   by_cases hcond : s a (b - 1) > s a b ∧ s a b = s a (b + 1)
   · have hone :
         Utils.oneIf (s a (b - 1) > s a b ∧ s a b = s a (b + 1)) = 1 := by
-      simp only [Utils.oneIf]
       exact if_pos hcond
     have hleft : s a (b - 1) = s a b + 1 := by omega
     simp_all
@@ -720,8 +719,7 @@ private lemma sigmaFun_mul (S₁ S₂ : Set ℤ) (hDisj : Disjoint S₁ S₂)
   have hD1 : ∀ m, m ∈ S₁ → m ∉ S₂ := Set.disjoint_left.mp hDisj
   have hD2 : ∀ m, m ∈ S₂ → m ∉ S₁ := Set.disjoint_right.mp hDisj
   have hNoLeft : ∀ m, m ∈ S₁ ∪ S₂ → m - 1 ∉ S₁ ∪ S₂ := by
-    intro m hm hpred
-    exact hS (m - 1) hpred (by simpa only [sub_add_cancel] using hm)
+    exact fun m a => not_pred_mem_of_noConsecutive hS a
   by_cases h1 : n ∈ S₁
   · have h1' : n ∉ S₂ := hD1 n h1
     have h2 : n - 1 ∉ S₂ := by

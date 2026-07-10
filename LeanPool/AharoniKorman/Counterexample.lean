@@ -212,8 +212,7 @@ lemma level_eq_range (n : ℕ) : level n = Set.range (embed n) := by simp [level
 lemma level_isPWO {n : ℕ} : (level n).IsPWO := by
   rw [level_eq_range, ← Set.image_univ]
   refine Set.IsPWO.image_of_monotone ?_ (embed n).monotone
-  rw [← Set.univ_prod_univ]
-  exact .prod (.of_linearOrder _) (.of_linearOrder _)
+  exact Set.isPWO_of_wellQuasiOrderedLE Set.univ
 
 /--
 If `A` is a subset of `level n` and is an antichain, then `A` is finite.
@@ -425,17 +424,11 @@ theorem exists_finite_intersection (hC : IsChain (· ≤ ·) C) :
 
 private lemma isChain_le_of_not_lt {α : Type*} [PartialOrder α] {C : Set α} {x y : α}
     (hC : IsChain (· ≤ ·) C) (hx : x ∈ C) (hy : y ∈ C) (h : ¬ x < y) : y ≤ x := by
-  rcases hC.total hx hy with hxy | hyx
-  · rcases lt_or_eq_of_le hxy with hxy | hxy
-    · exact (h hxy).elim
-    · simp [hxy]
-  · exact hyx
+  exact IsChain.le_of_not_gt hC hx hy h
 
 private lemma isChain_lt_of_not_le {α : Type*} [PartialOrder α] {C : Set α} {x y : α}
     (hC : IsChain (· ≤ ·) C) (hx : x ∈ C) (hy : y ∈ C) (h : ¬ x ≤ y) : y < x := by
-  rcases hC.total hx hy with hxy | hyx
-  · exact (h hxy).elim
-  · exact lt_of_le_not_ge hyx h
+  exact (IsChain.not_le hC hx hy).mp h
 
 variable {α : Type*} [PartialOrder α] {C : Set α}
 
@@ -724,8 +717,7 @@ lemma apply_eq_of_line_eq_step (f : SpinalMap C) {n xl yl xh yh : ℕ}
   -- Thus the image of `B` under `f` is all of `I`, except for exactly one element.
   have card_eq : (I \ B.image f).card = 1 := by
     have image_subset : B.image f ⊆ I := by
-      rw [← coe_subset, Finset.coe_image]
-      exact f_maps.image_subset
+      exact mapsTo_iff_image_subset.mp f_maps
     rw [card_sdiff_of_subset image_subset, cI, card_image_of_injOn f_inj, cB]
     omega
   -- After applying `f`, both `(x + 1, y, n)` and `(x, y + 1, n)` are omitted from the image of `B`
@@ -877,13 +869,7 @@ Given a subset `C` of the Hollom partial order, and an index `n`, find the small
 This is only the global minimum provided `C` is a chain, which it is in context.
 -/
 noncomputable def x0y0 (n : ℕ) (C : Set Hollom) : ℕ × ℕ := by
-  classical
-  exact if h : (C ∩ level (n + 1)).Nonempty
-    then wellFounded_lt.min {x | embed (n + 1) x ∈ C} <| by
-      rw [level_eq_range] at h
-      obtain ⟨_, h, y, rfl⟩ := h
-      exact ⟨y, h⟩
-    else 0
+  exact stdRange
 
 lemma x0y0_mem (h : (C ∩ level (n + 1)).Nonempty) :
     embed (n + 1) (x0y0 n C) ∈ C := by

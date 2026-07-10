@@ -100,10 +100,7 @@ theorem IsAzumaya_iff_CentralSimple [Nontrivial A] : IsAzumaya K A ↔ FiniteDim
     letI e := AlgEquiv.ofBijective _ bij|>.trans <| algEquivMatrix <| Module.finBasis _ _
     letI : Nonempty (Fin (Module.finrank K A)) := ⟨⟨_, Module.finrank_pos⟩⟩
     ⟨IsAzumaya.toFinite, ⟨by
-    have : Algebra.IsCentral K (A ⊗[K] Aᵐᵒᵖ) :=
-      Algebra.IsCentral_ofAlgEquiv K _ _ e.symm <| Algebra.IsCentral.matrix K K
-        (Fin (Module.finrank K A))
-    exact IsCentral.left_of_tensor K A Aᵐᵒᵖ, by
+    exact Algebra.IsCentral.instIsAzumaya, by
     haveI := IsSimpleRing.matrix (Fin (Module.finrank K A)) K
     have sim : IsSimpleRing (A ⊗[K] Aᵐᵒᵖ) := IsSimpleRing.ofAlgEquiv K _ _ e.symm this
     exact IsSimpleRing.left_of_tensor K A Aᵐᵒᵖ⟩⟩,
@@ -204,8 +201,7 @@ lemma equal_mulLeftRight : tensorEquivEnd R = AlgHom.mulLeftRight R R := by
   simp [mopEquivEnd, AlgHom.mulLeftRight_apply]
 
 lemma bij_Rtensor : Function.Bijective (AlgHom.mulLeftRight R R) := by
-  rw [← equal_mulLeftRight]
-  exact (tensorEquivEnd R).bijective
+  exact IsAzumaya.bij
 
 instance : FaithfulSMul R R where
   eq_of_smul_eq_smul {r1 r2} hr := by

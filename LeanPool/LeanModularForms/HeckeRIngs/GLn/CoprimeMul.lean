@@ -82,9 +82,7 @@ private lemma doubleCoset_eq_of_mem' (g δ : GL (Fin n) ℚ)
     (h : g ∈ DoubleCoset.doubleCoset δ (GLPair n).H (GLPair n).H) :
     DoubleCoset.doubleCoset g (GLPair n).H (GLPair n).H =
       DoubleCoset.doubleCoset δ (GLPair n).H (GLPair n).H := by
-  rw [DoubleCoset.mem_doubleCoset] at h; obtain ⟨h₁, hh₁, h₂, hh₂, heq⟩ := h; rw [heq]
-  exact (DoubleCoset.doubleCoset_mul_right_eq_self (GLPair n) ⟨h₂, hh₂⟩ (h₁ * δ)).trans
-    (doset_mul_left_eq_self (GLPair n) ⟨h₁, hh₁⟩ δ)
+  exact doubleCoset_eq_of_mem h
 
 section Scalar
 
@@ -216,8 +214,7 @@ private lemma heckeMultiplicity_scalar_eq_one (c : ℕ) (hc : 0 < c) (b : Fin n 
         Fintype.card_pos_iff.mp (h_card ▸ Nat.one_pos)
       have ⟨j₀⟩ : Nonempty (decompQuot (GLPair n) (HeckeCoset.rep D_b)) :=
         Fintype.card_pos_iff.mp (by
-          have := HeckeRing.HeckeCoset_deg_pos (GLPair n) D_b
-          simp only [HeckeRing.HeckeCosetDeg] at this; omega)
+          exact Fintype.card_pos)
       exact ⟨i₀, j₀, mulMap_scalar_eq n c hc b hb_pos hb hab (i₀, j₀)⟩
     exact HeckeRing.heckeMultiplicity_pos_of_mem (GLPair n) _ _ _ h_mem
   omega
@@ -819,12 +816,10 @@ private lemma heckeMultiplicity_coprime_pos (a b : Fin n → ℕ) (ha_pos : ∀ 
       true_and, Prod.exists]
     have ⟨i₀⟩ : Nonempty (decompQuot (GLPair n) (HeckeCoset.rep D_a)) :=
       Fintype.card_pos_iff.mp (by
-        have := HeckeRing.HeckeCoset_deg_pos (GLPair n) D_a
-        simp only [HeckeRing.HeckeCosetDeg] at this; omega)
+        exact Fintype.card_pos)
     have ⟨j₀⟩ : Nonempty (decompQuot (GLPair n) (HeckeCoset.rep D_b)) :=
       Fintype.card_pos_iff.mp (by
-        have := HeckeRing.HeckeCoset_deg_pos (GLPair n) D_b
-        simp only [HeckeRing.HeckeCosetDeg] at this; omega)
+        exact Fintype.card_pos)
     exact ⟨i₀, j₀, mulMap_coprime_eq n a b ha_pos hb_pos ha hb hab hcop (i₀, j₀)⟩
   exact HeckeRing.heckeMultiplicity_pos_of_mem (GLPair n) _ _ _ h_mem
 

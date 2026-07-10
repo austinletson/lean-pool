@@ -53,12 +53,7 @@ theorem moves_toForm (p : Player) (L R : List ShortTree) (tL tR : Bool) :
   rw [toForm, AugmentedForm.moves_ofSetsWithTombs]
   ext x
   simp only [Set.mem_range, Set.mem_image, Set.mem_setOf_eq]
-  constructor
-  · rintro ⟨i, rfl⟩
-    exact ⟨_, List.get_mem _ _, rfl⟩
-  · rintro ⟨y, hy, rfl⟩
-    obtain ⟨i, rfl⟩ := List.mem_iff_get.mp hy
-    exact ⟨i, rfl⟩
+  exact Iff.symm List.exists_mem_iff_get
 
 @[simp]
 theorem hasTombstone_toForm (p : Player) (L R : List ShortTree) (tL tR : Bool) :

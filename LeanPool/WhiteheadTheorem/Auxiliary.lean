@@ -86,9 +86,7 @@ lemma Real.forall_le_of_iSup_le_of_finite_domain {ι : Type*} {f : ι → ℝ} {
 lemma Real.le_iSup_of_exists_ge_of_bddAbove {ι : Sort*} {f : ι → ℝ} {a : ℝ}
     (hbdd : BddAbove (Set.range f)) (hf : ∃ i, a ≤ f i) : a ≤ ⨆ i, f i := by
   obtain ⟨i, hi⟩ := hf
-  cases (Set.range f).eq_empty_or_nonempty
-  · exact Set.range_eq_empty_iff.mp ‹_› |>.false i |>.elim
-  · exact hi.trans <| (Real.isLUB_sSup ‹_› hbdd).left (Set.mem_range_self i)
+  exact le_ciSup_of_le hbdd i hi
 
 lemma Real.le_iSup_of_exists_ge_of_finite_domain {ι : Type*} {f : ι → ℝ} {a : ℝ}
     [Finite ι] (hf : ∃ i, a ≤ f i) : a ≤ ⨆ i, f i :=
@@ -134,8 +132,7 @@ noncomputable def liftCoverClosed : C(α, β) :=
       conv => lhs; rhs; ext hxi; arg 2; equals Φ x => exact Eq.symm (Set.liftCover_of_mem hxi)
       tauto
     have : Φ ⁻¹' Y = ⋃ i, Subtype.val '' (φ i ⁻¹' Y) := by
-      conv_rhs => ext x; arg 1; ext i; rw [this]
-      conv_rhs => ext x; rw [← Set.iUnion_inter, H, Set.univ_inter]
+      exact Set.preimage_liftCover Y
     rw [this]
     exact isClosed_iUnion_of_finite fun i ↦
       IsClosed.trans (IsClosed.preimage (φ i).continuous hY) (hS_closed i)

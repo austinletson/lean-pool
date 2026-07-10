@@ -108,16 +108,7 @@ lemma log_f_zero_bound (f : Torus3 → (Fin 3 → ℝ) → ℝ)
     have h1 : Real.log (f xMin 0) ≤ Real.log (f x 0) := h_min (mem_univ x)
     have h2 : Real.log (f x 0) ≤ Real.log (f xMax 0) := h_max (mem_univ x)
     have h3 : |Real.log (f x 0)| ≤ max |Real.log (f xMin 0)| |Real.log (f xMax 0)| := by
-      rw [abs_le]
-      constructor
-      · have h_neg : -Real.log (f x 0) ≤ max |Real.log (f xMin 0)| |Real.log (f xMax 0)| := by
-          calc -Real.log (f x 0) ≤ -Real.log (f xMin 0) := neg_le_neg h1
-            _ ≤ |Real.log (f xMin 0)| := neg_le_abs (Real.log (f xMin 0))
-            _ ≤ max |Real.log (f xMin 0)| |Real.log (f xMax 0)| := le_max_left _ _
-        exact neg_le.mp h_neg
-      · calc Real.log (f x 0) ≤ Real.log (f xMax 0) := h2
-          _ ≤ |Real.log (f xMax 0)| := le_abs_self _
-          _ ≤ max |Real.log (f xMin 0)| |Real.log (f xMax 0)| := le_max_right _ _
+      exact abs_le_max_abs_abs h1 h2
     refine le_trans h3 (le_trans (max_le_add_of_nonneg (abs_nonneg _) (abs_nonneg _)) ?_)
     linarith
 

@@ -90,9 +90,7 @@ def baseSet : Finset SymN :=
 def outside (x : SymN) : Prop := x ∉ baseSet
 
 instance : DecidablePred outside := by
-  intro x
-  unfold outside
-  infer_instance
+  exact Classical.decPred outside
 
 /-- Imported auxiliary declaration for the 2-coloring one-round formalization. -/
 abbrev OutsideSym := { x : SymN // outside x }

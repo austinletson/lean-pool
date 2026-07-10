@@ -337,8 +337,7 @@ theorem finite_proof_of_proof (𝕏 : Proof) (Δ : SplitSequent) :
   use pointGeneratedProof (filtration 𝕏) (Quotient.mk (fEqEquiRel 𝕏) x)
   constructor
   · have h : Finite (SplitSequent.FL Δ).powerset := by
-      apply Set.finite_coe_iff.1
-      apply Finset.finite_toSet
+      exact Finite.of_fintype ↥(Finset.powerset Δ.FL)
     apply @Finite.of_injective _ _ h (fun y ↦
       ⟨f (r ((pointGeneratedProof (filtration 𝕏) ⟦x⟧).α) y), by
       simp only [Finset.mem_powerset]

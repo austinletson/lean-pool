@@ -146,18 +146,13 @@ lemma _root_.isIdempotentElem_pi_iff
 
 theorem AlgEquiv.eq_apply_iff_symm_eq {R A B : Type _} [CommSemiring R] [Semiring A] [Semiring B]
     [Algebra R A] [Algebra R B] (f : A ≃ₐ[R] B) {a : B} {b : A} : a = f b ↔ f.symm a = b := by
-  have : ∀ e : A ≃ B, a = e b ↔ e.symm a = b := by
-    intro e
-    rw [← Equiv.apply_eq_iff_eq e, Equiv.apply_symm_apply]
-  exact this f
+  exact Iff.symm (symm_apply_eq f)
 
 theorem StarAlgEquiv.eq_apply_iff_symm_eq {R A B : Type _}
   [Add A] [Add B] [Mul A] [Mul B] [SMul R A] [SMul R B] [Star A] [Star B]
   (f : A ≃⋆ₐ[R] B) {a : B} {b : A} :
     a = f b ↔ f.symm a = b := by
-  rw [eq_comm]
-  nth_rw 2 [eq_comm]
-  exact Equiv.apply_eq_iff_eq_symm_apply f.toRingEquiv.toEquiv
+  exact Iff.symm (symm_apply_eq f b a)
 
 lemma AlgEquiv.apply_eq_iff_eq {R A B : Type*} [CommSemiring R] [Semiring A] [Algebra R A]
   [Semiring B] [Algebra R B]

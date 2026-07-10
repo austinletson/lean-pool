@@ -147,16 +147,7 @@ lemma rep_mem (D : HeckeCoset P) : (HeckeCoset.rep D : G) ∈ HeckeCoset.toSet D
 lemma doubleCoset_eq_of_mem {g : P.Δ} {x : G}
     (hx : x ∈ DoubleCoset.doubleCoset (g : G) P.H P.H) :
     DoubleCoset.doubleCoset x P.H P.H = DoubleCoset.doubleCoset (g : G) P.H P.H := by
-  obtain ⟨_, ⟨l, hl, _, rfl, rfl⟩, r, hr, rfl⟩ := hx
-  -- x = l * g * r with l ∈ H, r ∈ H. H(lgr)H = HgH
-  simp only [DoubleCoset.doubleCoset]
-  ext y; simp only [Set.mem_mul, Set.mem_singleton_iff, SetLike.mem_coe]
-  constructor
-  · rintro ⟨_, ⟨a, ha, _, rfl, rfl⟩, b, hb, rfl⟩
-    exact ⟨_, ⟨a * l, P.H.mul_mem ha hl, _, rfl, rfl⟩, r * b, P.H.mul_mem hr hb, by group⟩
-  · rintro ⟨_, ⟨a, ha, _, rfl, rfl⟩, b, hb, rfl⟩
-    exact ⟨_, ⟨a * l⁻¹, P.H.mul_mem ha (P.H.inv_mem hl), _, rfl, rfl⟩,
-      r⁻¹ * b, P.H.mul_mem (P.H.inv_mem hr) hb, by group⟩
+  exact DoubleCoset.doubleCoset_eq_of_mem hx
 
 /-- `⟦g₁⟧ = ⟦g₂⟧` when `g₁` is in the double coset of `g₂`. -/
 lemma eq_mk_of_mem {g₁ g₂ : P.Δ}

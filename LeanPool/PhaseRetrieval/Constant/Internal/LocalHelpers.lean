@@ -63,8 +63,7 @@ private lemma norm_sub_phaseAnchor_le (w lam : ℂ) (hlam : ‖lam‖ = 1) :
       calc
         ‖w - phaseAnchor w‖ = ‖phaseAnchor w * ((‖w‖ : ℂ) - 1)‖ := by
           have hw_sub : w - phaseAnchor w = phaseAnchor w * ‖w‖ - phaseAnchor w := by
-            nth_rewrite 1 [hw_eq]
-            rfl
+            exact (sub_eq_sub_iff_comm (phaseAnchor w) w (phaseAnchor w)).mp (congrArg (HSub.hSub (phaseAnchor w)) hw_eq)
           calc
             ‖w - phaseAnchor w‖ = ‖phaseAnchor w * ‖w‖ - phaseAnchor w‖ := by rw [hw_sub]
             _ = ‖phaseAnchor w * ((‖w‖ : ℂ) - 1)‖ := by

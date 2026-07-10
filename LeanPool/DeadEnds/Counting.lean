@@ -75,8 +75,7 @@ lemma count_real_bounds (b : ℕ) (hb : 2 ≤ b) (T : Finset ℕ) (hT : T ⊆ Fi
   simp only at hbounds
   have hA := validResidues_card_eq_mul b hb T hT S
   have hA' : (M : ℝ) * L = (validResiduesMod b T S).card := by
-    simp only [hA]
-    ring
+    exact Eq.symm (validResidues_card_eq_mul b hb T hT S)
   constructor
   · calc (q : ℝ) * M * L = q * (M * L) := by ring
       _ = q * (validResiduesMod b T S).card := by rw [← hA']
@@ -258,9 +257,7 @@ lemma finite_product_ge_density (b : ℕ) (hb : 2 ≤ b) (T : Finset ℕ) (hT : 
     exact Finset.prod_nonneg fun p _ => localDensityFactor_nonneg p b T
   unfold localDensityProduct jointSquarefreeDensity
   rw [ge_iff_le, ← hfactor, ← hS_eq]
-  calc (∏' (x : {p // p ∈ S}), f ↑x) * (∏' (x : {p // p ∉ S}), f ↑x)
-      ≤ (∏' (x : {p // p ∈ S}), f ↑x) * 1 := mul_le_mul_of_nonneg_left hcompl_le hS_nonneg
-    _ = _ := mul_one _
+  exact mul_le_of_le_one_right hS_nonneg hcompl_le
 
 lemma jointSquarefree_subset_finitePrime (b : ℕ) (T : Finset ℕ) (S : Finset Nat.Primes) (X : ℕ) :
     (Finset.Icc 1 X).filter (fun N => Squarefree N ∧ ∀ d ∈ T, Squarefree (b * N + d)) ⊆

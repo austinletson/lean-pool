@@ -177,10 +177,7 @@ theorem exists_omega0_seq_succ_prop (opos : 0 < o) {P : Ordinal → Ordinal → 
   -- Key relation: f at successor equals chosen witness
   have f_succ_eq : ∀ n : Iio ω,
       f ⟨Order.succ n.1, isSuccLimit_omega0.succ_lt n.2⟩ = Classical.choose (hP (f n)) := by
-    intro n
-    change boundedLimitRec' isSuccLimit_omega0 ⟨Order.succ n.1, _⟩ (succ r) H₂ H₃ =
-      Classical.choose (hP (f n))
-    rw [@boundedLimitRec'_succ ω isSuccLimit_omega0 (fun _ ↦ Iio o) n (succ r) H₂ H₃]
+    exact fun n => boundedLimitRec'_succ isSuccLimit_omega0 n (succ r) H₂ H₃
   -- The successor in Iio ω
   have succ_eq : ∀ n : Iio ω,
       (succ n : Iio ω) = ⟨Order.succ n.1, isSuccLimit_omega0.succ_lt n.2⟩ := fun n ↦

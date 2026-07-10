@@ -453,8 +453,7 @@ theorem int_ordered_pair_inj [ModelPairing V] (s : ℕ → V) (xs : Fin 0 → V)
   suffices h : ∀ a₁ a₂ a₃ a₄ a₅ : V,
       ExtIsOrderedPair a₁ a₂ a₅ → ExtIsOrderedPair a₃ a₄ a₅ → a₁ = a₃ ∧ a₂ = a₄ by
     simpa [realize_liftAt', fixedSnoc] using h
-  intro a₁ a₂ a₃ a₄ a₅
-  apply ext_ordered_pair_inj
+  exact fun a₁ a₂ a₃ a₄ a₅ a a_1 => ext_ordered_pair_inj a₁ a₂ a₃ a₄ a₅ a a_1
 
 /-- Model with both emptyset and pairing. -/
 class ModelEP (V : Type u) extends ModelEmptyset V, ModelPairing V
@@ -462,8 +461,7 @@ class ModelEP (V : Type u) extends ModelEmptyset V, ModelPairing V
 /-- A singleton can be formed for any emptyset element. -/
 theorem ext_singleton_of_emptyset [ModelEP V] : ∀ (e : V),
     ExtIsEmptyset e → ∃ (a : V), ExtIsSingleton e a := by
-  intro e _he
-  exact ext_singleton e
+  exact fun e a => ext_singleton e
 
 /-- A singleton can be formed for the emptyset internally. -/
 theorem int_singleton_of_emptyset [ModelEP V] (s : ℕ → V) (xs : Fin 0 → V) :
@@ -471,8 +469,7 @@ theorem int_singleton_of_emptyset [ModelEP V] (s : ℕ → V) (xs : Fin 0 → V)
     ⟹∃'(intIsSingleton.liftAndReplaceFV 2 0 ![bv 2 0, bv 2 1]))).Realize s xs := by
   suffices h : ∀ e : V, ExtIsEmptyset e → ∃ a : V, ExtIsSingleton e a by
     simpa [realize_liftAt', fixedSnoc] using h
-  intro e he
-  exact ext_singleton_of_emptyset e he
+  exact fun e a => ext_singleton e
 
 /-- Describe fv 1 is the union of fv 0 (in the set-theoretic sense). -/
 def intIsUnion {n : ℕ} : LZFC.BoundedFormula ℕ n :=
@@ -526,8 +523,7 @@ theorem int_union_of_ordered_pair [ModelEPU V] {s : ℕ → V} {xs : Fin 0 → V
   suffices h : ∀ a b c d : V,
       ExtIsOrderedPair a b c → ExtIsUnion c d → ExtIsPair a b d by
     simpa [realize_liftAt'] using h
-  intro a b c d
-  apply union_of_ordered_pair
+  exact fun a b c d a_1 a_2 => union_of_ordered_pair a_1 a_2
 
 /-- Make a formula fv 0 ⊆ fv 1. -/
 def intIsSubset {n : ℕ} : LZFC.BoundedFormula ℕ n :=
@@ -645,8 +641,7 @@ theorem int_powerset_of_emptyset [ModelEPUP V] {s : ℕ → V}
   simp only [Nat.reduceAdd, Fin.isValue, realize_all, Nat.succ_eq_add_one, snoc_conv, realize_imp,
     realize_is_emptyset'', realize_bv', FixedSnoc_2_0, realize_is_powerset', FixedSnoc_2_1,
     realize_is_singleton']
-  intro emp a
-  apply powerset_of_emptyset
+  exact fun a a_2 a_3 a_4 => powerset_of_emptyset a a_2 a_3 a_4
 
 /-- Make a formula for fv 1 is a successor of fv 0. -/
 def intIsSuccessor {n : ℕ} : LZFC.BoundedFormula ℕ n :=
@@ -911,15 +906,13 @@ theorem ext_omega_exists [ModelEPUPIC V] {n : ℕ} {s : ℕ → V}
     · intro emp h_emp
       apply (h_b emp).mpr
       constructor
-      · unfold ExtIsInductive at h_a
-        apply h_a.left emp h_emp
+      · exact ext_emp_in_inductive h_emp h_a
       · unfold ϕ
         simp only [realize_all, Nat.succ_eq_add_one, snoc_conv, realize_imp,
           BoundedFormula.realize_replaceFV, realize_fixedSnoc_makeTsN_1, realize_is_inductive,
           replaceInitialValues_1_0, realize_in, realize_fv', realize_bv'', Fin.ofNat_eq_cast,
           Fin.natCast_eq_last, snoc_last]
-        intro c h_c
-        apply ext_emp_in_inductive h_emp h_c
+        exact fun a a_2 => ext_emp_in_inductive h_emp a_2
     · intro x h_xb y h_xy
       apply (h_b y).mpr
       constructor
@@ -955,8 +948,7 @@ theorem int_omega_minus_emptyset [ModelEPUPIC V] {n : ℕ} (s : ℕ → V)
     realize_bv'', Fin.ofNat_eq_cast, FixedSnoc_n_2_0, realize_is_omega', Fin.natCast_eq_last,
     snoc_last, realize_ex, realize_iff, realize_in, realize_and, FixedSnoc_n_3_0, realize_neq,
     FixedSnoc_n_4_0, ne_eq]
-  intro emp omega h_emp h_omega
-  exact ext_omega_minus_emptyset emp h_emp omega h_omega
+  exact fun a a_2 a_3 a_4 => ext_omega_minus_emptyset a a_3 a_2 a_4
 
 /-- ω is closed under the successor operation. -/
 theorem omega_closed_under_succ [ModelEPUPIC V] : ∀ (omega : V),

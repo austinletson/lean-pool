@@ -482,10 +482,7 @@ private lemma convolution_compactSupport_decay_exists (f : SchwartzMap E ℂ) (K
     -- Peetre: 1 + ‖y‖ ≤ (1 + ‖x‖)(1 + ‖x - y‖) ≤ (1 + ‖x‖)(1 + R₀)
     have h_peetre_base : 1 + ‖y‖ ≤ (1 + ‖x‖) * (1 + R₀) := by
       have h1 : ‖y‖ ≤ ‖x‖ + ‖x - y‖ := by
-        calc ‖y‖ = ‖y - x + x‖ := by simp only [sub_add_cancel]
-          _ ≤ ‖y - x‖ + ‖x‖ := norm_add_le _ _
-          _ = ‖x - y‖ + ‖x‖ := by rw [norm_sub_rev]
-          _ = ‖x‖ + ‖x - y‖ := by ring
+        exact norm_le_insert x y
       calc 1 + ‖y‖ ≤ 1 + ‖x‖ + ‖x - y‖ := by linarith
         _ ≤ 1 + ‖x‖ + R₀ := by linarith
         _ ≤ (1 + ‖x‖) * (1 + R₀) := by nlinarith [norm_nonneg x]
@@ -981,9 +978,7 @@ theorem schwartz_bilinear_translation_decay_polynomial_proof
       ext y
       show ∫ x : E, f x * (K (x - y) : ℂ) * g (y - a) =
           (∫ x : E, f x * (K (x - y) : ℂ)) * g (y - a)
-      simp_rw [show ∀ x, f x * (K (x - y) : ℂ) * g (y - a) =
-          (fun x => f x * (K (x - y) : ℂ)) x * g (y - a) from fun x => by ring]
-      exact integral_mul_const (g (y - a)) (fun x => f x * (K (x - y) : ℂ))
+      exact integral_mul_const (g (y - a)) fun a => f a * ↑(K (a - y))
     -- Final calc chain: relate double integral to convolution form
     calc ‖∫ x, ∫ y, f x * ↑(K (x - y)) * g (y - a)‖
         = ‖∫ y, (∫ x, f x * ↑(K (x - y))) * g (y - a)‖ := by rw [h_fubini]

@@ -144,8 +144,7 @@ private theorem expcont {a : k[X]} (ha : a ≠ 0) (hda : derivative a = 0) (chn0
 omit [DecidableEq k] in
 private theorem expand_dvd {a b : k[X]} {n : ℕ} (_hn : n ≠ 0) (h : a ∣ b) :
     expand k n a ∣ expand k n b := by
-  rcases h with ⟨t, eqn⟩
-  exact ⟨expand k n t, by rw [eqn, map_mul]⟩
+  exact _root_.map_dvd (expand k n) h
 
 omit [DecidableEq k] in
 private theorem is_coprime_of_expand {a b : k[X]} {n : ℕ} (hn : n ≠ 0) :
@@ -169,8 +168,7 @@ theorem flt_catalan_aux
       apply Polynomial.flt_catalan_deriv hp hq hr hineq _ _ _ ha hb hc _ hu hv hw <;> assumption
     rcases hderiv with ⟨da, -, -⟩
     have ii : CharZero k := by
-      apply charZero_of_inj_zero; intro n; rw [ringChar.spec]
-      rw [ch0]; exact zero_dvd_iff.mp
+      exact (CharP.ringChar_zero_iff_CharZero k).mp ch0
     simp_all
   /- Characteristic ch ≠ 0, where we use infinite descent.
     We use proof by contradiction (`by_contra`) combined with strong induction

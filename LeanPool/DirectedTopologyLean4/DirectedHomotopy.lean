@@ -222,10 +222,7 @@ lemma trans_first_case {a₀ a₁ : I × X} {γ : Path a₀ a₁} (γ_dipath : I
   set p' := p.map (↑F : D(I × X, Y)) with p'_def
   have h : ∀ (t : I) (x : X), (ht : (t : ℝ) ≤ 2⁻¹) → Γ (t, x)
       = F (⟨2 * (t : ℝ), double_mem_I ht⟩, x) := by
-    intros t x ht
-    rw [Γ_def, ContinuousMap.Homotopy.trans_apply (dihomToHom F) (dihomToHom G) (t, x)]
-    simp [ht]
-    rfl
+    exact fun t x ht => trans_apply_left F G t x ht
   have : (t₀ : ℝ) ≤ 2⁻¹ := by
     have h_le : t₀ ≤ t₁ := directed_path_source_le_target γ_dipath.1
     exact le_trans (Subtype.coe_le_coe.mpr h_le) ht₁
@@ -250,12 +247,7 @@ lemma trans_second_case {a₀ a₁ : I × X} {γ : Path a₀ a₁} (γ_dipath : 
   set p' := p.map (↑G : D(I × X, Y)) with p'_def
   have h : ∀ (t : I) (x : X), (ht : (2⁻¹ : ℝ) ≤ ↑t) →
     Γ (t, x) = G (⟨2 * (t : ℝ) - 1, double_sub_one_mem_I ht⟩, x) := by
-    intros t x ht
-    rw [Γ_def, ContinuousMap.Homotopy.trans_apply (dihomToHom F) (dihomToHom G) (t, x)]
-    split_ifs with ht'
-    · simp at ht'
-      simp [show (t : ℝ) = 2⁻¹ by linarith]
-    · rfl
+    exact fun t x ht => trans_apply_right F G t x ht
   have : 2⁻¹ ≤ (t₁ : ℝ) := by
     have h_le : t₀ ≤ t₁ := directed_path_source_le_target γ₁.dipath_toPath
     exact le_trans ht₀ (Subtype.coe_le_coe.mpr h_le)

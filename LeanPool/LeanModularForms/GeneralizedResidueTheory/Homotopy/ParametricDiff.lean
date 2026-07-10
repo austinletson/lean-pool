@@ -613,8 +613,7 @@ theorem hasDerivAt_homotopy_integral_zero
       exact homotopy_schwarz_product_rule f H hH_smooth t s
         (hf_diff t (Ioo_subset_Icc_self ht) s hs) hf_differentiable
     rw [← h_ftc]
-    exact hasDerivAt_homotopy_param f H a b s hab hH_smooth hf_diff hfH_cont hs
-      hf_differentiable (fun t ht => h_schwarz t ht)
+    exact hasDerivAt_homotopy_param f H a b s hab hH_smooth hf_diff hfH_cont hs hf_differentiable h_schwarz
   simp_all
 
 end

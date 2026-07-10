@@ -191,8 +191,7 @@ lemma nat_div_floor_le_real_div (X : ℕ) (q : Nat.Primes) :
     norm_cast at h₂ ⊢
   have hq0 : (0 : ℝ) < (q : ℕ) := by exact_mod_cast q.property.pos
   have h₆ : 0 < ((q : ℕ) ^ 2 : ℝ) := by positivity
-  rw [le_div_iff₀ h₆]
-  exact h₁
+  exact (le_div_iff₀ h₆).mpr h₁
 
 lemma nat_sum_le_real_sum (T : Finset ℕ) (X : ℕ) (Q : Finset Nat.Primes) :
     ((∑ q ∈ Q, (T.card + 1) * (X / (q : ℕ) ^ 2 + 1) : ℕ) : ℝ)

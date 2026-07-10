@@ -37,8 +37,7 @@ lemma reflexive_def : Std.Refl rel ↔ (Geachean ⟨0, 0, 1, 0⟩ rel) := by
   · intro h
     simp only [Geachean, Rel.iterate.iff_zero, Rel.iterate.iff_succ, exists_eq_right,
       exists_eq_right', and_imp, forall_apply_eq_imp_iff, forall_eq']
-    intro x
-    exact h.refl x
+    exact fun {x} => Std.Refl.refl x
   · intro h
     simp only [Geachean, Rel.iterate.iff_zero, Rel.iterate.iff_succ, exists_eq_right,
       exists_eq_right', and_imp, forall_apply_eq_imp_iff, forall_eq'] at h
@@ -57,8 +56,7 @@ lemma transitive_def : IsTrans α rel ↔ (Geachean ⟨0, 2, 1, 0⟩ rel) := by
   constructor;
   · rintro h x y z rfl w Rxw Rwz
     exact h.trans _ _ _ Rxw Rwz
-  · intro h
-    exact ⟨fun x y z Rxy Ryz => h rfl y Rxy Ryz⟩
+  · exact fun a => { trans := fun a_1 b c => a rfl b }
 
 lemma euclidean_def : Euclidean rel ↔ (Geachean ⟨1, 1, 0, 1⟩ rel) := by simp [Geachean, Euclidean];
 

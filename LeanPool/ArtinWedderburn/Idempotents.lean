@@ -35,11 +35,7 @@ def AreOrthogonalIdempotents (e f : R) : Prop :=
   IsIdempotentElem e ∧ IsIdempotentElem f ∧ IsOrthogonal e f
 
 theorem leq_neq_lt (I J : Ideal R) : I ≤ J → I ≠ J → I < J := by
-  intro hleq hneq
-  refine ⟨hleq, ?_⟩
-  intro heq
-  have h : I = J := le_antisymm hleq heq
-  trivial
+  exact fun a a_1 => Std.lt_of_le_of_ne a a_1
 
 -- Lemma 2.9
 theorem one_sub_e_larger_span_on_sub_e_sub_f (e f : R)
@@ -277,9 +273,7 @@ theorem lemma_2_19 (h : IsPrimeRing R) (e f : R)
     have h_nonzero : v * u - f ≠ 0 := sub_ne_zero_of_ne h_neq
     have h_mem : v * u - f ∈ CornerSubring idem_f := by
       apply both_mul_sub
-      · apply both_mul_mul
-        · exact hv
-        · exact hu
+      · exact both_mul_mul v u hv_mem hu
       · exact e_in_corner_ring idem_f
     let w : CornerSubring idem_f := ⟨v * u - f, h_mem⟩
     have w_val_eq : w.val = v * u - f := rfl
@@ -381,8 +375,7 @@ lemma orth_coercion (e : R) (idem_e : IsIdempotentElem e) (x y : CornerSubring i
 
 lemma iso_idem_to_idem (R' : Type*) [Ring R'] (φ : R ≃+* R') (e : R)
     (idem_e : IsIdempotentElem e) : IsIdempotentElem (φ e) := by
-  unfold IsIdempotentElem at *
-  rw [← RingEquiv.map_mul, idem_e]
+  exact IsIdempotentElem.map idem_e φ
 
 lemma iso_orthogonal_to_orthogonal (R' : Type*) [Ring R'] (φ : R ≃+* R') (x y : R)
     (ort : IsOrthogonal x y) : IsOrthogonal (φ x) (φ y) := by

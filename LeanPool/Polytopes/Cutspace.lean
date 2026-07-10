@@ -40,8 +40,7 @@ lemma mem_cutSpace (H_ : Set (Halfspace E)) (x : E) :
     unfold cutSpace
     rw [Set.mem_sInter]
     rintro _ ⟨ Hi_, hHi_, rfl ⟩
-    specialize h Hi_ hHi_
-    rwa [Halfspace_mem]
+    exact (Halfspace_mem Hi_ x).mpr (h Hi_ hHi_)
 
 lemma empty_cutSpace (h : ∃ x : E, x ≠ 0) : ∃ (H_ : Set (Halfspace E)), cutSpace H_ = ∅ := by
   rcases h with ⟨ x, hx ⟩

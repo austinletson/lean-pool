@@ -380,10 +380,7 @@ theorem recDec_setEq₀ {f g : ℕ → ℕ} (hf : Nat.Primrec f) (hg : Nat.Primr
 
 theorem recDec_setEq₁ {f g : ℕ → ℕ} (hf : Nat.Primrec f) (hg : Nat.Primrec g) :
     RecDecidable (fun u => P₁.X (f u) = P₁.X (g u)) := by
-  have hincl : RecDecidable (fun s => P₁.X s.unpair.1 ⊆ P₁.X s.unpair.2) := P₁.incl_computable
-  refine RecDecidable.of_iff (fun u => ?_) ((hincl.comp (hf.pair hg)).and (hincl.comp (hg.pair hf)))
-  simp only [unpair_pair_fst, unpair_pair_snd]
-  exact ⟨fun h => ⟨h.subset, h.symm.subset⟩, fun ⟨h1, h2⟩ => Set.Subset.antisymm h1 h2⟩
+  exact recDec_setEq₀ hf hg
 
 include h₁ in
 /-- **`sumEnum u.1 = sumEnum u.2` is recursively decidable** (the `of_iff`

@@ -73,8 +73,7 @@ private theorem SupportsValid.append {t : ℕ}
     _ ≤ (T \ I).sum cap₁ + (T \ I).sum cap₂ := by
           exact Nat.add_le_add (h₁ T I hIT) (h₂ T I hIT)
     _ = (T \ I).sum (fun i => cap₁ i + cap₂ i) := by
-          symm
-          exact Finset.sum_add_distrib
+          exact Eq.symm Finset.sum_add_distrib
 
 private def EdgesNonempty {V : Type*} (edges : Hypergraph V) : Prop :=
   ∀ e ∈ edges, e.Nonempty
@@ -185,8 +184,7 @@ private theorem NoLargePartition.map {α β : Type*} [DecidableEq α] [Decidable
   intro P hP
   let Q : Finset (Finset α) := edges.filter fun e => e.image f ∈ P
   have hQsub : Q ⊆ edges := by
-    intro e he
-    exact (Finset.mem_filter.mp he).1
+    exact Finset.filter_subset (fun e => Finset.image (⇑f) e ∈ P) edges
   have hP_eq : mapHypergraph f Q = P := by
     ext E
     constructor
@@ -228,9 +226,7 @@ private def encodeSubstVertex {t : ℕ}
             rcases Nat.pair_eq_pair.mp h with ⟨_, hinner⟩
             rcases Nat.pair_eq_pair.mp hinner with ⟨hij, hvw⟩
             have hij' : i = j := Fin.ext hij
-            subst hij'
-            subst hvw
-            rfl
+            exact Eq.subst (congrArg (SubstVertex.old j) hvw) (congrFun (congrArg SubstVertex.old hij') v)
         | new s =>
             have : (0 : ℕ) = 1 := (Nat.pair_eq_pair.mp h).1
             omega
@@ -405,12 +401,7 @@ private theorem binary_isFrame (a b c : ℕ) (hc : c ≤ min a b) :
       have hcount :
           ∀ n, (List.replicate n pairSupport).countP (frameWitnesses T I) =
             if frameWitnesses T I pairSupport then n else 0 := by
-        intro n
-        induction n with
-        | zero =>
-            simp
-          | succ n ih =>
-              by_cases hw : frameWitnesses T I pairSupport <;> simp [List.replicate, ih, hw]
+        exact fun n => List.countP_replicate
       have hpair_subset :
           (({0, 1} : Finset (Fin 2)) ⊆ T) ↔ ((0 : Fin 2) ∈ T ∧ (1 : Fin 2) ∈ T) := by
         constructor
@@ -553,16 +544,12 @@ private lemma A_mod3 (n : ℕ) (hn : 60 ≤ n) (hr : n % 4 = 3) :
 private lemma q_mul_three_add_mod (m q : ℕ) (hq : q = m / 3) :
     q * 3 + m % 3 = m := by
   subst q
-  simpa [Nat.add_comm, Nat.add_left_comm, Nat.add_assoc,
-    Nat.mul_comm, Nat.mul_left_comm, Nat.mul_assoc] using
-    (Nat.mod_add_div m 3)
+  exact Nat.div_add_mod' m 3
 
 private lemma four_mul_div_add_mod (n m : ℕ) (hm : m = n / 4) :
     4 * m + n % 4 = n := by
   subst m
-  simpa [Nat.add_comm, Nat.add_left_comm, Nat.add_assoc,
-    Nat.mul_comm, Nat.mul_left_comm, Nat.mul_assoc] using
-    (Nat.mod_add_div n 4)
+  exact Nat.div_add_mod n 4
 
 private lemma q_mul_three_add_two (m q : ℕ) (hq : q = m / 3) (hs : m % 3 = 2) :
     q * 3 + 2 = m := by

@@ -159,10 +159,7 @@ theorem uniformLowAnnulusWidthBound
     (hj : annulusRadius j < degreeThreshold d M) :
     degreeWidth j M ≤ d * (degreeThreshold d M + M) ^ 2 := by
   have hTpos : 0 < degreeThreshold d M := by
-    unfold degreeThreshold
-    have : 0 < 120 * d * (2 * M + 1) :=
-      Nat.mul_pos (Nat.mul_pos (by decide) (by omega)) (by omega)
-    omega
+    exact Nat.zero_lt_of_lt hj
   refine degreeWidth_le_of_coord_bound hd j M (degreeThreshold d M + M) (by omega) (fun q => ?_)
   have := coord_le_annulusRadius j q
   omega
@@ -250,10 +247,7 @@ private theorem degreeWidth_eq_gap_sum
       (∑ q : Fin d, (((j q + M + 1) ^ 2 - 1) - (max (j q) M - M) ^ 2)) =
         (∑ q : Fin d, ((j q + M + 1) ^ 2 - 1)) -
           (∑ q : Fin d, (max (j q) M - M) ^ 2) := by
-    simpa using
-      (Finset.sum_tsub_distrib (s := Finset.univ)
-        (f := fun q : Fin d => ((j q + M + 1) ^ 2 - 1))
-        (g := fun q : Fin d => (max (j q) M - M) ^ 2) hfg)
+    exact sum_tsub_distrib univ hfg
   rw [hdistrib]
 
 /-- High-annulus crude degree lower/width upper bounds in terms of the annulus radius. -/
@@ -351,8 +345,7 @@ theorem highFrequencyThreshold
   have h1343 : 1343 * (degreeWidth j M) ^ 2 ≤ x ^ 4 :=
     le_trans (Nat.mul_le_mul_right ((degreeWidth j M) ^ 2) (by decide : 1343 ≤ 1600)) h1600
   have hlower_sq : x ^ 4 ≤ (degreeIntervalLower j M) ^ 2 := by
-    have hsq := Nat.mul_self_le_mul_self (by simpa [x, R] using hlower)
-    simpa [pow_two, pow_succ, x, mul_assoc, mul_left_comm, mul_comm] using hsq
+    exact pow_four_le_pow_two_of_pow_two_le hlower
   exact le_trans h1343 hlower_sq
 
 /-- Zero-padding turns arbitrary finite support inside a band into a full band. -/

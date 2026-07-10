@@ -610,10 +610,7 @@ lemma exVec {k l} {P : (Fin k → V) → (Fin l → V) → Prop}
   case zero => simpa [Matrix.empty_eq] using h
   case succ l ih =>
     suffices Sg-[m + 1].Boldface fun v : Fin k → V ↦ ∃ y, ∃ ys : Fin l → V, P v (y :> ys) by
-      apply of_iff this; intro x
-      constructor
-      · rintro ⟨ys, h⟩; exact ⟨ys 0, (ys ·.succ), by simpa using h⟩
-      · rintro ⟨y, ys, h⟩; exact ⟨_, h⟩
+      apply of_iff this; exact fun x => exists_vec_iff_exists_exists_vec
     apply ex; apply ih
     let g : Fin (k + (l + 1)) → Fin (k + 1 + l) :=
       Matrix.vecAppend rfl (fun x ↦ x.succ.castAdd l) (Fin.castAdd l 0 :> fun j ↦ j.natAdd (k + 1))
@@ -636,10 +633,7 @@ lemma allVec {k l} {P : (Fin k → V) → (Fin l → V) → Prop}
   case zero => simpa [Matrix.empty_eq] using h
   case succ l ih =>
     suffices Pg-[m + 1].Boldface fun v : Fin k → V ↦ ∀ y, ∀ ys : Fin l → V, P v (y :> ys) by
-      apply of_iff this; intro x
-      constructor
-      · intro h y ys; apply h
-      · intro h ys; simpa using h (ys 0) (ys ·.succ)
+      apply of_iff this; exact fun x => Matrix.forall_vecCons_iff (P x)
     apply all; apply ih
     let g : Fin (k + (l + 1)) → Fin (k + 1 + l) :=
       Matrix.vecAppend rfl (fun x ↦ x.succ.castAdd l) (Fin.castAdd l 0 :> fun j ↦ j.natAdd (k + 1))
@@ -807,18 +801,7 @@ variable {ℌ : HierarchySymbol}
 
 lemma graph_delta {k} {f : (Fin k → V) → V}
     (h : Sg-[m].BoldfaceFunction f) : Dlt-[m].BoldfaceFunction f := by
-  rcases h with ⟨φ, h⟩
-  exact ⟨φ.graphDelta, by
-    rcases m with _ | m <;> simp only [HierarchySymbol.Semiformula.graphDelta,
-      Semiformula.ProperWithParamOn.of_zero]
-    intro e
-    simp only [Semiformula.sigma_mkDelta, h.df.iff, Semiformula.pi_mkDelta,
-      Semiformula.val_mkPi, Semiformula.eval_all, Nat.succ_eq_add_one,
-      LogicalConnective.HomClass.map_imply, Semiformula.eval_substs, Matrix.comp_vecCons',
-      Semiterm.val_bvar, Matrix.vecCons_zero, Matrix.vecCons_succ, Semiformula.eval_operator₂,
-      Matrix.cons_val_one, Structure.Eq.eq, LogicalConnective.Prop.arrow_eq, forall_eq]
-    exact eq_comm, by
-    intro v; simp [h.df.iff]⟩
+  exact Boldface.of_sigma h
 
 instance {k} {f : (Fin k → V) → V} [h : Sg-[m].BoldfaceFunction f] : Dlt-[m].BoldfaceFunction f :=
   BoldfaceFunction.graph_delta h

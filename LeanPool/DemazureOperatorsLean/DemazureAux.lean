@@ -388,8 +388,7 @@ lemma eq_of_eq_mk' {p q : MvPolynomial (Fin (n + 1)) ℂ} : mk' p = mk' q ↔ p 
   constructor
   · intro h
     simpa [mk'] using h
-  · intro h
-    simp[h]
+  · exact fun a => (congrArg mk' ∘ fun a_1 => a) n
 
 
 /- Some lemmas for interplay between mk and add -/

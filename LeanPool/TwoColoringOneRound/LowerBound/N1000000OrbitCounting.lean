@@ -88,8 +88,7 @@ private lemma card_freeCol (k : DirIdx) : Fintype.card (FreeCol k) = freeCols (m
   classical
   change Fintype.card { j : Fin 3 // colMatch (maskAt k) j = none } = freeCols (maskAt k)
   rw [freeCols]
-  exact Fintype.card_of_subtype
-    (Finset.univ.filter fun j : Fin 3 => colMatch (maskAt k) j = none) (by intro j; simp)
+  exact Fintype.card_subtype fun x => colMatch (maskAt k) x = none
 
 private theorem colMatch_unique' (k : DirIdx) :
     ∀ j₁ j₂ : Fin 3, ∀ i : Fin 3,
@@ -128,8 +127,7 @@ theorem baseOrbit_freeCoord_outside {k : DirIdx} (u : BaseOrbit k) (j : FreeCol 
           decide (baseVertex.1 i = u.1.1 j.1) := by
       exact dirMask_testBit (u := baseVertex) (v := u.1) (i := i) (j := j.1)
     have hDecFalse : decide (baseVertex.1 i = u.1.1 j.1) = false := by simpa [hb] using hdFalse
-    have : ¬ baseVertex.1 i = u.1.1 j.1 := of_decide_eq_false hDecFalse
-    simpa [eq_comm] using this
+    exact Ne.symm (of_decide_eq_false hDecFalse)
   exact
     ge_three_of_ne_base (x := u.1.1 j.1)
       (h0 := hne ⟨0, by decide⟩) (h1 := hne ⟨1, by decide⟩) (h2 := hne ⟨2, by decide⟩)
@@ -263,8 +261,7 @@ theorem decodeVertex_mask (k : DirIdx) (g : FreeCol k ↪ AvailFrom3) :
     let iNat : Nat := t / 3
     let jNat : Nat := t % 3
     have hi : iNat < 3 := by
-      have : t < 3 * 3 := by simpa using ht
-      simpa [iNat] using (Nat.div_lt_of_lt_mul this)
+      exact Nat.div_lt_of_lt_mul ht
     have hj : jNat < 3 := by
       have : 0 < 3 := by decide
       simpa [jNat] using (Nat.mod_lt t (y := 3) this)
@@ -326,8 +323,7 @@ private theorem decode_encode_id (k : DirIdx) :
             = decodeTuple (k := k) (encodeBaseOrbit k u) j := rfl
       have h1 :
           decodeTuple (k := k) (encodeBaseOrbit k u) j = (encodeBaseOrbit k u ⟨j, hcol'⟩).1 := by
-        simpa using
-          (decodeTuple_of_colMatch_none (k := k) (g := encodeBaseOrbit k u) (j := j) hcol')
+        exact decodeTuple_of_colMatch_none k (encodeBaseOrbit k u) j hcol'
       have hDec :
           (decodeBaseOrbit k (encodeBaseOrbit k u)).1.1 j
             = (encodeBaseOrbit k u ⟨j, hcol'⟩).1 := by
@@ -341,8 +337,7 @@ private theorem decode_encode_id (k : DirIdx) :
           (decodeBaseOrbit k (encodeBaseOrbit k u)).1.1 j
             = decodeTuple (k := k) (encodeBaseOrbit k u) j := rfl
       have h1 : decodeTuple (k := k) (encodeBaseOrbit k u) j = baseVertex.1 i := by
-        simpa using
-          (decodeTuple_of_colMatch_some (k := k) (g := encodeBaseOrbit k u) (j := j) (i := i) hi)
+        exact decodeTuple_of_colMatch_some k (encodeBaseOrbit k u) j i hcol
       simp_all
 
 private theorem encode_decode_id (k : DirIdx) :

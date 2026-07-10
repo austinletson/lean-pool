@@ -145,8 +145,7 @@ lemma forall_exists_pos_swap {α : Type} [Finite α] {P : ℝ → α → Prop}
         apply h (fδ x) x (hfδ x).2
         exact min'_le _ _ (mem_image_of_mem fδ (mem_univ x))
     · simp_all only [gt_iff_lt, not_nonempty_iff, IsEmpty.forall_iff, and_true, implies_true]
-      use 1
-      norm_num
+      exact exists_zero_lt
 
 /-- For positive `x`, there is a radius `δ > 0` within which `x + a * y` stays positive. -/
 lemma real_interval_δ {x : ℝ} (y : ℝ) (hx : 0 < x) : ∃ δ > 0, ∀ a, |a| ≤ δ → 0 < x + a * y := by

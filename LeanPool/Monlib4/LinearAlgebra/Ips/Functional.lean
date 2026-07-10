@@ -246,8 +246,7 @@ lemma PiMat.nonneg_iff {k : Type _} [Finite k]
   letI : Fintype k := Fintype.ofFinite k
   simp_rw [Pi.le_def, Pi.zero_apply, Pi.mul_def, Pi.star_apply, Matrix.nonneg_iff,
     funext_iff]
-  exact ⟨fun h => ⟨(fun i => (h i).choose), fun _ => (h _).choose_spec⟩,
-    fun h a => ⟨h.choose a, h.choose_spec _⟩⟩
+  exact Classical.skolem
 
 lemma dual_isPosMap_of_linearMap_isPosMap {A :
     Type _} [NonUnitalSemiring A] [StarRing A] [Module 𝕜 A]
@@ -502,10 +501,7 @@ private lemma Module.Dual.tracial_posSemidef_matrix_eq_re_smul_one
       ← Matrix.star_apply, star_eq_conjTranspose]
     rw [hQ.1.eq]
   have hnn : 0 ≤ Q i i := by
-    rw [PosSemidef.complex] at hQ
-    specialize hQ fun j => ite (i = j) 1 0
-    simpa only [dotProduct, mulVec, dotProduct, Pi.star_apply, star_ite, star_zero, star_one,
-      boole_mul, mul_boole, Finset.sum_ite_eq, Finset.mem_univ, if_true] using hQ
+    exact PosSemidef.diag_nonneg hQ
   refine ⟨(RCLike.nonneg_def'.mp hnn).2, ?_⟩
   simp only [smul_eq_diagonal_mul, Matrix.mul_one]
   rwa [← hre]
@@ -578,9 +574,7 @@ theorem Module.Dual.isTracial_faithful_pos_map_iff_of_matrix [Nonempty n]
     use α'
     constructor
     · exact hα
-    · intro y hy
-      simp_rw [← Subtype.coe_inj] at hy ⊢
-      exact h _ hy
+    · exact fun y a => Subtype.coe_eq_of_eq_mk (h (↑y) a)
   · rintro ⟨α, ⟨h1, _⟩⟩
     have : 0 < (α : NNReal) := Subtype.mem α
     constructor
@@ -768,10 +762,6 @@ noncomputable def Module.Dual.pi.InnerProductSpace
   @_root_.InnerProductSpace ℂ (PiMat ℂ k s) _
   ((Module.Dual.PiNormedAddCommGroup (_hφ := hφ)).toSeminormedAddCommGroup)
    := by
-  letI : _root_.NormedAddCommGroup (PiMat ℂ k s) :=
-    Module.Dual.PiNormedAddCommGroup (_hφ := hφ)
-  letI : InnerProductSpace.Core ℂ (PiMat ℂ k s) :=
-    Module.Dual.PiInnerProductCore (φ := φ)
-  exact InnerProductSpace.ofCore _
+  exact InnerProductSpace.ofCore PiInnerProductCore.toCore
 
 scoped[Functional] attribute [instance high] Module.Dual.pi.InnerProductSpace

@@ -53,13 +53,7 @@ choice-tainted).
 Needed to fold `insert` over a `Multiset`. -/
 theorem insert_comm' (a b : α) (s : Finset α) :
     insert a (insert b s) = insert b (insert a s) := by
-  ext x
-  simp only [Finset.mem_insert]
-  constructor
-  · rintro (h | h | h)
-    exacts [Or.inr (Or.inl h), Or.inl h, Or.inr (Or.inr h)]
-  · rintro (h | h | h)
-    exacts [Or.inr (Or.inl h), Or.inl h, Or.inr (Or.inr h)]
+  exact Finset.insert_comm a b s
 
 instance : LeftCommutative (insert : α → Finset α → Finset α) := ⟨insert_comm'⟩
 
@@ -78,11 +72,7 @@ theorem mem_foldr_insert (a : α) (u : Finset α) (s : Multiset α) :
   · simp
   · intro b t ih
     simp only [Multiset.foldr_cons, Finset.mem_insert, ih, Multiset.mem_cons]
-    constructor
-    · rintro (h | h | h)
-      exacts [Or.inr (Or.inl h), Or.inl h, Or.inr (Or.inr h)]
-    · rintro (h | h | h)
-      exacts [Or.inr (Or.inl h), Or.inl h, Or.inr (Or.inr h)]
+    exact or_left_comm
 
 @[simp] theorem mem_funion {a : α} {u v : Finset α} :
     a ∈ u ∪' v ↔ a ∈ u ∨ a ∈ v := mem_foldr_insert a u v.1

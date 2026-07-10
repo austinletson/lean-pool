@@ -50,9 +50,7 @@ instance : BooleanValued (@majority n) where
   one_or_neg_one := by
     intro x
     rw [majority.eq_def]
-    split_ifs
-    · left; rfl
-    · right; rfl
+    exact ite_eq_or_eq (∑ j, ↑(x j) > n / 2) 1 (-1)
 
 /-- A dictator is a Walsh character of a singleton set. -/
 abbrev dictator {n : ℕ} (i : Fin n) : BooleanFunc n := χ {i}

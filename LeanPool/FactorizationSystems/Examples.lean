@@ -28,9 +28,7 @@ We construct an example of factorization system: (Mono,Epi) on Set
 /- Every iso is an epi -/
 lemma isIsoIsEpi : {X Y : C} → (f : X ⟶ Y) →
       MorphismProperty.isomorphisms _ f → MorphismProperty.epimorphisms _ f := by
-  intro X Y f hf
-  simp at hf
-  exact {left_cancellation := by exact (IsIso.epi_of_iso f).left_cancellation}
+  exact fun {X Y} f a => IsIso.epi_of_iso f
 
 
 /- Iso ⊆ Epi -/
@@ -47,9 +45,7 @@ lemma epimorphismsClosedUnderComp : is_closed_comp (MorphismProperty.epimorphism
 /- Every iso is a mono -/
 lemma isIsoIsMono : {X Y : C} → (f : X ⟶ Y) →
         MorphismProperty.isomorphisms _ f → MorphismProperty.monomorphisms _ f := by
-    intro X Y f hf
-    simp at hf
-    exact {right_cancellation := by exact (IsIso.mono_of_iso f).right_cancellation}
+    exact fun {X Y} f a => IsIso.mono_of_iso f
 
 /- Mono ⊆ Iso -/
 lemma monomorphismsContainsIsos : containsIsos (MorphismProperty.monomorphisms C) := by

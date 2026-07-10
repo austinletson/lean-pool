@@ -48,8 +48,7 @@ theorem card_availFrom (s : Nat) : Fintype.card (AvailFrom (s := s)) = n - s := 
         let xVal : Nat := s + i.1
         have hx : xVal < n := by
           have hi : i.1 < n - s := i.2
-          simpa [xVal, Nat.add_comm, Nat.add_left_comm, Nat.add_assoc] using
-            (Nat.add_lt_of_lt_sub hi)
+          exact Nat.add_lt_of_lt_sub' hi
         ⟨⟨xVal, hx⟩, Nat.le_add_right _ _⟩
       invFun := fun x =>
         ⟨x.1.1 - s, by

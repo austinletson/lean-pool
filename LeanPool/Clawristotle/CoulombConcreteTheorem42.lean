@@ -166,9 +166,7 @@ theorem CoulombConcreteTheorem42
     hForceTransport_int := fun x =>
       force_transport_integrable_coulomb E B hf_pos hf_smooth_v hSchwartz hLogBound x
     hLandauFluxDiff := by
-      intro x i
-      exact coulomb_flux_differentiable (f x) (hf_pos x) (hf_smooth_v x)
-        (hSchwartz_x x) i
+      exact fun x i => coulomb_flux_differentiable (f x) (hf_pos x) (hf_smooth_v x) (hSchwartz_x x) i
     hLandauIBP_df_g := by
       obtain ⟨C_log, K_log, hLB⟩ := hLogBound
       intro x i

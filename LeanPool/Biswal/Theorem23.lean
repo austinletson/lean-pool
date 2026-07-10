@@ -367,8 +367,7 @@ lemma coe_prod_mul_inv_pow_eq_prod (m k : ℕ)
         ((↑(polyP ℚ m) : PowerSeries ℚ))⁻¹) := by
   rw [show (↑(∏ ν : Fin k, (polyP ℚ (pairs ν).1 * polyP ℚ (pairs ν).2)) : PowerSeries ℚ) =
         ∏ ν : Fin k, (↑(polyP ℚ (pairs ν).1 * polyP ℚ (pairs ν).2) : PowerSeries ℚ) from by
-      rw [← Polynomial.coeToPowerSeries.ringHom_apply]
-      simp only [map_prod, Polynomial.coeToPowerSeries.ringHom_apply],
+      exact coe_finset_prod_eq_prod_coe k fun i => polyP ℚ (pairs i).1 * polyP ℚ (pairs i).2,
     show ((↑(polyP ℚ m) : PowerSeries ℚ)⁻¹) ^ k =
         ∏ _ν : Fin k, ((↑(polyP ℚ m) : PowerSeries ℚ)⁻¹) from (Fin.prod_const k _).symm]
   exact Finset.prod_mul_distrib.symm
@@ -826,8 +825,7 @@ private lemma stripMatrix_minor_det (n : ℕ) (a j : Fin (n + 1))
   rw [hsplit1]
   set Rest := M.toSquareBlockProp (fun x => ¬(x.val < a.val)) with _
   have hsplit2 := Matrix.twoBlockTriangular_det' Rest (fun x => x.val.val < j.val) (by
-    intro i hi j' hj'
-    exact md_rest_block_zero_middle_vs_right n a j i j' hi hj')
+    exact fun i a_1 j_2 a_2 => md_rest_block_zero_middle_vs_right n a j i j_2 a_1 a_2)
   rw [hsplit2, md_minor_left_block_det n a j haj, stripMatrix_det a.val,
     md_minor_middle_block_det n a j, md_minor_right_block_det n a j haj,
     stripMatrix_det (n - j.val)]

@@ -290,11 +290,7 @@ lemma NullableRelated.derives {u v : List (Symbol T g.NT)} (huv : NullableRelate
 
 lemma NullableRelated.empty_nullableWord {u : List (Symbol T g.NT)} (hu : NullableRelated [] u) :
     NullableWord u := by
-  induction u with
-  | nil => rfl
-  | cons _ l ih => cases hu with
-    | empty_left _ hsl => exact hsl
-    | cons_nterm_nullable hl hn => exact (hn.append_right l).trans (ih hl)
+  exact derives hu
 
 lemma NullableRelated.empty_right {u : List (Symbol T g.NT)} (hu : NullableRelated u []) :
     u = [] := by
@@ -476,10 +472,7 @@ lemma ruleIsNullable_NullableNonTerminal (p : Finset g.NT) (r : ContextFreeRule 
   unfold ruleIsNullable at hr
   unfold NullableNonTerminal
   have hrr : g.Produces [Symbol.nonterminal r.input] r.output := by
-    use r, hrg
-    rw [ContextFreeRule.rewrites_iff]
-    use [], []
-    simp
+    exact Produces.input_output hrg
   apply Produces.trans_derives hrr
   apply symbols_nullable_nullableWord
   intro v hvr

@@ -62,8 +62,7 @@ noncomputable def Module.Basis.transvect (b : Basis (Fin 2) K V) (x : K) : Basis
     · simp
     · intro x y _ _ hx hy
       exact Submodule.add_mem _ hx hy
-    · intro a x _ hx
-      exact Submodule.smul_mem _ a hx
+    · exact fun a x hx a_2 => Submodule.smul_mem (Submodule.span K (Set.range v)) a a_2
   have hli : LinearIndependent K v := by
     apply linearIndependent_of_top_le_span_of_card_eq_finrank hsp
     exact (Module.finrank_eq_card_basis b).symm

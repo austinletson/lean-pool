@@ -113,9 +113,7 @@ private lemma fderiv_entropy_potential (g : (Fin 3 → ℝ) → ℝ) (v : Fin 3 
     simp_all
   have h1 : fderiv ℝ (fun w => g w * Real.log (g w)) v =
       g v • fderiv ℝ (fun w => Real.log (g w)) v + Real.log (g v) • fderiv ℝ g v := by
-    have h_eq : (fun w => g w * Real.log (g w)) = g * (fun w => Real.log (g w)) := by
-      ext; simp [Pi.mul_apply]
-    rw [h_eq]; exact (hg_diff.hasFDerivAt.mul hlog_diff.hasFDerivAt).fderiv
+    exact fderiv_fun_mul hg_diff hlog_diff
   rw [hlog_fderiv] at h1
   have h_sub : HasFDerivAt (fun w => g w * Real.log (g w) - g w)
       (fderiv ℝ (fun w => g w * Real.log (g w)) v - fderiv ℝ g v) v :=

@@ -389,9 +389,7 @@ lemma evalₐ_zero_imp_map_mkQ_pow_zero {A : Type*} [CommRing A]
   · have hcauchy_kn := SModEq.sub_mem.mp (seq.property hk)
     rw [Ideal.smul_eq_mul, Ideal.mul_top] at hcauchy_kn
     have hseqk_mem : seq.val k ∈ (M ^ n : Ideal A) := by
-      have : seq.val k = seq.val n - (seq.val n - seq.val k) := by ring
-      rw [this]
-      exact (M ^ n).sub_mem hseqn hcauchy_kn
+      exact (Submodule.sub_mem_iff_right (M ^ n) hseqn).mp hcauchy_kn
     simp [Ideal.Quotient.eq_zero_iff_mem.mpr hseqk_mem]
   · -- k < n: seq.val k ∈ M^k via Cauchy condition and M^n ⊆ M^k
     push Not at hk
@@ -401,9 +399,7 @@ lemma evalₐ_zero_imp_map_mkQ_pow_zero {A : Type*} [CommRing A]
     have hseqk_mem : seq.val k ∈ (M ^ k : Ideal A) := by
       have h1 : seq.val n ∈ (M ^ k : Ideal A) :=
         Ideal.pow_le_pow_right hkn hseqn
-      have : seq.val k = seq.val n + (seq.val k - seq.val n) := by ring
-      rw [this]
-      exact (M ^ k).add_mem h1 hcauchy
+      exact (Submodule.sub_mem_iff_left (M ^ k) h1).mp hcauchy
     rw [Submodule.Quotient.mk_eq_zero]
     rw [show Submodule.Quotient.mk (seq.val k) =
       seq.val k • (1 : A ⧸ (M ^ n : Submodule A A)) from by simp [Algebra.smul_def]]
@@ -601,8 +597,7 @@ lemma quotient_not_analytically_irreducible
   have hb_ne : b ≠ 0 := by
     intro h
     have h1 : algebraMap A Ahat a = 0 := by
-      apply φ.injective
-      rw [← hb_def, h, map_zero]
+      exact (RingEquiv.map_eq_zero_iff φ).mp h
     simp_all
   -- span{b} ≤ Q with ht(Q)=1; if span{b} were prime then span{b}=Q, contradicting Q not principal
   have hb_not_prime : ¬ (Ideal.span ({b} : Set T)).IsPrime :=
@@ -665,9 +660,7 @@ lemma quotient_not_analytically_irreducible
       apply Ideal.mem_map_of_mem
       have hcauchy := SModEq.sub_mem.mp (seq.property hle)
       rw [Ideal.smul_eq_mul, Ideal.mul_top] at hcauchy
-      have : seq.val n - seq.val m = -(seq.val m - seq.val n) := by ring
-      rw [this]
-      exact (M ^ m).neg_mem hcauchy
+      exact sub_mem_comm_iff.mp hcauchy
   set ψ := AdicCompletion.liftRingHom Mbar f_n hcompat with hψ_def
   have hψb : ψ b = 0 := by
     apply AdicCompletion.ext_evalₐ
@@ -738,8 +731,7 @@ lemma quotient_not_analytically_irreducible
     rw [Ideal.Quotient.eq_zero_iff_mem, ← hmap_pow,
         Ideal.mem_map_iff_of_surjective _ Ideal.Quotient.mk_surjective] at hgn_zero
     obtain ⟨y, hy_mem, hy_eq⟩ := hgn_zero
-    have hxy : x - y ∈ I := by rw [← Ideal.Quotient.eq]
-                               exact hy_eq.symm
+    have hxy : x - y ∈ I := by exact (Ideal.Quotient.mk_eq_mk_iff_sub_mem x y).mp (id (Eq.symm hy_eq))
     -- Decompose: s = (s - of(x)) + of(y) + of(x-y), each piece in Mhat^n or J
     have h_eval_of : AdicCompletion.evalₐ M n (AdicCompletion.of M A x) =
         Ideal.Quotient.mk (M ^ n) x := AdicCompletion.evalₐ_of M n x
@@ -766,8 +758,7 @@ lemma quotient_not_analytically_irreducible
       rw [AdicCompletion.algebraMap_apply]
       rfl]
     exact Ideal.mem_map_of_mem _ (by
-                                    rw [← neg_sub]
-                                    exact I.neg_mem hxy)
+                                    exact (Ideal.Quotient.mk_eq_mk_iff_sub_mem y x).mp hy_eq)
   haveI : IsDomain (AdicCompletion Mbar Abar) := h_ai
   exact hT_quot_not_domain (Function.Injective.isDomain ψ' hψ'_inj)
 

@@ -31,19 +31,7 @@ lemma exp_zero_of_pow_eq_one_aux {n : ℕ} (ha : (0 : Γ₀) ^ n = 1) : n = 0 :=
   simp_all
 
 lemma exp_zero_of_zpow_eq_one' {n : ℤ} (ha : (0 : Γ₀) ^ n = 1) : n = 0 := by
-  have haux (n : ℤ) (ha : (0 : Γ₀) ^ n = 1) (hn : n ≥ 0) : n = 0 := by
-    have : n.toNat = 0 := by
-      apply exp_zero_of_pow_eq_one_aux (Γ₀ := Γ₀)
-      rwa [← zpow_natCast, Int.toNat_of_nonneg hn]
-    rw [← Int.toNat_of_nonneg hn]
-    simpa
-  by_cases hn : n ≥ 0
-  · exact haux n ha hn
-  · apply Int.neg_eq_zero.mp
-    apply haux
-    · simpa
-    · simp only [ge_iff_le, Left.nonneg_neg_iff]
-      exact Int.le_of_not_le hn
+  exact zero_zpow_eq_one₀.mp ha
 
 lemma exp_zero_of_zpow_eq_one {a : Γ₀} (h : a < 1) {n : ℤ} (han : a ^ n = 1) : n = 0 := by
   by_cases ha : a = 0
@@ -65,12 +53,7 @@ lemma Matrix.GeneralLinearGroup.toLinear_symm_ofLinearEquiv_apply
       e (Pi.single j 1) i :=
   rfl
 
-lemma Fin.rev_antitone (n : ℕ) : Antitone (Fin.rev (n := n)) := by match n with
-  | 0 => intro j; simp
-  | n + 1 =>
-      apply Fin.antitone_iff_succ_le.mpr
-      intro i
-      simpa only [Fin.rev_le_rev] using Fin.le_of_lt i.castSucc_lt_succ
+lemma Fin.rev_antitone (n : ℕ) : Antitone (Fin.rev (n := n)) := by exact rev_anti
 
 namespace Finset
 

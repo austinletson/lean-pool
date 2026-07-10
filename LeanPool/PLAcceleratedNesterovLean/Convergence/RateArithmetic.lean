@@ -77,13 +77,7 @@ theorem rate_deficit_sum_le (K : ℕ) :
     ∑ k ∈ range K, (2 : ℝ) ^ k * ((4 : ℝ)⁻¹ ^ k) ≤ 2 := by
   simp_rw [two_pow_mul_four_inv_pow]
   -- ∑_{k=0}^{K-1} (1/2)^k = 1 + ∑_{k=0}^{K-2} (1/2)^{k+1} ≤ 1 + 1 = 2
-  rcases K with _ | K
-  · simp
-  · rw [Finset.sum_range_succ']
-    simp only [pow_zero]
-    have : ∑ i ∈ range K, ((1 : ℝ) / 2) ^ (i + 1) ≤ 1 :=
-      partial_geometric_half_le K
-    linarith
+  exact sum_geometric_two_le K
 
 /-- Σ_{k=0}^{K-1} 2^k · C · 4^{-k} ≤ 2·C for C ≥ 0. -/
 theorem weighted_deficit_sum_le {C : ℝ} (hC : 0 ≤ C) (K : ℕ) :

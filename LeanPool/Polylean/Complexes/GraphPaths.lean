@@ -327,8 +327,7 @@ theorem homotopy_inverse {G : Graph V E} {x y : V}
     homotopy p₁ p₂ → homotopy q₁ q₂ := by
   intro h₀
   let func : EdgePath G x y → ht G y x := by
-    intro p
-    exact htclass (inverse p)
+    exact fun a => htclass q₁
   have g : (s₁ s₂ : EdgePath G x y) → (h : basicht s₁ s₂) →
       homotopy (inverse s₁) (inverse s₂) := by
       intro s₁ s₂ h
@@ -366,8 +365,7 @@ theorem homotopy_right_mult {G : Graph V E} {x y z : V}
          have r₂ :
              homotopy (multiply (inverse q) (inverse p₁))
                (multiply (inverse q) (inverse p₂)) := by
-           apply homotopy_left_mult
-           apply r₁
+           exact homotopy_left_mult (inverse p₁) (inverse p₂) (inverse q) r₁
          have r₃ :
              homotopy (inverse (multiply (inverse q) (inverse p₁)))
                (inverse (multiply (inverse q) (inverse p₂))) := by
@@ -418,8 +416,7 @@ def homotopyMultiplication : ht G x y → ht G y z → ht G x z := by
             exact homotopy_right_mult q₁ q₂ p' h'
           exact this
         apply Quot.ind g''
-      let hh := g' p₂
-      exact hh
+      exact ((fun a => g' p₂) ∘ func) q₁
   let k := (Quot.lift (fun x => func x) g)
   apply k p₁
 

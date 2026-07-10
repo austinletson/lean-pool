@@ -49,10 +49,7 @@ by
     -- as it creates a goal 'φ.IsOpen' - which might be not true!
     rw [IsDelta0.of_open.imp]
     · constructor
-      · unfold Term.neq
-        rw [IsDelta0.of_open.not]
-        constructor; constructor; constructor
-        constructor; constructor
+      · exact IsDelta0.neq x 0
       · constructor
         rw [IsDelta0.flip]
         rw [IsDelta0.display2]
@@ -290,8 +287,7 @@ by
       rw [<- idelta0.add_assoc] at hdiff
       rw [le_iff_exists_add]
       exists pred_diff
-      apply B2
-      exact hdiff
+      exact add_cancel_right.mp hdiff
   · intro h
     cases h with
     | inl h =>
@@ -341,23 +337,7 @@ noncomputable instance : LinearOrder M where
     simp only [implies_true]
 
   toDecidableLE := by
-    unfold DecidableLE DecidableRel
-    intro a b
-    if ha : a = 0 then
-      apply Decidable.isTrue
-      rw [ha]
-      apply IOPENModel.zero_le b
-    else
-      if hb : b = 0 then
-        apply Decidable.isFalse
-        rw [hb]
-        intro ha'
-        apply ha
-        exact (@nonpos_iff_eq_zero M).mp ha'
-      else
-        -- HERE, WE SHOULD TAKE PREDECESSOR OF
-        -- BOTH AND RECURSE!
-        exact Classical.propDecidable (a ≤ b)
+    exact Classical.decRel LE.le
 
 theorem le_of_eq :
   ∀ {x y : M}, x = y -> x ≤ y :=
@@ -497,9 +477,7 @@ by
     have hass_cancel : y * z = xp * z := by
       apply add_cancel_right.mp
       calc
-        y * z + z = y * z + 1 * z := by rw [one_mul z]
-        _ = xp * z + 1 * z := hass
-        _ = xp * z + z := by rw [one_mul z]
+        exact min y y
     change y + 1 = x
     rw [hxp_eq]
     rw [hind xp z ⟨hass_cancel, hz⟩]

@@ -501,13 +501,7 @@ private theorem dixonH1_F'_aestronglyMeasurable {M_d C_b δ₀ : ℝ}
     have h_tendsto_zero : Filter.Tendsto
         (fun n : ℕ => (1 : ℂ) / (↑n + 1)) Filter.atTop (𝓝[≠] 0) := by
       apply tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within
-      · have hR : Filter.Tendsto (fun n : ℕ => (1 : ℝ) / (↑n + 1)) Filter.atTop (𝓝 0) :=
-          tendsto_one_div_add_atTop_nhds_zero_nat
-        have hC : Filter.Tendsto (fun n : ℕ => (1 : ℂ) / ((n : ℂ) + 1)) Filter.atTop (𝓝 0) := by
-          have := Complex.continuous_ofReal.continuousAt.tendsto.comp hR
-          simp only [Function.comp_def] at this
-          exact this.congr (fun n => by push_cast; ring)
-        exact hC
+      · exact tendsto_one_div_add_atTop_nhds_zero_nat
       · exact Filter.Eventually.of_forall (fun n => by
           apply div_ne_zero one_ne_zero
           norm_cast)
@@ -590,9 +584,7 @@ theorem dixonH1_differentiableOn (hU : IsOpen U) (hf : DifferentiableOn ℂ f U)
     filter_upwards with t _ht x hx
     have ht_Icc : t ∈ Icc γ.a γ.b := by
       rw [Set.uIoc_of_le hab] at _ht; exact Ioc_subset_Icc_self _ht
-    rw [norm_mul]
-    exact mul_le_mul (hCauchy t ht_Icc x hx) (hM_d t ht_Icc) (norm_nonneg _)
-      (div_nonneg hC_pos.le hε_pos.le)
+    exact norm_mul_le_of_le (hCauchy t ht_Icc x hx) (hM_d t ht_Icc)
   have h_diff : ∀ᵐ t ∂volume, t ∈ Set.uIoc γ.a γ.b →
       ∀ x ∈ Metric.ball w₀ ε,
         HasDerivAt (fun x => dslope f (γ.toFun t) x * deriv γ.toFun t)
@@ -639,10 +631,7 @@ theorem dixonFunction_differentiable (hU : IsOpen U) (hf : DifferentiableOn ℂ 
     set ε := Metric.infDist w (γ.toFun '' Icc γ.a γ.b) / 2 with hε_def
     have hε_pos : 0 < ε := by positivity
     have hball_avoids : ∀ t ∈ Icc γ.a γ.b, ∀ w' ∈ Metric.ball w ε, γ.toFun t ≠ w' := by
-      intro t ht w' hw' heq
-      linarith [Metric.infDist_le_dist_of_mem (x := w)
-        (show w' ∈ γ.toFun '' Icc γ.a γ.b from ⟨t, ht, heq⟩),
-        show dist w w' < ε from dist_comm w' w ▸ Metric.mem_ball.mp hw']
+      exact fun t a w' a_1 => ball_avoids_curve_of_infDist_pos γ w hinfDist_pos w' a_1 t a
     have hwn_cts : ContinuousOn (fun w' => generalizedWindingNumber' γ.toFun γ.a γ.b w')
         (Metric.ball w ε) := by
       apply ContinuousOn.congr
@@ -658,9 +647,7 @@ theorem dixonFunction_differentiable (hU : IsOpen U) (hf : DifferentiableOn ℂ 
           convert h using 2; simp only [dixonH2, div_eq_mul_inv, one_mul]
         exact hdiff2.continuousAt.continuousWithinAt
       · intro w' hw'
-        have hoff' : ∀ t ∈ Icc γ.a γ.b, γ.toFun t ≠ w' :=
-          fun t ht heq => hball_avoids t ht w' hw' heq
-        exact generalizedWindingNumber_eq_classical_away γ.toPiecewiseC1Curve w' hoff'
+        exact generalizedWindingNumber_eq_classical_away γ.toPiecewiseC1Curve w' fun t a => hball_avoids t a w' hw'
     have hwn_w := h_null.winding_zero w hw
     have hwn_int : ∀ w' ∈ Metric.ball w ε, ∃ n : ℤ,
         generalizedWindingNumber' γ.toFun γ.a γ.b w' = n := by

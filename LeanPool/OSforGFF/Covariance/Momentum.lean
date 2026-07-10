@@ -653,8 +653,7 @@ theorem integrable_schwinger_fourier_integrand (α : ℝ) (hα : 0 < α) (m : �
     -- This equals the indicator function of (0,∞) applied to exp(-tm²)
     have hm2_pos : 0 < m^2 := by positivity
     have h_intOn : IntegrableOn (fun t => Real.exp (-t * m^2)) (Set.Ioi 0) volume := by
-      convert exp_neg_integrableOn_Ioi 0 hm2_pos using 1
-      ext t; ring_nf
+      exact integrableOn_exp_neg_mul_sq_Ioi m hm
     have h_indicator : Integrable ((Set.Ioi (0:ℝ)).indicator (fun t => Real.exp (-t * m^2))) volume
       :=
       IntegrableOn.integrable_indicator h_intOn measurableSet_Ioi
@@ -731,7 +730,6 @@ theorem fubini_schwinger_integrand (α : ℝ) (hα : 0 < α) (m : ℝ) (hm : 0 <
   set phase : SpaceTime → ℂ := fun k => Complex.exp (-Complex.I * ⟪k, x - y⟫_ℝ) with hphase_def
   -- The phase has norm 1 (since -I * real has real part 0)
   have hphase_norm : ∀ k, ‖phase k‖ = 1 := fun k => by
-    simp only [hphase_def]
     exact norm_exp_neg_I_mul_real ⟪k, x - y⟫_ℝ
   -- Define the complex integrand on the product space
   set f : SpaceTime × ℝ → ℂ := fun p =>
@@ -834,8 +832,7 @@ theorem fubini_schwinger_fourier (α : ℝ) (hα : 0 < α) (m : ℝ) (hm : 0 < m
     exact pow_pos two_pi_pos STDimension
   have hnorm_ne : normalisation ≠ 0 := ne_of_gt hnorm_pos
   have hr_pos : 0 < ‖r‖ := by
-    rw [hr_def]
-    exact norm_pos_iff.mpr (sub_ne_zero.mpr hxy)
+    exact norm_sub_pos_iff.mpr hxy
   -- Step 2: The key exponent combination identity
   have h_combine : ∀ k : SpaceTime, ∀ t : ℝ, 0 < t →
       Real.exp (-α * ‖k‖^2) * schwingerIntegrand t m k =
@@ -851,7 +848,6 @@ theorem fubini_schwinger_fourier (α : ℝ) (hα : 0 < α) (m : ℝ) (hm : 0 < m
       (normalisation : ℂ) * (heatKernelPositionSpace (α + t) ‖r‖ : ℂ) := by
     intro t ht
     have hαt : 0 < α + t := by linarith
-    rw [hnorm_def]
     exact gaussianFT_eq_heatKernel_times_norm (α + t) hαt r
   -- Key identity: heat kernel equals k-integral (inverse of gaussFT)
   have h_heatKernel_eq_kint : ∀ s : ℝ, 0 < s →
@@ -1778,10 +1774,7 @@ lemma freeCovariance_exponential_bound (m : ℝ) (hm : 0 < m) (u v : SpaceTime)
   -- From h_sep: mr ≥ 1, so r > 0
   have hmr_ge1 : 1 ≤ m * r := h_sep
   have hr_pos : 0 < r := by
-    by_contra h_neg
-    push Not at h_neg
-    have : m * r ≤ 0 := mul_nonpos_of_nonneg_of_nonpos (le_of_lt hm) h_neg
-    linarith
+    exact norm_sub_pos_iff.mpr huv
   have hr_ne : r ≠ 0 := ne_of_gt hr_pos
   -- Unfold the covariance: C(u,v) = (m / (4π²r)) · K₁(mr)
   unfold freeCovarianceBessel

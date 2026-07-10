@@ -86,10 +86,7 @@ include T in theorem derive_mod_principal_trans
     exact lt_irrefl _ h0
   -- y ∉ P because p ∤ y and (p) = P∩R
   have hy_nP : (↑y : T) ∉ P := by
-    intro hyP
-    have : y ∈ P.comap R.carrier.subtype := hyP
-    rw [← hspan_eq] at this
-    exact hpy (Ideal.mem_span_singleton.mp this)
+    exact not_mem_associatedPrime_of_ndvd R p y hp hpy P hP_mem
   -- Apply the mod-P kernel hypothesis to conclude C(p) | f
   exact hx_ker P hP_prime hP_ne_top hP_ht hy_nP p hp hp_P f (hI_le_P hf_mem)
 
@@ -236,8 +233,7 @@ include T in theorem height_bound_wf_descent
       exact hav)
     have hav_S2 : a * ↑v_unit = p₀_S * u' := hav_S.trans hu'_eq
     have heq_S : a = p₀_S * u' * ↑v_unit⁻¹ := by
-      rw [Units.eq_mul_inv_iff_mul_eq]
-      exact hav_S2
+      exact (Units.eq_mul_inv_iff_mul_eq v_unit).mpr hav_S2
     have heq_T := congrArg Subtype.val heq_S
     simp only [Subring.coe_mul] at heq_T ⊢
     rw [heq_T, show (p₀_S : T) = (↑p₀ : T) from rfl, mul_assoc]
@@ -379,18 +375,14 @@ private def build_height_bound_proof
                              norm_cast
   by_contra hq_ne
   have ⟨s, hs_q, hs_ne⟩ : ∃ s : S_sub, s ∈ q ∧ s ≠ 0 := by
-    by_contra h
-    push Not at h
-    exact hq_ne ((Submodule.eq_bot_iff q).mpr fun x hx => h x hx)
+    exact Submodule.exists_mem_ne_zero_of_ne_bot hq_ne
   have ⟨x, hx_PS, hx_nq⟩ := Set.exists_of_ssubset hq_lt
   have hs_carrier : (s : T) ∈ S_carrier := hS_sub_eq' ▸ s.2
   obtain ⟨as, bs, has_Rbar, hbs_Rbar, hbs_nM, hsb_eq⟩ := hs_carrier
   have hx_carrier : (x : T) ∈ S_carrier := hS_sub_eq' ▸ x.2
   obtain ⟨ax, bx, hax_Rbar, hbx_Rbar, hbx_nM, hxb_eq⟩ := hx_carrier
   have hP_le_M : P ≤ IsLocalRing.maximalIdeal T := by
-    intro x hx
-    by_contra hxnM
-    exact hP_prime.ne_top (P.eq_top_of_isUnit_mem hx (IsLocalRing.notMem_maximalIdeal.mp hxnM))
+    exact IsLocalRing.le_maximalIdeal_of_isPrime P
   have heval_x₁_Rbar : ∀ f : Polynomial R.carrier, (aeval x₁ f : T) ∈ Rbar := by
     intro f
     induction f using Polynomial.induction_on' with
@@ -565,15 +557,7 @@ private def build_height_bound_proof
         M' (Polynomial K) J_q hJ_q_prime hJ_q_disj
     have hJ_q_map_ne :
         Ideal.map (algebraMap _ (Polynomial K)) J_q ≠ ⊥ := by
-      intro h
-      have hsat := IsLocalization.under_map_of_isPrime_disjoint
-        M' (Polynomial K) hJ_q_prime hJ_q_disj
-      rw [h] at hsat
-      have hbot : Ideal.under (Polynomial R.carrier) (⊥ : Ideal (Polynomial K)) = ⊥ := by
-        simpa [Ideal.under_def] using
-          Ideal.comap_bot_of_injective (algebraMap (Polynomial R.carrier) (Polynomial K)) hψ_inj
-      rw [hbot] at hsat
-      exact hJ_q_ne hsat.symm
+      exact map_ne_bot_of_ne_bot hJ_q_ne
     haveI : Ring.DimensionLEOne (Polynomial K) :=
       Ring.DimensionLEOne.principal_ideal_ring _
     -- In the PID K[X], two nonzero primes with J_q ≤ J forces J_q = J
@@ -778,11 +762,7 @@ private def build_intersection_nsubring_proof
         show algebraMap R.carrier T = R.carrier.subtype from rfl]
       ring
     rw [haeval]
-    have hc' : x₂ * (↑y₂ : T) = (↑c : T) - x₁ * (↑y₁ : T) := by
-      have h := hc_eq
-      rw [h]
-      ring
-    convert hc'
+    exact Eq.symm (sub_eq_of_eq_add' hc_eq)
   have hx₂_Rbar : x₂ ∈ Rbar := ⟨hx₂_A₁, hx₂_A₂⟩
   have hx₁_S : x₁ ∈ S_sub := hRbar_le_S _ hx₁_Rbar
   have hx₂_S : x₂ ∈ S_sub := hRbar_le_S _ hx₂_Rbar
@@ -827,8 +807,7 @@ private def build_intersection_nsubring_proof
         exact h_add
       exact (IsLocalRing.maximalIdeal T).ne_top_iff_one.mp
         (IsLocalRing.maximalIdeal.isMaximal T).ne_top h1
-    · left
-      exact hinv a ham
+    · exact Or.symm (Or.inr (hinv a ham))
   -- WfDvdMonoid for S: divisibility in S embeds into divisibility in T (which is Noetherian)
   haveI : IsDomain S_sub := inferInstance
   haveI : WfDvdMonoid S_sub := by

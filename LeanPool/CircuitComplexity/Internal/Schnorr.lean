@@ -98,8 +98,7 @@ theorem evalD_essential_means_referenced
   simp only [evalD]
   have hw : (⟨N + s - 1, by omega⟩ : Fin (N + s)).val ≠ a.val := by
     change N + s - 1 ≠ a.val; have := a.isLt; omega
-  exact wireValD_eq_of_unreferenced d a (!x a)
-    (fun g => ⟨(hall g).1, (hall g).2⟩) x ⟨N + s - 1, by omega⟩ hw
+  exact wireValD_eq_of_unreferenced d a (!x a) hall x ⟨N + s - 1, evalD._proof_2 hs⟩ hw
 
 /-- Every input of a circuit computing `comp ⊕ XOR_N` is essential: flipping any
     bit flips the output. -/

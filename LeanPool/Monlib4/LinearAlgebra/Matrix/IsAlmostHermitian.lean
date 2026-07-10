@@ -63,8 +63,7 @@ theorem isAlmostHermitian_iff (x : Matrix n n ℂ) : x.IsAlmostHermitian ↔ (x 
       simp_rw [zero_smul, isHermitian_zero, true_and]
     have nonzero_ : ∃ i j : n, x i j ≠ 0 := by
       contrapose! h'
-      ext i j
-      exact h' i j
+      exact (eq_zero x).mp h'
     rcases nonzero_ with ⟨i, k, hik⟩
     let α := x i k / star (x k i)
     have hα' : α ≠ 0 := by

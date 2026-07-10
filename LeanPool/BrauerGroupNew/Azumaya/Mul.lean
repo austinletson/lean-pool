@@ -364,14 +364,7 @@ End R A   ------------> End R B
 lemma small_comm_square (e : A ≃ₐ[R] B) :
     (AlgHom.mulLeftRight R B).comp (Algebra.TensorProduct.congr e e.op).toAlgHom =
       (e.toLinearEquiv.conjAlgEquiv R).toAlgHom.comp (AlgHom.mulLeftRight R A) := by
-  apply AlgHom.ext
-  intro a
-  induction a using TensorProduct.induction_on with
-  | zero => simp
-  | tmul a a' =>
-    ext
-    simp [AlgHom.mulLeftRight_apply, LinearEquiv.conjAlgEquiv]
-  | add _ _ _ _ => simp_all [map_add]
+  exact IsAzumaya.mulLeftRight_comp_congr R A B e
 
 lemma _root_.IsAzumaya.ofAlgEquiv (e : A ≃ₐ[R] B) (hA : IsAzumaya R A) : IsAzumaya R B :=
   let _ : Module.Projective R B := .of_equiv e.toLinearEquiv
@@ -539,8 +532,7 @@ instance : NeZero (nn R M) := ⟨by
     rw [hn]
     exact Unique.instSubsingleton
   have : Subsingleton M := Function.Surjective.subsingleton (f0_surj R M)
-  have : ¬ (Subsingleton M) := not_subsingleton_iff_nontrivial.2 inferInstance
-  tauto⟩
+  exact false_of_nontrivial_of_subsingleton M⟩
 
 lemma inj_endM : Function.Injective (AlgHom.mulLeftRight R (Module.End R M)) := by
   refine .of_comp (f := inclusion2' R M) ?_

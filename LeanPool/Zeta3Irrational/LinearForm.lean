@@ -177,9 +177,7 @@ noncomputable def q (r s : ℕ) : ℤ :=
   else 2
 
 lemma J_symm (r s : ℕ) : J r s = J s r := by
-  if h : r = s then rw [h]
-  else
-    rw [J_rs (by tauto), J_rs (by tauto), ← neg_div_neg_eq]; ring
+  exact J_rs_symm r s
 
 lemma linear_int_aux : ∃ a b : ℕ → ℕ → ℤ, ∀ r s : ℕ, J r s =
     b r s * ∑' n : ℕ , 1 / ((n : ℝ) + 1) ^ 3 +

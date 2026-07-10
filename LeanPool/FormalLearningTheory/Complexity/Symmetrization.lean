@@ -443,9 +443,7 @@ theorem per_hypothesis_gap_bound {X : Type u} [MeasurableSpace X]
   have hm_pos : (0 : ℝ) < m := Nat.cast_pos.mpr hm
   set equiv := MeasurableEquiv.arrowProdEquivProdArrow X X (Fin m) with hequiv_def
   have h_mp : MeasurePreserving (⇑equiv) π (μ.prod μ) := by
-    rw [hπ_def, hν_def]
-    show MeasurePreserving (⇑equiv) (Measure.pi fun _ => D.prod D) (μ.prod μ)
-    exact measurePreserving_arrowProdEquivProdArrow X X (Fin m) (fun _ => D) (fun _ => D)
+    exact measurePreserving_arrowProdEquivProdArrow X X (Fin m) (fun i => D) fun i => D
   set S_sum := {z : Fin m → X × X | (↑m * (ε / 2) : ℝ) ≤ ∑ i : Fin m, g (z i)}
     with hS_sum_def
   set S := {p : (Fin m → X) × (Fin m → X) |
@@ -560,8 +558,7 @@ theorem restriction_pattern_count {X : Type u} [MeasurableSpace X] [Infinite X]
   let ψ : (Fin n → Bool) → (Fin n → Bool) := fun f i => Bool.xor (f i) (c (z i))
   have hψ_inj : Function.Injective ψ := by
     intro f g hfg; funext i
-    have hi := congr_fun hfg i; simp only [ψ] at hi
-    revert hi; cases f i <;> cases g i <;> cases c (z i) <;> simp [Bool.xor]
+    have hi := congr_fun hfg i; exact Bool.xor_left_inj.mp hi
   have hP_eq : {p : Fin n → Bool | ∃ h ∈ C, ∀ i, p i = decide (h (z i) ≠ c (z i))} = ψ '' R := by
     ext p; simp only [Set.mem_setOf_eq, Set.mem_image, R, ψ]
     constructor
@@ -763,8 +760,7 @@ theorem exchangeability_chain_bound {X : Type u} [MeasurableSpace X] [Infinite X
     set ν := MeasureTheory.Measure.pi (fun _ : Fin m => D.prod D) with hν_def
     set eqv := MeasurableEquiv.arrowProdEquivProdArrow X X (Fin m)
     have h_mp : MeasurePreserving (⇑eqv) ν (μ.prod μ) := by
-      rw [hν_def]
-      exact measurePreserving_arrowProdEquivProdArrow X X (Fin m) (fun _ => D) (fun _ => D)
+      exact measurePreserving_arrowProdEquivProdArrow X X (Fin m) (fun i => D) fun i => D
     have h_meas_eq : (μ.prod μ) E = ν (eqv ⁻¹' E) := by rw [← h_mp.map_eq]; exact eqv.map_apply E
     rw [h_meas_eq]
     let swap_fun (σ : SignVector m) : (Fin m → X × X) → (Fin m → X × X) :=
@@ -1068,8 +1064,7 @@ theorem double_sample_pattern_bound {X : Type u} [MeasurableSpace X] [Infinite X
       push Not at hε2
       by_cases h_triv : 1 ≤ bound
       · have : MeasureTheory.IsProbabilityMeasure (μ.prod μ) := by
-          rw [hμ_def]
-          infer_instance
+          exact Measure.prod.instIsProbabilityMeasure μ μ
         calc (μ.prod μ) E
             ≤ (μ.prod μ) Set.univ := MeasureTheory.measure_mono (Set.subset_univ _)
           _ = 1 := MeasureTheory.measure_univ
@@ -1082,13 +1077,7 @@ theorem double_sample_pattern_bound {X : Type u} [MeasurableSpace X] [Infinite X
         set φ := MeasurableEquiv.sumPiEquivProdPi
           (fun _ : Fin m ⊕ Fin m => X)
         have h_mp : MeasureTheory.MeasurePreserving φ μ_sum (μ.prod μ) := by
-          change MeasureTheory.MeasurePreserving
-            (MeasurableEquiv.sumPiEquivProdPi (fun _ : Fin m ⊕ Fin m => X))
-            (MeasureTheory.Measure.pi (fun _ : Fin m ⊕ Fin m => D))
-            ((MeasureTheory.Measure.pi (fun _ : Fin m => D)).prod
-              (MeasureTheory.Measure.pi (fun _ : Fin m => D)))
-          exact MeasureTheory.measurePreserving_sumPiEquivProdPi
-            (fun _ : Fin m ⊕ Fin m => D)
+          exact measurePreserving_sumPiEquivProdPi fun x => D
         exact exchangeability_chain_bound D C c hmeas_C hc_meas m hm ε hε hε2
           (Set.nonempty_iff_ne_empty.mpr hC) hE_nullmeas
 
@@ -1477,10 +1466,7 @@ private lemma growth_exp_le_delta_large_v {X : Type u} [MeasurableSpace X]
     have hexp_t_pos := Real.exp_pos t
     have ht_pow_pos := pow_pos ht_pos (v + 1)
     rw [Real.exp_neg, le_div_iff₀ ht_pow_pos]
-    calc (Real.exp t)⁻¹ * t ^ (v + 1) ≤ 1 * ↑((v + 1).factorial) := by
-          rw [inv_mul_le_iff₀ hexp_t_pos, one_mul]
-          linarith [hTaylor2]
-      _ = ↑((v + 1).factorial) := one_mul _
+    exact (inv_mul_le_iff₀' hexp_t_pos).mpr hTaylor2
   have hchain1 : 4 * ↑(GrowthFunction X C (2 * m)) * Real.exp (-(↑m * ε ^ 2 / 8)) ≤
       4 * (2 : ℝ) ^ (2 * m) * (↑((v + 1).factorial) / t ^ (v + 1)) := by
     have hgf_cast : (↑(GrowthFunction X C (2 * m)) : ℝ) ≤ (2 : ℝ) ^ (2 * m) := by

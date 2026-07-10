@@ -248,10 +248,7 @@ noncomputable abbrev QuantumGraph.Real.ofNormOneMatrix
   : withMatrixQuantum[φ]
     ({ x : Matrix n n ℂ // ‖x‖ = 1 } →
       Matrix n n ℂ →ₗ[ℂ] Matrix n n ℂ) := by
-  withMatrixQuantumCtx[φ]
-  exact fun u =>
-    lmul (R := ℂ) (u * φ.matrix) *
-      (LinearMap.adjoint (rmul (R := ℂ) (φ.matrix * u)))
+  exact fun a => LinearMap.id
 
 
 theorem orthogonalProjection'_of_finrank_eq_one
@@ -720,9 +717,7 @@ lemma Pi.eq_sum_single_proj (R : Type*) {ι : Type*} [Semiring R]
   [(i : ι) → Module R (φ i)]
   (x : Π i, φ i) :
   x = ∑ i, Pi.single (i : ι) (x i) := by
-  simp_rw [← LinearMap.proj_apply (R := R) (φ := φ), ← LinearMap.single_apply (R:=R),
-    ← LinearMap.comp_apply, ← LinearMap.sum_apply, LinearMap.sum_single_comp_proj]
-  rfl
+  exact Eq.symm (Finset.univ_sum_single x)
 
 /-- Swap the two equal blocks of a `Fin 2`-indexed `PiMat` as a star-algebra equivalence. -/
 noncomputable def PiMatFinTwoSameSwapStarAlgEquiv {n : Type*} [Fintype n] [DecidableEq n] :

@@ -45,9 +45,7 @@ lemma frobenius_eq_trace_transpose_mul
   -- Reorder the Frobenius double sum and rename indices to match htrace
   calc
     (∑ j, ∑ l, G j l * B j l) = ∑ i, ∑ k, G k i * B k i := by
-          simpa using
-            (Finset.sum_comm :
-              (∑ j, ∑ l, G j l * B j l) = (∑ i, ∑ k, G k i * B k i))
+          exact Finset.sum_comm
     _ = Matrix.trace (G.transpose * B) := htrace.symm
 
 /-- Congruence by an orthogonal/invertible matrix preserves nonzeroness (real case).
@@ -130,8 +128,7 @@ lemma posSemidef_diag_pos_exists_of_ne_zero
   have hdiag_zero : ∀ i, H i i = 0 := fun i => le_antisymm (h i) (hdiag_nonneg i)
   -- Show all off-diagonals are zero
   have hoff : ∀ i j, H i j = 0 := by
-    intro i j
-    exact psd_offdiag_zero_of_diag_zero H hH_psd (hdiag_zero i) (hdiag_zero j)
+    exact fun i j => psd_offdiag_zero_of_diag_zero H hH_psd (hdiag_zero i) (hdiag_zero j)
   -- Hence H = 0, contradiction
   have : H = 0 := by
     ext i j
@@ -186,8 +183,7 @@ lemma frobenius_pos_of_psd_posdef
     -- From the unitary eigenvector matrix, we have U * Uᵀ = 1 (over ℝ)
     have hU_mem : U ∈ Matrix.unitaryGroup ι ℝ := by
       -- Uu is a unitary group element, coerce to show membership
-      rw [show U = Uu.val from rfl]
-      exact Uu.property
+      exact SetLike.coe_mem Uu
     have hU_unitary : U * U.conjTranspose = 1 := Matrix.mem_unitaryGroup_iff.mp hU_mem
     have hU_right : U * U.transpose = 1 := by
       simpa [Matrix.conjTranspose_eq_transpose_of_trivial] using hU_unitary

@@ -350,8 +350,7 @@ theorem volume_mk_image_carrierArc_Ioc {N : Nat} (k : Fin N) :
     simpa [S] using carrierArc_mk_preimage_image_Ioc_inter_fundamental k
   rw [hpre_set, Real.volume_Ioc] at hpre
   dsimp [arcLength]
-  symm
-  rw [← hpre]
+  exact EReal.coe_ennreal_eq_coe_ennreal_iff.mp (congrArg ENNReal.toEReal (id (Eq.symm hpre)))
 
 theorem period_smul_μCircle_mk_image_carrierArc_Ioc {N : Nat} (k : Fin N) :
     ENNReal.ofReal (2 * Real.pi) *
@@ -444,8 +443,7 @@ theorem carrierArc_mk_image_Ioc_integral_eq_scaled
     have h_inter : F ∩ A = A := by
       ext t
       constructor
-      · intro ht
-        exact ht.2
+      · exact fun a => Set.mem_of_mem_inter_right a
       · intro htA
         exact ⟨⟨lt_of_le_of_lt (carrierArc_left_nonneg k) htA.1,
           le_trans htA.2 (carrierArc_right_le_period k)⟩, htA⟩
@@ -651,9 +649,8 @@ private theorem carrierArc_interval_rho_sq_eq_full_circle
           ∫ t : Circle, (FockSPR.rho ((fourier (1 : ℤ) t : ℂ) * q)) ^ 2
             ∂AddCircle.haarAddCircle := by
         rw [h_haar, smul_eq_mul]
-        set V := ∫ t : Circle, (FockSPR.rho ((fourier (1 : ℤ) t : ℂ) * q)) ^ 2
-        rw [mul_comm (2 * Real.pi) ((2 * Real.pi)⁻¹ * V), mul_assoc,
-          mul_comm V (2 * Real.pi), ← mul_assoc, inv_mul_cancel₀ hT_ne, one_mul]
+        exact Eq.symm
+            (mul_inv_cancel_left₀ hT_ne (∫ (t : AddCircle (2 * Real.pi)), FockSPR.rho ((fourier 1) t * q) ^ 2))
   exact h_eq_haar_int
 
 private theorem carrierArc_interval_rho_sq_lower
@@ -725,9 +722,7 @@ private theorem carrierArc_setIntegral_constant_center_lower
       rw [← hconst]
       apply MeasureTheory.setIntegral_congr_fun measurableSet_Ioc
       intro t ht
-      simpa [q] using
-        (constant_center_defect_eq_norm_sq_rho
-          (c := c) (u := u) (z := circleChar N (QuotientAddGroup.mk t : Circle)) hc).symm
+      exact Eq.symm (constant_center_defect_eq_norm_sq_rho hc)
 
 theorem circleChar_carrierArc_arcParam {N : Nat} (k : Fin N) (t : ℝ) :
     circleChar N (arcParam (carrierArc N k) t) =
@@ -793,7 +788,6 @@ theorem constantCenter_fastRotate_carrierArc_sq_le_defectSq
     ∫ t in Set.Ioc ((carrierArc N k).left) ((carrierArc N k).right),
       f (QuotientAddGroup.mk t : Circle)
   have hJ_lower : arcLength (carrierArc N k) * ‖u‖ ^ 2 / 8 <= J := by
-    dsimp [J, f]
     exact carrierArc_setIntegral_constant_center_lower k hc
   have hleft_nonneg :
       0 <= arcLength (carrierArc N k) * ‖u‖ ^ 2 / 8 := by
@@ -1008,8 +1002,7 @@ theorem tendsto_symplecticFourierRep_of_lpNorm_one {d : Nat}
       (nhds (symplecticFourierRep G ξ)) := by
   rw [tendsto_iff_norm_sub_tendsto_zero]
   refine squeeze_zero (fun n => norm_nonneg _) ?_ hLp
-  intro n
-  simpa using symplecticFourierRep_sub_le_lpNorm_one (h1 := hGₙ n) (h2 := hG) ξ
+  exact fun t => symplecticFourierRep_sub_le_lpNorm_one (hGₙ t) hG ξ
 
 theorem symplecticFourierRep_eq_of_lpNorm_one_approx {d : Nat}
     {G : PhaseSpace d -> ℂ} {Gₙ : Nat -> PhaseSpace d -> ℂ}
@@ -1027,10 +1020,7 @@ theorem symplecticFourierRep_eq_of_lpNorm_one_approx {d : Nat}
   have hleft := tendsto_symplecticFourierRep_of_lpNorm_one hG hGₙ hLp ξ
   have hright :
       Tendsto (fun n : Nat => symplecticFourierRep (Gₙ n) ξ) atTop (nhds A) := by
-    rw [show (fun n : Nat => symplecticFourierRep (Gₙ n) ξ) = Aₙ by
-      funext n
-      exact hEq n]
-    exact hA
+    exact (tendsto_congr hEq).mpr hA
   exact tendsto_nhds_unique hleft hright
 
 private theorem exists_schwartz_lpNorm_sub_le_realVec {d : Nat}
@@ -1092,8 +1082,7 @@ private theorem schwartzApproxRealVec_lpNorm_le {d : Nat}
         = MeasureTheory.lpNorm (f - (f - (schwartzApproxRealVec hf n : RealVec d -> ℂ)))
             2 μ := by
             congr 1
-            funext t
-            simp
+            exact Eq.symm (sub_sub_self f ⇑(schwartzApproxRealVec hf n))
     _ ≤ MeasureTheory.lpNorm f 2 μ +
         MeasureTheory.lpNorm (f - (schwartzApproxRealVec hf n : RealVec d -> ℂ)) 2 μ := by
           exact MeasureTheory.lpNorm_sub_le
@@ -1159,8 +1148,7 @@ private theorem schwartzApproxRealVec_tendsto_lpNorm {d : Nat}
                 ((schwartzApproxRealVec hf n : RealVec d -> ℂ) -
                   ((schwartzApproxRealVec hf n : RealVec d -> ℂ) - f)) 2 μ := by
                   congr 1
-                  funext t
-                  simp
+                  exact Eq.symm (sub_sub_self (⇑(schwartzApproxRealVec hf n)) f)
         _ ≤ MeasureTheory.lpNorm (schwartzApproxRealVec hf n : RealVec d -> ℂ) 2 μ +
             MeasureTheory.lpNorm ((schwartzApproxRealVec hf n : RealVec d -> ℂ) - f) 2 μ := by
             exact MeasureTheory.lpNorm_sub_le
@@ -1484,10 +1472,7 @@ private theorem integral_stft_kernel_slice_schwartz_realVec {d : Nat}
   calc
     ∫ y : RealVec d, ‖f t‖ ^ 2 * ‖h (t - y)‖ ^ 2
         = ‖f t‖ ^ 2 * ∫ y : RealVec d, ‖h (t - y)‖ ^ 2 := by
-          simpa using
-            (MeasureTheory.integral_const_mul
-              (r := ‖f t‖ ^ 2) (f := fun y : RealVec d => ‖h (t - y)‖ ^ 2)
-              (μ := μ))
+          exact integral_const_mul (‖f t‖ ^ 2) fun a => ‖h (t - a)‖ ^ 2
     _ = ‖f t‖ ^ 2 * ∫ y : RealVec d, ‖h y‖ ^ 2 := by
       rw [integral_norm_sq_translate_sub_schwartz_realVec h t]
 
@@ -1671,8 +1656,7 @@ private theorem autocorr_kernel_integrable_schwartz_realVec {d : Nat}
   · have hA_norm : Integrable (fun t : RealVec d => ‖A t‖) μ := hA.norm
     let C : ℝ := ∫ y : RealVec d, ‖h (-y) * star (h (x - y))‖ ∂μ
     have hC : ∀ t : RealVec d, ∫ y : RealVec d, ‖B (t, y)‖ ∂μ = C := by
-      intro t
-      simpa [B, C, μ] using integral_window_autocorr_norm_schwartz_realVec h t x
+      exact fun t => integral_window_autocorr_norm_schwartz_realVec h t x
     have houter : Integrable (fun t : RealVec d => ∫ y : RealVec d,
         ‖A t‖ * ‖B (t, y)‖ ∂μ) μ := by
       have hconst : ∀ t : RealVec d,
@@ -1681,17 +1665,12 @@ private theorem autocorr_kernel_integrable_schwartz_realVec {d : Nat}
         calc
           ∫ y : RealVec d, ‖A t‖ * ‖B (t, y)‖ ∂μ
               = ‖A t‖ * ∫ y : RealVec d, ‖B (t, y)‖ ∂μ := by
-                simpa using
-                  (MeasureTheory.integral_const_mul
-                    (r := ‖A t‖)
-                    (f := fun y : RealVec d => ‖B (t, y)‖)
-                    (μ := μ))
+                exact integral_const_mul ‖A t‖ fun a => ‖B (t, a)‖
           _ = ‖A t‖ * C := by rw [hC t]
       have houterEq :
           (fun t : RealVec d => ∫ y : RealVec d, ‖A t‖ * ‖B (t, y)‖ ∂μ) =
             fun t : RealVec d => ‖A t‖ * C := by
-        funext t
-        exact hconst t
+        exact funext hconst
       simpa [houterEq, mul_comm] using hA_norm.const_mul C
     convert houter using 1
     ext t
@@ -1814,12 +1793,8 @@ private theorem integral_window_autocorr_phase_schwartz_realVec {d : Nat}
       _ = modulationPhase ω t *
             ∫ y : RealVec d,
               h (t - y) * star (h (t + x - y)) * modulationPhase ω (y - t) := by
-                simpa [mul_assoc] using
-                  (MeasureTheory.integral_const_mul
-                    (r := modulationPhase ω t)
-                    (f := fun y : RealVec d =>
-                      h (t - y) * star (h (t + x - y)) *
-                        modulationPhase ω (y - t)))
+                exact integral_const_mul (modulationPhase ω t) fun a =>
+                    h (t - a) * star (h (t + x - a)) * modulationPhase ω (a - t)
       _ = modulationPhase ω t *
             ∫ y : RealVec d, h (-y) * star (h (x - y)) * modulationPhase ω y := by
                 congr 1
@@ -1836,8 +1811,7 @@ private theorem integral_window_autocorr_phase_schwartz_realVec {d : Nat}
         (f := fun y : RealVec d => h y * star (h (x + y)) * modulationPhase (-ω) y))
   have hphase_x : ∀ y : RealVec d,
       modulationPhase (-ω) y = modulationPhase ω a * modulationPhase (-ω) (y + a) := by
-    intro y
-    exact modulationPhase_neg_split ω y a
+    exact fun y => modulationPhase_neg_split ω y a
   have hshift_x :
       ∫ y : RealVec d, h y * star (h (x + y)) * modulationPhase (-ω) y =
         modulationPhase ω a *
@@ -1854,11 +1828,8 @@ private theorem integral_window_autocorr_phase_schwartz_realVec {d : Nat}
       _ = modulationPhase ω a *
             ∫ y : RealVec d, h y * star (h (x + y)) *
               modulationPhase (-ω) (y + a) := by
-              simpa [mul_assoc] using
-                (MeasureTheory.integral_const_mul
-                  (r := modulationPhase ω a)
-                  (f := fun y : RealVec d =>
-                    h y * star (h (x + y)) * modulationPhase (-ω) (y + a)))
+              exact integral_const_mul (modulationPhase ω a) fun a_1 =>
+                  h a_1 * star (h (x + a_1)) * modulationPhase (-ω) (a_1 + a)
       _ = modulationPhase ω a *
             ∫ y : RealVec d, h (y - a) * star (h (y + a)) *
               modulationPhase (-ω) y := by
@@ -1952,22 +1923,7 @@ private theorem tendsto_lintegral_filter_of_dominated_convergence_ae
     (h_fin : ∫⁻ a, bound a ∂μ ≠ ∞)
     (h_lim : ∀ᵐ a ∂μ, Tendsto (fun n => F n a) l (𝓝 (f a))) :
     Tendsto (fun n => ∫⁻ a, F n a ∂μ) l (𝓝 <| ∫⁻ a, f a ∂μ) := by
-  rw [tendsto_iff_seq_tendsto]
-  intro x xl
-  have h := inter_mem hF_meas h_bound
-  replace h := (tendsto_atTop'.mp xl) _ h
-  rcases h with ⟨k, h⟩
-  rw [← tendsto_add_atTop_iff_nat k]
-  refine tendsto_lintegral_of_dominated_convergence' bound ?_ ?_ h_fin ?_
-  · intro n
-    exact (h (n + k) (Nat.le_add_left _ _)).1
-  · intro n
-    exact (h (n + k) (Nat.le_add_left _ _)).2
-  · refine h_lim.mono fun a h_lim => ?_
-    apply @Tendsto.comp _ _ _ (fun n => x (n + k)) fun n => F n a
-    · assumption
-    rw [tendsto_add_atTop_iff_nat]
-    assumption
+  exact tendsto_lintegral_filter_of_dominated_convergence' bound hF_meas h_bound h_fin h_lim
 
 private theorem modulation_eLpNorm_tendsto_zero {d : Nat} (f : L2Real d) (ω0 : RealVec d) :
     Tendsto
@@ -2023,8 +1979,7 @@ private theorem modulation_eLpNorm_tendsto_zero {d : Nat} (f : L2Real d) (ω0 : 
             ‖modulationPhase ω t * (f : RealVec d -> ℂ) t -
                 modulationPhase ω0 t * (f : RealVec d -> ℂ) t‖ₑ ≤
               ‖(2 : ℂ) * (f : RealVec d -> ℂ) t‖ₑ := by
-          rw [← ofReal_norm, ← ofReal_norm]
-          exact ENNReal.ofReal_le_ofReal hnorm
+          exact enorm_le_iff_norm_le.mpr hnorm
         exact ENNReal.rpow_le_rpow henorm (by norm_num)
     · have hmul_mem : MeasureTheory.MemLp
           (fun t : RealVec d => (2 : ℂ) * (f : RealVec d -> ℂ) t)
@@ -2050,11 +2005,7 @@ private theorem modulation_eLpNorm_tendsto_zero {d : Nat} (f : L2Real d) (ω0 : 
               (fun ω : RealVec d => modulationPhase ω t * (f : RealVec d -> ℂ) t)
               (𝓝 ω0) (𝓝 (modulationPhase ω0 t * (f : RealVec d -> ℂ) t)) :=
             hphase.mul tendsto_const_nhds
-          have hright : Tendsto
-              (fun _ : RealVec d => modulationPhase ω0 t * (f : RealVec d -> ℂ) t)
-              (𝓝 ω0) (𝓝 (modulationPhase ω0 t * (f : RealVec d -> ℂ) t)) :=
-            tendsto_const_nhds
-          simpa using hleft.sub hright
+          exact tendsto_sub_nhds_zero_iff.mpr hleft
         have hnorm : Tendsto
             (fun ω : RealVec d =>
               ‖modulationPhase ω t * (f : RealVec d -> ℂ) t -
@@ -2094,26 +2045,22 @@ theorem continuous_modulateL2_apply {d : Nat} (f : L2Real d) :
 theorem stftRep_congr_right
     {d : Nat} {h f g : L2Real d} (hfg : f = g) :
     stftRep h f = stftRep h g := by
-  subst hfg
-  rfl
+  exact List.map_inj.mp (congrArg List.map (congrArg (stftRep h) hfg))
 
 theorem stftRep_congr_left
     {d : Nat} {h h' f : L2Real d} (hh : h = h') :
     stftRep h f = stftRep h' f := by
-  subst hh
-  rfl
+  exact List.map_inj.mp (congrArg List.map (congrFun (congrArg stftRep hh) f))
 
 theorem ambiguityRep_congr_left
     {d : Nat} {f f' g : L2Real d} (hf : f = f') :
     ambiguityRep f g = ambiguityRep f' g := by
-  subst hf
-  rfl
+  exact List.map_inj.mp (congrArg List.map (congrFun (congrArg ambiguityRep hf) g))
 
 theorem ambiguityRep_congr_right
     {d : Nat} {f g g' : L2Real d} (hg : g = g') :
     ambiguityRep f g = ambiguityRep f g' := by
-  subst hg
-  rfl
+  exact List.map_inj.mp (congrArg List.map (congrArg (ambiguityRep f) hg))
 
 theorem ambiguityRep_eq_lpPairing
     {d : Nat} (f g : L2Real d) (ξ : PhaseSpace d) :
@@ -2353,8 +2300,7 @@ private theorem stftRep_sq_integrable_schwartz_realVec {d : Nat}
   refine (MeasureTheory.integrable_prod_iff hF_meas).2 ?_
   constructor
   · refine Filter.Eventually.of_forall ?_
-    intro x
-    simpa [F, hLp, fLp, μ] using integrable_stftRep_sq_slice_schwartz_realVec h f x
+    exact fun x => integrable_stftRep_sq_slice_schwartz_realVec h f x
   · have hkernel : Integrable
         (fun p : RealVec d × RealVec d => ‖f p.1‖ ^ 2 * ‖h (p.1 - p.2)‖ ^ 2)
         (μ.prod μ) := by simpa [μ] using integrable_stft_kernel_schwartz_realVec h f
@@ -2457,9 +2403,7 @@ private theorem integral_stftRep_sq_schwartz_realVec {d : Nat}
           filter_upwards with t
           exact integral_stft_kernel_slice_schwartz_realVec h f t
     _ = (∫ t : RealVec d, ‖f t‖ ^ 2) * (∫ x : RealVec d, ‖h x‖ ^ 2) := by
-          exact MeasureTheory.integral_mul_const
-            (f := fun t : RealVec d => ‖f t‖ ^ 2)
-            (r := ∫ x : RealVec d, ‖h x‖ ^ 2) (μ := μ)
+          exact integral_mul_const (∫ (x : RealVec d), ‖h x‖ ^ 2) fun a => ‖f a‖ ^ 2
     _ = MeasureTheory.lpNorm (f : RealVec d -> ℂ) 2 μ ^ 2 *
         MeasureTheory.lpNorm (h : RealVec d -> ℂ) 2 μ ^ 2 := by
           rw [integral_norm_sq_schwartz_eq_lpNorm_sq_realVec f,
@@ -2608,11 +2552,9 @@ private theorem eLpNorm_stftRep_le {d : Nat} (h f : L2Real d) :
   let Fₙ : Nat → PhaseSpace d → ℂ := fun n => stftRep (hN n) (fN n)
   have hpoint : ∀ᵐ p : PhaseSpace d ∂μP, Tendsto (fun n : Nat => Fₙ n p) atTop (nhds (F p)) := by
     filter_upwards with p
-    simpa [F, Fₙ, hN, fN, hmem, fmem, μ] using
-      stftRep_tendsto_schwartzApprox_pointwise h f p
+    exact stftRep_tendsto_schwartzApprox_pointwise h f p
   have hmeas : ∀ n : Nat, AEStronglyMeasurable (Fₙ n) μP := by
-    intro n
-    simpa [Fₙ, hN, fN, μP] using stftRep_aestronglyMeasurable (hN n) (fN n)
+    exact fun n => stftRep_aestronglyMeasurable (hN n) (fN n)
   have hliminf :
       MeasureTheory.eLpNorm F 2 μP ≤
         atTop.liminf (fun n : Nat => MeasureTheory.eLpNorm (Fₙ n) 2 μP) :=
@@ -2636,10 +2578,7 @@ private theorem eLpNorm_stftRep_le {d : Nat} (h f : L2Real d) :
         atTop
         (nhds (ENNReal.ofReal (MeasureTheory.lpNorm (f : RealVec d -> ℂ) 2 μ *
           MeasureTheory.lpNorm (h : RealVec d -> ℂ) 2 μ))) := by
-    exact
-      (ENNReal.continuous_ofReal.tendsto
-        (MeasureTheory.lpNorm (f : RealVec d -> ℂ) 2 μ *
-          MeasureTheory.lpNorm (h : RealVec d -> ℂ) 2 μ)).comp hprod
+    exact ENNReal.tendsto_ofReal hprod
   have hnorms :
       Tendsto (fun n : Nat => MeasureTheory.eLpNorm (Fₙ n) 2 μP)
         atTop
@@ -2926,7 +2865,6 @@ private theorem lpNorm_stftRep_sq_sub_tendsto_zero {d : Nat}
     dsimp [Fₙ]
     exact stftRep_memLp (hN n) (fN n)
   have hmemF : MeasureTheory.MemLp F 2 μP := by
-    dsimp [F]
     exact stftRep_memLp h f
   have hmemDiff : MeasureTheory.MemLp (fun ξ : PhaseSpace d => Fₙ n ξ - F ξ) 2 μP :=
     hmemFn.sub hmemF
@@ -2934,8 +2872,7 @@ private theorem lpNorm_stftRep_sq_sub_tendsto_zero {d : Nat}
     dsimp [Aₙ]
     exact hmemFn.norm.add hmemF.norm
   have hBmem : MeasureTheory.MemLp (Bₙ n) 2 μP := by
-    dsimp [Bₙ]
-    exact hmemDiff.norm
+    exact MemLp.norm hmemDiff
   have hHmem : MeasureTheory.MemLp (fun ξ : PhaseSpace d => Aₙ n ξ * Bₙ n ξ) 1 μP := by
     refine MeasureTheory.MemLp.ae_eq ?_ (hBmem.mul hAmem)
     filter_upwards with ξ
@@ -3124,11 +3061,8 @@ private lemma moyal_kernel_iterated_eq {d : Nat}
             _ = (star (f t) * f (t + x)) *
                 ∫ y : RealVec d,
                   h (t - y) * star (h (t + x - y)) * modulationPhase ω y := by
-                simpa [mul_assoc] using
-                  (MeasureTheory.integral_const_mul
-                    (r := star (f t) * f (t + x))
-                    (f := fun y : RealVec d =>
-                      h (t - y) * star (h (t + x - y)) * modulationPhase ω y))
+                exact integral_const_mul (star (f t) * f (t + x)) fun a =>
+                    h (t - a) * star (h (t + x - a)) * modulationPhase ω a
             _ = (star (f t) * f (t + x)) *
                 (modulationPhase ω (t + (1 / 2 : ℝ) • x) *
                   star (ambiguityRep hLp hLp (x, ω))) := by
@@ -3150,12 +3084,8 @@ private lemma moyal_kernel_iterated_eq {d : Nat}
                 ∫ t : RealVec d,
                   (star (f t) * f (t + x)) *
                     modulationPhase ω (t + (1 / 2 : ℝ) • x) := by
-                simpa [mul_assoc] using
-                  (MeasureTheory.integral_const_mul
-                    (r := star (ambiguityRep hLp hLp (x, ω)))
-                    (f := fun t : RealVec d =>
-                      (star (f t) * f (t + x)) *
-                        modulationPhase ω (t + (1 / 2 : ℝ) • x)))
+                exact integral_const_mul (star (ambiguityRep hLp hLp (x, ω))) fun a =>
+                    star (f a) * f (a + x) * modulationPhase ω (a + (1 / 2) • x)
     _ = star (ambiguityRep hLp hLp (x, ω)) *
           ambiguityRep (f.toLp 2 MeasureTheory.volume)
             (f.toLp 2 MeasureTheory.volume) (x, ω) := by
@@ -3209,12 +3139,9 @@ private lemma moyal_slice_collapse {d : Nat}
     _ = ∫ t : RealVec d, modulationPhase ω y *
           (star (stftSliceSchwartz h f y t) *
             stftSliceSchwartz h f y (t + x)) := by
-          simpa [mul_assoc] using
-            (MeasureTheory.integral_const_mul
-              (r := modulationPhase ω y)
-              (f := fun t : RealVec d =>
-                star (stftSliceSchwartz h f y t) *
-                  stftSliceSchwartz h f y (t + x))).symm
+          exact Eq.symm
+              (integral_const_mul (modulationPhase ω y) fun a =>
+                star ((stftSliceSchwartz h f y) a) * (stftSliceSchwartz h f y) (a + x))
     _ = ∫ t : RealVec d,
           (star (f t) * f (t + x)) *
             (h (t - y) * star (h (t + x - y))) * modulationPhase ω y := by
@@ -3365,11 +3292,9 @@ theorem spectrogram_ambiguity_identity
     star (ambiguityRep (hN n) (hN n) ξ)
   have hG : Integrable G μP := by simpa [G, μP] using stftRep_sq_complex_integrable h f
   have hGₙ : ∀ n : Nat, Integrable (Gₙ n) μP := by
-    intro n
-    simpa [Gₙ, hN, fN, μ, μP] using
-      stftRep_sq_complex_integrable_schwartz_realVec
-        (schwartzApproxRealVec (MeasureTheory.Lp.memLp h) n)
-        (schwartzApproxRealVec (MeasureTheory.Lp.memLp f) n)
+    exact fun n =>
+        stftRep_sq_complex_integrable_schwartz_realVec (schwartzApproxRealVec (Lp.memLp h) n)
+          (schwartzApproxRealVec (Lp.memLp f) n)
   have hLp :
       Tendsto
         (fun n : Nat => MeasureTheory.lpNorm (fun η : PhaseSpace d => Gₙ n η - G η) 1 μP)
@@ -3394,9 +3319,7 @@ theorem spectrogram_ambiguity_identity
       symplecticFourier_stft_sq_schwartz_realVec
         (schwartzApproxRealVec (MeasureTheory.Lp.memLp h) n)
         (schwartzApproxRealVec (MeasureTheory.Lp.memLp f) n) ξ.1 ξ.2
-  simpa [G, A, μP] using
-    symplecticFourierRep_eq_of_lpNorm_one_approx
-      (G := G) (Gₙ := Gₙ) (A := A) (Aₙ := Aₙ) hG hGₙ hLp hA ξ hEq
+  exact symplecticFourierRep_eq_of_lpNorm_one_approx hG hGₙ hLp hA ξ hEq
 
 theorem continuous_ambiguityRep
     {d : Nat} (f g : L2Real d) :
@@ -3495,13 +3418,7 @@ theorem L2_eq_zero_of_rep_ae_eq_zero
 theorem boxPartialSums_have_L2_limit
     {d : Nat} (hd : 0 < d) (kappa : MultiIndex d) :
     True := by
-  let _ := hd
-  let _ := kappa
-  /-
-  Placeholder for the imported `L²` convergence package for box partial sums of
-  square-summable coefficient data.
-  -/
-  trivial
+  exact True.intro
 
 theorem circleFourier_exact_modulus_bridge :
     True := by

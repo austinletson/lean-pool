@@ -894,17 +894,11 @@ theorem mul_comm (x y : ComputableℝSeq) : x * y = y * x := by
   · repeat rw [_root_.mul_comm (lb x)]
     repeat rw [_root_.mul_comm (ub x)]
     dsimp
-    rw [inf_assoc, inf_assoc]
-    congr 1
-    rw [← inf_assoc, ← inf_assoc]
-    nth_rw 2 [inf_comm]
+    exact min_min_min_comm (↑y.lb n * ↑x.lb n) (↑y.lb n * ↑x.ub n) (↑y.ub n * ↑x.lb n) (↑y.ub n * ↑x.ub n)
   · repeat rw [_root_.mul_comm (lb x)]
     repeat rw [_root_.mul_comm (ub x)]
     dsimp
-    rw [sup_assoc, sup_assoc]
-    congr 1
-    rw [← sup_assoc, ← sup_assoc]
-    nth_rw 2 [sup_comm]
+    exact max_max_max_comm (↑y.lb n * ↑x.lb n) (↑y.lb n * ↑x.ub n) (↑y.ub n * ↑x.lb n) (↑y.ub n * ↑x.ub n)
 
 
 theorem neg_mul (x y : ComputableℝSeq) : -x * y = -(x * y) := by

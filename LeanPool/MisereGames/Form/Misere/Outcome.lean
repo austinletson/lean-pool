@@ -267,8 +267,7 @@ theorem misereOutcome_P_iff_winsGoingFirst {g : G} :
 theorem misereOutcome_N_iff_winsGoingFirst {g : G} :
     (MisereOutcome g = .N) ↔ (WinsGoingFirst .left g ∧ WinsGoingFirst .right g) := by
   simp only [← miserePlayerOutcome_eq_iff_winsGoingFirst]
-  cases h_left : MiserePlayerOutcome g .left
-  <;> cases h_right : MiserePlayerOutcome g .right
+  exact misereOutcome_N_iff_miserePlayerOutcome
   <;> simp [MisereOutcome, Outcome.ofPlayers, h_left, h_right]
 
 /--
@@ -504,8 +503,7 @@ private theorem ClosedUnderNeg.not_ge_neg_iff.aux {A : G → Prop} [ClosedUnderN
   have h6 : (MisereOutcome (g + (-x))).Conjugate = MisereOutcome (-g + x) := by
     simp only [misereOutcome_conjugate_neg, neg_add_rev, neg_neg, add_comm]
   rw [<-h6]
-  apply Outcome.outcome_ge_conjugate_le
-  exact h2
+  exact Outcome.outcome_ge_conjugate_le h2
 
 @[simp]
 theorem ClosedUnderNeg.neg_ge_neg_iff {A : G → Prop} [ClosedUnderNeg A]

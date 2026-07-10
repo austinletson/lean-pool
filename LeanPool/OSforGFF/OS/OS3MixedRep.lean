@@ -103,8 +103,7 @@ lemma gaussian_exp_factorize (s : ℂ) (k : SpaceTime) :
   simp only [← Complex.ofReal_pow]
   -- Now goal is: -s * ↑(‖k‖^2) = -s * ↑((k 0)^2) + -s * ↑(‖spatialPart k‖^2)
   rw [h]
-  push_cast
-  ring
+  exact ofReal_mul (rexp (-s * m ^ 2)) (heatKernelPositionSpace s ‖timeReflection x - y‖)
 
 /-- The k₀-integral evaluates to √(π/s) exp(-t²/(4s)) times the k_sp-dependent factor.
 
@@ -1064,10 +1063,8 @@ theorem bilinear_schwinger_eq_heatKernel (m : ℝ) [Fact (0 < m)] (f : TestFunct
           heatKernelPositionSpace s ‖timeReflection x - y‖) := by
     filter_upwards with x
     have h_compl : ∀ᵐ y ∂(volume : Measure SpaceTime), y ≠ timeReflection x := by
-      rw [ae_iff]
-      simp
-    filter_upwards [h_compl] with y hy
-    exact h_kernel_eq x y (Ne.symm hy)
+      exact Measure.ae_ne volume (timeReflection x)
+    exact Eventually.mono h_compl fun x_1 a => h_kernel_eq x x_1 (id (Ne.symm a))
   -- Step 3: Rewrite LHS using a.e. equality
   have lhs_eq : ∫ x : SpaceTime, ∫ y : SpaceTime,
         (starRingEnd ℂ (f x)) * (freeCovariance m (timeReflection x) y : ℂ) * f y =

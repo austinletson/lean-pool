@@ -439,23 +439,14 @@ private lemma block_decay_compare_coord
       |((j q : ℕ) : ℝ) - ((ℓ q : ℕ) : ℝ)|
         ≤ |((j q : ℕ) : ℝ) - Real.sqrt (α q : ℝ)| +
             |Real.sqrt (α q : ℝ) - ((ℓ q : ℕ) : ℝ)| := by
-    calc
-      |((j q : ℕ) : ℝ) - ((ℓ q : ℕ) : ℝ)|
-          = |(((j q : ℕ) : ℝ) - Real.sqrt (α q : ℝ)) +
-              (Real.sqrt (α q : ℝ) - ((ℓ q : ℕ) : ℝ))| := by ring_nf
-      _ ≤ |((j q : ℕ) : ℝ) - Real.sqrt (α q : ℝ)| +
-            |Real.sqrt (α q : ℝ) - ((ℓ q : ℕ) : ℝ)| := by
-              simpa using
-                abs_add_le (((j q : ℕ) : ℝ) - Real.sqrt (α q : ℝ))
-                  (Real.sqrt (α q : ℝ) - ((ℓ q : ℕ) : ℝ))
+    exact abs_sub_le ↑(j q) √↑(α q) ↑(ℓ q)
   have hbound :
       ((Nat.dist (j q) (ℓ q) : ℕ) : ℝ)
         ≤ |((j q : ℕ) : ℝ) - Real.sqrt (α q : ℝ)| + 1 := by
     rw [hdist_eq]
     linarith
   have hk : (((κ q + 5 : ℕ) : ℝ)) = (((κ q + 4 : ℕ) : ℝ)) + 1 := by
-    push_cast
-    ring
+    exact Nat.cast_add_one (κ q + 4)
   exact max_le_max (by linarith) le_rfl
 
 private lemma sup_coord_exists
@@ -571,8 +562,7 @@ private lemma finiteShellSubtype
     Finite {j : MultiIndex d // blockDistance j ℓ = r} := by
   by_cases hd : d = 0
   · subst hd
-    letI := shellSubtype_isEmpty ℓ hr
-    infer_instance
+    exact Subtype.finite
   · obtain ⟨f, hf⟩ := shellSubtype_injects hd ℓ hr
     exact Finite.of_injective f hf
 
@@ -659,8 +649,7 @@ theorem productBasisLocalization
     let c : ℝ := Finset.univ.inf' ⟨q0, Finset.mem_univ q0⟩ cq
     let B : ℝ := ∑ q : Fin d, ((κ q + 5 : ℕ) : ℝ)
     have hC_pos : 0 < C := by
-      dsimp [C]
-      exact Finset.prod_pos (fun q hq => hCq_pos q)
+      exact prod_pos fun i a => hCq_pos i
     have hc_pos : 0 < c := by
       dsimp [c]
       simp_all
@@ -1076,9 +1065,7 @@ private lemma shell_sum_localizationLeakageCoefficient_bound
           unfold localizationLeakageCoefficient
           rw [← tsum_mul_left]
           refine tsum_congr fun r => ?_
-          by_cases hMr : M + 1 ≤ r
-          · simp only [u, hMr, if_true]
-          · simp only [u, hMr, if_false, mul_zero]
+          exact Eq.symm (mul_ite_zero (M + 1 ≤ r) C (↑(shellCardinality d r) * rexp (-c * max (↑r - B) 0 ^ 2)))
 
 private lemma finitePartialLeakage_bound_of_shell_sum_bound
     {d : ℕ} (κ : MultiIndex d) {C c B : ℝ}
@@ -1116,9 +1103,7 @@ private lemma finitePartialLeakage_bound_of_shell_sum_bound
       exact (Finset.mem_filter.mp hα).1
     have hrem_image_subset :
         (remainderPart j M G).support.image blockIndexMulti ⊆ G.support.image blockIndexMulti := by
-      intro ℓ hℓ
-      rcases Finset.mem_image.mp hℓ with ⟨α, hα, rfl⟩
-      exact Finset.mem_image.mpr ⟨α, hrem_support_subset hα, rfl⟩
+      exact image_subset_image hrem_support_subset
     calc
       annulusMass j (evalHermiteSum κ (remainderPart j M G))
         ≤ Finset.sum ((remainderPart j M G).support.image blockIndexMulti)
@@ -1216,8 +1201,7 @@ private lemma shell_sum_bound_of_shell_cardinality_bound
       localizationLeakageCoefficient C c B d M := by
   let t : Finset ℕ := s.image (fun j => blockDistance j ℓ)
   have hmaps : ∀ j ∈ s, blockDistance j ℓ ∈ t := by
-    intro j hj
-    exact Finset.mem_image.mpr ⟨j, hj, rfl⟩
+    exact fun j a => mem_image_of_mem (fun j => blockDistance j ℓ) a
   have hdecomp := Finset.sum_fiberwise_of_maps_to (s := s) (t := t)
     (g := fun j : MultiIndex d => blockDistance j ℓ)
     (h := hmaps)
@@ -1300,8 +1284,7 @@ private lemma finiteLeakage_global_bound_of_shell_sum_bound
   · intro j
     unfold annulusMass
     exact integral_nonneg fun z => by by_cases hz : z ∈ productAnnulus j <;> simp [hz]
-  · intro s
-    exact finitePartialLeakage_bound_of_shell_sum_bound (κ := κ) (hC := hC) hloc hshell s M G
+  · exact fun u => finitePartialLeakage_bound_of_shell_sum_bound κ hC hloc hshell u M G
 
 private theorem finiteLeakage_of_blockLocalization_shell_sum_bound
     {d : ℕ} (κ : MultiIndex d)
@@ -1358,8 +1341,7 @@ theorem finiteLeakage
   Keep it in exactly this global summed form.
   -/
   refine finiteLeakage_of_blockLocalization_shell_sum_bound (κ := κ) ?_ ?_
-  · intro C c B hC hc hB hloc
-    exact localizationLeakageCoefficient_tendsto_zero (d := d) hC hc hB
+  · exact fun {C c B} a a_1 a_2 a_3 => localizationLeakageCoefficient_tendsto_zero a a_1 a_2
   · intro C c B hC hc hB hloc M ℓ s
     exact shell_sum_bound_of_shell_cardinality_bound
       (d := d) (C := C) (c := c) (B := B) (le_of_lt hC)

@@ -262,13 +262,4 @@ lemma Halfspace.val_eq (p : Subspace ℝ E) [CompleteSpace p] (H_' : Halfspace p
 lemma Halfspace.val_eq' (p : Subspace ℝ E) [CompleteSpace p] : ∀ (H_' : Halfspace p),
   (fun H_ => (Halfspace.val p H_ : Set E) ∩ ↑p) H_' =
     (fun H_ => (@Subtype.val E fun x => x ∈ p) '' (H_ : Set p)) (SetLike.coe H_') := by
-  intro H_'
-  have := Halfspace.val_f p H_'
-  apply subset_antisymm <;> intro x <;> rw [Set.mem_inter_iff, Set.mem_image]
-  · rintro ⟨ hxH_', hxp ⟩
-    refine ⟨ ⟨ x, hxp ⟩, ?_, rfl ⟩
-    rwa [Halfspace_mem, ← (this ⟨ x, hxp ⟩), ← Halfspace.val_C p H_']
-  · rintro ⟨ ⟨ x', hx'p ⟩, hx'H_', rfl ⟩
-    refine ⟨ ?_, hx'p ⟩
-    rw [Halfspace_mem, ← (this ⟨ x', hx'p ⟩), ← Halfspace.val_C p H_'] at hx'H_'
-    exact hx'H_'
+  exact fun H_' => val_eq p H_'

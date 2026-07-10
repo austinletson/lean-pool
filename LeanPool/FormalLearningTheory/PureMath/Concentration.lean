@@ -109,9 +109,7 @@ lemma chebyshev_majority_bound
           div_le_div_of_nonneg_right hvar_S_fn (sq_nonneg _)
       _ = 9 / ↑k := by field_simp; ring
       _ ≤ δ := by
-          rw [div_le_iff₀ hk_pos]
-          have h9 : 9 / δ * δ = 9 := div_mul_cancel₀ 9 (ne_of_gt h_delta_pos)
-          nlinarith [hk]
+          exact (div_le_comm₀ h_delta_pos hk_pos).mp hk
   have hbad_le : μ {ω | ↑k / 6 ≤ |S ω - ∫ ω, S ω ∂μ|} ≤ ENNReal.ofReal δ :=
     le_trans hcheb (ENNReal.ofReal_le_ofReal hcheb_bound)
   have hES : ∫ ω, S ω ∂μ ≥ 2 * ↑k / 3 := by

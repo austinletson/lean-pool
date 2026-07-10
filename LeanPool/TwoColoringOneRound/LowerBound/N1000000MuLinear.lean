@@ -101,8 +101,7 @@ def PairMapOk (i : Var) (pm : PairMapData) : Prop :=
                                         pm.tgtSyms.getD pm.idxV.2.2 0 = pm.tgtV.2.2
 
 instance (i : Var) (pm : PairMapData) : Decidable (PairMapOk i pm) := by
-  unfold PairMapOk
-  infer_instance
+  exact Classical.propDecidable (PairMapOk i pm)
 
 private theorem corrAvg_tgt_eq_xFromColoring
     (f : Coloring n) (i : Var) (pm : PairMapData) (hok : PairMapOk i pm) :
@@ -297,8 +296,7 @@ private lemma aDot_eq_box (f : Coloring n) (k : Mu) (hk : muBoxCoeff[k.1]! ≠ 0
   classical
   unfold aDot
   have hCoeff : ∀ i : Var, aCoeff k i = if i = boxVar k then boxCoeff k else 0 := by
-    intro i
-    simpa using aCoeff_eq_boxCoeff (k := k) (hk := hk) (i := i)
+    exact fun i => aCoeff_eq_boxCoeff k hk i
   simp_all
 
 private lemma muBoxCoeff_eq_one_or_eq_neg_one (k : Mu) (hk : muBoxCoeff[k.1]! ≠ 0) :
@@ -424,8 +422,7 @@ private lemma aDot_eq_triLinear (f : Coloring n) (k : Mu) (hk : muBoxCoeff[k.1]!
   classical
   unfold aDot
   have hCoeff : ∀ i : Var, aCoeff k i = triCoeff k i := by
-    intro i
-    simpa using aCoeff_eq_triCoeff (k := k) (hk := hk) (i := i)
+    exact fun i => aCoeff_eq_triCoeff k hk i
   -- Expand the coefficient function and evaluate the three indicator sums.
   have hsumUV :
       (∑ i : Var, if i = uvVar k then cuv k * xFromColoring f i else 0) =

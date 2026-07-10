@@ -300,15 +300,7 @@ lemma covered_partwise_of_parts (hX : X₀ ∪ X₁ = Set.univ) {n : ℕ} (hn : 
       Nat.succ_pred_eq_of_pos prod_pos]
     simp_all
   have : Fraction (Nat.succ_pos n') (le_of_lt h₁) = Fraction.ofPos (Nat.succ_pos n) := by
-    apply Subtype.ext
-    rw [Fraction.Fraction_coe, Fraction.ofPos_coe]
-    rw [show d'.succ = (k - 1).succ from rfl,
-        show n'.succ = ((n + 1) * k - 1).succ from rfl]
-    rw [←(Nat.pred_eq_sub_one (n := k)), Nat.succ_pred_eq_of_pos hk]
-    rw [←(Nat.pred_eq_sub_one (n := (n + 1) * k)), Nat.succ_pred_eq_of_pos prod_pos, mul_comm,
-      Nat.cast_mul]
-    have : (k : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr (ne_of_gt hk)
-    rw [←div_div, div_self this]
+    exact Eq.symm (FractionEqualities.cancel_common_factor hk (le_of_lt h₁))
   have h₃ : (n' : ℝ) - (d' : ℝ) = (↑(n * k - 1) : ℝ) + 1 := by
     rw [←Nat.cast_sub (le_of_lt <| Nat.lt_of_succ_lt_succ h₁), ←Nat.cast_succ,
       ← (Nat.pred_eq_sub_one (n := n * k))]
@@ -326,8 +318,7 @@ lemma covered_partwise_of_parts (hX : X₀ ∪ X₁ = Set.univ) {n : ℕ} (hn : 
     have h₂ : i' < n' - d' := by
       rw [i_def, ←Nat.succ_sub_succ n' d']
       have : d'.succ ≤ i := hd_eq_k.symm ▸ h
-      apply (tsub_lt_tsub_iff_right this).mpr _
-      exact hi
+      exact Nat.sub_lt_sub_right this hi
     have : i = i' + d'.succ := by
       simp_all
     rw [this]

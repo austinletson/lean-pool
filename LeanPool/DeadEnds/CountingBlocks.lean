@@ -33,8 +33,7 @@ lemma completeBlock_mapsTo (M k : ℕ) (hM : 0 < M) :
     Set.MapsTo (· % M) (completeBlock M k : Set ℕ) (Finset.range M : Set ℕ) := by
   intro x hx
   simp only [Finset.mem_coe, Finset.mem_range, completeBlock] at hx ⊢
-  have h₄ : x % M < M := Nat.mod_lt x hM
-  simp_all
+  exact Nat.mod_lt x hM
 
 /-- For any x, y in the complete block [kM+1, (k+1)M], we have |y - x| < M.
 

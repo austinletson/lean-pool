@@ -71,11 +71,7 @@ private lemma slTransvecG_col0 {m : ℕ} (i j : Fin (m + 1)) (hij : i ≠ j) (c 
     (σ : Matrix.SpecialLinearGroup (Fin (m + 1)) ℤ) (a : Fin (m + 1)) :
     (slTransvecG i j hij c * σ).1 a 0 =
     if a = i then σ.1 i 0 + c * σ.1 j 0 else σ.1 a 0 := by
-  have : (slTransvecG i j hij c * σ).1 = Matrix.transvection i j c * σ.1 := by
-    simp only [Matrix.SpecialLinearGroup.coe_mul, slTransvecG]
-  rw [this]; split_ifs with hai
-  · subst hai; simp [Matrix.transvection, Matrix.add_mul]
-  · simp [Matrix.transvection, Matrix.add_mul, hai]
+  exact slTransvecG_mul_entry i j hij c σ a 0
 
 private lemma col0_ne_zero {m : ℕ} (σ : Matrix.SpecialLinearGroup (Fin (m + 1)) ℤ) :
     ∃ i, σ.1 i 0 ≠ 0 := by

@@ -220,8 +220,7 @@ private theorem commProb_le_five_eighths_of_finite (G : Type*) [Group G] [Finite
         have h2 : ({ g : G | True } : Set G) = Set.univ := by ext; simp
         rw [h1, Set.ncard_compl, h2, Set.ncard_univ]
         have hle : Set.ncard { g : G | g ∈ Z(G) } ≤ Nat.card G := by
-          rw [← Set.ncard_univ G]
-          exact Set.ncard_le_ncard (Set.subset_univ _) Set.finite_univ
+          exact Set.ncard_le_card {g | g ∈ Z(G)}
         exact Nat.cast_sub hle
     _ = centralFraction G + (1 / 2) * (#ₜG - #ₛ{ g : G | g ∈ Z(G) }) / #ₜG := by
         congr
@@ -243,8 +242,7 @@ Gustafson's theorem. -/
 theorem commProb_le_five_eighths (G : Type*) [Group G] (h : ¬IsMulCommutative G) :
     commProb G ≤ 5 / 8 := by
   rcases finite_or_infinite G with hfinite | hinfinite
-  · letI := hfinite
-    exact commProb_le_five_eighths_of_finite G h
+  · exact commProb_le_five_eighths_of_finite G h
   · letI := hinfinite
     rw [commProb_eq_zero_of_infinite]
     norm_num

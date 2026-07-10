@@ -51,8 +51,7 @@ theorem Subgroup.eq_bot_or_eq_top_of_prime_card' :
 @[to_additive]
 theorem IsSimpleGroup.of_prime_card :
     IsSimpleGroup G := by
-  have := Nontrivial.of_card_eq_prime h
-  exact ⟨fun H _ => H.eq_bot_or_eq_top_of_prime_card' h⟩
+  exact isSimpleGroup_of_prime_card h
 
 @[to_additive]
 lemma Subgroup.ne_top_iff_eq_bot_of_prime_card : H ≠ ⊤ ↔ H = ⊥ := by

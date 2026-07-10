@@ -329,8 +329,7 @@ theorem countable_avoidance
     intro n
     induction n with
     | zero => exact Nat.zero_le _
-    | succ k ih => have := hq_inc k
-                   omega
+    | succ k ih => exact add_le_of_add_le_right (hq_inc k) ih
   have hu_diff : ∀ n, u_seq (n + 1) - u_seq n ∈ 𝔪 ^ q_seq n :=
     fun n => Ideal.mul_le_left
       (buildSeqDiff I hC_prime hC_ne_max exists_avoid P_of r_of hP_mem n)
@@ -360,8 +359,7 @@ theorem countable_avoidance
         rw [this]
         exact (𝔪 ^ a).add_mem
           (Ideal.pow_le_pow_right (by
-                                     have := hq_ge k
-                                     omega) (hu_diff k))
+                                     exact Nat.le_trans hak (hq_ge k)) (hu_diff k))
           (ih hak)
       · have : a = k + 1 := by omega
         simp_all
@@ -371,9 +369,7 @@ theorem countable_avoidance
     intro a b hab
     rw [SModEq.sub_mem]
     simp only [smul_eq_mul, mul_top]
-    have h := hu_cauchy_telescope a b hab
-    rw [show u_seq a - u_seq b = -(u_seq b - u_seq a) from by ring]
-    exact (𝔪 ^ a).neg_mem h
+    exact sub_mem_comm_iff.mp (hu_cauchy_telescope a b hab)
   -- Get the limit from IsPrecomplete
   have hpre : IsPrecomplete 𝔪 T := IsAdicComplete.toIsPrecomplete
   obtain ⟨L, hL⟩ := hpre.prec hu_smodEq
@@ -399,8 +395,7 @@ theorem countable_avoidance
       | succ k ih =>
         by_cases hak : a ≤ k
         · exact le_trans (ih hak) (by
-                                     have := hq_inc k
-                                     omega)
+                                     exact Nat.le_of_succ_le (hq_inc k))
         · exact le_of_eq (show q_seq a = q_seq (k + 1) by
                             congr 1
                             omega)
@@ -423,9 +418,8 @@ theorem countable_avoidance
       have : L - u_seq (n + 1) =
         (L - u_seq (q_seq (n + 1))) + (u_seq (q_seq (n + 1)) - u_seq (n + 1)) := by ring
       rw [this]
-      exact (𝔪 ^ q_seq (n + 1)).add_mem
-        (hL_diff (q_seq (n + 1)))
-        (hu_cauchy_q (n + 1) (q_seq (n + 1)) (hq_ge (n + 1)))
+      exact (Submodule.add_mem_iff_right (𝔪 ^ q_seq (n + 1)) (hL_diff (q_seq (n + 1)))).mpr
+          (hu_cauchy_q (n + 1) (q_seq (n + 1)) (hq_ge (n + 1)))
     -- Apply separation
     have := hu_sep n (L - u_seq (n + 1)) hL_diff_q
     rwa [show u_seq (n + 1) + (L - u_seq (n + 1)) = L from by ring] at this
@@ -569,79 +563,7 @@ theorem uncountable_avoidance [IsNoetherianRing T]
       (Cardinal.mk_le_of_injective (f := fun (c : ↑C) => ((c, ⟨d, hd⟩) : ↑C × ↑D))
         (fun _ _ h => congr_arg Prod.fst h)) hcard
   obtain ⟨t, ht_mem, ht_avoid⟩ : ∃ t ∈ I, ∀ P ∈ C, t ∉ P := by
-    by_cases hfin : C.Finite
-    · -- Finite C: standard prime avoidance
-      by_contra h
-      push Not at h
-      have hsub : (I : Set T) ⊆ ⋃ P ∈ C, (P : Set T) :=
-        fun t ht => let ⟨P, hP, htP⟩ := h t ht
-        Set.mem_biUnion hP htP
-      rw [Ideal.subset_union_prime_finite hfin (⊥ : Ideal T) ⊥
-        (fun P hP _ _ => hC_prime P hP)] at hsub
-      obtain ⟨P, hP, hle⟩ := hsub
-      exact hI P hP hle
-    · -- Infinite C: line argument
-      obtain ⟨P₀, hP₀⟩ := hCne
-      obtain ⟨v, hv_mem, hv_not⟩ := Set.not_subset.mp (hI P₀ hP₀)
-      by_cases hvall : ∀ P ∈ C, v ∉ P
-      · exact ⟨v, hv_mem, hvall⟩
-      · push Not at hvall
-        obtain ⟨Q₀, hQ₀, hv_in_Q⟩ := hvall
-        obtain ⟨w, hw_mem, hw_not⟩ := Set.not_subset.mp (hI Q₀ hQ₀)
-        -- Split on whether {P ∈ C | v ∈ P} is finite
-        by_cases hCv_fin : (C ∩ {P | (v : T) ∈ (P : Set T)}).Finite
-        · -- Finite Cv: find w' ∈ I avoiding all P ∈ Cv via prime avoidance
-          obtain ⟨w', hw'_mem, hw'_avoid⟩ :
-              ∃ w' ∈ I, ∀ P ∈ C, (v : T) ∈ (P : Set T) → w' ∉ (P : Set T) := by
-            by_contra hall
-            push Not at hall
-            have hsub : (I : Set T) ⊆
-                ⋃ P ∈ (C ∩ {P | (v : T) ∈ (P : Set T)}), (P : Set T) := by
-              intro t ht
-              obtain ⟨P, hPC, hvP, htP⟩ := hall t ht
-              exact Set.mem_biUnion (Set.mem_inter hPC hvP) htP
-            rw [Ideal.subset_union_prime_finite hCv_fin (⊥ : Ideal T) ⊥
-              (fun P hP _ _ => hC_prime P (Set.mem_of_mem_inter_left hP))] at hsub
-            obtain ⟨P, hP, hle⟩ := hsub
-            exact hI P (Set.mem_of_mem_inter_left hP) hle
-          let π := Ideal.Quotient.mk (IsLocalRing.maximalIdeal T)
-          let g : ↑C → IsLocalRing.ResidueField T := fun ⟨P, _⟩ =>
-            if h : ∃ a : T, v + a * w' ∈ (P : Ideal T) then π h.choose else 0
-          have hg_range : Cardinal.mk (Set.range g) <
-              Cardinal.mk (IsLocalRing.ResidueField T) :=
-            lt_of_le_of_lt Cardinal.mk_range_le hC_card
-          obtain ⟨y_bar, hy_bar⟩ : ∃ z : IsLocalRing.ResidueField T, z ∉ Set.range g := by
-            by_contra hall
-            push Not at hall
-            exact absurd (Cardinal.mk_univ ▸ (Set.eq_univ_of_forall hall ▸ hg_range))
-              (lt_irrefl _)
-          obtain ⟨a₀, rfl⟩ := Ideal.Quotient.mk_surjective y_bar
-          refine ⟨v + a₀ * w', I.add_mem hv_mem (I.mul_mem_left a₀ hw'_mem),
-            fun P hP hmem => ?_⟩
-          by_cases hw'P : (w' : T) ∈ (P : Set T)
-          · -- w' ∈ P: contradicts hw'_avoid since v + a₀w' ∈ P implies v ∈ P
-            have hv_in_P : (v : T) ∈ (P : Ideal T) := by
-              have := P.sub_mem hmem (P.mul_mem_left a₀ hw'P)
-              rwa [show v + a₀ * w' - a₀ * w' = v from by ring] at this
-            exact hw'_avoid P hP hv_in_P hw'P
-          · apply hy_bar
-            refine ⟨⟨P, hP⟩, ?_⟩
-            change g ⟨P, hP⟩ = π a₀
-            simp only [g]
-            rw [dif_pos ⟨a₀, hmem⟩]
-            have hex : ∃ a : T, v + a * w' ∈ (P : Ideal T) := ⟨a₀, hmem⟩
-            have hdiff : (hex.choose - a₀) * w' ∈ (P : Ideal T) := by
-              have := P.sub_mem hex.choose_spec hmem
-              rwa [show v + hex.choose * w' - (v + a₀ * w') =
-                (hex.choose - a₀) * w' from by ring] at this
-            have hsub : hex.choose - a₀ ∈ IsLocalRing.maximalIdeal T :=
-              IsLocalRing.le_maximalIdeal (hC_prime P hP).ne_top
-                (((hC_prime P hP).mem_or_mem hdiff).resolve_right hw'P)
-            change (Ideal.Quotient.mk (IsLocalRing.maximalIdeal T)) hex.choose =
-              (Ideal.Quotient.mk (IsLocalRing.maximalIdeal T)) a₀
-            rw [Ideal.Quotient.mk_eq_mk_iff_sub_mem]
-            exact hsub
-        · exact ideal_avoidance_of_card_lt I C hC_prime hC_card hI
+    exact ideal_avoidance_of_card_lt I C hC_prime hC_card hI
   -- Step 2: For each (P, r) ∈ C × D, compute the unique forbidden residue class
   let π := Ideal.Quotient.mk (IsLocalRing.maximalIdeal T)
   let f : ↑C × ↑D → IsLocalRing.ResidueField T := fun ⟨⟨P, _⟩, ⟨r, _⟩⟩ =>
@@ -689,7 +611,6 @@ theorem avoidance
   rcases hCD_bound with h | ⟨hC_count, hD_count⟩
   · exact uncountable_avoidance hC_prime h hI
   · letI : TopologicalSpace T := (IsLocalRing.maximalIdeal T).adicTopology
-    have _ : IsTopologicalRing T := inferInstance
     exact countable_avoidance hC_count hC_prime hC_ne_max hD_count hI
 
 end

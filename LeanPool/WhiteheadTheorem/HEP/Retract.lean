@@ -79,8 +79,7 @@ the homotopy extension property in `retrToBoundaryJar`.
 This function is `noncomputable` due to `Real.decidableEq`. -/
 noncomputable def projToBoundary {n : ℕ} : (I^ Fin (n + 1)) → ∂I^(n+1) := fun y ↦
   let _ : Decidable (y ∈ ∂I^(n+1)) := by
-    simp only [Cube.boundary, Set.mem_setOf_eq]
-    infer_instance
+    exact Classical.propDecidable (y ∈ ∂I^n + 1)
   if _ : y ∈ ∂I^(n+1)
     then ⟨y, ‹_›⟩
     else ⟨0, ⟨0, by simp only [Pi.zero_apply, zero_ne_one, or_false]⟩⟩
@@ -172,8 +171,7 @@ noncomputable def retrToBoundaryJar (n : ℕ) :
           change (H ∘ splitAtLastComm ∘ inclToSides) _ = y
           rw [splitAtLastComm_inclToSides_eq]
           rw [← spec.right]
-          apply inclToBoundaryJarSides_projToSides_eq_of y
-          exact hy' ⟩
+          exact inclToBoundaryJarSides_projToSides_eq_of y hy' ⟩
 
 /-- A strong deformation retraction from `I^n` to `⊔I^n`, for `n ≥ 1`.
 I'm writing down the formula for each coordinate because:

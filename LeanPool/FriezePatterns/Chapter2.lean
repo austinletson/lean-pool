@@ -323,8 +323,7 @@ def fibFluteEven (k : ℕ) : flute (2*k+2) := by
                   rw [← Nat.fib_add_one]
                   · have h : Nat.fib (4 * k - 2 * i + 1) + (Nat.fib (4 * k - 2 * i + 1) +
                         Nat.fib (4 * k - 2 * i + 1)) = Nat.fib (4 * k - 2 * i + 1)*3 := by omega
-                    rw [h]
-                    use 3
+                    exact Dvd.intro 3 (id (Eq.symm h))
                   · have h₃ : ¬ 4*k = 2*i := by omega
                     omega
   exact ⟨aEven k, pos, hd, period, div⟩

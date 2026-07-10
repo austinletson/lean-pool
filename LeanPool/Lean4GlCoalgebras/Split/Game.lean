@@ -389,8 +389,7 @@ lemma no_inf_chain_from_prover (g : ℕ → GamePos)
           have this := by simpa [g2k2_def] using this
           simp [← this, ← h, hyp, in_seq]
   apply inf.not_finite
-  apply Set.finite_coe_iff.1
-  apply Finset.finite_toSet
+  exact Finite.of_fintype ↥(Finset.powerset Γ.FL)
 
 /-- The game is converse well-founded. -/
 lemma matches_finite : WellFounded (Function.swap Move) := by

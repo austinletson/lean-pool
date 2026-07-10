@@ -30,10 +30,7 @@ noncomputable section
 
 theorem fdBoundary_H_at_one_eq_rho_plus_one (H : ℝ) :
     fdBoundaryH H 1 = ellipticPointRhoPlusOne := by
-  simp only [fdBoundaryH, show (1 : ℝ) ≤ 1 from le_refl 1, ↓reduceIte,
-    ellipticPointRhoPlusOne, ellipticPointRhoPlusOne', UpperHalfPlane.coe_mk,
-    Complex.ofReal_one, one_mul]
-  ring
+  exact fdBoundary_H_at_one H
 
 theorem fdBoundary_H_at_two_eq_I (H : ℝ) :
     fdBoundaryH H 2 = I := by
@@ -46,15 +43,7 @@ theorem fdBoundary_H_at_two_eq_I (H : ℝ) :
 
 theorem fdBoundary_H_at_three_eq_rho (H : ℝ) :
     fdBoundaryH H 3 = ellipticPointRho := by
-  simp only [fdBoundaryH, show ¬((3 : ℝ) ≤ 1) from by norm_num,
-             show ¬((3 : ℝ) ≤ 2) from by norm_num,
-             show (3 : ℝ) ≤ 3 from le_refl 3, ↓reduceIte]
-  rw [show (↑(Real.pi : ℝ) / 2
-        + (↑(3 : ℝ) - 2) * (2 * ↑(Real.pi : ℝ) / 3 - ↑(Real.pi : ℝ) / 2)) * I =
-    ↑(2 * Real.pi / 3) * I from by push_cast; ring,
-    exp_real_angle_I, cos_two_pi_div_three, sin_two_pi_div_three]
-  simp only [ellipticPointRho, ellipticPointRho', UpperHalfPlane.coe_mk]
-  push_cast; ring
+  exact fdBoundary_H_at_three H
 
 theorem fdBoundary_H_seg0 (H : ℝ) {t : ℝ} (ht : t ≤ 1) :
     fdBoundaryH H t = 1/2 + (↑H - ↑t * (↑H - ↑(Real.sqrt 3) / 2)) * I := by

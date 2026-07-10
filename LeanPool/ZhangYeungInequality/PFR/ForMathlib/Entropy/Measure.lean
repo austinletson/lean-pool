@@ -146,10 +146,7 @@ instance finiteSupport_of_dirac (x : S) : FiniteSupport (Measure.dirac x) := ⟨
 lemma full_measure_of_finiteRange {μ : Measure Ω} {X : Ω → S}
     (hX : Measurable X) [hX' : FiniteRange X] :
     (μ.map X) hX'.toFinsetᶜ = 0 := by
-  rw [Measure.map_apply hX (MeasurableSet.compl (Finset.measurableSet _))]
-  convert measure_empty (μ := μ)
-  ext x
-  simp [FiniteRange.toFinset]
+  exact FiniteRange.null_of_compl μ X
 
 lemma ae_mem_of_finiteRange {μ : Measure Ω} {X : Ω
   → S} (hX : Measurable X) [hX' : FiniteRange X] :
@@ -179,8 +176,7 @@ lemma integrable_of_finiteSupport (μ : Measure S) [FiniteSupport μ]
   · simp_all
   have : ∃ s₀, s₀ ∈ A := by
     contrapose! hA'
-    ext s
-    simpa using hA' s
+    exact Finset.eq_empty_of_forall_notMem hA'
   rcases this with ⟨s₀, hs₀⟩
   let f' : A → β := fun a ↦ f a
   classical
@@ -237,8 +233,7 @@ theorem _root_.ProbabilityTheory.Measure.ext_iff_measureReal_singleton_finiteSup
   congr! with x
   have h1 : μ1 {x} ≠ ⊤ := by finiteness
   have h2 : μ2 {x} ≠ ⊤ := by finiteness
-  rw [measureReal_def, measureReal_def, ENNReal.toReal_eq_toReal_iff]
-  simp [h1, h2]
+  exact Iff.symm (measureReal_eq_measureReal_iff h1 h2)
 
 end
 
@@ -314,11 +309,7 @@ lemma _root_.ProbabilityTheory.measureEntropy_nonneg (μ : Measure S) : 0 ≤ Hm
   apply tsum_nonneg
   intro s
   apply negMulLog_nonneg (by positivity)
-  refine ENNReal.toReal_le_of_le_ofReal zero_le_one ?_
-  rw [ENNReal.ofReal_one]
-  cases eq_zero_or_neZero μ with
-  | inl hμ => simp [hμ]
-  | inr hμ => exact prob_le_one
+  exact measureReal_le_one
 
 variable [MeasurableSingletonClass S]
 
@@ -424,8 +415,7 @@ lemma _root_.ProbabilityTheory.entropy_of_uniformOn (H : Set S) [Nonempty H] [Fi
     _ = ∑ s ∈ H.toFinite.toFinset, negMulLog (1 / Nat.card H) := by
       convert tsum_eq_sum (s := H.toFinite.toFinset) ?_ using 2 with s hs
       · simp at hs; simp [hs]
-      · constructor
-        simp
+      · exact SummationFilter.instLeAtTopUnconditional S
       simp_all
     _ = (Nat.card H) * negMulLog (1 / Nat.card H) := by simp [← Set.ncard_coe_finset]
     _ = log (Nat.card H) := by
@@ -509,13 +499,7 @@ lemma _root_.ProbabilityTheory.measureEntropy_prod
   let B := ν.finiteSupport
   have hB := measure_compl_support ν
   have hC : (μ.prod ν) (A ×ˢ B : Finset (S × T))ᶜ = 0 := by
-    have : ((A ×ˢ B : Finset (S × T)) : Set (S × T))ᶜ
-      = ((A : Set S)ᶜ ×ˢ Set.univ) ∪ (Set.univ ×ˢ (B : Set T)ᶜ) := by
-        ext ⟨a, b⟩
-        simp
-        tauto
-    rw [this]
-    simp [hA, hB, A, B]
+    exact Measure.prod_of_full_measure_finset hA hB
   have h1 : Hm[μ] = ∑ p ∈ (A ×ˢ B), (negMulLog (μ.real {p.1})) * (ν.real {p.2}) := by
     rw [measureEntropy_of_isProbabilityMeasure_finite' hA, Finset.sum_product]
     congr with s
@@ -787,8 +771,7 @@ lemma _root_.ProbabilityTheory.measureMutualInfo_nonneg_aux
   · rw [← neg_nonpos, H1]
     have key := concaveOn_negMulLog.le_map_sum hw1 hw2 hf
     simp only [smul_eq_mul] at key
-    rw [← H2] at key
-    exact key
+    exact le_of_le_of_eq key (id (Eq.symm H2))
   rw [← neg_eq_zero, H1, H2, eq_comm]
   refine (strictConcaveOn_negMulLog.map_sum_eq_iff' hw1 hw2 hf).trans ?_
   have w0 (p : S × U) (hp: w p = 0) : μ.real {p} = 0 := by

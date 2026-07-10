@@ -204,8 +204,7 @@ lemma validOnFrame_of_surjective_pseudoMorphism (f : F₁ →ₚ F₂) (f_surjec
 lemma theory_ValidOnFrame_of_surjective_pseudoMorphism (f : F₁ →ₚ F₂) (f_surjective :
     Function.Surjective f) : F₁ ⊧* T → F₂ ⊧* T := by
   simp only [Semantics.realizeSet_iff];
-  intro h φ hp;
-  exact validOnFrame_of_surjective_pseudoMorphism f f_surjective (h hp);
+  exact fun a ⦃f_2⦄ a_1 => validOnFrame_of_surjective_pseudoMorphism f f_surjective (a a_1)
 
 end «lp_section_3»
 

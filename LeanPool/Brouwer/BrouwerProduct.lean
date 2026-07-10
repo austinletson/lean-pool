@@ -67,9 +67,7 @@ lemma index_split_existence (k : Fin (totalCard card)) : ∃ (p : Σ i, Fin (car
   let i₀ := @WellFounded.min I (· < ·) wellFounded_lt S s_nonempty
   have i₀_in_S : i₀ ∈ S := WellFounded.min_mem wellFounded_lt S s_nonempty
   have i₀_is_min : ∀ j < i₀, j ∉ S := fun j hlt => by
-    intro hj
-    have := WellFounded.min_le wellFounded_lt hj
-    exact not_le_of_gt hlt this
+    exact WellFounded.notMem_of_lt_min hlt
   have h_lt : k.val < prefixSum card i₀ + (card i₀ : ℕ) := by
     change k.val < (∑ j ∈ Finset.univ.filter (· ≤ i₀), (card j : ℕ)) at i₀_in_S
     have : (∑ j ∈ Finset.univ.filter (· ≤ i₀), (card j : ℕ)) =
@@ -101,8 +99,7 @@ lemma index_split_existence (k : Fin (totalCard card)) : ∃ (p : Σ i, Fin (car
             · exact Finset.min'_le _ _ (Finset.mem_univ i₀)
           exact this h_min
         push Not at this
-        obtain ⟨j, _, hj⟩ := this
-        exact ⟨j, Finset.mem_filter.mpr ⟨Finset.mem_univ j, hj⟩⟩
+        exact Finset.filter_nonempty_iff.mpr this
       let j₀ := pred_set.max' pred_set_nonempty
       have j₀_lt_i₀ : j₀ < i₀ := by
         have h_mem : j₀ ∈ pred_set := Finset.max'_mem pred_set pred_set_nonempty
@@ -252,12 +249,7 @@ noncomputable def zUniform : BigSimplex card :=
   ⟨fun _ => (1 : ℝ) / (totalCard card : ℝ), by
     simp only [stdSimplex, Set.mem_setOf_eq]
     constructor
-    · intro _
-      apply div_nonneg
-      · norm_num
-      · have : 0 < (totalCard card : ℝ) := by
-          norm_cast; exact PNat.pos (totalCard card)
-        exact le_of_lt this
+    · exact fun x => Nat.one_div_cast_nonneg ↑(totalCard card)
     · have hpos : 0 < (totalCard card : ℝ) := by
         norm_cast; exact PNat.pos (totalCard card)
       have hcard : (Fintype.card (Fin (totalCard card)) : ℝ) = (totalCard card : ℝ) := by
@@ -414,8 +406,7 @@ noncomputable def embedFromProduct (y : ProductSimplices card) : BigSimplex card
     · intro k
       let p := indexSplit card k
       have h_denom_pos : 0 < (totalCard card : ℝ) := by
-        norm_cast
-        exact PNat.pos (totalCard card)
+        exact totalCard_pos_real card
       have h_num_nonneg : 0 ≤ (y p.1).1 p.2 * (card p.1 : ℝ) :=
         mul_nonneg ((y p.1).2.1 p.2) (by positivity)
       exact div_nonneg h_num_nonneg (le_of_lt h_denom_pos)
@@ -549,11 +540,7 @@ lemma pushTowardsZ_continuous : Continuous (pushTowardsZ card) := by
     hone_minus_t.mul hxk
   have hterm2 : Continuous (fun x => (tPush card x) * (zUniform card).1 k) :=
     (tPush_continuous card).mul continuous_const
-  have hsum : Continuous
-      (fun x : BigSimplex card =>
-        ((1 : ℝ) - tPush card x) * x.1 k + (tPush card x) * (zUniform card).1 k) :=
-    hterm1.add hterm2
-  simpa [pushTowardsZ] using hsum
+  exact Continuous.fun_add hterm1 hterm2
 
 /-- Continuity of `projectToProduct`. -/
 lemma project_continuous : Continuous (projectToProduct card) := by
@@ -575,10 +562,7 @@ lemma project_continuous : Continuous (projectToProduct card) := by
       (continuous_subtype_val.comp (pushTowardsZ_continuous card))
   have h_denom_ne : ∀ x : BigSimplex card, blockSum card i (pushTowardsZ card x) ≠ 0 :=
     fun x => ne_of_gt (blockSum_pushTowardsZ_pos card i x)
-  have h_div : Continuous (fun x : BigSimplex card =>
-      (pushTowardsZ card x).1 k / blockSum card i (pushTowardsZ card x)) :=
-    Continuous.div h_num_cont h_denom_cont h_denom_ne
-  simpa [projectToProduct, blockSum] using h_div
+  exact Continuous.div₀ h_num_cont h_denom_cont h_denom_ne
 
 
 /-- Continuity of `embedFromProduct`. -/

@@ -26,18 +26,7 @@ private theorem toFun_ofPkappa_wip
     {d : Nat} (hd : 0 < d) (kappa : MultiIndex d)
     (F : Pkappa d kappa) :
     toFun kappa (ofPkappa kappa F) = evalPkappa kappa F := by
-  let _ := hd
-  ext z
-  rw [toFun, evalPkappa, Finsupp.sum]
-  have hzero :
-      ∀ alpha ∉ F.support,
-        coeffSkappa (ofPkappa kappa F) alpha * Phi kappa alpha z = 0 := by
-    intro alpha halpha
-    simp [coeffSkappa, ofPkappa, Finsupp.notMem_support_iff.mp halpha]
-  rw [tsum_eq_sum hzero]
-  refine Finset.sum_congr rfl ?_
-  intro alpha halpha
-  simp [coeffSkappa, ofPkappa]
+  exact toFun_ofPkappa kappa F
 
 private theorem norm_nonneg_pkappa_wip
     (hd : 0 < d) {kappa : MultiIndex d} (F : Pkappa d kappa) :
@@ -73,16 +62,12 @@ private theorem norm_ne_zero_of_ne_zero_pkappa_wip
 private lemma continuous_Phi_wip
     {d : Nat} (kappa alpha : MultiIndex d) :
     Continuous (Phi kappa alpha) := by
-  unfold Phi phi1D complexHermite
-  continuity
+  exact continuous_Phi kappa alpha
 
 private lemma continuous_evalPkappa_wip
     {d : Nat} (kappa : MultiIndex d) (F : Pkappa d kappa) :
     Continuous (evalPkappa kappa F) := by
-  unfold evalPkappa
-  refine continuous_finsetSum _ ?_
-  intro alpha halpha
-  exact continuous_const.mul (continuous_Phi_wip kappa alpha)
+  exact continuous_evalPkappa kappa F
 
 private lemma measurableSet_productAnnulus_wip
     {d : Nat} (j : Idx d) :
@@ -212,8 +197,7 @@ private theorem Phi_eq_PhiKappaAlpha_wip
     Phi kappa alpha z = Hermite1DimdLEAN.PhiKappaAlpha kappa alpha z := by
   unfold Phi Hermite1DimdLEAN.PhiKappaAlpha
   refine Finset.prod_congr rfl ?_
-  intro q hq
-  exact phi1D_eq_oneDimPhi_wip (kappa q) (alpha q) (z q)
+  exact fun x a => phi1D_eq_oneDimPhi_wip (kappa x) (alpha x) (z x)
 
 private theorem evalPkappa_eq_evalHermiteSum_wip
     {d : Nat} (kappa : MultiIndex d) (F : Pkappa d kappa) :
@@ -351,8 +335,7 @@ private theorem mem_nearLowCoeffSet_wip
     · exact
         (mem_nearLowBlocks_wip (J := J) (M := M) (Hermite1DimdLEAN.blockIndexMulti alpha)).mpr
           ⟨j, hj, hjdist⟩
-    · exact
-        (mem_coeffBlockFinset_wip (Hermite1DimdLEAN.blockIndexMulti alpha) alpha).mpr rfl
+    · exact (mem_coeffBlockFinset_wip (Hermite1DimdLEAN.blockIndexMulti alpha) alpha).mpr rfl
 
 private theorem truncate_ofPkappa_apply_wip
     {d : Nat} (kappa : MultiIndex d) (E : Finset (Idx d))
@@ -486,8 +469,7 @@ private theorem lowAnnulusMass_add_le_two_wip
             2 * annulusMass j (ofPkappa kappa F) +
               2 * annulusMass j (ofPkappa kappa G)) := by
             refine Finset.sum_le_sum ?_
-            intro j hj
-            exact annulusMass_add_le_two_wip hd kappa j F G
+            exact fun i a => annulusMass_add_le_two_wip hd kappa i F G
     _ = 2 * lowAnnulusMass J (ofPkappa kappa F) + 2 * lowAnnulusMass J (ofPkappa kappa G) := by
           simp [lowAnnulusMass, Finset.sum_add_distrib, two_mul, add_assoc]
 
@@ -580,8 +562,7 @@ theorem lowAnnulusProjection
   let Hnear : Pkappa d kappa := truncateFinset E (ofPkappa kappa H)
   let Hfar : Pkappa d kappa := H - Hnear
   have hdecomp : Hnear + Hfar = H := by
-    ext alpha
-    simp [Hfar, Hnear, sub_eq_add_neg, add_left_comm]
+    exact add_sub_cancel Hnear H
   have hnear_norm_sq :
       ‖Hnear‖ ^ 2 = Finset.sum E (fun alpha => ‖coeffPkappa H alpha‖ ^ 2) := by
     calc

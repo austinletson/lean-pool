@@ -152,11 +152,7 @@ lemma iff_valid_on_canonicalModel_deducible : (canonicalModel 𝓢) ⊧ φ ↔ �
   · contrapose;
     intro h;
     have : FormulaSet.Consistent 𝓢 ({∼φ}) := by
-      apply FormulaSet.def_consistent.mpr;
-      intro Γ hΓ;
-      by_contra hC;
-      have : 𝓢 ⊢! φ := dne'! <| negEquiv'!.mpr <| replace_imply_left_conj! hΓ hC;
-      contradiction;
+      exact FormulaSet.unprovable_iff_singleton_neg_consistent.mpr h
     obtain ⟨Ω, hΩ⟩ := lindenbaum this;
     apply ValidOnModel.not_of_exists_world;
     use Ω;

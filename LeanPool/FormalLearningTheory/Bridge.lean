@@ -635,14 +635,7 @@ theorem compression_bounds_vcdim (X : Type u)
   obtain ⟨T, hT_sub, hT_card⟩ := Finset.exists_subset_card_eq hN_le
   -- T is shattered (subset of shattered set)
   have hT_shatt : Shatters X C T := by
-    intro f
-    -- Extend f to a labeling on S
-    let g : ↥S → Bool := fun ⟨x, hx⟩ => if h : x ∈ T then f ⟨x, h⟩ else false
-    obtain ⟨c, hcC, hcg⟩ := hS g
-    refine ⟨c, hcC, ?_⟩
-    intro ⟨x, hx⟩
-    have hxS : x ∈ S := hT_sub hx
-    simpa only [g, hx, dite_true] using hcg ⟨x, hxS⟩
+    exact Shatters.subset hS hT_sub
   set n := T.card with hn_def
   have hn_eq : n = N := hT_card
   -- Enumerate T injectively

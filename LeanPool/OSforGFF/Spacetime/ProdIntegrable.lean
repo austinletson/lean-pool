@@ -579,8 +579,7 @@ theorem spatialNormIntegral_linear_bound (f : TestFunctionℂ)
   -- Pull out constants: ∫ (C_pt * t) / (1 + ‖x‖)^4 = (C_pt * t) * ∫ 1 / (1 + ‖x‖)^4
   have h_factor : ∫ x : SpatialCoords3, C_pt * t / (1 + ‖x‖)^4 = C_pt * t * K := by
     rw [h_div_eq]
-    simp only [← smul_eq_mul, integral_smul]
-    rfl
+    exact integral_const_mul (C_pt * t) fun a => 1 / (1 + ‖a‖) ^ 4
   -- Combine inequalities
   calc spatialNormIntegral f t
       = ∫ x : SpatialCoords3, ‖f (spacetimeOfTimeSpace t x)‖ := rfl

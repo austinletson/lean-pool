@@ -25,10 +25,7 @@ theorem sum_rotate {α β γ ζ : Type _} [AddCommMonoid β] {s : Finset α} {t 
     {f : α → γ → ζ → β} :
     ∑ x ∈ s, ∑ y ∈ t, ∑ z ∈ u, f x y z =
       ∑ z ∈ u, ∑ x ∈ s, ∑ y ∈ t, f x y z := by
-  nth_rw 2 [Finset.sum_comm]
-  congr
-  ext x
-  rw [Finset.sum_comm]
+  exact sum_comm_cycle
 
 theorem sum_3_comm {α β γ ζ : Type _} [AddCommMonoid β] {s : Finset α} {t : Finset γ} {u : Finset ζ}
     {f : α → γ → ζ → β} :
@@ -62,11 +59,7 @@ theorem sum_sum_sum {β α γ ζ : Type _} [AddCommMonoid β] {s : Finset γ} {t
     {g : Finset ζ} {f : γ → α → ζ → β} :
     ∑ x ∈ s, ∑ y ∈ t, ∑ z ∈ g, f x y z =
       ∑ z ∈ g, ∑ x ∈ s, ∑ y ∈ t, f x y z := by
-  symm
-  rw [Finset.sum_comm]
-  congr
-  ext
-  rw [Finset.sum_comm]
+  exact sum_rotate
 
 theorem sum_4_swap_2 {β α γ ζ ε : Type _} [AddCommMonoid β] {s : Finset γ} {t : Finset α}
     {u : Finset ζ} {v : Finset ε} {f : γ → α → ζ → ε → β} :

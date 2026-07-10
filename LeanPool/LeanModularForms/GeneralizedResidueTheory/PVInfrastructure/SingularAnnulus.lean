@@ -137,10 +137,7 @@ lemma intervalIntegral_eq_zero_of_ae_eq_zero {a b : ℝ}
     {φ : ℝ → ℂ} (_hI : IntervalIntegrable φ volume a b)
     (h_ae : ∀ᵐ t ∂volume, t ∈ Set.uIoc a b → φ t = 0) :
     ∫ t in a..b, φ t = 0 := by
-  rw [show (∫ t in a..b, φ t) = ∫ t in a..b, (0 : ℂ) from
-    intervalIntegral.integral_congr_ae
-      (by filter_upwards [h_ae] with t ht ht_mem; exact ht ht_mem)]
-  exact intervalIntegral.integral_zero
+  exact intervalIntegral.integral_zero_ae h_ae
 
 /-- Split `∫ a..b f` into five consecutive sub-integrals at four ordered intermediate points. -/
 lemma integral_split_five {a p₁ p₂ p₃ p₄ b : ℝ}
@@ -376,8 +373,7 @@ private lemma singular_annulus_lin_integral_zero
   have hc₁_le_c₂ : c₁ ≤ c₂ :=
     div_le_div_of_nonneg_right hε₂_le (le_of_lt hL_pos)
   have hc₂_lt_dist : c₂ < min (t₀ - a) (b - t₀) := by
-    rw [show c₂ = ε₁ / ‖L‖ from rfl, div_lt_iff₀ hL_pos]
-    linarith [mul_comm ‖L‖ (min (t₀ - a) (b - t₀))]
+    exact (div_lt_iff₀' hL_pos).mpr hε₁_lt_Ldist
   set φ : ℝ → ℂ := fun t =>
     if ε₂ < ‖L‖ * |t - t₀| ∧ ‖L‖ * |t - t₀| ≤ ε₁
     then (↑(t - t₀) : ℂ)⁻¹ else 0

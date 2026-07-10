@@ -259,8 +259,7 @@ theorem erdos137_eventually_not_powerful (k : ℕ) (hk : 3 ≤ k) (hRadLB : RadL
   have hmono : T ^ δ < (n : ℝ) ^ δ := Real.rpow_lt_rpow hT_nonneg hTltn hδ_pos
   rw [hTpow] at hmono
   have hfinal : (k : ℝ) ^ k < C ^ 2 * (n : ℝ) ^ δ := by
-    have := (div_lt_iff₀ hCsq_pos).mp hmono
-    linarith [this, mul_comm (C^2) ((n:ℝ)^δ)]
+    exact (div_lt_iff₀' hCsq_pos).mp hmono
   exact absurd hcombine2 (not_le.mpr hfinal)
 
 /-- The set of positive `n` for which `F k n` is powerful is finite

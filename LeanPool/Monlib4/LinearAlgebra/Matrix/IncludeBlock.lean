@@ -146,8 +146,7 @@ theorem blockDiagonal'_includeBlock_trace {R k : Type _} [CommSemiring R] [Finty
   calc
     (blockDiagonal' (includeBlock (x j))).trace
       = ∑ i, (includeBlock (x j) i).trace :=
-      by simp_rw [Matrix.trace, Matrix.diag, blockDiagonal'_apply, dif_pos,
-      Finset.sum_sigma']; rfl
+      by exact trace_blockDiagonal' (includeBlock (x j))
     _ = ∑ i, ∑ a, includeBlock (x j) i a a := rfl
     _ = ∑ i, ∑ a, dite (j = i) (fun h => by rw [← h]; exact (x j))
       (fun _ => (0 : Matrix (s i) (s i) R)) a a :=
@@ -170,12 +169,7 @@ theorem single_hMul_trace {R n p : Type _} [Semiring R] [Fintype p] [DecidableEq
 
 theorem ext_iff_trace {R n p : Type _} [Fintype n] [Fintype p]
     [CommSemiring R] (x y : Matrix n p R) : x = y ↔ ∀ a, (x * a).trace = (y * a).trace := by
-  classical
-  refine ⟨fun h a => by rw [h], fun h => ?_⟩
-  ext i j
-  specialize h (single j i 1)
-  simp_rw [trace_mul_comm _ (single _ _ _), Matrix.single_hMul_trace j i] at h
-  exact h
+  exact ext_iff_trace_mul_right
 
 variable {R : Type _} [CommSemiring R]
 
@@ -515,9 +509,7 @@ def semiring {k : Type _} [Fintype k] [DecidableEq k] {s : k → Type _}
   natCast_zero := by
     simp_all
   natCast_succ a := by
-    ext
-    simp only [IsBlockDiagonal.coe_nsmul, IsBlockDiagonal.coe_one, IsBlockDiagonal.coe_add,
-      add_smul, one_smul, add_comm]
+    exact succ_nsmul 1 a
   npow n x := x ^ n
   npow_zero x := by
     ext
@@ -661,8 +653,7 @@ def sigmaProdDistrib' {ι : Type _} (β : Type _) (α : ι → Type _) :
     (β × Σ i : ι, α i) ≃ Σ i : ι, β × α i := by
   let this : (Σ i : ι, β × α i) ≃ Σ i : ι, α i × β := by
     apply Equiv.sigmaCongrRight
-    intro i
-    exact Equiv.prodComm _ _
+    exact fun a => Equiv.prodComm β (α a)
   exact ((Equiv.prodComm _ _).trans (Equiv.sigmaProdDistrib _ _)).trans this.symm
 
 end Equiv

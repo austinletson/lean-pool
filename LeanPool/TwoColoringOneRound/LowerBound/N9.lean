@@ -168,9 +168,7 @@ noncomputable def edgeEmb (e : Edge n) : Emb4 := ⟨e.1, e.2⟩
 abbrev Extra (e : Edge n) : Set Sym9 := (Set.range (edgeEmb e))ᶜ
 
 noncomputable instance (e : Edge n) : Fintype (Extra e) := by
-  classical
-  dsimp [Extra]
-  infer_instance
+  exact setFintype (Extra e)
 
 private lemma card_extra (e : Edge n) : Fintype.card (Extra e) = 5 := by
   classical
@@ -467,8 +465,7 @@ private lemma monoCount_zmod2_eq_edgeCount_zmod2 (f : Coloring9) :
           = (∑ e : Edge n, if p e then (1 : ZMod 2) else 0) := by
       -- `sum_filter` moves the predicate from the finset into the summand.
       -- (`∑ e : Edge n, _` is `Finset.univ.sum _`.)
-      dsimp [s, p]
-      rw [Finset.sum_filter]
+      exact Finset.sum_filter (Edge.monochromatic f) fun a => 1
     -- put it together
     calc
       (monoCount f : ZMod 2) = (s.card : ZMod 2) := by rw [hs]
@@ -479,8 +476,7 @@ private lemma monoCount_zmod2_eq_edgeCount_zmod2 (f : Coloring9) :
         = ∑ e : Edge n, (if Edge.monochromatic f e then (1 : ZMod 2) else 0) := hmono
     _ = ∑ e : Edge n, ((1 : ZMod 2) + bit (f (Edge.src e)) + bit (f (Edge.dst e))) := by
           apply Fintype.sum_congr
-          intro e
-          simpa using (monoIndicator_zmod2 (f := f) e)
+          exact fun a => monoIndicator_zmod2 f a
     _ = (∑ _e : Edge n, (1 : ZMod 2))
           + (∑ e : Edge n, bit (f (Edge.src e)))
           + (∑ e : Edge n, bit (f (Edge.dst e))) := by
@@ -494,8 +490,7 @@ private lemma monoCount_zmod2_eq_edgeCount_zmod2 (f : Coloring9) :
           -- in characteristic 2, `x + x = 0`
           have hself :
               (∑ e : Edge n, bit (f (Edge.src e))) + (∑ e : Edge n, bit (f (Edge.src e))) = 0 := by
-            simpa using
-              (CharTwo.add_self_eq_zero (R := ZMod 2) (x := ∑ e : Edge n, bit (f (Edge.src e))))
+            exact CharTwo.add_eq_zero.mpr rfl
           -- clean up the associativity
           simp [add_left_comm, add_comm, hself]
 

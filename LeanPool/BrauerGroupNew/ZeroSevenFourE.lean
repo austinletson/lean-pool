@@ -392,9 +392,7 @@ def endSimpleModOfWedderburn (n : ℕ) (hn : n ≠ 0) (D : Type v) [DivisionRing
         rfl }
     letI _ : SMulCommClass A k (Fin n → D) :=
       { smul_comm a b x := by
-          change wdb a • b • x = b • wdb a • x
-          ext i
-          exact congrFun (smul_comm (wdb a) b x) i }
+          exact smul_comm a b x }
     Module.End A (Fin n → D) ≃ₐ[k] Dᵐᵒᵖ := by
   let _ : Module A (Fin n → D) := Module.compHom _ wdb.toRingEquiv.toRingHom
   have : IsScalarTower k (Matrix (Fin n) (Fin n) D) (Fin n → D) :=
@@ -449,14 +447,7 @@ instance end_simple_mod_finite
   obtain ⟨iso⟩ := endSimpleModOfWedderburn' k A n hn D e M
   let E : Dᵐᵒᵖ ≃ₗ[k] D := MulOpposite.opLinearEquiv k |>.symm
   have : Module.Finite k D := by
-    haveI inst1 : Module.Finite k (Matrix (Fin n) (Fin n) D) := e.toLinearEquiv.finiteDimensional
-    rw [← Module.rank_lt_aleph0_iff] at inst1 ⊢
-    have eq1 := rank_mul_rank k D (Matrix (Fin n) (Fin n) D)
-    simp only [rank_matrix', Cardinal.mk_fintype, Fintype.card_fin, Cardinal.lift_mul,
-      Cardinal.lift_natCast] at eq1
-    rw [← eq1, mul_comm] at inst1
-    exact lt_of_le_of_lt (Cardinal.le_mul_left (a := Module.rank k D) (b := n * n) (by
-      simpa only [ne_eq, mul_eq_zero, Nat.cast_eq_zero, or_self] using NeZero.ne n)) inst1
+    exact is_fin_dim_of_wdb k A hn D e
   have : FiniteDimensional k Dᵐᵒᵖ := E.symm.finiteDimensional
   refine iso.symm.toLinearEquiv.finiteDimensional
 

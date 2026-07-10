@@ -94,8 +94,7 @@ def projElementEmbedding {α β : Type*} {D : NeighborhoodSystem α} {E : Neighb
     · intro h
       have hjm := toElementMap_mono j h
       rwa [hround a, hround b] at hjm
-    · intro h
-      exact toElementMap_mono i h)
+    · exact fun a_1 => toElementMap_mono i a_1)
 
 /-- **`D ⊴ E` yields an order embedding `|D| ↪o |E|`.** Unfold `⊴` to an iso `|D|
 ≅o |D'|` onto a

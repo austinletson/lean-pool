@@ -134,9 +134,7 @@ lemma measurable_distrib [Countable I]
     ext x : 1
     simp only [↓reduceDIte, f, ix]
   rw [this]
-  apply measurable_cases
-  · fun_prop
-  · fun_prop
+  exact measurable_cases hix hf
 
 lemma measurable_distrib' [Countable I]
     {f : A × Sigma P → B} (hf : Measurable (fun x : (i : I) × A × P i ↦ f ⟨x.2.1, x.1, x.2.2⟩))

@@ -328,13 +328,7 @@ theorem p_9
     use a
     constructor
     · exact a_in_bp
-    · unfold star
-      simp only [mem_setOf_eq]
-      split
-      case h.right.isTrue ca_eq =>
-        exact id ca_eq.symm
-      case h.right.isFalse ca_neq =>
-        apply rel_sym_bca a c a PG.l1 PG.l2 (PG.l1 a c)
+    · exact p_2 a c
   · obtain rfl | ab_eq := eq_or_ne a c
     · -- And if a = c, then one can choose q = b.
       use b
@@ -345,8 +339,7 @@ theorem p_9
         apply PG.l1 b d
       · unfold star
         simp only [mem_setOf_eq, if_true_left]
-        intro _
-        apply PG.l1 a b
+        exact fun a_1 => ProjectiveGeometry.l1 a b
     · -- So we may assume that c ∉ b ⋆ d and a ≠ c.
       have q_ex :
           ∃ q, q ∈ star ell a c ∩ star ell b d := by
@@ -354,22 +347,14 @@ theorem p_9
         rw [<- nonempty_def]
         have disj : inter = ∅ ∨ Set.Nonempty inter := eq_empty_or_nonempty inter
         have inter_nempty : inter ≠ ∅ := p_3 a b c d p a_in_bp p_in_cd ab_eq
-        rcases disj
-        case inl _ => contradiction
-        case inr nempty => exact nempty
+        exact nonempty_iff_ne_empty.mpr inter_nempty
       match q_ex with
       | ⟨q, q_in_ac, q_in_bd⟩ =>
         use q
         constructor
         · exact q_in_bd
         · obtain rfl | qa_neq := eq_or_ne q a
-          · unfold star
-            simp only [mem_setOf_eq]
-            split
-            case h.right.inl.isTrue cq_eq =>
-              exact id cq_eq.symm
-            case h.right.inl.isFalse _ =>
-              apply rel_sym_bca q c q PG.l1 PG.l2 (PG.l1 q c)
+          · exact p_2 q c
           · have c_in_qa : c ∈ star ell q a := p_4 q a c q_in_ac qa_neq
             have cq_neq : c ≠ q := by
               intro cq_eq
@@ -520,11 +505,9 @@ theorem elbow_center_neq :
 theorem shadow_exists :
     star ell x.val z ∩ star ell c b ≠ ∅ := by
   apply p_3 x.val c z b a
-  · rw [p_6 c a]
-    exact x.property
+  · exact zp_sym
   · apply p_4
-    · rw [p_6 b a]
-      exact z.property
+    · exact zp_sym
     · exact id (Ne.symm CPQ.bz_neq)
   · apply elbow_center_neq
 

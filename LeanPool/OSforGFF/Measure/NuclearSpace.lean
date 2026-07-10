@@ -45,9 +45,7 @@ variable {𝕜 E ι ι' : Type*} [NormedField 𝕜] [AddCommGroup E] [Module �
 /-- Reindexing a seminorm family by an equivalence preserves `WithSeminorms`. -/
 theorem WithSeminorms.equiv {p : SeminormFamily 𝕜 E ι} (hp : WithSeminorms p) (e : ι' ≃ ι) :
     WithSeminorms (p ∘ e) := by
-  rw [SeminormFamily.withSeminorms_iff_nhds_eq_iInf] at hp ⊢
-  simp_rw [Function.comp_apply, hp]
-  exact (Equiv.iInf_comp e).symm
+  exact WithSeminorms.congr_equiv hp e
 
 end Reindex
 

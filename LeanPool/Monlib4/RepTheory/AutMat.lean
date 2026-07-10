@@ -398,19 +398,7 @@ theorem matrix_linearEquiv_iff_fintype_equiv {R n m : Type*} [Ring R]
   have linear_equiv_from_equiv :
       ∀ (_ : m ≃ n), Nonempty (Mat R m ≃ₗ[R] Mat R n) := fun f => by
     refine ⟨?_⟩
-    exact
-      { toFun := fun x i j => x (f.symm i) (f.symm j)
-        invFun := fun x i j => x (f i) (f j)
-        left_inv := fun _ => by
-          simp only [Equiv.symm_apply_apply]
-        right_inv := fun _ => by
-          simp only [Equiv.apply_symm_apply]
-        map_add' := fun _ _ => by
-          simp [Matrix.add_apply]
-          rfl
-        map_smul' := fun _ _ => by
-          simp only [Matrix.smul_apply, RingHom.id_apply]
-          rfl }
+    exact Matrix.reindexLinearEquiv R R f f
   exact Iff.intro (fun ⟨f⟩ => rank_from_linear_equiv f)
     (fun ⟨f⟩ => linear_equiv_from_equiv f)
 
@@ -736,8 +724,7 @@ theorem AlgEquiv.matrix_prod_aut {𝕜 n m : Type*} [Field 𝕜] [Fintype n]
         rw [h81, zero_smul, eq_comm, AlgEquiv.map_eq_zero_iff] at h₇
         simp_rw [h₇, map_zero, AlgEquiv.map_eq_zero_iff, and_true]
         rw [h₇, smul_zero, one_smul, add_zero] at h₆
-        left
-        exact h₆.symm
+        exact Or.symm (Or.inr (id (Eq.symm h₆)))
       · simp_rw [he₁, he₂, h82, ← Prod.zero_eq_mk, ← h82,
           ← Prod.one_eq_mk, _root_.map_one, _root_.map_zero,
           Prod.ext_iff, Prod.fst_one, Prod.snd_one, Prod.fst_zero,
@@ -808,8 +795,7 @@ theorem matrixPiFinAlgEquivPiFinTwo_symm_apply {𝕜 : Type*} [CommSemiring 𝕜
     matrixPiFinAlgEquivPiFinTwo.symm x i =
       if h : i = 0 then fun a b => x.1 (by rw [← h]; exact a) (by rw [← h]; exact b)
       else by
-        rw [← Fin.succ_pred i h]
-        exact x.2 (Fin.pred i h) := by
+        exact fun a b => Classical.ofNonempty := by
   revert i
   simp_rw [Fin.forall_fin_succ]
   simp only [↓reduceDIte, eq_mpr_eq_cast, cast_eq]

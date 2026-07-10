@@ -196,8 +196,7 @@ private theorem analytic_correction_at_pole (S : Finset ℂ) (f : ℂ → ℂ)
       GeneralizedResidueTheory.meromorphicPrincipalPart f s' w with g_ext_def
   have hg_ext_diff : DifferentiableAt ℂ g_ext z := by
     apply DifferentiableAt.sub hg_an_at.differentiableAt
-    convert DifferentiableAt.sum h_each_diff using 1
-    ext w; exact (Finset.sum_apply w _ _).symm
+    exact DifferentiableAt.fun_sum h_each_diff
   have hg_eq_ext : g =ᶠ[𝓝[≠] z] g_ext := by
     rw [hg_def]
     apply hg_an_eq.mono; intro w hw
@@ -385,8 +384,7 @@ theorem conditionsAB_imply_higherOrderCancel_nh (U : Set ℂ) (hU : IsOpen U)
       cauchyPrincipalValueIntegrandOn S0
         (fun z => ∑ s ∈ S0, residueAt f s / (z - s)) γ.toFun ε t =
       cauchyPrincipalValueIntegrandOn S0 h γ.toFun ε t := by
-    intro ε t
-    exact cpvIntegrandOn_sub S0 f (fun z => ∑ s ∈ S0, residueAt f s / (z - s)) γ.toFun ε t
+    exact fun ε t => cpvIntegrandOn_sub S0 f (fun z => ∑ s ∈ S0, residueAt f s / (z - s)) γ.toFun ε t
   suffices h_main : Tendsto
       (fun ε => ∫ t in γ.a..γ.b,
         cauchyPrincipalValueIntegrandOn S0 h γ.toFun ε t)

@@ -632,8 +632,7 @@ lemma segment_in_interior_aux {Δ : Finset Triangle} (hCover : isTriangulation �
     have xinclosed : x ∈ closedHull L := by
       exact open_sub_closed L hx
     have xnotinopen : x ∉ openHull P := by
-      by_contra hcontra
-      tauto_set
+      exact Disjoint.notMem_of_mem_left P' xinclosed
     tauto_set
   have xinTside : ∃ i : Fin 3, x ∈ openHull (Tside P i) := by
     have xinclosed : ∃ i : Fin 3, x ∈ closedHull (Tside P i) := by
@@ -645,8 +644,7 @@ lemma segment_in_interior_aux {Δ : Finset Triangle} (hCover : isTriangulation �
     have xboundTside : x ∈ boundary (Tside P i) := by
       tauto_set
     have enddiff : Tside P i 0 ≠ Tside P i 1 := by
-      apply nondegen_triangle_imp_nondegen_side
-      exact Pnondegen
+      exact nondegen_triangle_imp_nondegen_side i Pnondegen
     have xtriangulationpt: x ∈ triangulationPoints Δ := by
       unfold triangulationPoints
       simp only [Fin.isValue, mem_biUnion, mem_insert, mem_singleton]
@@ -761,8 +759,7 @@ lemma triangulation_boundary_union (Δ : Finset Triangle) (hCover : isTriangulat
     rw [mem_filter, iff_self_and]
     intro hL
     have hT : ∃ T ∈ Δ, closedHull L ⊆ closedHull T := by
-     rcases segment_in_interior_aux hCover non_degen hL with ⟨T, hT⟩
-     exact ⟨T, hT⟩
+     exact segment_in_interior_aux hCover non_degen hL
     obtain ⟨T, hT⟩ := hT
     apply isCover_sub at hCover
     calc openHull L ⊆ closedHull L := open_sub_closed L
@@ -772,8 +769,7 @@ lemma triangulation_boundary_union (Δ : Finset Triangle) (hCover : isTriangulat
   ext L
   repeat rw [mem_filter]
   simp only [iff_self_and, and_imp]
-  intro hL hinc
-  apply segment_in_interior_or_boundary hCover non_degen hL
+  exact fun a a_1 => segment_in_interior_or_boundary hCover non_degen a
 
 
 lemma triangulation_boundary_intersection (Δ : Finset Triangle) :
@@ -784,8 +780,7 @@ lemma triangulation_boundary_intersection (Δ : Finset Triangle) :
   intro hS hOpen hS2
   by_contra h
   have h_elt : ∃ x, x ∈ openHull S := by
-    apply open_pol_nonempty
-    linarith
+    exact open_seg_nonempty S
   have h_open_nonempty : openHull S ≠ ∅ := by
     obtain ⟨x, h_1⟩ := h_elt
     intro h
@@ -1116,9 +1111,7 @@ theorem segment_sum_odd (Δ : Finset Triangle) (hCovering : isTriangulation Δ)
                            _ ⊆ boundary unitSquare := by exact hUnion
         have hopenSinBoundary : openHull S ⊆ boundary unitSquare := by
           have hInc : openHull S ⊆ closedHull S := open_sub_closed S
-          suffices h : closedHull S ⊆ boundary unitSquare by
-            tauto_set
-          exact hClosedSinBoundary
+          exact Set.Subset.trans hInc hClosedSinBoundary
         refine ⟨hopenSinBoundary, ?_⟩
         apply unitSquare_is_convex_open
         · exact hClosedSinBoundary
@@ -1140,8 +1133,7 @@ theorem segment_sum_odd (Δ : Finset Triangle) (hCovering : isTriangulation Δ)
     have h_triangle_avoiding_set : (triangulationAvoidingSet Δ) ⊆ openHull unitSquare := by
       unfold triangulationAvoidingSet
       simp only [Set.iUnion_subset_iff]
-      intro T hT
-      exact (open_triangle_in_open_square hT (non_degen T hT) hCovering)
+      exact fun i i_2 => open_triangle_in_open_square i_2 (non_degen i i_2) hCovering
     have h_square_boundary : ∀ L ∈ squareBoundaryBigSet,
         closedHull L ⊆ boundary unitSquare := by
       intro L hL
@@ -1162,8 +1154,7 @@ theorem segment_sum_odd (Δ : Finset Triangle) (hCovering : isTriangulation Δ)
       exact unitSquare_cover_segmentSet hCovering
     · suffices h_disj : Disjoint (boundary unitSquare) (openHull unitSquare) by
         tauto_set
-      unfold boundary
-      tauto_set
+      exact boundary_open_disjoint
   have h2 : ∀ S L, S ∈ (squareBoundaryBigSet) → L ∈ (squareBoundaryBigSet) → S ≠ L →
       openHull S ∩ openHull L = ∅ := by
     unfold squareBoundaryBigSet
@@ -1246,15 +1237,13 @@ lemma triangleBoundary_decomposition {Δ : Finset Triangle} {T : Triangle} (hdet
         rcases δ with ⟨η, hη⟩
         unfold triangulationAvoidingSet at hη
         have xopoenhullS : ∃ x, x ∈ openHull S := by
-          apply open_pol_nonempty
-          linarith
+          exact open_seg_nonempty S
         rcases xopoenhullS with ⟨x, hx⟩
         have xclosedhullS : x ∈ closedHull S := by
           exact open_sub_closed S hx
         have xinboundaryT : x ∈ boundary T := by
           rw [boundary_is_union_sides hdet]
-          apply hα at xclosedhullS
-          exact xclosedhullS
+          exact Set.mem_of_subset_of_mem hα xclosedhullS
         have xinTsideopen: ∃ i : Fin 3, x ∈ openHull (Tside T i) := by
           apply el_in_boundary_imp_side
           · apply hdet
@@ -1337,8 +1326,7 @@ lemma triangleBoundary_decomposition {Δ : Finset Triangle} {T : Triangle} (hdet
           rw [mem_filter] at α
           rcases α with ⟨β, hβ⟩
           rcases β with ⟨γ, hγ ⟩
-          apply segmentSet_vertex_distinct
-          apply γ
+          exact segmentSet_vertex_distinct γ
     · intro hS
       simp_all only [ne_eq, top_eq_univ, mem_biUnion, mem_univ, true_and]
       rcases hS with ⟨a, ha⟩
@@ -1485,8 +1473,7 @@ lemma rainbowTriangle_purpleSum {Δ : Finset Triangle}
           apply (Set.subset_iUnion_of_subset (Tside T i))
           apply (Set.subset_iUnion_of_subset i)
           simp only [Set.iUnion_true, subset_refl]
-        calc closedHull S ⊆ closedHull (Tside T i) := by exact h1
-                         _ ⊆ ⋃ L, ⋃ i, ⋃ (_ : L = Tside T i), closedHull (Tside T i) := by exact h2
+        exact Set.Subset.trans h1 h2
     · simp only [top_eq_univ, mem_biUnion, mem_univ, mem_singleton, true_and, Set.iUnion_exists,
       mem_filter, and_imp]
       intro hS1 hS2
@@ -1495,8 +1482,7 @@ lemma rainbowTriangle_purpleSum {Δ : Finset Triangle}
       have hBoundaryIncl : closedHull S ⊆ boundary T := by
         have hInc : ⋃ L, ⋃ i, ⋃ (_ : L = Tside T i), closedHull L ⊆ boundary T := by
           simp only [Set.iUnion_subset_iff, forall_eq_apply_imp_iff]
-          intro i
-          exact (side_in_boundary (non_degen T hT) i)
+          exact fun a => side_in_boundary (non_degen T hT) a
         tauto_set
       constructor
       · unfold triangleBasicBoundary triangulationBasicSegments
@@ -1586,8 +1572,7 @@ lemma rainbowTriangle_purpleSum {Δ : Finset Triangle}
     simp only [disjoint_singleton_left, mem_singleton, ne_eq]
     -- Annoying
     suffices hs : ¬ Tside T j 0 = Tside T i 0 by
-      by_contra h_contra
-      exact hs (congrFun h_contra.symm 0)
+      exact Not.imp hs fun a => congrFun (id (Eq.symm a)) 0
     unfold Tside
     fin_cases i <;> fin_cases j <;> simp only [Fin.isValue, not_true_eq_false]
     all_goals try (

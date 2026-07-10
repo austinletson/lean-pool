@@ -122,9 +122,7 @@ lemma DualCertificate.negMass_nonneg
 
 /-- `|x| = max(x, 0) + max(-x, 0)` -/
 private lemma abs_eq_max_add (x : ℝ) : |x| = max x 0 + max (-x) 0 := by
-  rcases le_or_gt x 0 with h | h
-  · rw [abs_of_nonpos h, max_eq_right h, max_eq_left (by linarith)]; ring
-  · rw [abs_of_pos h, max_eq_left h.le, max_eq_right (by linarith)]; ring
+  exact Eq.symm (max_zero_add_max_neg_zero_eq_abs_self x)
 
 /-
 Positive mass plus negative mass equals 1.
@@ -190,8 +188,7 @@ lemma DualCertificate.marginal_pos_eq_neg
       by
     simpa only [← Finset.sum_sub_distrib] using
       Finset.sum_congr rfl fun x hx => by
-        cases max_cases (cert.lam x) 0 <;>
-          cases max_cases (-cert.lam x) 0 <;>
+        exact max_zero_sub_max_neg_zero_eq_self (cert.lam x) <;>
           linarith
   linarith
 

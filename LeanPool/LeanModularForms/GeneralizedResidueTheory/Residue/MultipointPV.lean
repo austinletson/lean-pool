@@ -323,11 +323,7 @@ lemma finset_discrete_min_sep (S0 : Finset ℂ) (hS0_nonempty : S0.Nonempty)
     have h_nonempty : dists.Nonempty := by
       obtain ⟨x, hx⟩ := hS0_nonempty
       have h_exists_y : ∃ y ∈ S0, y ≠ x := by
-        by_contra h_all; push Not at h_all
-        have : S0.card ≤ 1 := (Finset.card_le_card
-          (fun z hz => Finset.mem_singleton.mpr (h_all z hz))).trans
-          (by simp only [Finset.card_singleton, le_refl])
-        omega
+        exact Finset.exists_mem_ne h_singleton x
       obtain ⟨y, hy, hne⟩ := h_exists_y; refine ⟨‖y - x‖, ?_⟩
       simp only [dists, Finset.mem_biUnion, Finset.mem_image, Finset.mem_filter]
       exact ⟨x, hx, y, ⟨hy, hne⟩, rfl⟩
@@ -336,9 +332,7 @@ lemma finset_discrete_min_sep (S0 : Finset ℂ) (hS0_nonempty : S0.Nonempty)
       have h_mem := Finset.min'_mem dists h_nonempty
       simp only [dists, Finset.mem_biUnion, Finset.mem_image, Finset.mem_filter] at h_mem
       obtain ⟨s, hs, s', ⟨hs', hne⟩, heq⟩ := h_mem
-      have h_pos : 0 < ‖s' - s‖ := hS0_discrete s hs s' hs' hne.symm
-      calc δ = ‖s' - s‖ := heq.symm
-        _ > 0 := h_pos
+      exact lt_of_lt_of_eq (hS0_discrete s hs s' hs' (id (Ne.symm hne))) heq
     refine ⟨δ, hδ_pos, fun s hs s' hs' hne => ?_⟩
     have h_in : ‖s' - s‖ ∈ dists := by
       simp only [dists, Finset.mem_biUnion, Finset.mem_image, Finset.mem_filter]
@@ -410,8 +404,7 @@ lemma A_int_bound_good_set {S0 : Finset ℂ} {f g_reg : ℂ → ℂ} {γ : ℝ �
     have := h_all_far t ht (γ t) h_in; simp only [sub_self, norm_zero] at this; linarith
   rw [show f (γ t) - ∑ s ∈ S0, residueSimplePole f s / (γ t - s) = g_reg (γ t) from by
     rw [hg_decomp (γ t) h_not_in_S0]; ring]
-  calc ‖g_reg (γ t) * deriv γ t‖ = ‖g_reg (γ t)‖ * ‖deriv γ t‖ := norm_mul _ _
-    _ ≤ Mg * Mγ := mul_le_mul (hg_bound t ht) (hγ'_bound t ht) (norm_nonneg _) hMg
+  exact norm_mul_le_of_le (hg_bound t ht) (hγ'_bound t ht)
 
 /-! ## Integrability Lemmas -/
 

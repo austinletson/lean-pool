@@ -127,10 +127,7 @@ theorem ker_phiToPS_eq : RingHom.ker phiToPS = PPre := by
       have hf'eq : f' = X 1 * g₁ := by
         rw [hf''_def] at hf''_zero
         exact sub_eq_zero.mp hf''_zero
-      have hfeq : f = X 0 * g₀ + f' := by rw [hf'_def]
-                                          abel
-      rw [hf'eq] at hfeq
-      exact hfeq
+      exact Eq.symm (add_eq_of_eq_sub' (id (Eq.symm hf'eq)))
     rw [hdecomp]
     apply Ideal.add_mem
     · exact Ideal.mul_mem_right _ _ (Ideal.subset_span (Set.mem_insert _ _))

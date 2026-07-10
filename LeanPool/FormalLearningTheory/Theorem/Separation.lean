@@ -425,9 +425,7 @@ private lemma chebyshev_seven_twelfths_bound
       _ = 2 * ↑k / 3 := by ring
   -- Step 12: MemLp S 2 μ
   have hS_memLp : MemLp S 2 μ := by
-    change MemLp (fun ω => ∑ j : Fin k, X j ω) 2 μ
-    have h := memLp_finsetSum univ (fun j (_ : j ∈ univ) => hX_memLp j)
-    convert h using 1
+    exact memLp_finsetSum Finset.univ fun i a => hX_memLp i
   -- Step 13: Var[S] ≤ k/4
   have hvar_S_fn : ProbabilityTheory.variance S μ ≤ ↑k / 4 := by
     change ProbabilityTheory.variance (fun ω => ∑ j : Fin k, X j ω) μ ≤ _
@@ -445,9 +443,7 @@ private lemma chebyshev_seven_twelfths_bound
           div_le_div_of_nonneg_right hvar_S_fn (sq_nonneg _)
       _ = 36 / ↑k := by field_simp; ring
       _ ≤ δ := by
-          rw [div_le_iff₀ hk_pos]
-          have h36 : 36 / δ * δ = 36 := div_mul_cancel₀ 36 (ne_of_gt h_delta_pos)
-          nlinarith [hk]
+          exact (div_le_comm₀ h_delta_pos hk_pos).mp hk
   -- Step 16: μ{bad} ≤ ofReal δ
   have hbad_le : μ {ω | ↑k / 12 ≤ |S ω - ∫ ω, S ω ∂μ|} ≤ ENNReal.ofReal δ :=
     le_trans hcheb (ENNReal.ofReal_le_ofReal hcheb_bound)
@@ -1089,15 +1085,7 @@ theorem pac_not_implies_online :
         simp_all
       have hprod_top : (inferInstance : MeasurableSpace ((Fin m → ℕ) × (Fin m → ℕ))) = ⊤ := by
         apply le_antisymm le_top
-        intro s _
-        have hs_union : s = ⋃ p ∈ s, {p} := by ext p; simp
-        rw [hs_union]
-        apply MeasurableSet.biUnion (Set.to_countable s)
-        intro ⟨a, b⟩ _
-        have : ({(a, b)} : Set ((Fin m → ℕ) × (Fin m → ℕ))) = {a} ×ˢ {b} := by
-          ext ⟨x, y⟩; simp [Prod.mk.injEq]
-        rw [this]
-        exact (hmeas_singleton_pi a).prod (hmeas_singleton_pi b)
+        intro s exact fun a => DiscreteMeasurableSpace.forall_measurableSet s
       have hmeas_all : ∀ s : Set ((Fin m → ℕ) × (Fin m → ℕ)),
           @MeasurableSet _ (inferInstance : MeasurableSpace ((Fin m → ℕ) × (Fin m → ℕ))) s := by
         intro s; rw [hprod_top]; exact MeasurableSpace.measurableSet_top

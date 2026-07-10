@@ -277,8 +277,7 @@ lemma mul_rowEliminationListMatrix_prod_apply_aux
     · have hni : n ≠ j := by
         intro hc
         apply he
-        ext
-        exact hc
+        exact Fin.eq_of_val_eq hc
       rw [mul_transvection_apply_of_ne, ih hnk]
       · by_cases hi : n + 1 ≤ (j : ℕ)
         · simp only [n.le_succ.trans hi, ↓reduceIte, hi]

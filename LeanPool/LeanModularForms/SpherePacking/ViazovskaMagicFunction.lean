@@ -216,15 +216,7 @@ alias isOpen_upperHalfPlaneSet := UpperHalfPlane.isOpen_upperHalfPlaneSet
 
 /-- The upper half-plane `{z : ℂ | 0 < z.im}` is convex. -/
 theorem convex_upperHalfPlaneSet : Convex ℝ {z : ℂ | 0 < z.im} := by
-  intro x hx y hy a b ha hb hab
-  change 0 < (a • x + b • y).im
-  have him : (a • x + b • y).im = a * x.im + b * y.im := by simp [Complex.add_im]
-  rw [him]
-  have hx' : (0 : ℝ) < x.im := hx
-  have hy' : (0 : ℝ) < y.im := hy
-  rcases eq_or_lt_of_le ha with rfl | ha'
-  · simp only [zero_add] at hab; subst hab; simp; linarith
-  · linarith [mul_pos ha' hx', mul_nonneg hb (le_of_lt hy')]
+  exact convex_halfSpace_im_gt 0
 
 /-! ## Holomorphicity of the integrand -/
 
@@ -276,11 +268,7 @@ theorem segment_integral_eq_sub_of_hasDerivAt {f G : ℂ → ℂ} {S : Set ℂ}
     (hf_cont : ContinuousOn f S) :
     ∫ t in (0 : ℝ)..1, f (a + t • (b - a)) * (b - a) = G b - G a := by
   have h_mem : ∀ t ∈ Icc (0 : ℝ) 1, a + ↑t • (b - a) ∈ S := by
-    intro t ht
-    have : a + ↑t • (b - a) = (1 - t) • a + t • b := by
-      simp only [smul_sub, sub_smul, one_smul]; ring
-    rw [this]
-    exact hS_convex ha hb (by linarith [ht.2]) ht.1 (by ring)
+    exact fun t a_1 => Convex.add_smul_sub_mem hS_convex ha hb a_1
   have hcont : ContinuousOn (fun t : ℝ => f (a + t • (b - a))) (Icc 0 1) :=
     hf_cont.comp (continuous_const.add
       (continuous_ofReal.smul continuous_const)).continuousOn h_mem

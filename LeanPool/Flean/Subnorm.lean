@@ -346,11 +346,7 @@ lemma subnormal_up_minus_down (q : ℚ) :
 
 lemma subnormal_round_neg (r : IntRounder) {q : ℚ} (h : q ≠ 0) :
   subnormalRound r.neg (-q) = (subnormalRound (C := C) r q).neg := by
-  simp only [subnormalRound, SubnormRep.neg, IntRounder.neg]
-  congr 2
-  · simp [h.symm.le_iff_lt]
-  · simp [<-decide_not, h.le_iff_lt]
-  simp
+  exact neg_subnormal_round r h
 
 lemma subnormal_round_eq_up_down (r : IntRounder) [rh : ValidRounder r] (q : ℚ) :
   subnormalRound r q = subnormalRound (C := C) rounddown q ∨

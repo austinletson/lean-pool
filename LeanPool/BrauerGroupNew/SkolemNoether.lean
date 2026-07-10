@@ -263,8 +263,7 @@ lemma findimB (K A B M : Type u)
     have H := IsSimpleRing.injective_ringHom_or_subsingleton_codomain f.toRingHom
     refine H.resolve_right fun rid ↦ ?_
     have : Nontrivial A := inferInstance
-    rw [← not_subsingleton_iff_nontrivial] at this
-    contradiction)
+    exact false_of_nontrivial_of_subsingleton A)
 
 omit hB in
 lemma iso_fg [hB1 : IsSimpleRing B] :

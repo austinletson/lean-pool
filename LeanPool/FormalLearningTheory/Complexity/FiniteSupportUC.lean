@@ -54,8 +54,7 @@ private lemma trueErrorReal_extend_false
   have hto : @PMF.toMeasure (H ⊕ ℕ) ⊤ (μ.toPMF.map Sum.inl) S =
       (μ.toPMF.map Sum.inl).toOuterMeasure S := by
     letI : MeasurableSpace (H ⊕ ℕ) := ⊤
-    exact @PMF.toMeasure_apply_eq_toOuterMeasure (H ⊕ ℕ) ⊤ (μ.toPMF.map Sum.inl)
-      ⟨fun _ => trivial⟩ S
+    exact PMF.toMeasure_apply_eq_toOuterMeasure (PMF.map Sum.inl μ.toPMF) S
   change (@PMF.toMeasure (H ⊕ ℕ) ⊤ (μ.toPMF.map Sum.inl) S).toReal = _
   rw [hto, PMF.toOuterMeasure_map_apply]
   -- Preimage computation

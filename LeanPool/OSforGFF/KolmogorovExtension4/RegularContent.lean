@@ -79,7 +79,6 @@ lemma addContent_iUnion_eq_sum_of_regular (hR : IsSetRing R) (m : AddContent ℝ
     (h_disj : Pairwise (Function.onFun Disjoint f)) :
     m (⋃ i, f i) = ∑' i, m (f i) := by
   refine addContent_iUnion_eq_sum_of_tendsto_zero hR m hm_ne_top ?_ hf hUf h_disj
-  intro s hs hs_anti hs_iInter
-  exact tendsto_zero_of_regular_addContent hR m hs hs_anti hs_iInter hC hCR h_reg
+  exact fun ⦃s⦄ x a a_1 => tendsto_zero_of_regular_addContent hR m x a a_1 hC hCR h_reg
 
 end MeasureTheory

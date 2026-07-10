@@ -395,8 +395,7 @@ lemma second_part_of_second_part (γ : Dipath x₀ x₁) {n k : ℕ} (hkn : k < 
       simp only [Nat.succ_eq_add_one, unitInterval.coe_symm_eq, zero_add, Nat.cast_one,
         Nat.cast_add, one_div, Subtype.mk.injEq]
       have : (n : ℝ) + 1 > 0 := by
-        rw [←Nat.cast_succ]
-        exact Nat.cast_pos.mpr (Nat.succ_pos n)
+        exact Nat.cast_add_one_pos n
       rw [←one_div, FractionEqualities.one_sub_inverse_of_add_one,
         FractionEqualities.frac_cancel', ← add_div]
       · linarith

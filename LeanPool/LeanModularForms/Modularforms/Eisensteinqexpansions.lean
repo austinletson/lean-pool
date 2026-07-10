@@ -56,9 +56,7 @@ def gammaSetNMap (N : ℕ) (v : gammaSetN N) : gammaSet 1 1 0 := by
   exact hv2.choose_spec.1
 
 lemma gammaSet_top_mem (v : Fin 2 → ℤ) : v ∈ gammaSet 1 1 0 ↔ IsCoprime (v 0) (v 1) := by
-  rw [gammaSet]
-  simp only [Fin.isValue, mem_setOf_eq, ←Int.isCoprime_iff_gcd_eq_one, and_iff_right_iff_imp]
-  exact fun _ => Subsingleton.eq_zero (Int.cast ∘ v)
+  exact mem_gammaSet_one v
 
 lemma gammaSetN_map_eq (N : ℕ) (v : gammaSetN N) : v.1 = N • gammaSetNMap N v := by
   have hv2 := v.2
@@ -297,8 +295,7 @@ lemma EQ22 (k : ℕ) (hk : 3 ≤ (k : ℤ)) (z : ℍ) :
         (g := fun (v : (gammaSet 1 1 0) ) => eisSummand k v z)
       · simp only [norm_inv, norm_pow, norm_natCast, Real.summable_nat_pow_inv, hk1]
       apply (EisensteinSeries.summable_norm_eisSummand hk z).subtype
-    intro b
-    simp only
+    exact fun b => comp_apply only
     apply Summable.mul_left
     apply Summable.of_norm
     apply (EisensteinSeries.summable_norm_eisSummand hk z).subtype

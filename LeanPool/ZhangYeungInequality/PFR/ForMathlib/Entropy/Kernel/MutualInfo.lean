@@ -257,11 +257,7 @@ instance _root_.ProbabilityTheory.Kernel.IsZeroOrProbabilityMeasure.compProd
     {α β : Type*} {mα : MeasurableSpace α} {mβ : MeasurableSpace β}
     (μ : Measure α) [IsZeroOrProbabilityMeasure μ] (κ : Kernel α β)
     [IsZeroOrMarkovKernel κ] : IsZeroOrProbabilityMeasure (μ ⊗ₘ κ) := by
-  rcases eq_zero_or_isMarkovKernel κ with rfl | hκ
-  · simp only [Measure.compProd_zero_right]; infer_instance
-  rcases eq_zero_or_isProbabilityMeasure μ with rfl | hμ
-  · simp only [Measure.compProd_zero_left]; infer_instance
-  infer_instance
+  exact Measure.instIsZeroOrProbabilityMeasureProdCompProdOfIsZeroOrMarkovKernel
 
 lemma _root_.ProbabilityTheory.Kernel.entropy_condKernel_compProd_triple
     [Nonempty V] (ξ : Kernel T S) [IsZeroOrMarkovKernel ξ]

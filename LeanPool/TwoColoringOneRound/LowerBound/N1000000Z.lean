@@ -101,8 +101,7 @@ private lemma LDL_entry (r : Block) (i j : Fin 3) :
   have hsum :
       ((L r) * Matrix.diagonal (Dvec r) * (Matrix.transpose (L r))) i j =
         ∑ k : Fin 3, (L r i k) * (Dvec r k) * (L r j k) := by
-    simpa [Matrix.mul_assoc] using
-      (mul_diagonal_mul_transpose_apply (L := L r) (d := Dvec r) (i := i) (j := j))
+    exact mul_diagonal_mul_transpose_apply (L r) (Dvec r) i j
   -- Unfold the scaled entries inside the finite sum and factor out the common `den⁻¹` powers.
   have hden : (den r : Q) ≠ 0 := denQ_ne_zero r
   let invDen : Q := (den r : Q)⁻¹

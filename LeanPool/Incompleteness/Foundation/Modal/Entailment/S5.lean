@@ -30,8 +30,7 @@ def diaboxBox : 𝓢 ⊢ ◇□φ ==> □φ := by
   apply implyBoxDistribute';
   refine impTrans'' diaDualityMp ?_;
   apply contra₀';
-  apply implyBoxDistribute';
-  apply dni;
+  exact boxDni
 omit [DecidableEq F] in
 @[simp] lemma «diaboxBox!» : 𝓢 ⊢! ◇□φ ==> □φ := by
   classical

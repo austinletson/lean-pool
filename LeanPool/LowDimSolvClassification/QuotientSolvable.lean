@@ -54,8 +54,7 @@ theorem solvable_of_ideal_and_quot_solvable {I : LieIdeal R L} (quotsol : LieAlg
     rfl
   rw [derivedSeries_def, derivedSeriesOfIdeal_add, ← derivedSeries_def R L k₁, eq_bot_iff]
   have h₁ : derivedSeriesOfIdeal R L k₂ (derivedSeries R L k₁) ≤ derivedSeriesOfIdeal R L k₂ I := by
-    apply derivedSeriesOfIdeal_le this
-    apply le_refl
+    exact derivedSeriesOfIdeal_mono this k₂
   rw [LieIdeal.derivedSeries_eq_derivedSeriesOfIdeal_comap,
     LieIdeal.comap_incl_eq_bot_of_le (derivedSeriesOfIdeal_le_self I k₂)] at hk₂
   simp_all

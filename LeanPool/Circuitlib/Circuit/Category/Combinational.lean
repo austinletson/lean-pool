@@ -318,15 +318,7 @@ lemma tensorHom_def
 lemma id_tensorHom_id
     (X₁ X₂ : CombinationalCircuitCategory V G) :
     tensorHom (𝟙 X₁) (𝟙 X₂) = 𝟙 (X₁.tensorObj X₂) := by
-  apply Subtype.ext; funext v
-  change tensorHomVal (𝟙 X₁) (𝟙 X₂) v = v
-  unfold tensorHomVal
-  apply Wires.ext; intro i
-  refine Fin.addCases (fun j => ?_) (fun j => ?_) i
-  · rw [tensorHom_eq_left v j (𝟙 X₁) (𝟙 X₂)]
-    simp only [CategoryStruct.id, id]; rw [idVal, Wires.get_ofFn]
-  · rw [tensorHom_eq_right v j (𝟙 X₁) (𝟙 X₂)]
-    simp only [CategoryStruct.id, id]; rw [idVal, Wires.get_ofFn]
+  exact whisker X₁ X₂
 
 @[simp]
 lemma tensorHom_comp_tensorHom

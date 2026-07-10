@@ -160,10 +160,7 @@ lemma spatial_transport_joint_integrable
   -- Uniform bound: |g x v| ≤ C_total / (1+‖v‖)^4 for all x, v
   have h_unif_bound : ∃ C_total > 0, ∀ (x : Torus3) (v : Fin 3 → ℝ),
       |g x v| ≤ C_total / (1 + ‖v‖) ^ 4 := by
-    obtain ⟨C_total, hC_total_pos, hbound⟩ :=
-      spatial_transport_uniform_bound hSchwartz C_log K_log hLB
-    exact ⟨C_total, hC_total_pos, fun x v => by
-      simpa only [hg_def] using hbound x v⟩
+    exact spatial_transport_uniform_bound hSchwartz C_log K_log hLB
   obtain ⟨C_total, hC_total_pos, h_bound⟩ := h_unif_bound
   -- Use integrable_prod_iff
   refine (integrable_prod_iff ?_).mpr ⟨?_, ?_⟩

@@ -60,15 +60,7 @@ open NeighborhoodSystem
 *nested-or-disjoint* — in fact always nested.) -/
 theorem upperSet_subset_or {Δ : Type*} [LinearOrder Δ] {X Y : Set Δ}
     (hX : IsUpperSet X) (hY : IsUpperSet Y) : X ⊆ Y ∨ Y ⊆ X := by
-  by_cases h : X ⊆ Y
-  · exact Or.inl h
-  · right
-    rw [Set.not_subset] at h
-    obtain ⟨a, haX, haY⟩ := h
-    intro b hbY
-    rcases le_total a b with hab | hba
-    · exact hX hab haX
-    · exact absurd (hY hba hbY) haY
+  exact IsUpperSet.total hX hY
 
 /-- **Exercise 1.25 — the final-segment neighbourhood system.** Over a (non-empty)
 linear order

@@ -62,8 +62,7 @@ lemma truthlemma_lemma1
   intro χ hr;
   replace hr : χ = □ψ ∨ χ = -ψ ∨ □χ ∈ X ∨ (∃ a, □a ∈ X ∧ □a = χ) := by simp at hr; tauto;
   rcases hr with (rfl | rfl | hp | ⟨χ, hr, rfl⟩);
-  · apply Finset.mem_union.mpr;
-    tauto;
+  · exact FormulaFinset.complementary_mem hq
   · apply Finset.mem_union.mpr;
     right;
     apply Finset.mem_image.mpr;

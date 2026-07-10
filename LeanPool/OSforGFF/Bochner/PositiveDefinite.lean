@@ -116,9 +116,7 @@ lemma eval_zero_real (hpd : IsPositiveDefinite φ) : (φ 0).im = 0 := by
   simp only [neg_zero] at h
   -- h : φ 0 = starRingEnd ℂ (φ 0), i.e., φ 0 = conj(φ 0)
   -- This means Im(φ 0) = 0
-  have := congr_arg Complex.im h
-  simp [Complex.conj_im] at this
-  linarith
+  exact conj_eq_iff_im.mp (id (Eq.symm h))
 
 /-- Helper: expand the PD condition for m=2. -/
 private lemma pd_two (hpd : IsPositiveDefinite φ) (a b : α) (c₀ c₁ : ℂ) :

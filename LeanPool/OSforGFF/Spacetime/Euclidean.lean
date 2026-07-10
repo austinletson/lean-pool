@@ -199,8 +199,7 @@ lemma measurePreserving_act (g : E) :
   have rot : MeasurePreserving (fun x : SpaceTime => g.R x) μ μ := by
     simpa using (g.R.toLinearIsometryEquiv rfl).measurePreserving
   have trans : MeasurePreserving (fun x : SpaceTime => x + g.t) μ μ := by
-    refine ⟨(continuous_id.add continuous_const).measurable, ?_⟩
-    simpa using map_add_right_eq_self μ g.t
+    exact measurePreserving_add_right μ g.t
   change MeasurePreserving ((fun x : SpaceTime => x + g.t) ∘ fun x : SpaceTime => g.R x) μ μ
   exact trans.comp rot
 

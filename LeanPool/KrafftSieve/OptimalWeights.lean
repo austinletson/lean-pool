@@ -432,23 +432,7 @@ lemma decomposition (n : ℕ) (x : Idx n → ℝ) :
     all_goals try infer_instance
     · exact Submodule.span ℝ { v : EuclideanSpace ℝ ( Idx n ) | q1 n ( fun i => v i ) = 0 }
     · constructor
-      intro v
-      have h_decomp : ∀ v : EuclideanSpace ℝ (Idx n),
-          ∃ w ∈ Submodule.span ℝ {v : EuclideanSpace ℝ (Idx n) | q1 n (fun i => v i) = 0},
-          v - w ∈ (Submodule.span ℝ
-            {v : EuclideanSpace ℝ (Idx n) | q1 n (fun i => v i) = 0})ᗮ := by
-        intro v
-        have h_decomp_S : ∀ (S : Submodule ℝ (EuclideanSpace ℝ (Idx n))),
-            ∃ w ∈ S, v - w ∈ Sᗮ := by
-          intro S
-          have h_mem_sup : v ∈ S ⊔ Sᗮ := by
-            rw [ Submodule.sup_orthogonal_of_hasOrthogonalProjection ]
-            aesop
-          rw [ Submodule.mem_sup ] at h_mem_sup
-          obtain ⟨ y, hy, z, hz, rfl ⟩ := h_mem_sup
-          exact ⟨ y, hy, by simpa using hz ⟩
-        exact h_decomp_S _
-      exact h_decomp v
+      exact fun v => Submodule.HasOrthogonalProjection.exists_orthogonal v
     · constructor <;> intro h
       · exact Submodule.sup_orthogonal_of_hasOrthogonalProjection
       · convert h using 1
@@ -494,8 +478,7 @@ lemma sphere_perp_compact (n : ℕ) : IsCompact (spherePerp n) := by
   · -- Closed
     apply IsClosed.inter
     · -- kernelQ1Perp is closed
-      haveI : FiniteDimensional ℝ (Idx n → ℝ) := by infer_instance
-      exact (kernelQ1Perp n).complete_of_finiteDimensional.isClosed
+      exact Submodule.closed_of_finiteDimensional (kernelQ1Perp n)
     · -- sphere is closed
       apply isClosed_eq
       · -- dotProduct is continuous
@@ -604,10 +587,7 @@ lemma exists_sphere_perp_ratio_eq (n : ℕ) (lambda : Idx n → ℝ) (hQ1 : q1 n
               div_self <| ne_of_gt <| lt_of_le_of_ne ( Finset.sum_nonneg fun _ _ =>
                 sq_nonneg _ ) <| Ne.symm <| by simpa only [ sq ] using h ] ⟩
   refine ⟨ c • hu, ⟨ ?_, hc.2 ⟩, ?_ ⟩
-  · intro w hw
-    simp_all +decide only [gt_iff_lt, ne_eq, dotProduct, Pi.smul_apply, smul_eq_mul]
-    convert hv w hw |> fun h => congr_arg ( · * c ) h using 1 <;> ring_nf
-    simp +decide [ mul_comm, mul_left_comm, Finset.mul_sum _ _ _, dotProduct ]
+  · exact Submodule.smul_mem (kernelQ1Perp n) c hv
   · rw [ Ratio_add_kernel n u hu v, Ratio_scale n hu c hc.1 ]
 
 /--

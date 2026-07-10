@@ -36,11 +36,7 @@ theorem logDeriv_tprod_eq_tsum2 {s : Set ℂ} (hs : IsOpen s) (x : s) (f : ℕ �
     have h_diff :
         ∀ᶠ (n : ℕ) in atTop, DifferentiableOn ℂ (fun z => ∏ i ∈ Finset.range n, f i z) s := by
       simp only [eventually_atTop]
-      use 0; intro b _ z hz
-      have := DifferentiableAt.finsetProd (fun i (_ : i ∈ Finset.range b) =>
-        (hd i z hz).differentiableAt (IsOpen.mem_nhds hs hz))
-      exact this.differentiableWithinAt.congr (fun w hw => (Finset.prod_apply ..).symm)
-        (Finset.prod_apply ..).symm
+      use 0; exact fun b a => DifferentiableOn.fun_finsetProd fun i a => hd i
     have HT := logDeriv_tendsto (f := fun (n : ℕ) z ↦ ∏ i ∈ Finset.range n, f i z) (g := g)
       (s := s) hs (x.2) (p := atTop) h_tlu h_diff hnez
     conv =>
@@ -70,8 +66,7 @@ theorem logDeriv_tprod_eq_tsumold {s : Set ℂ} (hs : IsOpen s) (x : s) (f : ℕ
       apply HT.congr
       intro m
       congr
-      ext i
-      simp only [Finset.prod_apply]
+      exact Finset.prod_fn (Finset.range m) f
     · exact htend
     · simp only [eventually_atTop]
       exact ⟨0, fun b _ z hz =>

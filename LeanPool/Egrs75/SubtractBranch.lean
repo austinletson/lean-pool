@@ -97,8 +97,7 @@ theorem pow_lowPDigitIndex_dvd {p n : ℕ} (_hp : 1 < p) (_hn : n ≠ 0) :
 theorem not_pow_succ_lowPDigitIndex_dvd {p n : ℕ} (hp : p.Prime) (hn : n ≠ 0) :
     ¬ p ^ (lowPDigitIndex p n + 1) ∣ n := by
   unfold lowPDigitIndex
-  haveI : Fact p.Prime := ⟨hp⟩
-  exact Nat.pow_succ_factorization_not_dvd hn hp
+  exact pow_succ_factorization_not_dvd hn hp
 
 /-- The base-`p` digit of `n` at the lowest-nonzero index `m` is nonzero:
 `0 < n / p^m % p`.  (From `p^m ∣ n` and `p^(m+1) ∤ n`.) -/
@@ -318,9 +317,7 @@ theorem sub_preserves_lowDigits {p : ℕ} (hp : p.Prime) (hodd : Odd p) {n : ℕ
     have hS_lt : (p ^ m + 1) / 2 ≤ p ^ m := by
       have hoddpow : Odd (p ^ m) := hodd.pow
       obtain ⟨k, hk⟩ := hoddpow; rw [hk]; omega
-    calc (p ^ m + 1) / 2 ≤ p ^ m := hS_lt
-      _ = 1 * p ^ m := by ring
-      _ ≤ a * p ^ m := Nat.mul_le_mul_right _ ha1
+    exact le_mul_of_one_le_of_le ha1 hS_lt
   -- n - S = (a·p^m - S) + p^(m+1)·Hi
   have hsubeq : n - (p ^ m + 1) / 2 = (a * p ^ m - (p ^ m + 1) / 2) + p ^ (m + 1) * Hi := by
     rw [hdecomp]
@@ -436,7 +433,6 @@ theorem sub_clears_true {p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hpo : Odd p)
   have hq1 : 1 < q := hq.one_lt
   have hn0 : n ≠ 0 := by omega
   refine ⟨sub_preserves_lowDigits hp hpo hpn hn0, ?_⟩
-  intro idx hidx
-  exact sub_not_badAt_above_top hq hbad hST hidx
+  exact fun idx a => sub_not_badAt_above_top hq hbad hST a
 
 end Egrs75.ClearingP3

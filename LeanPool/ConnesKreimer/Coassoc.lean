@@ -115,9 +115,7 @@ theorem _root_.CK.Coassoc.flatMap_const_nil {α β} (l : List α) :
 /-- `flatMap` of a singleton-valued function is a `map`. -/
 theorem _root_.CK.Coassoc.flatMap_singleton_eq_map {α β} (g : α → β) (l : List α) :
     l.flatMap (fun a => [g a]) = l.map g := by
-  induction l with
-  | nil => rfl
-  | cons a as ih => simp [List.flatMap_cons, ih]
+  exact flatMap_eq_nil_iff.mpr fun x => congrFun rfl
 
 open List in
 /-- Fubini: two independent nested `flatMap`s commute, up to `Perm`. -/

@@ -85,13 +85,7 @@ def tri (k : ℕ) : ℕ := k * (k + 1) / 2
 
 /-- `k(k+1)` is even (choice-free, by induction). -/
 theorem two_dvd_mul_succ (k : ℕ) : 2 ∣ k * (k + 1) := by
-  induction k with
-  | zero => exact ⟨0, by ring⟩
-  | succ n ih =>
-      obtain ⟨c, hc⟩ := ih
-      refine ⟨c + (n + 1), ?_⟩
-      have hexp : (n + 1) * (n + 1 + 1) = n * (n + 1) + 2 * (n + 1) := by ring
-      rw [hexp, hc]; ring
+  exact Nat.two_dvd_mul_add_one k
 
 /-- The defining doubling identity `2·T(k) = k(k+1)` — the division is exact
 because `k(k+1)` is

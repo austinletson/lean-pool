@@ -1445,8 +1445,7 @@ lemma case_2_subcase_6
     simp only [Set.mem_union, Set.mem_Icc, h'.1, h'.2, true_and, and_true]
     have : 0.34 - s 1 + δ ≤ 0.33 - 1 / 2 * s 2 - 1 / 2 * δ := by
       linear_combination 1 / 2 * h + 3 / 2 * hδ
-    by_contra! h''
-    exact lt_irrefl (0 : ℝ) (by linear_combination this + h''.1 + h''.2)
+    exact Or.symm (LE.le.ge_or_le this τ)
   have hs3 : 4 * s 1 + 3 * s 2 ≤ 0.73 := by
     by_contra! h'
     exact case_2_subcase_3 ha hb hc h43ab h43ac h43bc h44 h45b h45c hdab hdac htab htac htbc hg

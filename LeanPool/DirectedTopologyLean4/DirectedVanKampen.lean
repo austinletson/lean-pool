@@ -527,14 +527,10 @@ lemma functorOnHomOfCoveredPartwise_refine_apply (n k : ℕ) {x y : X}
   apply eq_of_morphism
   · rw [←functorOnHomOfCoveredPartwise_cast_right hX h_comm _ (congr_arg γ h₂.symm)]
     apply functorOnHomOfCoveredPartwise_equal hX h_comm
-    ext t
-    rw [Dipath.cast_apply]
-    exact SplitProperties.firstPart_eq_of_point_eq _ h₂.symm _
+    exact SplitProperties.firstPart_eq_of_split_point_eq γ (id (Eq.symm h₂))
   · rw [←functorOnHomOfCoveredPartwise_cast_left hX h_comm _ (congr_arg γ h₂.symm)]
     apply functorOnHomOfCoveredPartwise_equal' hX h_comm
-    · ext t
-      rw [Dipath.cast_apply]
-      exact SplitProperties.secondPart_eq_of_point_eq _ h₂.symm _
+    · exact SplitProperties.secondPart_eq_of_split_point_eq γ (id (Eq.symm h₂))
     · simp only [add_tsub_cancel_right, Nat.succ_eq_add_one]
       rw [Nat.succ_mul, Nat.sub_right_comm, Nat.add_sub_cancel]
 lemma functorOnHomOfCoveredPartwise_refine {n : ℕ} (k : ℕ) :
@@ -574,8 +570,7 @@ lemma functorOnHomOfCoveredPartwise_trans {n : ℕ} :
       Fₙ (covered_partwise_trans hγ₁ hγ₂) = (Fₙ hγ₁) ≫ (Fₙ hγ₂) := by
   induction n
   case zero =>
-    intro x y z γ₁ γ₂ hγ₁ hγ₂
-    exact functorOnHomOfCoveredPartwise_trans_case_0 hX h_comm hγ₁ hγ₂
+    exact fun {x y z} {γ₁} {γ₂} hγ₁ hγ₂ => functorOnHomOfCoveredPartwise_trans_case_0 hX h_comm hγ₁ hγ₂
   case succ n ih =>
     intros x y z γ₁ γ₂ hγ₁ hγ₂
     rw [functorOnHomOfCoveredPartwise_apply_succ hX h_comm]
@@ -900,8 +895,7 @@ lemma functorOnHomAux_of_partwise_covered_dihomotopic :
   intro n m
   induction n
   case zero =>
-    intro x y γ γ' h
-    exact functorOnHomAux_of_covered_dihomotopic_zero_m hX X₁_open X₂_open h_comm h
+    exact fun {x y} {γ γ'} x_1 => functorOnHomAux_of_covered_dihomotopic_zero_m hX X₁_open X₂_open h_comm x_1
   case succ n ih =>
     rintro x y γ γ' ⟨F, hF⟩
     have ⟨h₁, h₂⟩ := Dipath.Dihomotopy.dihomotopicCovered_split hX hF

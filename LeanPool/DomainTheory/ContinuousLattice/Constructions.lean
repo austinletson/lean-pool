@@ -46,8 +46,7 @@ theorem directedOn_finite_sSup_mem {S : Set D} (hSfin : S.Finite) (hSne : S.None
   obtain ⟨m, hm⟩ := hSfin.exists_maximal hSne
   have hub : m ∈ upperBounds S := by
     intro s hs
-    obtain ⟨c, hcS, hmc, hsc⟩ := hSdir m hm.1 s hs
-    exact hsc.trans (hm.2 hcS hmc)
+    exact DirectedOn.le_of_maximal hSdir hm hs
   have hlub : IsLUB S m := ⟨hub, fun b hb => hb hm.1⟩
   rw [hlub.sSup_eq]
   exact hm.1

@@ -173,8 +173,7 @@ theorem inner_evalPkappaL2_eq_star_pkappaInner
         · simp [coeffPkappa]
         · simp
       · simp_all
-      · intro a ha b1 b2
-        ring
+      · exact fun a a_1 b₁ b₂ => Semiring.right_distrib b₁ b₂ (star (F a))
 
 private theorem defect_lpNorm_eq
     {d : Nat} (kappa : MultiIndex d)
@@ -234,8 +233,7 @@ private theorem phase_alignment
   have hg_right : inner ℂ g f0 = 0 :=
     (inner_eq_zero_symm (𝕜 := ℂ) (x := g) (y := f0)).2 hg_left
   have hu_decomp : u = a • f0 + g := by
-    dsimp [g]
-    abel_nf
+    exact Eq.symm (add_sub_cancel (a • f0) u)
   rcases Complex.exists_norm_eq_mul_self β with ⟨phase, hphase, hphaseβ⟩
   refine ⟨phase, hphase, ?_⟩
   dsimp
@@ -276,9 +274,7 @@ private theorem phase_alignment
         = ‖((phase * β - 1 : ℂ) • f0)‖ * ‖((phase * β - 1 : ℂ) • f0)‖ +
           ‖phase • g‖ * ‖phase • g‖ := by
     rw [hh_decomp]
-    simpa using
-      norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero
-        (((phase * β - 1 : ℂ) • f0)) (phase • g) hh_orth
+    exact norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero ((phase * β - 1) • f0) (phase • g) hh_orth
   have hcoef : ‖(phase * β - 1 : ℂ)‖ ≤ ‖a‖ := by
     rw [← hphaseβ]
     have hreal : ((↑‖β‖ : ℂ) - 1) = (((‖β‖ - 1 : ℝ) : ℂ)) := by simp

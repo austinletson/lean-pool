@@ -143,8 +143,7 @@ lemma isHom_cases
     simp_all
   · intro n
     simp only [isVar_iff_isHom]
-    refine hf _ ?_
-    apply hφ
+    exact isHom_comp' (hf n) hφ
 
 @[simp, fun_prop]
 lemma isHom_of_discrete_countable
@@ -229,8 +228,7 @@ lemma measurable_of_isHom
   · rw [← MeasurableQuasiBorelSpace.isHom_iff_measurable]
     apply isHom_comp
     · exact hf
-    · rw [MeasurableQuasiBorelSpace.isHom_iff_measurable]
-      fun_prop
+    · exact isHom_unpack
   · simp only [MeasureTheory.measurable_pack]
 
 namespace NonEmpty

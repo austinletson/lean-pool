@@ -778,10 +778,7 @@ theorem centereqvCisoC (A : Type) [DivisionRing A] [Algebra ℝ A] [FiniteDimens
     map_zero' := _
     map_add' := _
     commutes' r := by
-      simp only [Complex.coe_algebraMap]
-      change (algebraMap ℂ A) (algebraMap ℝ ℂ r) = _
-      rw [Algebra.algebraMap_eq_smul_one, Algebra.algebraMap_eq_smul_one,
-        Algebra.algebraMap_eq_smul_one, smul_assoc, one_smul]} bij⟩
+      exact Eq.symm (IsScalarTower.algebraMap_apply ℝ ℂ A r)} bij⟩
 
 lemma center_eq_bot_of_iso_real (A : Type) [DivisionRing A] [Algebra ℝ A]
     [FiniteDimensional ℝ A] (hR : Subalgebra.center ℝ A ≃ₐ[ℝ] ℝ) :

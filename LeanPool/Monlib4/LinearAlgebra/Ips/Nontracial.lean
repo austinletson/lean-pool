@@ -541,8 +541,7 @@ theorem Module.Dual.pi.IsFaithfulPosMap.psiToFun'_apply [hψ : ∀ i, (ψ i).IsF
         ((op ℂ).toLinearMap : PiMat ℂ k s →ₗ[ℂ] (PiMat ℂ k s)ᵐᵒᵖ)
           (star (Module.Dual.pi.IsFaithfulPosMap.sig hψ r b))) := by
   letI : ∀ i, StarModule ℂ (Matrix ((fun i : k => s i) i) ((fun i : k => s i) i) ℂ) := by
-    intro i
-    infer_instance
+    exact fun i => instStarModule
   simp_rw [Module.Dual.pi.IsFaithfulPosMap.psiToFun', LinearMap.coe_mk,
     AddHom.coe_mk,
     Module.Dual.pi.IsFaithfulPosMap.toMatrixLinEquiv_rankOne_apply, conjTranspose_replicateCol,
@@ -585,18 +584,13 @@ theorem Pi.transposeAlgEquiv_symm_op_apply (A : PiMat ℂ k s) :
 private noncomputable def f₂_equiv :
     (PiMat ℂ k s) ⊗[ℂ] (PiMat ℂ k s) ≃ₐ[ℂ] (Π i : k × k,
       Matrix (s i.1) (s i.1) ℂ ⊗[ℂ] Matrix (s i.2) (s i.2) ℂ) := by
-  let this :=
-    @directSumTensorAlgEquiv ℂ _ _ _ _ _ _ _ (fun i => Matrix (s i) (s i) ℂ)
-      (fun i => Matrix (s i) (s i) ℂ) (fun i => Matrix.instRing) (fun i => Matrix.instRing)
-      (fun i => Matrix.instAlgebra) fun i => Matrix.instAlgebra
-  exact this
+  exact directSumTensorAlgEquiv ℂ (fun j => Mat ℂ (s j)) fun j => Mat ℂ (s j)
 
 private noncomputable def f₃_equiv :
     (Π i : k × k, Matrix (s i.1) (s i.1) ℂ ⊗[ℂ] Matrix (s i.2) (s i.2) ℂ) ≃ₐ[ℂ]
       (Π i : k × k, Matrix (s i.1 × s i.2) (s i.1 × s i.2) ℂ) := by
   apply AlgEquiv.piCongrRight
-  intro i
-  exact kroneckerToTensor.symm
+  exact fun i => kroneckerAlgEquiv (s i.1) (s i.2) ℂ
 
 /-- The tensor-product equivalence used to pass from block products to block-diagonal matrices. -/
 noncomputable def tensorProductMulOpEquiv :

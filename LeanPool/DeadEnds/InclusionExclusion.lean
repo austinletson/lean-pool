@@ -149,8 +149,7 @@ lemma alternating_sum_tendsto (b : ℕ) (_hb : 2 ≤ b)
       Filter.atTop (nhds (explicitDensityFormula b)) := by
   unfold explicitDensityFormula
   apply tendsto_finsetSum
-  intro T hT
-  exact (h_tendsto T hT).const_mul _
+  exact fun i a => Filter.Tendsto.const_mul ((-1) ^ i.card) (h_tendsto i a)
 
 /-- Rewriting the sum: factor out division by X.
     ∑_T (-1) ^ |T| · count(T,X) / X = (∑_T (-1) ^ |T| · count(T,X)) / X when X ≠ 0.

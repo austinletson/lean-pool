@@ -603,10 +603,7 @@ lemma semicirclePDF_toReal (μ : ℝ) (v : ℝ≥0) (x : ℝ) (h₀ : 0 ≤ semi
 
 /-- The canonical inclusion of `ℝ≥0` into `ℝ≥0∞` is measurable. -/
 lemma measurable_ofNNReal : Measurable (ENNReal.ofNNReal) := by
-  have h1 : Measurable fun (x : ℝ≥0) ↦ (x : ℝ) := measurable_subtype_coe
-  have h2 : Measurable fun (x : ℝ) ↦ ENNReal.ofReal x := ENNReal.measurable_ofReal
-  have h3 : Measurable fun (x : ℝ≥0) ↦ ENNReal.ofReal (x : ℝ) := h2.comp h1
-  simpa [ENNReal.ofReal_coe_nnreal] using h3
+  exact measurable_coe_nnreal_ennreal
 
 /-- The integral of an even power of cosine over `[0, π]`, as a Wallis-type product. -/
 lemma integral_cos_pow_even (n : ℕ) : (∫ x in (0)..π, Real.cos x ^ (2 * n))
@@ -702,8 +699,7 @@ lemma catalan_recur (n : ℕ) : (n + 2) * catalan (n + 1) = (4 * n + 2) * (catal
     rw [h]; ring
   -- `(n + 2) * catalan (n + 1)` telescopes back to the central binomial coefficient.
   have h_left : (n + 2) * catalan (n + 1) = Nat.centralBinom (n + 1) := by
-    rw [catalan_eq_centralBinom_div]
-    exact Nat.mul_div_cancel' (by simpa using Nat.succ_dvd_centralBinom (n + 1))
+    exact succ_mul_catalan_eq_centralBinom (n + 1)
   -- `(4n + 2) * catalan n` does too, using the recurrence above.
   have h_right : (4 * n + 2) * catalan n = Nat.centralBinom (n + 1) := by
     rw [catalan_eq_centralBinom_div, ← Nat.mul_div_assoc _ (Nat.succ_dvd_centralBinom n)]

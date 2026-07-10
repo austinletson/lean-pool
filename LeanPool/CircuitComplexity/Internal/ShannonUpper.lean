@@ -1544,8 +1544,7 @@ private theorem wireValue_colOutput (N : Nat) [NeZero N]
         Nat.div_eq_of_lt_le (by omega)
           (show p * (2 ^ k - 1) + (r' + 1) < (p + 1) * (2 ^ k - 1) by nlinarith),
         show (p * (2 ^ k - 1) + (r' + 1)) % (2 ^ k - 1) = r' + 1 from by
-          rw [show p * (2 ^ k - 1) + (r' + 1) = (r' + 1) + (2 ^ k - 1) * p from by ring,
-              Nat.add_mul_mod_self_left]; exact Nat.mod_eq_of_lt (by omega)]
+          exact Nat.mul_add_mod_of_lt hr]
       simp only [show r' + 1 ≠ 0 from by omega, ite_false,
         show r' + 1 - 1 = r' from by omega]
       simp only [mkG, Gate.eval, Basis.andOr2, AONOp.eval,

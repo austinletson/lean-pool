@@ -287,10 +287,7 @@ lemma winding_fdPolygon_at_ref_eq_neg_one :
             ((hasDerivAt_id t).const_mul (2 * Real.pi) |>.div_const 5)).congr_deriv (by ring)
         have h2 : HasDerivAt (fun t : ℝ => ((θ₀ - 2 * Real.pi * t / 5 : ℝ) : ℂ))
             ((-(2 * Real.pi / 5) : ℝ) : ℂ) t := by
-          have := Complex.ofRealCLM.hasFDerivAt.comp_hasDerivAt t h1
-          simp only [Complex.ofRealCLM_apply, map_neg] at this
-          convert this using 1
-          all_goals first | rfl | simp [Complex.ofReal_div, Complex.ofReal_mul]
+          exact HasDerivAt.ofReal_comp h1
         have h3 : HasDerivAt (fun t : ℝ => I * ((θ₀ - 2 * Real.pi * t / 5 : ℝ) : ℂ))
             (I * ((-(2 * Real.pi / 5) : ℝ) : ℂ)) t :=
           h2.const_mul I
@@ -298,8 +295,7 @@ lemma winding_fdPolygon_at_ref_eq_neg_one :
               exp (I * ((θ₀ - 2 * Real.pi * t / 5 : ℝ) : ℂ)))
             (exp (I * ((θ₀ - 2 * Real.pi * t / 5 : ℝ) : ℂ)) *
               (I * ((-(2 * Real.pi / 5) : ℝ) : ℂ))) t := by
-          have := (hasDerivAt_exp _).comp t h3
-          exact this
+          exact HasDerivAt.cexp h3
         have h5 : HasDerivAt (fun t : ℝ =>
               refP₀ + exp (I * ((θ₀ - 2 * Real.pi * t / 5 : ℝ) : ℂ)))
             (exp (I * ((θ₀ - 2 * Real.pi * t / 5 : ℝ) : ℂ)) * (I * ((-(2 * Real.pi / 5) : ℝ) : ℂ)))

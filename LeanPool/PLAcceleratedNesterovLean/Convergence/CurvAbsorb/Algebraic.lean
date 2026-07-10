@@ -129,9 +129,7 @@ theorem curv_absorption_algebraic
     have h2 : ‖ξn‖ ^ 2 ≤ (ε₁ * ‖hn‖) ^ 2 := sq_le_sq' (by linarith [hξ_nn]) h1
     have h3 : (ε₁ * ‖hn‖) ^ 2 = ε₁ ^ 2 * ‖hn‖ ^ 2 := by ring
     have h4 : ε₁ ^ 2 ≤ ε₁ := by
-      calc ε₁ ^ 2 = ε₁ * ε₁ := by ring
-        _ ≤ ε₁ * 1 := mul_le_mul_of_nonneg_left hε₁_le1 hε₁_nn
-        _ = ε₁ := mul_one _
+      exact sq_le hε₁_nn hε₁_le1
     calc ‖ξn‖ ^ 2 ≤ ε₁ ^ 2 * ‖hn‖ ^ 2 := by linarith
       _ ≤ ε₁ * ‖hn‖ ^ 2 := mul_le_mul_of_nonneg_right h4 (sq_nonneg _)
   -- Term 1: sm*⟨w,ξ⟩ ≤ ε₁/2 * C_wh * Ln
@@ -166,9 +164,7 @@ theorem curv_absorption_algebraic
   -- Term 3: sa*|⟨g,Pe⟩| ≤ ε₁ * sa * C_ge * Ln
   have hterm3 : sa * |@inner ℝ _ _ gn Pen| ≤ ε₁ * (sa * (C_ge * Ln)) := by
     have h3a : |@inner ℝ _ _ gn Pen| ≤ ‖gn‖ * (ε₁ * ‖en‖) := by
-      calc |@inner ℝ _ _ gn Pen| ≤ ‖gn‖ * ‖Pen‖ := hCS2
-        _ ≤ ‖gn‖ * (ε₁ * ‖en‖) := by
-            exact mul_le_mul_of_nonneg_left hPe hgn_nn
+      exact le_mul_of_le_mul_of_nonneg_left hCS2 hPe hgn_nn
     have h3d : sa * |@inner ℝ _ _ gn Pen| ≤ sa * (‖gn‖ * (ε₁ * ‖en‖)) :=
       mul_le_mul_of_nonneg_left h3a (le_of_lt hsa_pos)
     have h3e : sa * (‖gn‖ * (ε₁ * ‖en‖)) = ε₁ * (sa * (‖gn‖ * ‖en‖)) := by ring

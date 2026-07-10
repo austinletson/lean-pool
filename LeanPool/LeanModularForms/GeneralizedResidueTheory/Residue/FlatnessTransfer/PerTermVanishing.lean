@@ -143,21 +143,7 @@ private theorem circleIntegral_laurent_sum (s : ℂ) (r : ℝ) (hr_pos : 0 < r)
       exact pow_ne_zero _ (sub_ne_zero.mpr (ne_of_mem_of_not_mem hz hs_not))
   have h_push : (∮ z in C(s, r), ∑ k : Fin N, a k / (z - s) ^ (k.val + 1)) =
       ∑ k : Fin N, (∮ z in C(s, r), a k / (z - s) ^ (k.val + 1)) := by
-    unfold circleIntegral
-    have h_smul : ∀ θ : ℝ,
-        deriv (circleMap s r) θ •
-          (∑ k : Fin N, a k / (circleMap s r θ - s) ^ (k.val + 1)) =
-        ∑ k : Fin N,
-          deriv (circleMap s r) θ • (a k / (circleMap s r θ - s) ^ (k.val + 1)) :=
-      fun θ => Finset.smul_sum
-    rw [show (fun θ => deriv (circleMap s r) θ •
-          (∑ k : Fin N, a k / (circleMap s r θ - s) ^ (k.val + 1))) =
-          fun θ => ∑ k : Fin N,
-            deriv (circleMap s r) θ • (a k / (circleMap s r θ - s) ^ (k.val + 1))
-      from funext h_smul]
-    rw [intervalIntegral.integral_finsetSum]
-    intro i _
-    exact (h_ci_term i).out
+    exact circleIntegral.integral_fun_sum fun i a => h_ci_term i
   rw [h_push, show (∑ k : Fin N, (∮ z in C(s, r), a k / (z - s) ^ (k.val + 1))) =
       ∑ k : Fin N, if k.val = 0 then a k * (2 * ↑Real.pi * I) else 0
     from Finset.sum_congr rfl (fun k _ => circleIntegral_laurent_term s r hr_pos (a k) k.val),
@@ -481,8 +467,7 @@ private lemma single_cutoff_zpow_intervalIntegrable
         exact (γ.toPiecewiseC1Curve.deriv_continuous_off_partition
           t (mem_Ioo_of_notMem_partition γ ht_Icc ht_nP) ht_nP).continuousWithinAt
     exact h_aesm_if.congr (by
-      filter_upwards [ae_restrict_mem measurableSet_Icc] with t _
-      exact (cauchyPrincipalValueIntegrandOn_singleton f_zpow γ.toFun s ε t).symm)
+      exact EventuallyEq.symm (Eq.eventuallyEq (id (Eq.symm h_eq_cpv))))
   · intro t ht
     rw [cauchyPrincipalValueIntegrandOn_singleton]
     split_ifs with h

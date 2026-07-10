@@ -222,9 +222,7 @@ lemma best_approx_property [Finite U] (g : Finset U → ℝ) (M : ℝ)
   intro a;
   have h_sup_ge_M : ∃ S : Finset U, ∀ T : Finset U, |g T - additiveFunction a T| ≤ |g S -
     additiveFunction a S| := by
-    simpa using Finset.exists_max_image Finset.univ
-      (fun S => |g S - additiveFunction a S|)
-      ⟨∅, Finset.mem_univ _⟩;
+    exact Finite.exists_max fun x => |g x - additiveFunction a x|
   obtain ⟨ S, hS ⟩ := h_sup_ge_M;
   exact ⟨ S, le_trans ( h_sup_ge_M a ) ( by exact ciSup_le hS ) ⟩
 
@@ -509,9 +507,7 @@ lemma spine_case2
     Finset.univ)) (by
   exact mul_nonneg (le_of_lt (cert_posMass_pos cert hg hM_pos hM_bound))
     (by linarith [abs_le.mp (g_univ_le_one cert hg hM_pos hM_bound)])) (by
-  convert DualCertificate.augNegCollection_avgSurplus_le _ _ _ using 1;
-  · exact hg;
-  · exact hM_bound) 4 (by
+  exact DualCertificate.augNegCollection_avgSurplus_le cert hg hM_bound) 4 (by
   norm_num) τ₂ (by
   exact_mod_cast τ₂_nonneg) (by
   exact_mod_cast τ₂_le_one);
@@ -528,8 +524,7 @@ lemma spine_case2
     exact le_trans
       (pow_le_pow_left₀
         (by
-          linarith [show (0 : ℝ) ≤ cert.negMass by
-            exact le_trans (by norm_num [q₀]) hq_gt.le])
+          exact DualCertificate.negMass_nonneg cert)
         hq_half 4)
       (by norm_num [α₂]);
   exact le_trans hC_def_i hC_def_i_le) (by

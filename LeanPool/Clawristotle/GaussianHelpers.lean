@@ -272,9 +272,7 @@ lemma analysis_gaussian_integrability
     · simp_all only [exp_pos, implies_true, norm_eq_abs, abs_exp, exp_le_exp,
         le_add_iff_nonneg_right]
       exact Filter.Eventually.of_forall fun x => mul_nonneg hf_int (by
-        change 0 ≤ VML.normSq x
-        unfold VML.normSq
-        exact Finset.sum_nonneg fun i _ => mul_self_nonneg _)
+        exact normSq_nonneg x)
   have h_integrable : MeasureTheory.Integrable
       (fun v : Fin 3 → ℝ => Real.exp (b ⬝ᵥ v))
       MeasureTheory.MeasureSpace.volume := by

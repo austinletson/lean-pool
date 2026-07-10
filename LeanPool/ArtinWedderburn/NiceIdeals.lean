@@ -39,16 +39,13 @@ def NiceIdeal (I : Ideal R) :=
 
 lemma idem_lift_is_idem {e : R} {idem_e : IsIdempotentElem e}
     (f : CornerSubring idem_e) (hf : IsIdempotentElem f) : IsIdempotentElem (f : R) := by
-  unfold IsIdempotentElem at *
-  nth_rewrite 3 [← hf]
-  rfl
+  exact e_idem_to_e_val_idem hf
 
 /-- The zero ideal is a nice ideal. -/
 def zeroIdealNice : NiceIdeal (⊥ : Ideal R) := by
   intro _ e idem_e h
   have e_zero : e = 0 := by
-    rw [← Ideal.span_singleton_eq_bot]
-    exact Eq.symm h
+    exact Submodule.span_singleton_eq_bot.mp (id (Eq.symm h))
   have zero_e := Eq.symm e_zero
   exact
     { n := 0,
@@ -133,8 +130,7 @@ def extensionOfOrtIdem (e : R) (idem_e : IsIdempotentElem e)
           have k_neq_l : k ≠ l := by
             simp_all
           let ort := oi.orthogonal k l k_neq_l
-          apply orth_coercion
-          exact ort }
+          exact orth_coercion (1 - e) (IsIdempotentElem.one_sub idem_e) (oi.f k) (oi.f l) ort }
 
 -- If e is idempotent such that eRe is a division ring and (1-e)R(1-e) is OrtIdemDiv,
 -- then R is OrtIdemDiv
@@ -166,8 +162,7 @@ def extensionOfOrtIdemDiv (e : R) (idem_e : IsIdempotentElem e)
               (e_idem_to_e_val_idem (oid.h k)) eq_el)
           have hc2 : (CornerSubring (e_idem_to_e_val_idem (oid.h k))) ≃+*
               CornerSubring (oid.h k) := by
-            symm
-            apply @cornerRingUnitalEq R _
+            exact (cornerRingNonUnitalEq (oid.f k)).symm
           exact RingEquiv.trans hc1 hc2
         · exact oid.div k }
 
@@ -210,9 +205,7 @@ def subidealsNiceIdealNice (h_prime : IsPrimeRing R) (h_art : IsArtinian R R)
         refine ⟨1, ?_⟩
         rw [mul_one]
         exact (IsIdempotentElem.eq idem_e).symm
-      apply both_mul_sub
-      · exact e_mem
-      · exact f_mem
+      exact both_mul_sub e f e_mem f_mem
     let J : Ideal R := Ideal.span {e - f}
     have J_sub_I : J < I := by
       rw [I_span_e]
@@ -221,8 +214,7 @@ def subidealsNiceIdealNice (h_prime : IsPrimeRing R) (h_art : IsArtinian R R)
     have J_idem : IdemIdeal J := ⟨e - f, idem_e_sub_f, rfl⟩
     specialize J_nice J_idem (e - f) idem_e_sub_f rfl
     have f_div : IsDivisionRing (CornerSubring idem_f) := by
-      apply div_subring_to_div_ring
-      exact div_f
+      exact div_subring_to_div_ring f' idem_f div_f
     apply extensionOfOrtIdemDiv
     · exact f_div
     have h : (CornerSubring (IsIdempotentElem.one_sub idem_f)) ≃+*

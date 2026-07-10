@@ -90,8 +90,7 @@ def FrameSpec.IsValid (spec : FrameSpec) : Prop :=
     spec.countWitnesses T I ≤ (T \ I).sum spec.cap
 
 instance (spec : FrameSpec) : Decidable spec.IsValid := by
-  unfold FrameSpec.IsValid FrameSpec.countWitnesses
-  infer_instance
+  exact Classical.propDecidable spec.IsValid
 
 private def sup2 (a b : ℕ) : List ℕ := [a, b]
 private def sup3 (a b c : ℕ) : List ℕ := [a, b, c]
@@ -1306,9 +1305,7 @@ private lemma card_filter_univ_ofFn {α : Type*} {n : ℕ} (f : Fin n → α) (p
         ((Finset.univ : Finset (Fin (n + 1))).filter fun i => p (f i)).card
             = (if p (f 0) = true then 1 else 0) +
                 ((Finset.univ : Finset (Fin n)).filter fun i => p (f i.succ)).card := by
-                  simpa using
-                    (Fin.card_filter_univ_succ'
-                      (p := fun i : Fin (n + 1) => p (f i) = true))
+                  exact Fin.card_filter_univ_succ' fun x => p (f x) = true
         _ = (if p (f 0) = true then 1 else 0) +
               (List.ofFn fun i : Fin n => f i.succ).countP p := by
           rw [ih (fun i : Fin n => f i.succ)]
@@ -1691,8 +1688,7 @@ private theorem checkMasksDown_sound (spec : FrameSpec) :
       calc
         spec.countWitnesses T I =
             spec.rawSupports.attach.countP (rawAttachedWitness spec Tmask Imask) := by
-              symm
-              exact (countWitnesses_eq_rawAttachedCount spec Tmask Imask T I hTall hIall).symm
+              exact countWitnesses_eq_rawAttachedCount spec Tmask Imask T I hTall hIall
         _ ≤ rawCapSum spec Tmask Imask := hleaf'
         _ = (T \ I).sum spec.cap := rawCapSum_eq_sum spec Tmask Imask T I hTall hIall
   | succ n ih =>
@@ -1770,8 +1766,7 @@ private theorem checkMasksDown_sound (spec : FrameSpec) :
             · have hgt : n < j.1 := by omega
               exact hIrep j (by omega)
       · have hInot : i0 ∉ I := by
-          intro hi
-          exact hTn (hIT hi)
+          exact Finset.notMem_mono hIT hTn
         apply ih Tmask Imask hn'
         · intro i hi
           exact hzero i (Nat.lt_trans hi (Nat.lt_succ_self n))

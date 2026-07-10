@@ -123,15 +123,11 @@ lemma «imply_right_or'!» (h : 𝓢 ⊢! ψ ==> χ) : 𝓢 ⊢! ψ ==> (φ ⋎ 
 
 /-- Imported declaration from the Incompleteness formalization. -/
 def implyRightAnd (hq : 𝓢 ⊢ φ ==> ψ) (hr : 𝓢 ⊢ φ ==> χ) : 𝓢 ⊢ φ ==> ψ ⋏ χ := by
-  apply deduct';
-  replace hq : [] ⊢[𝓢] φ ==> ψ := of hq;
-  replace hr : [] ⊢[𝓢] φ ==> χ := of hr;
-  exact and₃' (mdp' hq FiniteContext.id) (mdp' hr FiniteContext.id)
+  exact implyAnd hq hr
 omit [DecidableEq F] in
 lemma «imply_right_and!» (hq : 𝓢 ⊢! φ ==> ψ) (hr : 𝓢 ⊢! φ ==> χ) :
     𝓢 ⊢! φ ==> ψ ⋏ χ := by
-  classical
-  exact ⟨implyRightAnd hq.some hr.some⟩
+  exact imply_and! hq hr
 
 omit [DecidableEq F] in
 lemma «imply_left_and_comm'!» (d : 𝓢 ⊢! φ ⋏ ψ ==> χ) : 𝓢 ⊢! ψ ⋏ φ ==> χ := by
@@ -142,8 +138,7 @@ omit [DecidableEq F] in
 lemma «dhyp_and_left!» (h : 𝓢 ⊢! φ ==> χ) : 𝓢 ⊢! (ψ ⋏ φ) ==> χ := by
   classical
   apply and_imply_iff_imply_imply'!.mpr;
-  apply deduct'!;
-  exact FiniteContext.of'! (Γ := [ψ]) h;
+  exact imply₁'! h
 
 omit [DecidableEq F] in
 lemma «dhyp_and_right!» (h : 𝓢 ⊢! φ ==> χ) :
@@ -663,8 +658,7 @@ lemma dhypImp'! (h : 𝓢 ⊢! φ ==> ψ) : 𝓢 ⊢! (χ ==> φ) ==> (χ ==> ψ
 def revDhypImp' (h : 𝓢 ⊢ ψ ==> φ) : 𝓢 ⊢ (φ ==> χ) ==> (ψ ==> χ) := impSwap' <| impTrans'' h pPqQ
 omit [DecidableEq F] in
 lemma «revDhypImp'!» (h : 𝓢 ⊢! ψ ==> φ) : 𝓢 ⊢! (φ ==> χ) ==> (ψ ==> χ) := by
-  classical
-  exact ⟨revDhypImp' h.some⟩
+  exact replace_imply_left! h
 
 -- TODO: Actually this can be computable but it's too slow.
 /-- Imported declaration from the Incompleteness formalization. -/
@@ -709,10 +703,7 @@ alias lac! := intro_bot_of_and!
 
 /-- Imported declaration from the Incompleteness formalization. -/
 def implyOfNotOr [HasAxiomEFQ 𝓢] : 𝓢 ⊢ (∼φ ⋎ ψ) ==> (φ ==> ψ) := or₃'' (by
-    apply emptyPrf;
-    apply deduct;
-    apply deduct;
-    exact efqOfMemEither (φ := φ) (by simp) (by simp)
+    exact efqImplyNot₁
   ) imply₁
 omit [DecidableEq F] in
 @[simp] lemma «imply_of_not_or!» [HasAxiomEFQ 𝓢] : 𝓢 ⊢! (∼φ ⋎ ψ) ==> (φ ==> ψ) := by
@@ -902,8 +893,7 @@ instance [HasAxiomEFQ 𝓢] [HasAxiomLEM 𝓢] : HasAxiomDNE 𝓢 where
 omit [DecidableEq F] in
 instance [HasAxiomLEM 𝓢] : HasAxiomWeakLEM 𝓢 where
   wlem φ := by
-    classical
-    exact lem (φ := ∼φ);
+    exact HasAxiomLEM.lem (∼φ)
 
 omit [DecidableEq F] in
 instance [HasAxiomEFQ 𝓢] [HasAxiomLEM 𝓢] : HasAxiomDummett 𝓢 where
@@ -952,10 +942,7 @@ noncomputable instance [HasAxiomDNE 𝓢] : HasAxiomPeirce 𝓢 where
 omit [DecidableEq F] in
 instance [HasAxiomDNE 𝓢] : HasAxiomElimContra 𝓢 where
   elimContra φ ψ := by
-    classical
-    apply deduct';
-    have : [∼ψ ==> ∼φ] ⊢[𝓢] ∼ψ ==> ∼φ := FiniteContext.byAxm;
-    exact contra₃' this;
+    exact contra₃
 
 end «lp_section_2»
 
@@ -990,8 +977,7 @@ lemma «implyLeft_conj_eq_conj!» :
 omit [DecidableEq F] in
 lemma «generalConj'!» (h : φ ∈ Γ) :
     𝓢 ⊢! ⋀Γ ==> φ := by
-  classical
-  exact replace_imply_left_by_iff'! conjIffConj! |>.mpr (generalConj! h)
+  exact generate_conj'! h
 omit [DecidableEq F] in
 lemma «generalConj'₂!» (h : φ ∈ Γ) (d : 𝓢 ⊢! ⋀Γ) : 𝓢 ⊢! φ := by
   classical
@@ -1044,8 +1030,7 @@ lemma «conjconj_provable!» (h : ∀ φ, φ ∈ Γ → Δ ⊢[𝓢]! φ) : 𝓢
 omit [DecidableEq F] in
 lemma «conjconj_provable₂!» (h : ∀ φ, φ ∈ Γ → Δ ⊢[𝓢]! φ) :
     Δ ⊢[𝓢]! ⋀Γ := by
-  classical
-  exact provable_iff.mpr <| conjconj_provable! h
+  exact iff_provable_list_conj.mpr h
 
 omit [DecidableEq F] in
 lemma «id_conj!» (he : ∀ g ∈ Γ, g = φ) : 𝓢 ⊢! φ ==> ⋀Γ := by

@@ -585,8 +585,7 @@ lemma polygonToCircleRadial_deriv_bounded (p : ℂ) (hp_norm : ‖p‖ > 1)
           linarith
       _ ≤ (3 + 4 / δ) * (3 * |t' - t|) := by
           apply mul_le_mul_of_nonneg_left _ (by positivity)
-          have h_lip := fdPolygon_norm_sub_le t' t
-          rwa [norm_sub_rev, abs_sub_comm] at h_lip
+          exact fdPolygon_norm_sub_le t t'
       _ = (3 + 4 / δ) * 3 * |t' - t| := by ring
   · simp only [deriv_zero_of_not_differentiableAt hd, norm_zero]
     positivity

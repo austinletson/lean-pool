@@ -158,8 +158,7 @@ private abbrev tubularProj_hasFDerivAt_starProjection {S U : Set E}
         _ = ‖x - m‖ := dist_eq_norm x m
     have hπ_near : ‖π_x - m‖ ≤ 2 * ‖x - m‖ := by
       have h2 : ‖π_x - m‖ ≤ ‖π_x - x‖ + ‖x - m‖ := by
-        calc ‖π_x - m‖ = ‖(π_x - x) + (x - m)‖ := by congr 1; abel
-          _ ≤ ‖π_x - x‖ + ‖x - m‖ := norm_add_le _ _
+        exact norm_sub_le_norm_sub_add_norm_sub π_x x m
       have h3 : ‖π_x - x‖ = ‖x - π_x‖ := (norm_sub_rev x π_x).symm
       linarith
     -- π(x) ∈ ball(m, δ), so we can use the chart
@@ -443,11 +442,7 @@ theorem tubular_neighborhood_projection {S U : Set E}
     obtain ⟨hmem, hdist⟩ := tubularProj_mem hTN hne x hx
     exact ⟨hmem, by rw [← hdist, dist_eq_norm]⟩
   -- ── Property 2: Fixes S ──
-  · intro x hx_S
-    have hx_U : x ∈ U := hTN.subset hx_S
-    have h_pred : x ∈ S ∧ dist x x = Metric.infDist x S :=
-      ⟨hx_S, by rw [dist_self, Metric.infDist_zero_of_mem hx_S]⟩
-    exact (tubularProj_unique hTN hne x hx_U x h_pred).symm
+  · exact fun x a => tubularProj_fixes_S hTN hne x a
   -- ── Property 3: Range in S ──
   · intro x
     by_cases hx : x ∈ U
@@ -495,41 +490,9 @@ theorem tubular_neighborhood_projection {S U : Set E}
       _ ≤ 2 * ε / 3 := by linarith [mul_nonneg h0 (by linarith : ε / 3 ≥ 0)]
       _ < ε := by linarith
   -- ── Property 6: Fiber segments realize infDist ──
-  · intro x hx t ht
-    obtain ⟨h0, h1⟩ := ht
-    set πx := tubularProj hTN hne x with hπx_def
-    have hπS := (tubularProj_mem hTN hne x hx).1
-    have hπdist := (tubularProj_mem hTN hne x hx).2
-    -- y - πx = t • (x - πx)
-    have hy_sub : (1 - t) • πx + t • x - πx = t • (x - πx) := by
-      rw [sub_smul, one_smul, smul_sub]; abel
-    -- ‖y - πx‖ = t * ‖x - πx‖
-    have hy_norm : ‖(1 - t) • πx + t • x - πx‖ = t * ‖x - πx‖ := by
-      rw [hy_sub, norm_smul, Real.norm_eq_abs, abs_of_nonneg h0]
-    -- x - y = (1 - t) • (x - πx)
-    have hx_sub_y : x - ((1 - t) • πx + t • x) = (1 - t) • (x - πx) := by
-      simp only [smul_sub, sub_smul, one_smul]; abel
-    -- dist x y = (1 - t) * ‖x - πx‖
-    have hdist_xy : dist x ((1 - t) • πx + t • x) = (1 - t) * ‖x - πx‖ := by
-      rw [dist_eq_norm, hx_sub_y, norm_smul, Real.norm_eq_abs,
-          abs_of_nonneg (sub_nonneg.mpr h1)]
-    -- dist x πx = ‖x - πx‖
-    have hdist_xπ : dist x πx = ‖x - πx‖ := dist_eq_norm x πx
-    change ‖(1 - t) • πx + t • x - πx‖ = Metric.infDist ((1 - t) • πx + t • x) S
-    apply le_antisymm
-    -- Goal 1: ‖y - πx‖ ≤ infDist y S (lower bound on infDist)
-    · rw [hy_norm, Metric.le_infDist hne]
-      intro m hm
-      have h_near : ‖x - πx‖ ≤ dist x m := by
-        rw [← hdist_xπ, hπdist]; exact Metric.infDist_le_dist_of_mem hm
-      have h_tri : dist x m ≤ dist x ((1 - t) • πx + t • x) +
-          dist ((1 - t) • πx + t • x) m := dist_triangle _ _ _
-      rw [hdist_xy] at h_tri
-      linarith
-    -- Goal 2: infDist y S ≤ ‖y - πx‖ (upper bound via πx ∈ S)
-    · calc Metric.infDist ((1 - t) • πx + t • x) S
-          ≤ dist ((1 - t) • πx + t • x) πx := Metric.infDist_le_dist_of_mem hπS
-        _ = ‖(1 - t) • πx + t • x - πx‖ := dist_eq_norm _ _
+  · exact fun x a t a_1 =>
+        let y := (1 - t) • tubularProj hTN hne x + t • x;
+        tubularProj_fiber_realizes_infDist hTN hne x a t a_1
   -- ── Property 7: Normal in ker Dπ ──
   · -- π is constant along fibers near πx (by openness of U), so
     -- the derivative in the fiber direction x - πx vanishes.
@@ -589,8 +552,7 @@ theorem tubular_neighborhood_projection {S U : Set E}
     rw [hfderiv.fderiv]
     exact Submodule.inner_starProjection_left_eq_right V u v
   -- ── Property 10: C¹ at each point of S ──
-  · intro m hm
-    exact tubularProj_contDiffAt_S hTN hne m hm
+  · exact fun m a => tubularProj_contDiffAt_S hTN hne m a
 
 
 end PLAcceleratedNesterovLean

@@ -117,8 +117,7 @@ lemma measurable_quantile
       : (⨅ j : I, if i ≤ cdf (μ x) j then j else ⊤)
       = (⨅ j : unitIntervalRat, if i ≤ cdf (μ x) j then ↑j else ⊤) := by
     apply le_antisymm
-    · apply le_iInf fun j ↦ ?_
-      apply iInf_le
+    · exact le_iInf_comp (fun y => if i ≤ cdf (μ x) y then y else ⊤) Subtype.val
     · apply le_iInf fun j ↦ ?_
       split_ifs with h
       · have := cdf_continuous (μ x) j
@@ -176,8 +175,7 @@ lemma eq_quantile_volume
         simp only [Set.mem_setOf_eq, h]
     simp only [Set.preimage, Set.mem_Iic, lemma₁]
     have lemma₂ : {r : I | r ≤ cdf μ i} = Set.Iic (cdf μ i) := by
-      ext ⟨_, _⟩
-      simp only [Set.mem_setOf_eq, Set.mem_Iic]
+      exact Set.Iic_def (cdf μ i)
     simp_all
   · apply measurable_quantile
     · fun_prop

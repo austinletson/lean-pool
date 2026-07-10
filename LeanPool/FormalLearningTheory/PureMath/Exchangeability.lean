@@ -126,5 +126,4 @@ def splitFirst {X : Type u} {m : ℕ} (z : MergedSample X m) (vs : ValidSplit m)
 /-- Given a merged sample z and a valid split, extract the second group (ghost sample). -/
 def splitSecond {X : Type u} {m : ℕ} (z : MergedSample X m) (vs : ValidSplit m) :
     Fin m → X := by
-  let _validSplit := vs.card_true
-  exact fun i => z (Fin.natAdd m i |>.cast (two_mul m).symm)
+  exact fun a => splitFirst z vs a

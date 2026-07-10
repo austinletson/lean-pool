@@ -272,9 +272,7 @@ lemma nth_succ (v i : V) : v.[i + 1] = (sndIdx v).[i] :=
   simpa [-nth_cons_succ, one_add_one_eq_two] using nth_cons_succ x v 1
 
 lemma cons_cases (x : V) : x = 0 ∨ ∃ y v, x = y ∷ v := by
-  rcases zero_or_succ x with (rfl | ⟨z, rfl⟩)
-  · simp
-  · right; exact ⟨π₁ z, π₂ z, by simp [cons]⟩
+  exact nil_or_cons x
 
 lemma cons_induction (Γ) {P : V → Prop} (hP : Γ-[1]-Predicate P)
     (nil : P 0) (cons : ∀ x v, P v → P (x ∷ v)) : ∀ v, P v :=

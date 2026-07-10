@@ -384,14 +384,10 @@ theorem toElementMap_ofIso (e : V₀.Element ≃o V₁.Element) (x : V₀.Elemen
       have hsub : e (V₀.principal hX) ≤ (ofIso e).toElementMap x :=
         fun Y hY => ⟨X, hXx, hX, hY⟩
       have hple : V₀.principal hX ≤ e.symm ((ofIso e).toElementMap x) := by
-        have h := e.symm.monotone hsub
-        rwa [e.symm_apply_apply] at h
+        exact (OrderIso.le_symm_apply e).mpr hsub
       exact hple X ⟨hX, subset_rfl⟩
-    · have h := e.symm.monotone hgxle
-      rwa [e.symm_apply_apply] at h
-  have h1 : e x = e (e.symm ((ofIso e).toElementMap x)) := congrArg e key
-  rw [e.apply_symm_apply] at h1
-  exact h1.symm
+    · exact (OrderIso.symm_apply_le e).mpr hgxle
+  exact (OrderIso.symm_apply_eq e).mp (id (Eq.symm key))
 
 /-- **Theorem 2.7 (statement) (Scott 1981, PRG-19).** "Every isomorphism between
 domains results
@@ -445,8 +441,7 @@ theorem exists_principal_eq_apply_principal (e : V₀.Element ≃o V₁.Element)
   have hz_le : z ≤ V₀.principal hX := by
     apply V₀.sSupDirected_le
     rintro s ⟨Y, hY, hYw, rfl⟩
-    have : e.symm (V₁.principal hY) ≤ e.symm w := e.symm.monotone (hprin_le_w hY hYw)
-    rwa [hsymm_w] at this
+    exact (OrderIso.symm_apply_le e).mpr (hprin_le_w hY hYw)
   -- `↑X ⊑ z`: show `w ⊑ e(z)`, then `↑X = e⁻¹(w) ⊑ z`.
   have hw_le_ez : w ≤ e z := by
     intro Y hYw
@@ -454,8 +449,7 @@ theorem exists_principal_eq_apply_principal (e : V₀.Element ≃o V₁.Element)
     have hmem_S : e.symm (V₁.principal hY) ∈ S := ⟨Y, hY, hYw, rfl⟩
     have h1 : e.symm (V₁.principal hY) ≤ z := V₀.le_sSupDirected S hne hdir hmem_S
     have h2 : V₁.principal hY ≤ e z := by
-      have := e.monotone h1
-      rwa [e.apply_symm_apply] at this
+      exact (OrderIso.symm_apply_le e).mp h1
     exact h2 Y ⟨hY, subset_rfl⟩
   have hX_le_z : V₀.principal hX ≤ z := by
     simp_all
@@ -469,9 +463,7 @@ theorem exists_principal_eq_apply_principal (e : V₀.Element ≃o V₁.Element)
   have hprinX_le : V₀.principal hX ≤ e.symm (V₁.principal hY) :=
     fun Z hZ => (e.symm (V₁.principal hY)).up_mem hXs hZ.1 hZ.2
   have hw_le_prinY : w ≤ V₁.principal hY := by
-    have := e.monotone hprinX_le
-    rw [e.apply_symm_apply] at this
-    rwa [← hw] at this
+    exact (OrderIso.le_symm_apply e).mp hprinX_le
   exact le_antisymm hw_le_prinY (hprin_le_w hY hYw)
 
 end ApproximableMap

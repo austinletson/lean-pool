@@ -41,8 +41,7 @@ lemma injective_normalize (r) : Function.Injective (normalize (r := r)) := by
   intro i₁ i₂ hi
   simp only [normalize, Subtype.mk.injEq] at hi
   rw [div_left_inj'] at hi
-  · ext
-    exact hi
+  · exact SetCoe.ext hi
   · grind
 
 noncomputable instance instMeasureSpaceElemRealIcoOfNatLeanPool (r : ℝ) :
@@ -53,11 +52,7 @@ instance : IsEmpty (Set.Ico 0 (0 : ℝ)) := by simp
 
 @[simp]
 lemma volume_zero : (volume : Measure (Set.Ico 0 (0 : ℝ))) = 0 := by
-  ext s
-  have hs : s = ∅ := by
-    ext a
-    simpa using a.property
-  simp only [hs, measure_empty]
+  exact eq_zero_of_isEmpty volume
 
 @[simp]
 lemma measurableEmbedding_normalize (r) : MeasurableEmbedding (normalize (r := r)) where
@@ -69,8 +64,7 @@ lemma measurableEmbedding_normalize (r) : MeasurableEmbedding (normalize (r := r
     simp only [normalize, ← Set.image_comp, Function.comp_apply]
     replace hs := MeasurableSet.subtype_image (by simp) hs
     have : ((fun a ↦ ↑a / r) '' s) = (· / r) '' (Subtype.val '' s) := by
-      simp only [← Set.image_comp]
-      rfl
+      exact Eq.symm (Set.image_image (fun x => x / r) Subtype.val s)
     rw [this]
     generalize ht : Subtype.val '' s = t
     rw [ht] at hs
@@ -197,10 +191,7 @@ lemma eq_detf_volume
     have hIE : IsEmpty (Set.Ico (0 : ℝ) ((0 : Measure A) Set.univ).toReal) := by
       simp_all
     have : (volume : Measure (Set.Ico (0 : ℝ) ((0 : Measure A) Set.univ).toReal)) = 0 := by
-      ext s _
-      simp only [Measure.coe_zero, Pi.zero_apply]
-      rw [show s = ∅ from Set.eq_empty_of_isEmpty s]
-      simp only [measure_empty]
+      exact eq_zero_of_isEmpty volume
     rw [this]
     simp only [Measure.map_zero]
   have : NeZero μ := ⟨hμ⟩

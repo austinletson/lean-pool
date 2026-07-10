@@ -55,9 +55,7 @@ theorem abs_residue_le (m r a : ℤ) (hm : 0 < m) (h2r : 2 * |r| ≤ m) (hcong :
     |(r : ℝ)| ≤ |(a : ℝ) - m * k| := by
   have hsq := sq_residue_le m r a hm h2r hcong k
   have hsqR : (r : ℝ) ^ 2 ≤ ((a : ℝ) - m * k) ^ 2 := by exact_mod_cast hsq
-  calc |(r : ℝ)| = Real.sqrt ((r : ℝ) ^ 2) := (Real.sqrt_sq_eq_abs _).symm
-    _ ≤ Real.sqrt (((a : ℝ) - m * k) ^ 2) := Real.sqrt_le_sqrt hsqR
-    _ = |(a : ℝ) - m * k| := Real.sqrt_sq_eq_abs _
+  exact sq_le_sq.mp hsqR
 
 /-- **The witness defect is coordinatewise-exact.** With `α* = (4/47, 15/47)`, balanced residues
 `4d ≡ r₀`, `15d ≡ r₁ (mod 47)` give `delta α* d = M/47`, where `M = max(|r₀|, |r₁|)` (provided as

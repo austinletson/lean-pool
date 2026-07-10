@@ -29,8 +29,7 @@ instance _root_.LO.IntProp.Kripke.EuclideanFrameClass.definedByLEM :
     exact ValidOnFrame.lem <| symm_of_refl_eucl F.rel_refl.refl hEucl
   · rintro h x y z Rxy Rxz;
     let V : Kripke.Valuation F := ⟨fun {v a} => z ≺ v, by
-      intro w v Rwv a Rzw;
-      exact F.rel_trans' Rzw Rwv;
+      exact fun {w₁ w₂} a {a_1} a_2 => Frame.rel_trans' a_2 a
     ⟩;
     suffices Satisfies ⟨F, V⟩ y (.atom 0) by simpa [Satisfies] using this;
     apply V.hereditary Rxy;

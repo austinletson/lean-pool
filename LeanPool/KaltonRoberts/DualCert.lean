@@ -94,10 +94,8 @@ lemma activeGenerators_finite [Finite U] (f : Finset U → ℝ) (M : ℝ) :
     (activeGenerators f M).Finite := by
   letI := Fintype.ofFinite U
   apply Set.Finite.union
-  · exact Set.Finite.image _ (Set.Finite.ofFinset (Finset.univ.filter (f · = M))
-      (by simp))
-  · exact Set.Finite.image _ (Set.Finite.ofFinset (Finset.univ.filter (f · = -M))
-      (by simp))
+  · exact Set.toFinite ((fun S => S.indicator') '' {S | f S = M})
+  · exact Set.toFinite ((fun S => -S.indicator') '' {S | f S = -M})
 
 /-
 Key separation lemma: 0 is in the convex hull of the active generators
@@ -286,10 +284,8 @@ lemma dual_cert_from_convexHull
       Finset.single_le_sum ( fun i _ => hw₁ i ) ( by aesop ) );
     · rw [← hw₂]
       trans ∑ i ∈ Finset.univ.filter (fun i => w i ≠ 0), w i
-      · exact Finset.sum_image' (s := Finset.univ.filter fun i => w i ≠ 0) (g := z) (h := w)
-          (by intro i hi; rfl)
-      · exact Finset.sum_filter_of_ne (s := Finset.univ) (f := w) (p := fun i => w i ≠ 0)
-          (by intro i _ hwi; exact hwi)
+      · exact sum_image' w fun i => congrFun rfl
+      · exact sum_filter_ne_zero univ
     · trans ∑ i ∈ Finset.univ.filter (fun i => w i ≠ 0), w i • z i
       · exact Finset.sum_image' (s := Finset.univ.filter fun i => w i ≠ 0) (g := z)
           (h := fun i => w i • z i) (by

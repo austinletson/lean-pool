@@ -40,8 +40,7 @@ variable {p : ℕ} [hp : Fact p.Prime]
 
 /-- A nonzero element of `ZMod p` (with `p` prime) viewed as a unit. -/
 def unitOfNeZero (x : ZMod p) (hx : x ≠ 0) : (ZMod p)ˣ := by
-  refine ZMod.unitOfCoprime x.val (Nat.coprime_of_lt_prime ?_ (ZMod.val_lt x) hp.elim).symm
-  simp only [ne_eq, ZMod.val_eq_zero, hx, not_false_eq_true]
+  exact Units.mk0 x hx
 
 @[simp]
 lemma val_unitOfNeZero (x : ZMod p) (hx : x ≠ 0) : ((unitOfNeZero x hx) : ZMod p) = x := by

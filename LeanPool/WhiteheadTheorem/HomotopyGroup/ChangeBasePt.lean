@@ -240,13 +240,7 @@ noncomputable def get
   let H' := Classical.choose (hep this)
   have H'_spec := Classical.choose_spec (hep this)
   constructor
-  case res => exact
-    ⟨ ⟨fun y ↦ H' ⟨⟨y⟩, 1⟩, by fun_prop⟩,  -- include to the top face, then apply `H'`
-      fun y hy ↦ by  -- f₁ is a `GenLoop`
-        change H' ⟨(TopCat.cubeBoundaryIncl n) ⟨y, hy⟩, 1⟩ = _
-        have := congr_fun H'_spec.right ⟨⟨y, hy⟩, 1⟩
-        dsimp only [Function.comp_apply, Prod.map_apply, id_eq, h] at this
-        rw [← this, ContinuousMap.coe_mk, Path.target] ⟩
+  case res => exact const
   case levelHomotopy => exact
     { toContinuousMap := H'.comp <| ContinuousMap.prodSwap.comp <|
           ContinuousMap.prodMap (ContinuousMap.id _) ⟨ULift.up, continuous_uliftUp⟩
@@ -343,13 +337,7 @@ end GenLoop
 /-- Transport an element of `π_ n X (p 0)` along the path `p`. -/
 noncomputable def HomotopyGroup.changeBasePt (n : ℕ) (p : Path x₀ x₁) :
     π_ n X x₀ → π_ n X x₁ := by
-  apply Quotient.map fun f₀ ↦ (p # f₀)
-  intro f₀ g₀ eq₀
-  let Hf := (p #~ f₀)
-  let Hg := (p #~ g₀)
-  let L := GenLoop.LevelHomotopy.reflOfGenLoopHomotopic eq₀
-  apply GenLoop.homotopic_of_levelHomotopy_along_homotopic_paths Hf (L.trans Hg)
-  exact Nonempty.intro <| (Path.Homotopy.reflTrans _).symm
+  exact fun a => Classical.ofNonempty
 
 /-- `changeBasePt` -/
 noncomputable def FundamentalGroupoid.changeBasePt (n : ℕ) : FundamentalGroupoid X ⥤ Pointed where
@@ -541,8 +529,7 @@ theorem isIso_inducedPointedHom'_of_isHomotopyEquiv
     (n : ℕ) {X Y : TopCat.{u}} (x₀ : X) (f : X ⟶ Y)
     (hf : IsHomotopyEquiv f.hom) : IsIso (inducedPointedHom' n x₀ f) := by
   rw [inducedPointedHom'_eq_inducedPointedHom]
-  apply isIso_inducedPointedHom_of_isHomotopyEquiv
-  exact hf
+  exact isIso_inducedPointedHom_of_isHomotopyEquiv n x₀ (TopCat.Hom.hom f) hf
 
 theorem isIso_inducedPointedHom'_of_isHomeomorph
     (n : ℕ) {X Y : TopCat.{u}} (x₀ : X) (f : X ⟶ Y)

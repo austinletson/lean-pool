@@ -123,8 +123,7 @@ lemma mixed_g_linear : G.mixedG i (update  x i y) = ∑ s : G.SS i,
         simp [hxx]
       · simp only [hxx, ↓reduceIte, zero_eq_mul]
         right
-        push Not at hxx
-        rw [stdSimplex.pure_eval_neq hxx]
+        exact stdSimplex.pure_eval_neq hxx
   rw [h1, Finset.sum_mul]
   congr 1
   ext g
@@ -271,8 +270,7 @@ theorem Brouwer.mixedGame (f : G.mixedS → G.mixedS) (hf : Continuous f) : ∃ 
   have n_pos : 0 < n := Fintype.card_pos_iff.mpr (by infer_instance)
   letI : Inhabited (Fin n) := ⟨⟨0, n_pos⟩⟩
   have card_pos (i : G.I) : 0 < Fintype.card (G.SS i) := by
-    haveI : Inhabited (G.SS i) := inferInstance
-    exact Fintype.card_pos_iff.mpr inferInstance
+    exact Fintype.card_pos
   let card' : Fin n → ℕ+ := fun k => ⟨Fintype.card (G.SS (eI.symm k)), card_pos (eI.symm k)⟩
   let reindex : G.mixedS → ((k : Fin n) → stdSimplex ℝ (G.SS (eI.symm k))) :=
     fun x k => x (eI.symm k)
@@ -551,8 +549,7 @@ theorem ExistsNashEq : ∃ σ : G.mixedS , mixedNashEquilibrium σ := by {
               nlinarith
             nlinarith
         nlinarith
-      rw [lt_iff_le_and_ne]
-      exact ⟨h1, h2⟩
+      exact Std.lt_of_le_of_ne h1 h2
     have H2 : ∑ s, σ i s * G.mixedG i (update σ i (stdSimplex.pure s)) =
       G.mixedG i σ := by
       rw [← mixed_g_linear]
@@ -573,10 +570,8 @@ theorem ExistsNashEq : ∃ σ : G.mixedS , mixedNashEquilibrium σ := by {
         simp only [div_zero] at h2
         exact h1 h2
       have hxy : x * y = x := by
-        rw [eq_div_iff hy] at h2
-        linarith
-      have : x * y = x * 1 := by rw [hxy, mul_one]
-      exact mul_left_cancel₀ h1 this
+        exact (eq_div_iff hy).mp h2
+      exact (mul_eq_left₀ h1).mp hxy
     have := self_div_lemma (by linarith) this
     linarith
 }

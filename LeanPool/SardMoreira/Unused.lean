@@ -112,21 +112,7 @@ theorem iteratedFDerivWithin_comp_of_eventually
     {i : ℕ} (hi : i ≤ n) :
     iteratedFDerivWithin 𝕜 i (g ∘ f) s a =
       (ftaylorSeriesWithin 𝕜 g t (f a)).taylorComp (ftaylorSeriesWithin 𝕜 f s a) i := by
-  have hat : f a ∈ t := hst.self_of_nhdsWithin ha
-  have hf_tendsto : Tendsto f (𝓝[s] a) (𝓝[t] (f a)) :=
-    tendsto_nhdsWithin_iff.mpr ⟨hf.continuousWithinAt, hst⟩
-  have H₁ : ∀ᶠ u in (𝓝[s] a).smallSets, u ⊆ s :=
-    eventually_smallSets_subset.mpr eventually_mem_nhdsWithin
-  have H₂ : ∀ᶠ u in (𝓝[s] a).smallSets, HasFTaylorSeriesUpToOn i f (ftaylorSeriesWithin 𝕜 f s) u :=
-    hf.eventually_hasFTaylorSeriesUpToOn hs ha hi
-  have H₃ := hf_tendsto.image_smallSets.eventually
-    (hg.eventually_hasFTaylorSeriesUpToOn ht hat hi)
-  rcases ((hs.frequently_smallSets _).and_eventually (H₁.and <| H₂.and H₃)).exists
-    with ⟨u, ⟨hau, hu⟩, hus, hfu, hgu⟩
-  refine .symm <| (hgu.comp hfu (mapsTo_image _ _)).eq_iteratedFDerivWithin_of_uniqueDiffOn le_rfl
-    hu (mem_of_mem_nhdsWithin ha hau) |>.trans ?_
-  refine iteratedFDerivWithin_congr_set (hus.eventuallyLE.antisymm ?_) _
-  exact set_eventuallyLE_iff_mem_inf_principal.mpr hau
+  exact iteratedFDerivWithin_comp_of_eventually_mem hg hf ht hs ha hst hi
 
 end ContDiff
 

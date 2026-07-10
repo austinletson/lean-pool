@@ -350,9 +350,7 @@ private theorem cauchyPV_inv_integrableOn_δ1 (r : ℝ) (hr : 0 < r) (α : ℝ)
     simp only [cauchyPrincipalValueIntegrand', sub_zero]
     rw [if_pos]; · exact pv_integrand_seg1 r hr α t ⟨lt_trans hδ htδ, ht1⟩
     · rw [sectorCurve_norm_seg1 r hr α t ⟨le_of_lt (lt_trans hδ htδ), le_of_lt ht1⟩]
-      have hδr : δ * r = ε := div_mul_cancel₀ ε (ne_of_gt hr)
-      calc ε = δ * r := hδr.symm
-        _ < t * r := by nlinarith
+      exact (div_lt_iff₀ hr).mp htδ
   have h1 : ∀ᵐ t ∂(volume.restrict (Ioo δ 1)),
       (fun t : ℝ => (↑(t⁻¹) : ℂ)) t =
       cauchyPrincipalValueIntegrand' (fun z => z⁻¹) (sectorCurve r α) 0 ε t :=

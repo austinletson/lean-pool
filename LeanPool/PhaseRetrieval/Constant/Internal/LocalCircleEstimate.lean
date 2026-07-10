@@ -635,11 +635,6 @@ theorem local_circle_estimate {L : ℕ} (hL : 1 ≤ L) {E : Finset ℕ}
     have h := large_amplitude hL hE hE_pos b P hP hx
     have hL_pos : (0 : ℝ) < (L : ℝ) := Nat.cast_pos.mpr (by omega)
     have h144L : (0 : ℝ) < 144 * (L : ℝ) := by positivity
-    rw [ge_iff_le] at h
-    calc circleNormSq P
-        = 144 * ↑L * (circleNormSq P / (144 * ↑L)) := by field_simp
-      _ ≤ 144 * ↑L *
-          ∫ t : AddCircle T, rho (P t) ^ 2 ∂AddCircle.haarAddCircle :=
-        mul_le_mul_of_nonneg_left h (le_of_lt h144L)
+    exact (div_le_iff₀' h144L).mp h
 
 end FockSPR

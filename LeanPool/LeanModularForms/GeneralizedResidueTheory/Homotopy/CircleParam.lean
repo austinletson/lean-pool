@@ -219,9 +219,7 @@ lemma circleParamCW_hasDerivAt (z₀ : ℂ) (r : ℝ)
           ((↑(a + b - t) - a) / (b - a))))
       (a + b - t) := by
     rw [← circleParam_deriv z₀ r a b hab (a + b - t)]; exact hdiff.hasDerivAt
-  have hchain := HasDerivAt.scomp t hf hg
-  simp only [neg_one_smul] at hchain
-  exact hchain
+  exact HasDerivAt.comp_const_sub (a + b) t hf
 
 lemma circleParamCW_deriv (z₀ : ℂ) (r : ℝ) (a b : ℝ)
     (hab : a < b) (t : ℝ) :

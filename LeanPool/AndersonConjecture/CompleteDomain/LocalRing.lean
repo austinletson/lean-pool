@@ -79,8 +79,7 @@ noncomputable def mvPowerSeriesFin0RingEquiv (R : Type*) [CommSemiring R] :
   toFun := MvPowerSeries.constantCoeff
   invFun := MvPowerSeries.C
   left_inv f := by
-    have huniq : ∀ (m : Fin 0 →₀ ℕ), m = 0 := fun m => by ext i
-                                                          exact Fin.elim0 i
+    have huniq : ∀ (m : Fin 0 →₀ ℕ), m = 0 := fun m => by exact Subsingleton.eq_zero m
     ext m
     simp [huniq m, MvPowerSeries.coeff_C]
   right_inv r := MvPowerSeries.constantCoeff_C r
@@ -490,8 +489,7 @@ lemma T_isPrecomplete : IsPrecomplete (IsLocalRing.maximalIdeal T) T := by
         Submodule (MvPowerSeries (Fin 3) ℂ) (MvPowerSeries (Fin 3) ℂ))] := by
     intro m n hmn
     rw [SModEq.sub_mem, smul_eq_mul, Ideal.mul_top]
-    have h := hg_cauchy hmn
-    rwa [show g m - g n = -(g n - g m) by ring, neg_mem_iff]
+    exact sub_mem_comm_iff.mp (hg_cauchy hmn)
   obtain ⟨G, hG⟩ := hprec hcauchyG
   refine ⟨Ideal.Quotient.mk conjI G, fun n => ?_⟩
   rw [SModEq.sub_mem, smul_eq_mul, Ideal.mul_top, M_T_pow_eq]
@@ -672,16 +670,7 @@ lemma gen_mem_maximalIdeal :
 open MvPowerSeries in
 lemma cToT_injective : Function.Injective
     ((Ideal.Quotient.mk conjI).comp (MvPowerSeries.C (σ := Fin 3) (R := ℂ))) := by
-  intro a b hab
-  simp only [RingHom.comp_apply] at hab
-  have hmem : C (σ := Fin 3) a - C (σ := Fin 3) b ∈ conjI := Ideal.Quotient.eq.mp hab
-  rw [← map_sub, conjI, Ideal.mem_span_singleton] at hmem
-  obtain ⟨q, hq⟩ := hmem
-  have h1 := congr_arg (constantCoeff (σ := Fin 3) (R := ℂ)) hq
-  simp only [MvPowerSeries.constantCoeff_C, map_mul, map_sub, map_pow,
-    constantCoeff_X, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true,
-    zero_pow, mul_zero, sub_zero, zero_mul] at h1
-  exact sub_eq_zero.mp h1
+  exact RingHom.injective ((Ideal.Quotient.mk conjI).comp C)
 
 -- |Fin 3 →₀ ℕ| = ℵ₀ and |ℂ| = continuum, so |(Fin 3 →₀ ℕ) → ℂ| = |ℂ|
 lemma mvPS_card_eq : Cardinal.mk (MvPowerSeries (Fin 3) ℂ) = Cardinal.mk ℂ := by
@@ -753,18 +742,7 @@ lemma cToResT_surjective : Function.Surjective cToResT := by
 -- Injectivity: distinct constants map to distinct residue classes
 open MvPowerSeries in
 lemma cToResT_injective : Function.Injective cToResT := by
-  intro a b hab
-  by_contra h
-  change (Ideal.Quotient.mk (IsLocalRing.maximalIdeal T))
-      ((Ideal.Quotient.mk conjI) (C (σ := Fin 3) a)) =
-    (Ideal.Quotient.mk (IsLocalRing.maximalIdeal T))
-      ((Ideal.Quotient.mk conjI) (C (σ := Fin 3) b)) at hab
-  rw [Ideal.Quotient.eq, ← map_sub, ← map_sub] at hab
-  rw [IsLocalRing.mem_maximalIdeal] at hab
-  apply hab
-  apply (Ideal.Quotient.mk conjI).isUnit_map
-  rw [MvPowerSeries.isUnit_iff_constantCoeff, MvPowerSeries.constantCoeff_C]
-  exact IsUnit.mk0 _ (sub_ne_zero.mpr h)
+  exact RingHom.injective cToResT
 
 /-- |T/M| = |ℂ| (the residue field is ℂ). -/
 theorem T_residueField_card :

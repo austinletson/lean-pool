@@ -194,8 +194,7 @@ theorem isQSPPair_of_coeff {d : ℕ} {P Q : ℂ[X]}
   refine ⟨?_, ?_, parP, parQ, norm⟩
   · refine (Polynomial.degree_le_iff_coeff_zero P d).mpr fun m hm => hP m ?_
     exact_mod_cast hm
-  · exact (Polynomial.degree_lt_iff_coeff_zero Q d).mpr fun m hm =>
-      hQ m (by exact_mod_cast hm)
+  · exact (degree_lt_iff_coeff_zero Q d).mpr hQ
 
 /-- The normalization identity is preserved by the one-step recurrence: a pure
 ring identity once the unit-modulus factor `v·w = v·v* = 1` cancels. -/

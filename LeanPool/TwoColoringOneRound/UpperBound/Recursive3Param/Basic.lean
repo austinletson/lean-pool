@@ -169,11 +169,7 @@ lemma measurable_g : Measurable fun xyz : Rand × Rand × Rand => g xyz.1 xyz.2.
   have hset :
       MeasurableSet {xyz : Rand × Rand × Rand | (xyz.2.2 : ℝ) < z0 xyz.1 xyz.2.1} := by
     -- express the predicate as the preimage of `{p | p.1 < p.2}` under a measurable map to `ℝ × ℝ`
-    have m : Measurable fun xyz : Rand × Rand × Rand => ((xyz.2.2 : ℝ), z0 xyz.1 xyz.2.1) :=
-      mz.prodMk mcut
-    have hopen : IsOpen {p : ℝ × ℝ | p.1 < p.2} := isOpen_lt continuous_fst continuous_snd
-    have hmeas : MeasurableSet ({p : ℝ × ℝ | p.1 < p.2} : Set (ℝ × ℝ)) := hopen.measurableSet
-    exact hmeas.preimage m
+    exact measurableSet_lt mz mcut
   refine Measurable.ite (hp := hset) ?_ ?_
   · exact measurable_const
   · exact measurable_const

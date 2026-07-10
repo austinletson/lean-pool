@@ -86,8 +86,7 @@ private lemma approx_isRational (p : Simplex α) (n : ℕ) :
     IsRational (α := α) (approx (p := p) n) := by
   classical
   refine ⟨approxWeight (p := p) n, ?_, ?_⟩
-  · intro a
-    exact approxWeight_pos (p := p) n a
+  · exact fun a => approxWeight_pos p n a
   · intro a
     simp [approx, approxDenom]
 
@@ -123,9 +122,7 @@ private lemma approxDenom_lower (p : Simplex α) (n : ℕ) :
         (fun a ha => approxWeight_lower (p := p) n a))
   have hleft : (∑ a : α, p.p a * (n + 1 : ℝ)) = (n + 1 : ℝ) := by
     have : (∑ a : α, p.p a * (n + 1 : ℝ)) = (∑ a : α, p.p a) * (n + 1 : ℝ) := by
-      simpa using
-        (Finset.sum_mul (s := (Finset.univ : Finset α))
-          (f := fun a => p.p a) (a := (n + 1 : ℝ))).symm
+      exact Eq.symm (Finset.sum_mul Finset.univ p.p (↑n + 1))
     simp [this, p.sum_eq_one]
   have hright : (∑ a : α, (approxWeight (p := p) n a : ℝ)) = (approxDenom (p := p) n : ℝ) := by
     simp [approxDenom]
@@ -147,9 +144,7 @@ private lemma approxDenom_upper (p : Simplex α) (n : ℕ) :
       simp [Finset.sum_add_distrib]
     have hsum1 : (∑ a : α, p.p a * (n + 1 : ℝ)) = (n + 1 : ℝ) := by
       have : (∑ a : α, p.p a * (n + 1 : ℝ)) = (∑ a : α, p.p a) * (n + 1 : ℝ) := by
-        simpa using
-          (Finset.sum_mul (s := (Finset.univ : Finset α))
-            (f := fun a => p.p a) (a := (n + 1 : ℝ))).symm
+        exact Eq.symm (Finset.sum_mul Finset.univ p.p (↑n + 1))
       simp [this, p.sum_eq_one]
     simp_all
   have hleft : (∑ a : α, (approxWeight (p := p) n a : ℝ)) = (approxDenom (p := p) n : ℝ) := by
@@ -197,12 +192,7 @@ private lemma approx_coord_upper (p : Simplex α) (n : ℕ) (a : α) :
     div_le_div_of_nonneg_right (approxWeight_upper (p := p) n a) (le_of_lt hNpos)
   have h3 : (p.p a * (n + 1 : ℝ) + 1) / (n + 1 : ℝ) = p.p a + 1 / (n + 1 : ℝ) := by
     have hn : (n + 1 : ℝ) ≠ 0 := by exact_mod_cast Nat.succ_ne_zero n
-    calc
-      (p.p a * (n + 1 : ℝ) + 1) / (n + 1 : ℝ)
-          = (p.p a * (n + 1 : ℝ)) / (n + 1 : ℝ) + 1 / (n + 1 : ℝ) := by
-              simp [add_div]
-      _ = p.p a + 1 / (n + 1 : ℝ) := by
-              simp [hn]
+    exact Eq.symm (add_div' 1 (p.p a) (↑n + 1) hn)
   simpa [approx, approxDenom, h3] using le_trans (le_trans h1 h2) (le_of_eq h3)
 
 private lemma tendsto_approx_coord (p : Simplex α) (a : α) :
@@ -245,8 +235,7 @@ private lemma tendsto_approx_p (p : Simplex α) :
     Filter.Tendsto (fun n : ℕ => (approx (p := p) n).p) Filter.atTop (𝓝 p.p) := by
   -- Reduce to coordinates.
   rw [tendsto_pi_nhds]
-  intro a
-  exact tendsto_approx_coord (p := p) a
+  exact fun x => tendsto_approx_coord p x
 
 private lemma tendsto_approx (p : Simplex α) :
     Filter.Tendsto (fun n : ℕ => approx (p := p) n) Filter.atTop (𝓝 p) := by

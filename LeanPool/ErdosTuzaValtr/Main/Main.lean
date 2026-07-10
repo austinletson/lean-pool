@@ -36,8 +36,7 @@ theorem Config.Mirror_mainGoal (n : ℕ) : C.MainGoal n → C.Mirror.MainGoal n 
   have goal := h S hSm cap4_free cup_free
   rcases goal with ⟨p, q, r, s, interweave⟩
   exists toDual s, toDual r, toDual q, toDual p
-  rw [Mirror.hasInterweavedLaced]
-  exact interweave
+  exact (Mirror.hasInterweavedLaced p q r s).mpr interweave
 
 private theorem hasLaced_pair {S : Finset γ} {x y : γ} (x_mem : x ∈ S) (y_mem : y ∈ S)
     (hxy : x < y) : C.HasLaced (0 + 2) S x y := by

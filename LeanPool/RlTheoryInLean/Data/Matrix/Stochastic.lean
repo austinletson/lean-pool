@@ -54,8 +54,7 @@ lemma StochasticVec.le_one (x : S → ℝ) [StochasticVec x] (s : S) :
   have hx : StochasticVec x := inferInstance
   rw [←hx.rowsum]
   apply single_le_sum
-  · intro z _
-    apply hx.nonneg
+  · exact fun i a => nonneg i
   · simp
 
 section simplex
@@ -78,8 +77,7 @@ instance : IsClosed (Simplex S) := by
   have h2 : IsClosed {f : l1Space | (∑ s, f.ofLp s) = 1} := by
     have hsum : Continuous (fun f : l1Space => ∑ s, f.ofLp s) := by
       apply continuous_finsetSum
-      intro s _
-      exact (continuous_apply s).comp (PiLp.continuous_ofLp 1 _)
+      exact fun i a => PiLp.continuous_apply 1 (fun i => ℝ) i
     have htarget : IsClosed ({x : ℝ | x = 1} : Set ℝ) := by simp
     simpa [Set.preimage] using htarget.preimage hsum
   have h := IsClosed.inter h1 h2
@@ -388,13 +386,7 @@ theorem smat_nonexpansive_in_l1 (Q : Matrix S S ℝ) [RowStochastic Q] :
 theorem smat_pow_nonexpansive_in_l1 [DecidableEq S] (Q : Matrix S S ℝ) [RowStochastic Q] :
     ∀ n (x y : S → ℝ),
       ‖WithLp.toLp 1 (x ᵥ* Q ^ n - y ᵥ* Q ^ n)‖₊ ≤ ‖WithLp.toLp 1 (x - y)‖₊ := by
-  intro n x y
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    simp_rw [pow_succ, ←Matrix.vecMul_vecMul]
-    have := smat_nonexpansive_in_l1 Q (x ᵥ* Q ^ n) (y ᵥ* Q ^ n)
-    exact this.trans ih
+  exact fun n x y => smat_nonexpansive_in_l1 (Q ^ n) x y
 
 /-- The affine action of a stochastic matrix on the probability simplex. -/
 def smatAsOperator (P : Matrix S S ℝ) [RowStochastic P] :
@@ -586,16 +578,14 @@ lemma cesaro_average_is_svec
     apply mul_nonneg
     · exact inv_nonneg.mpr (by linarith)
     · apply sum_nonneg
-      intro k _
-      exact (svec_mul_smat_is_svec x₀ (P ^ k)).nonneg i
+      exact fun i_2 a => StochasticVec.nonneg i
   case rowsum =>
     rw [Finset.sum_congr rfl (fun i _ => hval i), ← mul_sum, Finset.sum_comm]
     have hsum : ∑ k ∈ Finset.range (n + 1), ∑ i, (x₀ ᵥ* (P ^ k)) i = n + 1 := by
       calc ∑ k ∈ Finset.range (n + 1), ∑ i, (x₀ ᵥ* (P ^ k)) i
           = ∑ _k ∈ Finset.range (n + 1), 1 := by
             apply sum_congr rfl
-            intro k _
-            exact (svec_mul_smat_is_svec x₀ (P ^ k)).rowsum
+            exact fun x a => StochasticVec.rowsum
         _ = n + 1 := by simp
     rw [hsum, mul_comm]
     apply mul_inv_cancel₀
@@ -668,8 +658,7 @@ instance : StochasticVec (S := S) uniformDistribution := by
 instance : Nonempty ↑(Simplex S) := by
   refine ⟨⟨WithLp.toLp 1 uniformDistribution, ?_⟩⟩
   change StochasticVec (WithLp.toLp 1 uniformDistribution).ofLp
-  rw [WithLp.ofLp_toLp]
-  infer_instance
+  exact instStochasticVecUniformDistribution
 
 omit [DecidableEq S] in
 theorem stationary_distribution_exists (P : Matrix S S ℝ) [RowStochastic P]
@@ -706,8 +695,7 @@ theorem stationary_distribution_exists (P : Matrix S S ℝ) [RowStochastic P]
         refine ⟨N, ?_⟩
         intro n hnge
         have hnkn : 0 < (nk n + 1 : ℝ) := by
-          have : (0 : ℝ) ≤ nk n := Nat.cast_nonneg _
-          linarith
+          exact cast_add_one_pos (nk n)
         have hpos : (0 : ℝ) < 2 / (nk n + 1) := div_pos two_pos hnkn
         change dist (2 / ((nk n : ℝ) + 1)) 0 < ε
         rw [Real.dist_eq, sub_zero, abs_of_pos hpos]

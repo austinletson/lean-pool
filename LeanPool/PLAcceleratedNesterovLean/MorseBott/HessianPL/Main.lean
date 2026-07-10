@@ -94,9 +94,7 @@ lemma muPL_norm_sq_bound (f : E → ℝ) (μ : ℝ) (x₀ v : E)
   have hG_upper : ‖fderiv ℝ f (x₀ + t • v)‖ ≤ t * normHv + ε' * t * ‖v‖ := by
     have h1 : ‖fderiv ℝ f (x₀ + t • v)‖ ≤ ‖t • H v‖ +
         ‖fderiv ℝ f (x₀ + t • v) - t • H v‖ := by
-      calc ‖fderiv ℝ f (x₀ + t • v)‖
-          = ‖t • H v + (fderiv ℝ f (x₀ + t • v) - t • H v)‖ := by congr 1; abel
-        _ ≤ ‖t • H v‖ + ‖fderiv ℝ f (x₀ + t • v) - t • H v‖ := norm_add_le _ _
+      exact norm_le_norm_add_norm_sub' (fderiv ℝ f (x₀ + t • v)) (t • H v)
     have h2 : ‖t • H v‖ = t * normHv := by
       rw [norm_smul, Real.norm_of_nonneg ht_pos.le]
     have h3 : ‖fderiv ℝ f (x₀ + t • v) - t • H v‖ ≤ ε' * (t * ‖v‖) := by

@@ -659,9 +659,8 @@ private theorem sheafH_filtered_colimit_comparison_isIso
             intro J' _ _ Ysh csh hcsh
             exact sheafH_filtered_colimit_comparison_isIso_one Ysh csh hcsh
         | succ m =>
-            intro J' _ _ Ysh csh hcsh
-            exact sheafH_filtered_colimit_comparison_isIso_succ_succ
-              (Ysh := Ysh) (csh := csh) (hcsh := hcsh) (m := m) ih
+            intro J' exact fun [SmallCategory J'] [IsFiltered J'] Ysh csh hcsh =>
+                         sheafH_filtered_colimit_comparison_isIso_succ_succ Ysh csh hcsh m ih
   exact hP n Ysh csh hcsh
 
 /-- **Sheaf cohomology commutes with filtered colimits** on Noetherian spaces:

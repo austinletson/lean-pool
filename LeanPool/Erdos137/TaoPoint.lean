@@ -73,10 +73,7 @@ theorem prime_dvd_two_terms_eq {p n k i j : ℕ} (_hp : p.Prime) (hk : k ≤ p)
     have hkp : (k : ℤ) ≤ (p : ℤ) := by exact_mod_cast hk
     rw [abs_lt]; constructor <;> nlinarith [Int.natCast_nonneg i, Int.natCast_nonneg j]
   have hzero : (i : ℤ) - (j : ℤ) = 0 := by
-    rcases eq_or_ne ((i : ℤ) - (j : ℤ)) 0 with h | h
-    · exact h
-    · exact absurd (Int.le_of_dvd (abs_pos.mpr h) ((dvd_abs _ _).mpr hdvd)) (by
-        simp only [not_le]; exact hlt)
+    exact Int.eq_zero_of_abs_lt_dvd hdvd hlt
   have : (i : ℤ) = (j : ℤ) := by linarith
   exact_mod_cast this
 

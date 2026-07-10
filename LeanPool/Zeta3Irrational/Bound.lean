@@ -191,8 +191,7 @@ lemma bound'' (x y z : ℝ) (x0 : 0 < x) (x1 : x < 1) (y0 : 0 < y) (y1 : y < 1)
       nlinarith [sq_nonneg (22 * s - 9)]
     nlinarith
   have hratio_sq_le : (s * (1 - s) / (1 + s)) ^ 2 ≤ (2 / 11 : ℝ) ^ 2 := by
-    nlinarith [sq_nonneg ((2 / 11 : ℝ) - s * (1 - s) / (1 + s)), hratio_nonneg,
-      hratio_le]
+    exact pow_le_pow_left₀ hratio_nonneg hratio_le 2
   have hnum_le :
       x * (1 - x) * y * (1 - y) * z * (1 - z) ≤
         s ^ 2 * (1 - s) ^ 2 * z * (1 - z) := by
@@ -208,8 +207,7 @@ lemma bound'' (x y z : ℝ) (x0 : 0 < x) (x1 : x < 1) (y0 : 0 < y) (y1 : y < 1)
     x * (1 - x) * y * (1 - y) * z * (1 - z) / (1 - (1 - x * y) * z)
         ≤ s ^ 2 * (1 - s) ^ 2 * z * (1 - z) / (1 - (1 - s ^ 2) * z) := by
           rw [← hs_sq]
-          refine div_le_div₀ ?_ hnum_le hden_pos_s (le_refl _)
-          positivity
+          exact (div_le_div_iff_of_pos_right hden_pos_s).mpr hnum_le
     _ = s ^ 2 * (1 - s) ^ 2 * (z * (1 - z) / (1 - (1 - s ^ 2) * z)) := by
       ring
     _ ≤ s ^ 2 * (1 - s) ^ 2 * (1 / (1 + s) ^ 2) := by

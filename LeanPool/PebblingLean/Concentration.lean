@@ -61,8 +61,7 @@ theorem uniformProbabilityReal_le_expect_div_of_event_le [Fintype Ω] [Nonempty 
     exact Finset.sum_le_sum fun ω hω =>
       hP ω (by simpa [bad] using (Finset.mem_filter.mp hω).2)
   have hsum_bad_le_univ : (∑ ω ∈ bad, X ω) ≤ ∑ ω : Ω, X ω := by
-    exact Finset.sum_le_sum_of_subset_of_nonneg (by simp [bad])
-      (fun ω _hω _hnot => hnonneg ω)
+    exact Finset.sum_le_univ_sum_of_nonneg hnonneg
   have hcard_mul_a_le_sum : (bad.card : ℝ) * a ≤ ∑ ω : Ω, X ω := by
     have hsum_const : (∑ _ω ∈ bad, a) = (bad.card : ℝ) * a := by
       simp [Finset.sum_const, nsmul_eq_mul]
@@ -167,8 +166,7 @@ theorem one_sub_exp_neg_ge_sub_sq {x : ℝ} (hx : 0 ≤ x) :
 
 theorem one_sub_le_exp_neg (u : ℝ) :
     1 - u ≤ Real.exp (-u) := by
-  have h := Real.add_one_le_exp (-u)
-  linarith
+  exact Real.one_sub_le_exp_neg u
 
 /-- If a nonnegative one-step moment is at most `1-u`, then its `N`-fold
 product is at most `exp(-N u)`.  This is the product step in the

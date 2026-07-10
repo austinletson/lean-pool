@@ -478,14 +478,12 @@ private def intersection_close_up_proof
         apply Set.countable_iUnion
         intro f
         apply Set.countable_iUnion
-        intro hf
-        exact (hD₁_fiber_finite f hf).countable
+        exact fun i => Finite.countable (hD₁_fiber_finite f i)
       have hD₂_countable : D₂.Countable := by
         apply Set.countable_iUnion
         intro f
         apply Set.countable_iUnion
-        intro hf
-        exact (hD₂_fiber_finite f hf).countable
+        exact fun i => Finite.countable (hD₂_fiber_finite f i)
       -- D_mod₁ countable: countable polynomials × countable primes × finite root sets
       have hD_mod₁_countable : D_mod₁.Countable := by
         apply Set.countable_iUnion

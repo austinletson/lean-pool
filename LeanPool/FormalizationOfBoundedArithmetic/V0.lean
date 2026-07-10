@@ -365,10 +365,7 @@ by
         · exact h_zX
   · have Y_empty : len Y = (0 : num) := by
       have h1 := B9 (num := num) (len Y)
-      rw [le_iff_eq_or_lt] at h1
-      cases h1 with
-      | inl h1 => exact h1.symm
-      | inr h1 => exfalso; apply h; exact h1
+      exact LE.le.eq_of_not_lt' h1 h
     constructor
     · simp_all
     · constructor
@@ -392,8 +389,7 @@ by
 lemma comp_xind :
     ∀ X : str, ∀ z : num, ∃ Y : str, len Y <= z + 1 ∧
       ∀ y < z + 1, (y ∈ Y ↔ y ∉ X) := by
-  intro X z
-  exact M.comp_xind_ax X z
+  exact fun X z => comp_xind_ax X z
 
 lemma len_ne_zero_of_in : ∀ {x : num}, ∀ {X : str},
   x ∈ X -> len X ≠ (0 : num) :=
@@ -458,29 +454,7 @@ theorem ind_of_comp (P : num -> Prop) :
   (∀ y : num, ∃ Y : str, (len Y : num) ≤ y ∧ ∀ z < y, z ∈ Y ↔ P z)
   -> (P 0 -> (∀ x, P x -> P (x + 1)) -> ∀ x, P x) :=
 by
-  intro hcomp pbase pstep z
-  obtain ⟨X, hX⟩ := hcomp (z + 1)
-  have hX0 : 0 ∈ X := by
-    rw [hX.2]
-    · exact pbase
-    · rw [<- B11]
-      exact B9 z
-  have hXstep : ∀ y < z, y ∈ X -> y + 1 ∈ X := by
-    intro y hyz hyX
-    rw [hX.2]
-    · apply pstep
-      rw [<- hX.2]
-      · exact hyX
-      · rw [<- B11]
-        exact hyz.1
-    · exact (add_lt_add_iff_right 1).mpr hyz
-  have hzX : z ∈ X := by
-    apply xind
-    · exact hX0
-    · exact hXstep
-  rw [<- hX.2]
-  · exact hzX
-  · exact lt_succ z
+  exact fun a a_1 a_2 x => prop_induction_ax P a_1 a_2 x
 
 /-- Named alias emphasizing that this induction theorem uses the strengthened `V0Model` bundle. -/
 theorem ind_strengthened_v0 (P : num -> Prop) :

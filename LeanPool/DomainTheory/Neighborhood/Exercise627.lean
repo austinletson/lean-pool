@@ -521,15 +521,7 @@ theorem ext_of_principal {γ δ : Type*} {W₀ : NeighborhoodSystem γ} {W₁ : 
     {f g : ApproximableMap W₀ W₁}
     (h : ∀ (X : Set γ) (hX : W₀.mem X),
       f.toElementMap (W₀.principal hX) = g.toElementMap (W₀.principal hX)) : f = g := by
-  apply ApproximableMap.ext
-  intro X Y
-  constructor
-  · intro hr
-    have hX := f.rel_dom hr
-    rw [g.rel_iff_mem_principal hX, ← h X hX, ← f.rel_iff_mem_principal hX]; exact hr
-  · intro hr
-    have hX := g.rel_dom hr
-    rw [f.rel_iff_mem_principal hX, h X hX, ← g.rel_iff_mem_principal hX]; exact hr
+  exact eq_of_toElementMap_principal h
 
 theorem strctMap_comp_inclMap :
     (strctMap (V₀ := V₀) (V₁ := V₁)).comp inclMap = idMap (strictFun V₀ V₁) := by

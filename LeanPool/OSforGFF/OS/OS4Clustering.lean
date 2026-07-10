@@ -449,11 +449,7 @@ theorem gaussianFreeField_satisfies_OS4 (m : ℝ) [Fact (0 < m)] :
   -- Apply the technical lemma
   have h_bound := GFF_OS4_from_small_decay_real m f g a δ hδ_pos hδ_small h_S2_small
   -- Conclude: 2δ ≤ ε
-  calc ‖GJGeneratingFunctional (gaussianFreeFieldFree m) (f + g.translate a) -
-         GJGeneratingFunctional (gaussianFreeFieldFree m) f *
-         GJGeneratingFunctional (gaussianFreeFieldFree m) g‖
-      < 2 * δ := h_bound
-    _ ≤ ε := hδ_gives_ε
+  exact Std.lt_of_lt_of_le h_bound hδ_gives_ε
 
 /-! ## Alternative: Direct (ε-δ) Formulation
 
@@ -611,8 +607,7 @@ theorem gaussianFreeField_satisfies_OS4_PolynomialClustering (m : ℝ) [Fact (0 
     ‖z‖) := by
     intro z hz
     have hmz : m * ‖z‖ ≥ 1 := by
-      calc m * ‖z‖ ≥ m * (1/m) := mul_le_mul_of_nonneg_left hz (le_of_lt hm)
-        _ = 1 := by field_simp
+      exact (div_le_iff₀' hm).mp hz
     have h_norm_eq : ‖(0 : SpaceTime) - z‖ = ‖z‖ := by simp
     have h := freeCovariance_exponential_bound m hm 0 z (by rw [h_norm_eq]; exact hmz)
     simp only [freeCovarianceKernel, freeCovariance, h_norm_eq] at h ⊢; exact h

@@ -38,8 +38,7 @@ lemma log_one_to_two_eq {b : ℕ} {e : ℤ} (h : 1 < b) {x : ℚ} (h' : 1 ≤ x)
     suffices x * b^e < b^(e + 1) by
       -- Then we can use the x < b^y connection.
       have : Int.log b (x * b^e) < e + 1 := by
-        apply (Int.lt_zpow_iff_log_lt (b := b) h (x_be_pos)).1
-        exact this
+        exact (Int.lt_zpow_iff_log_lt h x_be_pos).mp this
       linarith
     -- Basic factoring and linear arithmetic
     rw [zpow_add_one₀ (by linarith), mul_comm]
@@ -120,10 +119,7 @@ lemma casesQPlane (P : ℚ → ℚ → Prop)
   (h4 : ∀ q1 < 0, ∀ q2 < 0, P (-q1) (-q2) → P q2 q1) (q1 q2 : ℚ)
   (q1_nezero : q1 ≠ 0) (q2_nezero : q2 ≠ 0) : P q1 q2 := by
   have h : ∀q ≠ (0 : ℚ), q > 0 ∨ q < 0 := by
-    intro q qnezero
-    by_cases h : q > 0
-    · exact Or.inl h
-    exact lt_or_gt_of_ne (Ne.symm qnezero)
+    exact fun q a => lt_or_gt_of_ne (id (Ne.symm a))
   rcases (h q1 q1_nezero) with h' | h'
   · rcases (h q2 q2_nezero) with h'' | h''
     · exact h1 q1 h' q2 h''

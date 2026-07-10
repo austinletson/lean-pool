@@ -246,8 +246,7 @@ lemma val_toEmpty [DecidableEq ξ] (t : Semiterm L ξ n) (h : t.freeVariables = 
     simp only [val_func, Semiterm.toEmpty]
     have : ∀ i, (v i).freeVariables = ∅ := by
       simpa [Semiterm.freeVariables_func, Finset.biUnion_eq_empty] using h
-    congr 1; funext i
-    exact ih i (this i)
+    congr 1; exact funext fun x => ih x (toEmpty._proof_2 k f v h x)
 
 end Semiterm
 

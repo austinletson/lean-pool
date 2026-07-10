@@ -564,11 +564,7 @@ lemma _root_.MeasureTheory.Measure.ae_of_ae_compProd {α β : Type*}
     {μ : Measure α} [SFinite μ] {κ : Kernel α β} [IsSFiniteKernel κ]
     {p : α × β → Prop} (hp : ∀ᵐ x ∂(μ ⊗ₘ κ), p x) :
     ∀ᵐ a ∂μ, ∀ᵐ b ∂(κ a), p (a, b) := by
-  rw [ae_iff] at hp
-  have hp' := Measure.ae_of_compProd_eq_zero hp
-  filter_upwards [hp'] with a ha
-  rw [ae_iff]
-  exact ha
+  exact Measure.ae_ae_of_ae_compProd hp
 
 lemma compProd_congr_ae {μ} [SFinite μ] {κ κ' :
   Kernel T S} [IsSFiniteKernel κ] [IsSFiniteKernel κ']
@@ -796,8 +792,7 @@ lemma _root_.ProbabilityTheory.Kernel.AEFiniteKernelSupport.comap_equiv
   rw [ae_map_iff f.symm.measurable.aemeasurable]
   · simp only [MeasurableEquiv.apply_symm_apply]
     exact hκ
-  · rw [Set.setOf_exists]
-    measurability
+  · exact MeasurableSet.of_discrete
 
 /-- Projecting a kernel to first coordinate preserves finite kernel support. -/
 lemma _root_.ProbabilityTheory.Kernel.FiniteKernelSupport.fst [MeasurableSingletonClass S]
@@ -852,9 +847,7 @@ lemma _root_.ProbabilityTheory.Kernel.aefiniteKernelSupport_of_cond
   intro x
   simp only [Set.mem_image, Set.mem_compl_iff, Finset.mem_coe, Prod.exists, exists_eq_right,
     not_exists, forall_exists_index, and_imp]
-  intro y h hsyx
-  rw [← hsyx]
-  exact h s
+  exact fun x_2 a a_1 => Eq.mpr_not (congrArg (Membership.mem A) (id (Eq.symm a_1))) (a s)
 
 /-- Swapping a kernel right preserves finite kernel support. -/
 lemma _root_.ProbabilityTheory.Kernel.FiniteKernelSupport.swapRight
@@ -955,8 +948,7 @@ protected lemma _root_.ProbabilityTheory.Kernel.AEFiniteKernelSupport.prodMkRigh
   rw [Measure.ae_prod_mem_iff_ae_ae_mem]
   · filter_upwards [hκ.ae_eq_mk] with x hx
     simp [hx]
-  · simp only [prodMkRight_apply, measurableSet_setOf]
-    exact .of_discrete
+  · exact MeasurableSet.of_discrete
 
 /-- prodMkLeft preserves finite kernel support. -/
 lemma _root_.ProbabilityTheory.Kernel.FiniteKernelSupport.prodMkLeft

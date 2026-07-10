@@ -188,11 +188,7 @@ private lemma avg_corrEmb_eq_avg_over_all_embeddings (f : Coloring n) (b : Emb4)
       (∑ σ : G, corrEmb f (σ • b))
           =
           ∑ p : (↑(MulAction.orbit G b)) × MulAction.stabilizer G b, corrEmb f ((e p) • b) := by
-            simpa using
-              (Fintype.sum_equiv e
-                    (fun p => corrEmb f ((e p) • b))
-                    (fun σ => corrEmb f (σ • b))
-                    (by intro p; rfl)).symm
+            exact Eq.symm (Fintype.sum_equiv e (fun x => corrEmb f (e x • b)) (fun x => corrEmb f (x • b)) (congrFun rfl))
       _ =
           ∑ p : (↑(MulAction.orbit G b)) × MulAction.stabilizer G b, corrEmb f p.1 := by
             refine Fintype.sum_congr _ _ ?_
@@ -217,8 +213,7 @@ private lemma avg_corrEmb_eq_avg_over_all_embeddings (f : Coloring n) (b : Emb4)
   have hcardNat :
       Fintype.card (↑(MulAction.orbit G b)) * Fintype.card (MulAction.stabilizer G b) =
         Fintype.card G := by
-    simpa using
-      (MulAction.card_orbit_mul_card_stabilizer_eq_card_group (α := G) (β := Emb4) b)
+    exact MulAction.card_orbit_mul_card_stabilizer_eq_card_group G b
   have hcardG :
       (Fintype.card G : Q) =
         (Fintype.card Emb4 : Q) * (Fintype.card (MulAction.stabilizer G b) : Q) := by

@@ -720,8 +720,7 @@ theorem fourier_lorentzian_1d (μ : ℝ) (hμ : 0 < μ) (x : ℝ) :
   -- Divide both sides by (μ/π): ∫ ... = e^{-μ|x|} / (μ/π) = (π/μ) * e^{-μ|x|}
   have h_solve : ∫ k : ℝ, Complex.exp (Complex.I * k * x) / (k^2 + μ^2) =
                  (↑(Real.exp (-μ * |x|)) : ℂ) / (μ / π) := by
-    rw [mul_comm] at hinv
-    exact eq_div_of_mul_eq hμπ_ne hinv
+    exact EuclideanDomain.eq_div_of_mul_eq_right hμπ_ne hinv
   rw [h_solve]
   -- Simplify: e^{...} / (μ/π) = e^{...} * (π/μ) = (π/μ) * e^{...}
   rw [div_div_eq_mul_div]

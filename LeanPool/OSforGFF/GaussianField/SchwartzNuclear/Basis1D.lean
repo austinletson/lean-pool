@@ -101,8 +101,7 @@ theorem hermiteCoeff1D_decay_single :
       ∀ (f : SchwartzMap ℝ ℝ) (n : ℕ),
         |hermiteCoeff1D n f| * (1 + (n : ℝ)) ^ (k : ℝ) ≤
           C * (Finset.Iic q).sup (fun m => SchwartzMap.seminorm ℝ m.1 m.2) f := by
-  intro k
-  exact hermiteCoeff1D_decay (k : ℝ)
+  exact fun k => hermiteCoeff1D_decay ↑k
 
 /-! ## Basis Growth (seminorm bound)
 

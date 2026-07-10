@@ -51,8 +51,7 @@ theorem leading_term_extraction :
   have hpow : (r ^ N : ℂ) ≠ 0 := pow_ne_zero N hr_ne
   have hdiv : q r / (r ^ N : ℂ) = -α := by
     have hqeq : q r = -(α * (r ^ N : ℂ)) := by
-      rw [eq_neg_iff_add_eq_zero]
-      simpa [add_comm] using hzero_r
+      exact Eq.symm (neg_eq_of_add_eq_zero_right (hR2 r hr2))
     rw [hqeq]
     field_simp [hpow]
   rw [hdiv, norm_neg] at hsmall
@@ -107,8 +106,7 @@ private theorem qkn_eventual_upper_bound (k n : ℕ) :
               norm_add_le (((qkn k n r : ℂ) / (r ^ n : ℂ)) - c0) c0
       _ ≤ 1 + ‖c0‖ := by gcongr
       _ = C := by simp [C, add_comm]
-  have hmul := mul_le_mul_of_nonneg_right hle_div hrpow_nonneg
-  rwa [div_mul_cancel₀ _ hrpow_pos.ne'] at hmul
+  exact (div_le_iff₀ hrpow_pos).mp hle_div
 
 private theorem qkn_eventual_lower_bound' (k n : ℕ) :
     ∃ R c : ℝ, 0 < c ∧ ∀ r ≥ R, c * r ^ n ≤ ‖(qkn k n r : ℂ)‖ := by
@@ -164,11 +162,9 @@ private theorem coeff_eq_zero_of_qkn_eventual_bounds
     (Filter.tendsto_atTop_atTop.1 hgrow) (C' + 1)
   let r : ℝ := max R0 (max R R')
   have hr1 : 1 ≤ r := by
-    dsimp [r]
-    exact le_trans hR0 (le_max_left R0 (max R R'))
+    exact le_sup_of_le_left hR0
   have hrR0 : R0 ≤ r := by
-    dsimp [r]
-    exact le_max_left R0 (max R R')
+    exact Std.left_le_max
   have hrR : R ≤ r := by
     dsimp [r]
     exact le_trans (le_max_left R R') (le_max_right R0 (max R R'))
@@ -397,10 +393,7 @@ private theorem fourierCoeff_pair_expansion
       c p.1 * star (c p.2) * fourier ((p.1.1 : ℤ) - (p.2.1 : ℤ)) t) m =
         c p.1 * star (c p.2) * fourierCoeff (T := T)
           (fourier ((p.1.1 : ℤ) - (p.2.1 : ℤ))) m := by
-            simpa [mul_assoc] using
-              (fourierCoeff.const_mul (T := T)
-                (f := fourier ((p.1.1 : ℤ) - (p.2.1 : ℤ)))
-                (c := c p.1 * star (c p.2)) (n := m))
+            exact fourierCoeff.const_mul (⇑(fourier (↑↑p.1 - ↑↑p.2))) (c p.1 * star (c p.2)) m
     _ = c p.1 * star (c p.2) * (if (p.1.1 : ℤ) - (p.2.1 : ℤ) = m then 1 else 0) := by rw [hfreq]
 
 /-- Explicit Fourier expansion of a finite circle polynomial. -/
@@ -414,8 +407,7 @@ private theorem finiteCirclePoly_sum
   have hband : frequencyBand 0 (d + 1) = Finset.range (d + 1) := by
     simpa [HermiteLEAN.frequencyBand] using
       (show Finset.Icc 0 d = Finset.range (d + 1) by
-        ext n
-        simp [Finset.mem_Icc])
+        exact Eq.symm (Nat.range_succ_eq_Icc_zero d))
   rw [hband, ← Fin.sum_univ_eq_sum_range]
   refine Finset.sum_congr rfl ?_
   intro x hx
@@ -467,8 +459,7 @@ theorem growth_forces_finite :
         ∀ i : Fin (d + 1),
           ∃ R C : ℝ,
             1 ≤ R ∧ 0 < C ∧ ∀ r ≥ R, ‖(qkn k i.1 r : ℂ)‖ ≤ C * r ^ i.1 := by
-      intro i
-      simpa using qkn_eventual_upper_bound k i.1
+      exact fun i => qkn_eventual_upper_bound k ↑i
     choose R_i C_i hR_i hC_i hqi using hq
     have hnonemptyR : (Finset.univ.image R_i).Nonempty := by
       simp_all
@@ -553,8 +544,7 @@ theorem growth_forces_finite :
       have hfour :
           fourierCoeff (circleSeries k (hermiteCoeff k G) r) (n : ℤ) =
             hermiteCoeff k G n * (qkn k n r : ℂ) := by
-        simpa using
-          (circleSeries_fourierCoeff_hermiteCoeff (k := k) (G := G) hG (r := r) hr_pos n)
+        exact circleSeries_fourierCoeff_hermiteCoeff hG hr_pos n
       rw [← hfour]
       simpa [fourierCoeff, hconst] using hInt0
     exact hpoint
@@ -597,9 +587,7 @@ private theorem finiteCirclePoly_normSq_fourierCoeff
             fourier ((p.1.1 : ℤ) - (p.2.1 : ℤ)) t := by
     ext t
     rw [finiteCirclePoly_sum (k := k) (a := c) hr t]
-    simpa [mul_assoc, mul_left_comm, mul_comm, qkn_real] using
-      (finiteSeries_mul_star_expand (D := d + 1)
-        (c := fun i : Fin (d + 1) => c i * (qkn k i.1 r : ℂ)) t)
+    exact finiteSeries_mul_star_expand (fun n => c n * ↑(qkn k (↑n) r)) t
   have hcoeff := congrArg (fun F : Circle → ℂ => fourierCoeff F m) hprod_eq
   simpa [mul_assoc, mul_left_comm, mul_comm, qkn_real] using
     (hcoeff.trans
@@ -708,11 +696,9 @@ private lemma finite_modulus_coeff_rel {k d : ℕ} (a b : Fin (d + 1) → ℂ)
     have hn : (qkn k n.1 r : ℂ) ≠ 0 := by
       exact_mod_cast hRn_nonzero r (le_trans (le_max_right _ _) hr)
     have hmulA : Fa r * ((qkn k d r : ℂ) * (qkn k n.1 r : ℂ)) = rawA r := by
-      simpa [Fa, rawA, mul_assoc, mul_left_comm, mul_comm] using
-        pairSum_ratio_mul_den (k := k) a m n.1 hd hn
+      exact pairSum_ratio_mul_den a m (↑n) hd hn
     have hmulB : Fb r * ((qkn k d r : ℂ) * (qkn k n.1 r : ℂ)) = rawB r := by
-      simpa [Fb, rawB, mul_assoc, mul_left_comm, mul_comm] using
-        pairSum_ratio_mul_den (k := k) b m n.1 hd hn
+      exact pairSum_ratio_mul_den b m (↑n) hd hn
     have hD : ((qkn k d r : ℂ) * (qkn k n.1 r : ℂ)) ≠ 0 := mul_ne_zero hd hn
     apply mul_right_cancel₀ hD
     simp_all
@@ -771,8 +757,7 @@ theorem finite_modulus_rigidity :
     intro n
     have hrel := hcoeff_rel n
     have hw_top : topB = w * topA := by
-      dsimp [w]
-      field_simp [htopA]
+      exact Eq.symm (div_mul_cancel₀ topB hTop)
     have hstarcoeff : star (a n) = w * star (b n) := by
       apply mul_left_cancel₀ htopA
       simpa [hw_top, mul_assoc, mul_left_comm, mul_comm] using hrel
@@ -956,11 +941,8 @@ private theorem fourierCoeff_circleSeries_mul_star_finiteCirclePoly
       = (star (a i) * (qkn k i.1 r : ℂ)) *
           fourierCoeff (fun t : Circle =>
             circleSeries k (hermiteCoeff k G) r t * fourier (-(i.1 : ℤ)) t) m := by
-            simpa using
-              (fourierCoeff.const_mul (T := T)
-                (f := fun t : Circle =>
-                  circleSeries k (hermiteCoeff k G) r t * fourier (-(i.1 : ℤ)) t)
-                (c := star (a i) * (qkn k i.1 r : ℂ)) (n := m))
+            exact fourierCoeff.const_mul (fun x => circleSeries k (hermiteCoeff k G) r x * (fourier (-↑↑i)) x)
+                (star (a i) * ↑(qkn k (↑i) r)) m
     _ = (star (a i) * (qkn k i.1 r : ℂ)) *
           fourierCoeff (circleSeries k (hermiteCoeff k G) r) (m + i.1) := by
             rw [fourierCoeff_mul_fourier]
@@ -1030,13 +1012,11 @@ private lemma circleSeries_neg_fourierCoeff_eq_zero
           (circleSeries_l2_identity_hermiteCoeff (k := k) (G := G) hG (r := r) hr).symm
   have hsplit :
       ∑' n : ℤ, s n = ∑' n : ℕ, s n + ∑' n : ℕ, s (-(n + 1 : ℤ)) := by
-    simpa [add_comm, add_left_comm, add_assoc] using
-      (tsum_of_nat_of_neg_add_one (f := s) hsummable_nat hsummable_neg)
+    exact tsum_of_nat_of_neg_add_one hsummable_nat hsummable_neg
   have hneg_sum_zero : ∑' n : ℕ, s (-(n + 1 : ℤ)) = 0 := by linarith [hparseval, hnat_eq, hsplit]
   have htermle : s (-(m + 1 : ℤ)) ≤ ∑' n : ℕ, s (-(n + 1 : ℤ)) :=
     hsummable_neg.le_tsum m fun n _ => by
-      dsimp [s]
-      positivity
+      exact sq_nonneg ‖fourierCoeff (↑↑fLp) (-(↑n + 1))‖
   have hsq : s (-(m + 1 : ℤ)) = 0 :=
     le_antisymm (hneg_sum_zero ▸ htermle) (by positivity)
   have hsqLp : fourierCoeff fLp (-(m + 1 : ℤ)) = 0 := by
@@ -1060,11 +1040,8 @@ private theorem fourierCoeff_star_circleSeries_mul_star_finiteCirclePoly_nat
         star (circleSeries k (hermiteCoeff k G) r t * star (finiteCirclePoly k r a t))) ell
       = star (fourierCoeff (fun t : Circle =>
           circleSeries k (hermiteCoeff k G) r t * star (finiteCirclePoly k r a t)) (-ell)) := by
-            simpa using
-              (fourierCoeff_star
-                (f := fun t : Circle =>
-                  circleSeries k (hermiteCoeff k G) r t * star (finiteCirclePoly k r a t))
-                (m := (ell : ℤ)))
+            exact fourierCoeff_star (fun t => circleSeries k (hermiteCoeff k G) r t * star (finiteCirclePoly k r a t))
+                ↑ell
     _ = star
           (∑ i : Fin (d + 1), star (a i) * (qkn k i.1 r : ℂ) *
             fourierCoeff (circleSeries k (hermiteCoeff k G) r) ((-(ell : ℤ)) + i.1)) := by
@@ -1164,8 +1141,7 @@ private theorem positive_mode_mixed_eq_zero
           star (circleSeries k (hermiteCoeff k G) r t * star (finiteCirclePoly k r a t))) =
       fun _ : Circle => (0 : ℂ) := by
     funext t
-    simpa using circleSeries_star_finiteCirclePoly_add_star_eq_zero
-      (k := k) (d := d) (a := a) hG hzero hr t
+    exact circleSeries_star_finiteCirclePoly_add_star_eq_zero a hG hzero hr t
   have hcoeff0 :
       fourierCoeff
         (fun t : Circle =>
@@ -1299,8 +1275,7 @@ private theorem positive_mode_error_sum_tendsto_zero
     by_cases h : ell ≤ i.1
     · have hi_lt : i.1 < d + ell := by omega
       have hlt : i.1 - ell < d := by
-        have hi_le : i.1 ≤ d := Nat.le_of_lt_succ i.2
-        omega
+        exact Nat.sub_lt_right_of_lt_add h hi_lt
       simpa [h, mul_assoc] using
         ((qkn_ratio_prod_tendsto_zero (k := k) hi_lt hlt).const_mul
           (star (hermiteCoeff k G (i.1 - ell)) * a i))
@@ -1651,11 +1626,9 @@ private theorem finite_real_part_rigidity
   let lam : ℂ := b top / a top
   have htopA : a top ≠ 0 := by simpa [top, topCoeff] using hTop
   have htop_eq : b top = lam * a top := by
-    dsimp [lam]
-    field_simp [htopA]
+    exact Eq.symm (div_mul_cancel₀ (b top) htopA)
   have hrel : ∀ n : Fin (d + 1), star (a n) * b top + star (b n) * a top = 0 := by
-    intro n
-    simpa [top] using finite_positive_mode_relation (k := k) a b n hzero
+    exact fun n => finite_positive_mode_relation a b n hzero
   have hlam_add_star : lam + star lam = 0 := by
     have hrel_top := hrel top
     have hsq_nonzero : star (a top) * a top ≠ 0 :=
@@ -1697,8 +1670,7 @@ private theorem finite_real_part_rigidity
     _ = lam * ∑ n : Fin (d + 1), a n * Phi k n.1 z := by
           rw [Finset.mul_sum]
           refine Finset.sum_congr rfl ?_
-          intro n hn
-          ring
+          exact fun x a_1 => mul_assoc lam (a x) (Phi k (↑x) z)
     _ = (Complex.I * (c : ℂ)) * ∑ n : Fin (d + 1), a n * Phi k n.1 z := by simp [hc]
     _ = ((Complex.I * (c : ℂ)) • finiteHermiteSum k a) z := by
           simp [finiteHermiteSum, Pi.smul_apply, smul_eq_mul, Finset.mul_sum, mul_assoc,

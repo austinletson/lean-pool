@@ -265,8 +265,7 @@ theorem _root_.Matrix.Pi.le_iff_sub_nonneg {ι : Type _} {n : ι → Type _}
     x ≤ y ↔ ∃ z : PiMat ℂ ι n, y = x + star z * z := by
   simp_rw [funext_iff, Pi.add_apply, Pi.mul_apply, Pi.star_apply, Pi.le_def, Matrix.le_iff,
     Matrix.posSemidef_iff, sub_eq_iff_eq_add', Matrix.star_eq_conjTranspose]
-  exact ⟨fun hx => ⟨fun i => (hx i).choose, fun i => (hx i).choose_spec⟩,
-    fun ⟨y, hy⟩ i => ⟨y i, hy i⟩⟩
+  exact Classical.skolem
 
 theorem _root_.Matrix.PiStarOrderedRing {ι : Type _} {n : ι → Type _}
     [∀ i, Fintype (n i)] :
@@ -291,8 +290,7 @@ theorem _root_.Matrix.IsHermitian.conj_by_isHermitian_posSemidef {𝕜 n : Type 
     [RCLike 𝕜] [Fintype n] {x y : Matrix n n 𝕜}
     (hx : x.IsHermitian) (hy : y.PosSemidef) :
     PosSemidef (x * y * x) := by
-  nth_rw 1 [← hx.eq]
-  exact PosSemidef.conjTranspose_mul_mul_same hy _
+  exact PosSemidef.conj_by_isHermitian_posSemidef hy hx
 
 alias isHermitian_mul_iff := Matrix.commute_iff
 

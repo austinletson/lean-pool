@@ -432,8 +432,7 @@ private lemma cauchy_schwarz_integral (f g : ℝ → ℝ) (hf : Integrable (fun 
     rw [hsimp] at h
     have hCsq : C ^ 2 ≤ A * B := by
       have h1 : C ^ 2 / B ≤ A := by linarith
-      calc C ^ 2 = C ^ 2 / B * B := by field_simp
-        _ ≤ A * B := mul_le_mul_of_nonneg_right h1 hB_pos.le
+      exact (div_le_iff₀ hB_pos).mp h1
     -- |C| = √(C²) ≤ √(AB) = √A · √B
     calc |C| = Real.sqrt (C ^ 2) := by rw [Real.sqrt_sq_eq_abs]
       _ ≤ Real.sqrt (A * B) := Real.sqrt_le_sqrt hCsq
@@ -646,21 +645,7 @@ private lemma pow_clm_sup_seminorm_bound (T : (SchwartzMap ℝ ℝ) →L[ℝ] (S
     ∃ (q : ℕ × ℕ) (C : ℝ), 0 < C ∧ ∀ (f : SchwartzMap ℝ ℝ),
       (Finset.Iic q₀).sup (fun p => SchwartzMap.seminorm ℝ p.1 p.2) ((T ^ m) f) ≤
         C * (Finset.Iic q).sup (fun p => SchwartzMap.seminorm ℝ p.1 p.2) f := by
-  induction m with
-  | zero =>
-    exact ⟨q₀, 1, one_pos, fun f => by simp⟩
-  | succ k ih =>
-    obtain ⟨q_k, C_k, hC_k, h_k⟩ := ih
-    obtain ⟨q_T, C_T, hC_T, h_T⟩ := clm_sup_seminorm_bound T q_k
-    refine ⟨q_T, C_k * C_T, by positivity, fun f => ?_⟩
-    -- T^(k+1) f = T^k (T f)
-    rw [pow_succ, mul_apply_eq_comp]
-    calc (Finset.Iic q₀).sup (fun p => SchwartzMap.seminorm ℝ p.1 p.2) ((T ^ k) (T f))
-        ≤ C_k * (Finset.Iic q_k).sup (fun p => SchwartzMap.seminorm ℝ p.1 p.2) (T f) :=
-          h_k (T f)
-      _ ≤ C_k * (C_T * (Finset.Iic q_T).sup (fun p => SchwartzMap.seminorm ℝ p.1 p.2) f) :=
-          by gcongr; exact h_T f
-      _ = C_k * C_T * (Finset.Iic q_T).sup (fun p => SchwartzMap.seminorm ℝ p.1 p.2) f := by ring
+  exact clm_sup_seminorm_bound (T ^ m) q₀
 
 theorem hermiteCoeff1D_decay :
     ∀ k : ℝ, ∃ (C : ℝ) (q : ℕ × ℕ), 0 < C ∧
@@ -893,9 +878,7 @@ private lemma hermiteCoeff_sq_summable (f : SchwartzMap ℝ ℝ) :
     calc ∑ x ∈ u, hermiteCoeff1D x f ^ 2
         ≤ ∑ n ∈ Finset.range (u.sup id + 1), hermiteCoeff1D n f ^ 2 := by
           apply Finset.sum_le_sum_of_subset_of_nonneg
-          · intro n hn
-            simp only [Finset.mem_range]
-            exact Nat.lt_succ_of_le (Finset.le_sup (f := id) hn)
+          · exact Finset.subset_range_sup_succ u
           · intros; exact sq_nonneg _
       _ ≤ ∫ x, (f x) ^ 2 := bessel_inequality f _)
 
@@ -1058,10 +1041,7 @@ private lemma integral_tsum_mul_hermite (f : SchwartzMap ℝ ℝ) (m : ℕ) :
         conv_lhs => arg 2; ext a; rw [mul_assoc, nnnorm_mul, ENNReal.coe_mul]
         rw [lintegral_const_mul' _ _ ENNReal.coe_ne_top]
         suffices h : ∫⁻ a, ↑‖hermiteFunction n a * hermiteFunction m a‖₊ ≤ 1 by
-          calc ↑‖hermiteCoeff1D n f‖₊ * ∫⁻ a, ↑‖hermiteFunction n a *
-                  hermiteFunction m a‖₊
-              ≤ ↑‖hermiteCoeff1D n f‖₊ * 1 := by gcongr
-            _ = ↑‖hermiteCoeff1D n f‖₊ := mul_one _
+          exact mul_le_of_le_one_right' h
         -- Show ∫⁻ ‖ψₙ * ψₘ‖₊ ≤ 1
         -- ↑‖x‖₊ = ‖x‖ₑ = ENNReal.ofReal ‖x‖ for normed types
         -- Use hasFiniteIntegral / lintegral bound
@@ -1152,8 +1132,7 @@ private lemma parseval_identity (f : SchwartzMap ℝ ℝ) :
       intro N
       have hSmemLp : MemLp (S N) 2 volume := by
         apply memLp_finsetSum; intro n _; exact (hermiteFunction_memLp n).const_mul _
-      exact (hSmemLp.integrable_mul hSmemLp).congr
-        (by filter_upwards with x; change S N x * S N x = S N x ^ 2; ring)
+      exact MemLp.integrable_sq hSmemLp
     have hT_sq_aesm : AEStronglyMeasurable (fun x => (T x) ^ 2) volume :=
       hT_sq_int.aestronglyMeasurable
     -- Convert: ∫ T² = toReal (∫⁻ ofReal T²)

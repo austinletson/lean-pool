@@ -90,11 +90,7 @@ private lemma map_glued_eq_of_local_eq {X : TopCat.{u}}
       ConcreteCategory.hom (G.obj.map (homOfLE (hBU i)).op) s) :
     ConcreteCategory.hom (g.hom.app (op (iSup B))) t =
       ConcreteCategory.hom (G.obj.map (homOfLE (iSup_le hBU)).op) s := by
-  apply G.eq_of_locally_eq
-  intro i
-  rw [← g.hom.naturality_apply _ t, ht i, hlocal i]
-  rw [← CategoryTheory.comp_apply, ← G.obj.map_comp]
-  exact presheaf_map_eq G.obj _ _ s
+  exact TopCat.Sheaf.eq_app_of_locally_eq ht hBU hlocal
 
 private lemma exists_patch_of_shortExact {X : TopCat.{u}}
     {S : ShortComplex (TopCat.Sheaf AddCommGrpCat.{u} X)}

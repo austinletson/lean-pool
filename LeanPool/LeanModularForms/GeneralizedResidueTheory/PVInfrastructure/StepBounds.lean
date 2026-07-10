@@ -462,10 +462,8 @@ lemma exists_summable_subseq {γ : ℝ → ℂ}
   let ε := summableSubseqAux hL hγ_hasderiv
     hγ_cont_deriv δ₀
   refine ⟨ε, ?_, ?_, ?_⟩
-  · exact fun n => summableSubseqAux_pos hL
-      hγ_hasderiv hγ_cont_deriv δ₀ hδ₀_pos n
-  · exact fun n => summableSubseqAux_halving hL
-      hγ_hasderiv hγ_cont_deriv δ₀ hδ₀_pos n
+  · exact fun n => summableSubseqAux_pos hL hγ_hasderiv hγ_cont_deriv δ₀ hδ₀_pos n
+  · exact fun n => summableSubseqAux_halving hL hγ_hasderiv hγ_cont_deriv δ₀ hδ₀_pos n
   · exact fun n => summableSubseqAux_error_bound hL
       hγ_hasderiv hγ_cont_deriv δ₀ hδ₀_pos n
 
@@ -514,8 +512,7 @@ lemma summableSubseqAux_tendsto_zero {γ : ℝ → ℂ}
   have h_pos : ∀ n, 0 ≤ ε n := fun n =>
     le_of_lt (summableSubseqAux_pos hL hγ_hasderiv
       hγ_cont_deriv δ₀ hδ₀_pos n)
-  exact tendsto_of_tendsto_of_tendsto_of_le_of_le
-    tendsto_const_nhds h_geom_tendsto h_pos h_squeeze
+  exact squeeze_zero h_pos h_squeeze h_geom_tendsto
 
 /-- Cutoff integrand is interval integrable. -/
 lemma cutoff_integrand_intervalIntegrable
@@ -797,11 +794,7 @@ lemma exists_dyadic_bracket {δ ε : ℝ}
   have h_tendsto : Tendsto (fun n : ℕ => δ / 2 ^ n) atTop (𝓝 0) := by
     have hp : Tendsto (fun n : ℕ => (2 : ℝ) ^ n) atTop atTop :=
       tendsto_pow_atTop_atTop_of_one_lt (by norm_num : (1 : ℝ) < 2)
-    have hi : Tendsto (fun n : ℕ => 1 / (2 : ℝ) ^ n) atTop (𝓝 0) := by
-      simp_rw [one_div]; exact tendsto_inv_atTop_zero.comp hp
-    have h_eq : (fun n : ℕ => δ / 2 ^ n) = (fun n => δ * (1 / 2 ^ n)) := by ext n; ring
-    rw [h_eq, show (0 : ℝ) = δ * 0 by ring]
-    exact Tendsto.const_mul δ hi
+    exact Tendsto.const_div_atTop hp δ
   rw [Metric.tendsto_atTop] at h_tendsto
   obtain ⟨N, hN⟩ := h_tendsto ε hε_pos
   have h_exists : ∃ n : ℕ, δ / 2 ^ n < ε := by

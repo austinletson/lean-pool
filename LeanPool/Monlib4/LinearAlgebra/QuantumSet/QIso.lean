@@ -166,9 +166,7 @@ theorem LinearMap.rTensor_tensor_eq_assoc_comp_rTensor_rTensor_comp_assoc_symm
   (ϰ _ _ _).toLinearMap
     ∘ₗ rT C (rT B x)
     ∘ₗ (ϰ A B C).symm.toLinearMap := by
-  rw [← TensorProduct.assoc_symm_comp_rTensor, ← LinearMap.comp_assoc,
-    LinearEquiv.comp_coe, LinearEquiv.symm_trans_self]
-  rfl
+  exact rTensor_tensor B x
 theorem LinearMap.rTensor_rTensor_eq_assoc_symm_comp_rTensor_comp_assoc
   {A B C D : Type*} [AddCommMonoid A]
   [AddCommMonoid B] [AddCommMonoid C] [AddCommMonoid D]

@@ -225,7 +225,6 @@ def mul (σ τ : AspPerm) : AspPerm where
       push Not at hτ hσ
       let C := (τ n) ^ 2
       have hC_pos : C > 0 := by
-        simp only [C]
         exact pow_two_pos_of_ne_zero h0
       have hC_nonneg : n * σ (τ n) * C ≥ 0 := by
         have hprod := mul_nonneg hσ hτ
@@ -645,7 +644,6 @@ private lemma tend_zero_a_raw (b : ℤ) : ∃ a : ℤ, τ.s_raw a b = 0 := by
       have h_se_nonempty : (τ.seFinset 0 b).Nonempty := by
         rcases h_nonempty with ⟨n, hn⟩
         exact ⟨n, by simpa [seFinset] using hn⟩
-      unfold S
       exact Finset.image_nonempty.mpr h_se_nonempty
     let a := Finset.min' S S_nonempty
     have a_lt_0 : a < 0 := by
@@ -1141,8 +1139,7 @@ lemma inv_set_id : invSet AspPerm.id = ∅ := by
   ext ⟨u, v⟩
   simp only [invSet, id, id_eq, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_and,
     not_lt]
-  intro u_lt_v
-  exact le_of_lt u_lt_v
+  exact fun a => Int.le_of_lt a
 
 @[simp] lemma s_chi_eq : τ.s.χ = τ.χ := rfl
 
@@ -1367,8 +1364,7 @@ lemma v_crit (b : ℤ) {m : ℤ} (m_pos : m > 0) (v : ℤ) :
     let s_inc : τ.s (τ v + 1) b = τ.s (τ v) b + 1 := (a_step_one_iff' τ v b).mpr v_ge_b
     have s_next_le : τ.s (τ v + 1) b ≤ m := by
       rw [s_inc]
-      apply Int.lt_iff_add_one_le.mpr
-      linarith [v_eq]
+      exact Int.add_one_le_of_lt s_lt_m
     have : τ.s (τ v + 1) b = m := le_antisymm s_next_le s_next
     rw [s_inc] at this
     exact ⟨by linarith [this, s_inc], v_ge_b⟩
@@ -1508,10 +1504,7 @@ theorem inv_ramp_correspondence (b : ℤ) {m n : ℤ} (m_pos : m > 0) (n_pos : n
       have := τ.duality a b
       omega
     have a_gt_v : a > τ v := by
-      contrapose! s_ge_m with a_le_v
-      have h_lt : τ.s (τ v) b < m := (τ.v_spec b m_pos).1
-      have h_le : τ.s a b ≤ τ.s (τ (τ.v b m_pos)) b := (τ.s_nondec a_le_v b).1
-      exact lt_of_le_of_lt h_le h_lt
+      exact τv_lt τ b m_pos s_ge_m
     have a_le_u : a ≤ τ u := by
       exact (τ.u_spec b n_pos).2 a s'_ge_n
     exact lt_of_lt_of_le a_gt_v a_le_u
@@ -1666,9 +1659,7 @@ lemma sr_subset (τ α : AspPerm) (h_R : α ≤R τ) : (τ.sr α) '' invSet α �
   intro x hx; obtain ⟨u, v⟩ := x
   apply (sr_crit τ α u v).mp at hx
   apply h_R at hx
-  obtain ⟨τu_gt_τv, u_lt_v⟩ := hx
-  simp only [inv_mul_cancel_eval] at u_lt_v
-  exact ⟨u_lt_v, τu_gt_τv⟩
+  exact (inv_set_inverse τ u v).mpr hx
 
 /-- The min-plus Demazure-product value is at least `n` at `(a, b)`. -/
 def dprodValGe (α β : AspPerm) (a b n : ℤ) : Prop :=
@@ -1875,9 +1866,7 @@ private lemma width_sides : (∃ (N : ℤ), τ.width_bound N) ↔ (∃ (M N : �
       exact hMN.1 <| by
         have hMabs : |M| ≤ |a - b| := (le_max_left _ _).trans hab
         have hM : -|M| ≤ M := by
-          have := le_abs_self (-M)
-          rw [abs_neg] at this
-          omega
+          exact neg_abs_le M
         rw [abs_of_neg h] at hMabs
         omega
 
@@ -2000,9 +1989,7 @@ theorem bdiff_iff_width : τ.isBdiff ↔ ∃ N, τ.width_bound N := by
     intro a b
     constructor <;> intro hab
     · have : ∀ (n : ℤ), n - τ n ≤ M := by
-        intro n
-        specialize hM n
-        exact le_trans (le_abs_self (n - τ n)) hM
+        exact fun n => le_of_abs_le (hM n)
       rw [τ.bdiff_width_helper] at this
       apply this a b (by omega)
     · have : ∀ (n : ℤ), n - τ⁻¹ n ≤ M := by

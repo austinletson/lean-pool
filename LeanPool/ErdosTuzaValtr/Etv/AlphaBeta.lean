@@ -292,8 +292,7 @@ theorem slope_tt_inc_beta {a b : α} (sab : l.Slope a b) (ha : a ∈ S) (hb : b 
   rw [← d_length]
   apply C.cup_length_le_beta S
   · simp_all
-  · rw [def_d]
-    exact c_cup.extend_right sab a_le_b hb c_in c_last
+  · exact Config.Cup.extend_right c_cup sab a_le_b hb c_in c_last
   · simp_all
 
 variable (C)

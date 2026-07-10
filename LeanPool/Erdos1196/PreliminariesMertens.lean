@@ -73,8 +73,7 @@ private lemma sum_vonMangoldt_mul_div_eq_log_factorial (N : ℕ) :
     (Finset.Icc 1 N).sum (fun m => Λ m * ((N / m : ℕ) : ℝ)) =
         ∑ n ∈ Finset.Ioc 0 N, Λ n * ((N / n : ℕ) : ℝ) := by rw [hI]
     _ = ∑ n ∈ Finset.Ioc 0 N, (ArithmeticFunction.vonMangoldt * ArithmeticFunction.zeta) n := by
-          simpa using
-            (ArithmeticFunction.sum_Ioc_mul_zeta_eq_sum ArithmeticFunction.vonMangoldt N).symm
+          exact Eq.symm (ArithmeticFunction.sum_Ioc_mul_zeta_eq_sum Λ N)
     _ = ∑ n ∈ Finset.Ioc 0 N, Real.log (n : ℝ) := by
           simp [ArithmeticFunction.vonMangoldt_mul_zeta, ArithmeticFunction.log]
     _ = Real.log (Nat.factorial N) := by

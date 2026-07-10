@@ -132,8 +132,7 @@ lemma industepFarkasBartl {m : ℕ} [DivisionRing R] [LinearOrder R] [IsStrictOr
       simp_rw [smul_dite, smul_zero]
       rw [Finset.sum_dite, Finset.sum_const_zero, add_zero]
       convert hxb w using 1
-      symm
-      apply finishing_piece
+      exact Eq.symm finishing_piece
   else
     push Not at is_easy
     obtain ⟨y', hay', hby'⟩ := is_easy

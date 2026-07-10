@@ -162,9 +162,7 @@ theorem exp_I_injOn_Ioo :
 /-- `z·z* = ‖z‖²` in `ℂ`. -/
 theorem mul_conj_eq_norm_sq (z : ℂ) :
     z * starRingEnd ℂ z = ((‖z‖ : ℝ) : ℂ) ^ 2 := by
-  conv_lhs => rw [← Complex.norm_mul_exp_arg_mul_I z]
-  rw [map_mul, Complex.conj_ofReal, conj_exp_I]
-  linear_combination ((‖z‖ : ℂ) * (‖z‖ : ℂ)) * exp_I_mul_exp_neg_I z.arg
+  exact mul_conj' z
 
 /-- A unit-normalized multiple of a nonzero pair, with real product: the
 phase `e^{-i·arg(pq)/2}` makes `|cp|² + |cq|² = 1` and `c²pq` real. -/
@@ -262,9 +260,7 @@ theorem exists_cos_sin {v w : ℝ} (hvw : v ^ 2 + w ^ 2 = 1) :
     · linarith
     · exfalso; linarith [norm_nonneg ζ]
   have hζ0 : ζ ≠ 0 := by
-    intro h0
-    rw [h0, norm_zero] at hn1
-    norm_num at hn1
+    exact left_ne_zero_of_mul_eq_one hζconj
   refine ⟨2 * ζ.arg, ?_, ?_⟩
   · rw [show (2 * ζ.arg) / 2 = ζ.arg by ring, Complex.cos_arg hζ0, hn1,
       div_one, hζdef]

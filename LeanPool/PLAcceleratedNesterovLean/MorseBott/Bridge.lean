@@ -93,9 +93,7 @@ lemma shrink (h : IsTubularNeighborhoodOfSubmanifold S U)
   subset := hSU'
   uniqueProj := fun x hx => h.uniqueProj x (hU'U hx)
   submanifold_chart := by
-    intro m hm
-    obtain ⟨V, φ, δ, hδ, hφ_smooth, hφ0, hDφ0, hchart⟩ := h.submanifold_chart m hm
-    exact ⟨V, φ, δ, hδ, hφ_smooth, hφ0, hDφ0, hchart⟩
+    exact fun m a => h.submanifold_chart m a
 
 omit [FiniteDimensional ℝ E] in
 lemma radius (h : IsTubularNeighborhoodOfSubmanifold S U) :

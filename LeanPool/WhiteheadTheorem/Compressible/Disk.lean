@@ -466,8 +466,7 @@ theorem homotopicRel_boundary_of_homotopicWith_isMapOfPairs
           have hx1 : ‖x‖ = 1 := by
             rw [← hy']
             change ‖y‖ = 1
-            convert Metric.mem_sphere.mp hy using 1
-            exact Eq.symm (dist_zero_right y)
+            exact mem_sphere_zero_iff_norm.mp hy
           rw [Cyl.stretchToWall_eq_zero_of_norm_eq_one hx1]
           rw [H.apply_zero] }
 

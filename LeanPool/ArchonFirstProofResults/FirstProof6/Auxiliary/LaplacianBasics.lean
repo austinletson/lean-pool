@@ -69,10 +69,7 @@ noncomputable abbrev inducedSubgraph (G : SimpleGraph V) (S : Finset V) : Simple
 
 instance inducedSubgraphDecidableRelAdj (G : SimpleGraph V) [DecidableRel G.Adj]
     (S : Finset V) : DecidableRel (inducedSubgraph G S).Adj := by
-  intro v w
-  simp only [inducedSubgraph, SimpleGraph.Subgraph.spanningCoe_adj,
-    SimpleGraph.Subgraph.induce_adj, SimpleGraph.Subgraph.top_adj, Finset.mem_coe]
-  infer_instance
+  exact Classical.decRel (inducedSubgraph G S).Adj
 
 omit [Fintype V] [DecidableEq V] in
 /-- Adjacency in the induced subgraph:

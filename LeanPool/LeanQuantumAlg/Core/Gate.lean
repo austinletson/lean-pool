@@ -189,8 +189,7 @@ theorem ext {G K : Gate n} (h : ∀ i j, G i j = K i j) : G = K := by
     cases K with
     | mk K hK =>
       have hGK : G = K := by
-        ext i j
-        exact h i j
+        exact Matrix.ext_iff.mp h
       simp_all
 
 /-- Build a gate from a unitary Hilbert operator. -/

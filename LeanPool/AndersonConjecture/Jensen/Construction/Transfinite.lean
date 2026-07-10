@@ -542,8 +542,7 @@ private def transfinite_construction_proof
       exact (IH_wf β₂ hβ₂).2 hle (le_refl _) r hmem hr
     have hgood_α : IH_good α (fun γ hγ => data γ) := by
       constructor
-      · intro β₁ β₂ hβ₁ hβ₂ hle
-        exact hmono_lt hle hβ₂
+      · exact fun ⦃β₁ β₂⦄ hβ₁ hβ₂ a => le_of_eq_of_le rfl (hmono_lt a hβ₂)
       · intro β₁ β₂ hβ₁ hβ₂ hle r hmem hr
         exact hprimes_lt hle hβ₂ r hmem hr
     have hring_le_prev_α : ∀ β, β < α →

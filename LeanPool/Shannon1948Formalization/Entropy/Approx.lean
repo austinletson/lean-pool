@@ -90,8 +90,7 @@ lemma entropyNat_approxProb
     H (approxProb p N) = -K H * ∑ a, approxProb p N a * Real.log (approxProb p N a) := by
   refine entropyNat_of_rational_counts H hH (approxProb p N) (approxCount p N) ?_ (approxTotal p N)
     (approxTotal_pos p N) ?_ ?_
-  · intro a
-    exact approxCount_pos p N a
+  · exact fun a => approxCount_pos p N a
   · simp [approxTotal]
   · simp_all
 
@@ -203,14 +202,10 @@ lemma tendsto_approxProb_apply
   have habs_tendsto :
       Tendsto (fun N : ℕ => |approxProb p N a - p a|) atTop (𝓝 0) := by
     refine squeeze_zero (fun N => abs_nonneg _) ?_ hbound_tendsto
-    intro N
-    simpa using approxProb_error_bound p N a
+    exact fun t => approxProb_error_bound p t a
   have hsub : Tendsto (fun N : ℕ => approxProb p N a - p a) atTop (𝓝 (0 : ℝ)) :=
     tendsto_zero_iff_abs_tendsto_zero _ |>.2 habs_tendsto
-  have hsub' :
-      Tendsto (fun N : ℕ => approxProb p N a - p a) atTop (𝓝 (p a - p a)) := by
-    simpa using hsub
-  exact (Filter.tendsto_sub_const_iff (b := p a)).1 hsub'
+  exact tendsto_sub_nhds_zero_iff.mp hsub
 
 lemma tendsto_approxProb
     {α : Type} [Fintype α]
@@ -218,8 +213,7 @@ lemma tendsto_approxProb
     Tendsto (fun N : ℕ => approxProb p N) atTop (𝓝 p) := by
   refine (tendsto_subtype_rng).2 ?_
   rw [tendsto_pi_nhds]
-  intro a
-  simpa using tendsto_approxProb_apply p a
+  exact fun x => tendsto_approxProb_apply p x
 
 
 end

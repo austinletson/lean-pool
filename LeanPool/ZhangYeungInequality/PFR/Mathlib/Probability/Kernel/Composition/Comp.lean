@@ -34,8 +34,7 @@ variable {Ω S T : Type*} [mΩ : MeasurableSpace Ω]
 lemma map_map (κ : Kernel α β) {f : β → γ} (hf : Measurable f) {g : γ
   → δ} (hg : Measurable g) :
     map (map κ f) g = map κ (g ∘ f) := by
-  ext x s _
-  rw [map_apply _ hg, map_apply _ hf, map_apply _ (hg.comp hf), Measure.map_map hg hf]
+  exact Eq.symm (map_comp_right κ hf hg)
 
 lemma map_swapRight (κ : Kernel α (β × γ)) {f : (γ × β) → δ} :
     map (swapRight κ) f = map κ (f ∘ Prod.swap) := by

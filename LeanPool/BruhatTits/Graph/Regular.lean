@@ -173,11 +173,9 @@ lemma submodule_finrank_eq_one_of_ne_bot_of_ne_top {L : Lattice R}
     Module.finrank (ResidueField R) M = 1 := by
   have : Module.finrank (ResidueField R) M < 2 := by
     rw [← L.quotient_finrank]
-    apply Submodule.finrank_lt_finrank_of_ne_top
-    exact h₂
+    exact Submodule.finrank_lt h₂
   have : 0 < Module.finrank (ResidueField R) M := by
-    apply Submodule.zero_lt_finrank_of_ne_bot
-    exact h₁
+    exact Submodule.zero_lt_finrank_of_ne_bot M h₁
   omega
 
 lemma submodule_finrank_eq_one_iff {L : Lattice R}

@@ -331,9 +331,7 @@ theorem compressedSizes_restricted_sum (A : Fin (k + 1) → Finset (ZMod p))
       have h_subset : ∀ i, ∃ A'_i ⊆ A i, (A'_i).card = b' i := by
         intro i;
         exact Finset.exists_subset_card_eq ( by
-          linarith [ h_valid_seq.2,
-            show compressedSizes ( fun i => Finset.card ( A i ) ) i ≤ Finset.card ( A i )
-              from compressedSizes_le i ] );
+          exact compressedSizes_le i );
       choose A' hA' using h_subset;
       exact ⟨ A', fun i => hA' i |>.1, fun i => hA' i |>.2,
           fun i j hij =>
@@ -349,8 +347,7 @@ theorem compressedSizes_restricted_sum (A : Fin (k + 1) → Finset (ZMod p))
       · exact fun i => Finset.card_pos.mp ( by
           rw [ left_1 ];
           exact compressedSizes_pos h_last_pos i )
-      · intro i j hij
-        exact right i j hij
+      · exact fun i j a => Ne.intro (right i j a)
       · simp_rw [left_1]; exact h_case
     -- Since $A'_i \subseteq A_i$, we have $restrictedSumSet k A' \subseteq restrictedSumSet k
     -- A$.

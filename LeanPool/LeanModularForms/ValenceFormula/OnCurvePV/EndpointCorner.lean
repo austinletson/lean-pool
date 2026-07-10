@@ -298,8 +298,7 @@ lemma cpv_at_endpoint (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
     have ht_pos : 0 < t := lt_of_lt_of_le hη_div_c_pos ht_low.le
     rw [if_pos, h_integrand_seg1 t ht_pos ht_high]
     rw [h_norm_seg1 t ht_pos.le ht_high.le]
-    calc η = (η / c) * c := by field_simp
-      _ < t * c := mul_lt_mul_of_pos_right ht_low hc
+    exact (div_lt_iff₀ hc).mp ht_low
   have h_I45 : (∫ t in (4 : ℝ)..5, if η < ‖fdBoundaryH H t - s‖
       then (fdBoundaryH H t - s)⁻¹ * deriv (fdBoundaryH H) t else 0) =
     ∫ t in (4 : ℝ)..(5 - η), (↑(t - 5) : ℂ)⁻¹ := by
@@ -515,8 +514,7 @@ lemma cpv_at_corner (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
             rw [if_neg]; push Not
             rw [h_norm_seg4 t (by linarith [ht.1]) ht.2]
             have h1 : 4 - t ≤ η / c := by linarith [ht.1]
-            calc (4 - t) * c ≤ (η / c) * c := by apply mul_le_mul_of_nonneg_right h1 hc.le
-              _ = η := by field_simp)
+            exact (le_div_iff₀ hc).mp h1)
         rw [this, intervalIntegral.integral_zero]
       rw [h_zero, add_zero]
       have h_le : (3 : ℝ) ≤ 4 - η / c := by linarith [hη_div_c_lt_1]
@@ -534,8 +532,7 @@ lemma cpv_at_corner (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
       rw [if_pos, h_integrand_seg4 t ht3 ht4]
       rw [h_norm_seg4 t ht3 ht4.le]
       have : η / c < 4 - t := by linarith
-      calc η = (η / c) * c := by field_simp
-        _ < (4 - t) * c := mul_lt_mul_of_pos_right this hc
+      exact (div_lt_iff₀ hc).mp this
     have h_I45 : (∫ t in (4 : ℝ)..5, if η < ‖fdBoundaryH H t - s‖
         then (fdBoundaryH H t - s)⁻¹ * deriv (fdBoundaryH H) t else 0) =
       ∫ t in (4 + η)..5, (↑(t - 4) : ℂ)⁻¹ := by

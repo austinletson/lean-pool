@@ -158,9 +158,7 @@ lemma _root_.ProbabilityTheory.IsUniform.measure_preimage_of_mem
     _ = ∑ x ∈ H, μ (X ⁻¹' {x}) := by
       have : X ⁻¹' H = ⋃ x ∈ H, X ⁻¹' ({x} : Set S) := by simp
       rw [this, measure_biUnion_finset]
-      · intro y _hy z _hz hyz
-        apply Disjoint.preimage
-        simp [hyz]
+      · exact pairwiseDisjoint_fiber X ↑H
       · intro y _hy
         exact hX .of_discrete
     _ = ∑ _x ∈ H, μ (X ⁻¹' {s}) :=

@@ -268,5 +268,4 @@ lemma imageFinite (F : Type*) [Field F] (f : ℕ × ℕ → F) (n : ℕ) [nzPatt
     · -- now the trivial part
       exact fun ⟨y, hy⟩ => ⟨y, hy.2⟩
   rw [key]
-  have : Finite ({i : ℕ | i ≤ n} ×ˢ {m : ℕ | m ≤ n}) := Finite.Set.finite_prod _ _
-  exact Finite.Set.finite_image ({i : ℕ | i ≤ n} ×ˢ {m : ℕ | m ≤ n}) f
+  exact Finite.Set.finite_image ({i | i ≤ n} ×ˢ {m | m ≤ n}) f

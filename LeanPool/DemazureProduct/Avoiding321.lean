@@ -608,8 +608,7 @@ lemma is_321a_of_lel : is321a β := by
   rw [is_321a_iff_set_321a_prop τ τ.bijective] at h_321a
   rw [is_321a_iff_set_321a_prop β β.bijective]
   constructor
-  · have := (AspSet.ofAspPerm β).prop
-    congr
+  · exact AspSet.AspSet_InvSet_of_AspPerm β
   · intro u v w
     by_contra! h
     obtain ⟨uv_inv, vw_inv⟩ := h
@@ -642,8 +641,7 @@ lemma between_inv_lel
       (src_of_src h_L h_src)
     have h_xv : ⟨x, v⟩ ∈ invSet β := bpβ.src_iff_right_inv.mp h_src
     have h_ux_β : ⟨u, x⟩ ∉ invSet β := by
-      contrapose! h_ux
-      exact h_L h_ux
+      exact bpβ.src_iff_left_ninv.mp h_src
     have x_src : isSrc β x := src_of_inv h_xv
     have x_snk : ¬ isSnk τ x := not_imp_not.mpr bp.snk_iff_left_inv.mp h_ux
     have x_snk_β : ¬ isSnk β x := not_imp_not.mpr
@@ -655,8 +653,7 @@ lemma between_inv_lel
         exact h_L h
       · simp_all
     · constructor
-      · intro _
-        exact src_of_src h_L h_src
+      · exact fun a => src_of_src h_L h_src
       · simp_all
     · simp_all
   · have h_snk : isSnk β x := by
@@ -666,8 +663,7 @@ lemma between_inv_lel
     have h_xv : ⟨x, v⟩ ∉ invSet τ := bp.snk_iff_right_ninv.mp
       (snk_of_snk h_L h_snk)
     have h_xv_β : ⟨x, v⟩ ∉ invSet β := by
-      contrapose! h_xv
-      exact h_L h_xv
+      exact bpβ.snk_iff_right_ninv.mp h_snk
     have x_src : ¬ isSrc τ x := not_imp_not.mpr bp.src_iff_right_inv.mp h_xv
     have x_snk : isSnk β x := snk_of_inv h_ux
     refine ⟨bp, bpβ, ?_, ?_, ?_, ?_⟩
@@ -678,8 +674,7 @@ lemma between_inv_lel
     · simp_all
     · simp_all
     · constructor
-      · intro _
-        exact snk_of_snk h_L h_snk
+      · exact fun a => snk_of_snk h_L h_snk
       · simp_all
 
 /-- The interval-subordination relation on inversion boxes. -/
@@ -710,9 +705,7 @@ lemma inv_of_lel_iff
   have bpv' : between_inv_lel_prop β τ u' v' v :=
     between_inv_lel h_321a h_L
     u'v_inv (le_of_lt u'v'_inv.1) nested.2
-  have v'_snk : isSnk β v' := bpv'.snk_iff.mpr v'_snk_τ
-  have u'v'_inv : ⟨u', v'⟩ ∈ invSet β := bpv'.propβ.snk_iff_left_inv.mp v'_snk
-  exact u'v'_inv
+  exact bpv'.inv_iff_left.mpr u'v'_inv
 
 omit h_L in
 lemma sr_inv_of_ler_iff {α : AspPerm} (h_R : α ≤R τ)
@@ -1125,9 +1118,7 @@ lemma not_isolated_of_domino (a b m m' n n' : ℤ)
   have τiu_snk : isSnk τ⁻¹ (τ u) := by
     have : ⟨τ v, τ u⟩ ∈ invSet τ⁻¹.func := by
       have := h_L invβ
-      use this.2
-      simp only [AspPerm.inv_mul_cancel_eval]
-      exact this.1
+      exact (AspPerm.inv_set_inverse τ u v).mp this
     exact snk_of_inv this
   have ineqs := duality v'_snk τiu_snk
   have u_le_τiv' : u ≤ τ⁻¹ v' := ineqs.1
@@ -1148,8 +1139,7 @@ lemma not_isolated_of_domino (a b m m' n n' : ℤ)
   have I_prec_J : I ≼ J := by
     constructor
     · exact u_le_τiv'
-    · change τ⁻¹ u' ≤ v
-      exact le_of_lt lt_v
+    · exact Int.le_of_lt lt_v
   have Iβ : I ∈ invSet β :=
     (inv_of_lel_iff h_321a h_L Jβ I_prec_J).mpr Iτ
   have Jα : J ∈ (τ.sr α) '' (invSet α) := by
@@ -1163,8 +1153,7 @@ lemma not_isolated_of_domino (a b m m' n n' : ℤ)
         simpa using this
       · exact τu_le_v'
     have lel : α⁻¹ ≤L τ⁻¹ := by
-      intro x hx
-      exact h_R hx
+      exact AspPerm.le_weak_L_of_R h_R
     apply  (inv_of_lel_iff (τ := τ⁻¹) (β := α⁻¹) (inv_is_321a h_321a) lel invα prec).mpr
     use (h_L Jβ).2
     simp only [AspPerm.inv_mul_cancel_eval]
@@ -1411,8 +1400,7 @@ theorem dprod_le_iff_isolated : α ⋆ β ≤ τ
     dsimp only [AspPerm.dprodValLe] at ne_le; push Not at ne_le
     have ge : α.dprodValGe β a b (τ.s a b + 1) := by
       intro x
-      specialize ne_le x
-      linarith
+      exact Int.add_one_le_of_lt (ne_le x)
     have concl := not_isolated_of_excess h_321a h_L h_R h_χ ge
     contrapose! concl with isolated
     intro I J mems prec

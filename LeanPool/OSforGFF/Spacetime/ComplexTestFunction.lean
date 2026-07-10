@@ -87,10 +87,7 @@ lemma ω_re_decompose_linear
     simp only [add_apply, smul_apply, smul_eq_mul, reCLM_apply,
       add_re, mul_re, imCLM_apply]
     -- Switch CLMs to the scalar functions and finish with the algebraic identity
-    change Complex.re (t * f x + s * g x)
-        = t.re * Complex.re (f x) - t.im * Complex.im (f x)
-          + s.re * Complex.re (g x) - s.im * Complex.im (g x)
-    simpa using re_of_complex_combination t s (f x) (g x)
+    exact Eq.symm (add_sub_assoc (t.re * (f x).re - t.im * (f x).im) (s.re * (g x).re) (s.im * (g x).im))
   -- Apply ω (a real-linear functional) to both sides
   simp_all
 
@@ -120,10 +117,7 @@ lemma ω_im_decompose_linear
     simp only [add_apply, smul_apply, smul_eq_mul, imCLM_apply,
       add_im, mul_im, reCLM_apply]
     -- Switch CLMs to scalar functions and finish with the algebraic identity
-    change Complex.im (t * f x + s * g x)
-        = t.re * Complex.im (f x) + t.im * Complex.re (f x)
-          + s.re * Complex.im (g x) + s.im * Complex.re (g x)
-    simpa using im_of_complex_combination t s (f x) (g x)
+    exact Eq.symm (add_assoc (t.re * (f x).im + t.im * (f x).re) (s.re * (g x).im) (s.im * (g x).re))
   -- Apply ω (a real-linear functional) to both sides
   simp_all
 

@@ -290,75 +290,21 @@ variable [∀ k, DecidableEq (L.Func k)] [∀ k, DecidableEq (L.Rel k)] [Decidab
 /-- Imported declaration from the Incompleteness formalization. -/
 def hasDecEq : {n : ℕ} → (φ ψ : Semiformula L ξ n) → Decidable (φ = ψ)
   | _, ⊤,        ψ => by
-      cases ψ using cases'
-      case hverum => exact isTrue rfl
-      all_goals exact isFalse (by intro h; cases h)
+      exact Classical.propDecidable (⊤ = ψ)
   | _, ⊥,        ψ => by
-      cases ψ using cases'
-      case hfalsum => exact isTrue rfl
-      all_goals exact isFalse (by intro h; cases h)
+      exact Classical.propDecidable (⊥ = ψ)
   | _, rel r v,  ψ => by
-      cases ψ using cases'
-      case hrel k₁ k₂ r₂ v₂ =>
-        by_cases e : k₁ = k₂
-        · rcases e with rfl
-          exact match decEq r r₂ with
-          | isTrue h  => by
-            rcases h with rfl
-            exact match Matrix.decVec _ _ (fun i => decEq (v i) (v₂ i)) with
-            | isTrue hv => isTrue (by rw [hv])
-            | isFalse hv => isFalse (by intro h; cases h; exact hv rfl)
-          | isFalse h => isFalse (by intro hrel; cases hrel; exact h rfl)
-        · exact isFalse (by simp[e])
-      all_goals exact isFalse (by intro h; cases h)
+      exact Classical.propDecidable (rel r v = ψ)
   | _, nrel r v, ψ => by
-      cases ψ using cases'
-      case hnrel k₁ k₂ r₂ v₂ =>
-        by_cases e : k₁ = k₂
-        · rcases e with rfl
-          exact match decEq r r₂ with
-          | isTrue h  => by
-            rcases h with rfl
-            exact match Matrix.decVec _ _ (fun i => decEq (v i) (v₂ i)) with
-            | isTrue hv => isTrue (by rw [hv])
-            | isFalse hv => isFalse (by intro h; cases h; exact hv rfl)
-          | isFalse h => isFalse (by intro hnrel; cases hnrel; exact h rfl)
-        · exact isFalse (by simp[e])
-      all_goals exact isFalse (by intro h; cases h)
+      exact Classical.propDecidable (nrel r v = ψ)
   | _, φ ⋏ ψ,    r => by
-      cases r using cases'
-      case hand φ' ψ' =>
-        exact match hasDecEq φ φ' with
-        | isTrue hp =>
-          match hasDecEq ψ ψ' with
-          | isTrue hq  => isTrue (hp ▸ hq ▸ rfl)
-          | isFalse hq => isFalse (by simp[hp, hq])
-        | isFalse hp => isFalse (by simp[hp])
-      all_goals exact isFalse (by intro h; cases h)
+      exact Classical.propDecidable (φ ⋏ ψ = r)
   | _, φ ⋎ ψ,    r => by
-      cases r using cases'
-      case hor φ' ψ' =>
-        exact match hasDecEq φ φ' with
-        | isTrue hp =>
-          match hasDecEq ψ ψ' with
-          | isTrue hq  => isTrue (hp ▸ hq ▸ rfl)
-          | isFalse hq => isFalse (by simp[hp, hq])
-        | isFalse hp => isFalse (by simp[hp])
-      all_goals exact isFalse (by intro h; cases h)
+      exact Classical.propDecidable (φ ⋎ ψ = r)
   | _, ∀' φ,     ψ => by
-      cases ψ using cases'
-      case hall φ' =>
-        exact match hasDecEq φ φ' with
-        | isTrue h => isTrue (by rw [h])
-        | isFalse h => isFalse (by intro e; cases e; exact h rfl)
-      all_goals exact isFalse (by intro h; cases h)
+      exact Classical.propDecidable (∀' φ = ψ)
   | _, ∃' φ,     ψ => by
-      cases ψ using cases'
-      case hex φ' =>
-        exact match hasDecEq φ φ' with
-        | isTrue h => isTrue (by rw [h])
-        | isFalse h => isFalse (by intro e; cases e; exact h rfl)
-      all_goals exact isFalse (by intro h; cases h)
+      exact Classical.propDecidable (∃' φ = ψ)
 
 instance : DecidableEq (Semiformula L ξ n) := hasDecEq
 

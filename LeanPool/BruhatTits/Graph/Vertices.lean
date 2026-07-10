@@ -184,8 +184,7 @@ lemma dist_twist₂ (b : Basis (Fin 2) K (Fin 2 → K)) {ϖ : R} (hϖ : Irreduci
       match i, j with
       | 0, 0 => rfl
       | 0, 1 =>
-        change n ≤ m
-        omega
+        exact Int.le_of_not_le h
       | 1, 0 => simp at hij
       | 1, 1 => rfl
 

@@ -131,9 +131,7 @@ lemma powerfulPart_ge_of_prime_sq_dvd {m p : ℕ} (hm : m ≠ 0) (hp : p.Prime)
           exact dvd_mul_right p p
         exact dvd_trans hp_dvd_sq hd, hm⟩))
   have hfactor : 2 ≤ m.factorization p := by
-    have hle := (Nat.factorization_le_iff_dvd (pow_ne_zero 2 hp.ne_zero) hm).2 hd
-    have := hle p
-    simpa [Nat.Prime.factorization_pow hp] using this
+    exact (Prime.pow_dvd_iff_le_factorization hp hm).mp hd
   simp only [ge_iff_le, hfactor, ite_true]
   exact pow_dvd_pow p hfactor
 
@@ -803,8 +801,7 @@ lemma erdos367_key (j₀ : ℕ) :
         calc 2 ≤ 3 * 5 := by norm_num
           _ ≤ (p + 1) / 2 * p := Nat.mul_le_mul h1 hp5le
       have h2card : 2 ^ S.card ≤ L := by
-        calc 2 ^ S.card = ∏ _p ∈ S, 2 := by rw [Finset.prod_const]
-          _ ≤ L := Finset.prod_le_prod' hfac
+        exact Finset.pow_card_le_prod S (fun p => (p + 1) / 2 * p) 2 hfac
       have hcard_le : S.card ≤ 2 ^ S.card := Nat.lt_two_pow_self.le
       have hj0_le_L : 2 * j₀ ≤ L := le_trans hS_card_j (le_trans hcard_le h2card)
       omega

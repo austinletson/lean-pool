@@ -202,13 +202,7 @@ lemma bernoulli_den_dvd_factorial_base : (bernoulli 2).den ∣ Nat.factorial 3 :
   norm_num
 
 lemma gcd_mul_coprime_eq_gcd (n a d : ℕ) (hcop : a.Coprime d) : (n * a).gcd d = n.gcd d := by
-  apply Nat.dvd_antisymm
-  · apply Nat.dvd_gcd
-    · exact (Nat.Coprime.coprime_dvd_left (Nat.gcd_dvd_right _ _) hcop.symm).dvd_mul_right.mp
-        (Nat.gcd_dvd_left _ _)
-    · exact Nat.gcd_dvd_right _ _
-  · exact Nat.dvd_gcd (dvd_trans (Nat.gcd_dvd_left _ _) (Nat.dvd_mul_right _ _))
-      (Nat.gcd_dvd_right _ _)
+  exact Nat.gcd_mul_left_left_of_gcd_eq_one hcop
 
 lemma gcd_natAbs_mul_num_dvd_n (n : ℕ) (q : ℚ) : (↑n * q.num).natAbs.gcd q.den ∣ n := by
   have h1 : (↑n * q.num).natAbs = n * q.num.natAbs := by rw [Int.natAbs_mul]; rfl

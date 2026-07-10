@@ -77,8 +77,7 @@ lemma innerProduct_is_pd_kernel :
                    (∑ i : Fin m, ∑ j : Fin m, b i * b j * ⟪x i, x j⟫_ℝ) := by
     simp only [add_mul]
     rw [← Finset.sum_add_distrib]
-    apply Finset.sum_congr rfl; intro i _
-    rw [← Finset.sum_add_distrib]
+    apply Finset.sum_congr rfl; exact fun x_2 a_1 => Finset.sum_add_distrib
   rw [split_sum]
   -- Each sum equals ⟪v_a, v_a⟫ or ⟪v_b, v_b⟫ = ‖v‖²
   have sum_w_eq (w : Fin m → ℝ) :

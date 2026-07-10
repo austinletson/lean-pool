@@ -188,9 +188,7 @@ theorem isIso_of_prod {A B C D : ZFSet} (h : A ≅ᶻ C) (h' : B ≅ᶻ D) : A.p
         exists_eq_left', F]
         simp_all
   · and_intros
-    · intro z hz
-      rw [mem_sep] at hz
-      exact hz.1
+    · exact sep_subset
     · intro z hz
       rw [mem_prod] at hz
       obtain ⟨a, ha, b, hb, rfl⟩ := hz

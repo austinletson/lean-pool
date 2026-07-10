@@ -159,9 +159,7 @@ lemma kernelTail_tendsto_zero (K : E → ℝ) (R₀ : ℝ)
                 rw [← h2]
                 exact Real.rpow_lt_rpow (Real.rpow_nonneg (le_of_lt hCε_pos) _) h1 hα
               rw [div_lt_iff₀ (Real.rpow_pos_of_pos hz_pos α)]
-              calc C = (C / ε) * ε := by field_simp
-                _ < ‖z‖ ^ α * ε := mul_lt_mul_of_pos_right key hε
-                _ = ε * ‖z‖ ^ α := mul_comm _ _
+              exact (div_lt_iff₀' hε).mp key
 
 /-! ## Key theorem: L¹ ⋆ C₀ → C₀
 
@@ -909,17 +907,12 @@ theorem schwartz_bilinear_translation_decay_proof
   -- As y → ∞, the support of K_sing(·-y) moves to where f is small
   have h_fKsing_vanish : Tendsto (fun y => ∫ x,
                                   f x * (K_sing (x - y) : ℂ)) (cocompact E) (nhds 0) := by
-    change Tendsto (fun y => ∫ x, f x * (kernelSingular K R₀ (x - y) : ℂ))
-      (cocompact E) (nhds 0)
     exact schwartz_bilinear_kernelSingular_vanish f K R₀ hK_sing_int hf_C0
   -- Step 8: Show f ⋆ K_tail vanishes at infinity
   -- Pattern: f is L¹, K_tail is bounded and C₀ → use ε-δ argument
   have h_fKtail_vanish : Tendsto (fun y => ∫ x,
                                   f x * (K_tail (x - y) : ℂ)) (cocompact E) (nhds 0) := by
-    change Tendsto (fun y => ∫ x, f x * (kernelTail K R₀ (x - y) : ℂ))
-      (cocompact E) (nhds 0)
-    exact schwartz_bilinear_kernelTail_vanish f K hK_meas α hα C R₀ hC hR₀
-      hK_decay hK_tail_C0 hf_int
+    exact schwartz_bilinear_kernelTail_vanish f K hK_meas α hα C R₀ hC hR₀ hK_decay hK_tail_C0 hf_int
   -- Step 9: Combine: f ⋆ K vanishes at infinity
   have h_fK_vanish : Tendsto (fun y => ∫ x, f x * (K (x - y) : ℂ)) (cocompact E) (nhds 0) := by
     -- Use kernel_decomposition and linearity of integral
@@ -978,8 +971,7 @@ theorem schwartz_bilinear_translation_decay_proof
           measurable_const)
         exact (measurable_ofReal.comp h2).aestronglyMeasurable
       refine Integrable.mul_bdd (c := M) hf_int hK_tail_meas (Eventually.of_forall ?_)
-      intro x
-      exact hM (x - y)
+      exact fun x => le_of_eq_of_le rfl (hM (x - y))
   -- Step 10: Final step - the double integral vanishes at infinity
   -- Strategy: Use Tendsto composition directly, avoiding ε-δ unfolding
   --
@@ -1018,9 +1010,8 @@ theorem schwartz_bilinear_translation_decay_proof
   obtain ⟨M_tail, hM_tail_pos, hM_tail⟩ := hK_tail_bdd
   -- Step 10a: H is continuous (convolution of Schwartz with locally integrable kernel)
   have hH_cont : Continuous H := by
-    change Continuous (fun y => ∫ x, f x * (K (x - y) : ℂ))
-    exact schwartz_bilinear_kernel_convolution_continuous f K hK_meas R₀ hR₀
-      hK_cont hK_sing_int hf_int Cf hCf M_tail (fun z => by simpa [K_tail] using hM_tail z)
+    exact schwartz_bilinear_kernel_convolution_continuous f K hK_meas R₀ hR₀ hK_cont hK_sing_int hf_int Cf hCf
+        M_tail hM_tail
   -- Step 10b: Apply the proven convolution theorem
   -- For integrable g and continuous C₀ H, (fun b => ∫ g(w) H(w - b)) → 0 as b → cocompact
   have h_decay := convolution_vanishes_of_integrable_and_C0 hg_int h_fK_vanish hH_cont

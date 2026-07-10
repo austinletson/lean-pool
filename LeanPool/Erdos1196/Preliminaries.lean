@@ -263,8 +263,7 @@ private lemma abs_mertensPartialSum_floor_sub_log_le {C : ℝ} {t : ℝ}
     |mertensPartialSum ⌊t⌋₊ - Real.log t|
       ≤ |mertensPartialSum ⌊t⌋₊ - Real.log ((⌊t⌋₊ : ℕ) : ℝ)| +
           |Real.log ((⌊t⌋₊ : ℕ) : ℝ) - Real.log t| := by
-            simpa [sub_eq_add_neg, add_comm, add_left_comm, add_assoc] using
-              abs_sub_le (mertensPartialSum ⌊t⌋₊) (Real.log ((⌊t⌋₊ : ℕ) : ℝ)) (Real.log t)
+            exact abs_sub_le (mertensPartialSum ⌊t⌋₊) (Real.log ↑⌊t⌋₊) (Real.log t)
     _ ≤ C + Real.log 2 := add_le_add (hC hfloor) (abs_log_floor_sub_log_le_log_two ht)
 
 /-- Consecutive logarithms differ by at most `log 2` once the index is at least `2`. -/

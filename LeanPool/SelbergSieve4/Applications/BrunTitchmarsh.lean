@@ -158,16 +158,12 @@ theorem natCeil_le_self_add_one (x : ℝ) (hx : 0 ≤ x) : Nat.ceil x ≤ x + 1 
 
 theorem floor_approx (x : ℝ) (hx : 0 ≤ x) : ∃ C, |C| ≤ 1 ∧  ↑((Nat.floor x)) = x + C :=
   ⟨↑(Nat.floor x) - x, by
-    rw [abs_le]; constructor
-    · linarith [Nat.lt_floor_add_one x]
-    · linarith [Nat.floor_le hx],
+    exact Nat.abs_floor_sub_le hx,
    by ring⟩
 
 theorem ceil_approx (x : ℝ) (hx : 0 ≤ x) : ∃ C, |C| ≤ 1 ∧  ↑((Nat.ceil x)) = x + C :=
   ⟨↑(Nat.ceil x) - x, by
-    rw [abs_le]; constructor
-    · linarith [Nat.le_ceil x]
-    · linarith [natCeil_le_self_add_one x hx],
+    exact Nat.abs_ceil_sub_le hx,
    by ring⟩
 
 theorem nat_div_approx (a b : ℕ) : ∃ C, |C| ≤ 1 ∧ ↑(a/b) = (a/b : ℝ) + C := by

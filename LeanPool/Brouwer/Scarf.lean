@@ -702,15 +702,11 @@ lemma odoor_index_in_pair (τ : Finset T) (D : Finset I) (C : Finset I)
   have ha_in_C : a ∈ C := by
     have ha_in_D : a ∈ D := ha_mem
     rw [hc_eq] at ha_in_D
-    cases Finset.mem_insert.mp ha_in_D with
-    | inl h_eq => exact absurd h_eq (Ne.symm hj_ne_a)
-    | inr h_mem => exact h_mem
+    exact mem_of_mem_insert_of_ne ha_in_D (id (Ne.symm hj_ne_a))
   have hb_in_C : b ∈ C := by
     have hb_in_D : b ∈ D := hb_mem
     rw [hc_eq] at hb_in_D
-    cases Finset.mem_insert.mp hb_in_D with
-    | inl h_eq => exact absurd h_eq (Ne.symm hj_ne_b)
-    | inr h_mem => exact h_mem
+    exact mem_of_mem_insert_of_ne hb_in_D (id (Ne.symm hj_ne_b))
   have h_inj_C : Set.InjOn (mini h_nonempty) (C : Set I) := by
     apply Finset.injOn_of_card_image_eq
     have h_tau_eq_C_image : τ = C.image (mini h_nonempty) := by
@@ -747,8 +743,7 @@ lemma idoor_determines_element [Fintype T] (τ : Finset T) (D : Finset I)
   have h_dom : IST.isDominant (insert x τ) D := h_room.1
   have h_exists_max : ∃ i ∈ ({a, b} : Finset I), (mSet τ D i h_nonempty).Nonempty ∧
       isMaximalInMSet τ D i h_nonempty x := by
-    apply (sublemma_3_2 τ D x h_door h_nonempty hx_not_mem a b ha_mem hb_mem hab h_eq_mini).mp
-    exact h_dom
+    exact (sublemma_3_2 τ D x h_door h_nonempty hx_not_mem a b ha_mem hb_mem hab h_eq_mini).mp h_dom
   obtain ⟨i, hi_mem, hi_nonempty, hi_max⟩ := h_exists_max
   have h_x_eq_mi : x = mElement τ D i h_nonempty hi_nonempty :=
     maximal_element_unique τ D i h_nonempty hi_nonempty x hi_max
@@ -839,9 +834,7 @@ theorem internalDoorTwoRoomsBothNonempty [Finite T] (τ : Finset T) (D : Finset 
     | idoor h0 _ x hx_not_mem hx_eq hc_eq =>
       subst hx_eq hc_eq
       have h_insert_room : IST.isRoom (insert x τ) D := by
-        constructor
-        · exact h0
-        · rw [Finset.card_insert_of_notMem hx_not_mem, h_card]
+        exact And.imp_left (fun a => h0) h_room
       cases idoor_determines_element τ D a b h_door h_nonempty ha_mem hb_mem hab h_eq_mini
           h_Ma_nonempty h_Mb_nonempty x h_insert_room hx_not_mem with
       | inl h_x_eq_ma => left; exact ⟨h_x_eq_ma ▸ rfl, rfl⟩
@@ -862,15 +855,11 @@ theorem internalDoorTwoRoomsBothNonempty [Finite T] (τ : Finset T) (D : Finset 
         have ha_in_C : a ∈ C := by
           have ha_in_D : a ∈ D := ha_mem
           rw [hc_eq] at ha_in_D
-          cases Finset.mem_insert.mp ha_in_D with
-          | inl h_eq => exact False.elim (hj_ne_a h_eq.symm)
-          | inr h_mem => exact h_mem
+          exact mem_of_mem_insert_of_ne ha_in_D (id (Ne.symm hj_ne_a))
         have hb_in_C : b ∈ C := by
           have hb_in_D : b ∈ D := hb_mem
           rw [hc_eq] at hb_in_D
-          cases Finset.mem_insert.mp hb_in_D with
-          | inl h_eq => exact False.elim (hj_ne_b h_eq.symm)
-          | inr h_mem => exact h_mem
+          exact mem_of_mem_insert_of_ne hb_in_D (id (Ne.symm hj_ne_b))
         have h_inj_C : Set.InjOn (mini h_nonempty) (C : Set I) := by
           apply Finset.injOn_of_card_image_eq
           have h_tau_eq_C_image : τ = C.image (mini h_nonempty) := by
@@ -1169,8 +1158,7 @@ theorem internal_door_two_rooms [Finite T] (τ : Finset T) (D : Finset I)
           have h_dom : IST.isDominant (insert x τ) D := h0
           have h_exists_max : ∃ i ∈ ({a, b} : Finset I),
               (mSet τ D i h_nonempty).Nonempty ∧ isMaximalInMSet τ D i h_nonempty x := by
-            apply (sublemma_3_2 τ D x h_door h_nonempty hx_not_mem a b ha_mem hb_mem hab
-                h_eq_mini).mp h_dom
+            exact (sublemma_3_2 τ D x h_door h_nonempty hx_not_mem a b ha_mem hb_mem hab h_eq_mini).mp h0
           simp_all
         | odoor h0 _ j hj_not_mem hj_eq hc_eq =>
           subst hj_eq
@@ -1475,8 +1463,7 @@ lemma image_erase_collision_preserves [DecidableEq T] (σ : Finset T) (c : T →
       · subst h
         use y
         constructor
-        · rw [Finset.mem_erase]
-          exact ⟨hxy_ne.symm, hy_in_σ⟩
+        · exact mem_erase_of_ne_of_mem (id (Ne.symm hxy_ne)) hy_in_σ
         · rw [←hcxy_eq, hw_eq]
       · use w
         exact ⟨Finset.mem_erase.mpr ⟨h, hw_in_σ⟩, hw_eq⟩
@@ -1504,8 +1491,7 @@ lemma collision_door_valid [DecidableEq T] (σ : Finset T) (C : Finset I) (_ : T
   · constructor
     · exact Dominant_of_subset σ (σ.erase x) C (Finset.erase_subset x σ) h_cell
     · rw [h_card_eq]
-      rw [Finset.card_erase_of_mem hx_in_σ]
-      exact (Nat.sub_add_cancel (Finset.card_pos.mpr ⟨x, hx_in_σ⟩)).symm
+      exact Eq.symm (card_erase_add_one hx_in_σ)
   · exact Finset.notMem_erase x σ
   · exact Finset.insert_erase hx_in_σ
   · rfl
@@ -1570,15 +1556,7 @@ lemma doorsOfNCroomInjective [DecidableEq T] (h_room : isRoom σ C)
             have h_cx_in_img_diff_D : c x ∈ img \ D := Finset.mem_sdiff.mpr
                 ⟨Finset.mem_image_of_mem c h_x_in_σ, h_cx_notin_C⟩
             rw [h_img_C_eq, Finset.mem_singleton] at h_cx_in_img_diff_D
-            have h_c_eq : c x = c y := by rw [h_cx_in_img_diff_D]
-            have x_in_sigma : x ∈ σ := by
-              have : x ∈ insert x τ := Finset.mem_insert_self x τ
-              have : x ∈ σ := by
-                rw [←h_insert_x]
-                exact Finset.mem_insert_self x τ
-              exact this
-            have := h_y_unique x_in_sigma h_c_eq
-            exact h_x_eq_y this
+            exact Ne.elim h_x_eq_y (h_y_unique h_x_in_σ h_cx_in_img_diff_D)
           exfalso
           have h_card_2 : (D \ (img.erase (c x))).card = 2 := by
             have h_eq : D \ (img.erase (c x)) = insert (c x) (D \ img) := by
@@ -1650,16 +1628,7 @@ lemma doorsOfNCroomInjective [DecidableEq T] (h_room : isRoom σ C)
                 exact ⟨h.1, fun h_in => h.2 ⟨fun h_eq => h_c_y_notin_C (h_eq ▸ h.1), h_in⟩⟩
               · simp_all
             rw [h_eq_diff, h_nc.2]
-        · apply isDoorof.idoor
-          · exact h_cell
-          · constructor
-            · unfold isCell
-              exact Dominant_of_subset _ _ D (Finset.erase_subset y σ) h_cell
-            · rw [Finset.card_erase_of_mem h_y_in_σ, h_card_eq]
-              exact (Nat.sub_add_cancel (Finset.card_pos.mpr ⟨y, h_y_in_σ⟩)).symm
-          · exact Finset.notMem_erase y σ
-          · exact Finset.insert_erase h_y_in_σ
-          · rfl
+        · exact collision_door_valid σ D c y h_cell h_y_in_σ h_card_eq
       · have ⟨h_τ_eq, h_D_eq⟩ : τ = σ ∧ D = insert (c y) C := Prod.mk.inj h_eq2
         subst h_τ_eq h_D_eq
         constructor
@@ -1717,8 +1686,7 @@ lemma pairEqOfCollision [DecidableEq T] {x y a b : T}
         by_cases h_y_eq_b : y = b
         · simp_all
         · have h_y_ne_a : y ≠ a := by
-            rw [h_x_eq_a] at h_xy_ne
-            exact h_xy_ne.symm
+            exact Ne.symm (ne_of_eq_of_ne (id (Eq.symm h_x_eq_a)) h_xy_ne)
           have h_c_chain : c a = c y := by
             rw [←h_x_eq_a, h_cxy_eq]
           have h_y_in_complement : y ∈ σ \ {a, b} := by
@@ -1744,8 +1712,7 @@ lemma pairEqOfCollision [DecidableEq T] {x y a b : T}
           have : ({b, a} : Finset T) = {a, b} := by simp [Finset.pair_comm]
           simp_all
         · have h_y_ne_b : y ≠ b := by
-            rw [h_x_eq_b] at h_xy_ne
-            exact h_xy_ne.symm
+            exact Ne.symm (ne_of_eq_of_ne (id (Eq.symm h_x_eq_b)) h_xy_ne)
           have h_c_chain : c b = c y := by
             rw [←h_x_eq_b, h_cxy_eq]
           have h_y_in_complement : y ∈ σ \ {a, b} := by
@@ -1946,8 +1913,7 @@ lemma doorsOfNCroomRepeated [DecidableEq T] (h_room : isRoom σ C)
     simp only [ne_eq, Prod.mk.injEq, and_true, door1, τ₁, door2, τ₂]
     intro h_eq
     have h_y_mem : y ∈ σ.erase x := by
-      rw [Finset.mem_erase]
-      exact ⟨h_xy_ne.symm, h_y_in_σ⟩
+      exact mem_erase_of_ne_of_mem (id (Ne.symm h_xy_ne)) h_y_in_σ
     simp_all
   have h_exactly_two : NCdoors c σ C = {door1, door2} := by
     ext ⟨τ, D⟩
@@ -2160,9 +2126,7 @@ lemma dbcount_outside_door' (i : I) : ∃ x,  filter (fun x => isOutsideDoor x.1
         have h2 : x_max_i ≤[i] x := h_dom x_max_i
         exact @le_antisymm T (IST i).toPartialOrder x x_max_i h1 h2
       apply Prod.ext
-      · apply Prod.ext
-        · exact h_empty
-        · rw [h_x_gen_1_2_eq]
+      · exact Prod.ext h_empty h_x_gen_1_2_eq
       · apply Prod.ext
         · rw [h_σ_eq, h_x_eq_max]
         · rw [←h_D_eq_C, h_x_gen_1_2_eq]
@@ -2179,9 +2143,7 @@ lemma dbcount_outside_door' (i : I) : ∃ x,  filter (fun x => isOutsideDoor x.1
     rw [h_eq]
     simp only [true_and]
     constructor
-    · constructor
-      · exact h_typed_nc
-      · exact h_door_relation
+    · exact ⟨h_typed_nc, h_door_relation⟩
     · exact h_outside_door_τu_Du
 
 variable (c)
@@ -2240,17 +2202,13 @@ lemma fiber_size_internal_door (c : T → I) (i : I) (y : Finset T × Finset I)
         rw [h_x_form]
         apply Prod.ext
         · rfl
-        · apply Prod.ext
-          · exact h_case1.1
-          · exact h_case1.2
+        · exact Prod.ext_iff.mpr h_case1
       · simp only [mem_insert, mem_singleton]
         right
         rw [h_x_form]
         apply Prod.ext
         · rfl
-        · apply Prod.ext
-          · exact h_case2.1
-          · exact h_case2.2
+        · exact Prod.ext_iff.mpr h_case2
     · intro hx
       simp only [mem_insert, mem_singleton] at hx
       cases hx with
@@ -2332,8 +2290,7 @@ lemma firber2_doors_NCroom (h0 : isRoom σ C) (h1 : isTypedNC c i σ C) :
         rw [mem_filter] at h_db
         obtain ⟨_, h_typed, h_door⟩ := h_db
         have h_x_form : x = (x.1, (σ,C)) := by
-          rw [Prod.ext_iff]
-          exact ⟨rfl, h_eq⟩
+          exact Prod.snd_eq_iff.mp h_eq
         rw [h_x_form]
         simp only [mem_insert, Prod.mk.injEq, and_true, mem_singleton]
         have h_x1_in_doors : x.1 ∈ NCdoors c σ C := by
@@ -2425,8 +2382,7 @@ theorem _root_.Finset.card_filter_filter_neg {α : Type*} (s : Finset α) (p : �
     [DecidablePred p]
  : s.card  = (Finset.filter p s).card + (Finset.filter (fun (a : α) => ¬p a) s).card :=
   by
-    nth_rw 1 [<-Finset.filter_union_filter_not_eq p s]
-    apply Finset.card_union_eq_card_add_card.2 (Finset.disjoint_filter_filter_not _ _ _)
+    exact Eq.symm (card_filter_add_card_filter_not p)
 
 lemma typed_colorful_room_odd (i : I) : Odd (Finset.filter (fun (x: (Finset T× Finset I)
     × Finset T × Finset I) =>  isColorful c x.2.1 x.2.2) (dbcountingset c i)).card

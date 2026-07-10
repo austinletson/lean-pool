@@ -255,9 +255,7 @@ instance : Hereditary (ShortDeadEnding (G := G)) where
 instance : ShortUniverse (ShortDeadEnding (G := G)) where
   zero_mem :=
   { short := by
-      rw [short_def]
-      intro p
-      simp
+      exact Short.zero
   , dead_ending := isDeadEnding_zero
   }
   isAmbient_of_mem h := h.short

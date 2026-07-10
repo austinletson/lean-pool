@@ -305,9 +305,7 @@ theorem lengthWhile_eq_iff_of_lt_length
       · grind
       · intro ⟨hi, hia⟩
         constructor
-        · intro i hi'
-          specialize hi (i + 1) (by grind)
-          simpa using hi
+        · refine fun i h => ?_
         · grind
   · constructor
     · intro ha
@@ -674,8 +672,7 @@ def IsToDown (hn : 0 < n) (x : FerrersDiagram n) :=
   x.diagSize + 1 < x.delta.getLast (x.delta_ne_nil hn)
 
 instance (hn : 0 < n) (x : FerrersDiagram n) : Decidable (x.IsToDown hn) := by
-  unfold IsToDown
-  infer_instance
+  exact Classical.propDecidable (IsToDown hn x)
 
 theorem diagSize_of_isToDown (hn : 0 < n) (x : FerrersDiagram n)
     (hdown : x.IsToDown hn) : x.diagSize + 1 < n := by
@@ -1034,26 +1031,7 @@ theorem diagSize_up (hn : 0 < n) (x : FerrersDiagram n)
       apply List.forall_iff_forall_mem.mp x.delta_pos
       simp
     )
-    obtain heq | hlt := eq_or_lt_of_le <| hdiagle
-    · have h1 := List.lengthWhile_eq_length_iff.mp heq
-      have h1' : x.delta.getLast (x.delta_ne_nil hn) = 1 := by
-        apply List.forall_iff_forall_mem.mp h1
-        simp
-      rw [h1']
-      suffices 1 < x.delta.length by simpa
-      exact x.one_lt_length hn hdown hpospen
-    simp only [IsToDown, not_lt] at hdown
-    obtain heq | hlt := eq_or_lt_of_le <| Nat.lt_iff_add_one_le.mp hlt
-    · apply lt_of_le_of_ne (heq ▸ hdown)
-      contrapose! hpospen with heq'
-      constructor
-      · exact heq'
-      · intro i hi
-        apply List.pred_of_lt_lengthWhile (· = 1)
-        apply hi.trans_le
-        rw [← heq, Nat.add_sub_cancel]
-        rfl
-    apply hdown.trans_lt hlt
+    exact getLast_lt_of_notToDown hn x hdown hpospen
   )]
   simp only [IsToDown, not_lt] at hdown
   constructor
@@ -2095,8 +2073,7 @@ theorem eularPhi : HasProd (fun (n : ℕ+) ↦ (1 - PowerSeries.monomial n (1 : 
         · simp
         · apply (PNat.coe_le_coe _ _).mp
           simpa [ha0, ha0.trans_le this] using this
-      rw [← x.parts_sum]
-      exact Multiset.le_sum_of_mem ha
+      exact Nat.Partition.le_of_mem_parts ha
     · suffices n = (Multiset.map (fun x ↦ if 0 < x then x else 1) x.parts).sum by simpa [g]
       have : Multiset.map (fun x ↦ if 0 < x then x else 1) x.parts =
           Multiset.map id x.parts := by

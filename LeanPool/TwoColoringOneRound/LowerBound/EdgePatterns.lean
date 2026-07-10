@@ -55,24 +55,16 @@ def Pat0110 (e : Edge n) : Prop :=
   e.1 0 < two ∧ two ≤ e.1 1 ∧ two ≤ e.1 2 ∧ e.1 3 < two
 
 instance : DecidablePred (Pat0000 (two := two)) := by
-  intro e
-  dsimp [Pat0000]
-  infer_instance
+  exact Classical.decPred (Pat0000 two)
 
 instance : DecidablePred (Pat1111 (two := two)) := by
-  intro e
-  dsimp [Pat1111]
-  infer_instance
+  exact Classical.decPred (Pat1111 two)
 
 instance : DecidablePred (Pat1001 (two := two)) := by
-  intro e
-  dsimp [Pat1001]
-  infer_instance
+  exact Classical.decPred (Pat1001 two)
 
 instance : DecidablePred (Pat0110 (two := two)) := by
-  intro e
-  dsimp [Pat0110]
-  infer_instance
+  exact Classical.decPred (Pat0110 two)
 
 private lemma big_ne_small {n : Nat} {two : Sym n} (x : Big (two := two)) (y : Small (two := two)) :
     (x.1 : Sym n) ≠ y.1 := by
@@ -82,8 +74,7 @@ private lemma big_ne_small {n : Nat} {two : Sym n} (x : Big (two := two)) (y : S
 
 private lemma small_ne_big {n : Nat} {two : Sym n} (x : Small (two := two)) (y : Big (two := two)) :
     (x.1 : Sym n) ≠ y.1 := by
-  intro hxy
-  exact big_ne_small (two := two) (x := y) (y := x) hxy.symm
+  exact Ne.symm (big_ne_small y x)
 
 private def bigValEmbedding {n : Nat} {two : Sym n} : Big (two := two) ↪ Sym n :=
   ⟨Subtype.val, Subtype.val_injective⟩
@@ -104,12 +95,7 @@ private lemma disjoint_range_big_small {n : Nat} {two : Sym n}
 private lemma disjoint_range_small_big {n : Nat} {two : Sym n}
     (bc : Fin 2 ↪ Small (two := two)) (ad : Fin 2 ↪ Big (two := two)) :
     Disjoint (Set.range (bc.trans smallValEmbedding)) (Set.range (ad.trans bigValEmbedding)) := by
-  refine Set.disjoint_left.2 ?_
-  intro x hx hy
-  rcases hx with ⟨i, rfl⟩
-  rcases hy with ⟨j, h⟩
-  have h' : (bc i).1 = (ad j).1 := by simpa [bigValEmbedding, smallValEmbedding] using h.symm
-  exact (small_ne_big (two := two) (x := bc i) (y := ad j) h').elim
+  exact Disjoint.symm (disjoint_range_big_small ad bc)
 
 private def outerPos : Fin 2 ↪ Fin 4 where
   toFun
@@ -150,11 +136,7 @@ private def embedding1001 {n : Nat} (two : Sym n) (ad : Fin 2 ↪ Big (two := tw
 
 private def embedding0110 {n : Nat} (two : Sym n) (ad : Fin 2 ↪ Big (two := two))
     (bc : Fin 2 ↪ Small (two := two)) : Fin 4 ↪ Sym n := by
-  let bc' : Fin 2 ↪ Sym n := bc.trans smallValEmbedding
-  let ad' : Fin 2 ↪ Sym n := ad.trans bigValEmbedding
-  exact interleavePos.trans
-    (Fin.Embedding.append (x := bc') (y := ad')
-      (disjoint_range_small_big (two := two) bc ad))
+  exact embedding1001 two ad bc
 
 private def tuple1001 {n : Nat} (two : Sym n) (ad : Fin 2 ↪ Big (two := two))
     (bc : Fin 2 ↪ Small (two := two)) : Tuple 4 n :=

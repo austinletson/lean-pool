@@ -254,8 +254,7 @@ theorem add_mod_eq (q a b i : ℕ) (hq : 1 < q)
     (h : ∀ e, e < i → (a / q ^ e % q) + (b / q ^ e % q) ≤ q - 1) :
     (a + b) % q ^ i = a % q ^ i + b % q ^ i := by
   have hlt := noCarry_mod q a b i hq h
-  conv_lhs => rw [Nat.add_mod]
-  rw [Nat.mod_eq_of_lt hlt]
+  exact Nat.add_mod_of_add_mod_lt hlt
 
 /-- Digit additivity (fact D2): if `a` and `b` add without carry in every base-`q`
 position, then each digit of `a + b` is the sum of the corresponding digits. -/
@@ -624,8 +623,7 @@ theorem Phi_eq_take_sum (q k1 d L : ℕ) :
   unfold Phi
   rw [abel_swap d (fun r => blockSum q k1 L r)]
   apply Finset.sum_congr rfl
-  intro c hc
-  rw [take_blocks]
+  exact fun x a => Eq.symm (take_blocks q k1 L (x + 1))
 
 -- Pure arithmetic greedy core: the smallest `m = ∑_{e<p} s_e + r` slots
 -- (values `q ^ e`) have the least value among any selection `b` with `b e ≤ s e`
@@ -876,10 +874,7 @@ theorem slot_lower_bound (q d k : ℕ) (hq : 2 ≤ q) (hk : 0 < k)
     have hthis := hcf e
     have hmono : ∑ i ∈ I, qdigit q (m i) e ≤ ∑ i : Fin d, qdigit q (m i) e :=
       Finset.sum_le_sum_of_subset (Finset.subset_univ I)
-    calc qdigit q k1 e + ∑ i ∈ I, qdigit q (m i) e
-        ≤ qdigit q k1 e + ∑ i : Fin d, qdigit q (m i) e := by
-          exact Nat.add_le_add_left hmono _
-      _ ≤ q - 1 := hthis
+    exact add_le_of_add_le_left (hcf e) hmono
   · -- hm_len
     have hb := slotList_length_ge q k1 Ls hq
     have hk1k : k1 + 1 = k := by omega
@@ -1188,8 +1183,7 @@ theorem slot_upper_bound (q d k : ℕ) (hq : 2 ≤ q) (hk : 0 < k) :
     intro i e
     rw [hmwin i]
     refine qdigit_window q L hq _ (hWpow i) ?_ e
-    intro e'
-    exact lt_of_le_of_lt (hWcount i (q ^ e')) (hSltq e')
+    exact fun e => Nat.lt_of_le_of_lt (hWcount i (q ^ e)) (hSltq e)
   -- membership in TSet
   have hmem : m ∈ TSet q d k1 := by
     refine ⟨?_, ?_, ?_⟩
@@ -1522,9 +1516,7 @@ theorem layer_cake (q d k : ℕ) (hq : 2 ≤ q) (hd : 1 < d) (hk : 0 < k) :
     rw [hsm1]
     refine slot_subtraction q k1 L hq ?_
     have hd1 : 1 ≤ d := by omega
-    calc q - 1 = 1 * (q - 1) := by ring
-      _ ≤ d * (q - 1) := Nat.mul_le_mul_right _ hd1
-      _ ≤ (slotList q k1 L).length := hlenL
+    exact le_of_mul_le_of_one_le_right hlenL hd1
   -- block-shift: block (r+1) of M(s1-1) = block (r+2) of M(k1)
   have hshift : ∀ r Lx : ℕ,
       blockSum q (s1 - 1) Lx (r + 1) = blockSum q k1 Lx (r + 2) := by

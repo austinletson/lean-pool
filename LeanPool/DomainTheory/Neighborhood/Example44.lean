@@ -96,10 +96,7 @@ theorem nestedOrDisjoint : NestedOrDisjoint memC := by
     · exact Or.inr (Or.inl h)
     · exact Or.inl h
     · exact Or.inr (Or.inr (by rw [Set.inter_comm]; exact h))
-  · rcases singleton_cone_nd τ σ with h | h | h
-    · exact Or.inl h
-    · exact Or.inr (Or.inl h)
-    · exact Or.inr (Or.inr h)
+  · exact singleton_cone_nd τ σ
   · by_cases h : σ = τ
     · subst h; exact Or.inl (Set.Subset.refl _)
     · simp_all

@@ -194,9 +194,7 @@ lemma pv_step_bound_ratio_two_uniform
           (if ε₂ < ‖γ t - γ t₀‖ ∧
             ‖γ t - γ t₀‖ ≤ ε₁
           then f t else 0) := by
-    simp only [I, f]
-    exact cutoff_diff_eq_annulus_integral
-      hε₂_le hI_int₂ hI_int₁
+    exact cutoff_diff_eq_annulus_integral hε₂_le hI_int₂ hI_int₁
   let r := fun t =>
     f t - (↑(t - t₀))⁻¹
   have h_sing_int :
@@ -281,10 +279,7 @@ lemma pv_step_bound_ratio_two_uniform
           ‖γ t - γ t₀‖ ≤ ε₁
         then r t else 0‖ ≤
           max 0 C * (4 * ε₁ / ‖L‖) := by
-    simp only [r, f]
-    exact remainder_integral_bound_on_annulus
-      hL hε₁_pos hε₂_pos hr_bounded h_lower
-      h_loc_for_rem hat₀
+    exact remainder_integral_bound_on_annulus hL hε₁_pos hε₂_pos hr_bounded h_lower h_loc_for_rem hat₀
   rw [h_diff, h_annulus_split]
   calc ‖(∫ t in a..b,
       if ε₂ < ‖γ t - γ t₀‖ ∧

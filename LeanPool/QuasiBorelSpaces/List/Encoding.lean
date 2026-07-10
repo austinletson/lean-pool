@@ -59,9 +59,7 @@ lemma nil_ne_cons (x : A) (xs : Encoding A) : nil ≠ cons x xs := by
 
 @[simp]
 lemma cons_ne_nil (x : A) (xs : Encoding A) : cons x xs ≠ nil := by
-  simp only [
-    nil, cons, ne_eq, Sigma.mk.injEq, Nat.add_eq_zero_iff,
-    Nat.succ_ne_self, and_false, false_and, not_false_eq_true]
+  exact Ne.symm (nil_ne_cons x xs)
 
 @[simp]
 lemma cons_inj_iff (x y : A) (xs ys : Encoding A) : cons x xs = cons y ys ↔ x = y ∧ xs = ys := by

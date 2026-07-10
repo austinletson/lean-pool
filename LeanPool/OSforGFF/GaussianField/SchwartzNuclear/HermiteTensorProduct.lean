@@ -895,21 +895,7 @@ private lemma hermiteFunctionNd_decay (d : ℕ) (α : MultiIndex d) (k n : ℕ) 
   -- by a product of 1D Schwartz bounds.
   rcases d with _ | d
   · -- d = 0: EuclideanSpace ℝ (Fin 0) is a point
-    refine ⟨1, fun x => ?_⟩
-    have hx : x = 0 := Subsingleton.eq_zero x
-    subst hx
-    simp only [norm_zero]
-    rcases k with _ | k
-    · simp only [pow_zero, one_mul]
-      -- Need ‖iteratedFDeriv ℝ n (hermiteFunctionNd 0 α) 0‖ ≤ 1
-      -- hermiteFunctionNd 0 α = fun x => ∏ i : Fin 0, ... = fun _ => 1
-      have hf : hermiteFunctionNd 0 α = fun _ => 1 := by
-        ext x; simp [hermiteFunctionNd, Finset.prod_empty]
-      rw [hf]
-      rcases n with _ | n
-      · simp
-      · simp [iteratedFDeriv_const_of_ne (Nat.succ_ne_zero n)]
-    · simp [zero_pow (Nat.succ_ne_zero k), zero_mul]
+    exact Finite.exists_le fun i => ‖i‖ ^ k * ‖iteratedFDeriv ℝ n (hermiteFunctionNd 0 α) i‖
   -- d + 1 ≥ 1
   -- For each j and m, get the bounds from 1D Schwartz decay
   -- Use the abstract product bound
@@ -933,8 +919,7 @@ private lemma hermiteFunctionNd_decay (d : ℕ) (α : MultiIndex d) (k n : ℕ) 
   have hfac_decay : ∀ j : Fin (d + 1), ∀ m : ℕ,
       ∃ C : ℝ, 0 ≤ C ∧ ∀ x : EuclideanSpace ℝ (Fin (d + 1)),
         |x j| ^ k * ‖iteratedFDeriv ℝ m (fac j) x‖ ≤ C := by
-    intro j m
-    exact iteratedFDeriv_hermite_comp_proj_bound (d + 1) (α j) j k m
+    exact fun j m => iteratedFDeriv_hermite_comp_proj_bound (d + 1) (α j) j k m
   -- Step A/B: ‖x‖^k ≤ (d+1)^k * ∑ |x j|^k (ℓ²≤ℓ¹ + power-mean)
   have h_norm_pow_le := euclidean_norm_pow_le d k
   -- Step C: Apply the multinomial Leibniz rule and bound each term
@@ -1179,8 +1164,7 @@ private lemma schwartz_partial_hermiteCoeff_seminorm_bound (d : ℕ) (k' l' : �
           (schwartzSlicePartial d f l' y v) ≤
           C_i * (∏ i, ‖v i‖) *
             q_i.sup (schwartzSeminormFamily ℝ (EuclideanSpace ℝ (Fin (d + 2))) ℝ) f := by
-    intro ⟨a, b⟩
-    exact schwartz_slice_partial_seminorm_bound d k' l' a b
+    exact fun idx => schwartz_slice_partial_seminorm_bound d k' l' idx.1 idx.2
   choose C_fn q_fn hC_pos h_bnd using h_single
   -- Step 3: Take maximum constants over the finite set q₁
   set C_max := q₁.sup' hne C_fn
@@ -1275,10 +1259,7 @@ private lemma schwartz_partial_hermiteCoeff_seminorm_bound (d : ℕ) (k' l' : �
                       (Finset.prod_nonneg fun _ _ => norm_nonneg _)
       _ = C₁ * C_max * S_f * ∏ i, ‖v i‖ := by ring
       _ = C₂ * S_f * ∏ i, ‖v i‖ := rfl
-  calc ‖c • iteratedFDeriv ℝ l' g y‖ * (1 + (n : ℝ)) ^ k
-      ≤ (C₂ * S_f / (1 + (n : ℝ)) ^ k) * (1 + (n : ℝ)) ^ k :=
-        mul_le_mul_of_nonneg_right h_op hc.le
-    _ = C₂ * S_f := div_mul_cancel₀ _ hc.ne.symm
+  exact (le_div_iff₀ hc).mp h_op
 
 /-- Packages `schwartz_partial_hermiteCoeff_seminorm_bound` for `schwartzSeminormFamily`-indexed
 seminorms over a finite set `q`, with `(1+n)^k` decay.
@@ -1331,11 +1312,7 @@ private lemma schwartz_partial_hermiteCoeff_seminorm_bound'
     -- Take the sup, then multiply by (1+n)^k
     have h_sup := Seminorm.finset_sup_apply_le
       (div_nonneg (mul_nonneg hCM.le (apply_nonneg _ _)) hc.le) h_each
-    calc q.sup (schwartzSeminormFamily ℝ (EuclideanSpace ℝ (Fin (d + 1))) ℝ)
-            (schwartzPartialHermiteCoeff d f n) * (1 + (n : ℝ)) ^ k
-        ≤ B / (1 + (n : ℝ)) ^ k * (1 + (n : ℝ)) ^ k :=
-          mul_le_mul_of_nonneg_right h_sup hc.le
-      _ = B := div_mul_cancel₀ B (ne_of_gt hc)
+    exact (le_div_iff₀ hc).mp h_sup
 
 /-! ### Proofs from Analytical Lemmas
 
@@ -1410,11 +1387,9 @@ private lemma hermiteCoeffNd_injective (d' : ℕ)
         ext n; simp [h_coeff n]
       rw [heq] at hs
       exact hs.unique hasSum_zero
-    change (schwartzDomCongr euclideanFin1Equiv).symm f = 0 at hg
-    exact (ContinuousLinearEquiv.injective _) (by rw [hg, map_zero])
+    exact (ContinuousLinearEquiv.map_eq_zero_iff (schwartzDomCongr euclideanFin1Equiv).symm).mp hg
   | succ d'' ih =>
-    exact hermiteCoeffNd_injective_succ d''
-      (fun g hg => ih g hg) f h
+    exact hermiteCoeffNd_injective_succ d'' ih f h
 
 /-- Multidimensional Hermite coefficients decay rapidly (for `d = d' + 1 ≥ 1`).
 This is the multivariate generalization of `hermiteCoeff1D_decay`.
@@ -2106,8 +2081,7 @@ private lemma scalar_flatBasisNd_iFDeriv_bound (d : ℕ) (c : ℝ) (n l : ℕ)
   rw [hcoe]
   calc ‖iteratedFDeriv ℝ l (⇑(c • flatBasisNd d n)) x‖
       ≤ (SchwartzMap.seminorm ℝ 0 l) (c • flatBasisNd d n) := by
-          have h := SchwartzMap.le_seminorm ℝ 0 l (c • flatBasisNd d n) x
-          simp only [pow_zero, one_mul] at h; exact h
+          exact norm_iteratedFDeriv_le_seminorm ℝ (c • flatBasisNd d n) l x
     _ = |c| * (SchwartzMap.seminorm ℝ 0 l) (flatBasisNd d n) := by
           rw [map_smul_eq_mul, Real.norm_eq_abs]
 

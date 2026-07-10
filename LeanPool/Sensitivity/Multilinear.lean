@@ -70,9 +70,7 @@ noncomputable def degree (f : BoolFun n) : ℕ :=
 /-- The multilinear degree of `f` is at most `n`. -/
 theorem degree_le (f : BoolFun n) : f.degree ≤ n := by
   apply Finset.sup_le
-  intro S hS
-  simp only [Finset.mem_filter] at hS
-  simpa using Finset.card_le_univ S
+  exact fun b a => card_finset_fin_le b
 
 /-- If the multilinear degree is positive, there exists a "witness" set `S`
 of cardinality equal to the degree at which the Möbius coefficient is

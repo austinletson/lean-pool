@@ -83,12 +83,7 @@ lemma nowhereDense_iff : IsNowhereDense A ↔ ∀ U, U.Nonempty → IsOpen U →
 
 lemma isNowhereDense_image (hf : IsInducing f) (h : IsNowhereDense A) :
   IsNowhereDense (f '' A) := by
-  simp_rw [IsNowhereDense, hf.closure_eq_preimage_closure_image] at *
-  replace h := subset_trans (preimage_interior_subset_interior_preimage hf.continuous) h.subset
-  rw [Set.subset_empty_iff, Set.preimage_eq_empty_iff] at h
-  simpa using Set.disjoint_of_subset_right
-    (subset_trans (interior_mono (closure_mono (Set.image_subset_range f A))) interior_subset)
-    (Disjoint.closure_right h isOpen_interior)
+  exact IsInducing.isNowhereDense_image hf h
 
 lemma nowhereDense_in_open (hU : IsOpen U) (A : Set U) :
   IsNowhereDense (Subtype.val '' A) ↔ IsNowhereDense A := by
@@ -107,8 +102,7 @@ lemma nowhereDense_in_dense (hU : Dense U) (A : Set U) :
       rw [← hU.isDenseEmbedding_val.dense_image]
       simpa using Dense.inter_of_isOpen_right hU hVd hVo
     · simpa [Set.subset_compl_iff_disjoint_left, projection_formula] using hVs
-  · intro h
-    exact isNowhereDense_image _ IsInducing.subtypeVal h
+  · exact fun a => IsNowhereDense.image_val a
 lemma isOpen_isNowhereDense (hU : IsOpen U) : IsNowhereDense U ↔ U = ∅ := by
   rw [← Subtype.coe_image_univ U, nowhereDense_in_open hU Set.univ]
   simp [IsNowhereDense]
@@ -210,13 +204,7 @@ lemma IsMeagre.interior [BaireSpace X] {U : Set X} (hU : IsMeagre U) : interior 
   simpa only [Set.compl_empty, ← closure_compl, ← dense_iff_closure_eq]
     using dense_of_mem_residual hU
 lemma isMeagre_image (hf : IsInducing f) (h : IsMeagre A) : IsMeagre (f '' A) := by
-  rw [isMeagre_iff_eq_countable_union_isNowhereDense] at *
-  obtain ⟨S, h1, h2, h3⟩ := h
-  use (fun s ↦ f '' s) '' S
-  constructor
-  · rintro _ ⟨x, hx, rfl⟩; exact isNowhereDense_image _ hf (h1 x hx)
-  · use h2.image _
-    simp [h3, Set.sUnion_eq_biUnion, Set.image_iUnion]
+  exact IsInducing.isMeagre_image hf h
 lemma isMeagre_congr (h : A =ᵇ B) : IsMeagre A ↔ IsMeagre B := Filter.mem_congr h.compl
 --TODO use before and below
 
@@ -239,11 +227,7 @@ lemma baireSpace_iff_isMeagre_isOpen : BaireSpace X ↔
   · simp_rw [baireSpace_iff_isMeagre_interior]
     exact fun h U hU ↦ h _ (hU.mono interior_subset) isOpen_interior
 lemma open_baire [BaireSpace X] {U : Set X} (hU : IsOpen U) : BaireSpace U := by
-  rw [baireSpace_iff_isMeagre_isOpen]
-  intro V hVm hVo
-  rw [← Set.image_eq_empty (f := Subtype.val), ← isOpen_isMeagre]
-  · exact isMeagre_image _ IsInducing.subtypeVal hVm
-  · exact IsOpen.trans hVo hU
+  exact IsOpen.baireSpace hU
 
 namespace residual.dom
 variable {U V : tX.Opens}
@@ -358,8 +342,7 @@ lemma forces_iUnion_left {I} (U : I → tX.Opens) (h : ∀ i, U i ⊩ A) : ⨆ i
   simp_rw [forces_iff_subset_dom] at *; simpa
 lemma dom_empty_isMeagre : IsMeagre (dom (∅ : Set X) : Set X) := by
   have h := forces (X := X) (A := ∅)
-  rw [forces_iff_isMeagre] at h
-  simpa using h
+  exact forces_empty_iff_isMeagre.mp h
 lemma banach_category {I} (U : I → Set X) (hUo : ∀ i, IsOpen (U i)) (hUm : ∀ i, IsMeagre (U i)) :
   IsMeagre (⋃ i, U i) := by
   suffices IsMeagre ((⨆ i, TopologicalSpace.Opens.mk (U i) (hUo i) : tX.Opens) : Set X) by simpa

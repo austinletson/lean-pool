@@ -75,8 +75,7 @@ lemma measurable_bind
     apply measurable_of_empty
   wlog hf : Measurable f
   · simp only [bind, hf, ↓reduceDIte]
-    change Measurable fun _ ↦ f hA.some.nonempty.some
-    apply measurable_const
+    exact measurable_const' fun x => congrFun rfl
   simp only [bind, hf, ↓reduceDIte]
   apply Measurable.subtype_mk
   apply Measurable.fun_comp (MeasureTheory.Measure.measurable_bind' ?_)

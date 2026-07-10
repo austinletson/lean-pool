@@ -66,9 +66,7 @@ theorem iff_provable_satisfies_FiniteTransitiveTree : Hilbert.GL ⊢! φ ↔ (�
     exact satisfies_at_root_on_FiniteTransitiveTree this M;
   · intro h;
     apply Hilbert.GL.Kripke.finiteComplete.complete;
-    intro F hF V;
-    apply valid_on_TransitiveIrreflexiveFrameClass_of_satisfies_at_root_on_FiniteTransitiveTree
-      h hF;
+    exact @valid_on_TransitiveIrreflexiveFrameClass_of_satisfies_at_root_on_FiniteTransitiveTree φ h
 
 lemma iff_unprovable_exists_unsatisfies_FiniteTransitiveTree
   : Hilbert.GL ⊬ φ ↔ ∃ M : FiniteTransitiveTreeModel, ¬Satisfies M.toModel M.root φ := by

@@ -42,8 +42,7 @@ theorem resolve_coupled_bounds (A B T c₁ c₂ a : ℝ)
   have h1 : B ≤ c₂ + a * (c₁ + B + T) := by nlinarith
   have h2 : (1 - a) * B ≤ c₂ + a * c₁ + a * T := by nlinarith
   have h3 : (0 : ℝ) < 1 - a := by linarith
-  rw [le_div_iff₀ h3]
-  nlinarith
+  exact (le_div_iff₀' h3).mpr h2
 
 /-- After resolving the coupled system, get a bound on A. -/
 theorem resolve_coupled_A_bound (A B c₁ c₂_prime : ℝ)

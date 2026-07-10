@@ -210,8 +210,7 @@ theorem sInf_closed (IsAmbient : G → Prop) {S : Set (G → Prop)}
     simp only [sInf_apply, iInf_Prop_eq] at hB hC ⊢
     intro P
     haveI : ClosedUnderDicotic IsAmbient (fun x => P.1 x) := hS P P.2
-    exact ClosedUnderDicotic.closed_dicotic B C
-      (fun b hb => hB b hb P) (fun c hc => hC c hc P) hBne hCne hAmbient
+    exact closed_dicotic B C (fun b a => hB b a P) (fun c a => hC c a P) hBne hCne hAmbient
 
 /--
 The closure operator for finding the smallest dicotically closed set (given the

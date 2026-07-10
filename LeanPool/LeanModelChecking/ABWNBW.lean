@@ -305,8 +305,7 @@ theorem ABW.toNBW.lang_sup {S Q} {A : ABW S Q} [Finite Q] {w : Nat → S} :
   obtain ⟨⟨bad_path_f, bad_path_path⟩⟩ := S'.ex_path
   obtain ⟨j, jn, jF⟩ := G_acc (fun i => bad_path_f i) (by
     simp only [DAG.path]
-    simp [S'] at bad_path_path
-    exists n
+    exact Exists.intro n bad_path_path
   ) n
   simp only [S'] at bad_path_f
   specialize W_not_F (n + j)

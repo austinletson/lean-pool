@@ -29,8 +29,7 @@ theorem norm_of_sum_sq_eq_sum_norm_sq_iff {n : Type _} [Fintype n] (α : n → �
     ‖(∑ i : n, α i ^ 2)‖ = ∑ i : n, ‖(α i)‖ ^ 2 ↔
       ∀ i j : n, (α i).re * (α j).im = (α j).re * (α i).im := by
   have complex.abs_sq : ∀ x : ℂ, ‖x‖ ^ 2 = Complex.normSq x := by
-    intros
-    simp_rw [norm_def, Real.sq_sqrt (normSq_nonneg _)]
+    exact fun x => Complex.sq_norm x
   simp_rw [complex.abs_sq, norm_def]
   rw [Real.sqrt_eq_iff_eq_sq (normSq_nonneg _), eq_comm, pow_two, Finset.sum_mul_sum]
   · simp_rw [← normSq_mul, normSq_apply, re_sum, im_sum, Finset.sum_mul_sum, ←
@@ -68,8 +67,7 @@ theorem norm_of_sum_sq_eq_sum_norm_sq_iff {n : Type _} [Fintype n] (α : n → �
         mul_comm]
     · simp_rw [Finset.mem_univ, true_imp_iff, sq_nonneg, forall_true_iff]
   · apply Finset.sum_nonneg
-    intros
-    exact normSq_nonneg _
+    exact fun i a => normSq_nonneg (α i)
 
 theorem norm_of_sq_add_sq_eq_norm_sq_add_norm_sq_iff (α₁ α₂ : ℂ) :
     norm (α₁ ^ 2 + α₂ ^ 2) = norm α₁ ^ 2 + norm α₂ ^ 2 ↔

@@ -293,9 +293,7 @@ theorem vcdim_finite_imp_proper_finite_support_learner
         rwa [h_symm] at hcons_i
       -- Now combine: |true - 0| ≤ 1 / 3, and true is nonneg, so true ≤ 1 / 3
       rw [h_emp_zero, sub_zero] at hclose
-      calc boolTestExpectation q disagree
-          ≤ |boolTestExpectation q disagree| := le_abs_self _
-        _ ≤ 1 / 3 := hclose
+      exact le_of_abs_le hclose
     ⟩, trivial⟩
 
 /-! ## Hypothesis Envelope -/
@@ -1045,8 +1043,7 @@ private theorem moran_yehudayoff_forward_construction
       boolTestExpectation_empirical_agreeTest_eq_avg hTvcPos (mkReps S hreal hm) c' (S i).1
     linarith
   -- Package into the goal via finalizeIncidenceScheme
-  exact finalizeIncidenceScheme Tvc Kreal compressCore blockHyp rowHyp
-    hTvcPos hsmall hsub hagree hmajor
+  exact finalizeIncidenceScheme Tvc Kreal compressCore blockHyp rowHyp hTvcPos hsmall hsub hagree hmajor
 /-! ## Forward direction: VCDim < ⊤ → compression with info -/
 
 /-- The forward direction of the Moran-Yehudayoff theorem:

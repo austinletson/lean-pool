@@ -27,8 +27,7 @@ private lemma alpha_sq : (2 * θ - 1 : R) ^ 2 = -7 := by
     _ = -7 := by ring
 
 private lemma two_R_ne_zero : (2 : R) ≠ 0 := by
-  intro h0
-  have := congrArg QuadraticAlgebra.re h0; simp at this
+  exact two_ne_zero
 
 private lemma theta_pow_mul_theta'_pow (m : ℕ) : θ ^ m * θ' ^ m = (2 : R) ^ m := by
   rw [theta'_eq_one_sub_theta, ← mul_pow, two_factorisation_R]
@@ -299,8 +298,7 @@ lemma must_have_minus_sign (m : ℕ) (hm_odd : Odd m) (hm_ge : m ≥ 3)
       have h_eq : θ ^ m - θ = θ' ^ m - θ' := by linear_combination hC
       have h_dvd_diff : θ' ^ 2 ∣ (θ' ^ m - θ') := by rwa [← h_eq]
       have h_dvd_pow : θ' ^ 2 ∣ θ' ^ m := pow_dvd_pow θ' (by omega : 2 ≤ m)
-      have h := dvd_sub h_dvd_pow h_dvd_diff
-      rwa [show θ' ^ m - (θ' ^ m - θ') = θ' from by ring] at h
+      exact (dvd_sub_right h_dvd_pow).mp h_dvd_diff
     have hθ'_ne : θ' ≠ 0 := Irreducible.ne_zero theta'_irreducible
     have h_dvd_one : θ' ∣ 1 := by
       rw [sq] at step5
@@ -603,10 +601,7 @@ lemma even_binomial_valuation (d l : ℕ) (hd : d > 0)
   set f : ℕ → ℤ := fun j => ↑(d.choose (2 * (j + 1))) * (-7) ^ j with hf_def
   have hn_pos : n ≥ 1 := by omega
   have h_even : 2 ∣ d * (d - 1) := by
-    by_cases h : 2 ∣ d
-    · exact h.mul_right (d - 1)
-    · have h2 : 2 ∣ d - 1 := by omega
-      exact h2.mul_left d
+    exact two_dvd_mul_sub_one d
   have h_f0 : f 0 = ↑(d.choose 2) := by simp [hf_def]
   have h_choose2 : d.choose 2 = d * (d - 1) / 2 := Nat.choose_two_right d
   have h_f0_div : (7 : ℤ) ^ l ∣ f 0 := by
@@ -676,8 +671,7 @@ lemma traceSeq_eq (n : ℕ) : (traceSeq n : R) = θ ^ n + θ' ^ n := by
     ring
   | case2 =>
     simp only [traceSeq, Int.cast_one, pow_one]
-    have h_theta' : θ' = 1 - θ := theta'_eq_one_sub_theta
-    rw [h_theta']; ring
+    exact Eq.symm theta_add_theta'
   | case3 n ih1 ih2 =>
     simp only [traceSeq, Int.cast_sub, Int.cast_mul, Int.cast_ofNat]
     rw [ih1, ih2]

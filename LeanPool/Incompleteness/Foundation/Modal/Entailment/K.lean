@@ -85,9 +85,7 @@ def multiDiaDuality : 𝓢 ⊢ ◇^[n]φ <=> ∼(□^[n](∼φ)) := by
     apply iffTrans'' <| diaDuality (φ := ◇^[n]φ);
     apply negReplaceIff';
     apply boxIff';
-    apply iffIntro;
-    · exact contra₂' <| and₂' ih;
-    · exact contra₁' <| and₁' ih;
+    exact iffNegLeftToRight' ih
 omit [DecidableEq F] in
 lemma «multidia_duality!» : 𝓢 ⊢! ◇^[n]φ <=> ∼(□^[n](∼φ)) := by
   classical
@@ -108,8 +106,7 @@ def diaIff' (h : 𝓢 ⊢ φ <=> ψ) : 𝓢 ⊢ (◇φ <=> ◇ψ) := by
   apply negReplaceIff';
   apply boxIff';
   apply negReplaceIff';
-  apply andComm';
-  assumption;
+  exact iffComm' h
 
 omit [DecidableEq F] in
 @[simp] lemma «dia_iff!» (h : 𝓢 ⊢! φ <=> ψ) : 𝓢 ⊢! ◇φ <=> ◇ψ := by
@@ -556,8 +553,7 @@ noncomputable def lemmaGrz₁ :
     apply and₃';
     · exact FiniteContext.byAxm;
     · exact (of this) ⨀ (imply₁' FiniteContext.byAxm) ⨀ (FiniteContext.byAxm);
-  have    : 𝓢 ⊢ φ ==> (□(ψ ==> □ψ) ==> ψ) := this;
-  exact implyBoxDistribute' this;
+  exact implyBoxDistribute' this
 
 omit [DecidableEq F] in
 lemma «lemmaGrz₁!» :

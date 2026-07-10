@@ -151,10 +151,7 @@ theorem add_eq_eval₃ [Semiring R] [LieRing M] [Module R M] {a₁ : R × V M} (
     {l₁ l₂ l : NF R M} (h : (a₁ ::ᵣ l₁).eval + l₂.eval = l.eval) :
     (a₁ ::ᵣ l₁).eval + (a₂ ::ᵣ l₂).eval = (a₂ ::ᵣ l).eval := by
   simp only [eval_cons, ← h]
-  nth_rw 4 [add_comm]
-  simp only [add_assoc]
-  congr! 2
-  rw [add_comm]
+  exact Eq.symm (add_left_comm (a₂.1 • v a₂.2) (a₁.1 • v a₁.2 + l₁.eval) l₂.eval)
 
 theorem add_eq_eval {R₁ R₂ : Type*} [LieRing M] [Semiring R] [Module R M]
     [Semiring R₁]
@@ -199,9 +196,7 @@ instance [Neg R] : Neg (NF R M) where
 
 private lemma sum_map_neg_eq_neg_sum {M : Type*} [AddCommGroup M] (l : List M) :
     (l.map (fun x ↦ -x)).sum = -l.sum := by
-  induction l with
-  | nil => simp
-  | cons _ _ ih => simp [ih, add_comm]
+  exact Eq.symm (sum_neg l)
 
 theorem eval_neg [Ring R] [LieRing M] [Module R M] (l : NF R M) : (-l).eval = - l.eval := by
   change NF.eval (l.map (fun (a, x) ↦ (-a, x))) = -l.eval

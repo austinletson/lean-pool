@@ -217,8 +217,7 @@ lemma A_AspSet_prop (L : Link) :
           have hτi :
               ⟨L.τ (L.τ⁻¹ u), L.τ (L.τ⁻¹ v)⟩ ∈ invSet ((L.τ)⁻¹).func := by
             simpa using h
-          have := (L.τ.inv_set_inverse (L.τ⁻¹ v) (L.τ⁻¹ u)).mpr hτi
-          simpa using this
+          exact (AspPerm.inv_set_inverse L.τ (L.τ⁻¹.func v) (L.τ⁻¹.func u)).mpr hτi
         have h'' : ⟨L.τ⁻¹ v, L.τ⁻¹ u⟩ ∈ L.S.I := by
           simpa [L.inv_set_τ] using h'
         rw [← L.union_eq] at h''
@@ -691,8 +690,7 @@ lemma HF_of_PChain_of_HF (A : HeckeFactorization τ) :
   rcases A with ⟨AL, dprodA⟩
   induction AL generalizing τ with
   | nil =>
-      apply Subtype.ext
-      rfl
+      exact Eq.symm (SetCoe.ext rfl)
   | cons α T ih =>
       let β := DProd T
       have h_L : β ≤L τ := by
@@ -837,8 +835,7 @@ noncomputable def tableauOfLabelChain (C : LabelChain τ n) :
     · have hpq_eq : p.1 = q.1 := C.2.sep hlt p.1 hpC q.1 hqC hpq
       exfalso
       apply hneq
-      apply Subtype.ext
-      exact hpq_eq
+      exact SetCoe.ext hpq_eq
     · exact le_of_not_gt hlt
 
 lemma mem_labelChainOfTableau_iff (T : SetValuedTableau τ n)
@@ -940,12 +937,7 @@ lemma mem_boxUnion_iff_exists_mem {L : List (Set (ℤ × ℤ) × ℤ)} {p : ℤ 
 lemma mem_boxUnion_iff_exists_index {L : List (Set (ℤ × ℤ) × ℤ)} {p : ℤ × ℤ} :
     p ∈ boxUnion L ↔ ∃ i, ∃ h : i < L.length, p ∈ (L[i]'h).1 := by
   rw [mem_boxUnion_iff_exists_mem]
-  constructor
-  · rintro ⟨x, hx, hp⟩
-    rcases List.mem_iff_getElem.mp hx with ⟨i, h, rfl⟩
-    exact ⟨i, h, hp⟩
-  · rintro ⟨i, h, hp⟩
-    exact ⟨L[i]'h, List.getElem_mem h, hp⟩
+  exact List.exists_mem_iff_exists_getElem
 
 lemma isChain_of_sep_ofFn (A : Fin n → Set (ℤ × ℤ)) (χs : Fin n → ℤ)
     (hsep : ∀ {i j : Fin n}, i < j → ∀ p ∈ A i, ∀ q ∈ A j, p ≼ q → p = q) :
@@ -1151,8 +1143,7 @@ noncomputable def setValuedTableauEquivHeckeFactorization
   have h_ofFn : List.ofFn χf = χs := by
     apply List.ext_getElem
     · simp only [List.length_ofFn, h_len]
-    · intro i hi1 hi2
-      rw [List.getElem_ofFn]
+    · exact fun i h₁ h₂ => List.getElem_ofFn h₁
   have h_sum' : (List.ofFn χf).sum = τ.χ := by
     simpa [h_ofFn] using h_sum
   simpa [FixedChiHeckeFactorization, h_ofFn] using

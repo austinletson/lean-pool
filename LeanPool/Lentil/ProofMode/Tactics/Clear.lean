@@ -13,8 +13,7 @@ theorem Entails_drop_hyps {σ : Type u} {hyps : List (NamedPred σ)} {goal : pre
   (subHyps : List (NamedPred σ)) (hinc : subHyps.map NamedPred.pred ⊆ hyps.map NamedPred.pred) :
   Entails subHyps goal → Entails hyps goal := by
   intro h
-  refine pred_implies_trans ?_ (by apply h); clear h
-  apply repeatedAnd_subset_implies; exact hinc
+  refine pred_implies_trans ?_ (by apply h); exact repeatedAnd_subset_implies (List.map NamedPred.pred subHyps) (List.map NamedPred.pred hyps) hinc
 
 theorem Entails_clear {σ : Type u} {hyps : List (NamedPred σ)} {goal : pred σ}
   (toClear : List String) :

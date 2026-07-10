@@ -174,12 +174,7 @@ variable {Ω' α : Type*} [MeasurableSpace Ω'] [MeasurableSpace α] [Measurable
 /-- Random variables are always independent of constants. -/
 lemma _root_.ProbabilityTheory.indepFun_const
     [IsZeroOrProbabilityMeasure μ] (c : α) : IndepFun f (fun _ => c) μ := by
-  rcases eq_zero_or_isProbabilityMeasure μ with rfl | hμ
-  · simp
-  rw [IndepFun_iff, MeasurableSpace.comap_const]
-  intro t₁ t₂ _ ht₂
-  rcases MeasurableSpace.measurableSet_bot_iff.mp ht₂ with h | h
-  all_goals simp [h]
+  exact indepFun_const_right f c
 
 lemma _root_.ProbabilityTheory.indepFun_fst_snd
     [IsZeroOrProbabilityMeasure μ] {μ'} [IsZeroOrProbabilityMeasure μ'] :
@@ -359,15 +354,7 @@ theorem _root_.ProbabilityTheory.EventuallyEq.finite_iInter
     {E : ι → Set α} {F : ι → Set α}
     (h : ∀ i ∈ s, E i =ᶠ[l] F i) :
     ⋂ i ∈ s, E i =ᶠ[l] ⋂ i ∈ s, F i := by
-  unfold Filter.EventuallyEq Filter.Eventually at h ⊢
-  simp only [eq_iff_iff] at h ⊢
-  rw [← Filter.biInter_finset_mem] at h
-  apply Filter.mem_of_superset h
-  intro a ha
-  change a ∈ ⋂ i ∈ s, E i ↔ a ∈ ⋂ i ∈ s, F i
-  simp only [mem_iInter, mem_setOf_eq] at ha ⊢
-  change ∀ i ∈ s, a ∈ E i ↔ a ∈ F i at ha
-  exact forall₂_congr ha
+  exact Finset.eventuallyEq_iInter s h
 
 /-- TODO: a kernel version of this theorem -/
 theorem _root_.ProbabilityTheory.iIndepFun.ae_eq {ι : Type*} {β : ι → Type*}

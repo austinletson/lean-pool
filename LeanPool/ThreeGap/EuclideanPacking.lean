@@ -111,7 +111,6 @@ theorem not_six_separated (o : Orientation ℝ E (Fin 2)) (v : Fin 6 → E) (hv 
     simp_all
   have hangle : InnerProductGeometry.angle (v j) (v i) = |(φ i - φ j).toReal| := by
     rw [o.angle_eq_abs_oangle_toReal (hv j) (hv i), hoa]
-  rw [← hangle, InnerProductGeometry.angle_comm]
-  exact hsep i j hne
+  exact lt_of_lt_of_eq (hsep j i (id (Ne.symm hne))) hangle
 
 end ThreeGap.EuclideanPacking

@@ -49,8 +49,7 @@ open Egrs75
 /-- exp-bridge: `log a < log b → a < b` for positive reals. -/
 theorem lt_of_log_lt {a b : ℝ} (ha : 0 < a) (hb : 0 < b)
     (h : Real.log a < Real.log b) : a < b := by
-  have := Real.exp_lt_exp.mpr h
-  rwa [Real.exp_log ha, Real.exp_log hb] at this
+  exact (Real.log_lt_log_iff ha hb).mp h
 
 /-! ## The walk: a small-step arithmetic progression cannot jump a window -/
 
@@ -114,8 +113,7 @@ theorem exists_small_step {p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hpq : p ≠
     have hn0R : Real.log q / ε < (n : ℝ) := by
       simp_all
     have h1 : Real.log q < ε * (n : ℝ) := by
-      have := (div_lt_iff₀ hε).mp hn0R
-      linarith
+      exact (div_lt_iff₀' hε).mp hn0R
     rw [div_lt_iff₀ (by linarith : (0 : ℝ) < (n : ℝ) + 1)]
     nlinarith
   -- Dirichlet at θ
@@ -224,8 +222,7 @@ theorem seed_window {p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hq3 : 3 ≤ q)
       have hδ'w : -δ < w₂ - w₁ := by linarith [habs2.1]
       obtain ⟨α₀, hα₀⟩ := exists_nat_gt ((w₂ + (β₀ : ℝ) * (w₂ - w₁)) / Real.log p)
       have hα₀L : w₂ + (β₀ : ℝ) * (w₂ - w₁) < (α₀ : ℝ) * Real.log p := by
-        have := (div_lt_iff₀ hL).mp hα₀
-        linarith
+        exact (div_lt_iff₀ hL).mp hα₀
       have hβ₀R0 : (0 : ℝ) ≤ (β₀ : ℝ) * (w₂ - w₁) := by
         have h1 : (0 : ℝ) ≤ (β₀ : ℝ) := by positivity
         have h2 : (0 : ℝ) ≤ w₂ - w₁ := by linarith
@@ -287,8 +284,7 @@ theorem seed_window {p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hq3 : 3 ≤ q)
     rw [hee]
     have h1 : Real.log (c₁ * (q : ℝ) ^ βe) < Real.log ((p : ℝ) ^ α) := by
       rw [Real.log_mul (ne_of_gt hc₁pos) (by positivity), Real.log_pow, Real.log_pow]
-      have hlogq : Real.log ((q : ℝ) ^ βe) = (βe : ℝ) * Real.log q := Real.log_pow _ _
-      linarith [hγlo]
+      exact lt_tsub_iff_right.mp hγlo
     have h2 : c₁ * (q : ℝ) ^ βe < (p : ℝ) ^ α :=
       lt_of_log_lt (by positivity) (by positivity) h1
     have h3 : (((q - 1) / 2 * q ^ βe : ℕ) : ℝ) < ((p ^ α : ℕ) : ℝ) := by

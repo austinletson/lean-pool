@@ -300,8 +300,7 @@ theorem weakDuality (x : Var → Q) (hx : PrimalFeasibleForCertificate x) :
         have : i.1 ≠ edgeVar := by
           intro hEq
           apply hi
-          apply Fin.ext
-          exact hEq
+          exact Fin.eq_mk_iff_val_eq.mpr hEq
         simp [this]
       · simp_all
       · simp [e]
@@ -321,16 +320,13 @@ theorem weakDuality (x : Var → Q) (hx : PrimalFeasibleForCertificate x) :
               intro i _
               simp [Finset.mul_sum]
       _ = ∑ k : Mu, ∑ i : Var, x i * (muVal k * aCoeff k i) := by
-              simpa using
-                (Finset.sum_comm (s := (Finset.univ : Finset Var)) (t := (Finset.univ : Finset Mu))
-                  (f := fun i k => x i * (muVal k * aCoeff k i)))
+              exact Finset.sum_comm
       _ = ∑ k : Mu, muVal k * ∑ i : Var, aCoeff k i * x i := by
               refine Finset.sum_congr rfl ?_
               intro k _
               rw [Finset.mul_sum]
               refine Finset.sum_congr rfl ?_
-              intro i _
-              ring
+              exact fun x_2 a => mul_rotate' (x x_2) (muVal k) (aCoeff k x_2)
       _ = ∑ k : Mu, muVal k * aDot k x := by simp [aDot]
   -- Commute the finite sums for the Z term.
   have hZComm :
@@ -346,10 +342,7 @@ theorem weakDuality (x : Var → Q) (hx : PrimalFeasibleForCertificate x) :
               intro i _
               simp [Finset.mul_sum]
       _ = ∑ r : Block, ∑ i : Var, x i * frobInner (Z r) (Si r i) := by
-              simpa using
-                (Finset.sum_comm (s := (Finset.univ : Finset Var))
-                  (t := (Finset.univ : Finset Block))
-                  (f := fun i r => x i * frobInner (Z r) (Si r i)))
+              exact Finset.sum_comm
       _ = ∑ r : Block, frobInner (Z r) (∑ i : Var, x i • Si r i) := by
               refine Finset.sum_congr rfl ?_
               intro r _
@@ -392,8 +385,7 @@ theorem weakDuality (x : Var → Q) (hx : PrimalFeasibleForCertificate x) :
       intro k _
       have hk : aDot k x ≤ (1 : Q) := hx.1 k
       have hμ : 0 ≤ muVal k := muVal_nonneg k
-      have : muVal k * aDot k x ≤ muVal k * (1 : Q) := mul_le_mul_of_nonneg_left hk hμ
-      simpa using this
+      exact mul_le_of_le_one_right hμ hk
     simpa using (neg_le_neg hsumLe)
   -- PSD constraints: for each block, `frobInner(Z_r, S_r(x)) ≥ 0`.
   have hPsdNonneg : ∀ r : Block, 0 ≤ frobInner (Z r) (S x r) := by

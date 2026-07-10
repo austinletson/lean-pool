@@ -132,9 +132,7 @@ theorem ext {ψ φ : PureState n} (h : ∀ i, ψ i = φ i) : ψ = φ := by
     cases φ with
     | mk φ hφ =>
       have hv : ψ = φ := by
-        apply WithLp.ofLp_injective
-        funext i
-        exact h i
+        exact PiLp.ext h
       simp_all
 
 /-- The computational basis ket `|x⟩ : PureState n`, big-endian (qubit 0 is

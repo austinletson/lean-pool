@@ -539,8 +539,7 @@ lemma regulated_fubini_factorization (α : ℝ) (hα : 0 < α) (m : ℝ) [Fact (
   congr 1
   apply MeasureTheory.integral_congr_ae
   filter_upwards with k
-  simp only [F]
-  exact h_factor_xy k
+  exact Complex.ext (congrArg re (h_factor_xy k)) (congrArg im (h_factor_xy k))
 
 /-- The x-integral in the factorized form equals the physics FT. -/
 lemma x_integral_eq_physicsFT (f : TestFunctionℂ) (k : SpaceTime) :

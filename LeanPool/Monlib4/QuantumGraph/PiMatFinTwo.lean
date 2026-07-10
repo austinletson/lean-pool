@@ -164,8 +164,7 @@ theorem AlgEquiv.prodMap_inner_of {K R₁ R₂ : Type*} [CommSemiring K]
 def MatProdAlgEquivPiMatSameInvertibleOf {U : Matrix n n ℂ × Matrix n n ℂ}
   (hU : Invertible U) :
   Invertible ((MatProdAlgEquivPiMat (PiFinTwoSame n)) U) := by
-  use (MatProdAlgEquivPiMat _ ⅟U) <;>
-  simp only [← map_mul, invOf_mul_self, mul_invOf_self, map_one]
+  exact Invertible.map (MatProdAlgEquivPiMat (PiFinTwoSame n)) U
 
 theorem AlgEquiv.toPiMat_finTwo_same_inner_of_matrix_prod_inner
   {f : (Matrix n n ℂ × Matrix n n ℂ) ≃ₐ[ℂ] (Matrix n n ℂ × Matrix n n ℂ)}
@@ -236,11 +235,7 @@ theorem PiMat.trace_eq_linearMap_trace_toEuclideanLM
     Matrix.traceLinearMap_apply, Matrix.blockDiagonal'AlgHom_apply,
     Matrix.trace_blockDiagonal']
   apply Finset.sum_congr rfl
-  intro i _
-  change Matrix.trace (y i) =
-      LinearMap.trace ℂ (EuclideanSpace ℂ (p i.1 × p i.2)) (Matrix.toLpLin 2 2 (y i))
-  rw [LinearMap.trace_eq_matrix_trace ℂ (PiLp.basisFun 2 ℂ (p i.1 × p i.2)),
-    Matrix.toLpLin_eq_toLin, LinearMap.toMatrix_toLin]
+  exact fun x a => Matrix.trace_eq_linearMap_trace (y x)
 
 variable {φ : (i : ι) → Module.Dual ℂ (Matrix (p i) (p i) ℂ)}
   [hφ : ∀ (i : ι), (φ i).IsFaithfulPosMap]
@@ -750,8 +745,7 @@ lemma schurMul_comp_proj
           LinearMap.mul' ℂ (PiMat ℂ ι p) :=
       LinearMap.adjoint_adjoint (LinearMap.mul' ℂ (PiMat ℂ ι p))
     rw [hadj]
-    exact (nonUnitalAlgHom_comp_mul
-      (NonUnitalAlgHom.single ℂ (fun r => Mat ℂ (p r)) i)).symm
+    exact Eq.symm (NonUnitalAlgHom.comp_mul' (NonUnitalAlgHom.single ℂ (fun r => Mat ℂ (p r)) i))
   rw [LinearMap.comp_assoc, hcomul, ← LinearMap.comp_assoc]
 
 lemma schurMul_comp_proj_adjoint

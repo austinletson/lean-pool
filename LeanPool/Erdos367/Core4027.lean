@@ -231,8 +231,7 @@ theorem t_big : 1676 ≤ t := by
       exact le_trans (by decide)
         (Nat.mul_le_mul_left _
           (pow_le_pow_left' (show s ≥ 5 by
-            contrapose! hs6
-            interval_cases s <;> trivial) 3)))
+            exact hs_ge5 s hs hs6) 3)))
 
 include hcong ht in
 theorem N3_mul_nn : N ^ 3 * nn t = Gpoly t ^ 3 := by

@@ -774,8 +774,7 @@ private theorem proofTransformation_path {𝕏 : Proof} {σ}
       (@depSumSeqProj 𝕏.X (fun x ↦ (partialProof x).X) f
         (fun x ↦ Ext.edge (partialProof x).α) h n).1
     have g_prop : ∀ n, edge 𝕏.α (g n) (g (n + 1)) := by
-      apply @infinite_dep_sum_chain
-      exact lex_chain
+      exact fun n => infinite_dep_sum_chain h lex_chain n
     intro n
     have ⟨m, m_prop⟩ := inf_path_has_inf_boxes g g_prop
       (@depSumSeqProj 𝕏.X (fun x ↦ (partialProof x).X) f
@@ -810,8 +809,7 @@ private theorem proofTransformation_path {𝕏 : Proof} {σ}
         · have d_le_find := (Nat.find_spec (h d.2)).1
           dsimp [d] at *
           omega
-        · dsimp [d]
-          omega
+        · exact Nat.le_add_right (depSumSeqProj h n).2 m
       exact sigmaPredicateOfEq
         (ρ := fun a b ↦ (Ext.r (partialProof a).α b).isBox)
         (sigmaMkCastEq first_eq rfl).symm

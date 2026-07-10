@@ -188,8 +188,7 @@ lemma _root_.VirasoroProject.TriangularDecomposition.VermaHW.smul_eq_algebraHom_
 instance (η : weight tri) :
     SMulCommClass 𝕜 (𝓤 𝕜 𝓰) (VermaHW η) where
   smul_comm r a v := by
-    simp_rw [VermaHW.smul_eq_algebraHom_smul]
-    simp only [← smul_assoc, smul_eq_mul, Algebra.commutes r a]
+    exact smul_comm r a v
 
 lemma _root_.VirasoroProject.TriangularDecomposition.VermaHW.hwVec_cyclic (η : weight tri) :
     Submodule.span (𝓤 𝕜 𝓰) {VermaHW.hwVec η} = ⊤ :=

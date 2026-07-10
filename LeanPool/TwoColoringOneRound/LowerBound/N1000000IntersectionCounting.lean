@@ -525,8 +525,7 @@ noncomputable def decodeInter {k : DirIdx} (u : BaseOrbit k) (a d : DirIdx)
     · let iNat : Nat := t / 3
       let jNat : Nat := t % 3
       have hi : iNat < 3 := by
-        have : t < 3 * 3 := by simpa using ht
-        simpa [iNat] using (Nat.div_lt_of_lt_mul this)
+        exact Nat.div_lt_of_lt_mul ht
       have hj : jNat < 3 := by
         have : 0 < 3 := by decide
         simpa [jNat] using Nat.mod_lt t this

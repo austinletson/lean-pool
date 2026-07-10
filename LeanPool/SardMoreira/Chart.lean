@@ -340,8 +340,7 @@ theorem exists_dim_lt_map_nhdsWithin_eq (hs : ¬IsLargeAt k α s a)
       refine (ContDiffAt.continuousAt_fderiv ?_ (n := k) (mod_cast hk)).tendsto.comp hg_tendsto
       simp +unfoldPartialApp only [ψ, ImplicitFunctionData.prodFun, chartImplicitData]
       exact hfka.contDiffAt.prodMk (by fun_prop)
-    rw [ψ.hasStrictFDerivAt.hasFDerivAt.fderiv]
-    apply ContinuousLinearMap.isInvertible_equiv
+    exact ImplicitFunctionData.isInvertible_fderiv_prodFun ψ
   have HcontDiff : ∀ᶠ x in 𝓝 (ψ.rightFun a), (g x ∈ s → ContDiffMoreiraHolderAt k α g x) := by
     rw [← map_implicitFunction_chartImplicitData_nhdsWithin_preimage hfka hk hdf s hf₀ has,
       eventually_map, eventually_nhdsWithin_iff] at hfk

@@ -101,9 +101,7 @@ theorem seed_lowDigits_pow {p : ℕ} (hp : 3 ≤ p) (k : ℕ) : LowDigits p (p ^
     simp only [List.mem_singleton] at hd
     rw [hd]
     -- `1 ≤ (p-1)/2` since `p ≥ 3`
-    have : 2 ≤ p - 1 := by omega
-    calc (1 : ℕ) = 2 / 2 := by norm_num
-      _ ≤ (p - 1) / 2 := Nat.div_le_div_right this
+    exact RoundUp.one_le_half hp
 
 /-- `N < p^(N+1)` for `p ≥ 2`, via `N < 2^N ≤ 2^(N+1) ≤ p^(N+1)`.  KERNEL-CLEAN. -/
 theorem seed_lt_pow_succ {p : ℕ} (hp : 2 ≤ p) (N : ℕ) : N < p ^ (N + 1) := by

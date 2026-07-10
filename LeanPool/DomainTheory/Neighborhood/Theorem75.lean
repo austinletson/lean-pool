@@ -682,14 +682,7 @@ theorem funCons_decidable (fc0 fc1 : ℕ → ℕ)
         V₁.mem (interFrom P₁ V₁.master
           (List.map (fun e => e.unpair.2) (bitSelect (decodeList w.unpair.2) w.unpair.1)))) := by
     refine RecDecidable.of_iff (fun w => ?_) (hc0.not.or hc1)
-    constructor
-    · intro himp
-      rcases hc0.em w with h0 | h0
-      · exact Or.inr (himp h0)
-      · exact Or.inl h0
-    · rintro (h0 | h1) hp0
-      · exact absurd hp0 h0
-      · exact h1
+    exact imp_iff_not_or
   refine RecDecidable.of_iff (fun c => ?_)
     (himp.bForall (bound := fun n => 2 ^ n) (primrec_two_pow primrec_id))
   rw [funCons_iff P₀ P₁ c]
@@ -876,11 +869,7 @@ theorem selectFn_isOne (v a b : ℕ) : selectFn (isOne v) a b = if v = 1 then a 
 
 /-- `decodeList` inverts `encodeList`: every list is the decoding of its code. -/
 theorem decodeList_encodeList (l : List ℕ) : decodeList (encodeList l) = l := by
-  induction l with
-  | nil => rw [show encodeList ([] : List ℕ) = 0 from rfl, decodeList_zero]
-  | cons a l ih =>
-    rw [show encodeList (a :: l) = Nat.pair a (encodeList l) + 1 from rfl,
-      decodeList_succ, unpair_pair_fst, unpair_pair_snd, ih]
+  exact Recursive.decodeList_encodeList l
 
 /-! #### The `interYs`-index fold: a conditional `inter`-chain over `𝒟₁`.
 

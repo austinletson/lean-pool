@@ -410,10 +410,8 @@ lemma neg_valid_rounder (r : IntRounder) :
   constructor
   · intro h
     rw [←neg_neg_r r]
-    exact ⟨fun s ↦ ValidRounder.le_iff_le !s,
-    fun s ↦ ValidRounder.leftInverse !s⟩
-  intro h
-  exact h.neg
+    exact ValidRounder.neg h
+  exact fun a => ValidRounder.neg a
 
 lemma roundnearest_neg :
   IntRounder.neg roundnearest = roundnearest := by

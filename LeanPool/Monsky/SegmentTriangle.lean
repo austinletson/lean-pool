@@ -273,8 +273,7 @@ lemma boundary_seg_nonempty {L : Segment} {x : ℝ²} (hx : x ∈ boundary L)
   rw [←Set.mem_empty_iff_false x]
   convert hx
   convert (boundary_constant (P := L 0)).symm using 2
-  ext i
-  rw [hi i]
+  exact funext hi
 
 
 
@@ -821,8 +820,7 @@ lemma segment_in_boundary_imp_in_side {T : Triangle} {L : Segment} (hdet : det T
     (hL : closedHull L ⊆ boundary T) : ∃ i, closedHull L ⊆ closedHull (Tside T i) := by
   by_cases hLTriv : L 0 = L 1
   · have hconstant : closedHull L = {L 0} := by
-      convert closedHull_constant (Nat.zero_ne_add_one 1).symm using 2
-      ext i; fin_cases i <;> simp [hLTriv]
+      exact segment_triv'.mp hLTriv
     simp_rw [hconstant, Set.singleton_subset_iff] at *
     exact el_boundary_imp_side hdet hL
   · have ⟨x,hx⟩ := open_seg_nonempty L
@@ -983,10 +981,7 @@ lemma colin_decomp_closed {u v w : ℝ²} (h : colin u v w) : closedHull (toSegm
               = (1-α)/(1-α) * α + (β - α) / (1 - α) - (β - α) / (1 - α) * α := by
             rw [div_self]
             · linarith
-            · by_contra hcontra
-              have  hcontra' : α = 1 := by
-                  linarith
-              linarith
+            · exact sub_ne_zero_of_ne (id (Ne.symm hαnot1))
           rw [hra]
           ring_nf
           have hra' : -(α * (1 - α)⁻¹ * β) + (1 - α)⁻¹ * β = (β - β • α) / (1 - α) := by
@@ -1299,8 +1294,7 @@ lemma colin_sub_aux {u v w x : ℝ²} {L : Segment} (hc : colin u v w)
     convert hx
     have hxcL : x ∈ closedHull L := open_sub_closed _ hxL
     have hconstant : closedHull L = {L 0} := by
-      convert closedHull_constant (Nat.zero_ne_add_one 1).symm using 2
-      ext i; fin_cases i <;> simp [hL01]
+      exact segment_triv'.mp hL01
     simp_all
   · apply closedHull_convex
     by_contra hLi
@@ -1798,9 +1792,7 @@ lemma open_sub_closed_sub (S L : Segment) (h : openHull S ⊆ openHull L) :
       · exact hxyS
       · exact open_sub_closed _
     · trans (openHull L)
-      · trans openHull S
-        · exact hxyS
-        · exact h
+      · exact Set.Subset.trans hxyS h
       · exact open_sub_closed _
     · apply Set.disjoint_of_subset h (fun ⦃a⦄ a ↦ a)
       rw [@Set.disjoint_iff_inter_eq_empty, Set.inter_comm]
@@ -2005,8 +1997,7 @@ lemma inward_pointing_vector_exists {T : Triangle} {x : ℝ²}
       · rw [Set.mem_singleton_iff]
         intro h; rw [h]
         have ⟨z, hz⟩ := open_pol_nonempty (by linarith) T
-        convert hz
-        exact hc _ hz
+        exact Set.mem_of_eq_of_mem (hc z hz) hz
     simp_all
   have ⟨y, hy, hxy⟩ := hy
   use y, hxy
@@ -2079,8 +2070,7 @@ lemma disjoint_opens_implies_disjoint_open_closed {T₁ T₂ : Triangle}
   by_cases htriv : ∀ i j, T₁ i = T₁ j
   · convert hT using 1
     have hTc : T₁ = fun i ↦ T₁ 0 := by
-      ext i
-      rw [htriv i 0]
+      exact funext fun x => htriv x 0
     rw [hTc, closedHull_constant (by norm_num), openHull_constant (by norm_num)]
   · rw [@Set.disjoint_right]
     intro x hxT₂ hxT₁

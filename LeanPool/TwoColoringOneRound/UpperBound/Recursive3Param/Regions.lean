@@ -557,9 +557,7 @@ private lemma lintegral_gCt2_triangle_t1_t2_value :
         (fun c : Rand => f c * μ (Set.Ioo c t2)) =
           (Set.Ici t1).indicator (fun c : Rand => gCt2 c * μ (Set.Ioo c t2)) := by
       funext c
-      by_cases hc : c ∈ (Set.Ici t1 : Set Rand)
-      · simp [f, hc, Set.indicator]
-      · simp [f, hc, Set.indicator]
+      exact Eq.symm (Set.indicator_mul_left (Set.Ici t1) gCt2 fun j => μ (Set.Ioo j t2))
     have hInd :=
       (MeasureTheory.setLIntegral_indicator (μ := μ) (s := Set.Ici t1) (t := Set.Iio t2) hsIci
         (fun c : Rand => gCt2 c * μ (Set.Ioo c t2)))

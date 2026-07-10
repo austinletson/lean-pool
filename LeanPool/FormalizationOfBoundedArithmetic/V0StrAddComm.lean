@@ -29,17 +29,11 @@ lemma carry_comm : ∀ {X Y : str}, ∀ {i : num}, Carry i X Y ↔ Carry i Y X :
   · intro h
     obtain ⟨k, hk_lt_i, hkX, hkY, hkprop⟩ := h
     refine ⟨k, hk_lt_i, hkY, hkX, ?_⟩
-    intro j hj_lt_i hk_lt_j
-    rcases hkprop j hj_lt_i hk_lt_j with hjX | hjY
-    · exact Or.inr hjX
-    · exact Or.inl hjY
+    exact fun j a a_1 => Or.symm (hkprop j a a_1)
   · intro h
     obtain ⟨k, hk_lt_i, hkY, hkX, hkprop⟩ := h
     refine ⟨k, hk_lt_i, hkX, hkY, ?_⟩
-    intro j hj_lt_i hk_lt_j
-    rcases hkprop j hj_lt_i hk_lt_j with hjY | hjX
-    · exact Or.inr hjY
-    · exact Or.inl hjX
+    exact fun j a a_1 => Or.symm (hkprop j a a_1)
 
 lemma mem_add_iff_xor : ∀ {X Y : str}, ∀ {i : num},
     i ∈ X + Y ↔ Xor (Xor (i ∈ X) (i ∈ Y)) (Carry i X Y) := by

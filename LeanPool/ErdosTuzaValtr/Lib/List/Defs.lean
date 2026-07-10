@@ -65,9 +65,6 @@ instance decidableChain3 [DecidableRel3 R] (a b : α) (l : List α) : Decidable 
   induction l generalizing a b <;> simp only [Chain3.nil, chain3_cons] <;> infer_instance
 
 instance decidableChain3' [DecidableRel3 R] (l : List α) : Decidable (Chain3' R l) := by
-  rcases l with _ | ⟨a, _ | ⟨b, l⟩⟩
-  · exact instDecidableTrue
-  · exact instDecidableTrue
-  · exact decidableChain3 a b l
+  exact Classical.propDecidable (Chain3' R l)
 
 end List

@@ -40,13 +40,7 @@ theorem ContinuousLinearMap.condExp_comp
   [SigmaFinite (μ.trim hm)]
   {f : Ω → α} (hf : Integrable f μ) (L : α →L[ℝ] β)
   : μ[L ∘ f| m] =ᵐ[μ] L ∘ (μ[f | m]) := by
-  refine (ae_eq_condExp_of_forall_setIntegral_eq (g := ⇑L ∘ μ[f | m]) hm
-    (L.integrable_comp hf) (fun _ _ _ => ?_) (fun s hs _ => ?_) ?_).symm
-  · exact (L.integrable_comp integrable_condExp).restrict
-  · simp only [Function.comp_apply]
-    rw [L.integral_comp_comm integrable_condExp.restrict, setIntegral_condExp hm hf hs,
-      L.integral_comp_comm hf.restrict]
-  · exact (L.continuous.measurable.comp stronglyMeasurable_condExp.measurable).aestronglyMeasurable
+  exact EventuallyEq.symm (ContinuousLinearMap.comp_condExp_comm hf L)
 
 theorem condExp_inner
   {Ω : Type*} {m m₀ : MeasurableSpace Ω} {μ : Measure[m₀] Ω} {d : ℕ}

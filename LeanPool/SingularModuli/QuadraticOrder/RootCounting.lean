@@ -61,8 +61,7 @@ private lemma cardSqrtsPrimePowCoprimeTwoMulNeZero (hp2 : p ≠ 2)
     have h_p_dvd_2 : (p : ℤ) ∣ 2 := by
       have h2' : ((2 : ℤ) : ZMod p) = 0 := by
         simp_all
-      rw [ZMod.intCast_zmod_eq_zero_iff_dvd] at h2'
-      exact h2'
+      exact (ZMod.intCast_zmod_eq_zero_iff_dvd 2 p).mp h2'
     have hp_le_2 : p ≤ 2 := by
       have : (p : ℤ) ≤ 2 := Int.le_of_dvd (by decide) h_p_dvd_2
       omega
@@ -224,8 +223,7 @@ private lemma cardSqrtsPrimePowCoprimeLift (hp2 : p ≠ 2)
     exact Int.dvd_of_mul_dvd_mul_right hp_pow_nz h_dvd'
   have h_t'_prop : (2 : ZMod p) * (x.val : ZMod p) * t' = (L : ZMod p) := by
     have h_zero : ((2 * (x.val : ℤ) * (t'.val : ℤ) - L : ℤ) : ZMod p) = 0 := by
-      rw [ZMod.intCast_zmod_eq_zero_iff_dvd]
-      exact h_div
+      exact (ZMod.intCast_zmod_eq_zero_iff_dvd (2 * ↑x.val * ↑t'.val - L) p).mpr h_div
     push_cast at h_zero
     have :
         (2 : ZMod p) * (x.val : ZMod p) * (t'.val : ZMod p) =
@@ -573,9 +571,7 @@ private lemma cardSqrtsPrimePowEvenValImage (n r : ℕ) (u : ℤ) (hr : 2 * r < 
         rw [hx_div]
         have : (p : ZMod (p ^ n)) ^ r = ↑(p ^ r) := by push_cast; rfl
         rw [this, ZMod.val_mul, ZMod.val_natCast]
-        have h_mod : z.val = z.val % (p ^ n) := (Nat.mod_eq_of_lt z.val_lt).symm
-        nth_rw 1 [h_mod]
-        exact (Nat.mul_mod (p ^ r) z.val (p ^ n)).symm
+        exact Nat.mod_mul_mod (p ^ r) z.val (p ^ n)
       rw [h_eq]
       have h_dvd : p ^ r ∣ p ^ n := pow_dvd_pow _ (by omega)
       rw [Nat.dvd_mod_iff h_dvd]
@@ -613,8 +609,7 @@ private lemma cardSqrtsPrimePowEvenValImage (n r : ℕ) (u : ℤ) (hr : 2 * r < 
     let k : ℕ := (y' / p ^ (n - 2 * r)) % p^r
     refine ⟨⟨y0, k⟩, ⟨⟨?_, ?_⟩, ?_⟩⟩
     · -- y0 in S_y
-      rw [Finset.mem_filter]
-      exact ⟨Finset.mem_univ _, hy_sq⟩
+      exact (mem_filter_univ (y0, k).1).mpr hy_sq
     · -- k in range
       exact Nat.mod_lt _ (pow_pos (Nat.Prime.pos hp.out) _)
     · -- f(y0, k) = x

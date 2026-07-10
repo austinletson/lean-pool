@@ -267,8 +267,7 @@ private lemma natAbs_norm_rem_lt (a : R) {b : R} (hb : b ≠ 0) :
   have hr_nn : 0 ≤ QuadraticAlgebra.norm (rem a b) := norm_nonneg _
   have h_bd := sixteen_norm_rem_le a b hb
   have hr_lt : QuadraticAlgebra.norm (rem a b) < QuadraticAlgebra.norm b := by linarith
-  zify
-  rwa [abs_of_nonneg hr_nn, abs_of_nonneg hN_pos.le]
+  exact Int.natAbs_lt_natAbs_of_nonneg_of_lt hr_nn hr_lt
 
 private lemma norm_mul_left_not_lt (a : R) {b : R} (hb : b ≠ 0) :
     ¬ normMeasure (a * b) < normMeasure a := by

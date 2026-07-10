@@ -185,8 +185,7 @@ lemma finset_sup_le_of_mono (p : ℕ → Seminorm ℝ E)
     (s : Finset ℕ) (m : ℕ) (hm : ∀ n ∈ s, n ≤ m) :
     s.sup p ≤ p m := by
   apply Finset.sup_le
-  intro n hn
-  exact seminorm_mono_of_le p hp_hs (hm n hn)
+  exact fun b a => seminorm_mono_of_le p hp_hs (hm b a)
 
 
 /-! ## Combined quadratic bound -/
@@ -456,10 +455,7 @@ lemma concentrationBadSet_eq_iUnion (d : ℕ → E) (p : Seminorm ℝ E) (C : �
   constructor
   · rintro ⟨c, hc⟩
     refine ⟨c.support.sup id + 1, c, ?_, hc⟩
-    intro i hi
-    exact Finset.mem_range.mpr (by
-      have : i ≤ c.support.sup id := Finset.le_sup (f := id) hi
-      omega)
+    exact Finset.subset_range_sup_succ c.support
   · rintro ⟨_, c, _, hc⟩
     exact ⟨c, hc⟩
 
@@ -628,8 +624,7 @@ lemma gram_schmidt_seminorm_aux (p : Seminorm ℝ F) (hp : p.IsHilbertian)
         intro j; change p.innerProd ((p u)⁻¹ • u) (e j) = 0
         rw [p.innerProd_smul_left hp]; simp [hu_orth j]
       have hu_eq_smul : u = p u • e_new := by
-        change u = p u • ((p u)⁻¹ • u)
-        rw [smul_smul, mul_inv_cancel₀ (ne_of_gt hpu_pos), one_smul]
+        exact Eq.symm (smul_inv_smul₀ hu0 u)
       -- Extended ONB: e_new at index 0, old e at indices 1..k
       let e' : Fin (k + 1) → F := Fin.cons e_new e
       have he'_orth : p.IsOrthonormalSeq e' := by
@@ -1143,10 +1138,8 @@ private lemma kernel_concentration_bound
     have h_finite_bound : ∀ (n : ℕ) (c_list : Fin n → ℕ →₀ ℚ),
         (∀ i, (c_list i).support ⊆ Finset.range N) →
         ν {ω | ∃ i : Fin n, ω (z (c_list i)) ≠ 0} ≤ ENNReal.ofReal ε_q := by
-      intro n c_list h_supp
-      exact joint_kernel_bound_finite Φ ν h_cf_joint h_normalized ε_q hε_q n
-        (fun i => z (c_list i))
-        (fun t => h_joint_cf n c_list h_supp t)
+      exact fun n c_list a =>
+          joint_kernel_bound_finite Φ ν h_cf_joint h_normalized ε_q hε_q n (fun i => z (c_list i)) (h_joint_cf n c_list a)
     -- z_bad ⊆ {∃ c, ω(z c) ≠ 0} (we can drop the support condition since
     -- z(c) for c outside range N is not constrained, but z_bad already restricts)
     -- For each c in z_bad, we have c.support ⊆ range N, so z(c) ∈ ker(p_m)
@@ -1561,8 +1554,7 @@ private lemma tail_bound_uniform
   have h_denom_pos : 0 < 1 - Real.exp (-(σ₀ ^ 2 * R ^ 2 / 2)) := by
     linarith [h_exp_bound, h_dt_lt_one]
   have h_denom_bound : bound_σ / δ ≤ 1 - Real.exp (-(σ₀ ^ 2 * R ^ 2 / 2)) := by
-    have : 1 - denom_target = bound_σ / δ := by simp only [denom_target]; ring
-    linarith [h_exp_bound]
+    exact le_sub_comm.mp h_exp_bound
   calc (ν {ω | R ^ 2 < T ω}).toReal
       ≤ bound_σ / (1 - Real.exp (-(σ₀ ^ 2 * R ^ 2 / 2))) := by
         rw [le_div_iff₀ h_denom_pos, mul_comm]; exact h_cheb_σ₀

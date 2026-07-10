@@ -67,10 +67,7 @@ open Submodule LinearMap
   $x \in \textnormal{range}(p)$ if and only if $p(x) = x$ (for all $x \in E$) -/
 theorem IsIdempotentElem.mem_range_iff {p : E →ₗ[R] E} (hp : IsIdempotentElem p) {x : E} :
     x ∈ range p ↔ p x = x := by
-  simp_rw [mem_range]
-  refine ⟨fun ⟨y, hy⟩ => ?_, fun h => ⟨x, h⟩⟩
-  nth_rw 1 [← hy]
-  rw [← mul_apply, hp.eq, hy]
+  exact LinearMap.IsIdempotentElem.mem_range_iff hp
 
 variable {U V : Submodule R E} {q : E →ₗ[R] E} (hq : IsIdempotentElem q)
 
@@ -80,8 +77,7 @@ include hq in
 theorem IsIdempotentElem.comp_idempotent_iff
   {E₂ : Type*} [AddCommGroup E₂] [Module R E₂] (p : E₂ →ₗ[R] E) :
     q.comp p = p ↔ LinearMap.range p ≤ LinearMap.range q := by
-  simp_rw [LinearMap.ext_iff, comp_apply, ← IsIdempotentElem.mem_range_iff hq,
-    SetLike.le_def, mem_range, forall_exists_index, forall_apply_eq_imp_iff]
+  exact IsIdempotentElem.comp_eq_right_iff hq p
 include hq in
 theorem IsIdempotentElem.comp_idempotent_iff'
   {E₂ : Type*} [AddCommGroup E₂] [Module R E₂] (p : E₂ →ₗ[R] E) :
@@ -518,8 +514,7 @@ theorem self_adjoint_and_idempotent_is_positive_iff_commutes
     rw [← hp.eq, mul_apply_eq_comp, ← adjoint_inner_left, isSelfAdjoint_iff'.mp hpa,
       re_inner_self_nonpos] at h
     rw [h, inner_zero_left]
-  · intro h
-    exact SelfAdjointAndIdempotent.sub_is_positive_of hp hq hpa hqa h
+  · exact fun a => SelfAdjointAndIdempotent.sub_is_positive_of hp hq hpa hqa a
 
 /-- in a complex-finite-dimensional Hilbert space `E`, we have
   `Pᵤ ≤ Pᵤ` iff `PᵥPᵤ = Pᵤ` -/
@@ -670,11 +665,7 @@ lemma LinearMap.range_of_isProj {R M : Type*} [CommSemiring R] [AddCommGroup M] 
   {p : M →ₗ[R] M} {U : Submodule R M}
   (hp : LinearMap.IsProj U p) :
   LinearMap.range p = U := by
-  ext x
-  rw [mem_range]
-  refine ⟨fun ⟨y, hy⟩ => ?_, fun h => ⟨x, hp.map_id _ h⟩⟩
-  · rw [← hy]
-    exact hp.map_mem y
+  exact IsProj.range hp
 
 open scoped FiniteDimensional
 /-- a linear operator is an orthogonal projection onto a submodule, if and only if
@@ -735,8 +726,7 @@ theorem orthogonal_projection_iff' [InnerProductSpace 𝕜 E] [FiniteDimensional
     have hp : LinearMap.IsProj U (p : E →ₗ[𝕜] E) := ⟨h2.1, h2.2⟩
     have : IsIdempotentElem p := by
       rw [IsIdempotentElem.clm_to_lm]
-      exact (LinearMap.isProj_iff_isIdempotentElem (p : E →ₗ[𝕜] E)).mp
-        ⟨U, hp⟩
+      exact LinearMap.isIdempotentElem_of_isProj hp
     simp_rw [ContinuousLinearMap.ext_iff, ← ContinuousLinearMap.coe_coe,
       orthogonalProjection'_eq_linear_proj']
     let p' := isProj' hp
@@ -823,19 +813,14 @@ theorem ContinuousLinearMap.isOrthogonalProjection_iff'
     ↔ IsIdempotentElem p ∧ IsSelfAdjoint p := by
   rw [isOrthogonalProjection_iff]
   simp only [and_congr_right_iff]
-  intro h
-  have := List.TFAE.out (IsIdempotentElem.self_adjoint_is_positive_isOrthogonalProjection_tFAE
-    h) 0 1
-  rw [this, isOrthogonalProjection_iff]
-  simp only [h, true_and]
+  exact fun a => Iff.symm (IsIdempotentElem.isSelfAdjoint_iff_ker_isOrtho_to_range p a)
 
 lemma LinearMap.isSelfAdjoint_toContinuousLinearMap
     {𝕜 E : Type*} [RCLike 𝕜] [NormedAddCommGroup E] [InnerProductSpace 𝕜 E] [FiniteDimensional 𝕜 E]
     [CompleteSpace E]
     (f : E →ₗ[𝕜] E) :
       _root_.IsSelfAdjoint (LinearMap.toContinuousLinearMap f) ↔ _root_.IsSelfAdjoint f := by
-    simp_rw [ContinuousLinearMap.isSelfAdjoint_iff_isSymmetric, isSymmetric_iff_isSelfAdjoint]
-    rfl
+    exact isSelfAdjoint_toContinuousLinearMap_iff f
 
 lemma LinearMap.isOrthogonalProjection_iff
     {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
@@ -888,10 +873,7 @@ lemma isIdempotentElem_algEquiv_iff {R A B : Type*} [CommSemiring R]
 theorem orthogonalProjection'_isProj {R M : Type*} [RCLike R] [NormedAddCommGroup M]
   [InnerProductSpace R M] (U : Submodule R M) [HasOrthogonalProjection U] :
   LinearMap.IsProj U (orthogonalProjection' U) := by
-  constructor <;>
-  simp only [orthogonalProjection'_eq, coe_comp, Submodule.coe_subtypeL, Submodule.coe_subtype,
-    Function.comp_apply, SetLike.coe_mem, implies_true,
-    orthogonalProjection_eq_self_iff, imp_self, implies_true]
+  exact starProjection_isProj U
 
 theorem LinearMap.isProj_iff {S M F : Type*} [Semiring S] [AddCommMonoid M]
     [Module S M] (m : Submodule S M) [FunLike F M M] (f : F) :
@@ -951,12 +933,4 @@ theorem LinearMap.IsProj.codRestrict_eq_dim_iff {S M : Type*}
     U = (⊤ : Submodule S M)
     ↔ (Submodule.subtype _).comp hf.codRestrict = LinearMap.id := by
   rw[LinearMap.IsProj.subtype_comp_codRestrict]
-  constructor
-  · rintro rfl
-    ext
-    simp only [id_coe, id_eq, hf.2 _ Submodule.mem_top]
-  · rintro rfl
-    refine Submodule.eq_top_iff'.mpr ?mpr.a
-    intro x
-    rw [← id_apply (R := S) x]
-    exact hf.map_mem x
+  exact submodule_eq_top_iff hf

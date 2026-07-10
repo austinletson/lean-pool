@@ -278,9 +278,7 @@ lemma coeff_prod_sumX_minus_C_eq_coeff_sumX_pow_of_degree_eq
         coeff snd (Multiset.map (fun e => (∑ i, X i) - C e) E).prod =
           coeff snd ((∑ i, X i) ^ E.card) ∨
           coeff fst ((∑ i, X i) : MvPolynomial (Fin (k + 1)) (ZMod p)) = 0 by
-      rcases h_disj with h_eq | h_zero
-      · rw [h_eq]
-      · rw [h_zero, zero_mul, zero_mul]
+      exact mul_eq_mul_left_iff.mpr h_disj
     -- continue with the legacy chain on the disjunction
     by_cases h_snd : ∑ i, snd i = E.card
     · exact Or.inl <| ih snd h_snd
@@ -299,11 +297,7 @@ lemma coeff_prod_sumX_minus_C_eq_coeff_sumX_pow_of_degree_eq
           simp [Finsupp.single_apply, Finset.mem_univ]
         omega
       rw [MvPolynomial.coeff_X]
-      simp_all only [ne_eq, ite_eq_right_iff, one_ne_zero, imp_false]
-      apply Aesop.BuiltinRules.not_intro
-      intro a_1
-      subst a_1
-      simp_all only [not_true_eq_false]
+      exact if_neg (id (Ne.symm h_coeff_zero))
 
 /--
 Lemma 2.1.6 : The coefficient of a specific term in the construction polynomial is non-zero under
@@ -367,10 +361,7 @@ lemma constructionPolynomial_coeff_target_generalized
       rw [MvPolynomial.coeff_mul]
       rw [Finset.sum_eq_single (0, (Finsupp.equivFunOnFinite.symm c))]
       · -- the diagonal term: coeff 0 h * coeff (sym c) ((∑ X)^m) = 0 via h_final
-        change coeff 0 h *
-            coeff (Finsupp.equivFunOnFinite.symm c)
-              ((∑ i, X i : MvPolynomial (Fin (k + 1)) (ZMod p)) ^ m) = 0
-        rw [h_final, mul_zero]
+        exact (mul_eq_zero_iff_left h_constant_term_nonzero).mpr h_final
       · -- the off-diagonal terms vanish
         rintro ⟨fst, snd⟩ hmem hne
         simp only [Finset.mem_antidiagonal] at hmem
@@ -439,8 +430,7 @@ lemma constructionPolynomial_coeff_target_generalized
                 rw [← hE_card, h_snd_zero, mul_zero]
       · -- the diagonal pair belongs to the antidiagonal
         intro h_not
-        exfalso; apply h_not
-        simp [Finset.mem_antidiagonal]
+        exact (mul_eq_zero_iff_left h_constant_term_nonzero).mpr h_final
 
 noncomputable section AristotleLemmas
 
@@ -500,8 +490,7 @@ private lemma elimination_polynomial_degreeOf_eq
         · subst h_b1
           exfalso; apply hne
           simp only [zero_add] at hb
-          rw [Prod.mk.injEq]
-          exact ⟨rfl, hb⟩
+          exact Prod.mk_right_inj.mpr hb
         · simp [if_neg h_b1]
       on_goal 2 =>
         intro h_notin
@@ -540,9 +529,7 @@ private lemma elimination_polynomial_degreeOf_eq
     · exact totalDegree_prod_X_sub_C_le i (A i)
     · exact lt_of_lt_of_le hb (Finset.single_le_sum (fun a _ => Nat.zero_le (b a)) (by
     simp_all only [Finsupp.mem_support_iff, ne_eq]
-    apply Aesop.BuiltinRules.not_intro
-    intro a
-    simp_all only [not_lt_zero]))
+    exact Nat.ne_zero_of_lt hb))
   · refine le_trans ?_ (Finset.le_sup <| show Finsupp.single i (# (A i)) ∈ _ from ?_)
       <;> aesop
 
@@ -622,9 +609,7 @@ private lemma elimination_polynomial_coeff_top_eq_one
       simp_all only [Finset.mem_filter, Finset.mem_antidiagonal, Finset.mem_singleton]
       obtain ⟨fst, snd⟩ := a_1
       simp_all only [Prod.mk.injEq, and_iff_right_iff_imp, and_imp]
-      intro a_1 a_2
-      subst a_1 a_2
-      exact add_comm _ _
+      exact fun a a_1 => AddCommMagma.add_comm (fun₀ | i => 1) fun₀ | i => #s
   exact h_leading_coeff _
 
 /-- Helper for `elimination_polynomial_properties`: $g_i$ vanishes on inputs from $A_i$. -/
@@ -695,8 +680,7 @@ private lemma elimination_polynomial_sub_top_totalDegree_lt
               intro c; rw [MvPolynomial.coeff_C]
               split
               next h =>
-                subst h
-                simp_all only [add_zero, ↓reduceIte]
+                exact Eq.symm (if_pos (id (Eq.symm h)))
               next h =>
                 simp_all only [right_eq_ite_iff]
                 intro a_2
@@ -745,8 +729,7 @@ private lemma elimination_polynomial_sub_top_totalDegree_lt
         rw [MvPolynomial.mem_support_iff]
         simpa [h] using hm
       have hle : m j ≤ (eliminationPolynomials A i).degreeOf j := by
-        rw [MvPolynomial.degreeOf_eq_sup]
-        exact Finset.le_sup (f := fun m => m j) hmem
+        exact le_degreeOf_of_mem_support j hmem
       exact hle.trans (le_of_eq h_deg_j)
   rw [MvPolynomial.totalDegree]
   rw [Finset.sup_lt_iff (by simpa using h_card)]
@@ -755,13 +738,11 @@ private lemma elimination_polynomial_sub_top_totalDegree_lt
     rw [Finsupp.sum, Finset.sum_eq_single i]
     · intro b hbm hb
       have hle : m b ≤ (eliminationPolynomials A i - X i ^ #(A i)).degreeOf b := by
-        rw [MvPolynomial.degreeOf_eq_sup]
-        exact Finset.le_sup (f := fun m => m b) hm
+        exact le_degreeOf_of_mem_support b hm
       exact Nat.le_zero.mp (hle.trans (h_total_deg b hb))
     · exact fun h => Finsupp.notMem_support_iff.mp h
   have h_le : m i ≤ (eliminationPolynomials A i - X i ^ #(A i)).degreeOf i := by
-    rw [MvPolynomial.degreeOf_eq_sup]
-    exact Finset.le_sup (f := fun m => m i) hm
+    exact le_degreeOf_of_mem_support i hm
   rw [h_eq]
   exact lt_of_le_of_lt h_le h_deg_mono
 
@@ -843,8 +824,7 @@ lemma monomial_reduction_step (m : Fin (k + 1) →₀ ℕ) (i : Fin (k + 1))
                   simp [Finsupp.single_apply, if_neg (Ne.symm hji)]
                 rw [Finset.sum_congr rfl h_outside]
                 have h_mi : c i + 1 ≤ m i := by
-                  have := h_le i
-                  simpa [Finsupp.single_apply] using this
+                  exact Order.add_one_le_iff.mpr hi
                 have happ : (m - Finsupp.single i (c i + 1)) i = m i - (c i + 1) := by
                   simp
                 rw [happ]
@@ -1243,8 +1223,7 @@ theorem ANR_polynomial_method (h : MvPolynomial (Fin (k + 1)) (ZMod p))
               simp only [pow_zero, one_mul]
               have hS_empty : S = ∅ := by
                 have hS_card : #S = 0 := by
-                  have := H
-                  omega
+                  exact Nat.eq_zero_of_le_zero hS_size
                 exact Finset.card_eq_zero.mp hS_card
               have H_eval : ∀ ⦃x : Fin (k + 1) → ZMod p⦄,
                   (∀ a : Fin (k + 1), x a ∈ A a) → (MvPolynomial.eval x) h = 0 := by

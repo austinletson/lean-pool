@@ -138,8 +138,7 @@ theorem corrector_centerSq_full_step_eq_cross_sq {n : Nat}
 /-- The homogenized dimension `n + 1` is strictly positive. -/
 theorem hdim_pos (n : Nat) : 0 < hdim n := by
   unfold hdim
-  have hn : (0 : ℝ) ≤ (n : ℝ) := by exact_mod_cast Nat.zero_le n
-  linarith
+  exact Nat.cast_add_one_pos n
 
 /-- Interior points have positive complementarity gap. -/
 theorem gap_pos_of_interior {n : Nat} (w : HSState n)
@@ -577,11 +576,7 @@ theorem corrector_scalar_cross_abs_le_quarter_mu {n : Nat}
   have hl1 := corrector_cross_l1_bound w d hneigh hdir
   have hsum_nonneg : 0 ≤ ∑ j : Fin n, |d.dx j * d.ds j| := by
     exact Finset.sum_nonneg (fun j _ => abs_nonneg (d.dx j * d.ds j))
-  have hle_total :
-      |d.dtau * d.dkappa| ≤
-        (∑ j : Fin n, |d.dx j * d.ds j|) + |d.dtau * d.dkappa| := by
-    nlinarith
-  exact le_trans hle_total hl1
+  exact le_of_add_le_of_nonneg_right hl1 hsum_nonneg
 
 /-- If two factors have positive product and a positive weighted sum with positive
 weights, then both factors are positive. -/
@@ -680,8 +675,7 @@ theorem corrector_full_step_interior {n : Nat}
     Interior (addStep w d 1) := by
   have hpair : ∀ i : Fin n,
       0 < (addStep w d 1).x i ∧ 0 < (addStep w d 1).s i := by
-    intro i
-    exact corrector_component_pair_pos_full_step w d hneigh hdir i
+    exact fun i => corrector_component_pair_pos_full_step w d hneigh hdir i
   have hscalar := corrector_scalar_pair_pos_full_step w d hneigh hdir
   exact ⟨fun i => (hpair i).1, hscalar.1, fun i => (hpair i).2, hscalar.2⟩
 
@@ -962,9 +956,7 @@ theorem predictor_step_interior_of_product_pos {n : Nat}
     Interior (addStep w d α) := by
   have hpair : ∀ i : Fin n,
       0 < (addStep w d α).x i ∧ 0 < (addStep w d α).s i := by
-    intro i
-    exact predictor_component_pair_pos_of_product_pos
-      w d α hinterior hdir hαle i (hprod_vec i)
+    exact fun i => predictor_component_pair_pos_of_product_pos w d α hinterior hdir hαle i (hprod_vec i)
   have hscalar := predictor_scalar_pair_pos_of_product_pos
     w d α hinterior hdir hαle hprod_scalar
   exact ⟨fun i => (hpair i).1, hscalar.1, fun i => (hpair i).2, hscalar.2⟩
@@ -1036,8 +1028,7 @@ theorem predictor_fixed_mu_step {n : Nat}
     (hdir : HSDStepDirection w d 0) :
     mu (addStep w d (ytmStepConstant / Real.sqrt (hdim n))) =
       (1 - ytmStepConstant / Real.sqrt (hdim n)) * mu w := by
-  simpa using
-    predictor_mu_step w d (ytmStepConstant / Real.sqrt (hdim n)) hdir
+  exact predictor_mu_step w d (ytmStepConstant / √(hdim n)) hdir
 
 /-- Fixed-step specialization of the vector predictor product identity. -/
 theorem predictor_fixed_component_product_step {n : Nat}
@@ -1049,9 +1040,7 @@ theorem predictor_fixed_component_product_step {n : Nat}
           (w.x i * w.s i) +
         (ytmStepConstant / Real.sqrt (hdim n)) ^ 2 *
           (d.dx i * d.ds i) := by
-  simpa using
-    predictor_component_product_step w d
-      (ytmStepConstant / Real.sqrt (hdim n)) hdir i
+  exact predictor_component_product_step w d (ytmStepConstant / √(hdim n)) hdir i
 
 /-- Fixed-step specialization of the scalar predictor product identity. -/
 theorem predictor_fixed_scalar_product_step {n : Nat}
@@ -1063,9 +1052,7 @@ theorem predictor_fixed_scalar_product_step {n : Nat}
           (w.tau * w.kappa) +
         (ytmStepConstant / Real.sqrt (hdim n)) ^ 2 *
           (d.dtau * d.dkappa) := by
-  simpa using
-    predictor_scalar_product_step w d
-      (ytmStepConstant / Real.sqrt (hdim n)) hdir
+  exact predictor_scalar_product_step w d (ytmStepConstant / √(hdim n)) hdir
 
 /-- Fixed-step specialization of the exact predictor centrality-residual expansion. -/
 theorem predictor_fixed_centerSq_step_eq {n : Nat}
@@ -1085,9 +1072,7 @@ theorem predictor_fixed_centerSq_step_eq {n : Nat}
             (w.tau * w.kappa - mu w) +
           (ytmStepConstant / Real.sqrt (hdim n)) ^ 2 *
             (d.dtau * d.dkappa)) ^ 2 := by
-  simpa using
-    predictor_centerSq_step_eq w d
-      (ytmStepConstant / Real.sqrt (hdim n)) hdir
+  exact predictor_centerSq_step_eq w d (ytmStepConstant / √(hdim n)) hdir
 
 /-- Fixed-parameter YTM local theory.
 
@@ -1383,8 +1368,7 @@ theorem predictor_fixed_scaled_core_to_norm_bounds {n : Nat}
       scaled_tau := ?_
       scaled_kappa := ?_
       center := ?_ }
-  · intro i
-    exact hcore.scaled_vec i
+  · exact fun i => hcore.scaled_vec i
   · exact hcore.scaled_tau
   · exact hcore.scaled_kappa
   · exact hcore.center

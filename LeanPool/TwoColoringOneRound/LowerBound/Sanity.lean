@@ -171,8 +171,7 @@ theorem monoCount_f5 : monoCount f5 = 24 := by
         = Fintype.card {e : Edge 5 // Edge.monochromatic f5 e} := hsub
     _ = Fintype.card {e : Edge 5 // pat1001 e ∨ pat0110 e} := hmono
     _ = Fintype.card {e : Edge 5 // pat1001 e} + Fintype.card {e : Edge 5 // pat0110 e} := by
-          simpa using
-            (Fintype.card_subtype_or_disjoint (p := pat1001) (q := pat0110) hdisj)
+          exact Fintype.card_subtype_or_disjoint pat1001 pat0110 hdisj
     _ = 12 + 12 := by simp [card_pat1001, card_pat0110]
     _ = 24 := by decide
 

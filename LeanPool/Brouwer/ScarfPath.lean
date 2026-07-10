@@ -688,8 +688,7 @@ theorem component_path_support_eq_component_of_no_escape
     {x : α | x ∈ p.support} = component.supp := by
   ext z
   constructor
-  · intro hz
-    exact hp_sub hz
+  · exact fun a => Set.mem_of_subset_of_mem hp_sub a
   · intro hzcomp
     by_contra hzNot
     have huSupport : u ∈ p.support := p.start_mem_support

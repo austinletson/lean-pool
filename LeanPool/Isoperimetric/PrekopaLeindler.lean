@@ -166,8 +166,7 @@ lemma layercake {f : ℝ → ENNReal} (hf_measurable : Measurable f) :
           calc
             volume {t | ENNReal.ofReal t ≤ f x ∧ 0 < t}
                 = volume {t | t ≤ (f x).toReal ∧ 0 < t} := by
-              congr; ext t; simp only [and_congr_left_iff]; intro
-              exact ENNReal.ofReal_le_iff_le_toReal hinf
+              congr; ext t; simp only [and_congr_left_iff]; exact fun a => ENNReal.ofReal_le_iff_le_toReal hinf
             _ = volume (Ioc 0 (f x).toReal) := by congr; aesop
             _ = ENNReal.ofReal (f x).toReal := by simp
             _ = f x := ENNReal.ofReal_toReal_eq_iff.mpr hinf
@@ -427,10 +426,7 @@ lemma prekopa_leindler_1d_bounded {θ : ℝ} {f g h : ℝ → ENNReal}
       · linarith
       linarith
     _ ≤ h'int * ((iSup f)^(1-θ) * (iSup g)^θ) := by
-      rw [ENNReal.mul_le_mul_iff_left]
-      · exact normalized_result
-      · rw [← pos_iff_ne_zero]; exact ENNReal.mul_pos iSupf_pow_ne_zero iSupg_pow_ne_zero
-      · exact ENNReal.mul_ne_top iSupf_pow_ne_top iSupg_pow_ne_top
+      exact mul_le_mul_left normalized_result (iSup f ^ (1 - θ) * iSup g ^ θ)
     _ = (hint * (iSup f)⁻¹^(1-θ) * (iSup g)⁻¹^θ) * ((iSup f)^(1-θ) * (iSup g)^θ) := by
       rw [h'int_to_hint]
     _ = hint * ((iSup f)⁻¹^(1-θ) * (iSup f)^(1-θ)) * ((iSup g)⁻¹^θ * (iSup g)^θ) := by ring
@@ -633,8 +629,7 @@ theorem prekopa_leindler
       ENNReal.ofReal ((1-θ)^(1-θ) * θ^θ)⁻¹
       * (∫⁻ (x : Fin 1 → ℝ), f x)^(1-θ) * (∫⁻ (x : Fin 1 → ℝ), g x)^θ
       ≤ ∫⁻ (x : Fin 1 → ℝ), h x := fun hpl => by
-    have hres := hd 0 (Nat.zero_le d) hpl
-    simpa using hres
+    exact prekopa_leindler_1d_fin1 hpl
   have hyp_d : ∀ {f g h : (Fin (d + 1) → ℝ) → ENNReal}, PLConditions (d + 1) θ f g h →
       ENNReal.ofReal ((1-θ)^((d+1)*(1-θ)) * θ^((d+1)*θ))⁻¹
       * (∫⁻ (x : Fin (d + 1) → ℝ), f x)^(1-θ) * (∫⁻ (x : Fin (d + 1) → ℝ), g x)^θ
@@ -706,10 +701,7 @@ theorem prekopa_leindler
           * (ENNReal.ofReal ((1 - θ)^(1-θ)*θ^θ)⁻¹ * (F x1)^(1-θ) * (G y1)^θ) := by
         ring
       _ ≤ H (x1 + y1) := by
-        rw [ENNReal.mul_le_mul_iff_right
-          (by simp only [ne_eq, ENNReal.ofReal_eq_zero, not_le]; linarith)
-          (by simp only [ne_eq, ENNReal.ofReal_ne_top, not_false_eq_true])]
-        exact hyp_0 (fix_plconditions x1 y1)
+        exact mul_le_mul_right (hyp_0 (fix_plconditions x1 y1)) (ENNReal.ofReal ((1 - θ) ^ (1 - θ) * θ ^ θ))
   have result_d : ENNReal.ofReal ((1-θ)^((d+1)*(1-θ))*θ^((d+1)*θ))⁻¹
       * (∫⁻ (x : Fin (d + 1) → ℝ), F x)^(1-θ)
       * (∫⁻ (x : Fin (d + 1) → ℝ), G x)^θ

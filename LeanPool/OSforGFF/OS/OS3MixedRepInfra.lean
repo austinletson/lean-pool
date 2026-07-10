@@ -465,9 +465,7 @@ lemma schwinger_bound_integrand_integral_y (s : ℝ) (hs : 0 < s)
   have h_eq : ∫ y : SpaceTime, r *
         heatKernelPositionSpace s ‖timeReflection x - y‖ =
       r * ∫ y : SpaceTime, heatKernelPositionSpace s ‖timeReflection x - y‖ := by
-    simpa using
-      (integral_const_mul r
-        (fun y : SpaceTime => heatKernelPositionSpace s ‖timeReflection x - y‖))
+    exact MeasureTheory.integral_const_mul r fun a => heatKernelPositionSpace s ‖timeReflection x - a‖
   have h_int : ∫ y : SpaceTime, heatKernelPositionSpace s ‖timeReflection x - y‖ = 1 :=
     heatKernelPositionSpace_integral_translated s hs (timeReflection x)
   simpa [r, h_int, mul_assoc] using h_eq
@@ -529,8 +527,7 @@ lemma schwinger_bound_integrable_xy (s : ℝ) (hs : 0 < s)
   refine (MeasureTheory.integrable_prod_iff (μ := volume) (ν := volume) hG_meas).2 ?_
   constructor
   · refine Eventually.of_forall ?_
-    intro x
-    exact schwinger_bound_integrand_integrable_y s hs f Cf m x
+    exact fun x => schwinger_bound_integrand_integrable_y s hs f Cf m x
   · -- integrable in x of the norm-integral
     have h_norm : ∀ x : SpaceTime,
         ∫ y : SpaceTime, ‖G (x, y)‖ = ‖f x‖ * Cf * Real.exp (-s * m^2) := by
@@ -541,9 +538,7 @@ lemma schwinger_bound_integrable_xy (s : ℝ) (hs : 0 < s)
         funext y
         have hy : 0 ≤ G (x, y) :=
           schwinger_bound_integrand_nonneg s hs f Cf hCf_nonneg m x y
-        have : ‖G (x, y)‖ = G (x, y) := by
-          simpa using (Real.norm_of_nonneg hy)
-        simpa [G, this, mul_assoc]
+        exact norm_of_nonneg hy
       calc
         ∫ y : SpaceTime, ‖G (x, y)‖
             = ∫ y : SpaceTime,
@@ -573,8 +568,7 @@ lemma schwinger_bound_integrand_integral_xy (s : ℝ) (hs : 0 < s)
   -- rewrite using the y-integral formula
   have h_inner : ∀ x : SpaceTime,
       ∫ y : SpaceTime, G (x, y) = ‖f x‖ * Cf * Real.exp (-s * m^2) := by
-    intro x
-    simpa [G] using schwinger_bound_integrand_integral_y s hs f Cf m x
+    exact fun x => schwinger_bound_integrand_integral_y s hs f Cf m x
   calc
     ∫ p : SpaceTime × SpaceTime, G p
         = ∫ x : SpaceTime, ∫ y : SpaceTime, G (x, y) := by
@@ -669,9 +663,7 @@ theorem schwinger_bound_integrable_fubini (m : ℝ) [Fact (0 < m)] (f : TestFunc
       have h_nonneg' : 0 ≤ F (s, p.1, p.2) := by
         simpa [F] using
           schwinger_bound_integrand_nonneg s hs' f Cf hCf_nonneg m p.1 p.2
-      have : ‖F (s, p.1, p.2)‖ = F (s, p.1, p.2) := by
-        simpa using (Real.norm_of_nonneg h_nonneg')
-      simpa [F, this, mul_assoc]
+      exact norm_of_nonneg h_nonneg'
     have h_eq :
         ∫ p : SpaceTime × SpaceTime, ‖F (s, p.1, p.2)‖ =
           (Cf * (∫ x : SpaceTime, ‖f x‖)) * Real.exp (-s * m^2) := by
@@ -998,8 +990,7 @@ lemma continuous_spatialPart : Continuous spatialPart := by
   apply (EuclideanSpace.equiv (Fin (STDimension - 1)) ℝ).symm.continuous.comp
   apply continuous_pi
   intro i
-  have h : i.val + 1 < STDimension := by simp [STDimension]; omega
-  exact PiLp.continuous_apply 2 (fun _ : Fin STDimension => ℝ) (⟨i.val + 1, h⟩ : Fin STDimension)
+  exact PiLp.continuous_apply 2 (fun x => ℝ) ⟨↑i + 1, spatialPart._proof_3 i⟩
 
 /-- `spatialPart` is measurable. -/
 lemma spatialPart_measurable : Measurable (spatialPart : SpaceTime → SpatialCoords) :=
@@ -2013,8 +2004,7 @@ lemma spacetime_fubini_linear_vanishing_bound (f : TestFunctionℂ)
             exact congr_fun hG_eq t₁
           · exact congr_fun hG_eq t₂)
     _ ≤ C_sp^2 * (10 * s^(3/2 : ℝ)) := by
-        simpa [K] using heat_kernel_spatial_integral_bound s hs C_sp hC_sp_pos G
-          hG_zero hG_nonneg hG_meas h_spatial
+        exact heat_kernel_spatial_integral_bound s hs C_sp hC_sp_pos G hG_zero hG_nonneg hG_meas h_spatial
     _ = C_sp^2 * 10 * s^(3/2 : ℝ) := by ring
 
 /-- **Schwartz norm–Gaussian product measurability.**
@@ -2589,8 +2579,7 @@ private lemma fubini_s_xy_swap_integrable (m : ℝ) [Fact (0 < m)]
       rw [h_compl]
       have h_prod : (Prod.fst ⁻¹' Set.Iic (0 : ℝ) : Set (ℝ × SpaceTime × SpaceTime)) =
           Set.Iic 0 ×ˢ Set.univ := by
-        ext ⟨s, xy⟩
-        simp only [Set.mem_preimage, Set.mem_Iic, Set.mem_prod, Set.mem_univ, and_true]
+        exact Eq.symm Set.prod_univ
       rw [h_prod, MeasureTheory.Measure.prod_prod]
       simp only [MeasureTheory.Measure.restrict_apply measurableSet_Iic,
         Set.Iic_inter_Ioi, Set.Ioc_self, MeasureTheory.measure_empty, zero_mul]

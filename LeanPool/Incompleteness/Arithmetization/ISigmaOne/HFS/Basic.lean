@@ -44,8 +44,7 @@ section «lp_section_1»
       simpa using h (mem_under_iff.mpr this),
    by intro hij x
       simp only [mem_under_iff]
-      intro hx
-      exact lt_of_lt_of_le hx hij⟩
+      exact fun a => Std.lt_of_lt_of_le a hij⟩
 
 end «lp_section_1»
 
@@ -348,13 +347,7 @@ instance domain_definable' (ℌ : HierarchySymbol) : ℌ-Function₁ (domain :
 
 @[simp] lemma domain_union (a b : V) : domain (a ∪ b) = domain a ∪ domain b := mem_ext (by
   simp only [mem_domain_iff, mem_cup_iff]
-  intro x; constructor
-  · rintro ⟨y, (hy | hy)⟩
-    · left; exact ⟨y, hy⟩
-    · right; exact ⟨y, hy⟩
-  · rintro (⟨y, hy⟩ | ⟨y, hy⟩)
-    · exact ⟨y, Or.inl hy⟩
-    · exact ⟨y, Or.inr hy⟩)
+  exact fun i => exists_or)
 
 @[simp] lemma domain_singleton (x y : V) : (domain {⟪x, y⟫} :
     V) = {x} :=

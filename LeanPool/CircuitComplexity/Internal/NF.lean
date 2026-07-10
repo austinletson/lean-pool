@@ -66,22 +66,16 @@ private lemma foldl_bor_eq_list_any {α : Type} (l : List α) (p : α → Bool) 
   have h_iff : (Fin.foldl l.length (fun acc i => acc || p (l.get i)) false = true) ↔
       (l.any p = true) := by
     rw [foldl_bor_eq_true, List.any_eq_true]
-    refine ⟨fun ⟨i, hi⟩ => ⟨l.get i, List.get_mem l i, hi⟩, fun ⟨a, ha, hp⟩ => ?_⟩
-    obtain ⟨i, rfl⟩ := List.mem_iff_get.mp ha
-    exact ⟨i, hp⟩
-  cases h1 : Fin.foldl l.length (fun acc i => acc || p (l.get i)) false <;>
-    cases h2 : l.any p <;> simp_all
+    exact Iff.symm List.exists_mem_iff_get
+  exact Eq.symm ((fun {a b} => Bool.coe_iff_coe.mp) (id (Iff.symm h_iff))) <;> simp_all
 
 private lemma foldl_band_eq_list_all {α : Type} (l : List α) (p : α → Bool) :
     Fin.foldl l.length (fun acc (i : Fin l.length) => acc && p (l.get i)) true = l.all p := by
   have h_iff : (Fin.foldl l.length (fun acc i => acc && p (l.get i)) true = true) ↔
       (l.all p = true) := by
     rw [foldl_band_eq_true, List.all_eq_true]
-    refine ⟨fun h a ha => ?_, fun h i => h (l.get i) (List.get_mem l i)⟩
-    obtain ⟨i, rfl⟩ := List.mem_iff_get.mp ha
-    exact h i
-  cases h1 : Fin.foldl l.length (fun acc i => acc && p (l.get i)) true <;>
-    cases h2 : l.all p <;> simp_all
+    exact Iff.symm List.forall_mem_iff_get
+  exact Eq.symm ((fun {a b} => Bool.coe_iff_coe.mp) (id (Iff.symm h_iff))) <;> simp_all
 
 /-! ## CNF circuit embedding -/
 

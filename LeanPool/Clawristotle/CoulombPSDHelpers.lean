@@ -82,15 +82,7 @@ lemma tendsto_landau_quadratic_diag
           obtain ⟨ L, hL ⟩ := hU.2.2
           -- eucNorm z ≤ √3 * ‖z‖ and ‖z‖ ≤ eucNorm z for Fin 3 → ℝ
           have h_norm_le_euc : ∀ z : Fin 3 → ℝ, ‖z‖ ≤ eucNorm z := by
-            intro z; unfold eucNorm normSq
-            have h_each : ∀ i : Fin 3, |z i| ≤ Real.sqrt (z ⬝ᵥ z) := by
-              intro i
-              refine Real.le_sqrt_of_sq_le ?_
-              simp only [dotProduct, Fin.sum_univ_three]
-              fin_cases i <;> simp [sq_abs] <;>
-                nlinarith [sq_nonneg (z 0), sq_nonneg (z 1), sq_nonneg (z 2)]
-            rw [pi_norm_le_iff_of_nonneg (Real.sqrt_nonneg _)]
-            exact fun i => by rw [Real.norm_eq_abs]; exact h_each i
+            exact fun z => pi_norm_le_eucNorm z
           have h_euc_le_norm : ∀ z : Fin 3 → ℝ, eucNorm z ≤ Real.sqrt 3 * ‖z‖ := by
             intro z; unfold eucNorm normSq
             rw [show Real.sqrt 3 * ‖z‖ = Real.sqrt (3 * ‖z‖ ^ 2) from by

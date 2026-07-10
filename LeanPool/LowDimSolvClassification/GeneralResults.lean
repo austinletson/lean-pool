@@ -253,11 +253,7 @@ theorem Submodule.compl_span_singleton_of_codim_one
   specialize hx 1 one_ne_zero
   rw [one_smul] at hx
   have disj : Disjoint p (Submodule.span K {x}) := by
-    rw [Submodule.disjoint_span_singleton']
-    · exact hx
-    · intro h
-      rw [h] at hx
-      exact hx (zero_mem _)
+    exact disjoint_span_singleton_of_notMem hx
   constructor
   · exact disj
   · rw [codisjoint_iff]
@@ -351,12 +347,7 @@ variable (K L : Type*) [Field K] [AddCommGroup L] [Module K L]
 /-- The natural map from the base field to scalar multiples of `x` is an isomorphism if `x ≠ 0`. -/
 noncomputable def LinearEquiv.toSpanSingleton {x : L} (h : x ≠ 0) :
     K ≃ₗ[K] Submodule.span K {x} := by
-  have f'inj : Function.Injective (LinearMap.toSpanSingleton K L x) := by
-    rw [← LinearMap.ker_eq_bot, LinearMap.ker_toSpanSingleton K h]
-  have f'range := LinearMap.span_singleton_eq_range K L x
-  let f := LinearEquiv.ofInjective (LinearMap.toSpanSingleton K L x) f'inj
-  rw [← f'range] at f
-  exact f
+  exact toSpanNonzeroSingleton K L x h
 
 @[simp]
 theorem LinearEquiv.toSpanSingleton_apply {x : L} (h : x ≠ 0) (a : K) :
@@ -381,8 +372,7 @@ theorem LinearEquiv.toSpanSingleton_symm_apply' {x : L} (h : x ≠ 0) (y : Submo
     ((LinearEquiv.toSpanSingleton K L h).symm y) • x = y := by
   obtain ⟨a, hy⟩ := Submodule.mem_span_singleton.mp y.2
   have : y = ⟨a • x, mem_span_singleton.mpr ⟨a, rfl⟩⟩ := by
-    ext
-    rw [← hy]
+    exact SetLike.coe_eq_coe.mp (id (Eq.symm hy))
   rw [this, LinearEquiv.toSpanSingleton_symm_apply K L h]
 
 end linalg
@@ -737,12 +727,10 @@ theorem LieDerivation.map_commutator (D : LieDerivation K L L) :
   · simp only [map_zero, Submodule.zero_mem]
   · intro x y _ _ hDx hDy
     rw [map_add]
-    apply Submodule.add_mem
-    repeat assumption
+    exact (Submodule.add_mem_iff_right (Submodule.span K {x | ∃ y z, ⁅y, z⁆ = x}) hDx).mpr hDy
   · intro a x _ hDx
     rw [map_smul]
-    apply Submodule.smul_mem
-    assumption
+    exact Submodule.smul_mem (Submodule.span K {x | ∃ y z, ⁅y, z⁆ = x}) a hDx
 
 /-- The adjoint action of a Lie algebra on itself maps everything into the commutator. -/
 theorem LieAlgebra.ad_into_commutator' (x : L) :
@@ -804,8 +792,7 @@ theorem LieAlgebra.abelian_iff_dim_comm_zero [FiniteDimensional K L] :
 theorem LieAlgebra.abelian_iff_lie_basis_eq_zero {n : ℕ} (B : Basis (Fin n) K L) :
     IsLieAbelian L ↔ ∀ i j : Fin n, (i < j → ⁅B i, B j⁆ = 0) := by
   constructor
-  · intro ⟨h⟩ _ _ _
-    apply h
+  · exact fun a i j a_1 => LieModule.IsTrivial.trivial (B i) (B j)
   · intro h
     have h' : ∀ i j : Fin n, ⁅B i, B j⁆ = 0 := by
       intro i j
@@ -963,8 +950,7 @@ def LinearEquiv.smulId : K ≃ₗ[K] (K →ₗ[K] K) := {
     ext
     simp only [LinearMap.smul_apply, LinearMap.id_coe, id_eq, smul_eq_mul, mul_one]
   map_add' := by
-    intro x y
-    exact Module.add_smul x y LinearMap.id
+    exact fun x y => Module.add_smul x y LinearMap.id
   map_smul' := by
     intro x y
     exact IsScalarTower.smul_assoc x y LinearMap.id

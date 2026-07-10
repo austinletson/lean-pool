@@ -205,8 +205,7 @@ lemma modfom_q_exp_cuspfunc (c : ℕ → ℂ) (f : F) [ModularFormClass F Γ(n) 
         · intro k
           apply Tendsto.const_mul
           have := ((continuous_pow k (M := ℂ) ).tendsto) 0
-          apply Filter.Tendsto.mono_left this
-          exact nhdsWithin_le_nhds
+          exact tendsto_nhdsWithin_of_tendsto_nhds this
         rw [eventually_iff_exists_mem]
         use {z | (z : ℂ) ≠ 0 ∧ ‖z‖ < 1 / 2}
         constructor
@@ -257,8 +256,7 @@ lemma qParam_surj_onto_ball (r : ℝ) (hr : 0 < r) (hr2 : r < 1) [NeZero n] : �
     · simp only [Left.neg_neg_iff, Nat.cast_pos]
       exact Nat.pos_of_neZero n
     exact two_pi_pos
-  rw [propext (log_neg_iff hr)]
-  exact hr2
+  exact log_neg hr hr2
 
 
 lemma q_exp_unique (c : ℕ → ℂ) (f : ModularForm Γ(n) k) [hn : NeZero n]
@@ -349,17 +347,7 @@ lemma auxasdf (n : ℕ) : (PowerSeries.coeff n) ((qExpansion 1 E₄) * (qExpansi
   apply PowerSeries.coeff_mul
 
 lemma sigma_bound (k n : ℕ) : σ k n ≤ n ^ (k + 1) := by
-  rw [ArithmeticFunction.sigma_apply]
-  have : ∑ d ∈ n.divisors, d ^ k ≤ ∑ d ∈ n.divisors, n ^ k := by
-    apply Finset.sum_le_sum
-    intro i hi
-    gcongr
-    exact Nat.divisor_le hi
-  apply le_trans this
-  simp only [Finset.sum_const, smul_eq_mul]
-  rw [pow_add, mul_comm]
-  gcongr
-  simpa only [pow_one] using Nat.card_divisors_le_self n
+  exact ArithmeticFunction.sigma_le_pow_succ k n
 
 /-- The `q`-expansion coefficients of the weight-`k` Eisenstein series. -/
 def EkQ (k : ℕ) : ℕ → ℂ := fun m => if m = 0 then 1 else
@@ -494,8 +482,7 @@ lemma E4_q_exp : (fun m => (qExpansion 1 E₄).coeff m) =
   simp_all only [inv_div]
   split
   next h =>
-    subst h
-    simp_all only
+    exact Complex.ext rfl rfl
   next h =>
     simp_all only [mul_eq_mul_right_iff, Nat.cast_eq_zero]
     left
@@ -1020,8 +1007,7 @@ lemma E₂_isBoundedAtImInfty : IsBoundedAtImInfty E₂ := by
       (1 - cexp (2 * π * Complex.I * ↑n * ↑z)) = S := by
     congr 1; ext n
     have : cexp (2 * π * Complex.I * n * z) = q ^ (n : ℕ) := by
-      change _ = (cexp (2 * π * Complex.I * z)) ^ (n : ℕ)
-      rw [← Complex.exp_nat_mul]; ring_nf
+      exact exp_aux z ↑n
     simp [this]
   calc ‖1 - 24 * ∑' n : ℕ+, ↑n * cexp (2 * π * Complex.I * ↑n * ↑z) /
           (1 - cexp (2 * π * Complex.I * ↑n * ↑z))‖

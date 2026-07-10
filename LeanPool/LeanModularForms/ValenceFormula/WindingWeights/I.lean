@@ -408,14 +408,7 @@ private lemma hasDerivAt_i_seg0 (H : ℝ) (t : ℝ) :
 private lemma hasDerivAt_i_arc (t : ℝ) :
     HasDerivAt (fun s : ℝ => exp (↑(Real.pi * (1 + s) / 6) * I) - I)
       (↑(Real.pi / 6) * I * exp (↑(Real.pi * (1 + t) / 6) * I)) t := by
-  have hf : HasDerivAt (fun s : ℝ => Real.pi * (1 + s) / 6) (Real.pi / 6) t :=
-    ((hasDerivAt_id t).add_const (1 : ℝ) |>.const_mul (Real.pi / 6)).congr_of_eventuallyEq
-      (Eventually.of_forall fun s => show _ from by simp [id]; ring)
-      |>.congr_deriv (by ring)
-  have hci : HasDerivAt (fun s : ℝ => (↑(Real.pi * (1 + s) / 6) : ℂ) * I)
-      ((↑(Real.pi / 6) : ℂ) * I) t :=
-    (hf.ofReal_comp.mul_const I).congr_deriv (by norm_num [smul_eq_mul])
-  exact (hci.cexp.sub (hasDerivAt_const t I)).congr_deriv (by simp only [sub_zero]; ring)
+  exact hasDerivAt_arc I t
 
 private lemma hasDerivAt_i_seg3 (H : ℝ) (t : ℝ) :
     HasDerivAt

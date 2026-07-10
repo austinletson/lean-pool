@@ -248,9 +248,7 @@ private lemma coulomb_entry_conv_hasFDerivAt_aux
     apply ae_of_all
     intro u v _
     have : HasFDerivAt (fun v => g (v - u)) (fderiv ℝ g (v - u)) v := by
-      have h1 := (hg_diff (v - u)).comp v (hasFDerivAt_sub_const u)
-      simp only [ContinuousLinearMap.comp_id] at h1
-      exact h1
+      exact (hasFDerivAt_comp_sub u).mpr (hg_diff (v - u))
     exact this.const_mul (landauMatrix coulombKernel u i j)
 
 lemma coulomb_entry_conv_differentiable

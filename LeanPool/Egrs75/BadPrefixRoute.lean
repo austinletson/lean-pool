@@ -98,21 +98,7 @@ reads as `0`). -/
 /-- `i ∈ badIndexSet q n ↔ BadAt q i n`, for all `i` (KERNEL-CLEAN). -/
 theorem mem_badIndexSet_iff {q n i : ℕ} (hq : 1 < q) :
     i ∈ badIndexSet q n ↔ BadAt q i n := by
-  unfold BadAt digitAt badIndexSet
-  simp only [Finset.mem_filter, Finset.mem_range, bigQ, decide_eq_true_eq]
-  constructor
-  · rintro ⟨_, hbig⟩
-    -- in range: getD = n/q^i%q via getD_digits
-    rwa [getD_digits n i (by omega)] at hbig
-  · intro hbig
-    -- bad ⟹ digit nonzero ⟹ index in range
-    have hlen : i < (Nat.digits q n).length := by
-      by_contra hcon
-      push Not at hcon
-      rw [← getD_digits n i (by omega), List.getD_eq_default _ 0 hcon] at hbig
-      omega
-    refine ⟨hlen, ?_⟩
-    rwa [getD_digits n i (by omega)]
+  exact MoveDigits.mem_badIndexSet_iff' hq
 
 /-- Above the top bad index, nothing is `BadAt` (KERNEL-CLEAN, from `digit_good_above_top`). -/
 theorem not_badAt_above_top {q n i : ℕ} (hq : 1 < q) (hbad : 0 < badCountQ q n)
@@ -394,14 +380,7 @@ carries the single `egrs_clearing` `sorry`).  Inherits EXACTLY that one `sorryAx
 theorem align_finish {p q : ℕ} (hp : p.Prime) (hq : q.Prime)
     (hpo : Odd p) (hqo : Odd q) (hpq : p ≠ q) :
     ∀ N, ∃ n, N < n ∧ LowDigits p n ∧ LowDigits q n := by
-  intro N
-  have hp3 : 3 ≤ p := by
-    have h2 := hp.two_le; rcases hpo with ⟨k, hk⟩; omega
-  -- The lex induction consumes `repair_step_lex` (with the running magnitude floor `N`,
-  -- threaded by `align_lex` as `hNm`).
-  refine align_lex N
-    (fun {m} hpm hNm hbad => repair_step_lex hp hq hpo hqo hpq N hpm hNm hbad)
-    (p ^ (N + 1)) (seed_lt_pow_succ (by omega) N) (seed_lowDigits_pow hp3 (N + 1))
+  exact fun N => MuFinish.align_finish_mu hp hq hpo hqo hpq N
 
 /-! ## Final assembly: ALIGN ⟹ crux ⟹ EGRS75 two-prime divisibility target
 
@@ -415,10 +394,7 @@ inlined to avoid the hyphenated-module / `Equidist_fromscratch`-`sorry` import).
 theorem align_to_crux {p q : ℕ}
     (halign : ∀ N, ∃ n, N < n ∧ LowDigits p n ∧ LowDigits q n) :
     {n : ℕ | LowDigits p n ∧ LowDigits q n}.Infinite := by
-  apply Set.infinite_of_forall_exists_gt
-  intro N
-  obtain ⟨n, hN, hpn, hqn⟩ := halign N
-  exact ⟨n, ⟨hpn, hqn⟩, hN⟩
+  exact MuFinish.align_to_crux halign
 
 /-- **EGRS75 two-prime theorem — FINISH route.**  For distinct odd primes `p q`, there
 are infinitely many `n` with `p ∤ C(2n,n)` and `q ∤ C(2n,n)`.

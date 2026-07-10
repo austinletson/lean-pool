@@ -235,9 +235,7 @@ theorem and_comm (p q : ZFBool) : p ⋀ q = q ⋀ p := by
   obtain ⟨P, hP⟩ := p
   obtain ⟨Q, hQ⟩ := q
   rw [Subtype.mk.injEq]
-  ext1
-  repeat rw [mem_inter]
-  exact And.comm
+  exact inter_comm
 
 theorem and_assoc (p q r : ZFBool) : p ⋀ q ⋀ r = p ⋀ (q ⋀ r) := by
   obtain ⟨P, hP⟩ := p
@@ -282,9 +280,7 @@ theorem or_comm (p q : ZFBool) : p ⋁ q = q ⋁ p := by
   obtain ⟨P, hP⟩ := p
   obtain ⟨Q, hQ⟩ := q
   rw [Subtype.mk.injEq]
-  ext1
-  repeat rw [mem_union]
-  exact Or.comm
+  exact union_comm
 
 theorem or_assoc (p q r : ZFBool) : p ⋁ q ⋁ r = p ⋁ (q ⋁ r) := by
   obtain ⟨P, hP⟩ := p

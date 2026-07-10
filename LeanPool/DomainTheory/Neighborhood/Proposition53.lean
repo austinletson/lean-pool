@@ -141,8 +141,7 @@ theorem fixElement_paired_eq (τ : ApproximableMap (prod V₀ V₁) V₀)
         _ = b := hσb
     -- so `ystar ⊑ b`, and `xstar = !x.τ(x, ystar) ⊑ !x.τ(x, b) ⊑ a`.
     have hystar_le : ystar ≤ b := by
-      rw [hystar]
-      exact fixElement_le_of_toElementMap_le (outerOp τ σ) houter_le
+      exact fixElement_le_of_toElementMap_le (τ.outerOp σ) houter_le
     have hxstar_le : xstar ≤ a := by
       rw [hxstar]
       calc (secFixX τ).toElementMap ystar

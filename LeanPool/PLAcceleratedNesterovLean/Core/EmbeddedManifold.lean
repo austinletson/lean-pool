@@ -347,8 +347,7 @@ private abbrev smooth_embedding_local_graph {d n : ℕ}
     have hbv : (↑bump : ↥V → ℝ) v = 1 := by simpa using hv
     rw [hbv, one_smul]
   have hφ_zero : φ 0 = 0 := by
-    change bump 0 • φ_raw 0 = 0
-    rw [hφ_raw_zero, smul_zero]
+    exact smul_eq_zero_of_right (↑bump 0) hφ_raw_zero
   have hφ_smooth : ContDiff ℝ 2 φ := by
     rw [contDiff_iff_contDiffAt]
     intro v
@@ -980,8 +979,7 @@ private theorem c3_pl_argmin_global_graph
     rw [hbv, one_smul]
   obtain ⟨r_eq, hr_eq_pos, hr_eq⟩ := Metric.eventually_nhds_iff.mp hφ_eq_raw_near
   have hφ0 : φ 0 = 0 := by
-    change bump 0 • φ_raw 0 = 0
-    rw [hφ_raw0, smul_zero]
+    exact smul_eq_zero_of_right (↑bump 0) hφ_raw0
   have hφ_smooth : ContDiff ℝ 2 φ := by
     rw [contDiff_iff_contDiffAt]
     intro v
@@ -1067,8 +1065,7 @@ theorem exists_tubular_subneighborhood_of_c3_pl
     subset := hS_sub_U'
     uniqueProj := hGenTub.uniqueProj
     submanifold_chart := by
-      intro m hm
-      exact c3_pl_argmin_global_graph hd hU_open hS_sub hPL hf_C3 m hm
+      exact fun m a => c3_pl_argmin_global_graph hd hU_open hS_sub hPL hf_C3 m a
   }
 
 /-- A C² smooth embedded submanifold contained in an open set admits a smaller
@@ -1119,9 +1116,7 @@ theorem general_to_metric_tubular
       uniqueProj := fun x (hx : Metric.infDist x S < r_U) =>
         hU.uniqueProj x (hr_U_sub hx)
       submanifold_chart := by
-        intro m hm
-        obtain ⟨p, rfl⟩ := hm
-        exact smooth_embedding_local_graph M ι hι (ι p) ⟨p, rfl⟩
+        exact fun m a => smooth_embedding_local_graph M ι hι m a
     }
 
 /-- For C² embedded submanifolds, a general tubular neighborhood yields
@@ -1140,7 +1135,6 @@ theorem general_tubular_of_smooth_embedding
   subset := hU.subset
   uniqueProj := hU.uniqueProj
   submanifold_chart := by
-    intro m hm; obtain ⟨p, rfl⟩ := hm
-    exact smooth_embedding_local_graph M ι hι (ι p) ⟨p, rfl⟩
+    exact fun m a => smooth_embedding_local_graph M ι hι m a
 
 end PLAcceleratedNesterovLean

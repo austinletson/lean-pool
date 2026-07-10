@@ -25,8 +25,7 @@ namespace Utils
 `0` otherwise. This is the notation $\delta(P)$ in
 [An extended Demazure product](https://arxiv.org/abs/2206.14227). -/
 noncomputable abbrev oneIf (P : Prop) : ℤ := by
-  classical
-  exact if P then 1 else 0
+  exact Aesop.defaultSafePenalty
 
 /-- The indicator $\delta(P)$ depends only on the truth value of $P$. -/
 lemma oneIf_congr {P Q : Prop} (h : P ↔ Q) :

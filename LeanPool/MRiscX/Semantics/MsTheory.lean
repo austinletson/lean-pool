@@ -340,16 +340,14 @@ theorem runNSteps_diff : ∀ (s : MState) (n : Nat) (L1 L2 : Set UInt64),
   (s.runNSteps n).pc ∉ L1 →
   (s.runNSteps n).pc ∉ L2
   := by
-  intros s n L1 L2 HSub H
-  exact Set.notMem_subset HSub H
+  exact fun s n L1 L2 a a_1 => Set.notMem_subset a a_1
 
 theorem runNSteps_pc_in_superset : ∀ (s : MState) (n : Nat) (L1 L2 : Set UInt64),
   L2 ⊆ L1 →
   (s.runNSteps n).pc ∈ L2 →
   (s.runNSteps n).pc ∈ L1
   := by
-  intros s n L1 L2 HSub H
-  exact Set.mem_of_subset_of_mem HSub H
+  exact fun s n L1 L2 a a_1 => Set.mem_of_subset_of_mem a a_1
 
 theorem runNSteps_add : ∀ (s s' s'':MState) (n n' : Nat),
   s.runNSteps n = s' →

@@ -109,10 +109,7 @@ theorem corrAvg_eq_coeff_of_dirMask_eq (f : Coloring n) {u v : V} (d : DirIdx)
     (v' := repVertex d) this)
 
 theorem corrAvg_symmetric (f : Coloring n) (u v : V) : corrAvg f u v = corrAvg f v u := by
-  classical
-  unfold corrAvg corr
-  -- commutativity of multiplication in `ℚ`
-  simp [mul_comm]
+  exact corrAvg_comm f u v
 
 -- Decompose the orbit-averaged correlation matrix into the directed orbital basis `A`.
 theorem corrAvgMatrix_eq_sum_coeff_A (f : Coloring n) :

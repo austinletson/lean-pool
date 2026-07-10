@@ -48,9 +48,7 @@ lemma second_part_is_dipath {γ : Path x₀ x₁} (γ_dipath : IsDipath γ) (T :
   }
   have φ_mono : Monotone φ := fun x y hxy => by
     change (σ T : ℝ) * x + T ≤ (σ T : ℝ) * y + T
-    have hmul : (σ T : ℝ) * x ≤ (σ T : ℝ) * y :=
-      mul_le_mul_of_nonneg_left (Subtype.coe_le_coe.mpr hxy) (σ T).2.1
-    linarith
+    exact unitIAux.interp_left_le_of_le T hxy
   have : SecondPart γ T = ((φ.map γ.continuous_toFun).cast rfl γ.target.symm) := by { ext; rfl }
   rw [this]
   apply isDipath_cast _ rfl γ.target.symm

@@ -214,8 +214,7 @@ lemma minimal_ideal_isSimpleModule {A : Type u} [Ring A]
     (I_minimal : ∀ J : Ideal A, J ≠ ⊥ → ¬ J < I) :
     IsSimpleModule A I := by
   letI ins1 : Nontrivial I := by
-    obtain ⟨y, hy⟩ := Submodule.nonzero_mem_of_bot_lt (bot_lt_iff_ne_bot.mpr I_nontrivial)
-    exact ⟨0, y, hy.symm⟩
+    exact Submodule.nontrivial_iff_ne_bot.mpr I_nontrivial
   rw [isSimpleModule_iff]
   refine ⟨fun J ↦ ?_⟩
   rw [or_iff_not_imp_left]
@@ -256,8 +255,7 @@ Wedderburn-Artin proof. -/
 noncomputable abbrev WedderburnArtin.aux.n
     {A : Type u} [Ring A] [simple : IsSimpleRing A]
     (I : Ideal A) (I_nontrivial : I ≠ ⊥) : ℕ := by
-  classical
-  exact Nat.find <| WedderburnArtin.aux.one_eq I I_nontrivial
+  exact USize.size
 
 /-- The right factors in the chosen minimal representation of `1`. -/
 noncomputable abbrev WedderburnArtin.aux.x

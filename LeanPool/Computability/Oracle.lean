@@ -242,8 +242,7 @@ lemma recursiveIn_empty_iff_partrec : RecursiveIn {} f ↔ Nat.Partrec f := by
     | comp _ _ ih₁ ih₂ => exact .comp ih₁ ih₂
     | prec _ _ ih₁ ih₂ => exact .prec ih₁ ih₂
     | rfind _ ih => exact .rfind ih
-  · intro hf
-    exact recursiveIn_of_partrec (O := ({} : Set (ℕ →. ℕ))) hf
+  · exact fun a => recursiveIn_of_partrec a
 
 theorem recursiveIn_mono {O₁ O₂ : Set (ℕ →. ℕ)} (hsub : O₁ ⊆ O₂) {g : ℕ →. ℕ} :
       RecursiveIn O₁ g → RecursiveIn O₂ g := by

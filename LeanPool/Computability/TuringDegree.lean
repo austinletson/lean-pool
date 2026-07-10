@@ -175,8 +175,7 @@ lemma right_le_join (f g : ℕ →. ℕ) : g ≤ᵀ (f ⊕ g) := by
   -- compute `g n` from the oracle `(f ⊕ g)` by querying at `2*n+1` and decoding by `div2`
   have hdouble1 : RecursiveIn {f ⊕ g} (fun n : ℕ => (2 * n + 1 : ℕ)) := by
     refine RecursiveIn.of_primrec (Primrec.nat_iff.1 ?_)
-    simpa using
-      (Primrec.nat_add.comp (Primrec.nat_mul.comp (Primrec.const 2) Primrec.id) (Primrec.const 1))
+    exact Primrec.nat_double_succ
   refine le_join_aux (f ⊕ g) g (fun n => 2 * n + 1) hdouble1 fun n => ?_
   simp_all
 
@@ -236,9 +235,7 @@ theorem eq01_natPartrec : Nat.Partrec eq01 := by
           (fun p : ℕ => cond (decide ((Nat.unpair p).1 = (Nat.unpair p).2)) (0 : ℕ) 1) := by
       have h0 : Computable (fun _ : ℕ => (0 : ℕ)) := Computable.const 0
       have h1 : Computable (fun _ : ℕ => (1 : ℕ)) := Computable.const 1
-      simpa using
-        (Computable.cond (c := fun p : ℕ => decide ((Nat.unpair p).1 = (Nat.unpair p).2))
-          (f := fun _ : ℕ => (0 : ℕ)) (g := fun _ : ℕ => (1 : ℕ)) hdec h0 h1)
+      exact Computable.cond hdec h0 h1
     refine Computable.of_eq hcond ?_
     simp_all
   have hpart : _root_.Partrec eq01 := by
@@ -332,9 +329,7 @@ theorem RecursiveIn_cond_core_rfind {O : Set (ℕ →. ℕ)} {c : ℕ → Bool} 
   have hcmp : RecursiveIn O cmp := by
     have hpair : RecursiveIn O (fun p => Nat.pair <$> t1 p <*> t2 p) :=
       RecursiveIn.pair ht1 ht2
-    have : RecursiveIn O (fun p => (Nat.pair <$> t1 p <*> t2 p) >>= mulPair) :=
-      RecursiveIn.comp hmul hpair
-    simpa [cmp] using this
+    exact RecursiveIn.comp hmul hpair
   refine ⟨cmp, hcmp, ?_⟩
   funext n
   let φ : ℕ → Bool := fun m => decide (m = 0)
@@ -401,12 +396,10 @@ theorem turingJoin_recursiveIn_pair (f g : ℕ →. ℕ) :
   let oddBranch : ℕ →. ℕ := fun n => (payload n >>= g) >>= dbl1
   have heven : RecursiveIn O evenBranch := by
     have h1 : RecursiveIn O (fun n => payload n >>= f) := RecursiveIn.comp hfO hpayload
-    have h2 : RecursiveIn O (fun n => (payload n >>= f) >>= dbl) := RecursiveIn.comp hdbl h1
-    simpa [evenBranch] using h2
+    exact RecursiveIn.comp hdbl h1
   have hodd : RecursiveIn O oddBranch := by
     have h1 : RecursiveIn O (fun n => payload n >>= g) := RecursiveIn.comp hgO hpayload
-    have h2 : RecursiveIn O (fun n => (payload n >>= g) >>= dbl1) := RecursiveIn.comp hdbl1 h1
-    simpa [oddBranch] using h2
+    exact RecursiveIn.comp hdbl1 h1
   have hc : Computable Nat.bodd := by
     simpa using (Computable.nat_bodd : Computable Nat.bodd)
   have hcond :

@@ -108,8 +108,7 @@ theorem delta_astar (d n₀ n₁ n₂ r₀ r₁ r₂ M : ℤ)
     · refine le_trans ?_ (norm_le_pi_norm (rem astar d p) 1)
       rw [c1 p, normcoord, hMa]
       have hnum : ((|r₁| : ℤ) : ℝ) ≤ ((|-11872 * d - 50000 * p 1| : ℤ) : ℝ) := by
-        exact_mod_cast abs_residue_le 50000 r₁ (-11872 * d) (by norm_num) hb1 ⟨n₁, by linarith
-          [hr1]⟩ (p 1)
+        exact_mod_cast abs_residue_le 50000 r₁ (-11872 * d) (by norm_num) hb1 ⟨n₁, by exact Int.sub_eq_iff_eq_add'.mpr hr1⟩ (p 1)
       linarith
     · refine le_trans ?_ (norm_le_pi_norm (rem astar d p) 2)
       rw [c2 p, normcoord, hMa]

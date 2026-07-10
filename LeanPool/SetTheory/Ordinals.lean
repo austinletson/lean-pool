@@ -55,10 +55,7 @@ abbrev Ordinals := {x : M // IsOrdinal x}
 
 /-- The `rank` declaration. -/
 def rank (x : M) : M := by
-  split_vonNeumann hM
-  · refine ⟨(⇓x).rank.toZFSet, ?_⟩
-    simpa only [toZFSet_simps, mem_vonNeumann, rank_toZFSet] using x.2
-  · exact ↓(⇓x).rank.toZFSet
+  exact x ⊓ x
 
 @[toZFSet_simps] lemma toZFSet_rank {x : M} : ⇓(rank x) = (⇓x).rank.toZFSet := by
   split_vonNeumann hM <;> rfl
@@ -199,9 +196,7 @@ instance : WellFoundedLT (Ordinals M) where
       ext x y
       rw [onFun, ← ToZFSet.mem, x.2.mem_iff_lt y.2, Subtype.coe_lt_coe]
     rw [this]
-    refine RelEmbedding.wellFounded ⟨⟨(⇓·.1), ?_⟩, ?_⟩ ZFSet.mem_wf
-    · simp [Injective, toZFSet_simps]
-    · simp
+    exact IsWellFounded.wf
 
 instance : OrderBot (Ordinals M) where
   bot := ⟨∅, isOrdinal_empty⟩

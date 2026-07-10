@@ -405,8 +405,7 @@ theorem rTensor_counit_comp_comul_comp_unit_eq_unit :
 theorem lTensor_counit_comp_comul_comp_unit_eq_unit :
   (lT _ counit) ∘ₗ comul ∘ₗ Algebra.linearMap R A
     = (TensorProduct.rid _ _).symm.toLinearMap ∘ₗ Algebra.linearMap R A := by
-  rw [← LinearMap.comp_assoc, lTensor_counit_comp_comul]
-  rfl
+  exact lTensor_counit_comp_comul_unit
 
 /-- An algebra and coalgebra with the Frobenius tensor compatibility law. -/
 class FrobeniusAlgebra (R A : Type*) [CommSemiring R] [Semiring A] extends

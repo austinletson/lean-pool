@@ -79,9 +79,7 @@ theorem residueSimplePole_eq_zero_of_nonneg_order (f : ℂ → ℂ) (z₀ : ℂ)
     obtain ⟨g, hg_an, _hg_ne, hg_eq⟩ := (meromorphicOrderAt_ne_top_iff hf).mp htop
     set n := (meromorphicOrderAt f z₀).untop₀
     have hord_val : (0 : ℤ) ≤ n := by
-      have h_fin := WithTop.coe_untop₀_of_ne_top htop
-      rw [← h_fin] at hord
-      exact_mod_cast hord
+      exact WithTop.untop₀_nonneg.mpr hord
     -- (z - z₀) * f(z) =ᶠ (z-z₀)^(n+1) • g(z) with n+1 ≥ 1, tends to 0
     have hexp_pos : 0 < n + 1 := by omega
     -- First show the eventual equality

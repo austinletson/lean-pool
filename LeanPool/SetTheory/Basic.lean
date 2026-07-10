@@ -438,8 +438,7 @@ namespace SetTheory
 @[toV_simps] lemma singleton.toV {x} : {↓x} = ↓({x} : M) := by
   rw [Singleton.singleton.eq_iff, ToV.forall_mem_toV_iff]
   · simpa only [toV_simps] using Singleton.singleton.spec _
-  · rintro z ⟨_⟩
-    exact ⟨x, rfl⟩
+  · exact fun y a => Exists.intro x (id (Eq.symm a))
 
 @[toZFSet_simps] lemma singleton.toZFSet {x} : ⇓({x} : M) = {⇓x} := by
   simp (config := {singlePass := true}) only [← ToZFSet.toZFSet_toV]
@@ -572,8 +571,7 @@ lemma trcl_sub {x y : M} (hx : IsTransitive y) (sub : x ⊆ y) : trcl x ⊆ y :=
   rintro z (hz | hz) <;> exact trcl_trans hz <| sub_trcl (by simp)
 
 @[realize] lemma inter.eu (x y : M) : IsSet {z | z ∈ x ∧ z ∈ y} := by
-  rw [isSet_iff]
-  exact ⟨y, by simp⟩
+  exact exists_separate x (Membership.mem y)
 
 end SetTheory
 

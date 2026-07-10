@@ -213,9 +213,7 @@ theorem AONFor_is_Correct {N : Nat} [NeZero N] (f : BitString N → Bool) :
       rw [mkGate_eval_true_iff f m _ hfm]
       intro j; rw [AONFor_wireValue_input f x j]; exact (hm j).symm
   -- Close by Bool case analysis using the ↔
-  cases hfx : f x <;>
-    cases hfold : Fin.foldl (2 ^ N) (fun acc i =>
-      acc || (AONFor.mkGate f i).eval ((AONFor f).wireValue x)) false <;>
+  exact Eq.symm ((fun {a b} => Bool.coe_iff_coe.mp) (id (Iff.symm h_iff))) <;>
     simp_all
 
 /-! ## Multi-output DNF circuit: AONForM -/
@@ -396,9 +394,7 @@ theorem AONForM_is_Correct {N M : Nat} [NeZero N] [NeZero M]
       intro p; rw [AONForM_wireValue_input f x p]
       rw [AONForM_idx_i]; exact (hm p).symm
   -- Close by Bool case analysis
-  cases hfx : f x j <;>
-    cases hfold : Fin.foldl (2 ^ N) (fun acc k =>
-      acc || (AONForM_mkGate f (AONForM_idx j k)).eval ((AONForM f).wireValue x)) false <;>
+  exact Eq.symm ((fun {a b} => Bool.coe_iff_coe.mp) (id (Iff.symm h_iff))) <;>
     simp_all
 
 instance : CompleteBasis Basis.unboundedAON where

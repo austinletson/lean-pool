@@ -44,8 +44,7 @@ theorem Submodule.invariantUnder_iff_ortho_adjoint_invariant [FiniteDimensional 
     Set.mem_image, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
   intro U T h x hx y hy
   rw [LinearMap.adjoint_inner_right]
-  apply (Submodule.mem_orthogonal U x).mp hx
-  apply h y hy
+  exact inner_right_of_mem_orthogonal (h y hy) hx
 
 open ContinuousLinearMap in
 theorem Submodule.invariantUnder_iff_ortho_adjoint_invariant' (U : Submodule 𝕜 V) [CompleteSpace V]
@@ -166,8 +165,7 @@ theorem IsSymmetric.neg (T : V →ₗ[𝕜] V) (hT : T.IsSymmetric) : IsSymmetri
 
 theorem IsSymmetric.sub {T S : V →ₗ[𝕜] V} (hT : T.IsSymmetric) (hS : S.IsSymmetric) :
     (T - S).IsSymmetric := by
-  rw [sub_eq_add_neg]
-  exact IsSymmetric.add hT (IsSymmetric.neg S hS)
+  exact LinearMap.IsSymmetric.sub hT hS
 
 /-- $T$ is normal if and only if $\forall v, \|T v\| = \|T^* v\|$ -/
 theorem LinearMap.IsStarNormal.norm_eq_adjoint [FiniteDimensional 𝕜 V] (T : V →ₗ[𝕜] V) :
@@ -184,25 +182,7 @@ theorem LinearMap.IsStarNormal.norm_eq_adjoint [FiniteDimensional 𝕜 V] (T : V
 
 theorem ContinuousLinearMap.IsStarNormal.norm_eq_adjoint [CompleteSpace V] (T : V →L[𝕜] V) :
     IsStarNormal T ↔ ∀ v : V, ‖T v‖ = ‖adjoint T v‖ := by
-  rw [T.isStarNormal_iff_adjoint, Commute, SemiconjBy, ← sub_eq_zero]
-  simp_rw [ContinuousLinearMap.ext_iff, ← ContinuousLinearMap.coe_coe,
-    ContinuousLinearMap.toLinearMap_sub,
-    ← LinearMap.ext_iff, ContinuousLinearMap.toLinearMap_zero]
-  have : IsSymmetric ((T.comp (adjoint T) : V →ₗ[𝕜] V) - ((adjoint T).comp T : V →ₗ[𝕜] V)) :=
-    fun u v => by
-    simp_rw [← ContinuousLinearMap.mul_def, LinearMap.sub_apply,
-      ContinuousLinearMap.coe_coe,
-      mul_apply_eq_comp, inner_sub_left, inner_sub_right,
-      ContinuousLinearMap.adjoint_inner_left, ContinuousLinearMap.adjoint_inner_right, sub_left_inj,
-      ← ContinuousLinearMap.adjoint_inner_left T, ← ContinuousLinearMap.adjoint_inner_right T]
-  simp_rw [← ContinuousLinearMap.mul_def] at this
-  rw [← IsSymmetric.inner_map_self_eq_zero this]
-  simp_rw [LinearMap.sub_apply, inner_sub_left, ContinuousLinearMap.coe_coe,
-    mul_apply_eq_comp, ContinuousLinearMap.adjoint_inner_left,
-    inner_self_eq_norm_sq_to_K, ← ContinuousLinearMap.adjoint_inner_right T,
-    inner_self_eq_norm_sq_to_K, sub_eq_zero, ←
-    sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _), eq_comm]
-  norm_cast
+  exact isStarNormal_iff_norm_eq_adjoint
 
 /-- if $T$ is normal, then $\textnormal{ker}(T) = \textnormal{ker}(T^*)$ -/
 theorem LinearMap.IsStarNormal.ker_eq_ker_adjoint [InnerProductSpace ℂ V] [FiniteDimensional ℂ V]

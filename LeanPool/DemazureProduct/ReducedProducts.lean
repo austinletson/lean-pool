@@ -191,8 +191,7 @@ private lemma star_le_mul_of_reducedProduct (α β : AspPerm)
         ⟨hm'.2.1, hm'.1⟩
     simp_all
   have hval₀ : (α.s ⋆ β.s) a b ≤ α.s a l₀ + β.s l₀ b := by
-    simpa using
-      SlipFace.star_val_le α.s β.s a b l₀
+    exact SlipFace.star_val_le α.s β.s a b l₀
   have hcount₀ := star_sum_eq_mul_add_errors α β a b l₀
   simp only [hl₀, add_zero, hlo₀, Finset.card_empty, Nat.cast_zero] at hcount₀
   have hhi₀ : 0 < (star_hi_error α β a b l₀).card := by
@@ -213,8 +212,7 @@ private lemma star_le_mul_of_reducedProduct (α β : AspPerm)
     have hn'_le : n' ≤ n := Finset.le_max' H n' hn'H
     omega
   have hval_succ : (α.s ⋆ β.s) a b ≤ α.s a (n + 1) + β.s (n + 1) b := by
-    simpa using
-      SlipFace.star_val_le α.s β.s a b (n + 1)
+    exact SlipFace.star_val_le α.s β.s a b (n + 1)
   have hcount_succ := star_sum_eq_mul_add_errors α β a b (n + 1)
   simp only [hhi_succ, Finset.card_empty, Nat.cast_zero] at hcount_succ
   have hlo_succ : 0 < (star_lo_error α β a b (n + 1)).card := by
@@ -520,8 +518,7 @@ theorem rres_eq_mul_iff (α β : AspPerm) :
   constructor
   · intro hweak
     simpa only [inv_inv] using AspPerm.le_weak_R_of_L hweak
-  · intro hweak
-    exact AspPerm.le_weak_L_of_R hweak
+  · exact fun a => AspPerm.le_weak_L_of_R a
 
 
 /-! ### Weak order implies strong order -/
@@ -641,8 +638,7 @@ private theorem of_lel_lres {α β γ : AspPerm}
     simp_all
   have h_mul : α * β = γ := by
     rw [← eq_α, mul_assoc, inv_mul_cancel, mul_one]
-  rw [← h_mul] at h_lel
-  exact ReducedFact.mk ((AspPerm.reduced_iff_leL α β).mpr h_lel) h_mul
+  exact of_mul_lel h_mul h_lel
 
 theorem of_ler_rres {α β γ : AspPerm}
     (h_ler : α ≤R γ) (h_rres : α⁻¹ ▹ γ = β) : ReducedFact α β γ := by
@@ -651,8 +647,7 @@ theorem of_ler_rres {α β γ : AspPerm}
     simp_all
   have h_mul : α * β = γ := by
     rw [← eq_β, ← mul_assoc, mul_inv_cancel, one_mul]
-  rw [← h_mul] at h_ler
-  exact ReducedFact.mk ((AspPerm.reduced_iff_leR α β).mpr h_ler) h_mul
+  exact of_mul_ler h_mul h_ler
 
 /-- The Demazure product in a reduced factorization has the same value as its ordinary
 product. -/

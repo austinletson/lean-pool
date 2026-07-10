@@ -54,15 +54,7 @@ lemma coe_inv_eq_inv_coe (u : Rˣ) : (u : K)⁻¹ = u⁻¹ := by
 
 lemma mem_or_inv_mem (x : K) : x ∈ R ∨ x⁻¹ ∈ R := by
   rw [mem_subring_iff_integer, mem_subring_iff_integer]
-  by_cases h : v x ≤ 1
-  · exact Or.inl h
-  · apply Or.inr
-    have hx : x ≠ 0 := by
-      rintro rfl
-      simp at h
-    have hvx : 1 < v x := not_le.mp h
-    rw [Valuation.one_lt_val_iff v hx] at hvx
-    exact le_of_lt hvx
+  exact Valuation.val_le_one_or_val_inv_le_one (ValuationRing.valuation (↥R) K) x
 
 include hϖ in
 lemma eq_unit_mul_pow_irreducible [IsDiscreteValuationRing R] (x : K) (hx : x ≠ 0) :
@@ -187,8 +179,7 @@ lemma unit_mul_zpow_congr_zpow' (a b : Rˣ) (m n : ℤ) (h : a * ϖ.val ^ m = b 
     IsDiscreteValuationRing.unit_mul_pow_congr_pow hϖ hϖ a b 0 (Int.toNat (n - m)) this
   rw [← Nat.cast_inj (R := ℤ)] at this
   simp only [CharP.cast_eq_zero, Int.ofNat_toNat, right_eq_sup, tsub_le_iff_right, zero_add] at this
-  symm
-  exact Int.le_antisymm this hmn
+  exact Int.le_antisymm hmn this
 
 lemma unit_mul_zpow_congr_zpow {p q : R} (hp : Irreducible p) (hq : Irreducible q)
     (a b : Rˣ) (m n : ℤ) (h : a * p.val ^ m = b * q.val ^ n) :
@@ -199,8 +190,7 @@ lemma unit_mul_zpow_congr_zpow {p q : R} (hp : Irreducible p) (hq : Irreducible 
   nth_rw 3 [mul_comm] at h
   have : (b * u ^ n).val.val = b.val.val * u.val.val ^ n := by simp
   rw [← mul_assoc, ← this] at h
-  apply unit_mul_zpow_congr_zpow' _ hp
-  exact h
+  exact unit_mul_zpow_congr_zpow' p hp a (b * u ^ n) m n h
 
 include hϖ in
 omit [IsDiscreteValuationRing R] in
@@ -284,8 +274,7 @@ lemma zaddVal'_eq_iff (n : ℤ) (x : Kˣ) :
     rw [Units.ext_iff] at hy
     simp only [Units.val_mul, Units.coe_map, MonoidHom.coe_coe, Subring.coe_subtype,
       Units.val_zpow_eq_zpow_val, Units.val_mk0] at hy
-    apply unit_mul_zpow_congr_zpow hϖ hϖ y u
-    exact hy.symm
+    exact unit_mul_zpow_congr_zpow' ϖ hϖ y u (zaddVal' ϖ hϖ x) n (id (Eq.symm hy))
 
 lemma zaddVal_eq_iff (n : ℤ) (x : Kˣ) :
     zaddVal (R := R) x = n ↔ ∃ (u : Rˣ), Units.map R.subtype u *

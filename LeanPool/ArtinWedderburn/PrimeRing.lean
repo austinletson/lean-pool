@@ -246,9 +246,7 @@ lemma two_sided_span_bot_forall {a b x y : R} (hab : bothMul a b = {0})
     x * y = 0 := by
   induction hy using AddSubgroup.closure_induction with
   | mem z hz =>
-    apply span_mul_closure_bot_forall' hab
-    · exact hx
-    · exact hz
+    exact span_mul_closure_bot_forall' hab hx hz
   | zero => simp
   | add u v hu hv ihu ihv =>
     noncomm_ring

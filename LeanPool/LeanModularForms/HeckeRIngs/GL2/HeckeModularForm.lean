@@ -299,9 +299,7 @@ private theorem heckeSlash_comp (k : ℤ) (D₁ D₂ : HeckeCoset (GLPair 2)) (f
       ∀ (i : decompQuot (GLPair 2) (HeckeCoset.rep D₁))
         (j : decompQuot (GLPair 2) (HeckeCoset.rep D₂)),
       (f ∣[k] tRep D₂ j) ∣[k] tRep D₁ i = f ∣[k] (tRep D₂ j * tRep D₁ i) := fun i j => by
-    change (f ∣[k] glMap (tRep D₂ j)) ∣[k] glMap (tRep D₁ i) =
-      f ∣[k] glMap (tRep D₂ j * tRep D₁ i)
-    rw [map_mul, ← SlashAction.slash_mul]
+    exact Eq.symm (SlashAction.slash_mul k (tRep D₂ j) (tRep D₁ i) f)
   simp_rw [h_slash_mul]; rw [← Fintype.sum_prod_type']
   change (∑ p : decompQuot (GLPair 2) (HeckeCoset.rep D₁) ×
       decompQuot (GLPair 2) (HeckeCoset.rep D₂),

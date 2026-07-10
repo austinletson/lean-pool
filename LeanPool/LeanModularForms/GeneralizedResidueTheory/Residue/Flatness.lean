@@ -263,10 +263,8 @@ theorem isFlatOfOrder_one (γ : PiecewiseC1Immersion) (t₀ : ℝ)
     exact γ.smooth_off_partition t ht₂ fun hm =>
       ht₁ ⟨hm, ne_of_lt (Set.mem_Iio.mp ht₃)⟩
   constructor
-  · intro L hL hL_right
-    exact tangentDeviation_isLittleO_right γ.toFun t₀ L hL hL_right hcont hdiff_right
-  · intro L hL hL_left
-    exact tangentDeviation_isLittleO_left γ.toFun t₀ L hL hL_left hcont hdiff_left
+  · exact fun L a a_1 => tangentDeviation_isLittleO_right γ.toFun t₀ L a a_1 hcont hdiff_right
+  · exact fun L a a_1 => tangentDeviation_isLittleO_left γ.toFun t₀ L a a_1 hcont hdiff_left
 
 /-! ### Pole order -/
 

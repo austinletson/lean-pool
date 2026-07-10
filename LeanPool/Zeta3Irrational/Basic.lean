@@ -74,10 +74,7 @@ theorem linear_int (n : ℕ) : ∃ a b : ℕ → ℤ,
     · rw [mul_div_assoc', ← mul_div_assoc, div_eq_div_iff]
       · norm_cast
         rw [← mul_assoc, ← mul_assoc]
-      · simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, pow_eq_zero_iff,
-        Nat.cast_eq_zero]
-        apply d_ne_zero
-        simp
+      · exact d_cube_ne_zero
       · simp only [Int.cast_pow, Int.cast_natCast, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true,
         pow_eq_zero_iff, Nat.cast_eq_zero]
         apply d_ne_zero
@@ -929,7 +926,6 @@ theorem JJ_eq_form (n : ℕ) : JJ n = JJ' n := by
       (1 - (1 - x.1 * x.2) * z) ^ (n + 1) := by
     apply MeasureTheory.setIntegral_congr_fun (by measurability)
     intro z hz
-    simp only
     exact double_integral_eq1 n z hz
   _ = ∫ (x : ℝ × ℝ) in Set.Ioo 0 1 ×ˢ Set.Ioo 0 1, ∫ (z : ℝ) in Set.Ioo 0 1,
     eval x.1 (shiftedLegendre n) * (x.1 * x.2 * z) ^ n * (1 - x.2) ^ n /
@@ -940,7 +936,6 @@ theorem JJ_eq_form (n : ℕ) : JJ n = JJ' n := by
     eval x.1 (shiftedLegendre n) * (1 - z) ^ n * (1 - x.2) ^ n / (1 - (1 - x.1 * x.2) * z) := by
     apply MeasureTheory.setIntegral_congr_fun (by measurability)
     intro x hx
-    simp only
     exact double_integral_eq2 n x hx
   _ = ∫ (z : ℝ) in Set.Ioo 0 1, ∫ (x : ℝ × ℝ) in Set.Ioo 0 1 ×ˢ Set.Ioo 0 1,
     eval x.1 (shiftedLegendre n) * (1 - z) ^ n * (1 - x.2) ^ n / (1 - (1 - x.1 * x.2) * z) := by

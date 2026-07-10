@@ -366,15 +366,7 @@ private lemma ftc_logDeriv_telescope_rho (H : ℝ) (hH : Real.sqrt 3 / 2 < H)
       |>.congr_deriv (by simp [mul_one])
   have hd_h₁ : ∀ t : ℝ, HasDerivAt h₁
       (↑(Real.pi / 6) * I * exp (↑(Real.pi * (1 + t) / 6) * I)) t := by
-    intro t
-    have hf : HasDerivAt (fun s : ℝ => Real.pi * (1 + s) / 6) (Real.pi / 6) t :=
-      ((hasDerivAt_id t).add_const (1 : ℝ) |>.const_mul (Real.pi / 6)).congr_of_eventuallyEq
-        (Eventually.of_forall fun s => show _ from by simp [id]; ring)
-        |>.congr_deriv (by ring)
-    have hci : HasDerivAt (fun s : ℝ => (↑(Real.pi * (1 + s) / 6) : ℂ) * I)
-        ((↑(Real.pi / 6) : ℂ) * I) t :=
-      (hf.ofReal_comp.mul_const I).congr_deriv (by norm_num [smul_eq_mul])
-    exact (hci.cexp.sub (hasDerivAt_const t ρ)).congr_deriv (by simp only [sub_zero]; ring)
+    exact fun t => hasDerivAt_arc ρ t
   have hd_h₂ : ∀ t : ℝ, HasDerivAt h₂ ((↑(H - Real.sqrt 3 / 2) : ℂ) * I) t := by
     intro t
     exact ((((hasDerivAt_id t).sub (hasDerivAt_const t 3)).mul_const
@@ -837,8 +829,7 @@ theorem pv_integral_at_rho_tendsto (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
       else 0) = (fun ε => ∫ t in (0 : ℝ)..5,
       if ‖g t - 0‖ > ε then (g t - 0)⁻¹ * deriv g t else 0) := by
     funext ε; congr 1; funext t; simp only [hg_def, sub_zero]
-  rw [h_eq]
-  exact h_tendsto
+  exact tendsto_nhdsWithin_congr (fun x a => congrFun (id (Eq.symm h_eq)) x) h_tendsto
 
 /-- `generalizedWindingNumber' (fdBoundaryH H) 0 5 ρ = -1/6`. -/
 theorem gWN_fdBoundary_H_at_rho (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :

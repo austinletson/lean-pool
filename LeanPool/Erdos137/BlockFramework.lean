@@ -333,8 +333,7 @@ lemma overlapg_le (hg : 1 ≤ g) {k n p : ℕ} (hn : 1 ≤ n) : overlapg g k n p
           exact ⟨i, hi, hidvd⟩
         set S : Finset ℕ := (Finset.range g).filter (fun r => p ∣ (n + g * j + r)) with hS
         have hSne : S.Nonempty := by
-          obtain ⟨r, hr, hrd⟩ := hexists
-          exact ⟨r, by rw [hS, Finset.mem_filter]; exact ⟨hr, hrd⟩⟩
+          exact filter_nonempty_iff.mpr hexists
         obtain ⟨r0, hr0min⟩ := Finset.min_of_nonempty hSne
         have hr0mem : r0 ∈ S := Finset.mem_of_min hr0min
         rw [hS, Finset.mem_filter, Finset.mem_range] at hr0mem
@@ -715,11 +714,7 @@ the set of `n ≥ 1` with `F k n` powerful is **finite**: every such `n` satisfi
 The crude analogue of `g_finiteness`, with a fully explicit threshold. -/
 theorem crude_g_finiteness (g : ℕ) (hBlock : BlockRadLBg g) (hg : 3 ≤ g) {k : ℕ} (hk : g ≤ k) :
     {n : ℕ | 1 ≤ n ∧ Powerful (F k n)}.Finite := by
-  apply Set.Finite.subset (Set.finite_Iic (k ^ (2 * g)))
-  intro n hn
-  simp only [Set.mem_setOf_eq] at hn
-  simp only [Set.mem_Iic]
-  exact powerful_bound_crude_g g hBlock hg hk hn.1 hn.2
+  exact g_finiteness g hBlock hg hk
 
 end  -- noncomputable section
 

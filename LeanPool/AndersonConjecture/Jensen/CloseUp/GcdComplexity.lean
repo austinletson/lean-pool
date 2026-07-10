@@ -220,8 +220,7 @@ lemma nzd_element_in_span_prime
     change Ideal.Quotient.mk _ ((a : T) * t_val) = 0
     exact Ideal.Quotient.eq_zero_iff_mem.mpr h_at_mem
   have h_t_zero : Ideal.Quotient.mk (Ideal.span {(q : T)}) t_val = 0 := by
-    have h0 : (a : T) • (0 : T ⧸ Ideal.span {(q : T)}) = 0 := smul_zero _
-    exact ha_reg (h_quot_zero.trans h0.symm)
+    exact IsSMulRegular.right_eq_zero_of_smul ha_reg h_quot_zero
   have h_t_mem : t_val ∈ Ideal.span {(q : T)} :=
     Ideal.Quotient.eq_zero_iff_mem.mp h_t_zero
   exact Ideal.mem_span_singleton.mp h_t_mem

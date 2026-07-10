@@ -24,8 +24,7 @@ open BASICModel IOPENModel
 
 
 theorem isAddRightRegular_one : IsAddRightRegular (1 : M) := by
-  unfold IsAddRightRegular Function.Injective
-  exact B2
+  exact one_add_right_regular
 
 instance : IsRightCancelAdd M where
   add_right_cancel := by
@@ -55,11 +54,7 @@ instance instAddCommMonoidLeanPool : AddCommMonoid M where
 instance instSemiringLeanPool : Semiring M where
   left_distrib := IOPENModel.mul_add
   right_distrib := by
-    intro a b c
-    rw [<- iopen.mul_comm]
-    rw [iopen.mul_add]
-    rw [iopen.mul_comm]
-    conv => lhs; rhs; rw [iopen.mul_comm]
+    exact fun a b c => IOPENModel.add_mul a b c
 
 end IOPEN
 

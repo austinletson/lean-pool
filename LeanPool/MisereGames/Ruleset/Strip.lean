@@ -827,8 +827,7 @@ theorem toGameForm_hasStride (s : R) (p : Player) :
     · refine ⟨Strip.toGameForm (push s k), toGameForm_push_mem_moves p hrm, ?_, ?_⟩
       · by_cases hk_pos : 0 < k
         · have h_str := stride_push_at_rightmost p rfl hk_pos hrm
-          have h_hs := ih_push k p hk_ne
-          rwa [h_str] at h_hs
+          exact (hasStride_mk_iff (stride (push s k) p) (ih_push k p hk_ne)).mpr (id (Eq.symm h_str))
         · have hk_zero : (k : ℕ) = 0 := by omega
           have h_empty : ∀ n, board (push s 0) n = .none :=
             push_rightmost_zero_empty (by rw [← hk_def]; exact hk_zero)

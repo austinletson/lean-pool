@@ -305,8 +305,7 @@ lemma positive_iff {t : Semiterm L ξ (n + 1)} : t.Positive ↔ ∃ t', t = bShi
         choose w hw using this
         exact ⟨func f w, by
           simp only [Rew.func, func.injEq, heq_eq_eq, true_and]
-          funext i
-          exact hw i⟩,
+          exact funext hw⟩,
    by rintro ⟨t', rfl⟩; exact bShift_positive t'⟩
 
 @[simp] lemma leftConcat_bShift_comp_bvar :

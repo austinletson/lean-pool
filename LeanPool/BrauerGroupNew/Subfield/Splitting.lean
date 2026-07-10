@@ -309,11 +309,7 @@ theorem isSplit_iff_dimension [FiniteDimensional F K] (A : CSA F) :
       change Module.finrank F B = n * Module.finrank K B at eq
       rw [dim_eq, pow_two] at eq
       replace eq : n = Module.finrank K B := by
-        set m := Module.finrank K B
-        have m_pos : 0 < m := Module.finrank_pos
-        clear_value n m
-        simp only [mul_eq_mul_left_iff] at eq
-        refine eq.resolve_right (by omega)
+        exact Nat.eq_of_mul_eq_mul_left n_pos eq
       simp only [← eq, pow_two]]
 
 end CSA
@@ -323,22 +319,7 @@ section CSA2
 /-- Splitting passes across Brauer equivalence. -/
 theorem isSplit_if_equiv (A B : CSA F) (hAB : IsBrauerEquivalent A B) (hA : isSplit F A K) :
     isSplit F B K := by
-  obtain ⟨n, m, hn, hm, ⟨iso⟩⟩ := hAB
-  obtain ⟨p, hp, ⟨e⟩⟩ := hA
-  obtain ⟨q, hq, D, hD1, _, ⟨e'⟩⟩ := WedderburnArtin_algebra_version K (K ⊗[F] B)
-  haveI := is_fin_dim_of_wdb K (K ⊗[F] B) hq D e'
-  have ee := Matrix.reindexAlgEquiv _ _ finProdFinEquiv |>.symm.trans <|
-    Matrix.compAlgEquiv _ _ _ _ |>.symm.trans <| e'.mapMatrix.symm.trans <|
-    matrixTensorEquivTensor K F B (Fin m) |>.symm.trans <|
-    Algebra.TensorProduct.congr (A := K) (S := K) .refl iso |>.symm.trans <|
-    matrixTensorEquivTensor K F A (Fin n) |>.trans <| e.mapMatrix (m := (Fin n)) |>.trans <|
-      Matrix.compAlgEquiv (Fin n) (Fin p) K K |>.trans <| Matrix.reindexAlgEquiv K K
-        finProdFinEquiv
-  haveI : NeZero (m * q) := ⟨by aesop⟩
-  haveI : NeZero (n * p) := ⟨by aesop⟩
-  exact ⟨q, ⟨hq⟩, ⟨e'.trans <|
-    WedderburnArtin_uniqueness₀ K (Matrix (Fin (m * q)) (Fin (m * q)) D) (m * q) (n * p)
-      D AlgEquiv.refl K ee |>.some.mapMatrix⟩⟩
+  exact (split_sound' K F A B hAB).mp hA
 
 end CSA2
 

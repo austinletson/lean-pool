@@ -684,9 +684,7 @@ noncomputable def _root_.LieAlgebra.Dim3.Hyperbolic.commutatorBasis : Basis (Fin
     unfold e₂ e₃ Hyperbolic at hst
     simp_all
   have li_range : Set.range ![(e₂ : Hyperbolic K), e₃] = {e₂, e₃} := by
-    simp only [Matrix.range_cons, Matrix.range_empty,
-      Set.union_empty, Set.union_singleton]
-    exact Set.pair_comm e₃ e₂
+    exact Matrix.range_cons_cons_empty e₂ e₃ ![]
   let b := Basis.span li
   rw [li_range, ← commutator_is_span_e₂e₃] at b
   exact b
@@ -1097,9 +1095,7 @@ noncomputable def _root_.LieAlgebra.Dim3.Family.commutatorBasis (α β : K) (hα
         apply Subtype.ext
         rw [Set.map_into_subtype_apply (↑(commutator K (Family K α β))) (B α β) (B_setrange) (0)]
         · unfold B
-          simp only [Matrix.cons_val_zero, e₂_def]
-          unfold e₂
-          simp only [e₂_def]
+          exact Matrix.cons_val_zero Family.e₂ ![Family.e₃]
         · exact hα
       · subst e1
         simp only [Set.mem_setOf_eq]

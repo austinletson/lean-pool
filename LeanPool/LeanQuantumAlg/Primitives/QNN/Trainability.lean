@@ -48,9 +48,7 @@ theorem ExpConcentrated.tendsto {X : ℕ → ℝ} {μ : ℝ} (h : ExpConcentrate
   have key : Filter.Tendsto (fun n => C / b ^ n) Filter.atTop (nhds 0) := by
     have hbpow : Filter.Tendsto (fun n => b ^ n) Filter.atTop Filter.atTop :=
       tendsto_pow_atTop_atTop_of_one_lt hb
-    have hinv : Filter.Tendsto (fun n => (b ^ n)⁻¹) Filter.atTop (nhds 0) :=
-      tendsto_inv_atTop_zero.comp hbpow
-    simpa [div_eq_mul_inv] using hinv.const_mul C
+    exact Tendsto.const_div_atTop hbpow C
   have hsq : Filter.Tendsto (fun n => |X n - μ|) Filter.atTop (nhds 0) :=
     squeeze_zero (fun n => abs_nonneg _) hbnd key
   rw [tendsto_iff_dist_tendsto_zero]

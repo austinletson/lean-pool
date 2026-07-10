@@ -230,13 +230,7 @@ theorem LinearMap.ker_coe_def {R E F : Type _} [Semiring R] [AddCommMonoid E] [A
 
 theorem exists_dual_vector_of_ne {X : Type _} [NormedAddCommGroup X] [NormedSpace 𝕜 X] {x y : X}
     (h : x ≠ y) : ∃ f : StrongDual 𝕜 X, f x ≠ f y := by
-  rw [ne_eq, ← sub_eq_zero] at h
-  obtain ⟨f, ⟨_, hxy⟩⟩ := exists_dual_vector (𝕜 := 𝕜) (x - y) (by
-    rwa [norm_ne_zero_iff])
-  rw [map_sub] at hxy
-  refine ⟨f, fun H => ?_⟩
-  rw [H, sub_self, eq_comm, RCLike.ofReal_eq_zero, norm_eq_zero] at hxy
-  contradiction
+  exact SeparatingDual.exists_separating_of_ne h
 
 theorem isLinearMap_zero (R : Type _) {E F : Type _} [CommSemiring R] [AddCommMonoid E] [Module R E]
     [AddCommMonoid F] [Module R F] : IsLinearMap R (0 : E → F) :=
@@ -415,9 +409,7 @@ example
     [NormedSpace 𝕜 X] [NormedSpace 𝕜 Y] [NormedSpace 𝕜 Z] [CompleteSpace X] [CompleteSpace Y]
     [CompleteSpace Z] (β : X →L[𝕜] Y →L[𝕜] Z) : ∃ M : ℝ, ∀ x y, ‖β x y‖ ≤ M * ‖x‖ * ‖y‖ := by
   use ‖β‖
-  intro x y
-  apply ContinuousLinearMap.le_of_opNorm_le
-  exact ContinuousLinearMap.le_opNorm _ _
+  exact fun x y => ContinuousLinearMap.le_opNorm₂ β x y
 
 lemma Set.mem_extremePoints_iff'
   {H : Type _} [AddCommMonoid H] [SMul 𝕜 H] (x : H) (y : Set H) :

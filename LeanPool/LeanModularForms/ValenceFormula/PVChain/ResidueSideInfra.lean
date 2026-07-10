@@ -587,10 +587,7 @@ lemma winding_zero_for_non_fd_point_H_geo (S : Finset UpperHalfPlane)
       exact this
     have h_fd : s ∈ 𝒟 := by
       refine ⟨?_, h_re⟩
-      change 1 ≤ Complex.normSq z₀
-      have h_sq := Complex.sq_norm z₀
-      rw [Complex.normSq_apply] at h_sq ⊢
-      nlinarith [h_sq]
+      exact one_le_normSq_iff.mpr h_norm
     have h_ord : orderOfVanishingAt' (⇑f) s ≠ 0 :=
       orderOfVanishingAt'_ne_zero_of_eq_zero f hf s h_fs
     exact hz₀_not_S s (hS_complete s h_fd h_ord) rfl

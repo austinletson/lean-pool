@@ -277,8 +277,7 @@ lemma nonempty_mulEquiv_prod_of_card_eq_prime_pow_two_of_not_isCyclic
     Nonempty (G ≃* (MulZMod p) × (MulZMod p)) := by
   have : Finite G := Finite.of_card_eq_neZero h
   have : Nontrivial G := by
-    rw [← Finite.one_lt_card_iff_nontrivial, h, Nat.one_lt_pow_iff (by norm_num1)]
-    exact hp.elim.one_lt
+    exact Nontrivial.of_not_isCyclic h'
   have ho : ∀ x ≠ (1 : G), orderOf x = p := by
     rwa [← Monoid.exponent_eq_prime_iff hp.elim, ← not_isCyclic_iff_exponent_eq_prime hp.elim h]
   obtain ⟨x, hx⟩ := exists_ne (1 : G)

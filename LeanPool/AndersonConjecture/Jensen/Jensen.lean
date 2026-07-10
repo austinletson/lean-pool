@@ -226,9 +226,7 @@ lemma coeff_rhs' (f : MvPowerSeries (Fin 3) ℂ) (d : Fin 3 →₀ ℕ) :
   rw [MvPowerSeries.coeff_monomial_mul]
   by_cases hle : Finsupp.single (0 : Fin 3) 2 ≤ d
   · have hd0 : 2 ≤ d 0 := by
-      have := hle 0
-      simp only [Finsupp.single_eq_same] at this
-      exact this
+      exact Finsupp.single_le_iff.mp hle
     simp only [hle, ite_true, one_mul]
     by_cases hd1 : d 1 = 0
     · simp only [hd0, hd1, true_and, ite_true]
@@ -250,12 +248,7 @@ lemma coeff_rhs' (f : MvPowerSeries (Fin 3) ℂ) (d : Fin 3 →₀ ℕ) :
   · have hd0 : ¬ (2 ≤ d 0) := by
       intro h
       apply hle
-      intro i
-      simp only [Finsupp.single_apply]
-      by_cases hi : i = 0
-      · subst hi
-        simpa only [Fin.isValue, ↓reduceIte] using h
-      · simp [show (0 : Fin 3) ≠ i from fun h => hi h.symm]
+      exact Finsupp.single_le_iff.mpr h
     simp [hle, hd0]
 
 open MvPowerSeries in
@@ -308,9 +301,7 @@ lemma coeff_f_vanish' (f g : MvPowerSeries (Fin 3) ℂ)
   have he0 : e 0 = d 0 := by simp [he_def, Finsupp.add_apply]
   have he1 : e 1 = 0 := by simp [he_def, Finsupp.add_apply, hd1]
   have hle2 : Finsupp.single (2 : Fin 3) 1 ≤ e := by
-    intro i
-    simp only [he_def, Finsupp.add_apply, Finsupp.single_apply]
-    split_ifs <;> omega
+    exact CanonicallyOrderedAdd.le_add_self (Finsupp.single 2 1) d
   have hnle1 : ¬ Finsupp.single (1 : Fin 3) 1 ≤ e := by
     intro h
     have h1 := h 1
@@ -421,89 +412,7 @@ theorem maximal_not_assoc_local
       RingTheory.Sequence.IsRegular T [a, b])
     (r : T) (hr : r ≠ 0) :
     IsLocalRing.maximalIdeal T ∉ associatedPrimes T (T ⧸ Ideal.span {r}) := by
-  intro hM_assoc
-  obtain ⟨a, b, ha_mem, hb_mem, hreg⟩ := hdepth
-  rw [RingTheory.Sequence.isRegular_cons_iff] at hreg
-  obtain ⟨ha_reg, hreg_b⟩ := hreg
-  rw [RingTheory.Sequence.isRegular_cons_iff] at hreg_b
-  obtain ⟨hb_reg_mod_a, _⟩ := hreg_b
-  rw [AssociatedPrimes.mem_iff, isAssociatedPrime_iff] at hM_assoc
-  obtain ⟨_, x, hx_ann⟩ := hM_assoc
-  have hx_ne : x ≠ 0 := by
-    intro hx0
-    rw [hx0] at hx_ann
-    have : IsLocalRing.maximalIdeal T = ⊤ := by
-      rw [hx_ann]
-      ext t
-      simp
-    exact (IsLocalRing.maximalIdeal.isMaximal T).ne_top this
-  obtain ⟨x_lift, rfl⟩ := Ideal.Quotient.mk_surjective x
-  have hx_not_mem : x_lift ∉ Ideal.span ({r} : Set T) := by
-    intro h
-    apply hx_ne
-    exact (Ideal.Quotient.eq_zero_iff_mem).mpr h
-  have ha_in_ann : a ∈ (⊥ : Submodule T (T ⧸ Ideal.span {r})).colon
-      {Ideal.Quotient.mk (Ideal.span {r}) x_lift} := by
-    rw [← hx_ann]
-    exact ha_mem
-  have ha_mul : a * x_lift ∈ Ideal.span ({r} : Set T) := by
-    rw [Submodule.mem_colon] at ha_in_ann
-    have := ha_in_ann (Ideal.Quotient.mk _ x_lift) (Set.mem_singleton _)
-    rw [Submodule.mem_bot] at this
-    rw [← Ideal.Quotient.eq_zero_iff_mem, map_mul]
-    exact this
-  have hb_in_ann : b ∈ (⊥ : Submodule T (T ⧸ Ideal.span {r})).colon
-      {Ideal.Quotient.mk (Ideal.span {r}) x_lift} := by
-    rw [← hx_ann]
-    exact hb_mem
-  have hb_mul : b * x_lift ∈ Ideal.span ({r} : Set T) := by
-    rw [Submodule.mem_colon] at hb_in_ann
-    have := hb_in_ann (Ideal.Quotient.mk _ x_lift) (Set.mem_singleton _)
-    rw [Submodule.mem_bot] at this
-    rw [← Ideal.Quotient.eq_zero_iff_mem, map_mul]
-    exact this
-  rw [Ideal.mem_span_singleton] at ha_mul hb_mul
-  obtain ⟨y₁, hy₁⟩ := ha_mul
-  obtain ⟨y₂, hy₂⟩ := hb_mul
-  have h_eq : r * (b * y₁) = r * (a * y₂) := by
-    have h1 : b * (a * x_lift) = a * (b * x_lift) := by ring
-    rw [hy₁, hy₂] at h1
-    calc r * (b * y₁) = b * (r * y₁) := by ring
-    _ = a * (r * y₂) := h1
-    _ = r * (a * y₂) := by ring
-  have h_cancel : b * y₁ = a * y₂ := by
-    have h_sub : r * (b * y₁ - a * y₂) = 0 := by rw [mul_sub]
-                                                 exact sub_eq_zero.mpr h_eq
-    exact sub_eq_zero.mp ((mul_eq_zero.mp h_sub).resolve_left hr)
-  have hby₁_mem : b * y₁ ∈ Ideal.span ({a} : Set T) :=
-    Ideal.mem_span_singleton.mpr ⟨y₂, h_cancel⟩
-  open Pointwise in
-  have hy₁_in_aT : y₁ ∈ Ideal.span ({a} : Set T) := by
-    have h_eq : (Ideal.span ({a} : Set T) : Submodule T T) = (a • ⊤ : Submodule T T) := by
-      ext x
-      constructor
-      · intro hx
-        rw [Ideal.mem_span_singleton] at hx
-        obtain ⟨c, rfl⟩ := hx
-        exact Submodule.smul_mem_pointwise_smul c a ⊤ Submodule.mem_top
-      · intro hx
-        have : x ∈ (a • (⊤ : Set T) : Set T) := SetLike.mem_coe.mpr hx
-        rw [Set.mem_smul_set] at this
-        obtain ⟨c, _, rfl⟩ := this
-        exact Ideal.mem_span_singleton.mpr ⟨c, by rw [smul_eq_mul]⟩
-    have hby₁_smul : b * y₁ ∈ (a • ⊤ : Submodule T T) := h_eq ▸ hby₁_mem
-    have hy₁_smul : y₁ ∈ (a • ⊤ : Submodule T T) :=
-      mem_of_isSMulRegular_quotient_of_smul_mem hb_reg_mod_a (by rwa [smul_eq_mul])
-    rw [h_eq]
-    exact hy₁_smul
-  rw [Ideal.mem_span_singleton] at hy₁_in_aT
-  obtain ⟨z, hz⟩ := hy₁_in_aT
-  have h_ax : a * x_lift = a * (r * z) := by rw [hy₁, hz]
-                                             ring
-  have h_x_eq : x_lift = r * z := by
-    have := ha_reg (show a • x_lift = a • (r * z) by rwa [smul_eq_mul, smul_eq_mul])
-    exact this
-  exact hx_not_mem (Ideal.mem_span_singleton.mpr ⟨z, h_x_eq⟩)
+  exact maximal_not_assoc_of_depth_ge_two hdepth r hr
 
 /-- Heitmann's Proposition 1, Noetherian part: if R → T/M² is surjective and
 IT ∩ R = I for all f.g. ideals, then R is Noetherian.

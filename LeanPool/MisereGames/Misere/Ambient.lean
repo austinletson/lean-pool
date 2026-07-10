@@ -57,8 +57,7 @@ instance : Ambient (IsLong : G → Prop) where
 private lemma rightSeparatorLeftSet_finite {r h : G} (hh : IsShort h) :
     (Separation.rightSeparatorLeftSet r h).Finite := by
   have := Short.finite_moves' Player.right hh
-  exact (Set.finite_singleton r).union
-    (Set.finite_range (fun hr : moves .right h => rootedAdjoint r (hr : G)))
+  exact Set.toFinite (rightSeparatorLeftSet r h)
 
 private lemma rightSeparatorLeftSet_short {r h : G} (h_root_short : IsShort r) (hh : IsShort h) :
     ∀ y ∈ Separation.rightSeparatorLeftSet r h, IsShort y := by

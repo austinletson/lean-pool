@@ -119,9 +119,7 @@ by
     | of_isAtomic hh => cases hh
     | imp hpre hpost =>
       rw [relabelEquiv.imp]
-      apply IsQF.imp
-      · exact hind_pre hpre
-      · exact hind_post hpost
+      exact imp (hind_pre hpre) (hind_post hpost)
   | all f f_ih =>
     cases h with
     | of_isAtomic h' => cases h'
@@ -361,9 +359,7 @@ by
     exact ih (g.sumCongr (_root_.Equiv.refl _))
   | imp pre post ihpre ihpost =>
     rw [relabelEquiv.imp]
-    constructor
-    · exact ihpre g
-    · exact ihpost g
+    exact IsDelta0.imp (ihpre g) (ihpost g)
   | of_isQF f =>
     exact IsDelta0.of_isQF (BoundedFormula.IsQF.relabelEquiv.mp g f)
 

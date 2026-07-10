@@ -78,8 +78,7 @@ noncomputable def trajProb
   let f : S → (Iic 0 → S) := fun s => (fun _ : Iic 0 => s)
   have hf : Measurable f := by
     apply measurable_pi_iff.mpr
-    intro x
-    apply measurable_id
+    exact fun a => measurable_id'
   let init := M.init.map hf.aemeasurable
   haveI : IsProbabilityMeasure init.1 := init.2
   let prob := init.1.bind κ

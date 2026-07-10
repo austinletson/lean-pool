@@ -228,8 +228,7 @@ mod-recursion `n % q^{t+1} = n % q^t + q^t·(n/q^t % q)`. -/
 /-- Base-`q` mod-recursion (KERNEL-CLEAN): `n % q^{t+1} = n % q^t + q^t·(n / q^t % q)`. -/
 theorem mod_pow_succ (n q t : ℕ) :
     n % q ^ (t + 1) = n % q ^ t + q ^ t * (n / q ^ t % q) := by
-  conv_lhs => rw [pow_succ]
-  rw [Nat.mod_mul]
+  exact Nat.mod_pow_succ
 
 /-- The partial tail lower bound `LB q n j t = b_j·q^j + B·(q^{j+1} + … + q^{t-1})`,
 expressed as `(n/q^j%q)·q^j + B·∑_{j < s < t} q^s`.  (Only used internally.) -/

@@ -43,9 +43,7 @@ theorem mulVec_stdBasis {R m n : Type _} [Semiring R] [Fintype n]
 theorem mulVec_eq {R m n : Type _} [CommSemiring R] [Fintype n]
     (a b : Matrix m n R) :
     a = b ↔ ∀ c : n → R, a.mulVec c = b.mulVec c := by
-  refine ⟨fun h c => by rw [h], fun h => ?_⟩
-  ext i j
-  rw [← mulVec_stdBasis a i j, ← mulVec_stdBasis b i j, h _]
+  exact ext_iff_mulVec
 
 /-- A vector is nonzero iff at least one entry is nonzero. -/
 theorem vec_ne_zero {R n : Type _} [Semiring R] (a : n → R) :
@@ -62,9 +60,7 @@ theorem vec_ne_zero {R n : Type _} [Semiring R] (a : n → R) :
 /-- Two vectors are equal iff their entries are equal. -/
 theorem ext_vec {𝕜 n : Type _} (α β : n → 𝕜) :
     α = β ↔ ∀ i : n, α i = β i := by
-  refine ⟨fun h i => by rw [h], fun h => ?_⟩
-  ext i
-  exact h i
+  exact funext_iff
 
 /-- The transpose of `vecMulVec x y` is `vecMulVec y x`. -/
 theorem vecMulVec_transpose {R n : Type _} [CommSemiring R] (x y : n → R) :
@@ -74,21 +70,18 @@ theorem vecMulVec_transpose {R n : Type _} [CommSemiring R] (x y : n → R) :
 theorem smul_mulVec_assoc {R m n : Type _} [Semiring R] [Fintype n]
     (r : R) (x : Matrix m n R) (y : n → R) :
     (r • x) *ᵥ y = r • (x *ᵥ y) := by
-  ext i
-  simp [mulVec, dotProduct, Finset.mul_sum, mul_assoc]
+  exact smul_mulVec r x y
 
 /-- The identity matrix as a sum of standard matrix units. -/
 theorem one_eq_sum_std_matrix {n R : Type _} [CommSemiring R] [Fintype n] [DecidableEq n] :
     (1 : Matrix n n R) = ∑ r : n, Matrix.single r r (1 : R) := by
-  simp_rw [← Matrix.ext_iff, Matrix.sum_apply, Matrix.one_apply, Matrix.single, ite_and,
-    of_apply, Finset.sum_ite_eq', Finset.mem_univ, if_true, forall₂_true_iff]
+  exact Eq.symm sum_single_one
 
 /-- The trace of a Kronecker product is the product of traces. -/
 theorem kronecker_trace {R n : Type _} [CommSemiring R] [Fintype n]
     (A B : Matrix n n R) :
     (A ⊗ₖ B).trace = A.trace * B.trace := by
-  simp_rw [Matrix.trace, Matrix.diag, Matrix.kroneckerMap, Finset.sum_mul_sum,
-    Matrix.of_apply, Fintype.sum_prod_type]
+  exact trace_kronecker A B
 
 theorem _root_.Matrix.kronecker.trace {R n : Type _} [CommSemiring R] [Fintype n]
     (A B : Matrix n n R) :
@@ -172,8 +165,7 @@ theorem kmul_representation {R n₁ n₂ : Type _} [Fintype n₁] [Fintype n₂]
 theorem kronecker_conjTranspose {R m n : Type _} [CommSemiring R] [StarRing R]
     (x : Matrix n n R) (y : Matrix m m R) :
     (x ⊗ₖ y)ᴴ = xᴴ ⊗ₖ yᴴ := by
-  simp_rw [← Matrix.ext_iff, conjTranspose_apply, kroneckerMap, of_apply, star_mul',
-    conjTranspose_apply, forall₂_true_iff]
+  exact conjTranspose_kronecker x y
 
 theorem kronecker_star {R n : Type _} [CommSemiring R] [StarRing R] (x y : Matrix n n R) :
     star (x ⊗ₖ y) = star x ⊗ₖ star y :=
@@ -186,8 +178,7 @@ theorem _root_.Matrix.kronecker.star {R n : Type _} [CommSemiring R] [StarRing R
 
 theorem kronecker_transpose {R n : Type _} [CommSemiring R] (x y : Matrix n n R) :
     (x ⊗ₖ y)ᵀ = xᵀ ⊗ₖ yᵀ := by
-  ext i j
-  simp only [Matrix.transpose_apply, Matrix.kroneckerMap, of_apply]
+  exact Eq.symm (kroneckerMap_transpose (fun x1 x2 => x1 * x2) x y)
 
 theorem _root_.Matrix.kronecker.transpose {R n : Type _} [CommSemiring R] (x y : Matrix n n R) :
     (x ⊗ₖ y)ᵀ = xᵀ ⊗ₖ yᵀ :=

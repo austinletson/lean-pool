@@ -84,11 +84,7 @@ private lemma isHermitian_entrywiseExp_real (R : Matrix ι ι ℝ)
 /-- Over `ℝ`, the Hadamard product of Hermitian matrices is Hermitian. -/
 private lemma isHermitian_hadamard_real {A B : Matrix ι ι ℝ}
     (hA : A.IsHermitian) (hB : B.IsHermitian) : (A ∘ₕ B).IsHermitian := by
-  rw [Matrix.IsHermitian]
-  ext i j
-  have hAij : A i j = A j i := by simpa using (Matrix.IsHermitian.apply hA i j).symm
-  have hBij : B i j = B j i := by simpa using (Matrix.IsHermitian.apply hB i j).symm
-  simp [Matrix.conjTranspose, Matrix.hadamard, hAij, hBij]
+  exact Matrix.IsHermitian.hadamard hA hB
 
 /-- Hadamard powers act entrywise as usual scalar powers. -/
 lemma hadamardPow_apply (R : Matrix ι ι ℝ) (n : ℕ) (i j : ι) :
@@ -196,8 +192,7 @@ lemma quadratic_form_entrywiseExp_hadamardSeries
   have hHas_ij (i j : ι) : HasSum (s_ij i j) ((entrywiseExpHadamardSeries R) i j) := by
     have h1 : (entrywiseExpHadamardSeries R) i j = tsum (s_ij i j) := by
       simp [entrywiseExpHadamardSeries, s_ij]
-    rw [h1]
-    exact (hs_ij i j).hasSum
+    exact (Summable.hasSum_iff (hs_ij i j)).mpr (id (Eq.symm h1))
   -- Push scalars inside: first x j
   have hHas_ij_xj (i j : ι) :
       HasSum (fun n => s_ij i j n * x j) ((entrywiseExpHadamardSeries R) i j * x j) :=
@@ -281,7 +276,6 @@ lemma summable_hadamardQuadSeries
   -- The outer sum over i remains summable.
   have h_outer : Summable (fun n : ℕ => ∑ i : ι, ∑ j : ι,
       (1 / (Nat.factorial n : ℝ)) * (x i * (R i j) ^ n * x j)) := by
-    classical
     exact summable_sum fun i a => h_inner i
   -- Identify the quadratic form with the double sum built above.
   have h_eq :
@@ -381,13 +375,7 @@ lemma posDef_entrywiseExp_hadamardSeries_of_posDef
       -- f n = (1/n!) * (quadratic form in hadamardPow R n)
       exact summable_hadamardQuadSeries R x
     -- Now compare tsum with the singleton partial sum at {1}
-    have h_f1_le : f 1 ≤ tsum f := by
-      -- bound partial sum by tsum for nonnegative terms
-      have h := (Summable.sum_le_tsum (s := ({1} : Finset ℕ)) (f := f)
-        (by intro n hn; exact hterm_nonneg n) hSumm_f)
-      simpa using h
-    -- Use strict positivity of f 1
-    exact lt_of_lt_of_le hterm_pos h_f1_le
+    exact Summable.tsum_pos hSumm_f hterm_nonneg 1 hterm_pos
   -- Conclude
   simpa [hq_tsum] using this
 

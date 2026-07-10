@@ -112,13 +112,11 @@ theorem grothendieck_vanishing_of_irreducible
       Subsingleton (Sheaf.H G m)) :
     Subsingleton (Sheaf.H F n) := by
   by_cases hEmpty : IsEmpty X
-  · letI := hEmpty
-    simpa using sheafH_subsingleton_of_isEmpty F n
+  · exact sheafH_subsingleton_of_isEmpty F n
   · rw [not_isEmpty_iff] at hEmpty
     by_cases hIrred : IrreducibleSpace X
     · exact ih_irred X n F le_rfl hn
-    · exact reducible_vanishing X n hn F hIrred
-        (fun Y [_] [_] G hle hY ↦ ih_irred Y n G hle hY)
+    · exact reducible_vanishing X n hn F hIrred fun Y [NoetherianSpace ↑Y] [IrreducibleSpace ↑Y] => ih_irred Y n
 
 /-! ## Main theorem -/
 

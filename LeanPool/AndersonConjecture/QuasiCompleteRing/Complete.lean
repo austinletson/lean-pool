@@ -42,11 +42,7 @@ lemma krull_intersection_sup (J : Ideal R) :
           rw [IsLocalRing.mem_maximalIdeal, mem_nonunits_iff]
           exact fun hu => hy (hu.map _)
         exact (Ideal.mem_map_iff_of_surjective _ Ideal.Quotient.mk_surjective).mpr ⟨r, hr, rfl⟩
-      · intro y hy
-        obtain ⟨r, hr, rfl⟩ :=
-          (Ideal.mem_map_iff_of_surjective _ Ideal.Quotient.mk_surjective).mp hy
-        rw [IsLocalRing.mem_maximalIdeal, mem_nonunits_iff] at hr ⊢
-        exact fun hu => hr (isUnit_of_map_unit _ r hu)
+      · exact IsLocalRing.map_maximalIdeal_le (Ideal.Quotient.mk J)
     have krl := Ideal.iInf_pow_eq_bot_of_isLocalRing M' (Ideal.IsMaximal.ne_top inferInstance)
     rw [eq_bot_iff] at krl
     apply krl
@@ -128,11 +124,7 @@ theorem anderson_complete_isQuasiComplete
           rw [IsLocalRing.mem_maximalIdeal] at hx
           exact (Ideal.mem_map_iff_of_surjective mk Ideal.Quotient.mk_surjective).mpr
             ⟨r, (IsLocalRing.mem_maximalIdeal r).mpr (fun hu => hx (hu.map mk)), rfl⟩
-        · intro x hx
-          obtain ⟨r, hr, rfl⟩ :=
-            (Ideal.mem_map_iff_of_surjective mk Ideal.Quotient.mk_surjective).mp hx
-          rw [IsLocalRing.mem_maximalIdeal] at hr ⊢
-          exact fun hu => hr (isUnit_of_map_unit mk r hu)
+        · exact IsLocalRing.map_maximalIdeal_le mk
       rw [hM'_eq, ← Ideal.map_pow]
       exact Ideal.map_mk_eq_bot_of_le (le_refl _)
     set Bj : ℕ → Ideal (R ⧸ M ^ j) := fun n => Ideal.map (Ideal.Quotient.mk (M ^ j)) (A n)
@@ -199,16 +191,14 @@ theorem anderson_complete_isQuasiComplete
       by_cases hpq' : p ≤ q
       · have h1 := ih hpq'
         have h2 : y q - y (q + 1) ∈ (M ^ (k + q + 1) : Ideal R) := by
-          have : y q - y (q + 1) = a q := by rw [hyrec q]
-                                             ring
+          have : y q - y (q + 1) = a q := by exact sub_eq_of_eq_add' (hyrec q)
           rw [this]
           exact haM q
         have h3 : y p - y (q + 1) = (y p - y q) + (y q - y (q + 1)) := by ring
         rw [h3]
         exact Ideal.add_mem _ h1 (Ideal.pow_le_pow_right (by omega) h2)
       · have hpeq : p = q + 1 := by omega
-        subst hpeq
-        simp
+        exact (Submodule.Quotient.eq (M ^ (k + p + 1))).mp (congrArg Submodule.Quotient.mk (congrArg y hpeq))
   -- Step 5: f is Cauchy
   have hf_cauchy : ∀ {m n : ℕ}, m ≤ n →
       f m ≡ f n [SMOD (M ^ m • ⊤ : Submodule R R)] := by
@@ -224,8 +214,7 @@ theorem anderson_complete_isQuasiComplete
   have hfMk : ∀ n, f n ∈ (M ^ k : Ideal R) := by
     intro n
     induction n with
-    | zero => rw [hf0]
-              exact Submodule.zero_mem _
+    | zero => exact (Submodule.Quotient.eq (M ^ k)).mp (congrArg Submodule.Quotient.mk (id (Eq.symm hy0)))
     | succ n ih =>
       have hstep : f (n + 1) = f n + a n := by
         change x - y (n + 1) = (x - y n) + a n
@@ -237,9 +226,7 @@ theorem anderson_complete_isQuasiComplete
   have hLMk : L ∈ (M ^ k : Ideal R) := by
     have hLk := hL k
     rw [SModEq.sub_mem, smul_eq_mul, Ideal.mul_top] at hLk
-    have : L = f k - (f k - L) := by ring
-    rw [this]
-    exact sub_mem (hfMk k) hLk
+    exact (Submodule.sub_mem_iff_right (M ^ k) (hfMk k)).mp hLk
   have hxL_mem : x - L ∈ I := by
     rw [Submodule.mem_iInf]
     intro m

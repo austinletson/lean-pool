@@ -151,8 +151,7 @@ private lemma asp_func_spec {s : SlipFace} (hsub : s.submodular) (a b : ℤ) :
     exact (unique_a hsub b).choose_spec.1
   · intro mem
     dsimp [asp_func]
-    have := (unique_a hsub b).choose_spec.2 a mem
-    rw [this]
+    exact (ExistsUnique.choose_eq_iff (unique_a hsub b)).mpr mem
 
 private lemma asp_bijective {s : SlipFace} (hsub : s.submodular) :
   (asp_func hsub).Bijective := by
@@ -174,11 +173,7 @@ private lemma asp_bijective {s : SlipFace} (hsub : s.submodular) :
     let b := (unique_b hsub a).choose
     use b
     have mem : ⟨a, b⟩ ∈ s.Γ := (unique_b hsub a).choose_spec.1
-    let a' := (unique_a hsub b).choose
-    suffices a = a' by
-      dsimp [asp_func]
-      rw [this]
-    exact (unique_a hsub b).choose_spec.2 a mem
+    exact (asp_func_spec hsub a b).mpr mem
 
 /-- The ASP permutation associated to a submodular slipface. It can be reconstructed from the set
 $\Gamma$ in the manner described in Section 4 of [An extended Demazure product](https://arxiv.org/abs/2206.14227). -/
@@ -509,9 +504,7 @@ lemma AspValley_step_b (α β : AspPerm) (a b : ℤ) :
     omega
   rw [this]
   have : v₀.M = v.M := by
-    subst v
-    have := v₀.shift_down_M 1
-    omega
+    exact Eq.symm (Valley.shift_down_M v₀ 1)
   suffices w.min = v.min  + (if v.M ≤ β b then 1 else 0) ∧ v.M ≤ w.M by
     omega
   subst v₀
@@ -577,8 +570,7 @@ private lemma submodular_of_basepoint_preserved (s : SlipFace) (a b : ℤ) :
     · have h1 : d1 ≥ 1 := by
         have : d1 ≥ 0 := by linarith [(s.b_step (a+1) b).1]
         apply lt_of_le_of_ne this
-        contrapose! h1
-        rw [← h1]
+        exact Ne.symm h1
       have h2 : d2 ≤ 1 := by linarith [s.b_step a b]
       exact le_trans h2 h1
 
@@ -668,8 +660,7 @@ private lemma lres_a_step_eq_iff_exists_witness (α β : AspPerm) (a b : ℤ) :
       by_contra hcut
       have hge : α⁻¹ a ≥ l := by omega
       have hstep : α.s (a + 1) l = α.s a l + 1 := by
-        rw [α.a_step a l]
-        simp only [if_pos hge]
+        exact (AspPerm.a_step_one_iff α a l).mpr hge
       have hmax := lres_candidate_le α β (a + 1) b l
       dsimp [lres_witness_set] at hl
       omega
@@ -803,8 +794,7 @@ private lemma lres_witness_move_a_down (α β : AspPerm) (a b l : ℤ)
     have hone : (α.s ◃ β.s) (a + 1) b = (α.s ◃ β.s) a b + 1 := by
       omega
     have hstep : α.s (a + 1) l = α.s a l + 1 := by
-      rw [α.a_step a l]
-      simp only [if_pos hle]
+      exact (AspPerm.a_step_one_iff α a l).mpr hle
     refine ⟨l, ?_, le_refl l⟩
     dsimp [lres_witness_set] at hl ⊢
     rw [hstep] at hl
@@ -1235,14 +1225,12 @@ instance : PartialOrder AspPerm where
   le_refl := by
     simp_all
   le_trans := by
-    intro σ τ υ h₁ h₂ a b
-    exact Int.le_trans (h₁ a b) (h₂ a b)
+    exact fun a b c a_2 a_3 a_4 b_2 => Int.le_trans (a_2 a_4 b_2) (a_3 a_4 b_2)
   le_antisymm := by
     intro σ τ h₁ h₂
     apply eq_of_sf_eq
     rw [SF_ext]
-    intro a b
-    exact Int.le_antisymm (h₁ a b) (h₂ a b)
+    exact fun a b => Int.le_antisymm (h₁ a b) (h₂ a b)
 
 /-- The relation $\alpha \leq_\chi \beta$ from
 [An extended Demazure product](https://arxiv.org/abs/2206.14227): Bruhat order together with

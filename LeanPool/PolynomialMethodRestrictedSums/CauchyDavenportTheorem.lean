@@ -146,8 +146,7 @@ lemma cauchy_davenport_small_sum (A B S : Finset (ZMod p)) (hp : p.Prime)
     rw [hS]
     dsimp [S_ANR, sumset]
     have h_eval_ne_zero : ∀ f ∈ Fintype.piFinset As, h_poly.eval f ≠ 0 := by
-      intro f _
-      simp [h_poly]
+      exact fun f a => RingHom.map_one_ne_zero (eval f)
     ext z
     simp only [Finset.mem_image, Finset.mem_product]
     constructor

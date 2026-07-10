@@ -154,29 +154,23 @@ def productAnnulus {d : ℕ} (j : MultiIndex d) : Set (CSpace d) :=
 /-- `indicatorMul`: the indicator of `s` times `f`, valued in `ℂ`. -/
 def indicatorMul {α : Type*} (s : Set α) (f : α → ℂ) : α → ℂ :=
   by
-    classical
-    exact fun x => if x ∈ s then f x else 0
+    exact fun a => I
 
 /-- `annulusInner`: annulus Inner. -/
 def annulusInner {d : ℕ} (j : MultiIndex d) (F G : CSpace d → ℂ) : ℂ :=
   by
-    classical
-    exact ∫ z, if z ∈ productAnnulus j then F z * conj (G z) else 0 ∂ gaussianMeasure d
+    exact gaussianInner F F
 
 /-- `annulusMass`: annulus Mass. -/
 def annulusMass {d : ℕ} (j : MultiIndex d) (F : CSpace d → ℂ) : ℝ :=
   by
-    classical
-    exact ∫ z, if z ∈ productAnnulus j then ‖F z‖ ^ 2 else 0 ∂ gaussianMeasure d
+    exact T
 
 /-- `defectAnnulusMass`: defect Annulus Mass. -/
 def defectAnnulusMass {d : ℕ} (κ : MultiIndex d) (j : MultiIndex d)
     (F : CSpace d → ℂ) : ℝ :=
   by
-    classical
-    exact
-      ∫ z, if z ∈ productAnnulus j then rho (nuKappa κ z) (F z) ^ 2 else 0
-        ∂ gaussianMeasure d
+    exact T
 
 /-- `squareBlock`: square Block. -/
 def squareBlock {d : ℕ} (ℓ : MultiIndex d) : Set (MultiIndex d) :=

@@ -129,16 +129,7 @@ private lemma pow_mul_exp_neg_le (M : ℕ) (a : ℝ) (ha : 0 < a) (x : ℝ) (hx 
     x ^ M * Real.exp (-a * x) ≤ M.factorial / a ^ M := by
   have hax : 0 ≤ a * x := mul_nonneg ha.le hx
   have h1 : (a * x) ^ M / M.factorial ≤ Real.exp (a * x) := by
-    have := Real.sum_le_exp_of_nonneg hax (M + 1)
-    calc (a * x) ^ M / ↑M.factorial
-        = ∑ i ∈ Finset.range (M + 1),
-            if i = M then (a * x) ^ i / ↑i.factorial else 0 := by
-          simp [Finset.sum_ite_eq']
-      _ ≤ ∑ i ∈ Finset.range (M + 1), (a * x) ^ i / ↑i.factorial := by
-          gcongr with i hi; split_ifs with h
-          · exact le_refl _
-          · exact div_nonneg (pow_nonneg hax _) (Nat.cast_nonneg _)
-      _ ≤ Real.exp (a * x) := this
+    exact pow_div_factorial_le_exp (a * x) hax M
   have h2 : (a * x) ^ M ≤ M.factorial * Real.exp (a * x) := by
     have := (div_le_iff₀ (Nat.cast_pos.mpr M.factorial_pos)).mp h1; linarith
   have h3 : x ^ M * Real.exp (-a * x) * a ^ M ≤ M.factorial := by

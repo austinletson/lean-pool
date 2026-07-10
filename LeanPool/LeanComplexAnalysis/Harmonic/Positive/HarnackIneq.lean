@@ -55,8 +55,7 @@ lemma harnack_ineq_cont_normalized_upper
     u z ≤ (1 + ‖z‖) / (1 - ‖z‖) := by
   have h_poisson : u z = (1 / (2 * π)) * ∫ t in 0..(2 * π),
     (1 - ‖z‖^2) / ‖(exp (t * Complex.I)) - z‖^2 * u (exp (t * Complex.I)) := by
-    convert poisson_integral_of_harmonicOn_unitDisc_continuousOn_closedUnitDisc h_harmonic hc hz
-      using 1;
+    exact poisson_integral_of_harmonicOn_unitDisc_continuousOn_closedUnitDisc h_harmonic hc hz
   have h_max : ∫ t in (0 : ℝ)..(2 * π),
     (1 - ‖z‖^2) / ‖(exp (t * Complex.I)) - z‖^2 * u (exp (t * Complex.I)) ≤
     ∫ t in (0 : ℝ)..(2 * π), (1 - ‖z‖^2) / (1 - ‖z‖)^2 * u (exp (t * Complex.I)) := by
@@ -114,8 +113,7 @@ lemma harnack_ineq_cont_normalized_lower
     (1 - ‖z‖) / (1 + ‖z‖) ≤ u z := by
   have h_integral : u z = (1 / (2 * π)) * ∫ t in (0 : ℝ)..(2 * π),
     (1 - ‖z‖ ^ 2) / ‖(exp (t * I)) - z‖ ^ 2 * u (exp (t * I)) := by
-    convert poisson_integral_of_harmonicOn_unitDisc_continuousOn_closedUnitDisc
-      h_harmonic hc hz using 1
+    exact poisson_integral_of_harmonicOn_unitDisc_continuousOn_closedUnitDisc h_harmonic hc hz
   have h_mean_value : ∫ t in (0 : ℝ)..(2 * π), (1 - ‖z‖ ^ 2) /
     ‖(exp (t * I)) - z‖ ^ 2 * u (exp (t * I)) ≥ ∫ t in (0 : ℝ)..(2 * π),
       (1 - ‖z‖ ^ 2) / (1 + ‖z‖) ^ 2 * u (exp (t * I)) := by

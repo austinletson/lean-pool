@@ -114,8 +114,7 @@ theorem expLb₀_le_exp {x : ℚ} (n : ℕ) (hx : 0 ≤ x) : expLb₀ x n ≤ Re
   push_cast
   have ha : (0 : ℝ) ≤ ↑x / ↑⌈x⌉.toNat := div_nonneg (by exact_mod_cast hx) (by positivity)
   apply pow_le_pow_left₀ (Finset.sum_nonneg fun i _ ↦ div_nonneg (pow_nonneg ha _) (by positivity))
-  apply_mod_cast Real.sum_le_exp_of_nonneg
-  exact_mod_cast div_nonneg hx (by positivity)
+  exact Real.sum_le_exp_of_nonneg ha (n + 1)
 
 theorem expUb₀_ge_exp (x : ℚ) (n : ℕ) (hx : 0 ≤ x) : Real.exp x ≤ expUb₀ x n := by
   rw [expUb₀, List_foldr_eq_finset_sum]
@@ -135,8 +134,7 @@ theorem expUb₀_ge_exp (x : ℚ) (n : ℕ) (hx : 0 ≤ x) : Real.exp x ≤ expU
     rw [_root_.mul_comm, ← div_div]
     apply div_le_div_of_nonneg_right ?_ (by positivity)
     rw [add_div, div_self (by positivity), ← one_add_one_eq_two, add_le_add_iff_left 1, one_div]
-    apply inv_le_one_of_one_le₀
-    simp
+    exact Nat.cast_inv_le_one (n + 1)
   · cases eq_or_lt_of_le hx
     · subst x; simp
     rw [div_le_one₀]
@@ -333,8 +331,7 @@ private lemma inverr_monotone_x (ε : ℝ) (hε : 0 < ε) :
     MonotoneOn (fun (x : ℝ) ↦ 2 * x / Real.log (1 + ε / Real.exp x)) (Set.Ici 0) := by
   apply MonotoneOn.mul ?_ ?_ ?_ ?_
   · apply MonotoneOn.mul monotoneOn_const ?_ (by norm_num) (by norm_num)
-    intro x y h
-    exact fun x_1 a => a
+    exact MonotoneOn.of_map_sup fun x a y => congrFun rfl
   · conv_lhs =>
       equals ((·⁻¹) ∘ Real.log ∘ (1 + ε / Real.exp ·)) =>
         ext x

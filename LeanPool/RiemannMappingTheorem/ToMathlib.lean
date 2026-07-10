@@ -99,8 +99,7 @@ lemma derivWithin_of_mem_uIoo {f : ℝ → E} (ht : t ∈ uIoo a b) :
 
 lemma intervalIntegral.integral_congr_uIoo' (h : EqOn f g (uIoo a b)) :
     ∫ t in a..b, f t = ∫ t in a..b, g t := by
-  apply intervalIntegral.integral_congr_ae
-  filter_upwards [eventually_mem_uIoo_of_mem_uIoc] with t ht1 ht2 using h (ht1 ht2)
+  exact integral_congr_uIoo h
 
 end helper_integral
 

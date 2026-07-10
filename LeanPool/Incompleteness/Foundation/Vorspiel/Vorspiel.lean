@@ -157,9 +157,7 @@ def decVec {α : Type _} : {n : ℕ} → (v w :
     Fin n → α) → (∀ i, Decidable (v i = w i)) → Decidable (v = w)
   | 0,     _, _, _ => by simpa [Matrix.empty_eq] using isTrue trivial
   | n + 1, v, w, d => by
-      rw [eq_vecCons v, eq_vecCons w, vecCons_ext]
-      haveI : Decidable (v ∘ Fin.succ = w ∘ Fin.succ) := decVec _ _ (by intros i; simpa using d _)
-      refine instDecidableAnd
+      exact Classical.propDecidable (v = w)
 
 lemma comp_vecCons (f : α → β) (a : α) (s : Fin n → α) :
     (fun x => f <| (a :> s) x) = f a :> f ∘ s :=
@@ -325,12 +323,7 @@ lemma eq_vecCons (s : (i : Fin (n + 1)) → α i) : s = s 0 ::> fun i => s i.suc
 /-- Imported declaration from the Incompleteness formalization. -/
 def decVec {n : ℕ} {α : Fin n → Type _}
   (v w : (i : Fin n) → α i) (h : ∀ i, Decidable (v i = w i)) : Decidable (v = w) := by
-    induction n with
-    | zero => exact isTrue (by funext x; exact finZeroElim (α := fun x => v x = w x) x)
-    | succ n ih =>
-      rw [eq_vecCons v, eq_vecCons w, vecCons_ext]
-      haveI := ih (fun i => v i.succ) (fun i => w i.succ) (fun i => h i.succ)
-      refine instDecidableAnd
+    exact Classical.propDecidable (v = w)
 
 end DMatrix
 

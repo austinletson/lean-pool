@@ -181,11 +181,7 @@ private theorem pacLearnable_of_vcdim_finite (X : Type u) [MeasurableSpace X]
     (C : ConceptClass X Bool) (hvcdim : VCDim X C < ⊤)
     (hmeas_C : ∀ h ∈ C, Measurable h) (hc_meas : ∀ c : Concept X Bool, Measurable c)
     (hWB : WellBehavedVC X C) : PACLearnable X C := by
-  by_cases hne : C.Nonempty
-  · exact uc_imp_pac X C hne (vcdim_finite_imp_uc' X C hvcdim hmeas_C hc_meas hWB)
-  · rw [Set.not_nonempty_iff_eq_empty] at hne
-    exact ⟨⟨Set.univ, fun _ => fun _ => false, fun _ => Set.mem_univ _⟩,
-           fun _ _ => 0, fun _ _ _ _ _ _ c hcC => by simp [hne] at hcC⟩
+  exact vcdim_finite_imp_pac_via_uc' X C hvcdim hmeas_C hc_meas hWB
 
 /-- Consistent learners are PAC learners when VCDim < ⊤. -/
 theorem consistent_learner_pac (X : Type u) [MeasurableSpace X]

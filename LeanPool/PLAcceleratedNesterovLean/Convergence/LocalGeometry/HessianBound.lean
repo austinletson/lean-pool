@@ -87,12 +87,7 @@ private lemma PL_to_local_MuPL (f : E d → ℝ) (μ : ℝ) (U : Set (E d))
     simp only [gradient]; exact (InnerProductSpace.toDual ℝ (E d)).symm.norm_map _
   have h2μ_pos : (0 : ℝ) < 2 * μ := by have := hPL.1; positivity
   filter_upwards [hU_open.mem_nhds hmU] with x hxU
-  have hpl := hPL.2.2 x hxU; rw [hfStar, hnorm_eq] at hpl; rw [ge_iff_le] at hpl
-  calc f x - f m
-      = (2 * μ)⁻¹ * ((2 * μ) * (f x - f m)) := by
-          rw [inv_mul_cancel_left₀ (ne_of_gt h2μ_pos)]
-    _ ≤ (2 * μ)⁻¹ * ‖fderiv ℝ f x‖ ^ 2 :=
-        mul_le_mul_of_nonneg_left hpl (inv_nonneg.mpr h2μ_pos.le)
+  have hpl := hPL.2.2 x hxU; rw [hfStar, hnorm_eq] at hpl; exact (le_inv_mul_iff₀ h2μ_pos).mpr hpl
 
 -- ════════════════════════════════════════════════════════════════════════════
 -- § H. Main theorem

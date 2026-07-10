@@ -42,8 +42,7 @@ instance : Repr (FloatRep C) where
 
 /-- Decidable equality on `FloatRep`. -/
 def FloatRep.decEq (f1 f2 : FloatRep C) : Decidable (Eq f1 f2) := by
-  rw [FloatRep.mk.injEq]
-  exact instDecidableAnd
+  exact Classical.propDecidable (f1 = f2)
 
 /-- A representation has a valid mantissa when it is below the precision. -/
 def FloatRep.validM (f : FloatRep C) : Prop := f.m < C.prec

@@ -227,12 +227,7 @@ theorem cond_toElementMap_mem (t : TD.Element) (x y : V.Element) {Z : Set α} :
         prod_mem_prodNbhd Example12.mem_one (prod_mem_prodNbhd V.master_mem hZ), hZ, ?_⟩
       refine Or.inr (Or.inl ⟨inl_preimage_prodNbhd _ _, ?_⟩)
       rw [inr_preimage_prodNbhd, inr_preimage_prodNbhd]
-    · refine ⟨prodNbhd Example12.master (prodNbhd V.master V.master),
-        ⟨Example12.master, prodNbhd V.master V.master, t.master_mem,
-          ⟨V.master, V.master, x.master_mem, y.master_mem, rfl⟩, rfl⟩,
-        prod_mem_prodNbhd Example12.mem_master (prod_mem_prodNbhd V.master_mem V.master_mem),
-        V.master_mem, ?_⟩
-      exact Or.inr (Or.inr ⟨inl_preimage_prodNbhd _ _, subset_rfl⟩)
+    · exact ((cond V).toElementMap (pair t (pair x y))).master_mem
 
 /-- **Exercise 3.26(i) (Scott 1981, PRG-19).** `cond(true, x, y) = x`. -/
 theorem cond_true (x y : V.Element) :
@@ -300,11 +295,6 @@ theorem cond_bot (x y : V.Element) :
   · intro hbZ
     rw [mem_bot] at hbZ
     subst hbZ
-    refine ⟨prodNbhd Example12.master (prodNbhd V.master V.master),
-      ⟨Example12.master, prodNbhd V.master V.master, rfl,
-        ⟨V.master, V.master, x.master_mem, y.master_mem, rfl⟩, rfl⟩,
-      prod_mem_prodNbhd Example12.mem_master (prod_mem_prodNbhd V.master_mem V.master_mem),
-      V.master_mem, ?_⟩
-    exact Or.inr (Or.inr ⟨inl_preimage_prodNbhd _ _, subset_rfl⟩)
+    exact ((cond V).toElementMap (pair Example23.botElt (pair x y))).master_mem
 
 end Domain.Neighborhood.Exercise326

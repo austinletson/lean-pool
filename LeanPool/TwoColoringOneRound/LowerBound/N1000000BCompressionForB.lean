@@ -260,10 +260,8 @@ theorem congr_A_eq_compBasis (r : Block) (d : DirIdx) :
         ∑ k : DirIdx,
           (baseTypeCount k : Q) * (∑ a : DirIdx,
           bVal r p k * (N k a d : Q) * bVal r q a) := by
-    refine Fintype.sum_congr _ _ ?_
-    · intro k
-      -- `∑ _u, ∑ a, ...` is definitionaly `∑ _u, (∑ a, ...)`.
-      exact huConst (k := k)
+    exact Fintype.sum_congr (fun a => ∑ _u, ∑ a_1, bVal r p a * ↑(N a a_1 d) * bVal r q a_1)
+        (fun a => ↑(baseTypeCount a) * ∑ a_1, bVal r p a * ↑(N a a_1 d) * bVal r q a_1) huConst
   rw [hUsum]
   -- Expand the remaining product and reorder to match `compBasis`.
   classical
@@ -302,9 +300,7 @@ theorem congr_ASymm_eq_compBasisSymm (r : Block) (d : DirIdx) :
     have hCB : compBasisSymm r d = compBasis r d + compBasis r (invDir d) := by
       unfold compBasisSymm
       -- Avoid unfolding `tTr` by using `if_neg` directly.
-      simpa using (if_neg hFix :
-        (if tTr[d.1]! = d.1 then compBasis r d else compBasis r d + compBasis r (invDir d))
-          = (compBasis r d + compBasis r (invDir d)))
+      exact if_neg hFix
     -- Rewrite both sides using these decompositions.
     rw [hAS, hCB]
     -- Expand the matrix product across the sum and apply the directed compression lemma twice.

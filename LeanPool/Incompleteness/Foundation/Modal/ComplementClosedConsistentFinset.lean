@@ -72,8 +72,7 @@ lemma unprovable_iff_singleton_compl_consistent : FormulaFinset.Consistent 𝓢 
   classical
   rcases (Formula.complement.or φ) with (hp | ⟨ψ, rfl⟩);
   · rw [hp];
-    convert FormulaSet.unprovable_iff_singleton_neg_consistent (𝓢 := 𝓢) (φ := φ);
-    simp;
+    exact unprovable_iff_singleton_neg_consistent
   · simp only [Formula.complement];
     convert FormulaSet.unprovable_iff_singleton_consistent (𝓢 := 𝓢) (φ := ψ);
     simp;
@@ -142,8 +141,7 @@ lemma enum_consistent [Entailment.Classical 𝓢]
   | nil => exact Φ_consis;
   | cons ψ qs ih =>
     simp only [enum];
-    apply next_consistent;
-    exact ih;
+    exact next_consistent ih ψ
 
 @[simp] lemma enum_nil {Φ : FormulaFinset α} : (Φ[[]]) = Φ := by simp [enum]
 
@@ -246,9 +244,7 @@ lemma mem_compl_of_not_mem (hs : ψ ∈ Ψ) : ψ ∉ X → -ψ ∈ X := by
 lemma mem_of_not_mem_compl (hs : ψ ∈ Ψ) : -ψ ∉ X → ψ ∈ X := Not.imp_symm (mem_compl_of_not_mem hs)
 
 lemma equality_def : X₁ = X₂ ↔ X₁.1 = X₂.1 := by
-  constructor;
-  · intro h; cases h; rfl;
-  · intro h; cases X₁; cases X₂; simp_all;
+  exact Subtype.ext_iff
 
 variable [Entailment.Classical 𝓢]
 
@@ -268,9 +264,7 @@ lemma membership_iff (hq_sub : ψ ∈ Ψ) : (ψ ∈ X) ↔ (X *⊢[𝓢]! ψ) :=
   · intro h; exact Context.by_axm! h;
   · intro hp;
     suffices -ψ ∉ X by
-      rcases X.closed.either ψ hq_sub with hψ | hneg
-      · exact hψ
-      · exact False.elim (this hneg)
+      exact mem_of_not_mem_compl hq_sub this
     by_contra hC;
     have hnp : X *⊢[𝓢]! -ψ := Context.by_axm! hC;
     have := complement_derive_bot hp hnp;

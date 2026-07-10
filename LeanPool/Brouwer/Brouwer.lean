@@ -49,7 +49,6 @@ variable (n l : ℕ+) (i : Fin n)
 abbrev TT := {x : Πₗ (_ : Fin n), Fin (l+1) | ∑ i, (x i : ℕ)  = l}
 
 instance TT.finite : Finite (TT n l) := by
-  rw [Set.coe_eq_subtype]
   exact Subtype.finite
 
 instance TT.inhabited : Inhabited (TT n l) where
@@ -96,13 +95,9 @@ instance TT.IST : IsStrictTotalOrder (TT n l) (TT.Ilt i) where
       le_antisymm (le_of_not_gt h_ba) (le_of_not_gt h_ab)
     simp_all
   irrefl := by
-    intro a
-    unfold TT.Ilt
-    exact lt_irrefl _
+    exact fun a => Std.lt_irrefl
   trans := by
-    intro a b c h_ab h_bc
-    unfold TT.Ilt at *
-    exact lt_trans h_ab h_bc
+    exact fun a b c a_1 a_2 => Std.lt_trans a_1 a_2
 
 
 variable {n l} in
@@ -235,8 +230,7 @@ theorem size_bound_in (σ : Finset (TT n l)) (C : Finset (Fin n)) (h : TT.ILO.is
           _ ≤ ∑ k, (x k : ℕ) := Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ C)
               (by simp)
           _ = l := x.2
-      rw [Nat.sub_lt_iff_lt_add h_sum_le_l, add_comm]
-      exact h_key
+      exact Nat.sub_lt_left_of_lt_add h_sum_le_l h_key
     have h_bound : ∀ z ∈ σ, (z i : ℕ) - m' i < C.card := by
       intro z hz
       by_cases hi_in_C : i ∈ C
@@ -338,9 +332,7 @@ theorem size_bound_out (σ : Finset (TT n l)) (C : Finset (Fin n)) (h : TT.ILO.i
         Nat.sub_le_sub_left h_m_le_x l
       exact lt_of_le_of_lt (h_le_sub.trans h_sub_le_sub) h_le_l_sub_sum
     have h_card_le_n : C.card ≤ n := by
-      calc
-        C.card ≤ (Finset.univ : Finset (Fin n)).card := Finset.card_le_card (Finset.subset_univ C)
-        _ = n := by simp [Fintype.card_fin]
+      exact card_finset_fin_le C
     have h_lt_n : (x i : ℤ) < ↑n :=
       lt_of_lt_of_le (Int.ofNat_lt.mpr h_bound) (Int.ofNat_le.mpr h_card_le_n)
     linarith
@@ -434,12 +426,7 @@ theorem exists_subseq_constant_of_finite_image {s : Finset α} (e : ℕ → α) 
     simp_all
   obtain ⟨m₀, hm₀⟩ := h_nonempty
   have h_exists_larger : ∀ k : ℕ, ∃ m ∈ preimage, k < m := by
-    intro k
-    by_contra h_not
-    push Not at h_not
-    have : preimage ⊆ {n | n ≤ k} := fun n hn => h_not n hn
-    have h_finite : Set.Finite preimage := (Set.finite_le_nat k).subset this
-    exact preimage_infinite h_finite
+    exact fun k => Set.Infinite.exists_gt preimage_infinite k
   choose f hf using h_exists_larger
   have f_lt : ∀ n : ℕ, n < f n := fun n => (hf n).2
   have f_in : ∀ n : ℕ, f n ∈ preimage := fun n => (hf n).1
@@ -639,9 +626,7 @@ theorem f_coords_ge_z_coords (f : stdSimplex ℝ (Fin n) → stdSimplex ℝ (Fin
         have h_idx_in_image : idx ∈ σ.image (@Fcolor n l_pnat f) := by
           rw [h_image_eq]
           exact h_C_l ▸ h_idx_C
-        rw [Finset.mem_image] at h_idx_in_image
-        obtain ⟨y, hy_in_σ, hy_color⟩ := h_idx_in_image
-        use y
+        exact Finset.mem_image.mp h_idx_in_image
       let y_seq := fun l' => TTtostdSimplex (h_exists_point l').choose
       have y_seq_spec : ∀ l',
         (h_exists_point l').choose ∈ (roomSeq f (g1 f l')).1.1 ∧

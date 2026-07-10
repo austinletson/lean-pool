@@ -248,9 +248,7 @@ lemma coulomb_flux_deriv_schwartz_decay
       (∫ w, landauMatrix coulombKernel (v - w) i j * f w) -
      f v * (∫ w, landauMatrix coulombKernel (v - w) i j *
       fderiv ℝ f w (Pi.single j 1))) v := by
-    simp only [Fin.sum_univ_three]
-    exact ((h_sum_diff 0).hasFDerivAt.add (h_sum_diff 1).hasFDerivAt |>.add
-      (h_sum_diff 2).hasFDerivAt).fderiv
+    exact fderiv_fun_sum fun i a => h_sum_diff i
   rw [h_fderiv_sum]
   calc ‖∑ j : Fin 3, fderiv ℝ _ v‖ * (1 + ‖v‖) ^ N
       ≤ (∑ j : Fin 3, ‖fderiv ℝ (fun v => fderiv ℝ f v (Pi.single j 1) *

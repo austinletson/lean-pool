@@ -46,8 +46,7 @@ theorem exists_uniform_labeling (n m : ℕ) (hn : 0 < n) (hm : 0 < m) (hdvd : m 
       Fin.ext <| Nat.mod_eq_of_lt j.2⟩
   · intro j
     rw [Finset.card_eq_of_bijective]
-    · use fun i hi => ⟨i * m + j,
-        by nlinarith [Nat.div_mul_cancel hdvd, Fin.is_lt j]⟩
+    · exact fun i a => Fin.Internal.ofNat n hn n
     · simp +decide only [mem_filter, mem_univ, true_and]
       exact fun a ha => ⟨a / m,
         Nat.div_lt_of_lt_mul <| by nlinarith [Fin.is_lt a, Nat.div_mul_cancel hdvd],

@@ -493,12 +493,10 @@ theorem sheafH_filtered_colimit_succ_inj_subsingleton
       (isFlasque_filtered_colimit
         (F := Inj)
         (hFlasque := fun j ↦ by
-          letI : Injective (Inj.obj j) := hInj j
-          exact fun {_ _} i ↦ (isFlasque_of_injective (Inj.obj j)) i)
+          exact @isFlasque_of_injective X (Inj.obj j) (hInj j))
         (c := injCocone)
         (hc := colimit.isColimit Inj)) i
-  simpa [injCocone] using
-    (sheafH_subsingleton_of_flasque X injCocone.pt hFlasque n)
+  exact sheafH_subsingleton_of_flasque X (sheafHFilteredColimitSuccInjCocone Y').pt hFlasque n
 
 end SheafHFilteredColimitSucc
 

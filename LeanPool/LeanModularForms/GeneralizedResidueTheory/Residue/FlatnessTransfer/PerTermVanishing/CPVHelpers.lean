@@ -57,8 +57,7 @@ theorem tendsto_cpv_of_continuousOn_zero_integral
     (fun t => ‖g (γ.toFun t) * deriv γ.toFun t‖)
     (by filter_upwards [self_mem_nhdsWithin] with ε (hε : (0 : ℝ) < ε)
         have h_int := intervalIntegrable_cauchyPrincipalValueIntegrandOn (S0 := S0) hε hg_cont
-        rw [intervalIntegrable_iff] at h_int
-        exact h_int.aestronglyMeasurable)
+        exact IntervalIntegrable.aestronglyMeasurable_restrict_uIoc h_int)
     (by filter_upwards [self_mem_nhdsWithin] with ε (_hε : (0 : ℝ) < ε)
         apply ae_of_all; intro t ht
         simp only [cauchyPrincipalValueIntegrandOn]

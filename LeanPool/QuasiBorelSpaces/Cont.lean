@@ -51,8 +51,7 @@ instance : QuasiBorelSpace (Cont R A) :=
 
 @[local fun_prop]
 lemma isHom_val : IsHom (apply (R := R) (A := A)) := by
-  rw [← isHom_to_lift]
-  simp only [isHom_id']
+  exact isHom_of_lift apply
 
 @[fun_prop]
 lemma isHom_val'

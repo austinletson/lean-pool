@@ -34,14 +34,10 @@ private lemma fdBoundary_H_norm_eq_one_arc {H t : ℝ} (h1 : 1 < t) (h3 : t < 3)
     ‖fdBoundaryH H t‖ = 1 := by
   by_cases h2 : t ≤ 2
   · rw [fdBoundary_H_eq_seg2_H H h1 h2]; simp only [fdBoundarySeg2H, fdBoundarySeg2]
-    rw [show (↑Real.pi / 3 + (↑t - 1) * (↑Real.pi / 2 - ↑Real.pi / 3)) * I =
-      ↑(Real.pi / 3 + (t - 1) * (Real.pi / 2 - Real.pi / 3)) * I from by push_cast; ring]
-    exact norm_exp_ofReal_mul_I _
+    exact RectHomotopyProof.segment2_arc_on_unit_circle t
   · push Not at h2
     rw [fdBoundary_H_eq_seg3_H H h2 (le_of_lt h3)]; simp only [fdBoundarySeg3H, fdBoundarySeg3]
-    rw [show (↑Real.pi / 2 + (↑t - 2) * (2 * ↑Real.pi / 3 - ↑Real.pi / 2)) * I =
-      ↑(Real.pi / 2 + (t - 2) * (2 * Real.pi / 3 - Real.pi / 2)) * I from by push_cast; ring]
-    exact norm_exp_ofReal_mul_I _
+    exact RectHomotopyProof.segment3_arc_on_unit_circle t
 
 /-- The boundary at height H avoids any strict interior point p
 with ‖p‖ > 1, |re p| < 1/2, im p > 0, im p < H. -/
@@ -101,8 +97,7 @@ private lemma arc_hasDerivAt' (s : ℝ) :
     simpa using h1.add_const (1 : ℂ)
   have h3 : HasDerivAt (fun s : ℝ =>
       ↑Real.pi * ((s : ℂ) + 1)) (↑Real.pi * 1) s := by
-    have := (hasDerivAt_const s (↑Real.pi : ℂ)).mul h2
-    simp only [zero_mul, zero_add] at this; exact this
+    exact HasDerivAt.const_mul (↑π) h2
   have h4 : HasDerivAt (fun s : ℝ =>
       ↑Real.pi * ((s : ℂ) + 1) / 6 * I) (↑Real.pi * 1 / 6 * I) s := (h3.div_const _).mul_const _
   convert h4 using 1; ring
@@ -278,8 +273,7 @@ private lemma fdBoundary_H_piecewise_homotopic (p : ℂ) (hp_norm : ‖p‖ > 1)
       (lt_of_lt_of_le hp_im (by nlinarith [hs.1] : heightCutoff ≤ _)) t ht
   · exact fun t _ ht_not_P s _ =>
       fdBoundary_H_differentiableAt_off_partition (heightCutoff + s * (H - heightCutoff)) t ht_not_P
-  · exact fun p₁ p₂ _ hfree _ =>
-      fdHomot_deriv_continuousOn_piece heightCutoff H p₁ p₂ hfree
+  · exact fun p₁ p₂ a a_1 a_2 => fdHomot_deriv_continuousOn_piece heightCutoff H p₁ p₂ a_1
   · exact fdHomot_deriv_bound H hH
 
 /-- The winding number of the fixed boundary fdBoundary around
@@ -400,9 +394,7 @@ theorem gWN_fdBoundary_H_eq_neg_one_of_strictInterior
           exact ⟨this.2.1, this.2.2.2.1, this.2.2.2.2.1⟩
         have hd := fdBoundary_H_differentiableAt_off_partition H r.1 ht_not_part
         simp only [Function.comp_def]
-        erw [show (fun t' => fdBoundaryH H t' - zPath r.2) =
-            fdBoundaryH H - fun _ => zPath r.2 from funext fun _ => rfl,
-          deriv_sub hd (differentiableAt_const _), deriv_const, sub_zero])
+        exact deriv_sub_const (zPath r.2))
     · obtain ⟨M, hM'⟩ := piecewiseC1Immersion_deriv_bounded (fdBoundaryHImmersion H hH_sqrt)
       have hM : ∀ t ∈ Icc (0 : ℝ) 5, ‖deriv (fdBoundaryH H) t‖ ≤ M := hM'
       refine ⟨M, fun t ht s _ => ?_⟩

@@ -73,10 +73,7 @@ private theorem HA_mul_neg (a b : HeckeAlgebra 2) : a * (-b) = -(a * b) := by
   exact eq_neg_of_add_eq_zero_right h.symm
 
 private theorem HA_neg_mul (a b : HeckeAlgebra 2) : (-a) * b = -(a * b) := by
-  have h := HA_add_mul a (-a) b
-  rw [add_neg_cancel, HA_zero_mul] at h
-  -- h : 0 = a * b + -a * b
-  exact eq_neg_of_add_eq_zero_right h.symm
+  exact HasDistribNeg.neg_mul a b
 
 private theorem HA_mul_sub (a b c : HeckeAlgebra 2) :
     a * (b - c) = a * b - a * c := by rw [sub_eq_add_neg, HA_mul_add, HA_mul_neg, ← sub_eq_add_neg]
@@ -205,9 +202,7 @@ private lemma first_invariant_dvd_p_of_product (S : Matrix.SpecialLinearGroup (F
   have h1 : (a 0 : ℤ) ∣ S_ℤ 0 0 := h_M00 ▸ h_dvd_entry 0 0
   have h2 : (a 0 : ℤ) ∣ (p : ℤ) * S_ℤ 1 0 := h_M10 ▸ h_dvd_entry 1 0
   exact_mod_cast (by
-    obtain ⟨u, v, huv⟩ := h_cop; obtain ⟨t, ht⟩ := h1
-    exact ⟨u * t, v, by
-      rw [show u * t * ↑(a 0) = u * (↑(a 0) * t) from by ring, ← ht]; exact huv⟩
+    exact IsCoprime.symm (IsCoprime.of_isCoprime_of_dvd_right (id (IsCoprime.symm h_cop)) h1)
     : IsCoprime (↑(a 0) : ℤ) (S_ℤ 1 0)).dvd_of_dvd_mul_right h2
 
 private lemma mulSupport_pp_det_eq (k : ℕ) (a : Fin 2 → ℕ) (ha_pos : ∀ i, 0 < a i)
@@ -576,8 +571,6 @@ theorem T_sum_prime_mul_T_ad (k : ℕ) (hk : 0 < k) :
 lemma T_sum_one : TSum 1 = (1 : HeckeAlgebra 2) := by
   change ∑ a ∈ Nat.divisors 1, TAd a (1 / a) = 1
   simp only [Nat.divisors_one, Finset.sum_singleton, Nat.div_self one_pos]
-  unfold TAd
-  rw [dif_pos ⟨one_pos, one_pos, dvd_refl 1⟩]
   exact T_ad_one_one
 
 include hp in
@@ -592,10 +585,7 @@ private lemma T_ad_p_ppow_eq (k : ℕ) (hk : 0 < k) :
 
 include hp in
 private lemma T_pp_comm_T_ad_one_p : TPp p * TAd 1 p = TAd 1 p * TPp p := by
-  rw [T_ad_of_pos 1 p Nat.one_pos hp.pos (one_dvd _)]
-  exact T_pp_comm_T_elem p hp _
-    (fun i => by fin_cases i <;> first | exact Nat.one_pos | exact hp.pos)
-    (fun i hi => by (have : i = 0 := by omega); subst this; simp)
+  exact HA_mul_comm (TPp p) (TAd 1 p)
 
 /-- `TSum(p^0) = 1`. -/
 private lemma T_sum_ppow_zero : TSum ⟨p ^ 0, pow_pos hp.pos 0⟩ = 1 := by
@@ -704,14 +694,7 @@ theorem T_sum_ppow_recurrence : ∀ k : ℕ, 0 < k →
 private lemma T_pp_comm_T_sum_ppow (k : ℕ) : TPp p * TSum ⟨p ^ k, pow_pos hp.pos k⟩ =
     TSum ⟨p ^ k, pow_pos hp.pos k⟩ * TPp p := by
   rw [T_sum_ppow_expansion p hp k, Finset.mul_sum, Finset.sum_mul]
-  apply Finset.sum_congr rfl; intro i _
-  by_cases h : 0 < p ^ i ∧ 0 < p ^ (k - i) ∧ p ^ i ∣ p ^ (k - i)
-  · obtain ⟨_, _, hdvd⟩ := h
-    rw [T_ad_of_pos (p ^ i) (p ^ (k - i)) (pow_pos hp.pos i) (pow_pos hp.pos (k - i)) hdvd]
-    exact T_pp_comm_T_elem p hp _
-      (fun i' => by fin_cases i' <;> first | exact pow_pos hp.pos i | exact pow_pos hp.pos (k - i))
-      (fun i' hi' => by (have : i' = 0 := by omega); subst this; simpa using hdvd)
-  · simp [T_ad_eq_zero h, HA_mul_zero, HA_zero_mul]
+  apply Finset.sum_congr rfl; exact fun x a => HA_mul_comm (TPp p) (TAd (p ^ x) (p ^ (k - x)))
 
 private lemma T_pp_pow_comm_T_sum_ppow (i k : ℕ) : TPp p ^ i *
     TSum ⟨p ^ k, pow_pos hp.pos k⟩ = TSum ⟨p ^ k, pow_pos hp.pos k⟩ * TPp p ^ i := by
@@ -930,18 +913,7 @@ private lemma T_ad_mul_zero_of_not_dvd' (b db : ℕ) (h : ¬(0 < b ∧ 0 < db �
     are coprime. -/
 lemma mul_injOn_coprime_divisors (m n : ℕ) (hcop : Nat.Coprime m n) :
     Set.InjOn (fun p : ℕ × ℕ => p.1 * p.2) (↑(m.divisors ×ˢ n.divisors)) := by
-  intro ⟨a₁, b₁⟩ h₁ ⟨a₂, b₂⟩ h₂ heq
-  simp only [Finset.mem_coe, Finset.mem_product, Nat.mem_divisors] at h₁ h₂
-  simp only at heq
-  have hcop₁₂ : Nat.Coprime a₁ b₂ :=
-    (hcop.coprime_dvd_left h₁.1.1).coprime_dvd_right h₂.2.1
-  have hcop₂₁ : Nat.Coprime a₂ b₁ :=
-    (hcop.coprime_dvd_left h₂.1.1).coprime_dvd_right h₁.2.1
-  have haeq : a₁ = a₂ := Nat.dvd_antisymm
-    (hcop₁₂.dvd_of_dvd_mul_right (heq ▸ dvd_mul_right a₁ b₁))
-    (hcop₂₁.dvd_of_dvd_mul_right (heq ▸ dvd_mul_right a₂ b₂))
-  have ha_pos : 0 < a₁ := Nat.pos_of_ne_zero fun h => by simp [h] at h₁
-  exact Prod.ext haeq (Nat.eq_of_mul_eq_mul_left ha_pos (haeq ▸ heq))
+  exact Nat.Coprime.mul_injOn_divisors hcop
 
 /-- Theorem 3.24(3a): coprime multiplicativity `T(m) T(n) = T(mn)` when `gcd(m,n) = 1`. -/
 theorem T_sum_mul_coprime (m n : ℕ+) (hcop : Nat.Coprime m n) :

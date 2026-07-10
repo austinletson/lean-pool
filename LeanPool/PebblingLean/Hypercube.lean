@@ -40,12 +40,7 @@ theorem dist_eq_card_diffSet {n : ℕ} (x y : HypercubeVertex n) :
 /-- Hamming distance in `Q_n` is at most `n`. -/
 theorem dist_le {n : ℕ} (x y : HypercubeVertex n) : dist x y ≤ n := by
   unfold dist
-  calc
-    (Finset.univ.filter fun i : Fin n => x i ≠ y i).card ≤
-        (Finset.univ : Finset (Fin n)).card :=
-      Finset.card_le_card (Finset.filter_subset _ _)
-    _ = n := by
-      simp
+  exact card_finset_fin_le {i | x i ≠ y i}
 
 /-- The vertex obtained from `base` by flipping exactly the coordinates in
 `s`. -/

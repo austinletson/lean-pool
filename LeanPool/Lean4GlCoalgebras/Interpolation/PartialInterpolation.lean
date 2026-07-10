@@ -1348,8 +1348,7 @@ noncomputable def partialInterpolationLeft {𝕏 : Proof} [fin_X : Fintype 𝕏.
                     try tauto
       root := Sum.inl ()
       path := by
-        intro node
-        exact partialInterpolationLeftPath x 𝕐₂ y₂ node }
+        exact fun x_2 f n => partialInterpolationLeftPath x 𝕐₂ y₂ x_2 f n }
 
 /-! # Partial Left Interpolation Proofs
 
@@ -1719,8 +1718,7 @@ noncomputable def partialInterpolationRight {𝕏 : Proof} [fin_X : Fintype 𝕏
                     try tauto
       root := Sum.inl ()
       path := by
-        intro node
-        exact partialInterpolationRightPath x 𝕐₂ y₂ node }
+        exact fun x_2 f n => partialInterpolationRightPath x 𝕐₂ y₂ x_2 f n }
 
 lemma Split_to_Ext_isBox {𝕏 : Split.Proof} {x : 𝕏.X} {τ} (r : Split.RuleApp) :
     r.isBox → (@splitToExt _ x τ r).isBox := by

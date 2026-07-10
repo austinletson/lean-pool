@@ -220,8 +220,7 @@ private lemma mutualInfo_add_n_way_inequality
           I[A : BinitTuple; μ] + I[A : Blast; μ]
             = I[A : ⟨BinitTuple, Blast⟩; μ] + I[BinitTuple : Blast; μ]
               - I[BinitTuple : Blast | A; μ] := by
-        simpa using (mutualInfo_add_three_way_identity (X := A) (Y := BinitTuple) (Z :=
-          Blast) hA hBinitTuple hBlast μ)
+        exact mutualInfo_add_three_way_identity hA hBinitTuple (hB (Fin.last n)) μ
       have h_nonneg : 0 ≤ I[BinitTuple : Blast | A; μ] :=
         condMutualInfo_nonneg hBinitTuple hBlast
       have h_pairInfo : I[BinitTuple : Blast; μ] =

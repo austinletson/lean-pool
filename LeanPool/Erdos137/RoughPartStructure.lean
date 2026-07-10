@@ -85,8 +85,7 @@ lemma prime_dvd_roughPartAbove_imp {k m p : ℕ} (hp : p.Prime) (hpdvd : p ∣ R
     p ∈ m.primeFactors ∧ k ≤ p := by
   have hRne : RoughPartAbove k m ≠ 0 := roughPartAbove_ne_zero k m
   have hval_pos : 1 ≤ (RoughPartAbove k m).factorization p := by
-    have hp1 : p ^ 1 ∣ RoughPartAbove k m := by simpa [pow_one] using hpdvd
-    exact (Nat.Prime.pow_dvd_iff_le_factorization hp hRne).mp hp1
+    exact (Nat.Prime.dvd_iff_one_le_factorization hp hRne).mp hpdvd
   by_contra hbad
   push Not at hbad
   have hnot : p ∉ m.primeFactors.filter (fun q => ¬ q < k) := by
@@ -142,8 +141,7 @@ lemma powerful_dvd_squarefree_eq_one {d m : ℕ}
     · by_contra hnonzero
       have hpos : 1 ≤ d.factorization p := by omega
       have hpdvd : p ∣ d := by
-        have hp1 : p ^ 1 ∣ d := (Nat.Prime.pow_dvd_iff_le_factorization hp hdne).mpr hpos
-        simpa [pow_one] using hp1
+        exact Nat.dvd_of_factorization_pos hnonzero
       have hp2d : p ^ 2 ∣ d := hPow p hp hpdvd
       have hge2 : 2 ≤ d.factorization p :=
         (Nat.Prime.pow_dvd_iff_le_factorization hp hdne).mp hp2d

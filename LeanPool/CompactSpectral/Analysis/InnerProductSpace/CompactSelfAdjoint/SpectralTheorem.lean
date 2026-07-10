@@ -82,9 +82,7 @@ theorem iSup_eigenspace_orthogonal_eq_bot_of_isCompactOperator_of_isSelfAdjoint
         -- Convert membership in the orthogonal complement to a `starProjection` equation.
         have :
             (largeEigenspace (𝕜 := 𝕜) (E := E) T ε).starProjection x = 0 := by
-          simpa using
-            (Submodule.starProjection_apply_eq_zero_iff
-                (K := largeEigenspace (𝕜 := 𝕜) (E := E) T ε) (v := x)).2 this
+          exact (Submodule.starProjection_apply_eq_zero_iff (largeEigenspace T ε)).mpr (hxU hε)
         simpa [hP] using this
       have hOp :
           ‖T - T ∘L largeEigenspaceProjector (𝕜 := 𝕜) (E := E) T hT hTc hε‖ ≤ ε :=
@@ -100,8 +98,7 @@ theorem iSup_eigenspace_orthogonal_eq_bot_of_isCompactOperator_of_isSelfAdjoint
           ‖T x‖ = ‖(T - T ∘L largeEigenspaceProjector (𝕜 := 𝕜) (E := E) T hT hTc hε) x‖ := by
             simp [hx']
           _ ≤ ‖T - T ∘L largeEigenspaceProjector (𝕜 := 𝕜) (E := E) T hT hTc hε‖ * ‖x‖ := by
-            simpa using (ContinuousLinearMap.le_opNorm (T - T ∘L largeEigenspaceProjector
-              (𝕜 := 𝕜) (E := E) T hT hTc hε) x)
+            exact ContinuousLinearMap.le_opNorm (T - T ∘SL largeEigenspaceProjector T hT hTc hε) x
           _ ≤ ε * ‖x‖ := by gcongr
       have hxne' : (‖x‖ : ℝ) ≠ 0 := (ne_of_gt hnx)
       have hnorm' : (‖T x‖ : ℝ) ≤ ‖T x‖ / 2 := by
@@ -140,14 +137,7 @@ theorem exists_hilbertBasis_hasEigenvector_of_isCompactOperator_of_isSelfAdjoint
   have complete_eigenspace : ∀ μ : 𝕜, CompleteSpace (t.eigenspace μ) := by
     intro μ
     have hClosed : IsClosed ((t.eigenspace μ : Submodule 𝕜 E) : Set E) := by
-      have :
-          ((t.eigenspace μ : Submodule 𝕜 E) : Set E) =
-            (LinearMap.ker ((T - μ • ContinuousLinearMap.id 𝕜 E : E →L[𝕜] E) :
-              E →ₗ[𝕜] E) : Set E) := by
-        ext x
-        simp [t, LinearMap.mem_ker, sub_eq_zero]
-      simpa [this] using
-        (ContinuousLinearMap.isClosed_ker (f := (T - μ • ContinuousLinearMap.id 𝕜 E)))
+      exact ContinuousLinearMap.isClosed_eigenspace T μ
     haveI : CompleteSpace ((t.eigenspace μ : Submodule 𝕜 E) : Set E) := hClosed.completeSpace_coe
     simpa using (inferInstance : CompleteSpace (t.eigenspace μ))
   -- Choose a Hilbert basis for each eigenspace, indexed by a set of vectors.
@@ -174,8 +164,7 @@ theorem exists_hilbertBasis_hasEigenvector_of_isCompactOperator_of_isSelfAdjoint
       · subst hμ
         have hv' : Orthonormal 𝕜 (b μi) := (b μi).orthonormal
         have hij' : vi ≠ vj := by
-          intro h
-          exact hij (by simp [h])
+          exact ne_of_apply_ne (Sigma.mk μi) hij
         -- Orthonormality within one eigenspace.
         have : inner 𝕜 (b μi vi : t.eigenspace μi) (b μi vj : t.eigenspace μi) = 0 :=
           hv'.2 hij'
@@ -267,11 +256,7 @@ theorem exists_hilbertBasis_hasEigenvector_of_isCompactOperator_of_isSelfAdjoint
     -- `b μi vi` is an element of the eigenspace subtype.
     simp [v]
   have hne0 : v ⟨μi, vi⟩ ≠ 0 := by
-    have hv' : Orthonormal 𝕜 v := hv_orthonormal
-    have hv_norm : ‖v ⟨μi, vi⟩‖ = 1 := hv'.1 ⟨μi, vi⟩
-    have hv_norm_ne : ‖v ⟨μi, vi⟩‖ ≠ 0 := by
-      simp [hv_norm]
-    exact (norm_ne_zero_iff.1 hv_norm_ne)
+    exact Orthonormal.ne_zero hv_orthonormal ⟨μi, vi⟩
   -- Identify `b`'s coerced family with `v`.
   have hb' :
       (HilbertBasis.mkOfOrthogonalEqBot hv_orthonormal hv_span_orth) ⟨μi, vi⟩ = v ⟨μi, vi⟩ := by

@@ -96,10 +96,7 @@ lemma models_iff_of_Delta1 {σ : Dlt1.Semisentence n} (hσ : σ.ProperOn ℕ) (h
     Fin n → ℕ} :
     V ⊧/(e ·) σ.val ↔ ℕ ⊧/e σ.val := by
   by_cases h : ℕ ⊧/e σ.val <;> simp [h]
-  · have : ℕ ⊧/e σ.sigma.val := by simpa [HierarchySymbol.Semiformula.val_sigma] using h
-    have : V ⊧/(e ·) σ.sigma.val := by
-      simpa [numeral_eq_natCast] using LO.Arith.bold_sigma_one_completeness' (M := V) (by simp) this
-    simpa [HierarchySymbol.Semiformula.val_sigma] using this
+  · exact (deltaOne_absolute V σ hσ hσV e).mp h
   · have : ℕ ⊧/e (∼σ.pi.val) := by simpa [hσ.iff'] using h
     have : V ⊧/(e ·) (∼σ.pi.val) := by
       simpa [numeral_eq_natCast] using LO.Arith.bold_sigma_one_completeness' (M := V) (by simp) this

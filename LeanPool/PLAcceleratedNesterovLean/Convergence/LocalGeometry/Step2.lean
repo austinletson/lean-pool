@@ -32,17 +32,10 @@ namespace PLAcceleratedNesterovLean
 
 lemma differentiable_deriv_of_contDiff2 {φ : ℝ → ℝ} (hφ : ContDiff ℝ 2 φ) :
     Differentiable ℝ (deriv φ) := by
-  have hfderiv_C1 : ContDiff ℝ 1 (fderiv ℝ φ) :=
-    hφ.fderiv_right (by norm_num : (1 : WithTop ℕ∞) + 1 ≤ 2)
-  have h1 : ContDiff ℝ 1 (fun x => (fderiv ℝ φ x) (1 : ℝ)) :=
-    (ContinuousLinearMap.apply ℝ ℝ (1 : ℝ)).contDiff.comp hfderiv_C1
-  have h2 : deriv φ = fun x => (fderiv ℝ φ x) (1 : ℝ) := by
-    ext x; exact fderiv_apply_one_eq_deriv.symm
-  rw [h2]; exact h1.differentiable (by norm_num)
+  exact ContDiff.differentiable_deriv_two hφ
 
 lemma hasDerivAt_const_mul_id (c x : ℝ) : HasDerivAt (fun t => c * t) c x := by
-  have h := (hasDerivAt_id x).const_mul c
-  simp only [mul_one] at h; exact h
+  exact hasDerivAt_const_mul c
 
 lemma hasDerivAt_quad (c x : ℝ) :
     HasDerivAt (fun t => c / 2 * t ^ 2) (c * x) x := by
@@ -58,8 +51,7 @@ lemma differentiable_sq : Differentiable ℝ (fun (t : ℝ) => t ^ 2) := by
   simp_all
 
 lemma continuous_sq : Continuous (fun (t : ℝ) => t ^ 2) := by
-  have : (fun t : ℝ => t ^ 2) = (fun t => t * t) := by ext; ring
-  rw [this]; exact continuous_id.mul continuous_id
+  exact continuous_pow 2
 
 /-- If φ''(t) ≥ c for all t ∈ [0,1] and φ'(0) = 0, then φ(1) - φ(0) ≥ c/2.
     (Quadratic growth from Hessian lower bound.)

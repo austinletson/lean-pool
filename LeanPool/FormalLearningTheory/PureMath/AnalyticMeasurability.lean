@@ -47,8 +47,7 @@ theorem MeasureTheory.AnalyticSet.exists_isCompact_measureReal_gt
     -- Every r in S satisfies r + ε ≤ μ s, hence r ≤ μ s - ε
     have hbound : sSup {r | ∃ K, IsCompact K ∧ K ⊆ s ∧ r = μ K} ≤ μ s - ENNReal.ofReal ε := by
       apply sSup_le
-      intro r hr
-      exact ENNReal.le_sub_of_add_le_right hε_ne_top (h r hr)
+      exact fun b a => ENNReal.le_sub_of_add_le_right hε_ne_top (h b a)
     -- But sSup S = compactCap μ s = μ s, so μ s ≤ μ s - ε
     have : MeasureTheory.compactCap μ s = sSup {r | ∃ K, IsCompact K ∧ K ⊆ s ∧ r = μ K} := rfl
     rw [← this, hcap] at hbound

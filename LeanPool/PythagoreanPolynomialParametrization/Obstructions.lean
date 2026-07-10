@@ -63,8 +63,7 @@ theorem no_int_poly_parametrization :
   let two : IntPoly n := 2
   have hId : f ^ 2 + g ^ 2 = h ^ 2 := intPolyParametrizes_identity hp
   have htwo_ne : two ≠ 0 := by
-    dsimp [two]
-    norm_num
+    exact Ne.symm (NeZero.ne' two)
   have htwo_prime : Prime two := by
     dsimp [two]
     simpa using ((MvPolynomial.prime_C_iff (σ := Fin n) (R := ℤ) (r := (2 : ℤ))).2

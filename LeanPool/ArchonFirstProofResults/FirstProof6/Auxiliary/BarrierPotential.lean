@@ -228,9 +228,7 @@ lemma barrier_rearrange {a b c : ℝ} (hc : 0 < c)
   have h1ma : (0 : ℝ) < 1 - a := by linarith
   rw [div_le_iff₀ h1ma]
   have hbc : b / c ≤ 1 - a := by linarith [div_nonneg _hb_nn hc.le]
-  calc b = (b / c) * c := by rw [div_mul_cancel₀ b (ne_of_gt hc)]
-    _ ≤ (1 - a) * c := by nlinarith
-    _ = c * (1 - a) := by ring
+  exact (div_le_iff₀' hc).mp hbc
 
 /-- For a PSD matrix, each eigenvalue is at most the trace. -/
 lemma eigenvalue_le_trace_of_posSemidef
@@ -261,8 +259,7 @@ lemma one_sub_posDef_of_trace_lt_one (K : Matrix V V ℝ) (hK_psd : K.PosSemidef
   have h_eig_lt_1 : ∀ i, eig i < 1 := fun i =>
     lt_of_le_of_lt (eigenvalue_le_trace_of_posSemidef K hK_psd i) htrK_lt
   have hQ_unit : IsUnit (eigQ : Matrix V V ℝ) := by
-    rw [Matrix.isUnit_iff_isUnit_det]
-    exact IsUnit.of_mul_eq_one _ (by rw [← Matrix.det_mul, hQ_mul_star, Matrix.det_one])
+    exact Unitary.isUnit_coe
   rw [hK_eq, ← hQ_mul_star,
       show eigQ * star eigQ - eigQ * Matrix.diagonal eig * star eigQ =
         eigQ * Matrix.diagonal (fun i => 1 - eig i) * star eigQ from by

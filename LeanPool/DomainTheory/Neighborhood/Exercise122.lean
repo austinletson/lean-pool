@@ -158,8 +158,7 @@ the topology:
 theorem le_iff_isOpen_imp (x y : V.Element) :
     x ≤ y ↔ ∀ U : Set V.Element, IsOpen U → x ∈ U → y ∈ U := by
   constructor
-  · intro hxy U hU hxU
-    exact V.isOpen_isUpperSet hU hxU hxy
+  · exact fun a U a_1 a_2 => isOpen_isUpperSet V a_1 a_2 a
   · intro h
     exact fun X hX => h (V.basicOpen X) (V.isOpen_basicOpen X) hX
 

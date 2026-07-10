@@ -47,29 +47,7 @@ theorem tprod_one_sub_ordererd {ι α : Type*} [CommRing α] [TopologicalSpace �
     {f : ι → α} (hsum : Summable fun i ↦ f i * ∏ j ∈ Finset.Iio i, (1 - f j))
     (hmul : Multipliable (1 - f ·)) :
     ∏' i, (1 - f i) = 1 - ∑' i, f i * ∏ j ∈ Finset.Iio i, (1 - f j) := by
-  obtain hempty | hempty := isEmpty_or_nonempty ι
-  · simp
-  obtain ⟨x, hx⟩ := hmul
-  convert hx.tprod_eq
-  unfold HasProd at hx
-  obtain hx := hx.const_sub 1
-  conv at hx in fun s ↦ _ =>
-    ext s
-    rw [Finset.prod_one_sub_ordered, sub_sub_cancel]
-  obtain ⟨a, ha⟩ := hsum
-  obtain h' := ha.comp Filter.tendsto_finset_Iic_atTop_atTop
-  obtain hx' := hx.comp Filter.tendsto_finset_Iic_atTop_atTop
-  rw [ha.tsum_eq, sub_eq_iff_eq_add, ← sub_eq_iff_eq_add']
-  apply tendsto_nhds_unique hx'
-  convert h' using 1
-  ext s
-  apply Finset.sum_congr rfl
-  intro i hi
-  congrm _ * ∏ _ ∈ ?_, _
-  ext j
-  suffices j < i → j ≤ s by simpa
-  intro hj
-  exact (hj.trans_le (by simpa using hi)).le
+  exact tprod_one_sub_ordered hsum hmul
 
 variable {R : Type*} [CommRing R]
 
@@ -207,5 +185,4 @@ theorem pentagonalNumberTheorem_generic [TopologicalSpace R] [IsTopologicalRing 
   rw [← tendsto_sub_nhds_zero_iff]
   simp_rw [sub_sub_cancel_left]
   rw [show (nhds (0 : R)) = (nhds (-0)) by simp]
-  apply Filter.Tendsto.neg
-  apply htail
+  exact Tendsto.neg htail

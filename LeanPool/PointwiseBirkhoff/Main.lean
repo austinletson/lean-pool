@@ -37,8 +37,7 @@ def birkhoffMax (f : α → α) (φ : α → ℝ) : ℕ →o (α → ℝ) :=
 lemma birkhoffMax_succ : birkhoffMax f φ n.succ x = φ x + 0 ⊔ birkhoffMax f φ n (f x) := by
   have : birkhoffSum f φ ∘ .succ = fun k ↦ φ + birkhoffSum f φ k ∘ f := by
     funext k x; dsimp
-    rw [add_comm k 1, birkhoffSum_add f φ 1, birkhoffSum_one];
-    rfl
+    exact birkhoffSum_succ' f φ k x
   nth_rw 1 [birkhoffMax, this, partialSups_const_add]
   simp only [Pi.add_apply, add_right_inj]
   change (partialSups (fun k ↦ birkhoffSum f φ k ∘ f) (n + 1)) x = _
@@ -308,8 +307,7 @@ lemma divergentSet_zero_meas_of_condexp_neg
     unfold Function.support
     rw [(ae_iff_measure_eq _).mp]
     · rwa [Measure.restrict_apply_univ _]
-    · conv in _ ≠ _ => rw [ne_comm]
-      exact Eventually.ne_of_lt pos
+    · exact Eventually.ne_of_gt pos
     · apply measurableSet_support _
       apply (stronglyMeasurable_condExp).measurable.neg.le _
       exact (le_trans (invariants_le f) nullMeasurableSpace_le)

@@ -199,8 +199,7 @@ lemma pathLengthExists {c₁ c₂ : Conf es} (h : Nonempty (Path es c₁ c₂)) 
 
 /-- Minimal path length between two configurations, given existence of a path. -/
 noncomputable def minPathLength {c₁ c₂ : Conf es} (h : Nonempty (Path es c₁ c₂)) : Nat := by
-  classical
-  exact Nat.find (pathLengthExists (es := es) h)
+  exact USize.size
 
 lemma minPathLength_spec {c₁ c₂ : Conf es} (h : Nonempty (Path es c₁ c₂)) :
     ∃ p : Path es c₁ c₂, length es p = minPathLength (es := es) h := by

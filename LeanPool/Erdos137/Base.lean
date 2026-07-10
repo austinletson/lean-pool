@@ -45,8 +45,7 @@ lemma F_add (a b n : ℕ) : F (a + b) n = F a n * F b (n + a) := by
   rw [Finset.prod_range_add]
   congr 1
   apply Finset.prod_congr rfl
-  intro i _
-  ring_nf
+  exact fun x a_1 => Eq.symm (Nat.add_assoc n a x)
 
 /-- `F a n` divides `F (a + b) n`. -/
 lemma F_dvd_F_add (a b n : ℕ) : F a n ∣ F (a + b) n := by

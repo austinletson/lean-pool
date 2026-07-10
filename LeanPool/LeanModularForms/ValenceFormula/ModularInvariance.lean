@@ -110,8 +110,7 @@ private lemma neg_inv_finite_order_witness (g : ℂ → ℂ) (p : ℂ) (hp : p �
       (mul_ne_zero hp hp)).mul (hh_an.comp_of_eq ((analyticAt_inv hp).neg) rfl)
   · exact mul_ne_zero (zpow_ne_zero _ (mul_ne_zero hp hp)) hh_ne
   · have hp_near : ∀ᶠ z in 𝓝[≠] p, z ≠ 0 := by
-      rw [eventually_nhdsWithin_iff]
-      filter_upwards [isOpen_ne.mem_nhds hp] with z hz _; exact hz
+      exact eventually_ne_nhdsWithin hp
     exact ((filter_map_neg_inv p hp hh_eq).and hp_near).mono fun z ⟨hz_eq, hz_ne⟩ => by
       simp only [smul_eq_mul] at hz_eq ⊢
       rw [hz_eq, show -z⁻¹ - -p⁻¹ = (z - p) * (z * p)⁻¹ from by field_simp; ring, mul_zpow]
@@ -236,8 +235,7 @@ lemma ord_S_eq (p : ℍ) :
     rw [UpperHalfPlane.modular_S_smul, UpperHalfPlane.coe_mk, neg_inv]
   conv_lhs => rw [h_S_coe]
   have hp_ne : p_cplx ≠ 0 := by
-    intro h; have : p_cplx.im = 0 := by rw [h]; simp only [Complex.zero_im]
-    linarith [show p.im = p_cplx.im from rfl, p.im_pos]
+    exact UpperHalfPlane.ne_zero p
   suffices h : meromorphicOrderAt G (-p_cplx⁻¹) =
       meromorphicOrderAt G p_cplx from congr_arg WithTop.untop₀ h
   calc meromorphicOrderAt G (-p_cplx⁻¹) = meromorphicOrderAt (fun z => G (-z⁻¹)) p_cplx :=
@@ -245,8 +243,7 @@ lemma ord_S_eq (p : ℍ) :
     _ = meromorphicOrderAt (fun z => z ^ k * G z) p_cplx := by
         apply meromorphicOrderAt_congr
         rw [Filter.EventuallyEq, eventually_nhdsWithin_iff]
-        filter_upwards [isOpen_lt continuous_const continuous_im |>.mem_nhds p.im_pos] with z hz _
-        exact modform_G_S_identity f G hG_def z hz
+        filter_upwards [isOpen_lt continuous_const continuous_im |>.mem_nhds p.im_pos] with z hz exact fun a => modform_G_S_identity f G hG_def z hz
     _ = meromorphicOrderAt (fun z : ℂ => z ^ k) p_cplx + meromorphicOrderAt G p_cplx :=
         meromorphicOrderAt_mul (analyticAt_id.zpow hp_ne).meromorphicAt
           (modform_G_meromorphicAt f G hG_def p)

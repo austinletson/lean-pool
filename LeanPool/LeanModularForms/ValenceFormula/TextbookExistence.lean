@@ -70,8 +70,7 @@ lemma orb_vAdd_neg_one_eq (p : ℍ) :
       smul_inv_smul _ p
     rw [UpperHalfPlane.modular_T_smul] at h1
     have h2 : ModularGroup.T⁻¹ • p = (-1 : ℝ) +ᵥ ((1 : ℝ) +ᵥ (ModularGroup.T⁻¹ • p)) := by
-      rw [← add_vadd, show (-1 : ℝ) + 1 = 0 from by ring,
-        zero_vadd]
+      exact Eq.symm (neg_vadd_vadd 1 (ModularGroup.T⁻¹ • p))
     rwa [h1] at h2
   change Quotient.mk'' ((-1 : ℝ) +ᵥ p) = Quotient.mk'' p
   rw [Quotient.eq'', MulAction.orbitRel_apply,

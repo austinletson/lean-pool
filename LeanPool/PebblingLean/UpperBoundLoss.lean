@@ -194,8 +194,7 @@ theorem geomSum_le_two_of_le_half {q : ℝ}
     geomSum q k ≤ 2 := by
   have hpow :
       ∀ i : ℕ, q ^ i ≤ ((1 : ℝ) / 2) ^ i := by
-    intro i
-    exact pow_le_pow_left₀ hq_nonneg hq_half i
+    exact fun i => pow_le_pow_left₀ hq_nonneg hq_half i
   have hsum :
       geomSum q k ≤ ∑ i ∈ Finset.range k, ((1 : ℝ) / 2) ^ i := by
     exact Finset.sum_le_sum fun i _hi => hpow i

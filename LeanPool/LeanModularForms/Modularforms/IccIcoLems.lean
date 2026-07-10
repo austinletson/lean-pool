@@ -24,10 +24,7 @@ open scoped Interval Real NNReal ENNReal Topology BigOperators Nat
 
 lemma Icc_succ (n : ℕ) : Finset.Icc (-(n + 1) : ℤ) (n + 1) = Finset.Icc (-n : ℤ) n ∪
   {(-(n+1) : ℤ), (n + 1 : ℤ)} := by
-  ext a
-  simp only [neg_add_rev, Int.reduceNeg, Finset.mem_Icc, add_neg_le_iff_le_add, Finset.union_insert,
-    Finset.mem_insert, Finset.mem_union, Finset.mem_singleton]
-  omega
+  exact Finset.Icc_succ_succ n n
 
 
 lemma trex (f : ℤ → ℂ) (N : ℕ) (hn : 1 ≤ N) : ∑ m ∈ Finset.Icc (-N : ℤ) N, f m =
@@ -87,6 +84,4 @@ lemma verga : Tendsto (fun N : ℕ => Finset.Ico (-N : ℤ) N) atTop atTop := by
 
 lemma fsb (b : ℕ) : Finset.Ico (-(b+1) : ℤ) (b+1) = Finset.Ico (-(b : ℤ)) (b) ∪
     {-((b+1) : ℤ), (b : ℤ)} := by
-  ext n
-  simp
-  omega
+  exact Finset.Ico_succ_succ b b
