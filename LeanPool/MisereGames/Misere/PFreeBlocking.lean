@@ -291,8 +291,7 @@ theorem _root_.MisereGames.GameForm.miserePlayerOutcome_right_isEnd_left_NN {g h
         rw [moves_add, Set.mem_union, Set.mem_image, Set.mem_image] at hg'
         rcases hg' with ⟨gl, hgl, rfl⟩ | ⟨hrl, hhrl, rfl⟩
         · have hg0 : moves .left g = ∅ := by rw [← isEnd_def]; exact hge
-          rw [hg0] at hgl
-          exact (Set.notMem_empty gl hgl).elim
+          grind
         · have hhrl_pfb := Hereditary.of_mem_moves hhr_pfb hhrl
           have hhrl_winsR : WinsGoingFirst .right hrl := by
             have := (not_winsGoingFirst_iff.mp

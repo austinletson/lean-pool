@@ -50,9 +50,7 @@ private def supportPatternOfList {t : ℕ} (s : List ℕ)
     SupportPattern t := by
   let finList : List (Fin t) := s.pmap (fun i hi => (⟨i, hi⟩ : Fin t)) hIn
   have hFinNodup : finList.Nodup := by
-    apply hNodup.pmap
-    intro a ha b hb hEq
-    simpa using congrArg Fin.val hEq
+    grind
   refine ⟨finList.toFinset, ?_⟩
   rw [List.toFinset_card_of_nodup hFinNodup]
   simpa [finList] using hCard
@@ -65,8 +63,7 @@ def FrameSpec.supportList (spec : FrameSpec) : List (SupportPattern spec.t) :=
         (spec.rawSupports_ok s hs).1
         (spec.rawSupports_ok s hs).2.2)
     (by
-      intro s hs
-      exact hs) : List (SupportPattern spec.t))
+      grind) : List (SupportPattern spec.t))
 
 /-- The support multiset of a frame specification, interpreted on `Fin spec.t`. -/
 def FrameSpec.supports (spec : FrameSpec) : Multiset (SupportPattern spec.t) :=
@@ -1340,11 +1337,8 @@ lemma card_filter_univ_multiset_toList_eq_countP_prop {α : Type*}
     apply Finset.card_bij
       (fun i _ => (⟨i.1, by rw [Multiset.length_toList]; exact i.2⟩ :
         Fin m.toList.length))
-    · intro i hi
-      simpa using hi
-    · intro i _ j _ hij
-      apply Fin.ext
-      exact congrArg (fun x : Fin m.toList.length => x.1) hij
+    · grind
+    · grind
     · intro j hj
       refine ⟨(⟨j.1, by rw [← Multiset.length_toList]; exact j.2⟩ : Fin m.card), ?_, ?_⟩
       · simpa using hj
@@ -1459,15 +1453,10 @@ private theorem mem_supportPatternOfList_iff {t : ℕ} {s : List ℕ}
   constructor
   · intro hi
     rw [List.mem_toFinset, List.mem_pmap] at hi
-    rcases hi with ⟨a, ha, hEq⟩
-    have : a = i.1 := by
-      simpa using congrArg Fin.val hEq
-    simpa [this] using ha
+    grind
   · intro hi
     rw [List.mem_toFinset, List.mem_pmap]
-    refine ⟨i.1, hi, ?_⟩
-    apply Fin.ext
-    rfl
+    grind
 
 private theorem rawCapSum_eq_sum (spec : FrameSpec)
     (Tmask Imask : Nat) (T I : Finset (Fin spec.t))
@@ -1478,8 +1467,7 @@ private theorem rawCapSum_eq_sum (spec : FrameSpec)
   have hfilter :
       ((Finset.univ : Finset (Fin spec.t)).filter fun i =>
           Tmask.testBit i.1 && !(Imask.testBit i.1)) = T \ I := by
-    ext i
-    simp [hT i, hI i]
+    grind
   rw [← Finset.sum_filter]
   rw [hfilter]
 
@@ -1498,18 +1486,12 @@ private theorem rawInterCount_eq_interCard (spec : FrameSpec)
   let finList : List (Fin spec.t) :=
     x.1.pmap (fun i hi => (⟨i, hi⟩ : Fin spec.t)) hIn
   have hfinNodup : finList.Nodup := by
-    apply hNodup.pmap
-    intro a ha b hb hEq
-    simpa using congrArg Fin.val hEq
+    grind
   have hcount :
       rawInterCount Imask x.1 = finList.countP (fun j => decide (j ∈ I)) := by
     unfold rawInterCount finList
     rw [← List.countP_attach (l := x.1) (p := fun i => Imask.testBit i)]
-    rw [List.countP_pmap]
-    apply List.countP_congr
-    intro y hy
-    rcases y with ⟨a, ha⟩
-    exact Bool.eq_iff_iff.mp (hI ⟨a, hIn a ha⟩)
+    grind
   calc
     rawInterCount Imask x.1 = finList.countP (fun j => decide (j ∈ I)) := hcount
     _ = (finList.filter fun j => decide (j ∈ I)).length := by
@@ -1558,9 +1540,7 @@ private theorem rawAll_eq_decide_subset (spec : FrameSpec)
     have hi : i ∈ (supportPatternOfList x.1 hIn hNodup hCard).1 :=
       (mem_supportPatternOfList_iff (hIn := hIn) (hNodup := hNodup) (hCard := hCard)).mpr ha
     have hmem : i ∈ T := hSub hi
-    have hmem' : decide (i ∈ T) = true := decide_eq_true hmem
-    rw [hT i]
-    exact hmem'
+    grind
 
 private theorem rawWitnessAux_eq (Tmask Imask : Nat) :
     ∀ acc s,
@@ -1667,8 +1647,7 @@ private theorem bit_testBit_gt {n i : Nat} (hi : n < i) :
     · exfalso
       exact hne ((Nat.testBit_one_eq_true_iff_self_eq_zero).mp htrue)
     · cases htest : Nat.testBit 1 (i - n) <;> simp_all
-  rw [Nat.testBit_shiftLeft]
-  simp [Nat.le_of_lt hi, hbit]
+  grind
 
 private theorem checkMasksDown_sound (spec : FrameSpec) :
     ∀ n Tmask Imask, n ≤ spec.t →
@@ -1692,11 +1671,9 @@ private theorem checkMasksDown_sound (spec : FrameSpec) :
         rw [rawAttachedCount_eq_count]
         exact hleaf
       have hTall : ∀ i : Fin spec.t, Tmask.testBit i.1 = decide (i ∈ T) := by
-        intro i
-        exact hTrep i (by omega)
+        grind
       have hIall : ∀ i : Fin spec.t, Imask.testBit i.1 = decide (i ∈ I) := by
-        intro i
-        exact hIrep i (by omega)
+        grind
       calc
         spec.countWitnesses T I =
             spec.rawSupports.attach.countP (rawAttachedWitness spec Tmask Imask) := by
@@ -1814,14 +1791,11 @@ theorem FrameSpec.rawCheckValid_sound (spec : FrameSpec)
     (h : spec.rawCheckValid = true) : spec.IsValid := by
   intro T I hIT
   have hzero : ∀ i < spec.t, (0 : Nat).testBit i = false ∧ (0 : Nat).testBit i = false := by
-    intro i hi
-    simp
+    grind
   have hTrep : ∀ i : Fin spec.t, spec.t ≤ i.1 → (0 : Nat).testBit i.1 = decide (i ∈ T) := by
-    intro i hi
-    exact (False.elim (Nat.not_le_of_lt i.2 hi))
+    grind
   have hIrep : ∀ i : Fin spec.t, spec.t ≤ i.1 → (0 : Nat).testBit i.1 = decide (i ∈ I) := by
-    intro i hi
-    exact (False.elim (Nat.not_le_of_lt i.2 hi))
+    grind
   exact checkMasksDown_sound spec spec.t 0 0 le_rfl hzero
     (by simpa [FrameSpec.rawCheckValid] using h) T I hIT hTrep hIrep
 

@@ -66,10 +66,7 @@ theorem tprod_one_sub_ordererd {ι α : Type*} [CommRing α] [TopologicalSpace �
   apply Finset.sum_congr rfl
   intro i hi
   congrm _ * ∏ _ ∈ ?_, _
-  ext j
-  suffices j < i → j ≤ s by simpa
-  intro hj
-  exact (hj.trans_le (by simpa using hi)).le
+  grind
 
 variable {R : Type*} [CommRing R]
 
@@ -168,15 +165,12 @@ theorem pentagonalLhs_gamma [TopologicalSpace R] [IsTopologicalRing R] [T2Space 
     rw [ih, gamma_rec _ hx hgamma h , Finset.sum_range_succ _ (n + 1)]
     have h (n) : (n + 1 + 1) * (3 * (n + 1) + 2) / 2 =
         (n + 1) * (3 * n + 4) / 2 + (2 * n + 3) := by
-      rw [← Nat.add_mul_div_left _ _ (by simp)]
-      ring_nf
+      grind
     simp_rw [h]
     have h (n) : (n + 1 + 1) * (3 * (n + 1) + 4) / 2 =
         (n + 1) * (3 * n + 4) / 2 + (3 * n + 5) := by
-      rw [← Nat.add_mul_div_left _ _ (by simp)]
-      ring_nf
-    simp_rw [h]
-    ring_nf
+      grind
+    grind
 
 end Pentagonal
 

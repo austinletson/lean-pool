@@ -48,9 +48,7 @@ lemma sides_eq_union (n : ℕ) :
     · left; use ⟨i, hin⟩; exact hi
     · right; use ⟨i, hin⟩; exact hi
   · simp only [Set.mem_union, Set.mem_iUnion, Set.mem_setOf_eq]
-    intro hi; obtain ⟨i, hi⟩ | ⟨i, hi⟩ := hi
-    · use i.castSucc, Fin.castSucc_lt_last _; left; exact hi
-    · use i.castSucc, Fin.castSucc_lt_last _; right; exact hi
+    grind
 
 lemma isClosed_bot (n : ℕ) : IsClosed (bot n) :=
   isClosed_eq ((continuous_apply _).comp (by fun_prop)) continuous_const
@@ -129,8 +127,7 @@ lemma backFlrCover_cover (n : ℕ) :
   · use 1; refine ⟨hy, ?_⟩; intro hyn'; contradiction
 
 lemma flr_eq_sprod (n : ℕ) : flr n = cubeBoundary.jar n ×ˢ Set.univ := by
-  ext x : 1
-  simp_all only [Set.mem_setOf_eq, Set.mem_prod, Set.mem_univ, and_true]
+  grind
 
 lemma isClosed_back (n : ℕ) : IsClosed (back n) :=
   isClosed_eq ((continuous_apply _).comp (by fun_prop)) continuous_const

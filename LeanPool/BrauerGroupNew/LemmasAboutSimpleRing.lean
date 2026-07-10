@@ -66,9 +66,7 @@ lemma IsSimpleRing.left_of_tensor (B C : Type u)
       intro x
       simp only [Set.mem_range, LinearMap.zero_apply, exists_const]
       rw [← show F 0 = 0 by simp, @Eq.comm _ 0 x]
-      constructor
-      · apply hF
-      · rintro rfl; simp
+      grind
     have : Function.Exact (0 : PUnit.{u + 1} →ₗ[K] _) f :=
       Module.FaithfullyFlat.iff_exact_iff_rTensor_exact K C|>.1 inferInstance
         (l12 := (0 : PUnit →ₗ[K] _) ) (l23 := f.toLinearMap) |>.2

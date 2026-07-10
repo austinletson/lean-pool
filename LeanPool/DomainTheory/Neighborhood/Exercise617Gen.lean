@@ -96,35 +96,15 @@ theorem singleton_subset_coneN {σ τ : Strn A} : ({τ} : Set (Strn A)) ⊆ cone
 omit [DecidableEq A] in
 theorem singleton_coneN_nd (σ τ : Strn A) :
     ({τ} : Set (Strn A)) ⊆ coneN σ ∨ coneN σ ⊆ {τ} ∨ ({τ} : Set (Strn A)) ∩ coneN σ = ∅ := by
-  by_cases h : σ <+: τ
-  · exact Or.inl (singleton_subset_coneN.mpr h)
-  · refine Or.inr (Or.inr ?_)
-    ext w
-    simp only [Set.mem_inter_iff, Set.mem_singleton_iff, mem_coneN, Set.mem_empty_iff_false,
-      iff_false, not_and]
-    rintro rfl hτ
-    exact h hτ
+  grind
 
 omit [DecidableEq A] in
 theorem nestedOrDisjointN : NestedOrDisjoint (memCn (A := A)) := by
   rintro X Y (⟨σ, rfl⟩ | ⟨σ, rfl⟩) (⟨τ, rfl⟩ | ⟨τ, rfl⟩)
   · exact coneN_trichotomy σ τ
-  · rcases singleton_coneN_nd σ τ with h | h | h
-    · exact Or.inr (Or.inl h)
-    · exact Or.inl h
-    · exact Or.inr (Or.inr (by rw [Set.inter_comm]; exact h))
-  · rcases singleton_coneN_nd τ σ with h | h | h
-    · exact Or.inl h
-    · exact Or.inr (Or.inl h)
-    · exact Or.inr (Or.inr h)
-  · by_cases h : σ = τ
-    · subst h; exact Or.inl (Set.Subset.refl _)
-    · refine Or.inr (Or.inr ?_)
-      ext w
-      simp only [Set.mem_inter_iff, Set.mem_singleton_iff, Set.mem_empty_iff_false, iff_false,
-        not_and]
-      rintro rfl h2
-      exact h h2
+  · grind
+  · grind
+  · grind
 
 /-- **The generic domain `Cₐ`** of finite-or-infinite `A`-sequences. -/
 def Cn (A : Type) : NeighborhoodSystem (Strn A) :=
@@ -174,9 +154,7 @@ omit [DecidableEq A] in
 theorem prependN_singleton (σ τ : Strn A) : prependN σ {τ} = {σ ++ τ} := by
   ext w
   simp only [mem_prependN, Set.mem_singleton_iff]
-  constructor
-  · rintro ⟨t, rfl, rfl⟩; rfl
-  · rintro rfl; exact ⟨τ, rfl, rfl⟩
+  grind
 
 omit [DecidableEq A] in
 theorem prependN_mono (σ : Strn A) {X X' : Set (Strn A)} (h : X' ⊆ X) :
@@ -817,9 +795,7 @@ omit [DecidableEq A] [Inhabited A] in
 theorem embA_eq_prependN (a : A) (X : Set (Strn A)) : embA a X = prependN [a] X := by
   ext w
   simp only [mem_embA, mem_prependN]
-  constructor
-  · rintro ⟨w', rfl, hX⟩; exact ⟨w', hX, rfl⟩
-  · rintro ⟨t, hX, rfl⟩; exact ⟨t, rfl, hX⟩
+  grind
 
 omit [DecidableEq A] [Inhabited A] in
 theorem embA_coneN (a : A) (σ : Strn A) : embA a (coneN σ) = coneN (a :: σ) := by
@@ -845,18 +821,14 @@ omit [DecidableEq A] [Inhabited A] in
 theorem embA_inter (a : A) (X X' : Set (Strn A)) : embA a X ∩ embA a X' = embA a (X ∩ X') := by
   ext w
   simp only [Set.mem_inter_iff, mem_embA]
-  constructor
-  · rintro ⟨⟨w', rfl, hX⟩, w'', heq, hX'⟩
-    rw [List.cons.injEq] at heq; obtain ⟨-, rfl⟩ := heq; exact ⟨w', rfl, hX, hX'⟩
-  · rintro ⟨w', rfl, hX, hX'⟩; exact ⟨⟨w', rfl, hX⟩, ⟨w', rfl, hX'⟩⟩
+  grind
 
 omit [DecidableEq A] [Inhabited A] in
 theorem embA_inter_ne {a a' : A} (h : a ≠ a') (X Y : Set (Strn A)) :
     embA a X ∩ embA a' Y = ∅ := by
   ext w
   simp only [Set.mem_inter_iff, mem_embA, Set.mem_empty_iff_false, iff_false, not_and]
-  rintro ⟨w', rfl, -⟩ ⟨w'', heq, -⟩
-  rw [List.cons.injEq] at heq; exact h heq.1
+  grind
 
 omit [DecidableEq A] [Inhabited A] in
 theorem embA_subset {a : A} {X X' : Set (Strn A)} : embA a X ⊆ embA a X' ↔ X ⊆ X' := by
@@ -1317,8 +1289,7 @@ def liftCn (V : NeighborhoodSystem β) (coneVal singVal : Strn A → V.Element)
     · rcases hX' with ⟨τ, rfl⟩ | ⟨τ, rfl⟩
       · exact absurd hX'X (not_coneN_subset_singleton τ σ)
       · have hτσ : τ = σ := by
-          have hmem := Set.singleton_subset_iff.mp hX'X
-          rwa [Set.mem_singleton_iff] at hmem
+          grind
         subst hτσ
         exact Or.inr ⟨τ, rfl, (singVal τ).up_mem hY hY' hYY'⟩
 
@@ -1351,10 +1322,7 @@ theorem liftCn_strElem (V : NeighborhoodSystem β) (coneVal singVal : Strn A →
     · have hpre : σ' <+: σ := by
         apply singleton_subset_coneN.mp; rw [← hXcone]; exact hsub
       exact hsing hpre Y hY
-    · have hσσ' : σ = σ' := by
-        have hmem := Set.singleton_subset_iff.mp (hXsing ▸ hsub)
-        rwa [Set.mem_singleton_iff] at hmem
-      subst hσσ'; exact hY
+    · grind
   · intro hY
     exact ⟨{σ}, ⟨memCn_singleton σ, subset_rfl⟩, Or.inr ⟨σ, rfl, hY⟩⟩
 

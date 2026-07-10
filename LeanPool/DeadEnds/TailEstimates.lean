@@ -51,8 +51,7 @@ lemma combine_violation_bounds (b : ℕ) (hb : 2 ≤ b) (T : Finset ℕ) (hT : T
     _ = (T.card + 1 : ℝ) * (∑' (p : {q : Nat.Primes // (q : ℕ) > y}), 1 / (
         ((p : Nat.Primes) : ℕ) : ℝ) ^ 2) +
         (T.card + 1 : ℝ) * ((Nat.sqrt (b * X + b) : ℝ) / X) := by
-        have hXne : (X : ℝ) ≠ 0 := ne_of_gt hX_pos
-        field_simp [hXne]
+        grind
     _ < ε / 2 + ε / 2 := add_lt_add htail hsqrt
     _ = ε := add_halves ε
 
@@ -178,15 +177,11 @@ theorem finite_count_upper_bound (b : ℕ) (hb : 2 ≤ b) (T : Finset ℕ) (hT :
   set prodMu := ∏ p ∈ S, localDensityFactor (p : ℕ) b T with hprodMu
   set prodPsq : ℝ := ∏ p ∈ S, (p : ℕ) ^ 2 with hprodPsq
   have h3 : (count : ℝ) ≤ (X : ℝ) * prodMu + prodPsq := by
-    have := abs_sub_le_iff.mp h2
-    linarith [this.1, this.2]
+    grind
   have h4 : ((∏ p ∈ S, (p : ℕ) ^ 2 : ℕ) : ℝ) = prodPsq := by
     rw [hprodPsq, Nat.cast_prod]
-    push_cast
-    rfl
-  calc (countJointSquarefree b T X : ℝ) ≤ (count : ℝ) := h1
-    _ ≤ (X : ℝ) * prodMu + prodPsq := h3
-    _ = (X : ℝ) * prodMu + (∏ p ∈ S, (p : ℕ) ^ 2 : ℕ) := by rw [h4]
+    grind
+  grind
 
 lemma finite_prod_lt_density_add (b : ℕ) (_hb : 2 ≤ b) (T : Finset ℕ) (_hT : T ⊆ Finset.range b)
     (S : Finset Nat.Primes) (ε : ℝ) (_hε : 0 < ε)
@@ -257,12 +252,7 @@ lemma joint_density_eq_euler_product (b : ℕ) (hb : 2 ≤ b) (T : Finset ℕ) (
   use max X₁ X₂
   intro X hX
   rw [Real.dist_eq]
-  have hX₁' : X ≥ X₁ := le_of_max_le_left hX
-  have hX₂' : X ≥ X₂ := le_of_max_le_right hX
-  have lower := hX₁ X hX₁'
-  have upper := hX₂ X hX₂'
-  rw [abs_sub_lt_iff]
-  constructor <;> linarith
+  grind
 
 
 end LeanPool.DeadEnds

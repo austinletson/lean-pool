@@ -986,9 +986,7 @@ theorem rho_rel (n : ℕ) {A E : Set Str} :
   · rintro ⟨z, hproj, hinj⟩
     rw [Subsystem.proj_rel] at hproj
     rw [Subsystem.inj_rel] at hinj
-    obtain ⟨hcA, hTz, hAz⟩ := hproj
-    obtain ⟨_, hcE, hzE⟩ := hinj
-    exact ⟨hcA, hcE, z, hTz, hAz, hzE⟩
+    grind
   · rintro ⟨hcA, hcE, z, hTz, hAz, hzE⟩
     exact ⟨z, by rw [Subsystem.proj_rel]; exact ⟨hcA, hTz, hAz⟩,
       by rw [Subsystem.inj_rel]; exact ⟨hTz, hcE, hzE⟩⟩
@@ -1014,8 +1012,7 @@ theorem iSupRho_eq_id : iSupRho hN = idMap (Exp N hN).sys := by
   constructor
   · rintro ⟨n, hr⟩
     rw [rho_rel] at hr
-    obtain ⟨hcA, hcE, z, _, hAz, hzE⟩ := hr
-    exact ⟨hcA, hcE, hAz.trans hzE⟩
+    grind
   · rintro ⟨hcA, hcE, hAE⟩
     obtain ⟨n, hA⟩ := hcA
     exact ⟨n, (rho_rel hN n).mpr ⟨⟨n, hA⟩, hcE, A, hA, subset_rfl, hAE⟩⟩

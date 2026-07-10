@@ -40,9 +40,7 @@ def bodyInfHom : sInfHom (tree A) (Set (Stream' A)) where
   map_sInf' := by
     intro s; ext a; simp only [body, principalOpen, Set.mem_range, CompleteSublattice.mem_sInf,
       forall_exists_index, Set.sInf_eq_sInter, Set.sInter_image, Set.mem_iInter]
-    constructor
-    · rintro h T hT x a rfl; exact h x a rfl _ hT
-    · rintro h x a rfl T hT; exact h T hT _ _ rfl
+    grind
 @[simp] lemma body_inter {S T : tree A} : body (S ⊓ T) = body S ∩ body T := by
   change bodyInfHom (S ⊓ T) = bodyInfHom S ∩ bodyInfHom T; simp
 @[simp] lemma body_bot : body (⊥ : tree A) = ∅ := by

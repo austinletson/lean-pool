@@ -49,12 +49,7 @@ private lemma fdBoundary_H_eq_arc_near {H : ℝ} {s : ℝ}
   filter_upwards [Ioi_mem_nhds hs1, Iio_mem_nhds hs3]
     with s' hs1' hs3'
   simp only [fdBoundaryH, show ¬s' ≤ 1 from not_le.mpr hs1']
-  by_cases hs2' : s' ≤ 2
-  · simp only [hs2', ite_true, ite_false]
-    congr 1; ring
-  · simp only [show ¬s' ≤ 2 from hs2',
-      show s' ≤ 3 from le_of_lt hs3', ite_true, ite_false]
-    congr 1; ring
+  grind
 
 private lemma arc_deriv_continuous :
     Continuous (fun s : ℝ =>
@@ -122,8 +117,7 @@ private lemma hasDerivAt_seg1_fun (H : ℝ) (t : ℝ) :
         ((0 - 1 * (↑H - ↑(Real.sqrt 3) / 2)) * I) t := by
       apply HasDerivAt.mul_const
       exact (hasDerivAt_const t (↑H : ℂ)).sub ((hasDerivAt_id t).ofReal_comp.mul_const _)
-    simp only [zero_sub, one_mul] at h2
-    exact h2
+    grind
   exact h1.const_add ((1 : ℂ) / 2)
 
 lemma fdBoundary_H_hasDerivAt_seg1' (H : ℝ) (t : ℝ)
@@ -578,8 +572,7 @@ noncomputable def fdBoundaryHCurve (H : ℝ) :
     intro x hx
     simp only [fdBoundaryFullPartition, Finset.coe_insert, Finset.coe_singleton,
       Set.mem_insert_iff] at hx
-    simp only [Icc, Set.mem_setOf_eq]
-    rcases hx with rfl | rfl | rfl | rfl | rfl | rfl <;> constructor <;> norm_num
+    grind
   endpoints_in_partition := ⟨by simp [fdBoundaryFullPartition], by simp [fdBoundaryFullPartition]⟩
   continuous_toFun := (fdBoundary_H_continuous H).continuousOn
   smooth_off_partition := by
@@ -663,8 +656,7 @@ noncomputable def fdBoundaryCurve : PiecewiseC1Curve where
     intro x hx
     simp only [fdBoundaryFullPartition, Finset.coe_insert, Finset.coe_singleton,
       Set.mem_insert_iff] at hx
-    simp only [Icc, Set.mem_setOf_eq]
-    rcases hx with rfl | rfl | rfl | rfl | rfl | rfl <;> constructor <;> norm_num
+    grind
   endpoints_in_partition := ⟨by simp [fdBoundaryFullPartition], by simp [fdBoundaryFullPartition]⟩
   continuous_toFun := fdBoundary_continuous.continuousOn
   smooth_off_partition := by
@@ -672,9 +664,7 @@ noncomputable def fdBoundaryCurve : PiecewiseC1Curve where
     have ht0 : t ≠ 0 := fun h => htp (h ▸ by simp [fdBoundaryFullPartition])
     have ht5 : t ≠ 5 := fun h => htp (h ▸ by simp [fdBoundaryFullPartition])
     have htoo : t ∈ Ioo (0 : ℝ) 5 := by
-      simp only [mem_Icc] at ht
-      exact ⟨lt_of_le_of_ne ht.1 (Ne.symm ht0),
-        lt_of_le_of_ne ht.2 ht5⟩
+      grind
     have htP : t ∉ fdPartition := by
       simp only [fdPartition, fdBoundaryFullPartition,
         Finset.mem_insert, Finset.mem_singleton] at htp ⊢
@@ -707,8 +697,7 @@ lemma fdBoundary_H_hasDerivAt_arc (H : ℝ) {t : ℝ}
 private lemma notMem_fullPartition_of_lt {t : ℝ} (h0 : 0 < t) (h1 : t ≠ 1) (h2 : t ≠ 2)
     (h3 : t ≠ 3) (h4 : t ≠ 4) (h5 : t < 5) : t ∉ fdBoundaryFullPartition := by
   simp only [fdBoundaryFullPartition, Finset.mem_insert, Finset.mem_singleton]
-  push Not
-  exact ⟨ne_of_gt h0, h1, h2, h3, h4, ne_of_lt h5⟩
+  grind
 
 lemma fdBoundary_H_deriv_continuousOn_Ioo_01 (H : ℝ) :
     ContinuousOn (deriv (fdBoundaryH H)) (Ioo 0 1) := by

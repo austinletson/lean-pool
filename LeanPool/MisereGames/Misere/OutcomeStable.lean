@@ -64,8 +64,7 @@ theorem misereOutcome_of_add_LN {G : Type (u + 1)} [Form G] {A : G → Prop} [Ou
     MisereOutcome (g + h) = .N ∨ MisereOutcome (g + h) = .L := by
   have h5 := miserePlayerOutcome_of_add_LN h1 h2 h3 h4
   simp only [MisereOutcome, Outcome.ofPlayers, h5]
-  cases MiserePlayerOutcome (g + h) Player.right
-  <;> simp only [reduceCtorEq, or_true, or_false]
+  grind
 
 theorem misereOutcome_of_add_RN {G : Type (u + 1)} [Form G] {A : G → Prop} [OutcomeStable A]
     {g h : G} (h1 : (PFreeSubset A) g) (h2 : (PFreeSubset A) h)
@@ -73,8 +72,7 @@ theorem misereOutcome_of_add_RN {G : Type (u + 1)} [Form G] {A : G → Prop} [Ou
     MisereOutcome (g + h) = .N ∨ MisereOutcome (g + h) = .R := by
   have h5 := miserePlayerOutcome_of_add_RN h1 h2 h3 h4
   simp only [MisereOutcome, Outcome.ofPlayers, h5]
-  cases MiserePlayerOutcome (g + h) Player.left
-  <;> simp only [reduceCtorEq, or_true, or_false]
+  grind
 
 /--
 If $\mathcal{A}$ is outcome-stable, $n \in \mathbb{N}$ then $0
@@ -191,8 +189,7 @@ theorem int_misereGE_one_add (A : GameForm → Prop)
         <-Misere.Outcome.ClosedUnderNeg.neg_ge_neg_iff] at h2
     simp only [Form.intCast_neg, neg_neg, Nat.cast_one] at h2
     rw [<-Form.intCast_neg] at h2
-    simp only [neg_sub, sub_neg_eq_add] at h2
-    exact h2
+    grind
 
 /--
 If $\mathcal{A}$ is outcome-stable, $n \in \mathbb{N}$, $k \in \mathbb{Z}$ then
@@ -283,8 +280,7 @@ theorem misereOutcome_add_natCast_le {g : GameForm}
     have hstep := misereOutcome_add_one_le hAk hpfk
     have hcast : g + ((k + 1 : ℕ) : GameForm) = g + (k : GameForm) + 1 := by
       rw [Nat.cast_add, Nat.cast_one, add_assoc]
-    rw [hcast]
-    exact le_trans hstep ih
+    grind
 
 /--
 If $\mathcal{A}$ is outcome-stable, $G \in \operatorname{pf}(\mathcal{A})$, and
@@ -296,8 +292,7 @@ theorem misereOutcome_add_int_antitone {g : GameForm}
     (hA : (PFreeSubset A) g) {k m : ℤ} (h : k ≤ m) :
     MisereOutcome (g + (m : GameForm)) ≤ MisereOutcome (g + (k : GameForm)) := by
   have hge := OutcomeStable.misereGE_of_int_le A k m h g hA
-  rw [add_comm (g : GameForm) (m : GameForm), add_comm (g : GameForm) (k : GameForm)]
-  exact hge
+  grind
 
 /--
 If $G$ is $\mathscr{P}$-free and $n$ is an integer then $G + n$ is also
@@ -362,8 +357,7 @@ theorem misereOutcome_add_NTippingPoint_N_of_misereOutcome_L {g : GameForm}
   rcases NTippingPoint_spec hsg with h | h
   · exact h
   · have hneg := PFree.misereOutcome_sub_natCast_L_of_misereOutcome_L (NTippingPoint hsg) hA hL
-    rw [h] at hneg
-    exact absurd hneg (by decide)
+    grind
 
 theorem misereOutcome_add_nat_L_of_lt_NTippingPoint {g : GameForm}
     [OutcomeStable A] [ClosedUnderAddNat A] [HasInt A] [ClosedUnderNeg A]
@@ -460,8 +454,7 @@ theorem RTippingPoint_add_natCast
         misereOutcome_add_int_R_of_ge hAg
           (show (RTippingPoint hsg : ℤ) ≤ n from by exact_mod_cast hn)
       norm_cast at h1
-      apply h1
-      exact ((this (RTippingPoint hsg)).mp rfl).left
+      grind
   have h_char' (j : ℕ) :
       MisereOutcome ((g + (k : GameForm)) + (j : GameForm)) = .R ↔ RTippingPoint hsg ≤ k + j := by
     convert h_char (k + j) using 1
@@ -597,8 +590,7 @@ theorem RTippingPoint_eq_one_of_isEnd_left_N {g : GameForm} (hsg : IsShort g)
     · absurd h_not_left
       exact minsGoingFirst_left_of_misereOutcome_L h
     · rw [misereOutcome_N_iff_winsGoingFirst] at h
-      absurd h_not_left
-      exact h.left
+      grind
     · exact False.elim ((PFree.misereOutcome_ne_P_of_pfree h_pfree) h)
     · simpa only [Nat.cast_one] using h
   refine (RTippingPoint_iff hsg 1).mpr ⟨ hand, fun x hx => ?_⟩
@@ -671,9 +663,7 @@ theorem isEnd_left_or_exists_NTippingPoint_eq_RTippingPoint_of_N
             have :=
                 PFree.misereOutcome_add_natCast_R_of_misereOutcome_R
                   (RTippingPoint hsg - 1) h_gl hglR
-            rw [hglL] at this
-            absurd this
-            decide
+            grind
           · cases h : MisereOutcome gl
             · rfl
             · exact False.elim (hglN h)
@@ -802,8 +792,7 @@ theorem RTippingPoint_eq_NTippingPoint_add_one_of_isEnd_left
           rw [hk]
           exact add_left_mem_moves_add (by rw [leftMoves_natCast_succ']; exact rfl) g
         rw [isEnd_def] at hEnd
-        rw [hEnd] at hmem
-        exact (Set.mem_empty_iff_false _).mp hmem
+        grind
       · exact hex
     have hHL_form : HL = g + ((NTippingPoint hsg - 1 : ℕ) : GameForm) := by
       rw [moves_add] at hHL₁
@@ -1033,8 +1022,7 @@ theorem exists_mem_moves_left_L_NTippingPoint_eq_RTippingPoint
               hne
           exact Nat.le_sub_one_of_lt hN
         · have := NTippingPoint_lt_RTippingPoint_of_misereOutcome_L hAg hsg hL
-          have := one_le_NTippingPoint_of_misereOutcome_L hsg hL
-          omega
+          grind
       exact False.elim <| hw.2 <| by rw [ misereOutcome_N_iff_winsGoingFirst ] at h_contra; tauto
   have hglL : MisereOutcome (gl + ((RTippingPoint hsg - 1 : ℕ) : GameForm)) = .L := by
     cases h : MisereOutcome (gl + ↑(RTippingPoint hsg - 1))
@@ -1053,8 +1041,7 @@ theorem exists_mem_moves_left_L_NTippingPoint_eq_RTippingPoint
     · have hglR' : MisereOutcome (gl + ((RTippingPoint hsg - 1 : ℕ) : GameForm)) = .R :=
         PFree.misereOutcome_add_natCast_R_of_misereOutcome_R _
           (Hereditary.has_option hAg (isOption_iff_mem_union.mpr (Or.inl hgl.left))) hglR
-      absurd hglR'.symm.trans hglL
-      decide
+      grind
     · by_cases hglN : MisereOutcome gl = .N
       · have hA := (Hereditary.has_option hAg (isOption_iff_mem_union.mpr (Or.inl hgl.left)))
         have h_rtip : (0 : ℤ) ≤ (RTippingPoint hsg - 1 : ℕ) := Int.natCast_nonneg _
@@ -1087,8 +1074,7 @@ theorem exists_mem_moves_left_L_NTippingPoint_eq_RTippingPoint
           MisereOutcome (gl + ↑n) ≤ MisereOutcome (gl + ↑(NTippingPoint h_short)) := by
         simpa [h] using h_antitone
       have h_le_N : MisereOutcome (gl + ↑n) ≤ Outcome.N := by
-        rw [h_ntip_outcome] at h_antitone_n
-        exact h_antitone_n
+        grind
       have hglL_n : MisereOutcome (gl + ↑n) = Outcome.L := by
         simpa [h] using hglL
       rw [hglL_n] at h_le_N

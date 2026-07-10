@@ -75,27 +75,14 @@ lemma dual_cert_zero_case
     (hM0 : distToAdditive f = 0) :
     Nonempty (DualCertificate f (distToAdditive f)) := by
   have hzero : ∀ S : Finset U, f S = 0 := by
-    intro S
-    have h := hMbound S
-    rw [hM0] at h
-    exact abs_eq_zero.mp (le_antisymm h (abs_nonneg _))
+    grind
   refine ⟨⟨fun S => if S = ∅ then 1 else 0, ?_, ?_, ?_, ?_⟩⟩
   · rw [Finset.sum_eq_single ∅] <;> simp
   · intro i
     apply Finset.sum_eq_zero
-    intro S hS
-    have hne : S ≠ ∅ := by
-      intro h_empty
-      have hi : i ∈ (∅ : Finset U) := by
-        simpa [h_empty] using (Finset.mem_filter.mp hS).2
-      exact Finset.notMem_empty i hi
-    simp [hne]
-  · intro S hpos
-    rw [hzero S, hM0]
-  · intro S hneg
-    by_cases hS : S = ∅
-    · norm_num [hS] at hneg
-    · simp [hS] at hneg
+    grind
+  · grind
+  · grind
 
 /-! ## M > 0 case: the Hahn–Banach argument -/
 
@@ -167,9 +154,7 @@ lemma zero_mem_convexHull_of_best_approx [Finite U]
     have h_additiveFunction_a_neg : additiveFunction a S = -Λ (S.indicator') := by
       rw [ clm_indicator'_eq_additiveFunction Λ S ]; ring_nf!;
       unfold additiveFunction; simp +decide [ Finset.sum_neg_distrib ];
-    rw [h_additiveFunction_a_neg]
-    exact neg_neg_of_pos (by
-    rw [ show Λ ( -S.indicator' ) = -Λ S.indicator' by simp +decide ] at hΛ_neg; linarith);
+    grind
   -- For ε > 0 sufficiently small, ∀ S : Finset U, |f S - additiveFunction (fun i => ε * a i) S| <
   -- M.
   obtain ⟨ε, hε_pos, hε⟩ : ∃ ε > 0, ∀ S : Finset U, |f S - additiveFunction (fun i => ε * a i) S| <
@@ -264,8 +249,7 @@ lemma zero_mem_convexHull_of_best_approx [Finite U]
         refine ⟨Finset.min' (Finset.image ε Finset.univ) hne, ?_, ?_⟩
         · rcases Finset.mem_image.mp (Finset.min'_mem (Finset.image ε Finset.univ) hne) with
             ⟨S, _hS, hSε⟩
-          rw [← hSε]
-          exact hε_pos S
+          grind
         · intro S
           exact Finset.min'_le _ _ (Finset.mem_image_of_mem ε (Finset.mem_univ S))
       · simp_all +decide;
@@ -317,8 +301,7 @@ lemma dual_cert_from_convexHull
             intro i hi
             rw [Finset.sum_smul]
             exact Finset.sum_congr rfl fun j hj => by
-              have hz : z j = z i := (Finset.mem_filter.mp hj).2
-              rw [hz])
+              grind)
       · rw [Finset.sum_filter_of_ne]
         · exact hw₄
         · intro i _ hwi
@@ -477,9 +460,7 @@ lemma dual_cert_from_convexHull
         (∑ x : Finset U, if i ∈ x then lam_pos x - lam_neg x else 0)
             = ∑ x : Finset U,
                 ((if i ∈ x then lam_pos x else 0) - (if i ∈ x then lam_neg x else 0)) := by
-              apply Finset.sum_congr rfl
-              intro x _
-              by_cases hx : i ∈ x <;> simp [hx]
+              grind
         _ = (∑ x : Finset U, if i ∈ x then lam_pos x else 0) -
               ∑ x : Finset U, if i ∈ x then lam_neg x else 0 := by
               rw [Finset.sum_sub_distrib]

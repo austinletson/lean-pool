@@ -339,16 +339,11 @@ private lemma continuousAt_g_at_pole
         ∑ s ∈ S0.filter (· = z), residueSimplePole f s / (w - s) +
         ∑ s ∈ S0.filter (· ≠ z), residueSimplePole f s / (w - s) := by
       rw [← Finset.sum_union]
-      · congr 1; ext x; simp only [Finset.mem_union, Finset.mem_filter]
-        exact ⟨fun hx => by by_cases hxz : x = z <;> tauto,
-               fun hx => by rcases hx with ⟨hx1, _⟩ | ⟨hx1, _⟩ <;> exact hx1⟩
+      · congr 1; grind
       · exact Finset.disjoint_filter.mpr fun x _ hxz hx_ne_z => hx_ne_z hxz
     have hfilter_eq : S0.filter (· = z) = {z} := by
-      ext x; simp only [Finset.mem_filter, Finset.mem_singleton]
-      exact ⟨fun ⟨_, hxz⟩ => hxz, fun hxz => ⟨hxz ▸ hs, hxz⟩⟩
-    have hsingleton : ∑ s ∈ S0.filter (· = z), residueSimplePole f s / (w - s) =
-        residueSimplePole f z / (w - z) := by rw [hfilter_eq, Finset.sum_singleton]
-    rw [hsum_split, hsingleton]; ring
+      grind
+    grind
   exact (funext hg_eq_at ▸ hf_ext.sub h2 : _)
 
 private lemma diff_punctured_of_diff_off_poles
@@ -364,9 +359,7 @@ private lemma diff_punctured_of_diff_off_poles
       (fun h => (Set.mem_compl_singleton_iff.mp hw_ne)
         (Set.mem_singleton_iff.mp (h_S0_singleton h)))⟩
   · have h_S0_non : ∃ s' ∈ S0, s' ≠ z := by
-      by_contra h_all; push Not at h_all
-      exact h_S0_singleton fun x hx => by
-        rw [Set.mem_singleton_iff]; exact h_all x (Finset.mem_coe.mp hx)
+      grind
     obtain ⟨s', hs'_in, hs'_ne⟩ := h_S0_non
     have h_ne : (S0.filter (· ≠ z)).Nonempty :=
       ⟨s', Finset.mem_filter.mpr ⟨hs'_in, hs'_ne⟩⟩
@@ -479,10 +472,7 @@ theorem integral_eq_sum_residues_of_avoids
       ∫ t in γ.a..γ.b,
         ((∑ s ∈ S0, residueSimplePole f s / (γ.toFun t - s)) + g (γ.toFun t)) *
           deriv γ.toFun t := by
-    apply intervalIntegral.integral_congr; intro t ht
-    rw [Set.uIcc_of_le (le_of_lt γ.hab)] at ht
-    simp only; rw [hf_decomp (γ.toFun t) ⟨hγ_in_U t ht, fun hs => by
-      simp only [Finset.mem_coe] at hs; exact hγ_avoids _ hs t ht rfl⟩]
+    grind
   rw [h_rewrite]
   have h_expand : ∀ t,
       ((∑ s ∈ S0, residueSimplePole f s / (γ.toFun t - s)) + g (γ.toFun t)) *
@@ -514,8 +504,7 @@ lemma cauchyPrincipalValueIntegrandOn_empty
     cauchyPrincipalValueIntegrandOn ∅ f γ ε t =
       f (γ t) * deriv γ t := by
   unfold cauchyPrincipalValueIntegrandOn
-  rw [if_neg]; push Not
-  intro s hs; exact absurd hs (Finset.notMem_empty s)
+  grind
 
 lemma cauchyPrincipalValueIntegrandOn_singleton
     (f : ℂ → ℂ) (γ : ℝ → ℂ) (z₀ : ℂ) (ε : ℝ) (t : ℝ) :
@@ -526,9 +515,7 @@ lemma cauchyPrincipalValueIntegrandOn_singleton
   by_cases h : ‖γ t - z₀‖ ≤ ε
   · rw [if_pos ⟨z₀, Finset.mem_singleton_self z₀, h⟩,
       if_neg (not_lt.mpr h)]
-  · push Not at h; rw [if_neg, if_pos h]; push Not
-    intro s hs
-    simp only [Finset.mem_singleton] at hs; rw [hs]; linarith
+  · grind
 
 lemma cauchyPrincipalValueOn_empty
     (f : ℂ → ℂ) (γ : ℝ → ℂ) (a b : ℝ) :
@@ -649,10 +636,7 @@ theorem pv_integral_simple_pole
         then (·⁻¹) ((fun s => γ.toFun s - z₀) t) *
           deriv (fun s => γ.toFun s - z₀) t
         else 0) * c := by
-    intro ε t; simp only [sub_zero, h_deriv_eq]
-    split_ifs with h
-    · rw [div_eq_mul_inv]; ring
-    · ring
+    grind
   have h_integral' : ∀ ε,
       (∫ t in γ.a..γ.b, if ‖γ.toFun t - z₀‖ > ε
         then (fun z => c / (z - z₀)) (γ.toFun t) *
@@ -677,8 +661,7 @@ theorem pv_integral_simple_pole
           then (·⁻¹) ((fun s => γ.toFun s - z₀) t) *
             deriv (fun s => γ.toFun s - z₀) t
           else 0)).symm]
-    apply intervalIntegral.integral_congr
-    intro t _; exact h_integrand' ε t
+    grind
   simp_rw [h_integral']
   obtain ⟨L, hL⟩ := hPV
   exact (hL.mul_const c).limUnder_eq ▸

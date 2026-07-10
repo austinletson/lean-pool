@@ -50,8 +50,7 @@ lemma IsCentral.left_of_tensor (B C : Type*)
     | tmul b' c =>
       subst hb
       simp only [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
-      congr 1
-      exact hb0 b'
+      grind
     | add _ _ _ _ => simp_all [add_mul, mul_add]
   have eq: (Algebra.TensorProduct.includeLeft.comp (Subalgebra.center K B).val).range =
       (⊥ : Subalgebra K (B ⊗[K] C)) := by

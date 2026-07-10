@@ -169,9 +169,7 @@ private lemma summable_transitionTailSummand (Y m : ℕ) (hm : 1 ≤ m) :
   have hN_ge_Y : Y ≤ N := le_max_left Y (Nat.ceil (Real.exp C) + 1)
   have hN_ge_two : 2 ≤ N := by
     have hceil_pos : 0 < Nat.ceil (Real.exp C) := Nat.ceil_pos.2 (Real.exp_pos _)
-    have hN0_ge_two : 2 ≤ Nat.ceil (Real.exp C) + 1 := by
-      omega
-    exact le_trans hN0_ge_two (le_max_right Y (Nat.ceil (Real.exp C) + 1))
+    grind
   have hN_log_large : C < Real.log ((m * N : ℕ) : ℝ) := by
     calc
       C = Real.log (Real.exp C) := by rw [Real.log_exp]
@@ -207,11 +205,7 @@ private lemma summable_transitionTailSummand (Y m : ℕ) (hm : 1 ≤ m) :
   rw [← Finset.summable_compl_iff (s := Finset.range N)]
   refine (hsN.subtype {q : ℕ | q ∉ Finset.range N}).congr ?_
   intro q
-  have hq : N ≤ q := by
-    have hq' : (q : ℕ) ∉ Finset.range N := q.property
-    exact not_lt.mp (by simpa [Finset.mem_range] using hq')
-  have hYq : Y ≤ q := le_trans hN_ge_Y hq
-  simp [hq, hYq]
+  grind
 
 /-- The transition-weight series is summable for every `m ≥ 1`. -/
 private lemma summable_transitionWeight (Y m : ℕ) (hm : 1 ≤ m) :
@@ -419,9 +413,7 @@ private lemma tsum_arrivalMass_eq_initial_add_parentSum {x Y : ℕ} (chain : Mar
 private lemma lt_of_dvd_of_two_le_div {m n Y : ℕ} (hmn : m ∣ n) (hY : 2 ≤ Y)
     (hYm : Y ≤ n / m) : m < n := by
   have hm_pos : 0 < m := by
-    rcases Nat.eq_zero_or_pos m with hm0 | hm0
-    · simp [hm0] at hYm; omega
-    · exact hm0
+    grind
   have hmul : m * 2 ≤ n :=
     (Nat.mul_le_mul_left _ (le_trans hY hYm)).trans (Nat.mul_div_cancel' hmn).le
   omega

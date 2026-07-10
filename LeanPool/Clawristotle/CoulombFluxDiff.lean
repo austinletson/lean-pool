@@ -319,7 +319,6 @@ lemma coulomb_ibp_df_g_integrable
           gcongr
       _ = C_fd * C_log := by
           have hPne : (1 + ‖v‖) ^ (K_log + 4) ≠ 0 := ne_of_gt (by positivity)
-          rw [pow_add] at hPne ⊢
-          field_simp
+          grind
 
 end VML

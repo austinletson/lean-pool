@@ -35,8 +35,7 @@ theorem jensen_T_no_integer_zerodivisor
   intro h
   apply hn
   rw [eq_intCast (algebraMap ℤ T)] at h
-  have : ((n : ℤ) : T) = ((0 : ℤ) : T) := by push_cast
-                                             exact h
+  have : ((n : ℤ) : T) = ((0 : ℤ) : T) := by grind
   exact Int.cast_injective this
 
 /-- |T| = |T/M|: both have cardinality |ℂ|. -/
@@ -89,11 +88,7 @@ lemma coeff_gen_zero_of_le_single (s : Fin 3) (b : Fin 3 →₀ ℕ)
         have := congr_arg (· 0) hcd
         simp [hc, hd, Finsupp.add_apply] at this
         omega
-      have : b 0 ≤ 1 := by
-        calc b 0 ≤ (Finsupp.single s 1) 0 := hb 0
-          _ ≤ 1 := by simp [Finsupp.single_apply]
-                      split <;> omega
-      omega
+      grind
     · simp [hc]
   have hX1X2 : (MvPowerSeries.coeff b) ((X 1 : MvPowerSeries (Fin 3) ℂ) * X 2) = 0 := by
     rw [MvPowerSeries.coeff_mul]
@@ -112,16 +107,7 @@ lemma coeff_gen_zero_of_le_single (s : Fin 3) (b : Fin 3 →₀ ℕ)
         have := congr_arg (· 2) hcd
         simp [hc, hd, Finsupp.add_apply] at this
         omega
-      fin_cases s
-      · have := hb 1
-        simp at this
-        omega
-      · have := hb 2
-        simp at this
-        omega
-      · have := hb 1
-        simp at this
-        omega
+      grind
     · simp [hc]
   rw [hX0sq, hX1X2, sub_self]
 
@@ -143,9 +129,7 @@ lemma mk_X1_ne_zero' : (Ideal.Quotient.mk conjI (X 1) : T) ≠ 0 := by
       simp [Finsupp.add_apply] at this
       omega
     simp [coeff_gen_zero_of_le_single 1 b hble]
-  rw [mul_comm] at hh
-  exact one_ne_zero (hlhs.symm.trans
-    (congr_arg (MvPowerSeries.coeff (Finsupp.single 1 1)) hh) |>.trans hrhs)
+  grind
 
 open MvPowerSeries in
 lemma mk_X2_ne_zero' : (Ideal.Quotient.mk conjI (X 2) : T) ≠ 0 := by
@@ -165,9 +149,7 @@ lemma mk_X2_ne_zero' : (Ideal.Quotient.mk conjI (X 2) : T) ≠ 0 := by
       simp [Finsupp.add_apply] at this
       omega
     simp [coeff_gen_zero_of_le_single 2 b hble]
-  rw [mul_comm] at hh
-  exact one_ne_zero (hlhs.symm.trans
-    (congr_arg (MvPowerSeries.coeff (Finsupp.single 2 1)) hh) |>.trans hrhs)
+  grind
 
 lemma T_smulRegular_of_ne_zero_local (a : T) (ha : a ≠ 0) : IsSMulRegular T a := by
   intro x y h
@@ -197,8 +179,7 @@ lemma coeff_lhs' (f : MvPowerSeries (Fin 3) ℂ) (d : Fin 3 →₀ ℕ) :
   by_cases hle : Finsupp.single (1 : Fin 3) 1 ≤ d
   · have hd1 : d 1 ≠ 0 := by
       have := hle 1
-      simp [Finsupp.single_eq_same] at this
-      omega
+      grind
     simp only [hle, ite_true, one_mul, hd1, ite_false, sub_eq_zero]
     change f d = shiftX1' f (d - Finsupp.single 1 1)
     simp only [shiftX1']
@@ -208,12 +189,7 @@ lemma coeff_lhs' (f : MvPowerSeries (Fin 3) ℂ) (d : Fin 3 →₀ ℕ) :
       by_contra h
       apply hle
       intro i
-      simp only [Finsupp.single_apply]
-      by_cases hi : i = 1
-      · subst hi
-        simp
-        omega
-      · simp [show (1 : Fin 3) ≠ i from fun h => hi h.symm]
+      grind
     simp [hle, hd1]
 
 open MvPowerSeries in
@@ -227,8 +203,7 @@ lemma coeff_rhs' (f : MvPowerSeries (Fin 3) ℂ) (d : Fin 3 →₀ ℕ) :
   by_cases hle : Finsupp.single (0 : Fin 3) 2 ≤ d
   · have hd0 : 2 ≤ d 0 := by
       have := hle 0
-      simp only [Finsupp.single_eq_same] at this
-      exact this
+      grind
     simp only [hle, ite_true, one_mul]
     by_cases hd1 : d 1 = 0
     · simp only [hd0, hd1, true_and, ite_true]
@@ -251,11 +226,7 @@ lemma coeff_rhs' (f : MvPowerSeries (Fin 3) ℂ) (d : Fin 3 →₀ ℕ) :
       intro h
       apply hle
       intro i
-      simp only [Finsupp.single_apply]
-      by_cases hi : i = 0
-      · subst hi
-        simpa only [Fin.isValue, ↓reduceIte] using h
-      · simp [show (0 : Fin 3) ≠ i from fun h => hi h.symm]
+      grind
     simp [hle, hd0]
 
 open MvPowerSeries in
@@ -264,10 +235,7 @@ lemma coeff_gen_zero' (a : Fin 3 →₀ ℕ) (ha0 : a 0 < 2) (ha1 : a 1 = 0) :
   simp only [map_sub, sub_eq_zero]
   have hX0sq : coeff a ((X (0 : Fin 3) : MvPowerSeries (Fin 3) ℂ) ^ 2) = 0 := by
     rw [MvPowerSeries.coeff_X_pow]
-    simp only [Fin.isValue, ite_eq_right_iff, one_ne_zero, imp_false]
-    intro h
-    subst h
-    simp [Finsupp.single_eq_same] at ha0
+    grind
   have hX1X2 : coeff a ((X (1 : Fin 3) : MvPowerSeries (Fin 3) ℂ) * X 2) = 0 := by
     rw [show (X (1 : Fin 3) : MvPowerSeries (Fin 3) ℂ) =
       MvPowerSeries.monomial (R := ℂ) (Finsupp.single 1 1) 1 from rfl]
@@ -275,8 +243,7 @@ lemma coeff_gen_zero' (a : Fin 3 →₀ ℕ) (ha0 : a 0 < 2) (ha1 : a 1 = 0) :
     split_ifs with hle
     · exfalso
       have := hle 1
-      simp [Finsupp.single_eq_same] at this
-      omega
+      grind
     · rfl
   rw [hX0sq, hX1X2]
 
@@ -314,9 +281,7 @@ lemma coeff_f_vanish' (f g : MvPowerSeries (Fin 3) ℂ)
   have hnle1 : ¬ Finsupp.single (1 : Fin 3) 1 ≤ e := by
     intro h
     have h1 := h 1
-    simp only [Finsupp.single_apply, ite_true] at h1
-    rw [he1] at h1
-    omega
+    grind
   have hlhs : coeff e (X 2 * f - X 1 * g) = coeff d f := by
     rw [map_sub]
     rw [show (X (2 : Fin 3) : MvPowerSeries (Fin 3) ℂ) =
@@ -330,9 +295,7 @@ lemma coeff_f_vanish' (f g : MvPowerSeries (Fin 3) ℂ)
     simp [he_def, add_tsub_cancel_right]
   have hrhs : coeff e ((X (0 : Fin 3) ^ 2 - X 1 * X 2) * k) = 0 :=
     coeff_gen_mul_zero' k e (he0 ▸ hd0) he1
-  have := congr_arg (coeff e) hk
-  rw [hlhs, hrhs] at this
-  exact this
+  grind
 
 open MvPowerSeries in
 lemma key_decomp' (f g : MvPowerSeries (Fin 3) ℂ)
@@ -444,8 +407,7 @@ theorem maximal_not_assoc_local
     exact (Ideal.Quotient.eq_zero_iff_mem).mpr h
   have ha_in_ann : a ∈ (⊥ : Submodule T (T ⧸ Ideal.span {r})).colon
       {Ideal.Quotient.mk (Ideal.span {r}) x_lift} := by
-    rw [← hx_ann]
-    exact ha_mem
+    grind
   have ha_mul : a * x_lift ∈ Ideal.span ({r} : Set T) := by
     rw [Submodule.mem_colon] at ha_in_ann
     have := ha_in_ann (Ideal.Quotient.mk _ x_lift) (Set.mem_singleton _)
@@ -454,8 +416,7 @@ theorem maximal_not_assoc_local
     exact this
   have hb_in_ann : b ∈ (⊥ : Submodule T (T ⧸ Ideal.span {r})).colon
       {Ideal.Quotient.mk (Ideal.span {r}) x_lift} := by
-    rw [← hx_ann]
-    exact hb_mem
+    grind
   have hb_mul : b * x_lift ∈ Ideal.span ({r} : Set T) := by
     rw [Submodule.mem_colon] at hb_in_ann
     have := hb_in_ann (Ideal.Quotient.mk _ x_lift) (Set.mem_singleton _)
@@ -466,14 +427,9 @@ theorem maximal_not_assoc_local
   obtain ⟨y₁, hy₁⟩ := ha_mul
   obtain ⟨y₂, hy₂⟩ := hb_mul
   have h_eq : r * (b * y₁) = r * (a * y₂) := by
-    have h1 : b * (a * x_lift) = a * (b * x_lift) := by ring
-    rw [hy₁, hy₂] at h1
-    calc r * (b * y₁) = b * (r * y₁) := by ring
-    _ = a * (r * y₂) := h1
-    _ = r * (a * y₂) := by ring
+    grind
   have h_cancel : b * y₁ = a * y₂ := by
-    have h_sub : r * (b * y₁ - a * y₂) = 0 := by rw [mul_sub]
-                                                 exact sub_eq_zero.mpr h_eq
+    have h_sub : r * (b * y₁ - a * y₂) = 0 := by grind
     exact sub_eq_zero.mp ((mul_eq_zero.mp h_sub).resolve_left hr)
   have hby₁_mem : b * y₁ ∈ Ideal.span ({a} : Set T) :=
     Ideal.mem_span_singleton.mpr ⟨y₂, h_cancel⟩
@@ -494,12 +450,10 @@ theorem maximal_not_assoc_local
     have hby₁_smul : b * y₁ ∈ (a • ⊤ : Submodule T T) := h_eq ▸ hby₁_mem
     have hy₁_smul : y₁ ∈ (a • ⊤ : Submodule T T) :=
       mem_of_isSMulRegular_quotient_of_smul_mem hb_reg_mod_a (by rwa [smul_eq_mul])
-    rw [h_eq]
-    exact hy₁_smul
+    grind
   rw [Ideal.mem_span_singleton] at hy₁_in_aT
   obtain ⟨z, hz⟩ := hy₁_in_aT
-  have h_ax : a * x_lift = a * (r * z) := by rw [hy₁, hz]
-                                             ring
+  have h_ax : a * x_lift = a * (r * z) := by grind
   have h_x_eq : x_lift = r * z := by
     have := ha_reg (show a • x_lift = a • (r * z) by rwa [smul_eq_mul, smul_eq_mul])
     exact this

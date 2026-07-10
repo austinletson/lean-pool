@@ -157,12 +157,7 @@ private abbrev localConvergenceAtBasePointProof
       have := fderiv_comp mstar hπ_diff_at_πm hπ_diff
       rwa [hπm] at this
     -- Combine: P ∘ P = P
-    have h_comp_eq : (fderiv ℝ π mstar).comp (fderiv ℝ π mstar) = fderiv ℝ π mstar := by
-      rw [← h_chain, h_eq]
-    intro x
-    have := ContinuousLinearMap.ext_iff.mp h_comp_eq x
-    simp only [ContinuousLinearMap.comp_apply] at this
-    exact this
+    grind
   have hmu4_le_L : μ_minus ≤ ↑L := by linarith
   have hμη_lt1_pre : μ_minus * η < 1 := by
     change μ_minus * (1 / ↑L) < 1
@@ -349,9 +344,7 @@ private abbrev localConvergenceAtBasePointProof
         exact fiber_path_second_deriv f z ξ t hC2at
       have hφ''_lower : ∀ t, 0 ≤ t → t ≤ 1 →
           deriv (deriv φ) t ≥ -ε * ‖ξ‖ ^ 2 := by
-        intro t ht0 ht1
-        rw [hφ''_eq t ht0 ht1]
-        exact hHessLow (z + t • ξ) (hseg' t ht0 ht1) ξ
+        grind
       -- Derive local regularity from ContDiffAt ℝ 2 at each point of [0,1]
       have hφ_C2at : ∀ t ∈ Set.Icc (0:ℝ) 1, ContDiffAt ℝ 2 φ t := by
         intro t ht
@@ -462,30 +455,7 @@ private abbrev localConvergenceAtBasePointProof
         s.x ∈ Ω → s.lookahead η ∈ Ω → Ln ≤ R ^ 2 →
         Ln' ≤ (1 - (1 - θ) * a) * Ln := by
       intro x₁ n_val _s _Ln _Ln' _a hsx hslx hLn_le
-      have hstr := hcontract x₁ n_val hsx hslx hLn_le
-      -- Ln ≥ 0
-      have hmstar_argmin : mstar ∈ argminSet f := by rwa [← hS_argmin]
-      have hmin_val : ∀ y, f mstar ≤ f y := hmstar_argmin
-      have hbdd : BddBelow (Set.range f) :=
-        ⟨f mstar, by rintro _ ⟨x, rfl⟩; exact hmin_val x⟩
-      have hLn_nn : 0 ≤ lyapunov P μ_minus π f η ρ x₁ n_val := by
-        unfold lyapunov
-        have hgap : 0 ≤ f (nesterovSeq f η ρ x₁ n_val).x - fStar f :=
-          sub_nonneg.mpr (ciInf_le hbdd _)
-        have hu2 : 0 ≤ ‖auxVar P μ_minus π f η ρ x₁ n_val‖ ^ 2 / 2 :=
-          div_nonneg (sq_nonneg _) two_pos.le
-        have ha_lt1 : Real.sqrt (μ_minus * η) < 1 := by
-          rw [← Real.sqrt_one]
-          exact Real.sqrt_lt_sqrt
-            (le_of_lt (mul_pos (by linarith : (0:ℝ) < μ_minus) hη_pos))
-            hμη_lt1
-        have hlam : 0 ≤ (1 + Real.sqrt (μ_minus * η)) ^ 2 /
-            (2 * (1 - Real.sqrt (μ_minus * η))) :=
-          le_of_lt (div_pos (by positivity) (by linarith))
-        have h_Pv_sq := sq_nonneg ‖P (nesterovSeq f η ρ x₁ n_val).v‖
-        have h_lam_Pv := mul_nonneg hlam h_Pv_sq
-        linarith
-      exact hstr
+      grind
     -- (viii) Motion bounds from motion_bounds_curvature_error
     have hmotion : ∃ (C_h : ℝ) (_ : 0 < C_h)
         (hstep_bound : ∀ (x₁ : E d) (n : ℕ),
@@ -553,8 +523,7 @@ private abbrev localConvergenceAtBasePointProof
             have := sq_nonneg ‖s.v‖
             linarith [hcoer_here]
           have hKmu : μ_minus * K = C_coer := by
-            change μ_minus * (C_coer / μ_minus) = C_coer
-            field_simp
+            grind
           have h2 : μ_minus * (K * Ln) = C_coer * Ln := by
             rw [← hKmu]; ring
           by_contra h; push Not at h
@@ -628,14 +597,11 @@ private abbrev localConvergenceAtBasePointProof
                 linarith [mul_le_mul_of_nonneg_left hv'_bound hsqrt_η_nn,
                           mul_le_mul_of_nonneg_left hg_bound hη_nn]
             _ = (Cv' + Real.sqrt η * Cg) * Real.sqrt η * Real.sqrt Ln := by
-                have hη_sq := (Real.mul_self_sqrt hη_nn).symm
-                linear_combination Cg * Real.sqrt Ln * hη_sq
+                grind
             _ ≤ Ch * Real.sqrt η * Real.sqrt Ln := by
                 have : 0 ≤ 1 * (Real.sqrt η * Real.sqrt Ln) :=
                   mul_nonneg one_pos.le (mul_nonneg hsqrt_η_nn hsqrt_Ln_nn)
-                change (Cv' + Real.sqrt η * Cg) * Real.sqrt η * Real.sqrt Ln ≤
-                  (Cv' + Real.sqrt η * Cg + 1) * Real.sqrt η * Real.sqrt Ln
-                linarith
+                grind
         · -- Velocity bound: ‖√η • s'.v‖ ≤ Cmov * √Ln
           have hsqrt_Ln_nn := Real.sqrt_nonneg Ln
           calc ‖Real.sqrt η • s'.v‖
@@ -645,10 +611,7 @@ private abbrev localConvergenceAtBasePointProof
                 exact mul_le_mul_of_nonneg_left hv'_bound hsqrt_η_nn
             _ = (Real.sqrt η * Cv') * Real.sqrt Ln := by ring
             _ ≤ Cmov * Real.sqrt Ln := by
-                have : 0 ≤ 1 * Real.sqrt Ln := mul_nonneg one_pos.le hsqrt_Ln_nn
-                change (Real.sqrt η * Cv') * Real.sqrt Ln ≤
-                  (Real.sqrt η * Cv' + 1) * Real.sqrt Ln
-                linarith
+                grind
       -- Provide existential witnesses
       refine ⟨Ch, by positivity, ?_, Cmov, by positivity, ?_⟩
       · intro x₁ n_step _s _Ln hsx hslx _hLn_le
@@ -679,8 +642,7 @@ private abbrev localConvergenceAtBasePointProof
         hboot_raw x₁ ⟨hx₁_boot, hx₁_U⟩
       refine ⟨hstay_Ω', hstay_U', ?_⟩
       -- Geometric decay from bootstrap with (1-(1-θ)·a)^{n+1}·L₀.
-      intro n
-      exact hdecay_weak n
+      grind
   obtain ⟨α, hα_pos, hball_sub, hboot⟩ := hlem5
   -- ── Assemble the local result ──
   refine ⟨α, hα_pos, hball_sub, ?_⟩
@@ -704,13 +666,11 @@ private abbrev localConvergenceAtBasePointProof
       | succ n => exact hdecay n
     have ha_le1 : Real.sqrt (μ_minus * η) ≤ 1 := by
       rw [← Real.sqrt_one]; apply Real.sqrt_le_sqrt
-      rw [show η = 1 / (↑L : ℝ) from rfl, mul_one_div, div_le_one hL]
-      linarith [hmu4_le_L]
+      grind
     have hb_le1 : (1 - θ) * Real.sqrt (μ_minus * η) ≤ 1 := by
       have := Real.sqrt_le_sqrt
         (show μ_minus * η ≤ 1 by
-          rw [show η = 1 / (↑L : ℝ) from rfl, mul_one_div, div_le_one hL]
-          linarith [hmu4_le_L])
+          grind)
       rw [Real.sqrt_one] at this
       have h1mθ : 1 - θ ≤ 1 := by linarith [hθ_lt1]
       have hsqrt_nn : (0 : ℝ) ≤ Real.sqrt (μ_minus * η) := Real.sqrt_nonneg _
@@ -750,12 +710,7 @@ private abbrev localConvergenceAtBasePointProof
           le_trans (sub_nonneg.mpr (ciInf_le hbdd x₁)) h_gap_le
         have hClyap := mul_nonneg
           (show (0:ℝ) ≤ ↑L * C_coer / (2 * μ_minus) by positivity) h_lyap_nn
-        have hexpand :
-            (1 + ↑L * C_coer / (2 * μ_minus)) * lyapunov P μ_minus π f η ρ x₁ 0 =
-            lyapunov P μ_minus π f η ρ x₁ 0 +
-            ↑L * C_coer / (2 * μ_minus) *
-            lyapunov P μ_minus π f η ρ x₁ 0 := by ring
-        linarith
+        grind
       | succ n =>
         -- Direct bound via fiber QUB from π(x'_k) to x'_k
         set sn := nesterovSeq f η ρ x₁ (n + 1)
@@ -800,26 +755,17 @@ private abbrev localConvergenceAtBasePointProof
           have h2 := mul_le_mul_of_nonneg_left hen_sq
             (show (0:ℝ) ≤ ↑L by positivity)
           have hkey : μ_minus * (f x'n - fStar f) ≤ ↑L / 2 * C_coer * Ln := by
-            calc μ_minus * (f x'n - fStar f)
-                ≤ μ_minus * (↑L / 2 * ‖en‖ ^ 2) := h1
-              _ = ↑L / 2 * (μ_minus * ‖en‖ ^ 2) := by ring
-              _ ≤ ↑L / 2 * (C_coer * Ln) :=
-                  mul_le_mul_of_nonneg_left hen_sq (by positivity)
-              _ = ↑L / 2 * C_coer * Ln := by ring
+            grind
           rw [div_mul_eq_mul_div]
           apply (le_div_iff₀ (by positivity : (0:ℝ) < 2 * μ_minus)).mpr
-          have : (f x'n - fStar f) * (2 * μ_minus) = 2 * (μ_minus * (f x'n - fStar f)) := by ring
-          have : ↑L * C_coer * Ln = 2 * (↑L / 2 * C_coer * Ln) := by ring
-          linarith
+          grind
         -- Ln ≥ 0
         have hLn_nn : 0 ≤ Ln := by
           have h_ge : 0 ≤ f sn.x - fStar f := sub_nonneg.mpr (ciInf_le hbdd _)
           have h_le : f sn.x - fStar f ≤ Ln :=
             gap_le_lyapunov_of_sqrt_le P μ_minus π f η ρ x₁ (n + 1) ha_le1
           linarith
-        have hexpand : (1 + ↑L * C_coer / (2 * μ_minus)) * Ln =
-            Ln + ↑L * C_coer / (2 * μ_minus) * Ln := by ring
-        linarith
+        grind
     obtain ⟨Cf, hCf_pos, hf_bound⟩ := hf_le
     -- Geometric decay implies exponential rate: (1−(1-θ)a)^k ≤ exp(−(1-θ)ak)
     have hgeom_exp : ∀ k : ℕ,
@@ -836,15 +782,9 @@ private abbrev localConvergenceAtBasePointProof
       have hb_pos : 0 < b := mul_pos h1θ_pos ha_pos
       -- (1-θ)*a ≤ 1 since (1-θ) ≤ 1 and a ≤ 1
       have ha1 : a ≤ 1 := by
-        rw [ha_def, ← Real.sqrt_one]; apply Real.sqrt_le_sqrt
-        change μ_minus * (1 / ↑L) ≤ 1; rw [mul_one_div, div_le_one hL]; exact hmu4_le_L
+        grind
       have hb_le1 : b ≤ 1 := by
-        calc b = (1 - θ) * a := rfl
-          _ ≤ 1 * a := by
-              apply mul_le_mul_of_nonneg_right _ (by linarith : 0 ≤ a)
-              linarith [hθ_lt1]
-          _ = a := one_mul _
-          _ ≤ 1 := ha1
+        grind
       have h1b : 0 ≤ 1 - b := by linarith
       -- Key identity: b · √(L/((1-θ)²·μ_minus)) = 1
       have hμ_target_pos : (0 : ℝ) < (1 - θ) ^ 2 * μ_minus := by positivity
@@ -862,11 +802,7 @@ private abbrev localConvergenceAtBasePointProof
         rw [key]
         have hb_sq : b ^ 2 = (1 - θ) ^ 2 * (μ_minus * η) := by
           rw [hb_def, mul_pow, ha_def, Real.sq_sqrt h_nn]
-        rw [hb_sq]
-        have h_eta_eq : η = 1 / (↑L : ℝ) := rfl
-        have h1 : (1 - θ) ^ 2 * (μ_minus * η) * (↑L / ((1 - θ) ^ 2 * μ_minus)) = 1 := by
-          rw [h_eta_eq]; field_simp
-        rw [h1, Real.sqrt_one]
+        grind
       have h_b_eq : b = 1 / Real.sqrt (↑L / ((1 - θ) ^ 2 * μ_minus)) := by
         rw [eq_div_iff (ne_of_gt h_sqrt_pos)]; exact h_prod
       have h_exp_eq : -(↑k / Real.sqrt (↑L / ((1 - θ) ^ 2 * μ_minus))) = ↑k * (-b) := by

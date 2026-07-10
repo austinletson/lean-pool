@@ -58,10 +58,7 @@ lemma DivChain_mul (a b : Fin n → ℕ) (ha : DivChain n a) (hb : DivChain n b)
     · simp
     · intro b' _ hb'; simp [hb']
     · intro h; exact absurd (Finset.mem_univ i) h
-  · simp only [hij, ↓reduceIte]; apply Finset.sum_eq_zero; intro k _
-    by_cases hik : i = k
-    · subst hik; simp [hij]
-    · simp [hik]
+  · simp only [hij, ↓reduceIte]; apply Finset.sum_eq_zero; grind
 
 variable [NeZero n]
 
@@ -570,12 +567,7 @@ lemma mulMap_coprime_eq (a b : Fin n → ℕ) (ha_pos : ∀ i, 0 < a i) (hb_pos 
       hc₂ * h₂b, H.mul_mem hhc₂ hh₂b, ?_⟩
     rw [show α = h₁a * diagMat n a * h₂a from hδa_eq,
         show β = h₁b * diagMat n b * h₂b from hδb_eq]
-    rw [show (p.1.out : GL (Fin n) ℚ) * (h₁a * diagMat n a * h₂a) *
-        ((p.2.out : GL (Fin n) ℚ) * (h₁b * diagMat n b * h₂b)) =
-        (p.1.out : GL (Fin n) ℚ) * h₁a *
-          (diagMat n a * (h₂a * (p.2.out : GL (Fin n) ℚ) * h₁b) * diagMat n b) * h₂b
-      from by group,
-      h_eq]; group
+    grind
   apply HeckeCoset_ext_toSet (P := GLPair n)
   rw [mulMap, HeckeCoset.toSet_mk]
   simp only [TDiag, HeckeCoset.toSet_mk,
@@ -596,8 +588,7 @@ private lemma GLnQ_mem_SLnZ_of_coprime_scaling (C : GL (Fin n) ℚ)
         s * ((pa : ℚ) * (↑C : Matrix (Fin n) (Fin n) ℚ) i j) +
         t * ((pb : ℚ) * (↑C : Matrix (Fin n) (Fin n) ℚ) i j) := by
       have hst_Q : (s : ℚ) * (pa : ℚ) + (t : ℚ) * (pb : ℚ) = 1 := by exact_mod_cast hst
-      have := congr_arg (· * (↑C : Matrix (Fin n) (Fin n) ℚ) i j) hst_Q
-      simp only [add_mul, one_mul] at this; linarith
+      grind
     rw [h1, hza, hzb]; push_cast; ring
   set N : Matrix (Fin n) (Fin n) ℤ := Matrix.of fun i j => (h_int i j).choose
   have hN_eq : ∀ i j, (↑C : Matrix (Fin n) (Fin n) ℚ) i j = ((N i j : ℤ) : ℚ) :=
@@ -683,10 +674,7 @@ private lemma diagSandwich_scaling (b : Fin n → ℕ) (hb : ∀ i, 0 < b i)
   have hDpq := (h_D_scale p q).choose_spec
   simp only [F_GL, E_GL, mapGL_coe_matrix, map_apply_coe, RingHom.mapMatrix_apply,
     Int.coe_castRingHom, algebraMap_int_eq, Matrix.map_apply]
-  set z := (h_D_scale p q).choose
-  have h1 : (∏ k, (b k : ℚ)) * ((↑(F.val i p) : ℚ) * (D_mat p q * (↑(E.val q j) : ℚ))) =
-      (↑(F.val i p) : ℚ) * ((∏ k, (b k : ℚ)) * D_mat p q) * (↑(E.val q j) : ℚ) := by ring
-  rw [h1, hDpq]
+  grind
 
 omit [NeZero n] in
 private lemma coprime_coupling_mem_H (a b : Fin n → ℕ)

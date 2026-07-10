@@ -187,9 +187,7 @@ theorem QFT_mem_unitaryGroup (n : ℕ) :
     rw [inv_pow, ← zpow_natCast (omega n) (l.val * j.val),
       ← zpow_natCast (omega n) (l.val * k.val), ← zpow_neg,
       ← zpow_add₀ (omega_ne_zero n)]
-    congr 1
-    push_cast
-    ring
+    grind
   rw [Matrix.mul_apply, Matrix.one_apply]
   simp only [hterm]
   rw [← Finset.mul_sum]
@@ -208,8 +206,7 @@ theorem QFT_mem_unitaryGroup (n : ℕ) :
       intro hdvd
       have h0 : (k.val : ℤ) - (j.val : ℤ) = 0 :=
         Int.eq_zero_of_abs_lt_dvd hdvd (Int.abs_sub_lt_of_lt_lt j.isLt k.isLt)
-      exact hjk (Fin.val_injective
-        (by exact_mod_cast sub_eq_zero.mp h0 : k.val = j.val)).symm
+      grind
     rw [sum_omega_zpow_eq_zero n hd, mul_zero]
 
 /-- The quantum Fourier transform on `n` qubits as a unitary gate. -/

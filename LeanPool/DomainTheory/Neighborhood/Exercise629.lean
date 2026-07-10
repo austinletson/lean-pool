@@ -130,8 +130,7 @@ theorem FinSupp.inter {X X' : ∀ i, Set (α i)}
   -- fully constructive,
   -- no case split on the undecidable proposition `X i = master`.
   refine ⟨l ++ l', fun i hi => ?_⟩
-  rw [List.mem_append, not_or] at hi
-  simp only [hl i hi.1, hl' i hi.2, Set.inter_self]
+  grind
 
 variable (D) in
 /-- **Exercise 6.29 — the indexed product `∏_i D_i`.** Neighbourhoods are
@@ -291,13 +290,9 @@ theorem iprodNbhd_restrictTo_cons {X : ∀ i, Set (α i)} (hXsub : ∀ i, X i �
   by_cases hja : j = a
   · subst hja
     rw [updTuple_apply_self]
-    by_cases hjl : j ∈ l
-    · rw [if_pos List.mem_cons_self, if_pos hjl, Set.inter_self]
-    · rw [if_pos List.mem_cons_self, if_neg hjl, Set.inter_eq_left.mpr (hXsub j)]
+    grind
   · rw [updTuple_apply_ne (X a) hja]
-    by_cases hjl : j ∈ l
-    · rw [if_pos (List.mem_cons_of_mem a hjl), if_pos hjl, Set.inter_eq_right.mpr (hXsub j)]
-    · rw [if_neg fun h => (List.mem_cons.mp h).elim hja hjl, if_neg hjl, Set.inter_self]
+    grind
 
 /-- An element contains the restricted cylinder once it contains each listed
 slice. -/
@@ -327,9 +322,7 @@ theorem z_mem_of_slices (z : (iprod D).Element) {X : ∀ i, Set (α i)}
   have heq : restrictTo D l X = X := by
     funext j
     rw [restrictTo]
-    by_cases h : j ∈ l
-    · rw [if_pos h]
-    · rw [if_neg h]; exact (hl j h).symm
+    grind
   rwa [heq] at key
 
 theorem fromPi_toPi (z : (iprod D).Element) : fromPi D (fun i => proj z i) = z := by
@@ -396,16 +389,14 @@ theorem none_not_mem_injI {i : ι} {X : Set (α i)} : (none : Option (Σ i, α i
     (some ⟨i, a⟩ : Option (Σ i, α i)) ∈ injI i X ↔ a ∈ X := by
   constructor
   · rintro ⟨b, hb, heq⟩
-    simp only [Option.some.injEq, Sigma.mk.injEq, heq_eq_eq, true_and] at heq
-    rwa [heq] at hb
+    grind
   · intro ha; exact ⟨a, ha, rfl⟩
 
 /-- A tagged token determines its summand index. -/
 theorem index_of_some_mem_injI {i k : ι} {a : α k} {X : Set (α i)}
     (hmem : (some ⟨k, a⟩ : Option (Σ i, α i)) ∈ injI i X) : k = i := by
   obtain ⟨b, _, heq⟩ := hmem
-  simp only [Option.some.injEq] at heq
-  exact (congrArg Sigma.fst heq).symm
+  grind
 
 theorem injI_nonempty {i : ι} {X : Set (α i)} (hX : X.Nonempty) : (injI i X).Nonempty := by
   obtain ⟨a, ha⟩ := hX; exact ⟨some ⟨i, a⟩, some_mem_injI.mpr ha⟩

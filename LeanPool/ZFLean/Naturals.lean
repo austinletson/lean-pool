@@ -60,12 +60,7 @@ theorem inductive_sep {S} (P : ZFSet → Prop) (ind : inductiveSet S)
   (h₀ : P ∅) (h₁ : ∀ n ∈ S, P n → P (insert n n)) : inductiveSet <| S.sep P := by
   unfold inductiveSet at *
   simp_rw [mem_sep]
-  apply And.intro
-  · exact ⟨ind.left, h₀⟩
-  · rintro n ⟨_,_⟩
-    apply And.intro
-    · exact ind.right n ‹_›
-    · exact h₁ n ‹_› ‹_›
+  grind
 
 theorem inductive_imp_transitive {E : ZFSet} (h : inductiveSet E) :
   inductiveSet (E.sep transitive) := by
@@ -244,8 +239,7 @@ theorem sep_of_ind_is_ind (P : ZFSet → Prop) {a} (h : inductiveSet a)
   apply And.intro
   · exact mem_sep.mpr ⟨h.left, h₀⟩
   · simp only [mem_sep, and_imp]
-    intros
-    exact ⟨h.right _ ‹_›, ih _ ‹_› ‹_›⟩
+    grind
 
 /-! ## Recursion on natural numbers -/
 
@@ -255,8 +249,7 @@ theorem succ_subrelation_mem' :
   intro _ _ _
   subst_eqs
   rw [mem_insert_iff]
-  left
-  rfl
+  grind
 
 theorem succ_wf' : @WellFounded ZFSet (fun x y => insert x x = y) := by
   apply Subrelation.wf
@@ -276,8 +269,7 @@ theorem succ_subrelation_mem : Subrelation (succ · = ·) (·.1 ∈ ·.1) := by
   simp only [succ] at *
   subst_eqs
   rw [mem_insert_iff]
-  left
-  rfl
+  grind
 
 theorem succ_wf : @WellFounded ZFNat (succ · = ·) := by
   apply Subrelation.wf
@@ -487,8 +479,7 @@ theorem strong_induction {P : ZFNat → Prop} (n : ZFNat)
       intros m hm
       unfold Q at ih
       by_cases h : m = n
-      · subst h
-        exact ind _ ih
+      · grind
       · have h' : m < n := by
           rcases lt_le_iff.mpr hm with (_ | rfl)
           · assumption
@@ -502,16 +493,13 @@ theorem mem_Nat_of_mem_mem_Nat {n m : ZFSet} (hn : n ∈ Nat) : m ∈ n → m �
     nomatch notMem_empty m h
   · intro n hn ih hm
     rw [mem_insert_iff] at hm
-    rcases hm with rfl | hm
-    · exact hn
-    · exact ih hm
+    grind
 
 theorem not_zero_imp_succ {n : ZFNat} : n ≠ 0 → ∃ m, n = succ m := by
   induction n using induction with
   | zero => intro h; contradiction
   | succ n _ =>
-    intro
-    exact exists_apply_eq_apply' succ n
+    grind
 
 lemma sUnion_insert_nat {x : ZFSet} (h : x ∈ Nat) : (⋃₀ (insert x x) : ZFSet) = x := by
   apply ind _ h
@@ -699,12 +687,7 @@ instance : LinearOrder ZFNat where
 
 instance : IsStrictTotalOrder ZFNat (·<·) where
   trichotomous x y := by
-    intro hxy hyx
-    rcases @le_total x y with (h | h) | (h | h)
-    · exact False.elim (hxy h)
-    · exact h
-    · exact False.elim (hyx h)
-    · exact h.symm
+    grind
   irrefl _ := lt_irrefl
   trans _ _ _ := lt_trans
 
@@ -769,8 +752,7 @@ theorem add_left_cancel {n m k : ZFNat} : n + m = n + k ↔ m = k := by
     apply Iff.intro
     · intro h
       exact ih.mp (succ_inj h)
-    · intro h
-      rw [h]
+    · grind
 
 theorem add_right_cancel {n m k : ZFNat} : n + m = k + m ↔ n = k := by
   rw [add_comm n, add_comm k]
@@ -945,8 +927,7 @@ theorem lt_of_succ_lt_succ {n m : ZFNat} : succ n < succ m → n < m := by
   intro h
   rcases le_of_succ_le_succ (Or.inl h) with (h | rfl)
   · assumption
-  · absurd lt_irrefl h
-    trivial
+  · grind
 
 theorem add_self_ne_one {n : ZFNat} : n + n ≠ 1 := by
   intro h
@@ -1237,8 +1218,7 @@ lemma left_distrib_mul_sub_one {n m : ZFNat} : n * (m - 1) = n * m - n := by
   | zero => rw [zero_sub, mul_zero, zero_sub]
   | succ _ _ =>
     rw [natOne_eq, succ_sub_succ, sub_zero, succ_mul', add_sub_assoc, sub_self, add_zero]
-    right
-    rfl
+    grind
 
 lemma left_distrib_mul_sub_aux {n m k : ZFNat} (h : k < m) : n * (m - k) = n * m - n * k := by
   induction k with
@@ -1317,15 +1297,7 @@ lemma mul_eq_zero_iff {n m : ZFNat} : n * m = 0 ↔ n = 0 ∨ m = 0 := by
     · rw [mul_zero]
 
 lemma eq_le_le_iff {n m : ZFNat} : n = m ↔ n ≤ m ∧ m ≤ n := by
-  constructor
-  · rintro rfl
-    exact ⟨le_refl _, le_refl _⟩
-  · rintro ⟨n_le_m, m_le_n⟩
-    rcases n_le_m with n_le_m | rfl
-    · rcases m_le_n with m_le_n | rfl
-      · nomatch lt_irrefl <| lt_trans n_le_m m_le_n
-      · rfl
-    · rfl
+  grind
 
 lemma mul_left_cancel_iff {n m k : ZFNat} (k_pos : k ≠ 0) : k * m = k * n ↔ m = n := by
   constructor
@@ -1333,18 +1305,14 @@ lemma mul_left_cancel_iff {n m k : ZFNat} (k_pos : k ≠ 0) : k * m = k * n ↔ 
     | zero =>
       intro hm
       rw [mul_zero, mul_eq_zero_iff] at hm
-      rcases hm with rfl | rfl
-      · contradiction
-      · rfl
+      grind
     | succ n ih =>
       intro eq
       cases m with
       | zero =>
         symm at eq
         rw [mul_zero, mul_eq_zero_iff] at eq
-        rcases eq with rfl | eq
-        · contradiction
-        · nomatch succ_ne_zero _ eq
+        grind
       | succ m =>
         congr
         rw [eq_le_le_iff]
@@ -1359,8 +1327,7 @@ lemma mul_left_cancel_iff {n m k : ZFNat} (k_pos : k ≠ 0) : k * m = k * n ↔ 
           rcases this with rfl | this
           · contradiction
           · rwa [ZFNat.succ_sub_succ, ZFNat.sub_eq_zero_imp_le] at this
-  · rintro rfl
-    rfl
+  · grind
 
 lemma mul_right_cancel_iff {n m k : ZFNat} (k_pos : k ≠ 0) : m * k = n * k ↔ m = n := by
   rw [mul_comm m k, mul_comm n k]
@@ -1487,8 +1454,7 @@ theorem _root_.ZFSet.ZFNat.ofNat_inj {n m : ℕ} : (n : ZFNat) = (m : ZFNat) ↔
         obtain rfl := ih <| ZFNat.succ_inj h
         rfl
   mpr := by
-    rintro rfl
-    rfl
+    grind
 
 theorem _root_.ZFSet.ZFNat.toNat_eq (n : ZFNat) : ZFNat.toNat n = n := by
   induction n with
@@ -1503,8 +1469,7 @@ theorem _root_.ZFSet.ZFNat.toNat_eq (n : ZFNat) : ZFNat.toNat n = n := by
 
 theorem _root_.ZFSet.ZFNat.toNat_iff {n m : ZFNat} : n = m ↔ n.toNat = m.toNat where
   mp := by
-    rintro rfl
-    rfl
+    grind
   mpr := by
     intro h
     induction n generalizing m with
@@ -1523,8 +1488,7 @@ theorem _root_.ZFSet.ZFNat.toNat_iff {n m : ZFNat} : n = m ↔ n.toNat = m.toNat
       | succ m =>
         rw [ZFNat.toNat, ZFNat.rec_succ, _root_.Nat.succ_inj, ←toNat, ←toNat] at h
         rw [add_one_eq_succ]
-        obtain rfl := ih h
-        rfl
+        grind
 
 /-- The equivalence between ZF natural numbers and Lean natural numbers. -/
 def _root_.ZFSet.ZFNat.instEquivZFNatNat : ZFNat ≃ ℕ where

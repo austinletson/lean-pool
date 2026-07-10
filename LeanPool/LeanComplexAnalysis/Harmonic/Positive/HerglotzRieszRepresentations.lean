@@ -90,14 +90,9 @@ lemma herglotz_integrable (μ : ProbabilityMeasure (sphere (0 : ℂ) 1))
           (continuousAt_id.sub continuousAt_const) (sub_ne_zero_of_ne <| by
               have hx' : ‖x‖ = 1 := by simpa [sphere, mem_sphere_iff_norm] using hx
               have hw' : ‖w‖ < 1 := by simpa [ball, mem_ball] using hw
-              intro h
-              have : ‖x‖ < 1 := by rw [h]; exact hw'
-              rw [hx'] at this
-              exact absurd this (lt_irrefl 1))
+              grind)
     obtain ⟨C, hC⟩ := IsCompact.exists_bound_of_continuousOn (isCompact_sphere 0 1) h_cont
-    use C; intro x hx
-    apply hC x
-    exact x.2
+    use C; grind
   refine MeasureTheory.Integrable.mono' (g := fun _ => h_bounded.choose) ?_ ?_ ?_
   · exact integrable_const h_bounded.choose
   · have h_measurable : Measurable (fun x : ℂ => (x + w) / (x - w)) := by
@@ -159,8 +154,7 @@ lemma herglotz_hasDerivAt (μ : ProbabilityMeasure (sphere (0 : ℂ) 1))
         exact ⟨(1 - ‖w₀‖) / 2, half_pos (sub_pos.mpr hw₀), fun n hn hn' =>
           Filter.eventually_of_mem (MeasureTheory.measure_eq_zero_iff_ae_notMem.mp (
             show μ.toMeasure (μ.toMeasure.supportᶜ) = 0 from by simp)) fun x hx =>
-              h_bound x (by simp_all [Subtype.forall, mem_sphere_iff_norm, sub_zero,
-                mem_compl_iff, mem_singleton_iff, not_not, setOf_mem_eq]) n
+              h_bound x (by grind) n
                 (by rwa [dist_eq_norm] at hn)⟩
       · norm_num
       · have h_tendsto : ∀ x ∈ μ.toMeasure.support,
@@ -171,8 +165,7 @@ lemma herglotz_hasDerivAt (μ : ProbabilityMeasure (sphere (0 : ℂ) 1))
           have h_lim : HasDerivAt (fun n : ℂ => (x + n) / (x - n))
             (2 * x / (x - w₀) ^ 2) w₀ := by
             have h_ne : (x : ℂ) - w₀ ≠ 0 := sub_ne_zero_of_ne <| by
-              rintro rfl
-              exact absurd hw₀ <| by simp [h_norm]
+              grind
             convert HasDerivAt.div (HasDerivAt.add (hasDerivAt_const _ _) (hasDerivAt_id w₀))
               (HasDerivAt.sub (hasDerivAt_const _ _) (hasDerivAt_id w₀)) h_ne using 1 <;>
               first | rfl
@@ -269,8 +262,7 @@ theorem HerglotzRiesz_realPos (μ : ProbabilityMeasure (sphere (0 : ℂ) 1)) :
               have : x = z := sub_eq_zero.mp h
               have hx : ‖(x : ℂ)‖ = 1 := by simp
               have hz : ‖z‖ < 1 := by simpa [ball] using hz
-              rw [this] at hx
-              nlinarith
+              grind
           · exact Filter.Eventually.of_forall fun x => Complex.abs_re_le_norm _
       convert h_integral_pos using 1
       have h_integral_re (f : sphere (0 : ℂ) 1 → ℂ) (hf : Integrable f μ) :
@@ -392,10 +384,7 @@ lemma complex_kernel_integrable (μ : Measure (sphere (0 : ℂ) 1))
     · fun_prop
     · simp only [mem_ball, dist_zero_right, ne_eq, Subtype.forall, mem_sphere_iff_norm,
       sub_zero] at ⊢ hz
-      intro a ha h_eq
-      have : a = z := sub_eq_zero.mp h_eq
-      rw [this] at ha
-      linarith [ha, hz]
+      grind
   apply_rules [Continuous.integrable_of_hasCompactSupport]
   rw [hasCompactSupport_iff_eventuallyEq]
   simp [Filter.EventuallyEq]
@@ -420,8 +409,7 @@ lemma u_n_pos (p : ℂ → ℂ) (r : ℕ → ℝ) (n : ℕ) (hp : MapsTo p (ball
     rw [abs_of_pos hr.1, hz_norm]; linarith [hr.2]
   obtain ⟨left, right⟩ := hr
   apply hp
-  simp_all only [mem_ball, dist_zero_right, Complex.norm_mul, norm_real,
-    Real.norm_eq_abs]
+  grind
 
 /-- The mean value property for `uN p` at 0. -/
 lemma u_n_mean_value (p : ℂ → ℂ) (r : ℕ → ℝ) (n : ℕ)
@@ -458,11 +446,7 @@ lemma u_n_mean_value (p : ℂ → ℂ) (r : ℕ → ℝ) (n : ℕ)
             I * ∫ (θ : ℝ) in 0..2 * π, p (↑(r n) * circleMap 0 1 θ) from
           intervalIntegral.integral_const_mul _ _] at this
       have hI : I ≠ 0 := I_ne_zero
-      have h_pi : (π : ℂ) ≠ 0 := ofReal_ne_zero.mpr (ne_of_gt Real.pi_pos)
-      have h_this : I * ∫ (θ : ℝ) in 0..π * 2, p (↑(r n) * circleMap 0 1 θ) = I * (↑π * 2) := by
-        rw [show (π * 2 : ℝ) = 2 * π from by ring]
-        convert this using 1; ring
-      exact mul_left_cancel₀ hI h_this
+      grind
   have h_real_part : (1 / (2 * π)) * ∫ t in (0)..2 * π,
     (p (r n * circleMap 0 1 t)).re = (p 0).re := by
     convert congr_arg Complex.re h_mean_value_property using 1
@@ -991,8 +975,7 @@ theorem HerglotzRiesz_representation_existence (p : ℂ → ℂ)
   have h_p_eq_q : ∀ z ∈ ball (0 : ℂ) 1,
     p z = ∫ w : sphere (0 : ℂ) 1, ((w : ℂ) + z) / ((w : ℂ) - z) ∂μ := by
     apply_rules [analytic_unique_of_real_part]
-    rw [hp0]
-    exact hq0.symm
+    grind
   exact ⟨μ, h_p_eq_q⟩
 
 /-! ## Main results -/
@@ -1013,10 +996,7 @@ theorem HerglotzRiesz_representation_analytic
     · intro ν  hν
       symm
       refine HerglotzRiesz_representation_uniqueness μ ν ?_
-      intro z hz
-      calc ∫ x : sphere (0 : ℂ) 1, (x + z) / (x - z) ∂μ
-            = p z := (hμ_rep z hz).symm
-        _ = ∫ x : sphere (0 : ℂ) 1, (x + z) / (x - z) ∂ν := hν z hz
+      grind
 
 /-- Every harmonic function `u` on the unit disc with `u(0) = 1` and
 `u(z) > 0` for all `z` admits a unique Herglotz–Riesz integral representation. -/
@@ -1054,9 +1034,7 @@ theorem HerglotzRiesz_representation_harmonic
     exists_analytic_of_harmonic_unitDisc u h_harmonic
   have h_real_pos : MapsTo F unitDisc {w : ℂ | 0 < w.re} := by
     intro z hz
-    simp only [Set.mem_setOf]
-    rw [hF_re.1 z hz]
-    exact h_pos z hz
+    grind
   have hF0 : F 0 = 1 := by simp [hF_re.2, h_u_zero]
   obtain ⟨μ, h_rep⟩ := HerglotzRiesz_representation_existence F hF_analytic hF0 h_real_pos
   have h_real_part : ∀ z ∈ unitDisc, u z = ∫ x : unitCircle, (1 - ‖z‖^2) / ‖(x : ℂ) - z‖^2 ∂μ := by

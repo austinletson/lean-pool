@@ -59,9 +59,7 @@ variable {S S' : Finset (Fin n)}
 lemma add_self_eq_zero (a : Fin n → Fin 2) : a + a = 0 := by
   funext i
   change a i + a i = (0 : Fin 2)
-  obtain h | h : a i = 0 ∨ a i = 1 := by omega
-  · rw [h]; rfl
-  · rw [h]; rfl
+  grind
 
 /-- Translation invariance -/
 lemma sum_translate (a : Fin n → Fin 2) : ∑ x, f x = ∑ x, f (x + a) := by
@@ -233,9 +231,7 @@ theorem walsh_mul_eq : χ S * χ S' = χ (symmDiff S S') := by
   rw [haux, mul_one, ← prod_union]
   · rfl
   · simp only [disjoint_iff_ne, mem_sdiff, ne_eq, and_imp]
-    intro _ ha _ _ _ _ h
-    rw [h] at ha
-    contradiction
+    grind
 
 lemma inner_eq_expectation : ⟪f, g⟫ = 𝐄 (f * g) := rfl
 
@@ -260,10 +256,7 @@ lemma flipAt_unflipped {i i₀ : Fin n} {x : Fin n → Fin 2} (h : i ≠ i₀) :
 @[simp]
 lemma flipAt_flipAt_eq {i₀ : Fin n} {x : Fin n → Fin 2} : flipAt i₀ (flipAt i₀ x) = x := by
   unfold flipAt
-  funext i
-  split_ifs
-  · rw [sub_sub_cancel]
-  · rfl
+  grind
 
 /-- Flipping a bit is an involution on `Fin n → Fin 2`. -/
 theorem flipAt_involutive {i₀ : Fin n} : Function.Involutive (flipAt i₀) := fun _ ↦ flipAt_flipAt_eq
@@ -293,8 +286,7 @@ theorem expectation_walsh_eq_zero (hS : S.Nonempty) : 𝐄 (χ S) = 0 := by
     rw [← Finset.prod_erase_mul S _ hi₀]
     refine congr_arg (· * _) ?_
     apply Finset.prod_congr rfl
-    intro i hi
-    rw [hv_other i (Finset.ne_of_mem_erase hi), add_zero]
+    grind
   have h_sum := e.sum_comp (χ S)
   simp_rw [hneg, Finset.sum_neg_distrib] at h_sum
   linarith
@@ -339,8 +331,7 @@ theorem inner_eq_sum_fourier : ⟪f, g⟫ = ∑ S : Finset (Fin n), (𝓕 f S) *
   simp_rw [inner_smul_right, walsh_inner_eq]
   rw [Finset.sum_eq_single S]
   · rw [oneOn_true rfl]; ring
-  · intros b _ hb
-    rw [oneOn_false (fun h => hb h.symm)]; ring
+  · grind
   · intro h; exact absurd (Finset.mem_univ S) h
 
 /-- Plancherel/Parseval theorem for Boolean functions. -/
@@ -374,15 +365,9 @@ lemma walsh_setAt_eq_ite {v : Fin 2} :
   split_ifs with h
   · rw [← mul_prod_erase S _ h, setAt_it, erase_eq]
     congr! 4 with j hj
-    rw [setAt_other]
-    rw [mem_sdiff, mem_singleton] at hj
-    symm
-    exact hj.right
+    grind
   · congr! 3 with j hj
-    rw [setAt_other]
-    by_contra hc
-    rw [hc] at h
-    exact h hj
+    grind
 
 theorem dderiv_walsh (i : Fin n) (S : Finset (Fin n)) :
     dderiv i (χ S) = ite (i ∈ S) (χ (S \ {i})) 0 := by
@@ -405,18 +390,12 @@ def laplace (i : Fin n) : BooleanFunc n →ₗ[ℝ] BooleanFunc n where
   map_smul' := by intros; funext; dsimp; ring
 
 lemma setAt_eq_id {v : Fin 2} (h : x i = v) : setAt i v x = x := by
-  funext j
-  unfold setAt
-  split_ifs with hj
-  · rw [hj]; symm; assumption
-  · rfl
+  grind
 
 lemma setAt_eq_flipAt {v : Fin 2} (h : x i ≠ v) : setAt i v x = flipAt i x := by
   funext j
   unfold setAt flipAt
-  split_ifs with hj
-  · rw [hj]; omega
-  · rfl
+  grind
 
 lemma laplace_eq_dderiv (i : Fin n) (f : BooleanFunc n) (x : Fin n → Fin 2) :
     laplace i f x = (-1) ^ (x i).val * (dderiv i f x) := by
@@ -525,9 +504,7 @@ lemma fourier_eq_zero_iff_fourier_weight_eq {k : ℕ} {f : BooleanFunc n} :
   constructor
   · intro h
     have h : ∀ S, S.card ≠ k → |𝓕 f S|^2 = 0 := by
-      intro S hS
-      simp only [sq_abs, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, pow_eq_zero_iff]
-      exact h S hS
+      grind
     symm
     rw [walsh_plancherel]
     calc
@@ -548,9 +525,7 @@ lemma fourier_eq_zero_iff_fourier_weight_eq {k : ℕ} {f : BooleanFunc n} :
         _ = ∑ S ∈ {S | S.card ≠ k}, |𝓕 f S|^2       := by
               rw [add_comm, add_sub_assoc, sub_self, add_zero]
     have := (sum_eq_zero_iff_of_nonneg <| by intro S _; apply pow_two_nonneg).mp this
-    specialize this S (by simp [hS])
-    rw [sq_abs, pow_eq_zero_iff (by trivial)] at this
-    assumption
+    grind
 
 lemma eq_sum_fourier_of_fourier_weight {k : ℕ} {f : BooleanFunc n}
     (h : fourierWeight k f = ‖f‖ ^ 2) :

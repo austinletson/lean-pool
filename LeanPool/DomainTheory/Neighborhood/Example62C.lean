@@ -362,8 +362,7 @@ theorem singleton_nil_inter_embBit (b : Bool) (X : Set Str) :
   ext w
   simp only [Set.mem_inter_iff, Set.mem_singleton_iff, mem_embBit, Set.mem_empty_iff_false,
     iff_false, not_and]
-  rintro rfl ⟨w', heq, -⟩
-  exact absurd heq (by simp)
+  grind
 
 theorem singleton_nil_ne_univ : ({[]} : Set Str) ≠ Set.univ := by
   intro h
@@ -422,8 +421,7 @@ def toCC (x : C.Element) : CC.Element where
     · exact Or.inr (Or.inr (Or.inl ⟨X', hX', master3_inter_j1 hX', hzF'⟩))
     · exact Or.inr (Or.inr (Or.inr ⟨Y', hY', master3_inter_j2 hY', hzT'⟩))
     · exact Or.inr (Or.inl ⟨by rw [Set.inter_comm, master3_inter_j0 rfl], hzU⟩)
-    · refine Or.inr (Or.inl ⟨?_, hzU⟩)
-      rw [j0_inter_j0, Set.inter_self]
+    · grind
     · exfalso
       have hx := x.inter_mem hzU hzF'
       rw [singleton_nil_inter_embBit] at hx

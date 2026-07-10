@@ -23,17 +23,10 @@ lemma Finset.exists_minimal_of_nonempty {α : Type*} [PartialOrder α] [WellFoun
   classical
   obtain ⟨x₀, hx₀⟩ := hne
   suffices ∀ x, x ∈ T → ∃ m ∈ T, (∀ y ∈ T, y < m → False) ∧ m ≤ x by
-    obtain ⟨m, hmT, hmmin, _⟩ := this x₀ hx₀
-    exact ⟨m, hmT, hmmin⟩
+    grind
   intro x
   apply (IsWellFounded.wf (r := (· < ·))).induction x
-  intro z ih hz
-  by_cases hmin : ∀ y ∈ T, y < z → False
-  · exact ⟨z, hz, hmin, le_rfl⟩
-  · push Not at hmin
-    obtain ⟨y, hyT, hy_lt, _⟩ := hmin
-    obtain ⟨m, hmT, hmmin, hm_le⟩ := ih y hy_lt hyT
-    exact ⟨m, hmT, hmmin, le_trans hm_le (le_of_lt hy_lt)⟩
+  grind
 
 /-- Constructive: every nonempty finite subset of a
     decidable strict order has a minimal element (no well-foundedness needed). -/

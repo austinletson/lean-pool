@@ -67,8 +67,7 @@ theorem misereEQ_shift [ClosedUnderAdd A] [IntegerInvertible A] {g h : GameForm}
     (g + h) =m A ((g + (n : GameForm)) + (h + (-(n : GameForm)))) := by
   have hrw : (g + (n : GameForm)) + (h + (-(n : GameForm)))
       = (g + h) + ((n : GameForm) + (-(n : GameForm))) := by
-    rw [add_assoc, ← add_assoc (n : GameForm) h, add_comm (n : GameForm) h,
-        add_assoc h, ← add_assoc g h]
+    grind
   rw [hrw]
   have hgh : A (g + h) := ClosedUnderAdd.has_add g h hg hh
   have key : ((g + h) + ((n : GameForm) + (-(n : GameForm)))) =m A ((g + h) + 0) :=

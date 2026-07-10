@@ -280,36 +280,26 @@ noncomputable def depSumSeqProj {α : Type} {β : α → Type} {f : ℕ → (a :
 lemma sigmaMemOfMemMap {α : Type} {β : α → Type} {a : α} {xs : List (β a)}
     {u : (a' : α) × β a'} (hmem : u ∈ xs.map (fun b ↦ Sigma.mk a b)) :
     ∃ h : a = u.1, h ▸ u.2 ∈ xs := by
-  rcases List.mem_map.mp hmem with ⟨b, hb, hbu⟩
-  cases hbu
-  exact ⟨rfl, hb⟩
+  grind
 
 lemma sigmaCastApplyHEq {α : Type} {β : α → Type} {ρ : (a : α) → β a → Type}
     (r : (a : α) → (b : β a) → ρ a b) {a : α} {s t : (x : α) × β x}
     (ha : s.1 = a) (hst : s = t) :
     r a (ha ▸ s.2) ≍ r t.1 t.2 := by
-  cases hst
-  cases s
-  cases ha
-  rfl
+  grind
 
 lemma sigmaMkCastEq {α : Type} {β : α → Type} {s t : (a : α) × β a} {a : α}
     (ha : s.1 = a) (hst : s = t) : Sigma.mk a (ha ▸ s.2) = t := by
-  cases hst
-  cases s
-  cases ha
-  rfl
+  grind
 
 lemma sigmaPredicateOfEq {α : Type} {β : α → Type} {ρ : (a : α) → β a → Prop}
     {s t : (a : α) × β a} (hst : s = t) (h : ρ t.1 t.2) : ρ s.1 s.2 := by
-  cases hst
-  exact h
+  grind
 
 lemma sigmaRootOfEq {α : Type} {β : α → Type} (root : (a : α) → β a)
     {s : (a : α) × β a} {a : α} (hst : s = ⟨a, root a⟩) :
     s.2 = root s.1 := by
-  cases hst
-  rfl
+  grind
 
 lemma transformedSuccessorRoot {𝕏 : Proof} {σ}
     {partialProof : (x : 𝕏.X) → Ext.PreProof x σ}
@@ -386,8 +376,7 @@ lemma fst_same_in_range {α : Type} {β : α → Type} {f : ℕ → (a : α) × 
   have n_le_m := dep_sum_seq_proj_leq h n
   induction n
   case zero =>
-    have n_ge := by simpa using n_ge
-    simp [n_ge]
+    grind
   case succ n ih =>
     have neq := Nat.find_spec (h (n + 1))
     by_cases eq : n + 1 = (depSumSeqProj h m).2
@@ -399,9 +388,7 @@ lemma fst_same_in_range {α : Type} {β : α → Type} {f : ℕ → (a : α) × 
       have :
           ∀ h : (f n).1 = (f (n + 1)).1,
             ¬ Q (f n).1 (f n).2 (h ▸ (f (n + 1)).2) := by
-        intro h
-        exfalso
-        exact eq h
+        grind
       have := @Nat.find_le _ _ _ (h n) ⟨by grind, this⟩
       have : Nat.find (h (depSumSeqProj h m).2) ≤ Nat.find (h n) := by
         have g : ∀ n, ∀ m, n ≤ m → Nat.find (h n) ≤ Nat.find (h m) :=
@@ -430,8 +417,7 @@ lemma infinite_dep_sum_chain
     R_rel | ⟨eq, Q_rel⟩
   · exact R_rel
   · exfalso
-    apply (Nat.find_spec (h (depSumSeqProj h n).2)).2 eq
-    convert Q_rel <;> simp
+    grind
 
 open Classical in
 /-- Auxiliary declaration used in the GL coalgebra development. -/
@@ -466,12 +452,7 @@ lemma infinite_dep_sum_chain_finite_subchain_prop
     dsimp
     have := @Nat.find_min _ _ (h (depSumSeqProj h m).2)
       ((depSumSeqProj h m).2 + k) (by grind)
-    have this := by simpa using this
-    convert this.2 using 1
-    · rw [←infinite_dep_sum_sequence_proj_eq]
-      apply fst_same_in_range h ((depSumSeqProj h m).2 + k) m ?_ ?_ <;> grind
-    · simp
-    · grind
+    grind
 
 lemma infinite_dep_sum_chain_inf
   {α : Type} {β : α → Type} {f : ℕ → (a : α) × β a}
@@ -720,8 +701,7 @@ private theorem proofTransformation_path {𝕏 : Proof} {σ}
     case pre z z_in =>
       apply Sigma.Lex.left
       change (f (n + 1)).1 ∈ p 𝕏.α (f n).1
-      rw [this]
-      exact z_in
+      grind
     all_goals
       have ⟨z, z_prop, eq⟩ := this
       apply Sigma.lex_iff.2 (Or.inr ⟨?_, ?_⟩)
@@ -743,15 +723,9 @@ private theorem proofTransformation_path {𝕏 : Proof} {σ}
       intro m m_ge
       induction m
       case zero =>
-        have m_ge := by simpa using m_ge
-        subst m_ge
-        rfl
+        grind
       case succ k ih =>
-        by_cases eq : n = k + 1
-        · subst eq
-          rfl
-        · rw [ih (by omega)]
-          exact (n_prop k (by omega)).choose
+        grind
     let g : ℕ → (partialProof (f n).1).X :=
       fun m ↦ h (n + m) (by grind) ▸ (f (n + m)).2
     have g_prop :
@@ -802,27 +776,7 @@ private theorem proofTransformation_path {𝕏 : Proof} {σ}
       (fun x ↦ Ext.edge (partialProof x).α) h n
     have ⟨⟨m, m_lt⟩, m_prop⟩ := box_prop _ n_is_box _ f_sub ?_ ?_ f_sub_prop
     · unfold f_sub infiniteDepSumChainFiniteSubchain at m_prop
-      dsimp at m_prop
-      have m_prop := by simpa using m_prop
-      use m
-      let d := @depSumSeqProj 𝕏.X (fun x ↦ (partialProof x).X) f
-        (fun x ↦ Ext.edge (partialProof x).α) h n
-      have first_eq :
-          (f (d.2 + m)).fst = d.1 := by
-        rw [← @infinite_dep_sum_sequence_proj_eq 𝕏.X (fun x ↦ (partialProof x).X) f
-          (fun x ↦ Ext.edge (partialProof x).α) h n]
-        apply Eq.symm <|
-          @fst_same_in_range 𝕏.X (fun x ↦ (partialProof x).X) f
-            (fun x ↦ Ext.edge (partialProof x).α) h _ _ ?_ ?_
-        · have d_le_find := (Nat.find_spec (h d.2)).1
-          dsimp [d] at *
-          omega
-        · dsimp [d]
-          omega
-      exact sigmaPredicateOfEq
-        (ρ := fun a b ↦ (Ext.r (partialProof a).α b).isBox)
-        (sigmaMkCastEq first_eq rfl).symm
-        m_prop
+      grind
     · unfold f_sub infiniteDepSumChainFiniteSubchain
       cases n <;> dsimp [depSumSeqProj]
       case zero =>
@@ -850,8 +804,7 @@ private theorem proofTransformation_path {𝕏 : Proof} {σ}
           (fun x ↦ Ext.edge (partialProof x).α) h
           (Nat.find (h ih)) n le_rfl (Nat.find_spec (h ih)).1
       have eq : ih + (Nat.find (h ih) - ih) = Nat.find (h ih) := by
-        have find_ge : ih ≤ Nat.find (h ih) := (Nat.find_spec (h ih)).1
-        omega
+        grind
       have idx_eq :
           f (ih + (Nat.find (h ih) - ih)) = f (Nat.find (h ih)) :=
         congrArg f eq
@@ -864,12 +817,7 @@ private theorem proofTransformation_path {𝕏 : Proof} {σ}
             (f (Nat.find (h ih))).snd).isNonAxLeaf :=
         transformedFinderIsNonAxLeaf f_succ (Nat.find (h ih))
           (Nat.find_spec (h ih)).2
-      change (Ext.r (partialProof d.1).α
-        (hcast ▸ (f (ih + (Nat.find (h ih) - ih))).snd)).isNonAxLeaf
-      exact sigmaPredicateOfEq
-        (ρ := fun a b ↦ (Ext.r (partialProof a).α b).isNonAxLeaf)
-        (sigmaMkCastEq hcast idx_eq)
-        known
+      grind
 
 /-- Provides the proof transformation from local pre-proofs and its path witnesses. -/
 noncomputable def proofTransformation {𝕏 : Proof} {σ}

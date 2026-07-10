@@ -318,8 +318,7 @@ lemma _root_.IsCentralSimple.is_obtainable_by_sum_tmul.exists_minimal_element
   simp only [not_le] at r
   have := @Nat.find_min (fun n => ∃ x : A ⊗[K] B, is_obtainable_by_sum_tmul x 𝒜 I n) _
       ⟨s.support.card, ∑ i ∈ s.support, 𝒜 i ⊗ₜ[K] s i, ⟨hx0, hx1, s.support, rfl, s, rfl⟩⟩ m r
-  simp only [not_exists] at this
-  exact this y hy
+  grind
 lemma _root_.IsCentralSimple.TensorProduct.map_comap_le_span_of_isSimple_isCentralSimple
     {A B : Type v} [Ring A] [Algebra K A] [Ring B] [Algebra K B]
     [isSimple_A : IsSimpleOrder <| TwoSidedIdeal A]
@@ -349,19 +348,14 @@ lemma _root_.IsCentralSimple.TensorProduct.map_comap_le_span_of_isSimple_isCentr
       · intro x hx1 hx2
         simp only [Finset.mem_erase, ne_eq, not_and] at hx2
         rw [show x = i by tauto, h2, TensorProduct.tmul_zero]⟩⟩
-    have ineq1 : 0 < n := by
-      rw [← card_s, Finset.card_pos]
-      exact ⟨i, h1⟩
-    omega
+    grind
   if s_ne_empty : s = ∅
   then
-    subst s_ne_empty
-    simp only [Finset.card_empty, Finset.sum_empty, ne_eq, not_true_eq_false] at *
+    grind
   else
     obtain ⟨i₀, hi₀⟩ := Finset.nonempty_iff_ne_empty.mpr s_ne_empty
     have ineq1 : 0 < n := by
-      rw [← card_s, Finset.card_pos]
-      exact ⟨i₀, hi₀⟩
+      grind
     have x_eq' :
         ∑ i ∈ s, 𝒜 i ⊗ₜ[K] b i =
         𝒜 i₀ ⊗ₜ[K] b i₀ +
@@ -375,11 +369,7 @@ lemma _root_.IsCentralSimple.TensorProduct.map_comap_le_span_of_isSimple_isCentr
       ext x
       simp only [Finset.disjUnion_eq_union, Finset.mem_union, Finset.mem_singleton,
         Finset.mem_erase, ne_eq]
-      constructor
-      · intro hx
-        if hx' : x = i₀ then left; exact hx'
-        else right; exact ⟨hx', hx⟩
-      · rintro (rfl|⟨_, hx2⟩) <;> assumption
+      grind
     have span_bi₀ : TwoSidedIdeal.span {b i₀} = ⊤ := isSimple_B.1.2 _ |>.resolve_left fun r ↦ by
       have mem : b i₀ ∈ (⊥ : TwoSidedIdeal B) := by
         rw [← r]
@@ -390,10 +380,7 @@ lemma _root_.IsCentralSimple.TensorProduct.map_comap_le_span_of_isSimple_isCentr
     rw [TwoSidedIdeal.mem_span_iff_exists_fin] at one_mem
     obtain ⟨ℐ, inst1, xL, xR, y, one_eq⟩ := one_mem
     replace one_eq : 1 = ∑ i : ℐ, xL i * b i₀ * xR i := by
-      rw [one_eq]
-      refine Finset.sum_congr rfl fun i _ => ?_
-      congr
-      simpa only [Set.mem_singleton_iff] using (y i).2
+      grind
     let ω := ∑ i ∈ s, 𝒜 i ⊗ₜ[K] b i
     let Ω := ∑ i : ℐ, (1 ⊗ₜ[K] xL i) * ω * (1 ⊗ₜ[K] xR i)
     have Ω_in_I : Ω ∈ I := TwoSidedIdeal.finsetSum_mem _ _ _ fun i _ => I.mul_mem_right _ _ <|
@@ -441,9 +428,7 @@ lemma _root_.IsCentralSimple.TensorProduct.map_comap_le_span_of_isSimple_isCentr
           congr 1
           exact Finset.sum_attach _ _ |>.symm
       _ = 𝒜 i₀ ⊗ₜ[K] 1 + ∑ i ∈ (s.erase i₀).attach, 𝒜 i ⊗ₜ[K] algebraMap _ _ (k i.1 i.2) := by
-          congr 1
-          refine Finset.sum_congr rfl fun i _ => ?_
-          rw [hk i.1 i.2]
+          grind
       _ = 𝒜 i₀ ⊗ₜ[K] 1 +  ∑ i ∈ (s.erase i₀).attach, 𝒜 i ⊗ₜ[K] (k i.1 i.2 • (1 : B) : B) := by
           congr 1
           refine Finset.sum_congr rfl fun i _ => ?_
@@ -473,20 +458,11 @@ lemma _root_.IsCentralSimple.TensorProduct.map_comap_le_span_of_isSimple_isCentr
         rw [Finset.sum_ite,
           show ∑ x ∈ Finset.filter (fun x ↦ x = i₀) s, 𝒜 x = ∑ x ∈ {i₀}, 𝒜 x by
           refine Finset.sum_congr ?_ fun _ _ => rfl
-          ext
-          simp only [Finset.mem_filter, Finset.mem_singleton, and_iff_right_iff_imp]
-          rintro rfl
-          exact hi₀, Finset.sum_singleton,
+          grind, Finset.sum_singleton,
           show Finset.filter (fun x ↦ ¬x = i₀) s = s.erase i₀ by
-          ext
-          simp only [Finset.mem_filter, Finset.mem_erase, ne_eq]
-          rw [and_comm], ← Finset.sum_attach]
-        conv_rhs => rw [← mem]
-        congr 1
-        refine Finset.sum_congr rfl fun i _ => ?_
-        rw [dif_pos i.2]) i₀ hi₀
-      rw [if_pos rfl] at LI
-      exact zero_ne_one LI.symm
+          grind, ← Finset.sum_attach]
+        grind) i₀ hi₀
+      grind
     rw [hI, TwoSidedIdeal.coe_top_set, TwoSidedIdeal.le_iff]
     rintro x -
     rw [SetLike.mem_coe]

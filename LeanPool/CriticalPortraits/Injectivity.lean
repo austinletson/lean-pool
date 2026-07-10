@@ -72,18 +72,10 @@ lemma root_saturated {a b : ℕ} (hsat : N fam a b = b - a) :
       -- Now lower bound ∑ N(lo r,hi r) using the saturation.
       rcases Finset.eq_empty_or_nonempty (topEdges fam a b) with htop | htop
       · -- no top edge: #Sstrict = N = b - a, and ∑(hi-lo) ≤ b-a.
-        rw [htop, Finset.card_empty] at hNsplit
-        -- hNsplit : N = 0 + #Sstrict
-        have : (∑ r ∈ Roots fam a b, N fam (fam.lo r) (fam.hi r)) = b - a := by
-          rw [← hSstrict]; omega
-        omega
+        grind
       · -- top edge present: crux gives ∑(hi-lo) ≤ b-a-1, #top = 1, #Sstrict = N - 1.
         have hcrux := crux fam hab htop
-        have htpos : 1 ≤ (topEdges fam a b).card := Finset.card_pos.mpr htop
-        have htone : (topEdges fam a b).card = 1 := le_antisymm htle htpos
-        have : (∑ r ∈ Roots fam a b, N fam (fam.lo r) (fam.hi r)) = b - a - 1 := by
-          rw [← hSstrict]; omega
-        omega
+        grind
     -- pointwise equality.
     exact (Finset.sum_eq_sum_iff_of_le hterm).mp hsumeq
   · -- empty window
@@ -110,8 +102,7 @@ lemma edge_tight_of_saturated :
     · -- e is strict; its root is saturated, and the root window is smaller.
       have heS : e ∈ Sstrict fam a b := by
         rw [mem_Sstrict]
-        refine ⟨⟨heE, hea, heb⟩, ?_⟩
-        rw [not_and_or] at htop; exact htop
+        grind
       have hr := rootS_mem_Roots fam heS
       have hrsat := root_saturated fam hsat _ hr
       have hcont := rootS_contains fam heS
@@ -120,8 +111,7 @@ lemma edge_tight_of_saturated :
         rw [mem_contained]; exact ⟨heE, hcont.1, hcont.2⟩
       -- root window width < w
       have hrwidth := rootS_width_lt fam heS
-      exact ih (fam.hi (rootS fam a b e) - fam.lo (rootS fam a b e)) (by omega)
-        (fam.lo (rootS fam a b e)) (fam.hi (rootS fam a b e)) rfl hrsat e hewin
+      grind
 
 /-! ### A2 — COLUMN-SEPARATION.
 
@@ -144,9 +134,7 @@ lemma roots_width_sum_eq {a b : ℕ} (hab : a < b) (hsat : N fam a b = b - a)
   have htone : (topEdges fam a b).card = 1 :=
     le_antisymm (topEdges_card_le fam) (Finset.card_pos.mpr htop)
   -- N = 1 + #Sstrict = 1 + ∑ widths; N = b - a; so ∑ widths = b - a - 1
-  rw [htone] at hNsplit
-  rw [hSstrict, hcongr] at hNsplit
-  omega
+  grind
 
 /-- The root level-intervals of a saturated top-edged window miss exactly one level `g*`:
     there is a unique `g ∈ (a,b]` covered by no root. -/
@@ -171,19 +159,11 @@ lemma exists_gap {a b : ℕ} (hab : a < b) (hsat : N fam a b = b - a)
   -- so B is a proper subset of Ioc a b, missing exactly one element.
   have hcardIoc : (Finset.Ioc a b).card = b - a := Nat.card_Ioc a b
   have hssub : B ⊂ Finset.Ioc a b := by
-    rw [Finset.ssubset_iff_of_subset hsub]
-    by_contra hc
-    push Not at hc
-    have : Finset.Ioc a b ⊆ B := hc
-    have := Finset.card_le_card this
-    omega
+    grind
   obtain ⟨g, hgIoc, hgB⟩ := Finset.exists_of_ssubset hssub
   rw [Finset.mem_Ioc] at hgIoc
   refine ⟨g, hgIoc.1, hgIoc.2, ?_⟩
-  intro r hr ⟨h1, h2⟩
-  apply hgB
-  rw [hB, Finset.mem_biUnion]
-  exact ⟨r, hr, by rw [Finset.mem_Ioc]; exact ⟨h1, h2⟩⟩
+  grind
 
 /-- Every level in `(a,b]` except the gap `g` (with `a < g ≤ b`) is covered by some root. -/
 lemma covered_of_ne_gap {a b g : ℕ} (htop : (topEdges fam a b).Nonempty)
@@ -207,29 +187,17 @@ lemma covered_of_ne_gap {a b g : ℕ} (htop : (topEdges fam a b).Nonempty)
       Finset.sum_congr rfl (fun r _ => Nat.card_Ioc _ _)
     rw [this, roots_width_sum_eq fam hab hsat htop]
   have hgnotB : g ∉ B := by
-    rw [hB, Finset.mem_biUnion]; push Not
-    intro r hr
-    rw [Finset.mem_Ioc]
-    intro ⟨h1, h2⟩
-    exact hgap r hr ⟨h1, h2⟩
+    grind
   have hgIoc : g ∈ Finset.Ioc a b := by rw [Finset.mem_Ioc]; exact ⟨hg1, hg2⟩
   -- insert g B ⊆ Ioc a b with card (b-a-1)+1 = b-a = card Ioc ⇒ insert g B = Ioc a b.
   have hins_sub : insert g B ⊆ Finset.Ioc a b := Finset.insert_subset hgIoc hsub
   have hins_card : (insert g B).card = b - a := by
-    rw [Finset.card_insert_of_notMem hgnotB, hcardB]
-    have hbpos : 1 ≤ b - a := by omega
-    omega
+    grind
   have heq : insert g B = Finset.Ioc a b :=
     Finset.eq_of_subset_of_card_le hins_sub (by rw [hins_card, Nat.card_Ioc])
   -- t ∈ Ioc a b, t ≠ g ⇒ t ∈ B
   have htIoc : t ∈ Finset.Ioc a b := by rw [Finset.mem_Ioc]; exact ⟨ht1, ht2⟩
-  rw [← heq, Finset.mem_insert] at htIoc
-  rcases htIoc with h | h
-  · exact absurd h htne
-  · rw [hB, Finset.mem_biUnion] at h
-    obtain ⟨r, hr, htr⟩ := h
-    rw [Finset.mem_Ioc] at htr
-    exact ⟨r, hr, htr.1, htr.2⟩
+  grind
 
 /-- Distinct roots covering adjacent levels seam: if `r''` covers `s` and `r` covers a level just
     above `s` (with `lo r < s+1`), and `r'' ≠ r`, then `hi r'' = lo r`.  (Used in the seam scan.) -/
@@ -263,9 +231,7 @@ lemma column_sep {a b : ℕ} (hab : a < b) (hsat : N fam a b = b - a)
       obtain ⟨hrE, hra, hrb, hrs⟩ := root_self_props fam hr
       -- r is a left root: hi r < g.
       have hrhig : fam.hi r < g := by
-        by_contra hc
-        push Not at hc  -- g ≤ hi r
-        exact hgap r hr ⟨by omega, hc⟩
+        grind
       by_cases hlo : fam.lo r = a
       · -- bottom-most: shares bottom with e0
         have hbl := fam.bLeft e0 he0E r hrE (by rw [he0lo, hlo]) (by rw [he0hi]; omega)
@@ -322,17 +288,7 @@ lemma column_sep {a b : ℕ} (hab : a < b) (hsat : N fam a b = b - a)
   obtain ⟨hrE, hra, hrb, hrs⟩ := root_self_props fam hr
   have hlhr := fam.lh r hrE
   -- r does not span g
-  have hnospan : ¬ (fam.lo r < g ∧ g ≤ fam.hi r) := hgap r hr
-  rcases Nat.lt_or_ge (fam.hi r) g with hcase | hcase
-  · -- left root: covers hi r ∈ (a, g)
-    have h := scanLeft (fam.hi r) (by omega) hcase r hr (by omega) (le_refl _)
-    omega
-  · -- g ≤ hi r; since not span, g ≤ lo r; right root: covers lo r + 1 ∈ (g, b]
-    have hglo : g ≤ fam.lo r := by
-      by_contra hc; push Not at hc; exact hnospan ⟨hc, hcase⟩
-    have h := scanRight (b - (fam.lo r + 1)) (fam.lo r + 1) rfl (by omega) (by omega) r hr
-      (by omega) (by omega)
-    omega
+  grind
 
 /-- **DIRECTIONAL COLUMN-SEPARATION (abstract).**  As `column_sep`, but exposes the gap `g`
     together with the run-direction columns: left roots (top below the gap) have `col e0 < col r`,
@@ -356,9 +312,7 @@ lemma column_sep_with_gap {a b : ℕ} (hab : a < b) (hsat : N fam a b = b - a)
       intro ht1 ht2 r hr hrlo hrhi
       obtain ⟨hrE, hra, hrb, hrs⟩ := root_self_props fam hr
       have hrhig : fam.hi r < g := by
-        by_contra hc
-        push Not at hc
-        exact hgap r hr ⟨by omega, hc⟩
+        grind
       by_cases hlo : fam.lo r = a
       · have hbl := fam.bLeft e0 he0E r hrE (by rw [he0lo, hlo]) (by rw [he0hi]; omega)
         exact hbl
@@ -410,8 +364,7 @@ lemma column_sep_with_gap {a b : ℕ} (hab : a < b) (hsat : N fam a b = b - a)
   · intro r hr hgr
     obtain ⟨hrE, hra, hrb, hrs⟩ := root_self_props fam hr
     have hlhr := fam.lh r hrE
-    exact scanRight (b - (fam.lo r + 1)) (fam.lo r + 1) rfl (by omega) (by omega) r hr
-      (by omega) (by omega)
+    grind
 
 
 end AbstractLaminar
@@ -683,8 +636,7 @@ lemma root_val_lt [NeZero (d * m)] (hd : 0 < d) (hm : 0 < m)
       · exact h
       · exact absurd (edge_inj hd hm hP hx hg h heq.symm) (fun hxg => hcol (by rw [hxg]))
     have hcg : colV g < colV x := lemmaB_right hd hm hP hx hg heq.symm hlostrict
-    have : colV g + hiV g * m < colV x + hiV x * m := by rw [heq]; omega
-    omega
+    grind
 
 /-- **The spanning-edge kernel.**  In one portrait `P`, for a survivor `x` and a level `ℓ`
     strictly inside `x`'s own window `(loV P x, hiV x)`, there is a survivor `b` of a different
@@ -779,8 +731,7 @@ theorem predIn_forced [NeZero (d * m)] (hd : 0 < d) (hm : 0 < m)
   -- IH: equality for strictly-lower survivors.
   have IH : ∀ y : ZMod (d*m), y.val < x.val → ∀ (hy₁ : y ∈ T P₁) (hy₂ : y ∈ T P₂),
       predIn P₁ y hy₁ = predIn P₂ y hy₂ := by
-    intro y hyv hy₁ hy₂
-    exact ih y.val hyv hy₁ hy₂ rfl
+    grind
   -- one-directional WLOG, generic in the ordered pair of portraits.
   have noLt : ∀ (Q₁ Q₂ : Finset (Finset (ZMod (d*m)))), Portrait d m Q₁ → Portrait d m Q₂ →
       T Q₁ = T Q₂ → (∀ y : ZMod (d*m), y.val < x.val → ∀ (hy₁ : y ∈ T Q₁) (hy₂ : y ∈ T Q₂),
@@ -906,8 +857,7 @@ lemma reach_sameHost [NeZero (d * m)] {P : Finset (Finset (ZMod (d * m)))} (hP :
     obtain ⟨hb, hc', hcase⟩ := hbc
     have hbc_host : hostSet P b hb = hostSet P c hc' :=
       edgeStep_sameHost hP ⟨hb, hc', hcase⟩ hb hc'
-    have hzc : hostSet P c hz = hostSet P c hc' := rfl
-    rw [hzc, ← hbc_host]; exact ih hb
+    grind
 
 /-- Every survivor `z` reaches the bottom survivor `q` of its block (predecessor a non-survivor). -/
 lemma reach_to_low [NeZero (d * m)] {P : Finset (Finset (ZMod (d * m)))} (hP : Portrait d m P) :
@@ -1030,8 +980,7 @@ theorem hostSet_forced [NeZero (d * m)] (hd : 0 < d) (hm : 0 < m)
   suffices H : ∀ (Q₁ Q₂ : Finset (Finset (ZMod (d*m)))), Portrait d m Q₁ → Portrait d m Q₂ →
       T Q₁ = T Q₂ → ∀ (y : ZMod (d*m)) (hy₁ : y ∈ T Q₁) (hy₂ : y ∈ T Q₂),
         hostSet Q₁ y hy₁ ⊆ hostSet Q₂ y hy₂ by
-    exact Finset.Subset.antisymm (H P₁ P₂ h₁ h₂ hT x hx₁ hx₂)
-      (H P₂ P₁ h₂ h₁ hT.symm x hx₂ hx₁)
+    grind
   intro Q₁ Q₂ hQ₁ hQ₂ hTQ y hy₁ hy₂ z hz
   by_cases hzT : z ∈ T Q₁
   · -- z survivor of y's block: reachable from y in Q₁; transfer to Q₂.

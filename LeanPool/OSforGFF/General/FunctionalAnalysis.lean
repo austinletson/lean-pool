@@ -808,8 +808,7 @@ theorem schwartz_integrable_decay {V : Type*} [NormedAddCommGroup V]
       ‖x‖^k) := by
       rw [add_comm, add_pow]
       simp only [one_pow, mul_one]
-      congr; ext k
-      rw [mul_comm]
+      grind
     rw [h_binom]
     -- Move norm inside
     rw [Finset.mul_sum]
@@ -821,8 +820,7 @@ theorem schwartz_integrable_decay {V : Type*} [NormedAddCommGroup V]
     -- Rearrange to match hC
     have h_rearrange : ‖f x‖ * ((N.choose k : ℝ) * ‖x‖^k) = (N.choose k : ℝ) * (‖x‖^k *
       ‖iteratedFDeriv ℝ 0 f x‖) := by
-       rw [h_norm]
-       ring
+       grind
     rw [h_rearrange]
     apply mul_le_mul_of_nonneg_left (hC k x) (Nat.cast_nonneg _)
 
@@ -869,8 +867,7 @@ lemma bumpSelfConv_integral (φ : ContDiffBump (0 : E)) :
   rw [integral_convolution (L := ContinuousLinearMap.lsmul ℝ ℝ)]
   · simp only [ContinuousLinearMap.lsmul_apply, smul_eq_mul]
     have h1 := φ.integral_normed (μ := volume)
-    simp only [h1]
-    norm_num
+    grind
   · exact φ.integrable_normed
   · exact φ.integrable_normed
 
@@ -913,11 +910,7 @@ lemma bumpSelfConv_support_tendsto {ι : Type*} {l : Filter ι} [l.NeBot]
   have hsub := bumpSelfConv_support_subset (φ i)
   have hx_ball := hsub hx
   rw [Metric.mem_ball, dist_zero_right] at hx_ball ⊢
-  calc ‖x‖ < 2 * (φ i).rOut := hx_ball
-    _ < 2 * (ε / 2) := by
-        apply mul_lt_mul_of_pos_left hi
-        norm_num
-    _ = ε := by ring
+  grind
 
 /-- **Main theorem: Double mollifier convergence via associativity.**
 
@@ -971,8 +964,7 @@ theorem double_mollifier_convergence
   -- Step 2: C converges to C(a) at a (since C is continuous at a)
   have hCconv : Tendsto (uncurry fun _ : ι => C) (l ×ˢ 𝓝 a) (𝓝 (C a)) := by
     have h : uncurry (fun _ : ι => C) = C ∘ Prod.snd := by
-      ext ⟨i, x⟩
-      simp [uncurry]
+      grind
     rw [h]
     exact hCa.tendsto.comp (Filter.tendsto_snd (f := l) (g := 𝓝 a))
   -- Step 3: Apply convolution_tendsto_right with ψ = bumpSelfConv
@@ -1043,8 +1035,7 @@ theorem double_mollifier_convergence
            congr 1
            ext x
            have : a - v - (x - v) = a - x := by abel
-           simp only [this]
-           ring
+           grind
          rw [h_eq]
        · -- Prove integrability of F(t, v) = ψ v * ψ(t-v) * C(a-t)
          let F := fun (p : E × E) => ψ p.2 * ψ (p.1 - p.2) * C (a - p.1)
@@ -1059,11 +1050,9 @@ theorem double_mollifier_convergence
            rw [Function.mem_support] at h
            dsimp [F] at h
            have hv : ψ v ≠ 0 := by
-             intro zero
-             rw [zero] at h; simp at h
+             grind
            have htv : ψ (t - v) ≠ 0 := by
-             intro zero
-             rw [zero] at h; simp at h
+             grind
            rw [← Function.mem_support] at hv htv
            have h_supp_psi : support ψ = Metric.ball 0 (φ i).rOut := by
              dsimp [ψ]
@@ -1097,12 +1086,7 @@ theorem double_mollifier_convergence
                 have hr : (φ i).rOut < ‖a‖ / 3 := by
                    rw [mem_preimage, Metric.mem_ball, dist_zero_right] at hi
                    rwa [Real.norm_of_nonneg (le_of_lt (φ i).rOut_pos)] at hi
-                have : ‖a‖ < ‖a‖ := by
-                   rcases htv with ⟨ht, _⟩
-                   calc ‖a‖ ≤ 2 * (φ i).rOut := ht
-                        _ < 2 * (‖a‖ / 3) := mul_lt_mul_of_pos_left hr (by norm_num)
-                        _ < ‖a‖ := by linarith [norm_nonneg a]
-                linarith
+                grind
          change Integrable F (volume.prod volume)
          rw [← MeasureTheory.integrableOn_iff_integrable_of_support_subset h_supp_F]
          exact h_cont_F.integrableOn_compact hK_compact
@@ -1111,8 +1095,7 @@ theorem double_mollifier_convergence
   have h_eq' : ∀ᶠ i in l,
       (bumpSelfConv (φ i) ⋆[ContinuousLinearMap.lsmul ℝ ℝ, volume] C) a =
       (∫ x, ∫ y, (φ i).normed volume (x - a) * C (x - y) * (φ i).normed volume y) := by
-    filter_upwards [h_eq] with i hi
-    exact hi.symm
+    grind
   exact Tendsto.congr' h_eq' h_selfconv_limit
 
 end DoubleMollifierConvergence

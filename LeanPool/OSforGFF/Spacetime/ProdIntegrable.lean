@@ -172,8 +172,7 @@ lemma spacetimeOfTimeSpace_norm_ge (t : ℝ) (x : SpatialCoords3) :
     have h1 : (spacetimeOfTimeSpace t x).ofLp 1 = x 0 := spacetimeOfTimeSpace_spatial t x 0
     have h2 : (spacetimeOfTimeSpace t x).ofLp 2 = x 1 := spacetimeOfTimeSpace_spatial t x 1
     have h3 : (spacetimeOfTimeSpace t x).ofLp 3 = x 2 := spacetimeOfTimeSpace_spatial t x 2
-    simp only [h1, h2, h3]
-    ring
+    grind
   have hsq_le : ‖x‖ ^ 2 ≤ ‖spacetimeOfTimeSpace t x‖ ^ 2 := by
     rw [hsq]; nlinarith [sq_nonneg t]
   have hx : 0 ≤ ‖x‖ := norm_nonneg _
@@ -363,8 +362,7 @@ lemma schwartz_vanishing_ftc_decay (f : TestFunctionℂ)
       have h_16 : (1 + ‖y‖)^4 ≤ 16 * ‖y‖^4 := by
         have : (1 + ‖y‖)^4 ≤ (2 * ‖y‖)^4 := by
           apply pow_le_pow_left₀ (by linarith [norm_nonneg y]); linarith
-        calc (1 + ‖y‖)^4 ≤ (2 * ‖y‖)^4 := this
-          _ = 16 * ‖y‖^4 := by ring
+        grind
       have h_norm_ge : ‖y‖^4 ≥ (1 + ‖y‖)^4 / 16 := by
         rw [ge_iff_le, div_le_iff₀ (by norm_num : (0:ℝ) < 16)]; linarith [h_16]
       calc ‖fderiv ℝ f y‖ ≤ C_decay / ‖y‖^4 := h_fderiv_raw

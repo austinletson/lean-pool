@@ -209,10 +209,7 @@ theorem trianglelefteq_of_isInitial
         rw [iterElem_zero]; exact botStrict_rel
       constructor
       · rintro ⟨Y, hG, hHr⟩
-        rw [hG0] at hG; rw [hH0] at hHr
-        obtain ⟨hEX, rfl⟩ := hG
-        obtain ⟨_, rfl⟩ := hHr
-        rw [hK0]; exact ⟨hEX, rfl⟩
+        grind
       · intro hK
         rw [hK0] at hK
         obtain ⟨hEX, rfl⟩ := hK
@@ -286,9 +283,7 @@ theorem trianglelefteq_of_isInitial
               (toStrictFilter ⟨idMap E.sys, isStrict_idMap⟩))) :=
             (toStrictFilter_toStrictMap _).symm
         _ = toStrictFilter (⟨idMap E.sys, isStrict_idMap⟩ : StrictMap E.sys E.sys) := by
-            congr 1
-            apply Subtype.ext
-            rw [hstepeq]
+            grind
         _ = toStrictFilter ⟨idMap E.sys, isStrict_idMap⟩ := rfl
     have hle : Opk.fixElement ≤
       toStrictFilter (⟨idMap E.sys, isStrict_idMap⟩ : StrictMap E.sys E.sys) :=

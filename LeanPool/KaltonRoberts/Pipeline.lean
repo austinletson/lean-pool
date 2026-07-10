@@ -80,8 +80,7 @@ theorem mixed_intersection_weighted_surplus
       have h := hf.2 A B hAB
       rwa [show -f A + -f B - -f (A ∪ B) = -(f A + f B - f (A ∪ B)) from by ring, abs_neg]
   have hgM : ∀ S : Finset U, |(fun S => -f S) S| ≤ M := fun S => by
-    simp only [abs_neg]
-    exact hM S
+    grind
   have hg_deficit : C.avgDeficit (fun S => -f S) M ≤ S_val := by
     rw [show C.avgDeficit (fun S => -f S) M = C.avgSurplus f M by
       simp [WeightedCollection.avgDeficit, WeightedCollection.avgSurplus, deficit, surplus]]
@@ -91,8 +90,7 @@ theorem mixed_intersection_weighted_surplus
   refine ⟨C', hfreq', ?_⟩
   have : C'.avgDeficit (fun S => -f S) M = C'.avgSurplus f M := by
     simp [WeightedCollection.avgDeficit, WeightedCollection.avgSurplus, deficit, surplus]
-  rw [← this]
-  exact hdef'
+  grind
 
 /-! ## Expander existence for the four rows
 
@@ -185,8 +183,7 @@ lemma distToAdditive_neg (f : Finset U → ℝ) :
       (⨆ S : Finset U, |f S - additiveFunction (fun i => -a i) S|) := by
     intro a; congr 1; ext S
     simp only [additiveFunction, Finset.sum_neg_distrib]
-    rw [sub_neg_eq_add]
-    rw [show -f S - ∑ i ∈ S, a i = -(f S + ∑ i ∈ S, a i) by ring, abs_neg]
+    grind
   have surj : Function.Surjective (fun (a : U → ℝ) (i : U) => -a i) :=
     fun a => ⟨fun i => -a i, by funext i; simp⟩
   conv_lhs => rw [iInf_congr fun a => key a]
@@ -274,11 +271,9 @@ lemma cert_posMass_pos
         rw [Finset.sum_eq_single ∅] <;>
           simp +contextual only [mem_univ, ne_eq, abs_eq_zero, forall_const,
             not_true_eq_false, false_implies];
-        exact fun S hS => h_lam_zero _ _ ( Classical.choose_spec ( Finset.nonempty_of_ne_empty hS )
-          )
+        grind
       have h_lam_empty : cert.lam ∅ = -1 := by
-        have := cert.norm_one; simp_all +decide [ abs_of_nonpos ];
-        linarith
+        have := cert.norm_one; grind
       have h_g_empty : g ∅ = -M := by
         exact cert.neg_support _ ( by linarith )
       have h_contra : M = 0 := by
@@ -340,13 +335,7 @@ lemma g_univ_le_one
         convert hg.2 N Nᶜ ( disjoint_compl_right ) using 1; simp +decide
       have h_bound_P : |g P + g Pᶜ - g univ| ≤ 1 := by
         convert hg.2 P Pᶜ ( disjoint_compl_right ) using 1; aesop;
-      exact abs_le.mpr
-        ⟨by
-          linarith [abs_le.mp h_bound_N, abs_le.mp h_bound_P, abs_le.mp (hM_bound N),
-            abs_le.mp (hM_bound Nᶜ), abs_le.mp (hM_bound P), abs_le.mp (hM_bound Pᶜ)],
-        by
-          linarith [abs_le.mp h_bound_N, abs_le.mp h_bound_P, abs_le.mp (hM_bound N),
-            abs_le.mp (hM_bound Nᶜ), abs_le.mp (hM_bound P), abs_le.mp (hM_bound Pᶜ)]⟩
+      grind
 
 /-
 Case 1 of the spine theorem (q ≤ q₀).

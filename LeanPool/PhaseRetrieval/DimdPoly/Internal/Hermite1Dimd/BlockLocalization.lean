@@ -72,8 +72,7 @@ private lemma blockwise_regroup
     simp [blockPart, Finsupp.onFinset_apply, hsq]
   rw [Finset.sum_congr rfl hterm, Finset.sum_fiberwise_eq_sum_filter]
   refine Finset.sum_congr ?_ fun _ _ => rfl
-  refine Finset.filter_true_of_mem fun α hα => ?_
-  exact Finset.mem_image.mpr ⟨α, hα, rfl⟩
+  grind
 
 private lemma blockPart_coeff_eq_zero_of_not_mem_support_image
     {d : ℕ} (G : FiniteHermiteSum d) (ℓ α : MultiIndex d)
@@ -116,8 +115,7 @@ theorem blockDecompositionNorm
   rw [tsum_hermiteNormSq_blockPart_eq_sum_support_image (κ := κ), finiteParseval]
   simp_rw [finiteParseval]
   have hkey := blockwise_regroup G (fun _ => 1)
-  simp only [mul_one] at hkey
-  exact hkey.symm
+  grind
 
 private lemma blockDecompositionNorm_sum_support_image
     {d : ℕ} (κ : MultiIndex d) (G : FiniteHermiteSum d) :
@@ -197,22 +195,7 @@ private lemma remainderPart_annulus_blockwise_bound
       simpa [hfar] using hbase
     · rw [hermiteNormSq_blockPart_remainderPart (κ := κ) (j := j) (ℓ := ℓ) (M := M)
         (G := G), if_neg hfar] at hbase
-      have hle0 :
-          annulusMass j (evalHermiteSum κ (blockPart ℓ (remainderPart j M G))) ≤ 0 := by
-        simpa using hbase
-      have hnonneg : 0 ≤ annulusMass j (evalHermiteSum κ (blockPart ℓ (remainderPart j M G))) := by
-        unfold annulusMass
-        positivity
-      have hzero :
-          annulusMass j (evalHermiteSum κ (blockPart ℓ (remainderPart j M G))) = 0 :=
-        le_antisymm hle0 hnonneg
-      have hright_nonneg :
-          0 ≤ C * Real.exp (-(c) * max (((blockDistance j ℓ : ℕ) : ℝ) - B) 0 ^ 2) *
-            hermiteNormSq κ (blockPart ℓ G) := by
-        have hnorm_nonneg : 0 ≤ hermiteNormSq κ (blockPart ℓ G) :=
-          hermiteNormSq_nonneg κ (blockPart ℓ G)
-        positivity
-      simp [hfar, hzero])
+      grind)
 
 /-- Explicit local and far support sets relative to an annulus and width. -/
 theorem explicitLocalAndFarSupport
@@ -233,12 +216,7 @@ theorem explicitLocalAndFarSupport
   have hunion : localCoeffSet j M G ∪ farCoeffSet j M G = G.support := by
     ext α
     simp only [localCoeffSet, farCoeffSet, mem_union, mem_filter]
-    constructor
-    · rintro (⟨hsupp, _⟩ | ⟨hsupp, _⟩) <;> exact hsupp
-    · intro hsupp
-      by_cases hlocal : blockDistance j (blockIndexMulti α) ≤ M
-      · exact Or.inl ⟨hsupp, hlocal⟩
-      · exact Or.inr ⟨hsupp, Nat.lt_of_not_ge hlocal⟩
+    grind
   have hlocal_support : (localPart j M G).support = localCoeffSet j M G := by
     ext α
     simp [FiniteHermiteSum.support, localPart, localCoeffSet, Finsupp.mem_support_iff, and_comm]
@@ -425,9 +403,7 @@ private lemma block_decay_compare_coord
   have hlt : Real.sqrt (α q : ℝ) < ((ℓ q + 1 : ℕ) : ℝ) := by
     simpa [hsqrt] using (Real.real_sqrt_lt_nat_sqrt_succ (a := α q))
   have hclose : |Real.sqrt (α q : ℝ) - ((ℓ q : ℕ) : ℝ)| < 1 := by
-    rw [abs_of_nonneg (sub_nonneg.mpr hle)]
-    push_cast at hlt ⊢
-    linarith
+    grind
   have hdist_eq : ((Nat.dist (j q) (ℓ q) : ℕ) : ℝ) = |((j q : ℕ) : ℝ) - ((ℓ q : ℕ) : ℝ)| := by
     rcases Nat.le_total (j q) (ℓ q) with hj | hℓ
     · rw [Nat.dist_eq_sub_of_le hj, abs_of_nonpos]
@@ -437,28 +413,7 @@ private lemma block_decay_compare_coord
     · rw [Nat.dist_eq_sub_of_le_right hℓ, abs_of_nonneg]
       · rw [Nat.cast_sub hℓ]
       · exact sub_nonneg.mpr (by exact_mod_cast hℓ)
-  have htri :
-      |((j q : ℕ) : ℝ) - ((ℓ q : ℕ) : ℝ)|
-        ≤ |((j q : ℕ) : ℝ) - Real.sqrt (α q : ℝ)| +
-            |Real.sqrt (α q : ℝ) - ((ℓ q : ℕ) : ℝ)| := by
-    calc
-      |((j q : ℕ) : ℝ) - ((ℓ q : ℕ) : ℝ)|
-          = |(((j q : ℕ) : ℝ) - Real.sqrt (α q : ℝ)) +
-              (Real.sqrt (α q : ℝ) - ((ℓ q : ℕ) : ℝ))| := by ring_nf
-      _ ≤ |((j q : ℕ) : ℝ) - Real.sqrt (α q : ℝ)| +
-            |Real.sqrt (α q : ℝ) - ((ℓ q : ℕ) : ℝ)| := by
-              simpa using
-                abs_add_le (((j q : ℕ) : ℝ) - Real.sqrt (α q : ℝ))
-                  (Real.sqrt (α q : ℝ) - ((ℓ q : ℕ) : ℝ))
-  have hbound :
-      ((Nat.dist (j q) (ℓ q) : ℕ) : ℝ)
-        ≤ |((j q : ℕ) : ℝ) - Real.sqrt (α q : ℝ)| + 1 := by
-    rw [hdist_eq]
-    linarith
-  have hk : (((κ q + 5 : ℕ) : ℝ)) = (((κ q + 4 : ℕ) : ℝ)) + 1 := by
-    push_cast
-    ring
-  exact max_le_max (by linarith) le_rfl
+  grind
 
 private lemma sup_coord_exists
     {d : ℕ} (hd : d ≠ 0) (j ℓ : MultiIndex d) :
@@ -527,12 +482,7 @@ private lemma cube_boundary_card
   have hsubset :
       Fintype.piFinset (fun _ : Fin d => Finset.Icc (-((r - 1 : ℕ) : ℤ)) (((r - 1 : ℕ) : ℤ))) ⊆
         Fintype.piFinset (fun _ : Fin d => Finset.Icc (-(r : ℤ)) (r : ℤ)) := by
-    intro x hx
-    rw [Fintype.mem_piFinset] at hx ⊢
-    intro q
-    have hxq := hx q
-    simp [Finset.mem_Icc] at hxq ⊢
-    omega
+    grind
   have hcube : (Finset.Icc (-(r : ℤ)) (r : ℤ)).card = 2 * r + 1 := by
     simp [Int.card_Icc]
     omega
@@ -565,8 +515,7 @@ private lemma shellSubtype_isEmpty
     IsEmpty {j : MultiIndex 0 // blockDistance j ℓ = r} := by
   refine ⟨fun j => ?_⟩
   have hd0 : blockDistance j.1 ℓ = 0 := by simp [blockDistance]
-  have hjr := j.2
-  omega
+  grind
 
 private lemma finiteShellSubtype
     {d : ℕ} (ℓ : MultiIndex d) {r : ℕ} (hr : 1 ≤ r) :
@@ -585,8 +534,7 @@ private lemma sharpShellCount_of_pos
   · subst hd
     letI := shellSubtype_isEmpty ℓ hr
     rw [Nat.card_eq_fintype_card, Fintype.card_eq_zero]
-    have hr0 : r ≠ 0 := by omega
-    simp [shellCardinality]
+    grind
   · obtain ⟨f, hf⟩ := shellSubtype_injects hd ℓ hr
     have hshell : Nat.card {x // x ∈ shellFinset d r} = shellCardinality d r := by
       rw [Nat.card_eq_fintype_card]
@@ -606,8 +554,7 @@ private lemma shell_cardinality_bound_filter
       simp only [mem_filter, notMem_empty, iff_false, not_and]
       intro hj hEq
       have hdist0 : blockDistance j ℓ = 0 := by simp [blockDistance]
-      have : r = 0 := by simpa [hdist0] using hEq.symm
-      omega
+      grind
     simp [hfilter0, shellCardinality]
   · let f :
         {j // j ∈ s.filter fun j => blockDistance j ℓ = r} →
@@ -615,10 +562,7 @@ private lemma shell_cardinality_bound_filter
       fun j => ⟨j.1, (Finset.mem_filter.mp j.2).2⟩
     have hf : Function.Injective f := by
       intro a b hab
-      cases a
-      cases b
-      cases hab
-      rfl
+      grind
     letI := finiteShellSubtype ℓ hr
     have hcard :
         Nat.card {j // j ∈ s.filter fun j => blockDistance j ℓ = r} ≤
@@ -668,8 +612,7 @@ theorem productBasisLocalization
     have hc_pos : 0 < c := by
       dsimp [c]
       rw [Finset.lt_inf'_iff]
-      intro q hq
-      exact hcq_pos q
+      grind
     have hB_nonneg : 0 ≤ B := by
       dsimp [B]
       positivity
@@ -712,8 +655,7 @@ theorem productBasisLocalization
       · intro q hq
         unfold annulusMass
         positivity
-      · intro q hq
-        exact hcoord q
+      · grind
     refine le_trans hprod_bound ?_
     have hcsmall : ∀ q : Fin d, c ≤ cq q := by
       intro q
@@ -735,8 +677,7 @@ theorem productBasisLocalization
       have hmax :
           max (((blockDistance j ℓ : ℕ) : ℝ) - B) 0 ≤
             max (((Nat.dist (j q0) (ℓ q0) : ℕ) : ℝ) - ((κ q0 + 5 : ℕ) : ℝ)) 0 := by
-        rw [hq0]
-        exact max_le_max (sub_le_sub_left hBq _) le_rfl
+        grind
       have hsq0 :
           max (((blockDistance j ℓ : ℕ) : ℝ) - B) 0 ^ 2 ≤
             max (((Nat.dist (j q0) (ℓ q0) : ℕ) : ℝ) - ((κ q0 + 5 : ℕ) : ℝ)) 0 ^ 2 := by
@@ -812,9 +753,7 @@ theorem blockLocalization
                   have hsuppnz : (blockPart ℓ G).coeff α ≠ 0 := by
                     simpa [FiniteHermiteSum.support, Finsupp.mem_support_iff] using hα
                   rw [blockPart, Finsupp.onFinset_apply] at hsuppnz
-                  by_cases hb : α ∈ squareBlock ℓ
-                  · exact hb
-                  · simp [hb] at hsuppnz
+                  grind
                 exact mul_le_mul_of_nonneg_left (hloc α j ℓ hblock) (by positivity)
     _ =
         (C * Real.exp (-(c) * max (((blockDistance j ℓ : ℕ) : ℝ) - B) 0 ^ 2)) *
@@ -829,9 +768,7 @@ theorem blockLocalization
                     (fun α =>
                       (C * Real.exp (-(c) * max (((blockDistance j ℓ : ℕ) : ℝ) - B) 0 ^ 2)) *
                         ‖(blockPart ℓ G).coeff α‖ ^ 2) := by
-                          refine Finset.sum_congr rfl ?_
-                          intro α hα
-                          ring
+                          grind
               _ =
                   (C * Real.exp (-(c) * max (((blockDistance j ℓ : ℕ) : ℝ) - B) 0 ^ 2)) *
                     Finset.sum (blockPart ℓ G).support (fun α => ‖(blockPart ℓ G).coeff α‖ ^ 2) :=
@@ -910,9 +847,7 @@ private lemma tailIndicator_tendsto_zero
       (∑ i ∈ Finset.range (M + 1), u i) +
           (∑' k : ℕ, u (k + (M + 1))) =
         ∑' i : ℕ, u i := by simpa using hu.sum_add_tsum_nat_add (M + 1)
-  have hEq : (∑' r : ℕ, if M < r then u r else 0) = ∑' k : ℕ, u (k + (M + 1)) := by
-    linarith [h1, h2]
-  simpa [Nat.succ_le_iff] using hEq.symm
+  grind
 
 private lemma shellExp_global_majorant
     {d : ℕ} {c B : ℝ} (hc : 0 < c) (hB : 0 ≤ B) :
@@ -958,8 +893,7 @@ private lemma shellExp_global_majorant
       · have hlarge : 2 * B < (r : ℝ) := by linarith
         have hhalf : (r : ℝ) / 2 ≤ (r : ℝ) - B := by nlinarith
         have hmaxeq : max ((r : ℝ) - B) 0 = (r : ℝ) - B := by
-          apply max_eq_left
-          linarith
+          grind
         rw [hmaxeq]
         have hsquare_half : ((r : ℝ) / 2) ^ 2 ≤ ((r : ℝ) - B) ^ 2 := by nlinarith
         nlinarith [hsquare_half]
@@ -970,8 +904,7 @@ private lemma shellExp_global_majorant
         ≤ Real.exp (c * B ^ 2 - (c / 8) * (r : ℝ) ^ 2) := Real.exp_le_exp.mpr hlog
       _ = Real.exp (c * B ^ 2) * Real.exp (-(c / 8) * (r : ℝ) ^ 2) := by
           rw [← Real.exp_add]
-          congr 1
-          ring
+          grind
   calc
     (shellCardinality d r : ℝ) * Real.exp (-(c) * max ((r : ℝ) - B) 0 ^ 2)
       ≤ ((3 : ℝ) ^ d * (1 + (r : ℝ) ^ d)) *
@@ -1029,8 +962,7 @@ private lemma localizationLeakageCoefficient_tendsto_zero
         C * (if M + 1 ≤ r then
           (shellCardinality d r : ℝ) * Real.exp (-(c) * max ((r : ℝ) - B) 0 ^ 2)
         else 0) := by
-    refine tsum_congr fun r => ?_
-    by_cases hr : M + 1 ≤ r <;> simp [hr]
+    grind
   rw [hterm, tsum_mul_left]
 
 private lemma shell_sum_localizationLeakageCoefficient_bound
@@ -1053,14 +985,10 @@ private lemma shell_sum_localizationLeakageCoefficient_bound
       by_cases hlt : M < r
       · simp only [Order.add_one_le_iff, neg_mul, hlt, ↓reduceIte, u]
         positivity
-      · have : ¬ M + 1 ≤ r := by omega
-        simp [u, hlt]
+      · grind
     · intro r
       by_cases hr : M + 1 ≤ r
-      · by_cases hlt : M < r
-        · simp [u, hlt]
-        · have : False := by omega
-          contradiction
+      · grind
       · have hlt : ¬ M < r := by omega
         simp only [Order.add_one_le_iff, neg_mul, hlt, ↓reduceIte, ge_iff_le, u]
         positivity
@@ -1071,27 +999,18 @@ private lemma shell_sum_localizationLeakageCoefficient_bound
           (if M < r then C * Real.exp (-(c) * max ((r : ℝ) - B) 0 ^ 2) else 0))
       = Finset.sum t u := by
           refine Finset.sum_congr rfl fun r _ => ?_
-          by_cases hMr : M < r
-          · have hMr' : M + 1 ≤ r := by omega
-            simp only [u, hMr, if_true, hMr']
-            ring
-          · simp [u, hMr]
+          grind
     _ ≤ ∑' r : ℕ, u r := by
           exact hu.sum_le_tsum _ (fun r hr => by
             by_cases hMr : M + 1 ≤ r
             · simp only [hMr, ↓reduceIte, neg_mul]
               positivity
-            · by_cases hlt : M < r
-              · have : False := by omega
-                contradiction
-              · simp [hMr])
+            · grind)
     _ = localizationLeakageCoefficient C c B d M := by
           unfold localizationLeakageCoefficient
           rw [← tsum_mul_left]
           refine tsum_congr fun r => ?_
-          by_cases hMr : M + 1 ≤ r
-          · simp only [u, hMr, if_true]
-          · simp only [u, hMr, if_false, mul_zero]
+          grind
 
 private lemma finitePartialLeakage_bound_of_shell_sum_bound
     {d : ℕ} (κ : MultiIndex d) {C c B : ℝ}
@@ -1129,9 +1048,7 @@ private lemma finitePartialLeakage_bound_of_shell_sum_bound
       exact (Finset.mem_filter.mp hα).1
     have hrem_image_subset :
         (remainderPart j M G).support.image blockIndexMulti ⊆ G.support.image blockIndexMulti := by
-      intro ℓ hℓ
-      rcases Finset.mem_image.mp hℓ with ⟨α, hα, rfl⟩
-      exact Finset.mem_image.mpr ⟨α, hrem_support_subset hα, rfl⟩
+      grind
     calc
       annulusMass j (evalHermiteSum κ (remainderPart j M G))
         ≤ Finset.sum ((remainderPart j M G).support.image blockIndexMulti)
@@ -1169,8 +1086,7 @@ private lemma finitePartialLeakage_bound_of_shell_sum_bound
                     hermiteNormSq κ (blockPart ℓ G)
                 else 0)) := by
                   refine Finset.sum_le_sum ?_
-                  intro j hj
-                  exact hpoint j
+                  grind
     _ = Finset.sum (G.support.image blockIndexMulti)
           (fun ℓ =>
             Finset.sum s
@@ -1201,8 +1117,7 @@ private lemma finitePartialLeakage_bound_of_shell_sum_bound
                       else 0)) *
                     hermiteNormSq κ (blockPart ℓ G) := by
               rw [Finset.sum_mul]
-              refine Finset.sum_congr rfl fun j _ => ?_
-              by_cases hfar : M < blockDistance j ℓ <;> simp [hfar]
+              grind
             rw [hfactor]
             exact mul_le_mul_of_nonneg_right hshell' hnorm_nonneg
     _ = localizationLeakageCoefficient C c B d M * hermiteNormSq κ G := by
@@ -1231,8 +1146,7 @@ private lemma shell_sum_bound_of_shell_cardinality_bound
       localizationLeakageCoefficient C c B d M := by
   let t : Finset ℕ := s.image (fun j => blockDistance j ℓ)
   have hmaps : ∀ j ∈ s, blockDistance j ℓ ∈ t := by
-    intro j hj
-    exact Finset.mem_image.mpr ⟨j, hj, rfl⟩
+    grind
   have hdecomp := Finset.sum_fiberwise_of_maps_to (s := s) (t := t)
     (g := fun j : MultiIndex d => blockDistance j ℓ)
     (h := hmaps)
@@ -1263,9 +1177,7 @@ private lemma shell_sum_bound_of_shell_cardinality_bound
             (fun _ =>
               if M < r then C * Real.exp (-(c) * max ((r : ℝ) - B) 0 ^ 2) else 0) := by
               refine Finset.sum_congr rfl ?_
-              intro j hj
-              have hjr : blockDistance j ℓ = r := by simpa using (Finset.mem_filter.mp hj).2
-              simp [hjr]
+              grind
       _ =
           (((s.filter fun j => blockDistance j ℓ = r).card : ℕ) : ℝ) *
             (if M < r then C * Real.exp (-(c) * max ((r : ℝ) - B) 0 ^ 2) else 0) := by

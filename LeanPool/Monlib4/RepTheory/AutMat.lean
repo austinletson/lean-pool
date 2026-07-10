@@ -542,17 +542,14 @@ theorem Matrix.commutes_with_all_iff {R n : Type _} [CommSemiring R] [Fintype n]
         if_true] at h
       specialize h k k
       simp_rw [diagonal, of_apply, Matrix.diag]
-      simp_rw [if_true, @eq_comm _ l k] at h
-      exact h.symm
+      grind
     have this1 : ∀ k l : n, x k k = x l l := by
       intro k l
       specialize h (single k l 1)
       simp_rw [← Matrix.ext_iff, mul_apply, single, of_apply, boole_mul, mul_boole, ite_and,
         Finset.sum_ite_irrel, Finset.sum_const_zero, Finset.sum_ite_eq, Finset.mem_univ,
         if_true] at h
-      specialize h k l
-      simp_rw [if_true] at h
-      exact h.symm
+      grind
     use x i i
     ext k l
     simp_rw [Matrix.smul_apply, one_apply, smul_ite, smul_zero, smul_eq_mul, mul_one]
@@ -579,8 +576,7 @@ lemma Matrix.prod_center {R n m : Type*} [CommSemiring R] [Fintype n] [Fintype m
   simp only [Set.mem_prod, SetLike.mem_coe, Submodule.mem_span_pair,
     Submodule.mem_span_singleton, Prod.smul_mk, smul_zero, Prod.mk_add_mk, zero_add,
     add_zero]
-  nth_rw 3 [← Prod.eta x]
-  simp_rw [Prod.ext_iff, exists_and_left, exists_and_right]
+  grind
 
 lemma Matrix.pi_center {R ι : Type*} [CommSemiring R] {n : ι → Type*}
     [∀ i, Fintype (n i)] :
@@ -588,10 +584,7 @@ lemma Matrix.pi_center {R ι : Type*} [CommSemiring R] {n : ι → Type*}
       { x | ∀ i, x i ∈ Set.center (Matrix (n i) (n i) R) } := by
   classical
   simp_rw [Set.center_pi, Matrix.center]
-  ext x
-  simp only [Set.mem_pi, Set.mem_univ, SetLike.mem_coe, forall_true_left]
-  simp only [Submodule.mem_span_singleton]
-  rfl
+  grind
 
 lemma PiMat.center {R ι : Type*} [CommSemiring R] {n : ι → Type*}
     [∀ i, Fintype (n i)] :
@@ -733,8 +726,7 @@ theorem AlgEquiv.matrix_prod_aut {𝕜 n m : Type*} [Field 𝕜] [Fintype n]
       AlgEquiv.map_eq_zero_iff, eq_comm, and_self]
     by_cases Hen : IsEmpty m
     · rw [← @Matrix.one_eq_zero_iff 𝕜] at Hen
-      simp_rw [Hen, ← Prod.zero_eq_mk, map_zero]
-      simp only [or_self]
+      grind
     · rw [← @Matrix.one_eq_zero_iff 𝕜, eq_comm] at Hen
       nth_rw 2 [Prod.eq_iff_fst_eq_snd_eq]
       simp only [Prod.fst_zero, Prod.snd_zero, true_and, Hen, or_false]
@@ -766,10 +758,7 @@ theorem AlgEquiv.matrix_prod_aut {𝕜 n m : Type*} [Field 𝕜] [Fintype n]
         exact h₉.2
       · simp_rw [h81, add_zero] at h₉
         rw [h81, zero_smul, eq_comm, AlgEquiv.map_eq_zero_iff] at h₇
-        simp_rw [h₇, map_zero, AlgEquiv.map_eq_zero_iff, and_true]
-        rw [h₇, smul_zero, one_smul, add_zero] at h₆
-        left
-        exact h₆.symm
+        grind
       · simp_rw [he₁, he₂, h82, ← Prod.zero_eq_mk, ← h82,
           ← Prod.one_eq_mk, _root_.map_one, _root_.map_zero,
           Prod.ext_iff, Prod.fst_one, Prod.snd_one, Prod.fst_zero,
@@ -791,8 +780,7 @@ theorem AlgEquiv.matrix_prod_aut {𝕜 n m : Type*} [Field 𝕜] [Fintype n]
         rw [h81, zero_smul, add_zero] at h₇
         rcases h₉ with ⟨h₉, (h91 | h92)⟩
         · rw [h91, one_smul] at h₆
-          right
-          exact ⟨h₆.symm, h₇.symm⟩
+          grind
         · rw [← @Matrix.one_eq_zero_iff 𝕜] at h92
           simp_rw [he₁, he₂, h92, ← Prod.zero_eq_mk, ← h92,
             ← Prod.one_eq_mk, _root_.map_one, _root_.map_zero,
@@ -824,8 +812,7 @@ def matrixPiFinAlgEquivPiFinTwo {𝕜 : Type*} [CommSemiring 𝕜]
     refine funext ?h
     simp_rw [Fin.forall_fin_succ]
     simp only [↓reduceDIte, eq_mpr_eq_cast, cast_eq]
-    simp only [true_and]
-    aesop
+    grind
   right_inv _ := rfl
   map_add' _ _ := rfl
   map_mul' _ _ := rfl
@@ -940,10 +927,7 @@ theorem matrixPiFinTwo_algAut_apply_piSingle {𝕜 : Type*} [Field 𝕜]
     rw [AlgEquiv.eq_apply_iff_symm_eq, this2] at h1
     rw [AlgEquiv.eq_apply_iff_symm_eq, this1] at h2
     use Equiv.swap 0 1
-    rw [Fin.forall_fin_two]
-    constructor
-    · exact h2.symm
-    · exact h1.symm
+    grind
 
 theorem Algebra.prod_one_zero_mul {R₁ R₂ : Type*} [Semiring R₁]
     [Semiring R₂] (a : R₁ × R₂) :
@@ -974,14 +958,12 @@ def ofProdMap₁₁ {K R₁ R₂ R₃ R₄ : Type*} [CommSemiring K]
     have : ((f.symm ((f (a, 0)).1, 0)).1, 0) = (a, 0) := by
       rw [← Algebra.prod_one_zero_mul, _root_.map_mul, ← hf_symm,
         f.symm_apply_apply, Algebra.prod_one_zero_mul]
-    simp_rw [Prod.ext_iff, and_true] at this
-    exact this
+    grind
   right_inv a := by
     have : ((f ((f.symm (a, 0)).1, 0)).1, 0) = (a, 0) := by
       rw [← Algebra.prod_one_zero_mul, _root_.map_mul, hf,
         f.apply_symm_apply, Algebra.prod_one_zero_mul]
-    simp_rw [Prod.ext_iff, and_true] at this
-    exact this
+    grind
   map_add' a b := by
     nth_rw 1 [← add_zero (0 : _)]
     simp_rw [← Prod.mk_add_mk, _root_.map_add]
@@ -1012,14 +994,12 @@ def ofProdMap₂₂ {K R₁ R₂ R₃ R₄ : Type*} [CommSemiring K]
     have : (0, (f.symm (0, (f (0, a)).2)).2) = (0, a) := by
       rw [← Algebra.prod_zero_one_mul, _root_.map_mul, ← hf_symm,
         f.symm_apply_apply, Algebra.prod_zero_one_mul]
-    simp_rw [Prod.ext_iff, true_and] at this
-    exact this
+    grind
   right_inv a := by
     have : (0, (f (0, (f.symm (0, a)).2)).2) = (0, a) := by
       rw [← Algebra.prod_zero_one_mul, _root_.map_mul, hf,
         f.apply_symm_apply, Algebra.prod_zero_one_mul]
-    simp_rw [Prod.ext_iff, true_and] at this
-    exact this
+    grind
   map_add' a b := by
     nth_rw 1 [← add_zero (0 : _)]
     simp_rw [← Prod.mk_add_mk, _root_.map_add]
@@ -1047,14 +1027,12 @@ def ofProdMap₁₂ {K R₁ R₂ R₃ R₄ : Type*} [CommSemiring K]
     have : ((f.symm (0, (f (a, 0)).2)).1, 0) = (a, 0) := by
       rw [← Algebra.prod_zero_one_mul, _root_.map_mul, ← hf,
         f.symm_apply_apply, Algebra.prod_one_zero_mul, f.symm_apply_apply]
-    simp_rw [Prod.ext_iff, and_true] at this
-    exact this
+    grind
   right_inv a := by
     have : (0, (f ((f.symm (0, a)).1, 0)).2) = (0, a) := by
       rw [← Algebra.prod_one_zero_mul, _root_.map_mul, hf,
         f.apply_symm_apply, Algebra.prod_zero_one_mul]
-    simp_rw [Prod.ext_iff, true_and] at this
-    exact this
+    grind
   map_add' a b := by
     nth_rw 1 [← add_zero (0 : _)]
     simp_rw [← Prod.mk_add_mk, _root_.map_add]
@@ -1082,14 +1060,12 @@ def ofProdMap₂₁ {K R₁ R₂ R₃ R₄ : Type*} [CommSemiring K]
     have : (0, (f.symm ((f (0, a)).1, 0)).2) = (0, a) := by
       rw [← Algebra.prod_one_zero_mul, _root_.map_mul, ← hf,
         f.symm_apply_apply, Algebra.prod_zero_one_mul, f.symm_apply_apply]
-    simp_rw [Prod.ext_iff, true_and] at this
-    exact this
+    grind
   right_inv a := by
     have : ((f (0, (f.symm (a, 0)).2)).1, 0) = (a, 0) := by
       rw [← Algebra.prod_zero_one_mul, _root_.map_mul, hf,
         f.apply_symm_apply, Algebra.prod_one_zero_mul]
-    simp_rw [Prod.ext_iff, and_true] at this
-    exact this
+    grind
   map_add' a b := by
     nth_rw 1 [← add_zero (0 : _)]
     simp_rw [← Prod.mk_add_mk, _root_.map_add]

@@ -121,9 +121,7 @@ lemma multFactor_mul (g : Matrix (Fin k ⊕ Unit) (Fin l ⊕ Unit) K)
   split
   · next h1 =>
       simpa [← h, h1] using Matrix.coeff_le_coeffs_sup v g (Sum.inr ()) (Sum.inl j)
-  · next h1 =>
-      rw [neg_mul, mul_assoc]
-      simp [inv_mul_cancel₀ h1]
+  · grind
 
 /-- The transvection struct in `R` for the transvection eliminating the `j`-th entry in the last
 row of `g`, where the bottom-right element of `g` has maximal valuation. -/
@@ -281,18 +279,9 @@ lemma mul_rowEliminationListMatrix_prod_apply_aux
       rw [mul_rowEliminationListMatrix_prod_apply_lastCol_aux _ _ _ hnk]
       apply multFactor_mul g h n'
     · have hni : n ≠ j := by
-        intro hc
-        apply he
-        ext
-        exact hc
+        grind
       rw [mul_transvection_apply_of_ne, ih hnk]
-      · by_cases hi : n + 1 ≤ (j : ℕ)
-        · simp only [n.le_succ.trans hi, ↓reduceIte, hi]
-        · rw [if_neg, if_neg]
-          · simpa using hi
-          · intro hnj
-            apply hni
-            omega
+      · grind
       · simpa using (Ne.symm he)
 
 lemma mul_rowEliminationListMatrix_prod_apply (g : Matrix (Fin k ⊕ Unit) (Fin k ⊕ Unit) K)
@@ -360,8 +349,7 @@ lemma mul_rowEliminationListMatrix_coeffs_sup_aux (g : Matrix (Fin k ⊕ Unit) (
       Option.toList_some, List.prod_cons, List.prod_nil, mul_one]
     rw [← mul_assoc]
     apply rowEliminationTransvection_mul_coeffs_sup'
-    apply ih
-    omega
+    grind
 
 lemma mul_rowEliminationListMatrix_coeffs_sup (g : Matrix (Fin k ⊕ Unit) (Fin k ⊕ Unit) K)
     (h : v (g (Sum.inr ()) (Sum.inr ())) = g.coeffsSup v) :
@@ -478,15 +466,13 @@ lemma exists_trafo_isNormalBlock (g : Matrix (Fin k ⊕ Unit) (Fin k ⊕ Unit) K
         ((colEliminator g' hg').val * g' * (rowEliminator g' hg').val).coeffsSup v
     · simp only [g']
       group
-    · simp only [g']
-      group
+    · grind
     · rw [colEliminator_mul_rowEliminator_coeffs_sup]
       rwa [colEliminator_mul_rowEliminator_last_last]
   · simp only [Units.val_mul, Matrix.map_mul, k₁, k₂]
     convert_to ((colEliminator g' hg').val * g' * (rowEliminator g' hg').val).coeffsSup v =
         g.coeffsSup v
-    · simp only [g']
-      group
+    · grind
     · rw [colEliminator_mul_rowEliminator_coeffs_sup]
       exact hagbv
 
@@ -539,10 +525,8 @@ lemma exists_trafo_isDiag_induction_step (g : Matrix (Fin k ⊕ Unit) (Fin k ⊕
     rfl
   convert_to IsBlockMonotoneDiag (R := R) ((l₁'.val : Matrix _ _ K) * g' * (l₂'.val : Matrix _ _ K))
     ∧ ((l₁'.val : Matrix _ _ K) * g' * (l₂'.val : Matrix _ _ K)).coeffsSup v = g.coeffsSup v
-  · simp only [g']
-    group
-  · simp only [g']
-    group
+  · grind
+  · grind
   · rw [he]
     refine ⟨⟨?_, ?_, ?_⟩, ?_⟩
     · simp only [GL.val_diagonalBlocks, Units.val_one, l₁', l₂']
@@ -720,9 +704,7 @@ lemma conj_cartanDiag_one_zero {ϖ : R} (hϖ : Irreducible ϖ) (g : GL (Fin 2) K
   rw [cartanDiag, Matrix.GL.conj_diagonal_apply]
   simp only [Fin.isValue, zpow_neg, Units.inv_mk, mul_eq_mul_right_iff]
   rw [zpow_sub₀ (coe_uniformizer_ne_zero hϖ)]
-  ring_nf
-  left
-  trivial
+  grind
 
 omit [ValuationRing ↥R] [IsFractionRing (↥R) K] in
 lemma conj_cartanDiag_zero_one {ϖ : R} (hϖ : Irreducible ϖ) (g : GL (Fin 2) K) (f : Fin 2 → ℤ) :
@@ -730,9 +712,7 @@ lemma conj_cartanDiag_zero_one {ϖ : R} (hϖ : Irreducible ϖ) (g : GL (Fin 2) K
   rw [cartanDiag, Matrix.GL.conj_diagonal_apply]
   simp only [Fin.isValue, zpow_neg, Units.inv_mk, mul_eq_mul_right_iff]
   rw [zpow_sub₀ (coe_uniformizer_ne_zero hϖ)]
-  ring_nf
-  left
-  trivial
+  grind
 
 /--
 Existence part of cartan decomposition: If `R` is a discrete valuation ring with

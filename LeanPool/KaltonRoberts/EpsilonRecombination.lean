@@ -44,8 +44,7 @@ omit [Fintype U] in
 lemma M_nonneg_of_bound (f : Finset U → ℝ) (hf : IsApproxAdditive f 1) (M : ℝ)
     (hM : ∀ S : Finset U, |f S| ≤ M) : 0 ≤ M := by
   have := hM ∅
-  simp only [hf.1, abs_zero] at this
-  exact this
+  grind
 
 omit [DecidableEq U] [Fintype U] in
 lemma deficit_nonneg_of_bound (f : Finset U → ℝ) (M : ℝ)
@@ -193,8 +192,7 @@ lemma approx_freq_le (N : ℕ) (i : U)
   refine le_trans h_sum_floorCount_le_weighted_itemFreq ?_
   rw [WeightedCollection.itemFreq]
   simp [Finset.sum_filter, mul_ite]
-  field_simp [ne_of_gt C.totalWeight_pos]
-  exact le_rfl
+  grind
 
 /-
 Sum of deficits over the approximation family decomposes into set and empty parts.
@@ -343,8 +341,7 @@ theorem two_sided_recombination_core_eps
   have hf_neg := IsApproxAdditive_neg f hf
   have hM_neg : ∀ S : Finset U, |(fun S => -f S) S| ≤ M :=
     fun S => by
-      simp only [abs_neg]
-      exact hM S
+      grind
   have hsur_as_def : C_sur.avgDeficit (fun S => -f S) M ≤ S_val := by
     rw [show C_sur.avgDeficit (fun S => -f S) M = C_sur.avgSurplus f M by
       simp [WeightedCollection.avgDeficit, WeightedCollection.avgSurplus, deficit, surplus]]

@@ -403,6 +403,4 @@ theorem hurwitz_inj [NeBot p]
   obtain ⟨u, v, hu, hv, huv⟩ := t2_separation_nhds hxy
   have h3 := hurwitz3 hU hG hg hx hgx (h2 x hx) (inter_mem hu (hU.mem_nhds hx))
   have h4 := hurwitz3 hU hG hg hy hgy (h2 y hy) (inter_mem hv (hU.mem_nhds hy))
-  filter_upwards [h3.and h4] with n ⟨⟨xn, hxn, hGxn⟩, ⟨yn, hyn, hGyn⟩⟩
-  rw [sub_eq_zero] at hGxn hGyn
-  exact ⟨xn, hxn.2, yn, hyn.2, by rw [hGxn, hGyn], huv.ne_of_mem hxn.1 hyn.1⟩
+  filter_upwards [h3.and h4] with n grind

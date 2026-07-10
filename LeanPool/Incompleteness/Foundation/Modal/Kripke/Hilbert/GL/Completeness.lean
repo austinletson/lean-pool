@@ -37,18 +37,11 @@ namespace miniCanonicalFrame
 
 lemma is_irreflexive : Std.Irrefl (miniCanonicalFrame φ).Rel := by
   constructor
-  rintro X ⟨_, χ, _, hnχ, hχ⟩
-  exact hnχ hχ
+  grind
 
 lemma is_transitive : IsTrans (miniCanonicalFrame φ).World (miniCanonicalFrame φ).Rel := by
   constructor
-  rintro X Y Z ⟨RXY, ⟨χ, _, _, _⟩⟩ ⟨RYZ, _⟩;
-  constructor;
-  · rintro ψ hq₁ hq₂;
-    exact RYZ ψ hq₁ <| RXY ψ hq₁ hq₂ |>.2;
-  · use χ;
-    refine ⟨by assumption, by assumption, ?_⟩;
-    exact RYZ χ (by assumption) (by assumption) |>.2;
+  grind
 
 end miniCanonicalFrame
 
@@ -90,8 +83,7 @@ lemma truthlemma_lemma2
   apply FormulaFinset.intro_union_consistent;
   rintro Γ₁ Γ₂ ⟨hΓ₁, hΓ₂⟩;
   replace hΓ₂ : ∀ χ ∈ Γ₂, χ = □ψ ∨ χ = -ψ := by
-    intro χ hr;
-    simpa using hΓ₂ χ hr;
+    grind
   by_contra hC;
   have : Γ₁ ⊢[_]! ⋀Γ₂ ==> ⊥ := provable_iff.mpr <| and_imply_iff_imply_imply'!.mp hC;
   have : Γ₁ ⊢[_]! (□ψ ⋏ -ψ) ==> ⊥ := imp_trans''! (by

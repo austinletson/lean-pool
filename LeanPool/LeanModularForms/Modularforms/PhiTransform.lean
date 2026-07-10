@@ -76,8 +76,7 @@ theorem φ₀_S_transform (z : ℍ) :
   have h_expand : (A + 6 * E₄ z / (π * Complex.I * z)) ^ 2 / Δ z =
                   A ^ 2 / Δ z + 12 * A * E₄ z / (π * Complex.I * z * Δ z) +
                   36 * (E₄ z) ^ 2 / (π ^ 2 * Complex.I ^ 2 * z ^ 2 * Δ z) := by
-    have hπIz : π * Complex.I * z ≠ 0 := mul_ne_zero (mul_ne_zero hπ hI) hz
-    field_simp; ring
+    grind
   have h_I_factor : (12 : ℂ) / (π * Complex.I * z) = -12 * Complex.I / (π * z) := by
     field_simp [Complex.inv_I]; simp [Complex.I_sq]
   rw [h_numer,

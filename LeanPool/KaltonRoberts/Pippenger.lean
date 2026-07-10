@@ -93,8 +93,7 @@ theorem tail_bound_real_E₂ :
   have h2 : ((1 / 100 : ℚ) : ℝ) ^ ((4 : ℤ) - 2) = 1 / 10000 := by
     push_cast; norm_num [zpow_natCast]
   rw [h1, h2]
-  have h3 : (7 / 4 : ℝ) ^ (3 : ℕ) = 343 / 64 := by norm_num
-  rw [h3]; nlinarith
+  grind
 
 /-- Tail bound for E₃: `e² · (2/7)^{-3} · (1/100)^2 < 1/20` -/
 theorem tail_bound_real_E₃ :
@@ -106,8 +105,7 @@ theorem tail_bound_real_E₃ :
   have h2 : ((1 / 100 : ℚ) : ℝ) ^ ((4 : ℤ) - 2) = 1 / 10000 := by
     push_cast; norm_num [zpow_natCast]
   rw [h1, h2]
-  have h3 : (7 / 2 : ℝ) ^ (3 : ℕ) = 343 / 8 := by norm_num
-  rw [h3]; nlinarith
+  grind
 
 /-- Tail bound for E₄: `e² · (5/11)^{-4} · (1/100)^3 < 1/20` -/
 theorem tail_bound_real_E₄ :
@@ -119,8 +117,7 @@ theorem tail_bound_real_E₄ :
   have h2 : ((1 / 100 : ℚ) : ℝ) ^ ((5 : ℤ) - 2) = 1 / 1000000 := by
     push_cast; norm_num [zpow_natCast]
   rw [h1, h2]
-  have h3 : (11 / 5 : ℝ) ^ (4 : ℕ) = 14641 / 625 := by norm_num
-  rw [h3]; nlinarith
+  grind
 
 /-! ## Phi negativity on intervals
 
@@ -286,8 +283,7 @@ theorem small_term_E₁
         ((12 * m).choose (4 * m) : ℝ) / ((4 * N).choose (4 * m) : ℝ)
       ≤ ((1 / 20 : ℝ) ^ m) := by
   have hcmN : 12 * m ≤ 4 * N := by
-    have h := Nat.mul_le_mul_left 12 hmL
-    simpa [hNL, Nat.mul_comm, Nat.mul_assoc] using h
+    grind
   have hraw := pippenger_small_term_raw N L 4 12 m hm hmN hmL (by norm_num) hcmN
   refine le_trans hraw ?_
   have hm_ne : (m : ℝ) ≠ 0 := by exact_mod_cast hm.ne'
@@ -300,9 +296,7 @@ theorem small_term_E₁
       Real.exp 2 * 27 * (((m : ℝ) / (N : ℝ)) ^ 2) := by
     rw [hLreal]
     rw [show Real.exp 2 = Real.exp 1 * Real.exp 1 by rw [← Real.exp_add]; norm_num]
-    norm_num [Nat.cast_mul]
-    field_simp [hm_ne, hN_ne]
-    ring
+    grind
   have hx_nonneg : 0 ≤ (m : ℝ) / (N : ℝ) := by positivity
   have hx2_le : ((m : ℝ) / (N : ℝ)) ^ 2 ≤ (1 / 100 : ℝ) ^ 2 := by
     exact pow_le_pow_left₀ hx_nonneg hsmall 2
@@ -349,9 +343,7 @@ theorem bad_ratio_sum_E₁_core (t : ℕ) (ht : 0 < t)
       have hsmall : (m : ℝ) / (N : ℝ) ≤ 1 / 100 := by
         rw [div_le_iff₀ (by exact_mod_cast hNpos)]
         have hmD' : (m : ℝ) ≤ (D : ℝ) := by exact_mod_cast hmD
-        dsimp [D, N] at hmD' ⊢
-        norm_num [Nat.cast_mul] at hmD' ⊢
-        nlinarith
+        grind
       have hs := small_term_E₁ N L m hNpos hmpos hmN hmL
         (by dsimp [N, L]; ring)
         (by dsimp [N, L]; norm_num [Nat.cast_mul]; ring)
@@ -365,15 +357,11 @@ theorem bad_ratio_sum_E₁_core (t : ℕ) (ht : 0 < t)
       have hx_low : 1 / 100 ≤ (m : ℝ) / (N : ℝ) := by
         rw [le_div_iff₀ (by exact_mod_cast hNpos)]
         have hDm' : (D : ℝ) < (m : ℝ) := by exact_mod_cast hDm
-        dsimp [D, N] at hDm' ⊢
-        norm_num [Nat.cast_mul] at hDm' ⊢
-        nlinarith
+        grind
       have hx_high : (m : ℝ) / (N : ℝ) ≤ 1003 / 10000 := by
         rw [div_le_iff₀ (by exact_mod_cast hNpos)]
         have hmA' : (m : ℝ) ≤ (A : ℝ) := by exact_mod_cast hmA
-        dsimp [A, N] at hmA' ⊢
-        norm_num [Nat.cast_mul] at hmA' ⊢
-        nlinarith
+        grind
       have hphi := Phi_margin_E₁ ((m : ℝ) / (N : ℝ)) hx_low hx_high
       have hmterm := pippenger_mid_term_le N L 4 12 m (1 / 3 : ℝ)
         hNpos hmpos hmN hmL (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -391,9 +379,7 @@ theorem bad_ratio_sum_E₁_core (t : ℕ) (ht : 0 < t)
     have hexp_eq :
         Real.exp (-(N : ℝ) / 1000) =
           Real.exp (-(1 / 500 : ℝ) * ((15000 * t : ℕ) : ℝ)) := by
-      dsimp [N]
-      norm_num [Nat.cast_mul]
-      ring_nf
+      grind
     dsimp [B]
     rw [hexp_eq]
     calc
@@ -405,18 +391,7 @@ theorem bad_ratio_sum_E₁_core (t : ℕ) (ht : 0 < t)
           Real.exp (-(1 / 500 : ℝ) * ((15000 * t : ℕ) : ℝ)) := by
             exact mul_le_mul_of_nonneg_right hpoly (by positivity)
       _ < 1 / 2 := hdec
-  have hsum_final :
-      (∑ m ∈ Finset.Icc 1 A,
-        ((N.choose m : ℝ) * (L.choose m : ℝ) *
-          (((12 * m).choose (4 * m) : ℝ) / (((4 * N).choose (4 * m) : ℝ)))))
-        < 1 := by
-    calc
-      (∑ m ∈ Finset.Icc 1 A,
-        ((N.choose m : ℝ) * (L.choose m : ℝ) *
-          (((12 * m).choose (4 * m) : ℝ) / (((4 * N).choose (4 * m) : ℝ)))))
-          ≤ (1 / 20 : ℝ) / (1 - 1 / 20) + (N : ℝ) * B := hsum_le
-      _ < 1 := by norm_num; linarith
-  simpa [N, L, A] using hsum_final
+  grind
 
 theorem tail_bound_E₂_simplified :
     Real.exp 2 * ((7 / 4 : ℝ) ^ 3) * ((1 / 100 : ℝ) ^ 2) < 1 / 20 := by
@@ -432,8 +407,7 @@ theorem small_term_E₂
         ((7 * m).choose (4 * m) : ℝ) / ((4 * N).choose (4 * m) : ℝ)
       ≤ ((1 / 20 : ℝ) ^ m) := by
   have hcmN : 7 * m ≤ 4 * N := by
-    have h := Nat.mul_le_mul_left 7 hmL
-    simpa [hNL, Nat.mul_comm, Nat.mul_assoc] using h
+    grind
   have hraw := pippenger_small_term_raw N L 4 7 m hm hmN hmL (by norm_num) hcmN
   refine le_trans hraw ?_
   have hm_ne : (m : ℝ) ≠ 0 := by exact_mod_cast hm.ne'
@@ -446,9 +420,7 @@ theorem small_term_E₂
       Real.exp 2 * ((7 / 4 : ℝ) ^ 3) * (((m : ℝ) / (N : ℝ)) ^ 2) := by
     rw [hLreal]
     rw [show Real.exp 2 = Real.exp 1 * Real.exp 1 by rw [← Real.exp_add]; norm_num]
-    norm_num [Nat.cast_mul]
-    field_simp [hm_ne, hN_ne]
-    ring
+    grind
   have hx_nonneg : 0 ≤ (m : ℝ) / (N : ℝ) := by positivity
   have hx2_le : ((m : ℝ) / (N : ℝ)) ^ 2 ≤ (1 / 100 : ℝ) ^ 2 := by
     exact pow_le_pow_left₀ hx_nonneg hsmall 2
@@ -496,9 +468,7 @@ theorem bad_ratio_sum_E₂_core (t : ℕ) (ht : 0 < t)
       have hsmall : (m : ℝ) / (N : ℝ) ≤ 1 / 100 := by
         rw [div_le_iff₀ (by exact_mod_cast hNpos)]
         have hmD' : (m : ℝ) ≤ (D : ℝ) := by exact_mod_cast hmD
-        dsimp [D, N] at hmD' ⊢
-        norm_num [Nat.cast_mul] at hmD' ⊢
-        nlinarith
+        grind
       have hs := small_term_E₂ N L m hNpos hmpos hmN hmL
         (by dsimp [N, L]; ring)
         (by dsimp [N, L]; norm_num [Nat.cast_mul]; ring)
@@ -512,15 +482,11 @@ theorem bad_ratio_sum_E₂_core (t : ℕ) (ht : 0 < t)
       have hx_low : 1 / 100 ≤ (m : ℝ) / (N : ℝ) := by
         rw [le_div_iff₀ (by exact_mod_cast hNpos)]
         have hDm' : (D : ℝ) < (m : ℝ) := by exact_mod_cast hDm
-        dsimp [D, N] at hDm' ⊢
-        norm_num [Nat.cast_mul] at hDm' ⊢
-        nlinarith
+        grind
       have hx_high : (m : ℝ) / (N : ℝ) ≤ 3009 / 10000 := by
         rw [div_le_iff₀ (by exact_mod_cast hNpos)]
         have hmA' : (m : ℝ) ≤ (A : ℝ) := by exact_mod_cast hmA
-        dsimp [A, N] at hmA' ⊢
-        norm_num [Nat.cast_mul] at hmA' ⊢
-        nlinarith
+        grind
       have hphi := Phi_margin_E₂ ((m : ℝ) / (N : ℝ)) hx_low hx_high
       have hmterm := pippenger_mid_term_le N L 4 7 m (4 / 7 : ℝ)
         hNpos hmpos hmN hmL (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -538,9 +504,7 @@ theorem bad_ratio_sum_E₂_core (t : ℕ) (ht : 0 < t)
     have hexp_eq :
         Real.exp (-(N : ℝ) / 1000) =
           Real.exp (-(1 / 500 : ℝ) * ((35000 * t : ℕ) : ℝ)) := by
-      dsimp [N]
-      norm_num [Nat.cast_mul]
-      ring_nf
+      grind
     dsimp [B]
     rw [hexp_eq]
     calc
@@ -552,18 +516,7 @@ theorem bad_ratio_sum_E₂_core (t : ℕ) (ht : 0 < t)
           Real.exp (-(1 / 500 : ℝ) * ((35000 * t : ℕ) : ℝ)) := by
             exact mul_le_mul_of_nonneg_right hpoly (by positivity)
       _ < 1 / 2 := hdec
-  have hsum_final :
-      (∑ m ∈ Finset.Icc 1 A,
-        ((N.choose m : ℝ) * (L.choose m : ℝ) *
-          (((7 * m).choose (4 * m) : ℝ) / (((4 * N).choose (4 * m) : ℝ)))))
-        < 1 := by
-    calc
-      (∑ m ∈ Finset.Icc 1 A,
-        ((N.choose m : ℝ) * (L.choose m : ℝ) *
-          (((7 * m).choose (4 * m) : ℝ) / (((4 * N).choose (4 * m) : ℝ)))))
-          ≤ (1 / 20 : ℝ) / (1 - 1 / 20) + (N : ℝ) * B := hsum_le
-      _ < 1 := by norm_num; linarith
-  simpa [N, L, A] using hsum_final
+  grind
 
 theorem tail_bound_E₃_simplified :
     Real.exp 2 * ((7 / 2 : ℝ) ^ 3) * ((1 / 100 : ℝ) ^ 2) < 1 / 20 := by
@@ -579,8 +532,7 @@ theorem small_term_E₃
         ((14 * m).choose (4 * m) : ℝ) / ((4 * N).choose (4 * m) : ℝ)
       ≤ ((1 / 20 : ℝ) ^ m) := by
   have hcmN : 14 * m ≤ 4 * N := by
-    have h := Nat.mul_le_mul_left 14 hmL
-    simpa [hNL, Nat.mul_comm, Nat.mul_assoc] using h
+    grind
   have hraw := pippenger_small_term_raw N L 4 14 m hm hmN hmL (by norm_num) hcmN
   refine le_trans hraw ?_
   have hm_ne : (m : ℝ) ≠ 0 := by exact_mod_cast hm.ne'
@@ -593,9 +545,7 @@ theorem small_term_E₃
       Real.exp 2 * ((7 / 2 : ℝ) ^ 3) * (((m : ℝ) / (N : ℝ)) ^ 2) := by
     rw [hLreal]
     rw [show Real.exp 2 = Real.exp 1 * Real.exp 1 by rw [← Real.exp_add]; norm_num]
-    norm_num [Nat.cast_mul]
-    field_simp [hm_ne, hN_ne]
-    ring
+    grind
   have hx_nonneg : 0 ≤ (m : ℝ) / (N : ℝ) := by positivity
   have hx2_le : ((m : ℝ) / (N : ℝ)) ^ 2 ≤ (1 / 100 : ℝ) ^ 2 := by
     exact pow_le_pow_left₀ hx_nonneg hsmall 2
@@ -643,9 +593,7 @@ theorem bad_ratio_sum_E₃_core (t : ℕ) (ht : 0 < t)
       have hsmall : (m : ℝ) / (N : ℝ) ≤ 1 / 100 := by
         rw [div_le_iff₀ (by exact_mod_cast hNpos)]
         have hmD' : (m : ℝ) ≤ (D : ℝ) := by exact_mod_cast hmD
-        dsimp [D, N] at hmD' ⊢
-        norm_num [Nat.cast_mul] at hmD' ⊢
-        nlinarith
+        grind
       have hs := small_term_E₃ N L m hNpos hmpos hmN hmL
         (by dsimp [N, L]; ring)
         (by dsimp [N, L]; norm_num [Nat.cast_mul]; ring)
@@ -659,15 +607,11 @@ theorem bad_ratio_sum_E₃_core (t : ℕ) (ht : 0 < t)
       have hx_low : 1 / 100 ≤ (m : ℝ) / (N : ℝ) := by
         rw [le_div_iff₀ (by exact_mod_cast hNpos)]
         have hDm' : (D : ℝ) < (m : ℝ) := by exact_mod_cast hDm
-        dsimp [D, N] at hDm' ⊢
-        norm_num [Nat.cast_mul] at hDm' ⊢
-        nlinarith
+        grind
       have hx_high : (m : ℝ) / (N : ℝ) ≤ 47 / 625 := by
         rw [div_le_iff₀ (by exact_mod_cast hNpos)]
         have hmA' : (m : ℝ) ≤ (A : ℝ) := by exact_mod_cast hmA
-        dsimp [A, N] at hmA' ⊢
-        norm_num [Nat.cast_mul] at hmA' ⊢
-        nlinarith
+        grind
       have hphi := Phi_margin_E₃ ((m : ℝ) / (N : ℝ)) hx_low hx_high
       have hmterm := pippenger_mid_term_le N L 4 14 m (2 / 7 : ℝ)
         hNpos hmpos hmN hmL (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -685,9 +629,7 @@ theorem bad_ratio_sum_E₃_core (t : ℕ) (ht : 0 < t)
     have hexp_eq :
         Real.exp (-(N : ℝ) / 1000) =
           Real.exp (-(1 / 500 : ℝ) * ((8750 * t : ℕ) : ℝ)) := by
-      dsimp [N]
-      norm_num [Nat.cast_mul]
-      ring_nf
+      grind
     dsimp [B]
     rw [hexp_eq]
     calc
@@ -699,18 +641,7 @@ theorem bad_ratio_sum_E₃_core (t : ℕ) (ht : 0 < t)
           Real.exp (-(1 / 500 : ℝ) * ((8750 * t : ℕ) : ℝ)) := by
             exact mul_le_mul_of_nonneg_right hpoly (by positivity)
       _ < 1 / 2 := hdec
-  have hsum_final :
-      (∑ m ∈ Finset.Icc 1 A,
-        ((N.choose m : ℝ) * (L.choose m : ℝ) *
-          (((14 * m).choose (4 * m) : ℝ) / (((4 * N).choose (4 * m) : ℝ)))))
-        < 1 := by
-    calc
-      (∑ m ∈ Finset.Icc 1 A,
-        ((N.choose m : ℝ) * (L.choose m : ℝ) *
-          (((14 * m).choose (4 * m) : ℝ) / (((4 * N).choose (4 * m) : ℝ)))))
-          ≤ (1 / 20 : ℝ) / (1 - 1 / 20) + (N : ℝ) * B := hsum_le
-      _ < 1 := by norm_num; linarith
-  simpa [N, L, A] using hsum_final
+  grind
 
 theorem tail_bound_E₄_simplified :
     Real.exp 2 * ((11 / 5 : ℝ) ^ 4) * ((1 / 100 : ℝ) ^ 3) < 1 / 20 := by
@@ -726,8 +657,7 @@ theorem small_term_E₄
         ((11 * m).choose (5 * m) : ℝ) / ((5 * N).choose (5 * m) : ℝ)
       ≤ ((1 / 20 : ℝ) ^ m) := by
   have hcmN : 11 * m ≤ 5 * N := by
-    have h := Nat.mul_le_mul_left 11 hmL
-    simpa [hNL, Nat.mul_comm, Nat.mul_assoc] using h
+    grind
   have hraw := pippenger_small_term_raw N L 5 11 m hm hmN hmL (by norm_num) hcmN
   refine le_trans hraw ?_
   have hm_ne : (m : ℝ) ≠ 0 := by exact_mod_cast hm.ne'
@@ -740,9 +670,7 @@ theorem small_term_E₄
       Real.exp 2 * ((11 / 5 : ℝ) ^ 4) * (((m : ℝ) / (N : ℝ)) ^ 3) := by
     rw [hLreal]
     rw [show Real.exp 2 = Real.exp 1 * Real.exp 1 by rw [← Real.exp_add]; norm_num]
-    norm_num [Nat.cast_mul]
-    field_simp [hm_ne, hN_ne]
-    ring
+    grind
   have hx_nonneg : 0 ≤ (m : ℝ) / (N : ℝ) := by positivity
   have hx3_le : ((m : ℝ) / (N : ℝ)) ^ 3 ≤ (1 / 100 : ℝ) ^ 3 := by
     exact pow_le_pow_left₀ hx_nonneg hsmall 3
@@ -790,9 +718,7 @@ theorem bad_ratio_sum_E₄_core (t : ℕ) (ht : 0 < t)
       have hsmall : (m : ℝ) / (N : ℝ) ≤ 1 / 100 := by
         rw [div_le_iff₀ (by exact_mod_cast hNpos)]
         have hmD' : (m : ℝ) ≤ (D : ℝ) := by exact_mod_cast hmD
-        dsimp [D, N] at hmD' ⊢
-        norm_num [Nat.cast_mul] at hmD' ⊢
-        nlinarith
+        grind
       have hs := small_term_E₄ N L m hNpos hmpos hmN hmL
         (by dsimp [N, L]; ring)
         (by dsimp [N, L]; norm_num [Nat.cast_mul]; ring)
@@ -806,15 +732,11 @@ theorem bad_ratio_sum_E₄_core (t : ℕ) (ht : 0 < t)
       have hx_low : 1 / 100 ≤ (m : ℝ) / (N : ℝ) := by
         rw [le_div_iff₀ (by exact_mod_cast hNpos)]
         have hDm' : (D : ℝ) < (m : ℝ) := by exact_mod_cast hDm
-        dsimp [D, N] at hDm' ⊢
-        norm_num [Nat.cast_mul] at hDm' ⊢
-        nlinarith
+        grind
       have hx_high : (m : ℝ) / (N : ℝ) ≤ 329 / 1250 := by
         rw [div_le_iff₀ (by exact_mod_cast hNpos)]
         have hmA' : (m : ℝ) ≤ (A : ℝ) := by exact_mod_cast hmA
-        dsimp [A, N] at hmA' ⊢
-        norm_num [Nat.cast_mul] at hmA' ⊢
-        nlinarith
+        grind
       have hphi := Phi_margin_E₄ ((m : ℝ) / (N : ℝ)) hx_low hx_high
       have hmterm := pippenger_mid_term_le N L 5 11 m (5 / 11 : ℝ)
         hNpos hmpos hmN hmL (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -832,9 +754,7 @@ theorem bad_ratio_sum_E₄_core (t : ℕ) (ht : 0 < t)
     have hexp_eq :
         Real.exp (-(N : ℝ) / 1000) =
           Real.exp (-(1 / 500 : ℝ) * ((13750 * t : ℕ) : ℝ)) := by
-      dsimp [N]
-      norm_num [Nat.cast_mul]
-      ring_nf
+      grind
     dsimp [B]
     rw [hexp_eq]
     calc
@@ -846,18 +766,7 @@ theorem bad_ratio_sum_E₄_core (t : ℕ) (ht : 0 < t)
           Real.exp (-(1 / 500 : ℝ) * ((13750 * t : ℕ) : ℝ)) := by
             exact mul_le_mul_of_nonneg_right hpoly (by positivity)
       _ < 1 / 2 := hdec
-  have hsum_final :
-      (∑ m ∈ Finset.Icc 1 A,
-        ((N.choose m : ℝ) * (L.choose m : ℝ) *
-          (((11 * m).choose (5 * m) : ℝ) / (((5 * N).choose (5 * m) : ℝ)))))
-        < 1 := by
-    calc
-      (∑ m ∈ Finset.Icc 1 A,
-        ((N.choose m : ℝ) * (L.choose m : ℝ) *
-          (((11 * m).choose (5 * m) : ℝ) / (((5 * N).choose (5 * m) : ℝ)))))
-          ≤ (1 / 20 : ℝ) / (1 - 1 / 20) + (N : ℝ) * B := hsum_le
-      _ < 1 := by norm_num; linarith
-  simpa [N, L, A] using hsum_final
+  grind
 
 theorem pippenger_row_E₁ : StrongExpandersExist α₁ 4 (1 / 3) := by
   refine ⟨15000, by norm_num, ?_⟩
@@ -894,8 +803,7 @@ theorem pippenger_row_E₁ : StrongExpandersExist α₁ 4 (1 / 3) := by
   · simp only [finiteExpanderOfGoodEdge, α₁, Nat.cast_mul, Nat.cast_ofNat]
     have hceil : (2 : ℚ) * (1003 / 10000) * (15000 * (t : ℚ)) =
         ((3009 * t : ℕ) : ℚ) := by
-      norm_num [Nat.cast_mul]
-      ring
+      grind
     rw [hceil, Nat.ceil_natCast]
 
 theorem pippenger_row_E₂ : StrongExpandersExist (3009 / 10000) 4 (4 / 7) := by
@@ -933,8 +841,7 @@ theorem pippenger_row_E₂ : StrongExpandersExist (3009 / 10000) 4 (4 / 7) := by
   · simp only [finiteExpanderOfGoodEdge, Nat.cast_mul, Nat.cast_ofNat]
     have hceil : (2 : ℚ) * (3009 / 10000) * (35000 * (t : ℚ)) =
         ((21063 * t : ℕ) : ℚ) := by
-      norm_num [Nat.cast_mul]
-      ring
+      grind
     rw [hceil, Nat.ceil_natCast]
 
 theorem pippenger_row_E₃ : StrongExpandersExist α₂ 4 (2 / 7) := by
@@ -972,8 +879,7 @@ theorem pippenger_row_E₃ : StrongExpandersExist α₂ 4 (2 / 7) := by
   · simp only [finiteExpanderOfGoodEdge, α₂, Nat.cast_mul, Nat.cast_ofNat]
     have hceil : (2 : ℚ) * (47 / 625) * (8750 * (t : ℚ)) =
         ((1316 * t : ℕ) : ℚ) := by
-      norm_num [Nat.cast_mul]
-      ring
+      grind
     rw [hceil, Nat.ceil_natCast]
 
 theorem pippenger_row_E₄ : StrongExpandersExist (329 / 1250) 5 (5 / 11) := by
@@ -1011,8 +917,7 @@ theorem pippenger_row_E₄ : StrongExpandersExist (329 / 1250) 5 (5 / 11) := by
   · simp only [finiteExpanderOfGoodEdge, Nat.cast_mul, Nat.cast_ofNat]
     have hceil : (2 : ℚ) * (329 / 1250) * (13750 * (t : ℚ)) =
         ((7238 * t : ℕ) : ℚ) := by
-      norm_num [Nat.cast_mul]
-      ring
+      grind
     rw [hceil, Nat.ceil_natCast]
 
 /-! ## Combined expander existence -/

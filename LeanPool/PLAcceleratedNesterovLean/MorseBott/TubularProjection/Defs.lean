@@ -250,8 +250,7 @@ lemma tubularProj_fiber_realizes_infDist {S U : Set E}
       rw [← hdist_xπ, hπdist]; exact Metric.infDist_le_dist_of_mem hm
     have h_tri : dist x m ≤ dist x ((1 - t) • πx + t • x) +
         dist ((1 - t) • πx + t • x) m := dist_triangle _ _ _
-    rw [hdist_xy] at h_tri
-    linarith
+    grind
   · calc Metric.infDist ((1 - t) • πx + t • x) S
         ≤ dist ((1 - t) • πx + t • x) πx := Metric.infDist_le_dist_of_mem hπS
       _ = ‖(1 - t) • πx + t • x - πx‖ := dist_eq_norm _ _

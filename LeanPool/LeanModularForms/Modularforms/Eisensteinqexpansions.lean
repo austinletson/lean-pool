@@ -72,16 +72,14 @@ def gammaSetNEquiv (N : ℕ) (hN : N ≠ 0) : gammaSetN N ≃ gammaSet 1 1 0 whe
   invFun v := by
     use N • v
     simp only [gammaSetN, singleton_smul, nsmul_eq_mul, mem_smul_set]
-    use v
-    simp
+    grind
   left_inv v := by simp_rw [← gammaSetN_map_eq N v]
   right_inv v := by
     simp only [nsmul_eq_mul]
     have H : N • v.1 ∈ gammaSetN N := by
       simp only [gammaSetN, singleton_smul, nsmul_eq_mul]
       rw [@mem_smul_set]
-      use v.1
-      simp
+      grind
     rw [gammaSetN] at H
     simp only [singleton_smul, nsmul_eq_mul] at H
     rw [@mem_smul_set] at H
@@ -237,11 +235,7 @@ lemma EQ1 (k : ℕ) (hk : 3 ≤ (k : ℤ)) (hk2 : Even k) (z : ℍ) : ∑' (x : 
   · rw [← tsum_sigma_eqn2]
     rw [← (piFinTwoEquiv fun _ => ℕ+).symm.tsum_eq, Summable.tsum_prod']
     · simp only [Fin.isValue, piFinTwoEquiv_symm_apply, Fin.cons_zero, Fin.cons_one]
-      congr
-      ext i
-      congr
-      ext j
-      ring_nf
+      grind
     · simp only [Fin.isValue, piFinTwoEquiv_symm_apply, Fin.cons_zero, Fin.cons_one]
       rw [← sigmaAntidiagonalEquivProd.summable_iff]
       simp only [sigmaAntidiagonalEquivProd, PNat.mk_coe, Equiv.coe_fn_mk]
@@ -310,8 +304,7 @@ lemma EQ22 (k : ℕ) (hk : 3 ≤ (k : ℤ)) (z : ℍ) :
     apply (EisensteinSeries.summable_norm_eisSummand hk z).subtype
   have := (GammaSetOneEquiv.symm.summable_iff ( f := fun v => eisSummand k v z)).mpr ?_
   · apply this.congr
-    intro b
-    simp
+    grind
   exact (EisensteinSeries.summable_norm_eisSummand hk z).of_norm
 
 lemma EQ2 (k : ℕ) (hk : 3 ≤ (k : ℤ)) (z : ℍ) : ∑' (x : Fin 2 → ℤ),
@@ -355,8 +348,4 @@ lemma E_k_q_expansion (k : ℕ) (hk : 3 ≤ (k : ℤ)) (hk2 : Even k) (z : ℍ) 
     -- step.symm ▸ h gives the goal; `convert` handles alpha-equiv binder names
     convert step.symm ▸ h using 2
     rfl
-  simp_rw [← mul_assoc]
-  rw [HE1, mul_add]
-  have : 2⁻¹ * (riemannZeta (k))⁻¹ * (2 * riemannZeta (k)) = 1 := by field_simp
-  rw [this]
-  ring
+  grind

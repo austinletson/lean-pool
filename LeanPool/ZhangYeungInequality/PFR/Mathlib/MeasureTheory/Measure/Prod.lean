@@ -32,8 +32,7 @@ lemma map_prod_comap_swap (hX : Measurable X) (hZ : Measurable Z) (μ : Measure 
   rw [Measure.map_apply (hZ.prodMk hX) hs, Measure.comap_apply _ Prod.swap_injective _ _ hs]
   · rw [Measure.map_apply (hX.prodMk hZ)]
     · congr!
-      ext ω
-      simp only [Set.image_swap_eq_preimage_swap, Set.mem_preimage, Prod.swap_prod_mk]
+      grind
     · exact MeasurableEquiv.prodComm.measurableEmbedding.measurableSet_image' hs
   · exact fun t ht ↦ MeasurableEquiv.prodComm.measurableEmbedding.measurableSet_image' ht
 

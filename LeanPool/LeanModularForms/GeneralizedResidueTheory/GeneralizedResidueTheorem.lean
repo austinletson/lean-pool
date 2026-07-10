@@ -94,9 +94,7 @@ theorem generalizedResidueTheorem (U : Set ℂ) (hU : IsOpen U)
           (U \ ↑S0) := by
         apply continuousOn_finsetSum; intro s _
         apply ContinuousOn.div continuousOn_const (continuousOn_id.sub continuousOn_const)
-        intro z ⟨_, hz_not_S0⟩
-        exact sub_ne_zero.mpr
-          (fun heq => by subst heq; exact hz_not_S0 (Finset.mem_coe.mpr ‹_›))
+        grind
       exact intervalIntegrable_cpvIntegrandOn_of_continuousOn_diff
         U S0 _ hfres_cont γ h_null.image_subset ε hε
     rw [← intervalIntegral.integral_sub h_int_f h_int_fres]
@@ -124,9 +122,7 @@ theorem generalizedResidueTheorem (U : Set ℂ) (hU : IsOpen U)
     apply cauchyPrincipalValueExists_of_singular_inv γ s
     intro ⟨t₀, ht₀, hcross⟩
     have ht₀_Ioo : t₀ ∈ Ioo γ.a γ.b := by
-      refine ⟨lt_of_le_of_ne ht₀.1 (fun h => ?_), lt_of_le_of_ne ht₀.2 (fun h => ?_)⟩
-      · exact (h_no_endpt_cross s hs).1 (h ▸ hcross)
-      · exact (h_no_endpt_cross s hs).2 (h ▸ hcross)
+      grind
     have honly : ∀ t ∈ Set.Icc γ.a γ.b, γ.toFun t = s → t = t₀ :=
       fun t ht hgt => h_unique_cross s hs t ht t₀ ht₀ hgt hcross
     suffices ∃ M, Tendsto (fun ε => ∫ (t : ℝ) in γ.a..γ.b,
@@ -237,9 +233,7 @@ theorem generalizedResidueTheorem_simplePoles (U : Set ℂ) (hU : IsOpen U)
     apply cauchyPrincipalValueExists_of_singular_inv γ s
     intro ⟨t₀, ht₀, hcross⟩
     have ht₀_Ioo : t₀ ∈ Ioo γ.a γ.b := by
-      refine ⟨lt_of_le_of_ne ht₀.1 (fun h => ?_), lt_of_le_of_ne ht₀.2 (fun h => ?_)⟩
-      · exact (h_no_endpt_cross s hs).1 (h ▸ hcross)
-      · exact (h_no_endpt_cross s hs).2 (h ▸ hcross)
+      grind
     have honly : ∀ t ∈ Set.Icc γ.a γ.b, γ.toFun t = s → t = t₀ :=
       fun t ht hgt => h_unique_cross s hs t ht t₀ ht₀ hgt hcross
     suffices ∃ M, Tendsto (fun ε => ∫ (t : ℝ) in γ.a..γ.b,

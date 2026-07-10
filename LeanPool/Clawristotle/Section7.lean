@@ -43,8 +43,7 @@ lemma poisson_boltzmann_algebraic
   have h_eq : gradX (Real.log ∘ ρ) = fun y => (-2 * c₀) • E y :=
     funext fun y => (hGradLogRho y).trans (hForce y)
   rw [h_eq, hDivLinear (-2 * c₀) E x, hGauss x]
-  have hc₀_ne : c₀ ≠ 0 := _hc₀.ne
-  field_simp
+  grind
 
 -- ============================================================================
 -- Section 5d: Maximum Principle / Spatial Uniformity (Section 7 of tex)
@@ -143,10 +142,7 @@ lemma poisson_boltzmann_from_vlasov
   have hTransport : ∀ x v,
       dotProduct v (FlatTorus3.gradX (fun y => f y v) x) +
       dotProduct (E x + cross v (B x)) (vGrad (f x) v) = 0 := by
-    intro x v
-    have h := _hVlasov x v
-    rw [hQ x v, mul_zero] at h
-    exact h
+    grind
   -- Step 3: Compute vGrad(f(x,·))(v) = f(x,v) • 2c₀v (isotropic: b=0)
   have hvGrad : ∀ x v, vGrad (f x) v = f x v • ((2 * c₀) • v) := by
     intro x v

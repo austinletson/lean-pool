@@ -369,11 +369,7 @@ theorem winding_of_S1_curve_eq_degree (z₀ : ℂ) (a b : ℝ) (_hab : a < b)
   have hint_const : ∀ ε > 0, ε < 1 →
       (∫ t in a..b, if ‖γ t - z₀‖ > ε then (γ t - z₀)⁻¹ * deriv γ t else 0) =
       2 * Real.pi * I * n := by
-    intro ε _ hε_lt
-    have h_cond : ∀ t, ‖γ t - z₀‖ > ε := fun t => by rw [h_S1]; exact hε_lt
-    have : (fun t => if ‖γ t - z₀‖ > ε then (γ t - z₀)⁻¹ * deriv γ t else 0) =
-        fun t => (γ t - z₀)⁻¹ * deriv γ t := by ext t; simp only [h_cond t, ↓reduceIte]
-    rw [this, h_integral]
+    grind
   have hlim : Tendsto (fun ε =>
       ∫ t in a..b, if ‖γ t - z₀‖ > ε then (γ t - z₀)⁻¹ * deriv γ t else 0)
       (𝓝[>] (0 : ℝ)) (𝓝 (2 * Real.pi * I * n)) :=

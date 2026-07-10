@@ -36,8 +36,7 @@ theorem wireValue_eq_of_unreferenced
     c.wireValue x w = c.wireValue (Function.update x i b) w := by
   by_cases h : w.val < N
   · rw [wireValue_lt c x w h, wireValue_lt c _ w h]
-    have hne : (⟨w.val, h⟩ : Fin N) ≠ i := fun heq => hw (congrArg Fin.val heq)
-    exact (Function.update_of_ne hne b x).symm
+    grind
   · have hG : w.val - N < G := by omega
     rw [wireValue_ge c x w h, wireValue_ge c _ w h]
     simp only [Gate.eval]
@@ -46,8 +45,7 @@ theorem wireValue_eq_of_unreferenced
 termination_by w.val
 decreasing_by
   have hacyc := c.acyclic ⟨w.val - N, hG⟩ k
-  have : (⟨w.val - N, hG⟩ : Fin G).val = w.val - N := rfl
-  omega
+  grind
 
 /-- If no gate (internal or output) reads primary input `i`, the circuit
     output is unchanged when input `i` is modified. -/
@@ -105,9 +103,7 @@ theorem card_coveredInputs_le (g : Gate B (N + G)) :
       _ = g.fanIn := by simp
   intro i hi
   rw [mem_coveredInputs] at hi
-  obtain ⟨k, hk⟩ := hi
-  simp only [Finset.mem_image, Finset.mem_univ, true_and]
-  exact ⟨k, by simp [hk]⟩
+  grind
 
 /-- For a gate over bounded fan-in k AON basis, covered inputs has card ≤ k. -/
 theorem boundedAON_coveredInputs_card_le {k : Nat}

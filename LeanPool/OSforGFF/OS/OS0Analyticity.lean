@@ -500,10 +500,7 @@ theorem gff_complex_CF_covariance (f : TestFunctionℂ) :
     have : AnalyticOnNhd ℂ (fun t : ℂ =>
         (2 * (freeCovarianceFormR m f_re f_im : ℂ)) * t) Set.univ :=
       AnalyticOnNhd.mul analyticOnNhd_const analyticOnNhd_id
-    have heq : (fun t : ℂ => 2 * t * (freeCovarianceFormR m f_re f_im : ℂ))
-        = (fun t : ℂ => (2 * (freeCovarianceFormR m f_re f_im : ℂ)) * t) := by
-      funext t; ring
-    rw [heq]; exact this
+    grind
   -- Step 3: L is entire (from parameter-dependent holomorphy)
   have hL_an : AnalyticOnNhd ℂ L Set.univ := gff_cf_slice_entire m f_re f_im
   -- Step 4: Identity theorem -- L = R on all of ℂ

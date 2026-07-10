@@ -57,9 +57,7 @@ def inj₁ (Y : Set β) : Set (Option (α ⊕ β)) := ir '' Y
 
 @[simp] theorem il_mem_inj₀ {X : Set α} {a : α} : (il a : Option (α ⊕ β)) ∈ inj₀ X ↔ a ∈ X := by
   simp only [inj₀, Set.mem_image, il]
-  constructor
-  · rintro ⟨a', ha', hb⟩; simp only [Option.some.injEq, Sum.inl.injEq] at hb; exact hb ▸ ha'
-  · intro ha; exact ⟨a, ha, rfl⟩
+  grind
 
 @[simp] theorem ir_mem_inj₀ {X : Set α} {b : β} : (ir b : Option (α ⊕ β)) ∉ inj₀ X := by
   rintro ⟨a, _, hb⟩; exact absurd hb (by simp [il, ir])
@@ -69,9 +67,7 @@ def inj₁ (Y : Set β) : Set (Option (α ⊕ β)) := ir '' Y
 
 @[simp] theorem ir_mem_inj₁ {Y : Set β} {b : β} : (ir b : Option (α ⊕ β)) ∈ inj₁ Y ↔ b ∈ Y := by
   simp only [inj₁, Set.mem_image, ir]
-  constructor
-  · rintro ⟨b', hb', hb⟩; simp only [Option.some.injEq, Sum.inr.injEq] at hb; exact hb ▸ hb'
-  · intro hb; exact ⟨b, hb, rfl⟩
+  grind
 
 @[simp] theorem il_mem_inj₁ {Y : Set β} {a : α} : (il a : Option (α ⊕ β)) ∉ inj₁ Y := by
   rintro ⟨b, _, hb⟩; exact absurd hb (by simp [il, ir])
@@ -251,15 +247,13 @@ theorem leftPart_mono (V₀ : NeighborhoodSystem α) {W W' : Set (Option (α ⊕
     leftPart V₀ W ⊆ leftPart V₀ W' := by
   intro a ha
   rw [mem_leftPart] at ha ⊢
-  exact ha.imp (fun h' => h h') (fun ⟨hm, hc⟩ => ⟨hm, hc.imp (fun ⟨b, hb⟩ => ⟨b, h hb⟩) (
-    fun hn => h hn)⟩)
+  grind
 
 theorem rightPart_mono (V₁ : NeighborhoodSystem β) {W W' : Set (Option (α ⊕ β))} (h : W ⊆ W') :
     rightPart V₁ W ⊆ rightPart V₁ W' := by
   intro b hb
   rw [mem_rightPart] at hb ⊢
-  exact hb.imp (fun h' => h h') (fun ⟨hm, hc⟩ => ⟨hm, hc.imp (fun ⟨a, ha⟩ => ⟨a, h ha⟩) (
-    fun hn => h hn)⟩)
+  grind
 
 @[simp] theorem leftPart_inj₀ (V₀ : NeighborhoodSystem α) (X : Set α) :
     leftPart V₀ (inj₀ X : Set (Option (α ⊕ β))) = X := by

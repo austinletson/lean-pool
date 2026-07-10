@@ -35,9 +35,7 @@ open scoped Chebyshev
 attribute [local fun_prop] DifferentiableAt.differentiableWithinAt
 
 private lemma Finset.Ioc_eq_Icc (M N : ℕ) : Finset.Ioc N M = Finset.Icc (N + 1) M := by
-  ext n
-  simp only [mem_Ioc, mem_Icc]
-  omega
+  grind
 
 private lemma Ioc_eq_Icc (M N : ℕ) : Finset.Ioc N M = Finset.Icc (N + 1) M :=
   Finset.Ioc_eq_Icc M N
@@ -223,8 +221,7 @@ theorem E_nu_bound (x : ℝ) (hx : x ≥ 0) : 0 ≤ E ν x ∧ E ν x ≤ 1 := b
       exact_mod_cast hlb
     have hub' : (⌊y⌋₊ : ℝ) ≤ ((⌊y / 2⌋₊ + ⌊y / 3⌋₊ + ⌊y / 5⌋₊ + 1 : ℕ) : ℝ) := by
       exact_mod_cast hub
-    push_cast at hlb' hub'
-    refine ⟨by linarith, by linarith⟩
+    grind
   let y := x - ⌊x / 30⌋₊ * 30
   have hy : 0 ≤ y ∧ y < 30 := ⟨by linarith [Nat.floor_le (by positivity : 0 ≤ x / 30)], by
     linarith [Nat.lt_floor_add_one (x / 30)]⟩
@@ -265,8 +262,7 @@ theorem psi_diff_le_weighted (x : ℝ) (hx : x > 0) : ψ x - ψ (x / 6) ≤ U x 
     have := hn.2 hn.1.1
     apply div_lt_iff₀ (by simp; grind) |>.mpr
     rw [Nat.floor_lt <| div_nonneg (by linarith) (by linarith)] at this
-    have := div_lt_iff₀ (by linarith) |>.mp this
-    rwa [mul_comm] at this
+    grind
   · exact E_nu_bound _ (div_nonneg hx.le (by simp)) |>.1
 
 /-- The main linear coefficient in the Chebyshev increment estimate. -/
@@ -310,21 +306,18 @@ lemma U_bound.lemma_4 (x : ℝ) (hx : 0 < x) :
   have ha : a = -(log 1 / 1 - log 2 / 2 - log 3 / 3 - log 5 / 5 + log 30 / 30) := by
     simp_rw [a, mul_div_assoc]
     rw [ν_sum_mul (fun m ↦ log m / m)]
-    push_cast
-    rfl
+    grind
   rw [ν_sum_mul (fun m ↦ (x / m) * log (x / m)), ha]
   simp [Real.log_div hx0]
   ring
 
 lemma U_bound.lemma_5 (x : ℝ) : ν.sum (fun m w ↦ w * (x / m)) = 0 := by
   rw [ν_sum_mul (fun m ↦ x / m)]
-  push_cast
-  ring
+  grind
 
 lemma U_bound.lemma_6 : ν.sum (fun _ w ↦ w) = (-1 : ℝ) := by
   have := ν_sum_mul (fun _ ↦ (1 : ℝ))
-  simp at this
-  linarith
+  grind
 
 lemma Finsupp.abs_sum_le (A : Type*) (ν : A →₀ ℝ) (g : A → ℝ → ℝ) : |ν.sum g| ≤ ν.sum |g| := by
   simp_rw [Finsupp.sum.eq_1]
@@ -348,9 +341,7 @@ theorem U_bound (x : ℝ) (hx : 30 ≤ x) : |U x - a * x| ≤ 5 * log x - 5 := b
   norm_num
   have hsupp_eq : ν.support = {1, 2, 3, 5, 30} := ν_support
   have hmem_of_supp : ∀ i ∈ ν.support, 0 < i ∧ i ≤ 30 := fun i hi ↦ by
-    have : i ∈ ({1, 2, 3, 5, 30} : Finset ℕ) := hsupp_eq ▸ hi
-    simp only [mem_insert, mem_singleton] at this
-    constructor <;> omega
+    grind
   have h : ν.sum |fun m w ↦ w * e (x * (↑m)⁻¹)| ≤
       ν.sum (fun m w ↦ |w| * log (x * (↑m)⁻¹)) := by
     apply Finsupp.sum_le_sum
@@ -382,11 +373,9 @@ theorem U_bound (x : ℝ) (hx : 30 ≤ x) : |U x - a * x| ≤ 5 * log x - 5 := b
       sum_insert (by decide : (3 : ℕ) ∉ ({5, 30} : Finset ℕ)),
       sum_insert (by decide : (5 : ℕ) ∉ ({30} : Finset ℕ)), sum_singleton, ν,
       Finsupp.sub_apply, Finsupp.add_apply, Finsupp.single_apply]
-    norm_num
-    ring
+    grind
   have habs : ν.sum (fun m w ↦ |w|) = 5 := by
-    rw [expand_sum _ (by intros; simp)]
-    norm_num
+    grind
   have hgeq6 : ν.sum (fun m w ↦ |w| * log m) ≥ 6 := by
     have hsum_eq : ν.sum (fun m w ↦ |w| * log (m : ℝ)) =
         log 2 + log 3 + log 5 + log 30 := by
@@ -441,12 +430,7 @@ theorem psi_upper_coarse (x : ℝ) (hx : 30 ≤ x) :
           · norm_num
           · refine Nat.floor_le <| div_nonneg ?_ ?_ <;> apply log_nonneg <;> linarith
           · norm_cast
-        · apply Nat.le_floor
-          norm_cast
-          apply le_div_iff₀ (log_pos (by norm_num : (1 : ℝ) < 6)) |>.mpr
-          rw [one_mul]
-          gcongr
-          linarith
+        · grind
       · exact rpow_key.le
   simp_rw [← add_sub, sum_add_distrib, sum_const, Nat.Ico_zero_eq_range, Finset.card_range,
     nsmul_eq_mul, tsub_le_iff_right] at bound
@@ -484,12 +468,7 @@ theorem psi_upper_coarse (x : ℝ) (hx : 30 ≤ x) :
       have hnonneg : 0 ≤ a * x * (1 / 6) ^ n := by
         have ha_nonneg : 0 ≤ a := by linarith [a_bound.1]
         positivity
-      have htail6 : 6 * (x / 6 ^ n) ≤ 180 := by nlinarith
-      have hmain :
-          a * x * (1 - (1 / 6 : ℝ) ^ n) / (1 - 1 / 6) ≤ 6 * a * x / 5 := by
-        norm_num
-        nlinarith
-      nlinarith
+      grind
 
 theorem eventually_psi_le_mul :
     ∀ᶠ x : ℝ in atTop, ψ x ≤ (113 / 100 : ℝ) * x := by

@@ -65,17 +65,14 @@ include T in theorem build_R_prime_in_S
   have hRbar_mul : ∀ t₁ t₂, t₁ ∈ Rbar → t₂ ∈ Rbar → t₁ * t₂ ∈ Rbar :=
     fun t₁ t₂ ⟨h₁₁, h₁₂⟩ ⟨h₂₁, h₂₂⟩ =>
       ⟨(fun x' y' t₁ t₂ ⟨f₁, n₁, hf₁⟩ ⟨f₂, n₂, hf₂⟩ =>
-        ⟨f₁ * f₂, n₁ + n₂, by rw [map_mul, ← hf₁, ← hf₂, pow_add]
-                              ring⟩) x₁ y₂ t₁ t₂ h₁₁ h₂₁,
+        ⟨f₁ * f₂, n₁ + n₂, by grind⟩) x₁ y₂ t₁ t₂ h₁₁ h₂₁,
        (fun x' y' t₁ t₂ ⟨f₁, n₁, hf₁⟩ ⟨f₂, n₂, hf₂⟩ =>
-        ⟨f₁ * f₂, n₁ + n₂, by rw [map_mul, ← hf₁, ← hf₂, pow_add]
-                              ring⟩) x₂ y₁ t₁ t₂ h₁₂ h₂₂⟩
+        ⟨f₁ * f₂, n₁ + n₂, by grind⟩) x₂ y₁ t₁ t₂ h₁₂ h₂₂⟩
   have hALS_mul : ∀ (x' : T) (y' : R.carrier) (t₁ t₂ : T),
       t₁ ∈ adjoinLocSetY R x' y' → t₂ ∈ adjoinLocSetY R x' y' →
       t₁ * t₂ ∈ adjoinLocSetY R x' y' := by
     intro x' y' t₁ t₂ ⟨f₁, n₁, hf₁⟩ ⟨f₂, n₂, hf₂⟩
-    exact ⟨f₁ * f₂, n₁ + n₂, by rw [map_mul, ← hf₁, ← hf₂, pow_add]
-                                ring⟩
+    exact ⟨f₁ * f₂, n₁ + n₂, by grind⟩
   have hp_ne : (⟨(↑p : T), hR_le p.2⟩ : S_sub) ≠ 0 := by
     intro h
     exact hp.ne_zero (R.carrier.subtype_injective (congrArg Subtype.val h))
@@ -92,9 +89,7 @@ include T in theorem build_R_prime_in_S
                                     exact hc_mem
   obtain ⟨ac, bc, hac_Rbar, hbc_Rbar, hbc_notM, hc_eq⟩ := hc_car
   have hab_ac : ab * ac = (↑p : T) * (d * bb * bc) := by
-    have : ab * ac = (b * bb) * (c * bc) := by rw [hb_eq, hc_eq]
-    rw [this, show (b * bb) * (c * bc) = b * c * (bb * bc) from by ring,
-      hbc_T, show (↑p : T) * d * (bb * bc) = (↑p : T) * (d * bb * bc) from by ring]
+    grind
   have hab_ac_Rbar := hRbar_mul ab ac hab_Rbar hac_Rbar
   have hcop := hcoprime p hp
   suffices h : (∃ e₁ ∈ Rbar, ab = (↑p : T) * e₁) ∨ (∃ e₂ ∈ Rbar, ac = (↑p : T) * e₂) by
@@ -128,10 +123,7 @@ include T in theorem build_R_prime_in_S
   have hd_carrier : d ∈ S_carrier := hS_sub_eq' ▸ hd_mem
   obtain ⟨a_d, b_d, had_Rbar, hbd_Rbar, hbd_notM, hd_eq⟩ := hd_carrier
   have hcleared : ab * (ac * b_d) = (↑p : T) * (a_d * bb * bc) := by
-    have h1 : ab * ac * b_d = (↑p : T) * (d * bb * bc) * b_d := by rw [hab_ac]
-    have h2 : (↑p : T) * (d * bb * bc) * b_d = (↑p : T) * (d * b_d * (bb * bc)) := by ring
-    rw [show ab * (ac * b_d) = ab * ac * b_d from by ring, h1, h2, hd_eq]
-    ring
+    grind
   have hacbd_Rbar : ac * b_d ∈ Rbar := hRbar_mul ac b_d hac_Rbar hbd_Rbar
   have hadbbbc_Rbar : a_d * bb * bc ∈ Rbar :=
     hRbar_mul _ _ (hRbar_mul a_d bb had_Rbar hbb_Rbar) hbc_Rbar
@@ -344,8 +336,7 @@ private def build_loc_away_ufd_proof
           evalS m_poly =
             s ^ nn * (⟨b', hb'_S⟩ *
               (ι y₂) ^ jw) * (ι y₂) ^ kw := by
-        simp only [m_poly, map_mul, map_pow,
-          hevalS_s, hevalS_C, hevalS_gw_eq]
+        grind
       have hm_mem : m_poly ∈ M := by
         change IsUnit (φ m_poly)
         change IsUnit (A (evalS m_poly))
@@ -370,8 +361,7 @@ private def build_loc_away_ufd_proof
           A (evalS a_poly)
         have hz' : z * A (s ^ nn) = A w := by
           show z * A (s ^ nn) = A w
-          rw [map_pow]
-          exact hz
+          grind
         apply hs_pow_unit.mul_right_cancel
         calc z * A (evalS m_poly) * A (s ^ nn)
             = z * A (s ^ nn) *
@@ -405,15 +395,7 @@ private def build_loc_away_ufd_proof
         rw [Subring.coe_mul,
           Subring.coe_inclusion,
           Subring.coe_inclusion]
-      rw [hs_T]
-      rw [show (aeval x₁ gw : T) =
-            b' * (↑y₂ : T) ^ jw from hgw.symm,
-          show (aeval x₁ fw : T) =
-            a' * (↑y₂ : T) ^ kw from hfw.symm]
-      linear_combination
-        (↑y₁ * ↑y₂ : T) ^ nn *
-          (↑y₂ : T) ^ jw *
-          (↑y₂ : T) ^ kw * hw_eq
+      grind
     · exact ⟨1, by rw [hφ_inj hab]⟩
   exact localization_submonoid_UFD hM_le
 ⟩
@@ -483,8 +465,7 @@ private def build_ufd_proof_proof
       refine ⟨f₁ * C (y₂ ^ n₂) + f₂ * C (y₂ ^ n₁), n₁ + n₂, ?_⟩
       have key : (t₁ + t₂) * (↑y₂ : T) ^ (n₁ + n₂) =
           t₁ * (↑y₂ : T) ^ n₁ * (↑y₂ : T) ^ n₂ +
-          t₂ * (↑y₂ : T) ^ n₂ * (↑y₂ : T) ^ n₁ := by rw [pow_add]
-                                                     ring
+          t₂ * (↑y₂ : T) ^ n₂ * (↑y₂ : T) ^ n₁ := by grind
       rw [key, hf₁, hf₂, map_add, map_mul, map_mul, aeval_C, aeval_C]
       simp only [show algebraMap R.carrier T = R.carrier.subtype
         from rfl, Subring.coe_subtype, map_pow]
@@ -493,19 +474,16 @@ private def build_ufd_proof_proof
       refine ⟨f₁ * C (y₁ ^ n₂) + f₂ * C (y₁ ^ n₁), n₁ + n₂, ?_⟩
       have key : (t₁ + t₂) * (↑y₁ : T) ^ (n₁ + n₂) =
           t₁ * (↑y₁ : T) ^ n₁ * (↑y₁ : T) ^ n₂ +
-          t₂ * (↑y₁ : T) ^ n₂ * (↑y₁ : T) ^ n₁ := by rw [pow_add]
-                                                     ring
+          t₂ * (↑y₁ : T) ^ n₂ * (↑y₁ : T) ^ n₁ := by grind
       rw [key, hf₁, hf₂, map_add, map_mul, map_mul, aeval_C, aeval_C]
       simp only [show algebraMap R.carrier T = R.carrier.subtype
         from rfl, Subring.coe_subtype, map_pow]
   have hRbar_mul : ∀ t₁ t₂, t₁ ∈ Rbar → t₂ ∈ Rbar → t₁ * t₂ ∈ Rbar :=
     fun t₁ t₂ ⟨h₁₁, h₁₂⟩ ⟨h₂₁, h₂₂⟩ =>
       ⟨(fun x' y' t₁ t₂ ⟨f₁, n₁, hf₁⟩ ⟨f₂, n₂, hf₂⟩ =>
-        ⟨f₁ * f₂, n₁ + n₂, by rw [map_mul, ← hf₁, ← hf₂, pow_add]
-                              ring⟩) x₁ y₂ t₁ t₂ h₁₁ h₂₁,
+        ⟨f₁ * f₂, n₁ + n₂, by grind⟩) x₁ y₂ t₁ t₂ h₁₁ h₂₁,
        (fun x' y' t₁ t₂ ⟨f₁, n₁, hf₁⟩ ⟨f₂, n₂, hf₂⟩ =>
-        ⟨f₁ * f₂, n₁ + n₂, by rw [map_mul, ← hf₁, ← hf₂, pow_add]
-                              ring⟩) x₂ y₁ t₁ t₂ h₁₂ h₂₂⟩
+        ⟨f₁ * f₂, n₁ + n₂, by grind⟩) x₂ y₁ t₁ t₂ h₁₂ h₂₂⟩
   have hS_mem_rep : ∀ s : S_sub, ∃ (a b : T), a ∈ Rbar ∧ b ∈ Rbar ∧
       b ∉ IsLocalRing.maximalIdeal T ∧ (s : T) * b = a := by
     intro s
@@ -634,8 +612,7 @@ private def build_ufd_proof_proof
         have h2 : (Multiset.map ι factors).prod = (pfactors.map ι).prod := by
           rw [show (factors : Multiset R.carrier) = ↑pfactors from
             (Multiset.coe_toList factors).symm, Multiset.map_coe, Multiset.prod_coe]
-        rw [h2, show ι (y₁ * y₂) = ι y₁ * ι y₂ from map_mul ι y₁ y₂] at h1
-        exact h1
+        grind
       -- Each prime factor of y₁y₂ is either prime-and-avoiding-P or a unit in S_sub
       have hfactor_class : ∀ p ∈ pfactors,
           (Prime (ι p) ∧ ι p ∉ P) ∨ IsUnit (ι p) := by
@@ -673,8 +650,7 @@ private def build_ufd_proof_proof
             obtain ⟨a', d', ha₁_eq, ha'_P, ha'_ne, ha'_ndvd⟩ :=
               ih a₁ ha₁_ne ha₁_P hqs_class
             refine ⟨a', (ι q) ^ kq * d', ?_, ha'_P, ha'_ne, ?_⟩
-            · rw [ha_eq, ha₁_eq]
-              ring
+            · grind
             · intro p hp hp_prime
               rcases List.mem_cons.mp hp with rfl | hp'
               · intro h
@@ -782,9 +758,7 @@ private def build_ufd_proof_proof
             have hsm_eq : s ^ m = (pfactors.map ι).prod ^ m * ↑u_s ^ m := by
               rw [← hu_s, mul_pow]
             have h1 : r' ∣ (x * ↑u_s ^ m) * (pfactors.map ι).prod ^ m := by
-              rwa [show (x * ↑u_s ^ m) * (pfactors.map ι).prod ^ m =
-                x * s ^ m from by rw [hsm_eq]
-                                  ring]
+              grind
             exact strip_list_prod_pow pfactors (x * ↑u_s ^ m)
               hfactor_class hr'_ndvd h1
           exact (u_s.isUnit.pow m).dvd_mul_right.mp hr'_dvd_xU
@@ -869,17 +843,14 @@ include T in theorem build_primes_preserved
   have hRbar_mul : ∀ t₁ t₂, t₁ ∈ Rbar → t₂ ∈ Rbar → t₁ * t₂ ∈ Rbar :=
     fun t₁ t₂ ⟨h₁₁, h₁₂⟩ ⟨h₂₁, h₂₂⟩ =>
       ⟨(fun x' y' t₁ t₂ ⟨f₁, n₁, hf₁⟩ ⟨f₂, n₂, hf₂⟩ =>
-        ⟨f₁ * f₂, n₁ + n₂, by rw [map_mul, ← hf₁, ← hf₂, pow_add]
-                              ring⟩) x₁ y₂ t₁ t₂ h₁₁ h₂₁,
+        ⟨f₁ * f₂, n₁ + n₂, by grind⟩) x₁ y₂ t₁ t₂ h₁₁ h₂₁,
        (fun x' y' t₁ t₂ ⟨f₁, n₁, hf₁⟩ ⟨f₂, n₂, hf₂⟩ =>
-        ⟨f₁ * f₂, n₁ + n₂, by rw [map_mul, ← hf₁, ← hf₂, pow_add]
-                              ring⟩) x₂ y₁ t₁ t₂ h₁₂ h₂₂⟩
+        ⟨f₁ * f₂, n₁ + n₂, by grind⟩) x₂ y₁ t₁ t₂ h₁₂ h₂₂⟩
   have hALS_mul : ∀ (x' : T) (y' : R.carrier) (t₁ t₂ : T),
       t₁ ∈ adjoinLocSetY R x' y' → t₂ ∈ adjoinLocSetY R x' y' →
       t₁ * t₂ ∈ adjoinLocSetY R x' y' := by
     intro x' y' t₁ t₂ ⟨f₁, n₁, hf₁⟩ ⟨f₂, n₂, hf₂⟩
-    exact ⟨f₁ * f₂, n₁ + n₂, by rw [map_mul, ← hf₁, ← hf₂, pow_add]
-                                ring⟩
+    exact ⟨f₁ * f₂, n₁ + n₂, by grind⟩
   set r' : S_sub := ⟨(r : T), hR_le r.2⟩ with hr'_def
   have hr'_ne : r' ≠ 0 := by
     intro h
@@ -920,20 +891,14 @@ include T in theorem build_primes_preserved
         ha_eq ▸ Ideal.mul_mem_right a₂ _ ha_M
       have heq_T : (r : T) = (a : T) * (b : T) := congrArg Subtype.val hab
       have hcleared : (r : T) * a₂ * b₂ = a₁ * b₁ := by
-        calc (r : T) * a₂ * b₂
-            = ((a : T) * (b : T)) * a₂ * b₂ := by rw [← heq_T]
-          _ = ((a : T) * a₂) * ((b : T) * b₂) := by ring
-          _ = a₁ * b₁ := by rw [ha_eq, hb_eq]
+        grind
       have hry₂ : ¬ r ∣ y₂ ∨ ¬ r ∣ y₁ := by
-        by_contra h
-        push Not at h
-        exact hcoprime r hr ⟨h.2, h.1⟩
+        grind
       have hab₂_Rbar := hRbar_mul a₂ b₂ ha₂_Rbar hb₂_Rbar
       have hab₂_A₁ : a₂ * b₂ ∈ adjoinLocSetY R x₁ y₂ := hab₂_Rbar.1
       have hab₂_A₂ : a₂ * b₂ ∈ adjoinLocSetY R x₂ y₁ := hab₂_Rbar.2
       have hprod_eq : a₁ * b₁ = (r : T) * (a₂ * b₂) := by
-        rw [← hcleared]
-        ring
+        grind
       have hr_M : (r : T) ∈ IsLocalRing.maximalIdeal T := by
         have hmem : r ∈ IsLocalRing.maximalIdeal R.carrier := by
           rw [IsLocalRing.mem_maximalIdeal, mem_nonunits_iff]
@@ -952,9 +917,7 @@ include T in theorem build_primes_preserved
           intro d ha₁_eq
           have hdb₁ : d * b₁ = a₂ * b₂ :=
             mul_left_cancel₀ hr_ne (by
-              calc (r : T) * (d * b₁) = (r : T) * d * b₁ := by ring
-                _ = a₁ * b₁ := by rw [← ha₁_eq]
-                _ = (r : T) * (a₂ * b₂) := hprod_eq)
+              grind)
           have hab₂_unit : IsUnit (a₂ * b₂) := ha₂_unit.mul hb₂_unit
           rw [← hdb₁] at hab₂_unit
           have hb₁_unit : IsUnit b₁ := isUnit_of_mul_isUnit_right hab₂_unit
@@ -965,9 +928,7 @@ include T in theorem build_primes_preserved
           intro d hb₁_eq
           have hda₁ : a₁ * d = a₂ * b₂ :=
             mul_left_cancel₀ hr_ne (by
-              calc (r : T) * (a₁ * d) = a₁ * ((r : T) * d) := by ring
-                _ = a₁ * b₁ := by rw [← hb₁_eq]
-                _ = (r : T) * (a₂ * b₂) := hprod_eq)
+              grind)
           have hab₂_unit : IsUnit (a₂ * b₂) := ha₂_unit.mul hb₂_unit
           rw [← hda₁] at hab₂_unit
           have ha₁_unit : IsUnit a₁ := isUnit_of_mul_isUnit_left hab₂_unit

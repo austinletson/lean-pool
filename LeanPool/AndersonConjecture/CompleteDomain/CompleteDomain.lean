@@ -87,8 +87,7 @@ theorem coeff_sub_X_mul_divX
   split_ifs with hle hms
   · exfalso
     have := hle s
-    simp [Finsupp.single_eq_same] at this
-    omega
+    grind
   · simp only [one_mul]
     simp only [sub_eq_zero]
     change f m = f (m - Finsupp.single s 1 + Finsupp.single s 1)
@@ -97,11 +96,7 @@ theorem coeff_sub_X_mul_divX
   · exfalso
     apply hle
     intro i
-    simp only [Finsupp.single_apply]
-    split_ifs with heq
-    · subst heq
-      omega
-    · exact Nat.zero_le _
+    grind
 
 open MvPowerSeries in
 /-- ker phiToPS = PPre. -/
@@ -129,20 +124,12 @@ theorem ker_phiToPS_eq : RingHom.ker phiToPS = PPre := by
       · rw [hf'_def, coeff_sub_X_mul_divX]
         split_ifs with h0
         · have hm_eq : m = Finsupp.single 2 (m 2) := by
-            ext i
-            fin_cases i <;> simp [*]
-          rw [hm_eq]
-          exact hcoeff (m 2)
+            grind
+          grind
         · rfl
       · rfl
     have hdecomp : f = X 0 * g₀ + X 1 * g₁ := by
-      have hf'eq : f' = X 1 * g₁ := by
-        rw [hf''_def] at hf''_zero
-        exact sub_eq_zero.mp hf''_zero
-      have hfeq : f = X 0 * g₀ + f' := by rw [hf'_def]
-                                          abel
-      rw [hf'eq] at hfeq
-      exact hfeq
+      grind
     rw [hdecomp]
     apply Ideal.add_mem
     · exact Ideal.mul_mem_right _ _ (Ideal.subset_span (Set.mem_insert _ _))
@@ -334,10 +321,7 @@ lemma Finsupp.sum_fin2
     m.sum f = f 0 (m 0) + f 1 (m 1) := by
   rw [Finsupp.sum]
   refine Finset.sum_subset_zero_on_sdiff (Finset.subset_univ _) (fun i hi => by
-    simp only [Finsupp.mem_support_iff, ne_eq, not_not, Finset.mem_sdiff, Finset.mem_univ,
-      true_and] at hi
-    rw [hi]
-    exact hf i) (fun _ _ => rfl)
+    grind) (fun _ _ => rfl)
   |>.trans ?_
   simp [Finset.univ_fin2]
 
@@ -360,13 +344,10 @@ lemma coeff_negSubst (g : MvPowerSeries (Fin 2) ℂ) (m : Fin 2 →₀ ℕ) :
       rw [Finsupp.sum]
       exact Finset.sum_subset (Finset.subset_univ _)
         (fun i _ hi => by
-           simp only [Finsupp.mem_support_iff, ne_eq, not_not] at hi
-           exact hi)
+           grind)
         |>.trans (by simp [Finset.univ_fin2])
-    rw [hsum]
-    ring
-  · intro d hd
-    simp only [if_neg (Ne.symm hd), mul_zero]
+    grind
+  · grind
 
 open MvPowerSeries in
 lemma ψHom_coeff_odd_parity (f : MvPowerSeries (Fin 3) ℂ)
@@ -377,11 +358,7 @@ lemma ψHom_coeff_odd_parity (f : MvPowerSeries (Fin 3) ℂ)
   rw [coeff_negSubst] at h1
   obtain ⟨k, hk⟩ := hm
   rw [hk, pow_succ, pow_mul, neg_one_sq, one_pow, one_mul, neg_one_mul] at h1
-  have h2 : (2 : ℂ) • MvPowerSeries.coeff m (ψHom f) = 0 := by
-    rw [two_smul]
-    exact neg_eq_iff_add_eq_zero.mp h1
-  rw [smul_eq_mul] at h2
-  exact (mul_eq_zero.mp h2).resolve_left two_ne_zero
+  grind
 
 open MvPowerSeries in
 lemma Q_le_maximalIdeal : Q ≤ IsLocalRing.maximalIdeal T :=
@@ -412,9 +389,7 @@ theorem Q_not_isPrincipal : ¬ Q.IsPrincipal := by
       simp [MvPowerSeries.coeff_X] at this
     have h1 : (MvPowerSeries.X (0 : Fin 2) : MvPowerSeries (Fin 2) ℂ) ^ 2 * ψBar r =
         MvPowerSeries.X 0 * MvPowerSeries.X 1 * ψBar s := by
-      calc _ = ψBar s * ψBar a * ψBar r := by rw [hψs]
-        _ = ψBar r * ψBar a * ψBar s := by ring
-        _ = _ := by rw [hψr]
+      grind
     rw [sq, mul_assoc, mul_assoc] at h1
     exact mul_left_cancel₀ hX0_ne h1
   have hconst_r : MvPowerSeries.constantCoeff (ψBar r) = 0 := by
@@ -489,23 +464,18 @@ theorem Q_not_isPrincipal : ¬ Q.IsPrincipal := by
       simp only [Finsupp.add_apply, Finsupp.single_eq_same] at this
       exact this
     have hu_eq : u = Finsupp.single 0 (u 0) := by
-      ext i
-      fin_cases i <;> simp [*]
+      grind
     have hv_eq : v = Finsupp.single 0 (v 0) := by
-      ext i
-      fin_cases i <;> simp [*]
+      grind
     have hu0_le : u 0 ≤ 2 := by omega
     interval_cases (u 0)
     · rw [hu_eq, Finsupp.single_zero (0 : Fin 2),
         MvPowerSeries.coeff_zero_eq_constantCoeff, hconst_s, zero_mul]
-    · have hv0 : v 0 = 1 := by omega
-      rw [hv_eq, hv0, hparity_a, mul_zero]
+    · grind
     · have hv0 : v 0 = 0 := by omega
       rw [hv_eq, hv0, Finsupp.single_zero (0 : Fin 2),
         MvPowerSeries.coeff_zero_eq_constantCoeff, hconst_a, mul_zero]
-  have : (1 : ℂ) = 0 := by
-    rw [← hcoeff_X0sq, hψs, hcoeff_prod]
-  exact one_ne_zero this
+  grind
 
 open MvPowerSeries in
 lemma mk_X2_not_mem_Q :
@@ -552,8 +522,7 @@ theorem T_ringKrullDim : ringKrullDim T = 2 := by
       | top => exact absurd h3 (by norm_num)
       | coe n =>
         rw [show (↑n : ℕ∞) + 1 = ↑(n + 1) by
-              push_cast
-              ring,
+              grind,
             show (3 : ℕ∞) = ↑(3 : ℕ) from rfl, ENat.coe_le_coe] at h3
         rw [show (2 : ℕ∞) = ↑(2 : ℕ) from rfl, ENat.coe_le_coe]
         omega

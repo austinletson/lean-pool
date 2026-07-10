@@ -173,9 +173,7 @@ private theorem taylor_remainder_factored (G : ℂ → ℂ) (s : ℂ) (N : ℕ)
     rw [hP_eq]
     rw [← hG_tail.tsum_eq]
     rw [← hH_z.tsum_eq, ← tsum_mul_left]
-    congr 1; ext j
-    simp only [c]
-    ring)
+    congr 1; grind)
 
 /-- If `f` is meromorphic at `s`, then `f - meromorphicPrincipalPart f s` agrees
 with an analytic function near `s` (away from `s`). Since the principal part
@@ -288,16 +286,10 @@ private theorem integral_zpow_comp_sub_mul_deriv'
     have hne : γ t ≠ s := hγ_ne t (Ioo_subset_Icc_self ht)
     have h_div := (hasDerivAt_zpow_comp_sub' (n := n + 1)
       (hγ_diff t ht ht_not_E).hasDerivAt hne).div_const (↑(n + 1) : ℂ)
-    change HasDerivAt F ((γ t - s) ^ n * ↑(deriv γ t)) t
-    have : (↑(n + 1) : ℂ) * (γ t - s) ^ (n + 1 - 1) * ↑(deriv γ t) / (↑(n + 1) : ℂ)
-        = (γ t - s) ^ n * ↑(deriv γ t) := by
-      rw [show (n + 1 : ℤ) - 1 = n from by ring]
-      rw [mul_assoc, mul_div_cancel_left₀ _ hn1_cast]
-    rwa [this] at h_div
+    grind
   rw [MeasureTheory.integral_eq_of_hasDerivAt_off_countable_of_le
     F f hab hE_count hF_cont hF_deriv h_int]
-  simp only [F]
-  rw [← sub_div]
+  grind
 
 /-! ### Contour integral of zpow on closed curves
 
@@ -411,8 +403,7 @@ private theorem residueAt_zpow_sum (s : ℂ) (N : ℕ) (hN : 0 < N) (c : ℕ →
   rw [h_sum_eq]
   simp_rw [h_term_integral]
   rw [Finset.sum_ite_eq' (Finset.range N) (N - 1)]
-  simp only [Finset.mem_range, Nat.sub_one_lt_of_le hN le_rfl, ↓reduceIte]
-  rw [mul_comm (c (N - 1)) _, ← mul_assoc, inv_mul_cancel₀ h2piI_ne, one_mul]
+  grind
 
 /-! ### Principal part integral vanishing
 
@@ -457,8 +448,7 @@ private theorem residueAt_eq_residueAt_principalPart_sum (f : ℂ → ℂ) (s : 
     have h_in : dist z s < rf := by rw [Metric.mem_sphere.mp hz]; exact hr_lt_rf
     have h_mem : z ∈ Metric.ball s rf ∩ {s}ᶜ :=
       ⟨Metric.mem_ball.mpr h_in, Set.mem_compl_singleton_iff.mpr h_ne⟩
-    rw [show f z = pp z + (f z - pp z) from (add_sub_cancel _ _).symm,
-      show f z - pp z = g_an z from by simpa using hrf_eq h_mem]
+    grind
   have h_g_cont : ContinuousOn g_an (Metric.closedBall s r) :=
     hg_ball.continuousOn.mono (Metric.closedBall_subset_ball hr_lt_rg)
   have h_ci_g : CircleIntegrable g_an s r :=
@@ -469,8 +459,7 @@ private theorem residueAt_eq_residueAt_principalPart_sum (f : ℂ → ℂ) (s : 
     intro k _
     apply ContinuousOn.mul continuousOn_const
     apply ContinuousOn.zpow₀ (continuousOn_id.sub continuousOn_const)
-    intro z hz
-    exact Or.inl (sub_ne_zero.mpr (ne_of_mem_of_not_mem hz hs_not))
+    grind
   have h_ci_pp : CircleIntegrable pp s r :=
     h_pp_cont.circleIntegrable hr_pos.le
   rw [circleIntegral.integral_congr hr_pos.le h_eq_on,

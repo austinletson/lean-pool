@@ -255,9 +255,7 @@ private lemma cutoff_zpow_integral_eq_boundary
     E hE_count (Set.inter_subset_right) (fun t ht hne =>
       hγ_diff t ⟨(hσ₁_ge.trans hσ₁_lt.le).trans ht.1.le, ht.2.le⟩ hne) h_int_r
   rw [hftc_l, hftc_r, hγ_closed]
-  simp only [show (-(m : ℤ) + 1 : ℤ) = 1 - (m : ℤ) from by omega,
-    show (↑(1 - (m : ℤ)) : ℂ) = 1 - ↑↑m from by push_cast; ring, Int.cast_natCast]
-  ring
+  grind
 
 private lemma exit_time_tendsto_right
     (γ : PiecewiseC1Immersion) (s : ℂ) (t₀ : ℝ)
@@ -288,10 +286,7 @@ private lemma exit_time_tendsto_right
     obtain ⟨hσ₂_gt, hσ₂_le, hσ₂_norm, hσ₂_mid⟩ :=
       hσ₂_props ε ⟨hε_pos, lt_of_lt_of_le hε_lt (min_le_right _ _)⟩
     rw [dist_eq_norm, Real.norm_eq_abs, abs_of_pos (sub_pos.mpr hσ₂_gt)]
-    by_contra h_not_lt
-    push Not at h_not_lt
-    linarith [hσ₂_mid t₁ ⟨ht₁_gt.le, by simp only [ht₁_def]; linarith [min_le_left η (r - t₀)]⟩,
-      lt_of_lt_of_le hε_lt (min_le_left _ _)]
+    grind
   · filter_upwards [Ioo_mem_nhdsGT hδ] with ε hε
     exact (hσ₂_props ε hε).1
 
@@ -323,10 +318,7 @@ private lemma exit_time_tendsto_left
     obtain ⟨hσ₁_lt, hσ₁_ge, hσ₁_norm, hσ₁_mid⟩ :=
       hσ₁_props ε ⟨hε_pos, lt_of_lt_of_le hε_lt (min_le_right _ _)⟩
     rw [dist_comm, dist_eq_norm, Real.norm_eq_abs, abs_of_pos (sub_pos.mpr hσ₁_lt)]
-    by_contra h_not_lt
-    push Not at h_not_lt
-    linarith [hσ₁_mid t₁ ⟨by simp only [ht₁_def]; linarith [min_le_left η (t₀ - l)],
-        ht₁_lt.le⟩, lt_of_lt_of_le hε_lt (min_le_left _ _)]
+    grind
   · filter_upwards [Ioo_mem_nhdsGT hδ] with ε hε
     exact (hσ₁_props ε hε).1
 
@@ -460,15 +452,9 @@ private lemma cutoff_zpow_direction_and_ftc
   · filter_upwards [hIoo_ev] with ε hε
     obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9⟩ := hprops ε hε
     have hne_left : ∀ t ∈ Icc γ.a (σ₁ ε), γ.toFun t ≠ s := by
-      intro t ht habs
-      rcases eq_or_lt_of_le ht.2 with rfl | ht_lt
-      · rw [habs, sub_self, norm_zero] at h5; linarith [hε.1]
-      · have := h7 t ⟨ht.1, ht_lt⟩; rw [habs, sub_self, norm_zero] at this; linarith [hε.1]
+      grind
     have hne_right : ∀ t ∈ Icc (σ₂ ε) γ.b, γ.toFun t ≠ s := by
-      intro t ht habs
-      rcases eq_or_lt_of_le ht.1 with rfl | ht_gt
-      · rw [habs, sub_self, norm_zero] at h6; linarith [hε.1]
-      · have := h8 t ⟨ht_gt, ht.2⟩; rw [habs, sub_self, norm_zero] at this; linarith [hε.1]
+      grind
     exact cutoff_zpow_integral_eq_boundary γ s m hm hγ_closed
       (σ₁ ε) (σ₂ ε) ε h1 (lt_trans h2 h3) h4 hε.1 h5 h6 h7 h8 h9
       (zpow_mul_deriv_intervalIntegrable γ s m γ.a (σ₁ ε) h1 le_rfl
@@ -518,8 +504,7 @@ lemma cutoff_zpow_infrastructure
       (∀ t ∈ Ico γ.a (σ₁ ε), ε < ‖γ.toFun t - s‖) ∧
       (∀ t ∈ Ioc (σ₂ ε) γ.b, ε < ‖γ.toFun t - s‖) ∧
       (∀ t ∈ Icc (σ₁ ε) (σ₂ ε), ‖γ.toFun t - s‖ ≤ ε) := by
-    intro ε hε
-    simpa only [σ₁, σ₂, hε, dif_pos] using (h_exit ε hε).choose_spec.choose_spec
+    grind
   have hIoo_ev : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ε ∈ Ioo 0 δ := Ioo_mem_nhdsGT hδ_pos
   let wR : ℝ → ℂ := fun ε => γ.toFun (σ₂ ε) - s
   let wL : ℝ → ℂ := fun ε => γ.toFun (σ₁ ε) - s
@@ -533,13 +518,9 @@ lemma cutoff_zpow_infrastructure
   · exact hIoo_ev.mono fun ε hε => (hprops ε hε).2.2.2.2.2.1
   · exact hIoo_ev.mono fun ε hε => (hprops ε hε).2.2.2.2.1
   · filter_upwards [hIoo_ev] with ε hε
-    change γ.toFun (σ₂ ε) - s ≠ 0
-    have h_norm := (hprops ε hε).2.2.2.2.2.1
-    exact sub_ne_zero.mpr (fun h => by rw [h, sub_self, norm_zero] at h_norm; linarith [hε.1])
+    grind
   · filter_upwards [hIoo_ev] with ε hε
-    change γ.toFun (σ₁ ε) - s ≠ 0
-    have h_norm := (hprops ε hε).2.2.2.2.1
-    exact sub_ne_zero.mpr (fun h => by rw [h, sub_self, norm_zero] at h_norm; linarith [hε.1])
+    grind
   · change ‖L_R / ↑‖L_R‖‖ = 1
     rw [norm_div, Complex.norm_real, Real.norm_eq_abs, abs_of_pos (norm_pos_iff.mpr hL_R_ne),
       div_self (norm_ne_zero_iff.mpr hL_R_ne)]

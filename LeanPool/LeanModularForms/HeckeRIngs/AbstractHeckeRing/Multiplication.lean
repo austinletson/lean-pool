@@ -545,9 +545,7 @@ lemma heckeMultiplicity_eq_zero_of_mulMap_unique (g₁ g₂ : P.Δ) (D_out A : H
       mulMap P g₁ g₂ p = D_out) :
     heckeMultiplicity P g₁ g₂ (HeckeCoset.rep A) = 0 :=
   heckeMultiplicity_eq_zero_of_nmem_mulSupport P g₁ g₂ A (by
-    rw [mulSupport]; simp only [Finset.top_eq_univ, Finset.mem_image, Finset.mem_univ,
-      true_and, Prod.exists, not_exists]
-    intro i j heq; exact hA (heq ▸ h (i, j)))
+    rw [mulSupport]; grind)
 
 /-- When `heckeMultiplicity` equals one on a single output coset and vanishes elsewhere,
 the multiplication finsupp is a singleton. -/

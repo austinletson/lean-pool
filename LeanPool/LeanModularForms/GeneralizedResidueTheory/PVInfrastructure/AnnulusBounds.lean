@@ -71,18 +71,13 @@ private lemma remainder_annulus_zero_of_far
   by_cases hcond : ε₂ < ‖γ t - γ t₀‖ ∧ ‖γ t - γ t₀‖ ≤ ε₁
   · exfalso
     have ht_in_Icc : t ∈ Set.Icc a b := by
-      rw [Set.uIoc_eq_union] at ht
-      rcases ht with ht_ab | ht_ba
-      · exact Set.Ioc_subset_Icc_self ht_ab
-      · rw [Set.Ioc_eq_empty_of_le hab.le] at ht_ba
-        exact absurd ht_ba (Set.notMem_empty t)
+      grind
     by_cases ht_eq : t = t₀
     · simp only [ht_eq, sub_self, norm_zero] at hcond
       exact absurd hcond.1 (not_lt.mpr hε₂_pos.le)
     exact not_lt.mpr
       (annulus_t_measure_bound hL hε₁_pos h_lower
-        (fun s hs hγs => by simp only [min_self]
-                            exact lt_of_lt_of_le (h_localize s hs hγs) (min_le_right _ _))
+        (fun s hs hγs => by grind)
         t ht_in_Icc ht_eq hcond.1 hcond.2) h_far
   · simp only [hcond, ↓reduceIte]
 
@@ -102,16 +97,11 @@ private lemma remainder_annulus_pw_bound
   by_cases hcond : ε₂ < ‖γ t - γ t₀‖ ∧ ‖γ t - γ t₀‖ ≤ ε₁
   · rw [if_pos hcond]
     have ht_in_Icc : t ∈ Set.Icc a b := by
-      rw [Set.uIoc_eq_union] at ht; rcases ht with h | h
-      · exact Set.Ioc_subset_Icc_self h
-      · exact absurd (Set.Ioc_eq_empty_of_le hab.le ▸ h) (Set.notMem_empty t)
+      grind
     by_cases ht_eq : t = t₀
     · simp only [ht_eq, sub_self, norm_zero] at hcond
       exact absurd hcond.1 (not_lt.mpr hε₂_pos.le)
-    have ht_pos : 0 < |t - t₀| := abs_pos.mpr (sub_ne_zero.mpr ht_eq)
-    exact le_trans (hr_bounded t ht_pos
-      (lt_of_lt_of_le (h_localize t ht_in_Icc hcond.2) (min_le_left _ _)))
-      (le_max_right 0 C)
+    grind
   · simp only [hcond, ↓reduceIte, norm_zero, le_max_iff, le_refl, true_or]
 
 lemma remainder_integral_bound_on_annulus
@@ -142,8 +132,7 @@ lemma remainder_integral_bound_on_annulus
     (Set.mem_Ioo.mp hat₀).1.trans_le (le_of_lt (Set.mem_Ioo.mp hat₀).2)
   have h_loc_δ₁ : ∀ t ∈ Set.Icc a b,
       ‖γ t - γ t₀‖ ≤ ε₁ → |t - t₀| < min δ₁ δ₁ := by
-    intro s hs hγs; simp only [min_self]
-    exact lt_of_lt_of_le (h_localize s hs hγs) (min_le_right _ _)
+    grind
   set R := 2 * ε₁ / ‖L‖
   have hR_pos : 0 < R := by positivity
   set Icontain := Set.Icc (t₀ - R) (t₀ + R)
@@ -163,10 +152,7 @@ lemma remainder_integral_bound_on_annulus
         t (Set.uIoc_of_le hab.le ▸ ht)
     · simp only [ht_in, ↓reduceIte]
       have h_far : R < |t - t₀| := by
-        simp only [Icontain, Set.mem_Icc, not_and_or, not_le] at ht_in
-        rcases ht_in with h | h
-        · rw [abs_of_neg (by linarith)]; linarith
-        · rw [abs_of_pos (by linarith)]; linarith
+        grind
       rw [remainder_annulus_zero_of_far hL hε₁_pos hε₂_pos h_lower h_loc_δ₁ hab
         t (Set.uIoc_of_le hab.le ▸ ht) h_far, norm_zero]
   calc ‖∫ t in a..b,
@@ -203,8 +189,7 @@ lemma norm_linear_approx_bound {γ : ℝ → ℂ}
     abs_norm_sub_norm_le _ _
   have h3 : ‖(t - t₀) • L‖ = |t - t₀| * ‖L‖ :=
     norm_smul (t - t₀) L
-  rw [h3, mul_comm] at h2
-  exact le_trans h2 h1
+  grind
 
 lemma volume_shell_le {t₀ r₁ r₂ : ℝ}
     (hr : r₁ ≤ r₂) :
@@ -216,19 +201,7 @@ lemma volume_shell_le {t₀ r₁ r₂ : ℝ}
         r₁ < |t - t₀| ∧ |t - t₀| ≤ r₂} ⊆
       Set.Ico (t₀ - r₂) (t₀ - r₁) ∪
       Set.Ioc (t₀ + r₁) (t₀ + r₂) := by
-    intro t ⟨h_lower, h_upper⟩
-    by_cases ht : t ≥ t₀
-    · right
-      have habs : |t - t₀| = t - t₀ :=
-        abs_of_nonneg (sub_nonneg.mpr ht)
-      rw [habs] at h_lower h_upper
-      exact ⟨by linarith, by linarith⟩
-    · left
-      push Not at ht
-      have habs : |t - t₀| = -(t - t₀) :=
-        abs_of_neg (sub_neg.mpr ht)
-      rw [habs] at h_lower h_upper
-      exact ⟨by linarith, by linarith⟩
+    grind
   calc volume {t : ℝ |
       r₁ < |t - t₀| ∧ |t - t₀| ≤ r₂}
       ≤ volume (Set.Ico (t₀ - r₂) (t₀ - r₁) ∪
@@ -248,8 +221,7 @@ lemma volume_shell_le {t₀ r₁ r₂ : ℝ}
 /-- If `g` and `x` are within `e` and straddle a threshold `ε`, then `|x - ε| ≤ e`. -/
 private lemma abs_sub_threshold_le {g x ε e : ℝ} (h_approx : |g - x| ≤ e)
     (h_between : (g ≤ ε ∧ ε ≤ x) ∨ (x ≤ ε ∧ ε ≤ g)) : |x - ε| ≤ e := by
-  rw [abs_le] at h_approx ⊢
-  rcases h_between with ⟨h1, h2⟩ | ⟨h1, h2⟩ <;> constructor <;> linarith
+  grind
 
 lemma symmDiff_subset_boundaryLayers
     {g x e ε₁ ε₂ : ℝ}
@@ -258,25 +230,7 @@ lemma symmDiff_subset_boundaryLayers
       Xor (ε₂ < g ∧ g ≤ ε₁)
            (ε₂ < x ∧ x ≤ ε₁)) :
     |x - ε₂| ≤ e ∨ |x - ε₁| ≤ e := by
-  rcases h_xor with
-    ⟨⟨hg_lower, hg_upper⟩, hnotB⟩ |
-    ⟨⟨hx_lower, hx_upper⟩, hnotA⟩
-  · by_cases hx_le_ε₂ : x ≤ ε₂
-    · exact Or.inl (abs_sub_threshold_le h_approx (Or.inr ⟨hx_le_ε₂, by linarith⟩))
-    · push Not at hx_le_ε₂
-      have hx_gt_ε₁ : ε₁ < x := by
-        by_contra h_not
-        push Not at h_not
-        exact hnotB ⟨hx_le_ε₂, h_not⟩
-      exact Or.inr (abs_sub_threshold_le h_approx (Or.inl ⟨hg_upper, by linarith⟩))
-  · by_cases hg_le_ε₂ : g ≤ ε₂
-    · exact Or.inl (abs_sub_threshold_le h_approx (Or.inl ⟨hg_le_ε₂, by linarith⟩))
-    · push Not at hg_le_ε₂
-      have hg_gt_ε₁ : ε₁ < g := by
-        by_contra h_not
-        push Not at h_not
-        exact hnotA ⟨hg_le_ε₂, h_not⟩
-      exact Or.inr (abs_sub_threshold_le h_approx (Or.inr ⟨hx_upper, by linarith⟩))
+  grind
 
 lemma tAnnLin_implies_r_le
     {L_norm r ε₁ : ℝ} (hL_pos : 0 < L_norm)
@@ -331,11 +285,7 @@ private lemma shell_vol_le_of_small_eps {t₀ ε Δ L_norm : ℝ}
 private lemma volume_abs_eq_null {t₀ r₁ : ℝ} (hr₁_pos : 0 < r₁) :
     volume {t : ℝ | |t - t₀| = r₁} = 0 := by
   have h_sub : {t : ℝ | |t - t₀| = r₁} ⊆ {t₀ - r₁, t₀ + r₁} := by
-    intro t ht; simp only [Set.mem_setOf_eq] at ht
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
-    rcases (abs_eq hr₁_pos.le).mp ht with h1 | h1
-    · right; linarith
-    · left; linarith
+    grind
   exact le_antisymm (le_of_le_of_eq
     (MeasureTheory.measure_mono h_sub)
     ((Set.toFinite _).measure_zero volume)) (zero_le)
@@ -365,17 +315,14 @@ private lemma shell_vol_le_of_large_eps {t₀ ε Δ L_norm : ℝ}
         MeasureTheory.measure_mono h_sub
     _ ≤ volume ({t : ℝ | r₁ < |t - t₀| ∧ |t - t₀| ≤ r₂} ∪ {t : ℝ | |t - t₀| = r₁}) :=
         MeasureTheory.measure_mono (fun t ⟨h1, h2⟩ => by
-          by_cases heq : |t - t₀| = r₁
-          · right; exact heq
-          · left; exact ⟨lt_of_le_of_ne h1 (Ne.symm heq), h2⟩)
+          grind)
     _ ≤ volume {t : ℝ | r₁ < |t - t₀| ∧ |t - t₀| ≤ r₂} +
         volume {t : ℝ | |t - t₀| = r₁} := MeasureTheory.measure_union_le _ _
     _ = volume {t : ℝ | r₁ < |t - t₀| ∧ |t - t₀| ≤ r₂} := by
         rw [volume_abs_eq_null hr₁_pos, add_zero]
     _ ≤ ENNReal.ofReal (2 * (r₂ - r₁)) := volume_shell_le hr₁_le_r₂
     _ = ENNReal.ofReal (4 * Δ / L_norm) := by
-        congr 1; show 2 * (r₂ - r₁) = 4 * Δ / L_norm
-        simp only [r₁, r₂]; field_simp; ring
+        grind
 
 lemma shell_vol_le {t₀ ε Δ L_norm : ℝ}
     (hL_pos : 0 < L_norm)
@@ -403,8 +350,7 @@ private lemma annulus_lower_bound {γ : ℝ → ℂ} {t₀ : ℝ} {L : ℂ} {K�
     have := abs_norm_sub_norm_le (γ t - γ t₀) ((t - t₀) • L)
     linarith [abs_le.mp this]
   have h2 : ‖γ t - γ t₀‖ ≥ |t - t₀| * ‖L‖ - K₀ * |t - t₀|^2 := by
-    rw [h_smul_norm] at h1
-    linarith [h_approx]
+    grind
   have h4 : K₀ * |t - t₀| < ‖L‖ / 2 := by
     have : K₀ * (‖L‖ / (2 * K₀)) = ‖L‖ / 2 := by field_simp
     linarith [mul_lt_mul_of_pos_left ht_lt_L_over_2K hK₀_pos]
@@ -433,8 +379,7 @@ lemma annulus_symmDiff_measure_bound
       hγ_deriv
   have ht₀_dist_pos :
       0 < min (t₀ - a) (b - t₀) := by
-    simp only [lt_min_iff, Set.mem_Ioo] at ht₀ ⊢
-    constructor <;> linarith
+    grind
   have hL_norm_pos : 0 < ‖L‖ := norm_pos_iff.mpr hL
   let δ₁ := min δ₀ (‖L‖ / (4 * K₀))
   have hδ₁_pos : 0 < δ₁ :=
@@ -475,8 +420,7 @@ lemma annulus_symmDiff_measure_bound
   have h2ε₁_over_L_lt_δ₁ :
       2 * ε₁ / ‖L‖ < δ₁ := by
     have h2 : 2 * ε₁ < ‖L‖ * δ₁ := by
-      have : ε₁ < ‖L‖ * δ₁ / 2 := hε₁_lt
-      linarith
+      grind
     linarith [div_lt_div_of_pos_right h2 hL_norm_pos,
       show ‖L‖ * δ₁ / ‖L‖ = δ₁ from by field_simp]
   have h2ε₁_over_L_lt_δ₀ : 2 * ε₁ / ‖L‖ < δ₀ :=
@@ -485,12 +429,10 @@ lemma annulus_symmDiff_measure_bound
     annulus_lower_bound hK₀_pos hL_norm_pos hδ₁_le_δ₀ hδ₁_le_L_over_2K h_quad
   have h_localize_γAnn :
       ∀ t, t ∈ γAnn → |t - t₀| < δ₁ := by
-    intro t ⟨_, ht_local, _, _⟩
-    exact ht_local
+    grind
   have h_localize_tAnnLin :
       ∀ t, t ∈ tAnnLin → |t - t₀| < δ₁ := by
-    intro t ⟨_, ht_local, _, _⟩
-    exact ht_local
+    grind
   let R_max := 2 * ε₁ / ‖L‖
   let Δ := K₀ * R_max^2
   have hR_max_pos : 0 < R_max := by simp only [R_max]; positivity
@@ -511,34 +453,17 @@ lemma annulus_symmDiff_measure_bound
     rw [Set.mem_symmDiff] at ht
     have hxor : Xor (t ∈ γAnn) (t ∈ tAnnLin) := ht
     have ht_localized : |t - t₀| < δ₁ := by
-      rcases hxor with ⟨ht_γAnn, _⟩ | ⟨ht_tAnn, _⟩
-      · exact h_localize_γAnn t ht_γAnn
-      · exact h_localize_tAnnLin t ht_tAnn
+      grind
     have ht_lt_δ₀ : |t - t₀| < δ₀ :=
       lt_of_lt_of_le ht_localized (min_le_left _ _)
     have h_gx_bound : |g t - x t| ≤ e t :=
       norm_linear_approx_bound h_quad ht_lt_δ₀
     have ht_Icc : t ∈ Set.Icc a b := by
-      rcases hxor with
-        ⟨⟨ht_Icc, _, _, _⟩, _⟩ |
-        ⟨⟨ht_Icc, _, _, _⟩, _⟩ <;>
-        exact ht_Icc
+      grind
     have hxor' :
         Xor (ε₂ < g t ∧ g t ≤ ε₁)
              (ε₂ < x t ∧ x t ≤ ε₁) := by
-      rcases hxor with
-        ⟨⟨_, _, hγ_lo, hγ_hi⟩, ht_not_tAnn⟩ |
-        ⟨⟨_, _, ht_lo, ht_hi⟩, ht_not_γAnn⟩
-      · left; constructor
-        · exact ⟨hγ_lo, hγ_hi⟩
-        · intro ⟨ht_lo', ht_hi'⟩
-          exact ht_not_tAnn
-            ⟨ht_Icc, ht_localized, ht_lo', ht_hi'⟩
-      · right; constructor
-        · exact ⟨ht_lo, ht_hi⟩
-        · intro ⟨hγ_lo', hγ_hi'⟩
-          exact ht_not_γAnn
-            ⟨ht_Icc, ht_localized, hγ_lo', hγ_hi'⟩
+      grind
     have hR_bound : |t - t₀| ≤ R_max := by
       rcases hxor with ⟨ht_γAnn, _⟩ | ⟨ht_tAnn, _⟩
       · have h_lb := h_lower_bound t ht_localized
@@ -557,20 +482,15 @@ lemma annulus_symmDiff_measure_bound
         calc |t - t₀|
             ≤ ε₁ / ‖L‖ := by rw [le_div_iff₀ hL_norm_pos]; exact h1'
           _ ≤ 2 * ε₁ / ‖L‖ := by
-              apply div_le_div_of_nonneg_right _
-                hL_nonneg; linarith
+              grind
     have he_le_Δ : e t ≤ Δ := by
       simp only [e, Δ, R_max]
       apply mul_le_mul_of_nonneg_left _ hK₀_nonneg
       exact sq_le_sq'
         (by linarith [abs_nonneg (t - t₀)]) hR_bound
     rcases symmDiff_subset_boundaryLayers h_gx_bound hxor' with h_near₂ | h_near₁
-    · right
-      change |x t - ε₂| ≤ Δ
-      exact le_trans h_near₂ he_le_Δ
-    · left
-      change |x t - ε₁| ≤ Δ
-      exact le_trans h_near₁ he_le_Δ
+    · grind
+    · grind
   have h_shell₁_eq : shell₁ = {t : ℝ | |‖L‖ * |t - t₀| - ε₁| ≤ Δ} := by simp only [shell₁, x]
   have h_shell₂_eq : shell₂ = {t : ℝ | |‖L‖ * |t - t₀| - ε₂| ≤ Δ} := by simp only [shell₂, x]
   have h_shell₁_vol : volume shell₁ ≤ ENNReal.ofReal (4 * Δ / ‖L‖) := by

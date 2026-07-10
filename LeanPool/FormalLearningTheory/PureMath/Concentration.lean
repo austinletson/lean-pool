@@ -133,9 +133,7 @@ lemma chebyshev_majority_bound
       {ω | ↑k / 6 ≤ |S ω - ∫ ω, S ω ∂μ|} := by
     intro ω hω
     simp only [Set.mem_compl_iff, Set.mem_setOf_eq, not_lt] at hω
-    simp only [Set.mem_setOf_eq]
-    calc ↑k / 6 ≤ ∫ ω, S ω ∂μ - S ω := by linarith
-      _ ≤ |S ω - ∫ ω, S ω ∂μ| := by rw [abs_sub_comm]; exact le_abs_self _
+    grind
   have hcompl_le : μ {ω | ↑k / 2 < S ω}ᶜ ≤ ENNReal.ofReal δ :=
     le_trans (μ.mono hcompl_sub) hbad_le
   have hS_meas : Measurable S := by

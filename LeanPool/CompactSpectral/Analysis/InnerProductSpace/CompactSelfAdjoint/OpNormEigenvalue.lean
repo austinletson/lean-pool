@@ -106,8 +106,7 @@ theorem exists_unit_norm_eq_opNorm_of_isCompactOperator
       refine ⟨0, ?_, rfl⟩
       exact Metric.mem_closedBall_self zero_le_one
     refine csSup_le hne ?_
-    rintro y ⟨x, hx, rfl⟩
-    exact hxMax_bound x hx
+    grind
   have hle_sSup :
       ‖T (xMax : E)‖ ≤
         sSup (Set.image (fun x : E => ‖T x‖) (closedBall (α := E) (0 : E) (1 : ℝ))) := by
@@ -158,8 +157,7 @@ theorem exists_unit_norm_eq_opNorm_of_isCompactOperator
         simpa [one_mul] using (mul_lt_mul_of_pos_right hinv hTx_pos)
       simpa [hTy, mul_comm, mul_left_comm, mul_assoc] using this
     exact (not_lt_of_ge (hxMax_bound y hy_mem)) hgt
-  refine ⟨xe, hxMax_norm_eq, ?_⟩
-  exact hTxMax
+  grind
 /-! ### A compact self-adjoint operator has an eigenvalue at the operator norm -/
 theorem exists_hasEigenvector_norm_eq_opNorm_of_isCompactOperator_of_isSelfAdjoint
     [Nontrivial E] (T : E →L[𝕜] E) (hT : IsSelfAdjoint T) (hTc : IsCompactOperator (T : E → E)) :
@@ -213,9 +211,7 @@ theorem exists_hasEigenvector_norm_eq_opNorm_of_isCompactOperator_of_isSelfAdjoi
       have : ‖T y‖ * ‖T y‖ ≤ ‖T‖ * ‖T‖ :=
         mul_le_mul hle hle hy0 hT0
       simpa [pow_two] using this
-    have hx0_sq : ‖T‖ ^ 2 = ‖T x0‖ ^ 2 := by simp [hTx0]
-    -- Compare via `A.reApplyInnerSelf`.
-    simpa [hA_apply, hx0_sq] using hle_sq
+    grind
   have hsup : (⨆ x : { x : E // x ≠ 0 }, A.rayleighQuotient x) = ‖T‖ ^ 2 := by
     classical
     -- First show a uniform upper bound.

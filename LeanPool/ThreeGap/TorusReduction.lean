@@ -76,9 +76,7 @@ theorem gapVal_eq_nnDist (α : Fin d → ℝ) {N : ℕ} (hN : 2 ≤ N) {q : ℕ}
     gapVal (deltaCost α) N q = nnDist α N q := by
   have hIcc : (Finset.Icc 1 (max q (N - q))).Nonempty := by
     refine ⟨1, Finset.mem_Icc.mpr ⟨le_refl 1, ?_⟩⟩
-    rcases Nat.eq_zero_or_pos q with h | h
-    · exact le_trans (by omega : 1 ≤ N - q) (le_max_right _ _)
-    · exact le_trans h (le_max_left _ _)
+    grind
   have hEr : ((Finset.range (N + 1)).erase q).Nonempty := by
     rw [← Finset.card_pos, Finset.card_erase_of_mem (Finset.mem_range.mpr (by omega)),
       Finset.card_range]
@@ -124,9 +122,7 @@ theorem gapVal_eq_nnDist (α : Fin d → ℝ) {N : ℕ} (hN : 2 ≤ N) {q : ℕ}
         _ = deltaCost α t := hval
     · -- `t > q`: then `max(q, N−q) = N−q`, so `t ≤ N − q`; matching point `j = q + t`
       have htNq : t ≤ N - q := by
-        rcases le_total q (N - q) with hle | hle
-        · rwa [max_eq_right hle] at ht2
-        · rw [max_eq_left hle] at ht2; omega
+        grind
       have hjmem : q + t ∈ (Finset.range (N + 1)).erase q :=
         Finset.mem_erase.mpr ⟨by omega, Finset.mem_range.mpr (by omega)⟩
       have hval : delta α ((q : ℤ) - ((q + t : ℕ) : ℤ)) = deltaCost α t := by
@@ -165,7 +161,6 @@ NB: this is the **sup-norm** (`L^∞`) five-distance theorem. The *Euclidean* fi
 theorem nnDist_count_le_plane (α : Fin 2 → ℝ) (hr : RecordsContinue (deltaCost α)) {N : ℕ}
     (hN : 2 ≤ N) : ((Finset.range (N + 1)).image (nnDist α N)).card ≤ 5 := by
   have h := nnDist_count_le (d := 2) α hr hN
-  norm_num at h
-  exact h
+  grind
 
 end ThreeGap.DeltaCost

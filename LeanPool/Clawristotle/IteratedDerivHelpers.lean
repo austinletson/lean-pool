@@ -167,8 +167,7 @@ lemma quadratic_iteratedFDeriv_bound (T : ℝ) (hT : 0 < T) (k : ℕ) :
               (by positivity)
         _ = 1 / T * (1 + ‖v‖) := by ring
     · simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin]
-      ring_nf
-      exact le_refl _
+      grind
   -- Step 2: (3/T)(1+‖v‖) ≤ c(1+‖v‖) ≤ (c(1+‖v‖))^i
   calc ‖iteratedFDeriv ℝ i (fun v => -(normSq v) / (2 * T)) v‖
       ≤ 3 / T * (1 + ‖v‖) := hbound

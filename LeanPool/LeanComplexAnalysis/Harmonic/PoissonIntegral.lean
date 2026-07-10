@@ -56,8 +56,7 @@ lemma mem_ball_of_scaled_norm_le_one {z : ℂ} {r : ℝ} (hz : ‖z‖ ≤ 1) (h
     r * z ∈ ball 0 1 := by
   rw [mem_ball, dist_zero_right, norm_mul, norm_real, norm_eq_abs, abs_of_pos hr.1]
   have := mul_le_of_le_one_left (LT.lt.le hr.1) hz
-  rw [mul_comm] at this
-  exact LE.le.trans_lt this hr.2
+  grind
 
 /-- `r* exp (t * I)` is in the unit disc for `r ∈ (0,1)`. -/
 lemma mem_unitDisc_of_scaled_exp_ofReal_mul_I {r : ℝ} (hr : r ∈ Ioo 0 1) (t : ℝ) :
@@ -195,8 +194,7 @@ lemma vanishing_goursat_integral_scaled_unitDisc {E : Type*} [NormedAddCommGroup
   · funext θ
     simp only [circleMap_zero, deriv_circleMap]
     rw [goursat_integrand_eq_aux z θ, smul_smul, ofReal_one, one_mul]
-    congr 1
-    rw [mul_comm I]
+    grind
 
 /-- We put together `vanishing_goursat_integral_scaled_unitDisc` and
 `cauchy_integral_formula_on_scaled_unitDisc` -/
@@ -312,8 +310,7 @@ lemma bounds_of_continuousOn_unitCircle_closedUnitDisc {E : Type*} [NormedAddCom
               ⟨_, ball_subset_closedBall (mem_unitDisc_of_scaled_exp_ofReal_mul_I hr t), rfl⟩
           · exact norm_nonneg _
           · apply sSup_nonneg
-            rintro _ ⟨_, ⟨_, hx⟩⟩
-            simp_rw [← hx, abs_nonneg]
+            grind
 
 /-- For a sequence `r_n → 1` with `r_n ∈ (0,1)`, the integral of `t ↦ k(e^{it}) • f(r_n*e^{it})`
 on `[0 , 2π]` converges to the integral of `t ↦ k(e^{it}) • f(e^{it})` on `[0 , 2π]`,

@@ -377,8 +377,7 @@ private lemma integrableOn_polar_norm {D : ℕ} (a : Fin D → ℂ) :
             -- Factor r from each term: ∑ ‖a k‖ * r^{k+1} = r * ∑ ‖a k‖ * r^k
             have hsum_factor : ∑ k : Fin D, ‖a k‖ * r ^ (k.val + 1) =
                 r * ∑ k : Fin D, ‖a k‖ * r ^ k.val := by
-              rw [Finset.mul_sum]; congr 1; ext k
-              rw [pow_succ]; ring
+              rw [Finset.mul_sum]; grind
             rw [hsum_factor]
             -- (r * X)² = r² * X², so r * (r * X)² = r³ * X²
             ring_nf
@@ -541,13 +540,7 @@ theorem polar_coord_fock {D : ℕ} (a : Fin D → ℂ) :
     have := integral_Ioo_eq_T_smul_haar (fun t : AddCircle T =>
       rho (polyEvalCircle a r t) ^ 2)
     simp only [smul_eq_mul] at this
-    rw [show (∫ θ in Set.Ioo (-Real.pi) Real.pi,
-          rho (polyEvalCircle a r (QuotientAddGroup.mk θ)) ^ 2) =
-        (∫ θ in Set.Ioo (-Real.pi) Real.pi,
-          (fun t : AddCircle T => rho (polyEvalCircle a r t) ^ 2) (QuotientAddGroup.mk θ))
-        from by rfl]
-    rw [this]
-    ring
+    grind
   simp_rw [inner_eq]
   -- Now: 1/π * ∫ r in Ioi 0, T * (r * exp(-r²) * ∫ t, G d(haar))
   -- = 2 * ∫ r in Ioi 0, r * exp(-r²) * ∫ t, G d(haar)
@@ -582,9 +575,7 @@ private lemma circleNormSq_polyEvalCircle {D : ℕ} (a : Fin D → ℂ) (r : ℝ
     simp only [b]
     rw [Finset.sum_filter]
     have : ∀ j : Fin D, (((j.val + 1 : ℕ) : ℤ) = ((k.val + 1 : ℕ) : ℤ)) ↔ j = k := by
-      intro j; constructor
-      · intro h; ext; omega
-      · intro h; rw [h]
+      grind
     simp_rw [this]
     simp [Finset.sum_ite_eq']
   let c : ℤ → ℂ := fun n =>
@@ -613,9 +604,7 @@ private lemma circleNormSq_polyEvalCircle {D : ℕ} (a : Fin D → ℂ) (r : ℝ
     simp only [Function.Embedding.coeFn_mk]
     rw [Finset.sum_filter]
     have : ∀ j : Fin D, (((j.val + 1 : ℕ) : ℤ) = ((k.val + 1 : ℕ) : ℤ)) ↔ j = k := by
-      intro j; constructor
-      · intro h; ext; omega
-      · intro h; rw [h]
+      grind
     simp_rw [this]
     simp [Finset.sum_ite_eq']
   -- Step 4: Compute inner product via orthonormality
@@ -686,9 +675,7 @@ private lemma radial_gaussian_integral (n : ℕ) :
     intro r _
     congr 1
     · rw [← rpow_natCast r (2 * n + 1)]
-      congr 1
-      push_cast
-      ring
+      grind
     · congr 1; congr 1
       rw [← rpow_natCast r 2]
       norm_num
@@ -751,12 +738,7 @@ private lemma fockNorm_polar {D : ℕ} (a : Fin D → ℂ) :
     have := integral_Ioo_eq_T_smul_haar (fun t : AddCircle T =>
       ‖polyEvalCircle a r t‖ ^ 2)
     simp only [smul_eq_mul] at this
-    rw [show (∫ θ in Set.Ioo (-Real.pi) Real.pi,
-          ‖polyEvalCircle a r (QuotientAddGroup.mk θ)‖ ^ 2) =
-        (∫ θ in Set.Ioo (-Real.pi) Real.pi,
-          (fun t : AddCircle T => ‖polyEvalCircle a r t‖ ^ 2) (QuotientAddGroup.mk θ))
-        from by rfl]
-    rw [this]; ring
+    grind
   simp_rw [inner_eq]
   rw [MeasureTheory.integral_const_mul]
   have hT_eq : (1 / Real.pi) * T = 2 := by simp only [T]; field_simp
@@ -782,8 +764,7 @@ theorem fockNorm_eq_gaussian_integral {D : ℕ} (a : Fin D → ℂ) :
     congr 1
     ext k
     have : (r ^ 2) ^ (k.val + 1) = r ^ (2 * (k.val + 1)) := by rw [← pow_mul]
-    rw [this]
-    ring
+    grind
   simp_rw [integrand_eq]
   -- Exchange sum and integral (finite sum)
   -- The set integral ∫_s = ∫ ∂(volume.restrict s)

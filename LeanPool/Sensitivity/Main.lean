@@ -66,10 +66,7 @@ theorem sensitivity_ge_sqrt_degree {n : ℕ} (f : BoolFun n) (hd : 1 ≤ f.degre
               Finset.mem_coe.mpr (Finset.mem_powerset.mpr (Finset.subset_univ _)),
               Finset.ext fun j => ?_⟩
       simp only [Finset.mem_map, Finset.mem_preimage, Function.Embedding.coeFn_mk]
-      exact ⟨fun ⟨i, hi, hij⟩ => hij ▸ hi,
-             fun hj => ⟨e ⟨j, hT hj⟩,
-               show toN (e ⟨j, hT hj⟩) ∈ T by rw [toN_e]; exact hj,
-               toN_e j (hT hj)⟩⟩
+      grind
     · intro U _
       congr 1
       · congr 1
@@ -81,13 +78,7 @@ theorem sensitivity_ge_sqrt_degree {n : ℕ} (f : BoolFun n) (hd : 1 ≤ f.degre
         by_cases hj : j ∈ S
         · simp only [hj, dite_true, ite_true, indicator,
                     Finset.mem_map, Function.Embedding.coeFn_mk]
-          have hiff : (e ⟨j, hj⟩ ∈ U) ↔ (∃ a ∈ U, toN a = j) :=
-            ⟨fun h => ⟨e ⟨j, hj⟩, h, toN_e j hj⟩,
-             fun ⟨i, hi, hij⟩ => by
-               rwa [show i = e ⟨j, hj⟩ from by
-                 rw [← Equiv.apply_symm_apply e i]; congr 1
-                 exact Subtype.ext hij] at hi⟩
-          simp only [hiff]
+          grind
         · simp only [hj, dite_false, ite_false]
   obtain ⟨c, _, hH⟩ := fullDegree_imbalance g (Nat.succ_pos m) hg_moeb
   set H := Finset.univ.filter (fun x : Fin (m + 1) → Bool => g.paritySigned x = c)
@@ -111,21 +102,14 @@ theorem sensitivity_ge_sqrt_degree {n : ℕ} (f : BoolFun n) (hd : 1 ≤ f.degre
       · subst hji
         rw [show (e ⟨toN i, hj⟩ : Fin (m + 1)) = i from e_toN i,
             flipBit_apply_same, flipBit_apply_same]
-        have : embedQ (toN i) = q i := by
-          change (if h : toN i ∈ S then q (e ⟨toN i, h⟩) else false) = q i
-          rw [dif_pos (toN_mem i)]
-          congr 1; exact e_toN i
-        rw [this]
+        grind
       · have : e ⟨j, hj⟩ ≠ i := fun h => hji (by rw [← toN_e j hj, h])
         rw [flipBit_apply_ne _ _ this, flipBit_apply_ne _ _ hji]
-        change q (e ⟨j, hj⟩) = (if h : j ∈ S then q (e ⟨j, h⟩) else false)
-        rw [dif_pos hj]
+        grind
     · simp only [hj, dite_false]
       have : j ≠ toN i := fun h => hj (h ▸ toN_mem i)
       rw [flipBit_apply_ne _ _ this]
-      change false = embedQ j
-      change false = (if h : j ∈ S then q (e ⟨j, h⟩) else false)
-      rw [dif_neg hj]
+      grind
   have g_to_f : ∀ i, g.sensitiveAt q i → f.sensitiveAt embedQ (toN i) := by
     intro i hi; unfold BoolFun.sensitiveAt at hi ⊢; rwa [← g_flip_eq]
   calc (H.filter (fun p => ∃ i, p = flipBit q i)).card

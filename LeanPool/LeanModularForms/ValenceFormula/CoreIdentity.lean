@@ -64,8 +64,7 @@ private lemma elliptic_finset_sum_eq_three (S : Finset UpperHalfPlane)
   have h_ell_sub : S.filter P ⊆
       ({ellipticPointI', ellipticPointRho',
         ellipticPointRhoPlusOne'} : Finset UpperHalfPlane) := by
-    intro x hx; have := (Finset.mem_filter.mp hx).2
-    simp only [Finset.mem_insert, Finset.mem_singleton]; exact this
+    grind
   have h_zero_outside : ∀ x ∈
       ({ellipticPointI', ellipticPointRho',
         ellipticPointRhoPlusOne'} : Finset UpperHalfPlane),
@@ -142,9 +141,7 @@ private theorem explicit_coefficients (S : Finset UpperHalfPlane) (hS : ∀ p �
         (-generalizedWindingNumber' (fdBoundaryH H) 0 5 (↑s : ℂ)) *
           ↑(orderOfVanishingAt' (⇑f) s) = -R := by
     rw [hR_def, h_filter_eq]; simp only [neg_mul, Finset.sum_neg_distrib, hg_def]
-  rw [h_neg_R]
-  rw [h_split, h_ell_sum, hg_i, hg_ρ, hg_ρ1] at h_sum
-  linear_combination -h_sum
+  grind
 
 omit f hf in
 /-- A unit-circle point with `re*re = 1/4` (so `re*re + im*im = 1`) has `im = √3/2`. -/
@@ -448,12 +445,10 @@ theorem valence_formula_orbit_sum (S : Finset UpperHalfPlane) (hS : ∀ p ∈ S,
   set M := S.sum (fun s : UpperHalfPlane => (s : ℂ).im)
   set H := max (max H₀ H₁) (max heightCutoff M + 1)
   have hH_height : heightCutoff ≤ H := by
-    linarith [le_max_left heightCutoff M,
-      le_max_right (max H₀ H₁) (max heightCutoff M + 1)]
+    grind
   have hH_above : ∀ s ∈ S, (s : ℂ).im < H := fun s hs => by
     have h1 : (s : ℂ).im ≤ M := Finset.single_le_sum (fun x _ => le_of_lt x.2) hs
-    linarith [le_max_right heightCutoff M,
-      le_max_right (max H₀ H₁) (max heightCutoff M + 1)]
+    grind
   have hH0_le : H₀ ≤ H := le_trans (le_max_left _ _) (le_max_left _ _)
   have h_explicit' := h_explicit hH0_le
   rw [ord_rho_plus_one_eq_ord_rho_via_vAdd f] at h_explicit'
@@ -513,17 +508,13 @@ theorem valence_formula_orbit_sum (S : Finset UpperHalfPlane) (hS : ∀ p ∈ S,
           ↑(orderOfVanishingAt' (⇑f) x) =
       ∑ x ∈ INT, ↑(orderOfVanishingAt' (⇑f) x) := by
     rw [h_ne_int]; apply Finset.sum_congr rfl
-    intro s hs
-    simp only [INT, Finset.mem_filter] at hs
-    rw [if_pos ⟨hs.2.2.2.2.1, hs.2.2.2.2.2⟩, one_mul]
+    grind
   have h_bdry_sum :
       ∑ x ∈ BDRY,
         (if ‖(x : ℂ)‖ > 1 ∧ |(x : ℂ).re| < 1/2 then (1 : ℂ) else 1/2) *
           ↑(orderOfVanishingAt' (⇑f) x) =
       (1/2 : ℂ) * ∑ x ∈ BDRY, (orderOfVanishingAt' (⇑f) x : ℂ) := by
-    rw [Finset.mul_sum]; apply Finset.sum_congr rfl; intro s hs
-    rw [if_neg (show ¬(‖(s : ℂ)‖ > 1 ∧ |(s : ℂ).re| < 1/2) from
-      (Finset.mem_filter.mp hs).2)]
+    rw [Finset.mul_sum]; apply Finset.sum_congr rfl; grind
   linear_combination h_int_sum + h_bdry_sum + h_bdry_identity - h_split
 
 end

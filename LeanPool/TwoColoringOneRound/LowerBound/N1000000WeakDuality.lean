@@ -263,13 +263,7 @@ private theorem stationarity (i : Var) :
       (linNumD i.1 : Q) / (D : Q) - (psdNumD2 i.1 : Q) / ((D : Q) * (D : Q))
         = if i.1 = edgeVar then (-1 : Q) else 0 := by
     -- Clear denominators with `field_simp`; the resulting goal is exactly `hQ`.
-    have h' :
-        (linNumD i.1 : Q) / (D : Q) - (psdNumD2 i.1 : Q) / ((D : Q) * (D : Q))
-          = (-(c i.1) : Q) := by
-      field_simp [hDne]
-      -- `field_simp` produces `linNumD*D - psdNumD2 = -(c)*D^2`.
-      simpa [pow_two, mul_assoc, mul_left_comm, mul_comm] using hQ
-    simpa [hc] using h'
+    grind
   calc
     (if i.1 = edgeVar then (1 : Q) else 0) + muCoeff i - zCoeff i
         = (if i.1 = edgeVar then (1 : Q) else 0)
@@ -277,8 +271,7 @@ private theorem stationarity (i : Var) :
             simp [muCoeff_eq_lin i, zCoeff_eq_psd i, sub_eq_add_neg, add_assoc]
     _ = (if i.1 = edgeVar then (1 : Q) else 0) + (if i.1 = edgeVar then (-1 : Q) else 0) := by
             -- Reassociate so that `hDiv` rewrites the parenthesized difference.
-            have := congrArg (fun t : Q => (if i.1 = edgeVar then (1 : Q) else 0) + t) hDiv
-            simpa [sub_eq_add_neg, add_assoc, add_left_comm, add_comm] using this
+            grind
     _ = 0 := by by_cases h : i.1 = edgeVar <;> simp [h]
 
 theorem weakDuality (x : Var → Q) (hx : PrimalFeasibleForCertificate x) :
@@ -296,15 +289,8 @@ theorem weakDuality (x : Var → Q) (hx : PrimalFeasibleForCertificate x) :
     have :
         (∑ i : Var, x i * (if i.1 = edgeVar then (1 : Q) else 0)) = x e := by
       refine (Finset.sum_eq_single e ?_ ?_).trans ?_
-      · intro i _ hi
-        have : i.1 ≠ edgeVar := by
-          intro hEq
-          apply hi
-          apply Fin.ext
-          exact hEq
-        simp [this]
-      · intro he
-        simp at he
+      · grind
+      · grind
       · simp [e]
     simpa [xEdge, e] using this
   -- Commute the finite sums for the μ term.
@@ -329,9 +315,7 @@ theorem weakDuality (x : Var → Q) (hx : PrimalFeasibleForCertificate x) :
               refine Finset.sum_congr rfl ?_
               intro k _
               rw [Finset.mul_sum]
-              refine Finset.sum_congr rfl ?_
-              intro i _
-              ring
+              grind
       _ = ∑ k : Mu, muVal k * aDot k x := by simp [aDot]
   -- Commute the finite sums for the Z term.
   have hZComm :
@@ -377,16 +361,7 @@ theorem weakDuality (x : Var → Q) (hx : PrimalFeasibleForCertificate x) :
         Finset.sum_sub_distrib,
         add_assoc,
         add_left_comm, add_comm] using hstatSum
-    have h0 :
-        xEdge x + (∑ i : Var, x i * muCoeff i) - (∑ i : Var, x i * zCoeff i) = 0 := by
-      -- Rewrite the edge-indicator sum to `xEdge x` without letting `simp` change its shape first.
-      have h := h0'
-      rw [hedge] at h
-      simpa using h
-    have :
-        xEdge x = - (∑ i : Var, x i * muCoeff i) + (∑ i : Var, x i * zCoeff i) := by
-      linarith
-    simpa [hMuComm, hZComm, sub_eq_add_neg, add_assoc, add_left_comm, add_comm] using this
+    grind
   -- Linear constraints: `∑ μ_k aDot_k(x) ≤ ∑ μ_k`.
   have hMuIneq :
       - (∑ k : Mu, (muVal k) * aDot k x) ≥ - (∑ k : Mu, muVal k) := by
@@ -420,8 +395,7 @@ theorem weakDuality (x : Var → Q) (hx : PrimalFeasibleForCertificate x) :
     have : (∑ r : Block, frobInner (Z r) (∑ i : Var, x i • Si r i))
         ≥ ∑ r : Block, (-frobInner (Z r) (S0 r)) := by
       refine Finset.sum_le_sum ?_
-      intro r _
-      exact hblock r
+      grind
     simpa [Finset.sum_neg_distrib] using this
   -- Combine and rewrite the dual objective.
   have hDual : dualObjective = -muSum - zSum0 := dualObjective_eq_expression
@@ -435,8 +409,7 @@ theorem weakDuality (x : Var → Q) (hx : PrimalFeasibleForCertificate x) :
         (∑ r : Block, frobInner (Z r) (∑ i : Var, x i • Si r i)) ≥ -zSum0 := by
       simpa [zSum0] using hPsdIneq
     -- Combine with `hxEdge`.
-    rw [hxEdge]
-    linarith
+    grind
   simpa [xEdge] using this
 
 end N1000000WeakDuality

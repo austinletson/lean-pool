@@ -67,8 +67,7 @@ lemma add_sum_lt_primeChain (h : m ≤ s) : m + ∑ i ∈ range n, primeChain s 
   | succ n ih =>
     rw [sum_range_succ, ← add_assoc]
     apply (primeChain_succ_gt).trans'
-    rw [two_mul]
-    exact add_lt_add_left ih _
+    grind
 
 lemma isSubsumBlock_chainTup (h : m ≤ s) :
     IsSubsumBlock (chainTup (n + 1) m s) {natAdd n (0 : Fin 3), natAdd n (2 : Fin 3)} := by
@@ -90,8 +89,7 @@ lemma isSubsumBlock_chainTup (h : m ≤ s) :
       sum_range_succ, ← add_assoc]
     exact Nat.lt_add_of_pos_right (by grind [primeChain_gt])
   · simp_rw [chainTup, sh₁, addCases_left, sh₂, addCases_right, mul_neg, Left.neg_nonpos_iff]
-    norm_cast
-    exact Nat.zero_le _
+    grind
 
 lemma tupReduce_chainTup {c : n + 1 = n + 1 + 2 - #{natAdd n (0 : Fin 3), natAdd n 2}} :
     tupReduce (chainTup (n + 1) m s) {natAdd n (0 : Fin 3), natAdd n (2 : Fin 3)} c =
@@ -120,8 +118,7 @@ lemma tupReduce_chainTup {c : n + 1 = n + 1 + 2 - #{natAdd n (0 : Fin 3), natAdd
           cases j using lastCases with
           | last => grind
           | cast j =>
-            rw [lastCases_castSucc]
-            exact (castAddOrderEmb _).strictMono h
+            grind
     simp_rw [lastCases_castSucc, this, chainTup]
     cases i using lastCases with
     | last =>

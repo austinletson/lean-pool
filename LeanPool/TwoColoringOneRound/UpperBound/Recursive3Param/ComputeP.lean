@@ -152,18 +152,7 @@ lemma aSlice_eq_of_b_lt_t1 {b c : Rand} (hb : b < t1) :
     have hctR : (c : ℝ) < t := lt_trans hcbR hbt
     have hL : (a ∈ aSlice b c) ↔ (a : ℝ) < t := by
       change ((c : ℝ) < z0 a b) ↔ (a : ℝ) < t
-      rw [hz0]
-      constructor
-      · intro hc
-        by_contra hat
-        have hta : (t : ℝ) ≤ a := le_of_not_gt hat
-        have : (c : ℝ) < 0 := by simpa [hta] using hc
-        exact (not_lt_of_ge (show (0 : ℝ) ≤ c from c.property.1) this)
-      · intro hat
-        have hta : ¬ (t : ℝ) ≤ a := not_le_of_gt hat
-        by_cases hab : (a : ℝ) ≤ b
-        · simpa [hta, hab] using hctR
-        · simpa [hta, hab] using hcbR
+      grind
     -- Finish by rewriting the RHS.
     exact (hL.trans hR.symm)
   · -- `¬ c < b`: split on `c < t`.
@@ -179,8 +168,7 @@ lemma aSlice_eq_of_b_lt_t1 {b c : Rand} (hb : b < t1) :
           by_contra hab
           have hab' : (b : ℝ) < a := lt_of_not_ge hab
           by_cases hta : (t : ℝ) ≤ a
-          · have : (c : ℝ) < 0 := by simpa [hta] using hc
-            exact (not_lt_of_ge (show (0 : ℝ) ≤ c from c.property.1) this)
+          · grind
           · have : (c : ℝ) < b := by simpa [hta, hab] using hc
             exact hcb (show c < b from this)
         · intro hab
@@ -191,14 +179,7 @@ lemma aSlice_eq_of_b_lt_t1 {b c : Rand} (hb : b < t1) :
     · have hR : a ∈ (if c < b then Set.Iio t else if c < t then Set.Iic b else ∅) ↔ False := by
         simp [hcb, hct]
       have hz0_le : z0 a b ≤ t := by
-        rw [hz0]
-        by_cases hta : (t : ℝ) ≤ a
-        · have ht0 : (0 : ℝ) ≤ t := t.property.1
-          simp [hta, ht0]
-        · by_cases hab : (a : ℝ) ≤ b
-          · simp [hta, hab]
-          · have : (b : ℝ) ≤ t := le_of_lt hbt
-            simp [hta, hab, this]
+        grind
       have hL : (a ∈ aSlice b c) ↔ False := by
         change ((c : ℝ) < z0 a b) ↔ False
         constructor
@@ -371,8 +352,7 @@ lemma p_eq_lintegral_innerBC :
     have h :=
       (MeasureTheory.lmarginal_union (μ := μ4) (s := ({1} : Finset (Fin 4)))
         (t := ({2} : Finset (Fin 4))) f03 hf03 (by decide))
-    have hunion : (({1} : Finset (Fin 4)) ∪ {2}) = ({1, 2} : Finset (Fin 4)) := by decide
-    simpa [hunion] using h
+    grind
   have hsplit12_x0 :
       (∫⋯∫⁻_({1, 2} : Finset (Fin 4)), f03 ∂μ4) x0 =
         (∫⋯∫⁻_({1} : Finset (Fin 4)),
@@ -417,8 +397,7 @@ lemma p_eq_lintegral_innerBC :
           refine MeasureTheory.lintegral_congr_ae ?_
           refine Filter.Eventually.of_forall fun b => ?_
           -- expand the `c`-integral and rewrite the integrand using `hf03_eval`
-          have := hsingleton2 b
-          simp [this, hf03_eval, f03]
+          grind
     _ =
         ∫⁻ b : Rand,
           ∫⁻ c : Rand, innerBC b c ∂(volume : Measure Rand) ∂(volume : Measure Rand) := rfl

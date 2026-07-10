@@ -210,9 +210,7 @@ lemma firstEntryTailApproximation {Y : ℕ} (hY : 2 ≤ Y) :
     |firstEntryTail x Y m - 1 / Real.log (x : ℝ)|
       ≤ |firstEntryTail x Y m - 1 / Real.log ((m * entryThreshold x Y m : ℕ) : ℝ)| +
           |1 / Real.log ((m * entryThreshold x Y m : ℕ) : ℝ) - 1 / Real.log (x : ℝ)| := by
-            simpa [sub_eq_add_neg, add_comm, add_left_comm, add_assoc] using
-              abs_sub_le (firstEntryTail x Y m)
-                (1 / Real.log ((m * entryThreshold x Y m : ℕ) : ℝ)) (1 / Real.log (x : ℝ))
+            grind
     _ ≤ C0 / (Real.log (x : ℝ)) ^ 2 + Real.log (Y : ℝ) / (Real.log (x : ℝ)) ^ 2 := by
           gcongr
           · exact htail.trans hlogsq
@@ -272,10 +270,8 @@ private lemma sum_sigma_divisorsAntidiagonal_eq_sum_product
     rcases z with ⟨n, q, m⟩
     simp only [Sigma.mk.injEq, heq_eq_eq, and_true]
     exact (Nat.mem_divisorsAntidiagonal.1 (Finset.mem_sigma.1 hz).2).1
-  · intro p hp
-    simp
-  · intro z hz
-    rfl
+  · grind
+  · grind
 
 /-- The small-prime divisor sum can be rewritten over the divisor antidiagonal. -/
 private lemma smallPrimeDivisorSum_eq_sum_divisorsAntidiagonal (Y n : ℕ) :
@@ -347,8 +343,7 @@ lemma sum_range_normalizationSmallPrimePart_eq
               simp [F, hqpos, hmpos, hqmN, hxqm, hqY, ceilDiv_le_iff_le_mul hqpos]
             simpa [div_eq_mul_inv, mul_assoc, mul_left_comm, mul_comm, Nat.mul_comm] using
               (entryWeightFactor_mul_vonMangoldt_eq_smallFactor q m)
-          · simp [F, hbase, show ¬ (0 < q ∧ 0 < m ∧ q * m < N ∧ q < Y ∧ x ⌈/⌉ q ≤ m) from
-              fun h => hbase ⟨h.1, h.2.1, h.2.2.1⟩]
+          · grind
 
 /-- Reindexing the product fiber of `firstEntryPairWeight` recovers the first-entry normalization
 summand, including the zero fiber. -/
@@ -364,8 +359,7 @@ lemma tsum_firstEntryPairWeight_fiber_prod {x Y n : ℕ} (hx : 1 ≤ x) :
       by_cases hmq : 1 ≤ m ∧ m < x ∧ entryThreshold x Y m ≤ q
       · have hm_pos : 0 < m := by omega
         have hxle : x ≤ m * q := (entryThreshold_le_iff x Y m q hm_pos).1 hmq.2.2 |>.2
-        have : m * q = 0 := by simpa using hp
-        omega
+        grind
       · simp [firstEntryPairWeight, hmq]
     simpa [normalizationFirstEntryPart, show ¬ x ≤ 0 from by omega] using tsum_congr hzero
   · rw [show (fun mq : ℕ × ℕ => mq.1 * mq.2) ⁻¹' {n} = n.divisorsAntidiagonal by

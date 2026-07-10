@@ -167,8 +167,7 @@ lemma freeCovariance_regulated_eq_complex_integral (α : ℝ) (m : ℝ) (x y : S
     have h1 : I = ∫ k, f (-k) := (integral_comp_neg_spacetime f).symm
     have h2 : starRingEnd ℂ I = ∫ k, conj (f k) := by
       rw [hI]; exact (integral_conj (𝕜 := ℂ)).symm
-    rw [h2, h1]
-    congr 1; funext k; exact hf_conj k
+    grind
   exact conj_eq_iff_re.mp (id (Eq.symm h_self_conj))
 
 /-! ### Regulated Parseval Identity - Full Proof
@@ -278,8 +277,7 @@ lemma triple_bound_integrable (α : ℝ) (hα : 0 < α) (m : ℝ) [Fact (0 < m)]
       (volume.prod volume) := Integrable.mul_prod h3 h2
   have h := Integrable.mul_prod h1 hyk
   convert h using 1
-  ext ⟨x, y, k⟩
-  ring
+  grind
 
 /-- The triple integrand is bounded by the integrable bounding function. -/
 lemma triple_integrand_norm_le (α : ℝ) (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ)
@@ -408,9 +406,7 @@ lemma integrand_rescale (α : ℝ) (m : ℝ) (f : TestFunctionℂ) (p : SpaceTim
   rw [norm_sq_smul_eq (2 * Real.pi) h2pi_nonneg p]
   rw [freePropagatorMomentum_rescale m p]
   rw [physicsFT_rescale f p]
-  have exp_eq : -α * ((2 * Real.pi) ^ 2 * ‖p‖ ^ 2) = -α * (2 * Real.pi) ^ 2 * ‖p‖ ^ 2 := by ring
-  rw [exp_eq]
-  ring
+  grind
 
 lemma change_of_variables_momentum (α : ℝ) (m : ℝ) (f : TestFunctionℂ) :
     ∫ k, Real.exp (-α * ‖k‖^2) * freePropagatorMomentum m k / (2 * Real.pi) ^ STDimension *
@@ -446,10 +442,7 @@ lemma change_of_variables_momentum (α : ℝ) (m : ℝ) (f : TestFunctionℂ) :
     congr 1; ext p; exact h_integrand p
   rw [h_int_eq]
   rw [← MeasureTheory.integral_const_mul]
-  congr 1
-  ext p
-  rw [abs_of_pos h2pi_pos]
-  field_simp
+  grind
 
 /-- After Fubini, the inner k-integral factorizes. -/
 lemma regulated_fubini_factorization (α : ℝ) (hα : 0 < α) (m : ℝ) [Fact (0 < m)] (f :
@@ -486,9 +479,7 @@ lemma regulated_fubini_factorization (α : ℝ) (hα : 0 < α) (m : ℝ) [Fact (
         ∫ k, f x * (amplitude k * Complex.exp (-Complex.I * Complex.ofReal ⟪k, x - y⟫_ℝ)) *
         starRingEnd ℂ (f y) from
         (MeasureTheory.integral_mul_const (starRingEnd ℂ (f y)) _).symm]
-    congr 1
-    ext k
-    ring
+    grind
   let F : SpaceTime → SpaceTime → SpaceTime → ℂ := fun x y k =>
     f x * amplitude k * Complex.exp (-Complex.I * Complex.ofReal ⟪k, x - y⟫_ℝ) * starRingEnd ℂ (f y)
   have h_F_integrable : Integrable (fun p : SpaceTime × SpaceTime × SpaceTime => F p.1 p.2.1 p.2.2)
@@ -739,9 +730,7 @@ theorem parseval_covariance_schwartz_correct (m : ℝ) [Fact (0 < m)] (f : TestF
               (nhdsWithin 0 (Set.Ioi 0)) (nhds 0) := by simpa using h1.mul_const ((2 * Real.pi)^2 *
                  ‖k‖^2)
           have h3 := this.neg
-          simp only [neg_zero] at h3
-          refine h3.congr (fun α => ?_)
-          ring
+          grind
         rw [← Real.exp_zero]
         exact Real.continuous_exp.continuousAt.tendsto.comp h2
       have h_tendsto_mul : Filter.Tendsto
@@ -857,8 +846,7 @@ theorem bilinear_covariance_regulated_tendstoℂ (m : ℝ) [Fact (0 < m)] (f g :
     have h_mem : Set.Ioo 0 1 ∈ nhdsWithin (0 : ℝ) (Set.Ioi 0) := by
       rw [mem_nhdsWithin]
       refine ⟨Set.Iio 1, isOpen_Iio, by norm_num, ?_⟩
-      intro x ⟨hx_lt, hx_pos⟩
-      exact ⟨hx_pos, hx_lt⟩
+      grind
     filter_upwards [h_mem] with α ⟨hα_pos, hα_lt1⟩
     -- Now α ∈ (0, 1), need to show a.e. bound (diagonal has measure zero)
     filter_upwards [ae_fst_ne_snd] with p hxy

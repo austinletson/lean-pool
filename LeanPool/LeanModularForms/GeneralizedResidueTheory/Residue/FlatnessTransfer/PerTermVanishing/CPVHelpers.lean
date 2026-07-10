@@ -71,8 +71,7 @@ theorem tendsto_cpv_of_continuousOn_zero_integral
         have h_not_in' := h_not_in ht_in
         by_cases hS0_empty : S0 = ∅
         · have : ∀ ε, ¬∃ s ∈ S0, ‖γ.toFun t - s‖ ≤ ε := by
-            intro ε h_ex; obtain ⟨s, hs, _⟩ := h_ex
-            exact absurd hs (hS0_empty ▸ Finset.notMem_empty s)
+            grind
           apply tendsto_const_nhds.congr'
           filter_upwards with ε; rw [if_neg (this ε)]
         · have hS0_ne : S0.Nonempty := Finset.nonempty_of_ne_empty hS0_empty
@@ -205,10 +204,7 @@ lemma intervalIntegrable_cpvIntegrandOn_of_continuousOn_diff
           = ‖g (γ.toFun t)‖ * ‖deriv γ.toFun t‖ := norm_mul _ _
         _ ≤ |Mg| * |Mγ'| := by
             apply mul_le_mul
-            · exact (hMg _
-                ⟨⟨t, ht, rfl⟩,
-                  fun s hs => le_of_lt (h s hs)⟩).trans
-                (le_abs_self _)
+            · grind
             · exact (hMγ' t ht).trans (le_abs_self _)
             · exact norm_nonneg _
             · positivity
@@ -221,8 +217,7 @@ lemma intervalIntegrable_cpvIntegrandOn_of_continuousOn_diff
     have hgγ_cont_good : ContinuousOn (fun t => g (γ.toFun t))
         (GoodSet ∩ Icc γ.a γ.b) := by
       apply ContinuousOn.comp (hg_cont.mono h_safe_sub) (hγ_cont.mono inter_subset_right)
-      intro t ⟨ht_good, ht_Icc⟩
-      exact ⟨mem_image_of_mem _ ht_Icc, fun s' hs' => le_of_lt (ht_good s' hs')⟩
+      intro t grind
     have h_prod_meas : AEStronglyMeasurable (fun t => g (γ.toFun t) * deriv γ.toFun t)
         (volume.restrict (GoodSet ∩ Icc γ.a γ.b)) :=
       (hgγ_cont_good.aestronglyMeasurable hGoodSet_meas).mul
@@ -445,8 +440,7 @@ lemma residueAt_sub_residueSum_eq_zero
     apply tendsto_nhds_of_eventually_eq
     rw [eventually_nhdsWithin_iff]
     filter_upwards [Iio_mem_nhds hR₀_pos] with r' hr'_lt hr'_pos
-    simp only [Set.mem_Ioi] at hr'_pos; simp only [Set.mem_Iio] at hr'_lt
-    rw [h_const_integral r' hr'_pos hr'_lt.le], sub_self]
+    grind, sub_self]
 
 /-- Helper: If `g` decomposes as `g = g_reg + g_pol` where:
 - `g_reg` is continuous on `γ`'s image with `∮ g_reg = 0`, and

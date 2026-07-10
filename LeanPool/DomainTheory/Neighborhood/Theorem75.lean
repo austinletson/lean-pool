@@ -78,12 +78,7 @@ theorem mem_interList {base : Set β} {M : List (Set β)} {z : β} :
   | nil => simp
   | cons Y M ih =>
     rw [interList_cons]
-    simp only [Set.mem_inter_iff, ih, List.mem_cons]
-    constructor
-    · rintro ⟨hY, hbase, hM⟩
-      exact ⟨hbase, fun W hW => hW.elim (fun h => h ▸ hY) (hM W)⟩
-    · rintro ⟨hbase, hall⟩
-      exact ⟨hall Y (Or.inl rfl), hbase, fun W hW => hall W (Or.inr hW)⟩
+    grind
 
 theorem interList_subset_base {base : Set β} {M : List (Set β)} : interList base M ⊆ base :=
   fun _ hz => (mem_interList.mp hz).1
@@ -214,13 +209,11 @@ theorem stepFun_funListOf_nonempty_iff (el : List ℕ) :
         decidable_of_iff (finc (Nat.pair nx e.unpair.1) = 1) (by
           have h := hfinc (Nat.pair nx e.unpair.1)
           simp only [unpair_pair_fst, unpair_pair_snd] at h
-          rw [hnx] at h
-          exact h.symm)
+          grind)
       set sub : List ℕ := el.filter (fun e => decide (X' ⊆ P₀.X e.unpair.1)) with hsubdef
       have hsub : sub.Sublist el := List.filter_sublist
       have hmem_iff : ∀ e, e ∈ sub ↔ e ∈ el ∧ X' ⊆ P₀.X e.unpair.1 := by
-        intro e
-        rw [hsubdef, List.mem_filter, decide_eq_true_iff]
+        grind
       have heq : interYs V₁.master (funListOf P₀ P₁ el) X'
           = interList V₁.master (sub.map (fun e => P₁.X e.unpair.2)) := by
         apply Set.ext; intro z
@@ -241,10 +234,7 @@ theorem stepFun_funListOf_nonempty_iff (el : List ℕ) :
           obtain ⟨e, hee, rfl⟩ := hp
           have hesub : e ∈ sub := (hmem_iff e).mpr ⟨hee, hXp⟩
           exact hall (P₁.X e.unpair.2) (List.mem_map.mpr ⟨e, hesub, rfl⟩)
-      rw [heq]
-      refine hcond sub hsub ⟨X', hX', ?_⟩
-      intro e he
-      exact ((hmem_iff e).mp he).2
+      grind
     exact ⟨leastMap (funListOf P₀ P₁ el) hcons, leastMap_mem_stepFun hL hcons⟩
 
 /-! ### Milestone 3a — deciding consistency of a finite index set via the
@@ -286,12 +276,7 @@ theorem mem_interFrom {A : Set α} {js : List ℕ} {z : α} :
   | nil => simp [interFrom]
   | cons j js ih =>
     rw [interFrom, ih]
-    simp only [Set.mem_inter_iff, List.mem_cons]
-    constructor
-    · rintro ⟨⟨hA, hj⟩, hrest⟩
-      exact ⟨hA, fun j' hj' => hj'.elim (fun h => h ▸ hj) (hrest j')⟩
-    · rintro ⟨hA, hall⟩
-      exact ⟨⟨hA, hall j (Or.inl rfl)⟩, fun j' hj' => hall j' (Or.inr hj')⟩
+    grind
 
 theorem interFrom_subset {A : Set α} {js : List ℕ} : interFrom P A js ⊆ A :=
   fun _ hz => (mem_interFrom P |>.mp hz).1
@@ -388,9 +373,7 @@ theorem bitSelect_sublist (L : List ℕ) (b : ℕ) : (bitSelect L b).Sublist L :
   | nil => simp
   | cons e L ih =>
     rw [bitSelect_cons]
-    split
-    · exact (ih (b / 2)).cons_cons e
-    · exact (ih (b / 2)).cons e
+    grind
 
 theorem exists_bitSelect_lt {L sub : List ℕ} (hsub : sub.Sublist L) :
     ∃ b, b < 2 ^ L.length ∧ bitSelect L b = sub := by
@@ -399,14 +382,12 @@ theorem exists_bitSelect_lt {L sub : List ℕ} (hsub : sub.Sublist L) :
   | @cons l₁ l₂ e _h ih =>
     obtain ⟨b, hb, heq⟩ := ih
     refine ⟨2 * b, ?_, ?_⟩
-    · have hpow : 2 ^ (l₂.length + 1) = 2 ^ l₂.length * 2 := pow_succ 2 l₂.length
-      rw [List.length_cons]; omega
+    · grind
     · rw [bitSelect_cons, if_neg (by omega), show 2 * b / 2 = b by omega]; exact heq
   | @cons_cons l₁ l₂ e _h ih =>
     obtain ⟨b, hb, heq⟩ := ih
     refine ⟨2 * b + 1, ?_, ?_⟩
-    · have hpow : 2 ^ (l₂.length + 1) = 2 ^ l₂.length * 2 := pow_succ 2 l₂.length
-      rw [List.length_cons]; omega
+    · grind
     · rw [bitSelect_cons, if_pos (by omega), show (2 * b + 1) / 2 = b by omega]; rw [heq]
 
 /-- A universal statement over all sublists of `decodeList c` is a *bounded*
@@ -623,14 +604,7 @@ theorem interList_X_eq_interFrom {V : NeighborhoodSystem α} (P : ComputablePres
     (js : List ℕ) : interList V.master (js.map (fun j => P.X j)) = interFrom P V.master js := by
   apply Set.ext; intro z
   rw [mem_interList, mem_interFrom]
-  constructor
-  · rintro ⟨hb, hall⟩
-    exact ⟨hb, fun j hj => hall (P.X j) (List.mem_map.mpr ⟨j, hj, rfl⟩)⟩
-  · rintro ⟨hb, hall⟩
-    refine ⟨hb, fun Y hY => ?_⟩
-    rw [List.mem_map] at hY
-    obtain ⟨j, hj, rfl⟩ := hY
-    exact hall j hj
+  grind
 
 /-- The antecedent of Prop 3.9(i) — `{X_{e.1} ∣ e ∈ sub}` admits a common lower
 neighbourhood — is
@@ -644,9 +618,7 @@ theorem antecedent_cons_iff (sub : List ℕ) :
     refine interFrom_mem_of_witness P₀ hZ (fun z hz => ?_) V₀.master_mem
     rw [mem_interFrom]
     refine ⟨V₀.sub_master hZ hz, fun j hj => ?_⟩
-    rw [List.mem_map] at hj
-    obtain ⟨e, he, rfl⟩ := hj
-    exact hZle e he hz
+    grind
   · intro hmem
     refine ⟨P₀.X (idxchain P₀ (sub.map (fun e => e.unpair.1))), P₀.mem_X _, fun e he z hz => ?_⟩
     have hj : e.unpair.1 ∈ sub.map (fun e => e.unpair.1) := List.mem_map.mpr ⟨e, he, rfl⟩
@@ -704,14 +676,7 @@ theorem funCons_decidable (fc0 fc1 : ℕ → ℕ)
         V₁.mem (interFrom P₁ V₁.master
           (List.map (fun e => e.unpair.2) (bitSelect (decodeList w.unpair.2) w.unpair.1)))) := by
     refine RecDecidable.of_iff (fun w => ?_) (hc0.not.or hc1)
-    constructor
-    · intro himp
-      rcases hc0.em w with h0 | h0
-      · exact Or.inr (himp h0)
-      · exact Or.inl h0
-    · rintro (h0 | h1) hp0
-      · exact absurd hp0 h0
-      · exact h1
+    grind
   refine RecDecidable.of_iff (fun c => ?_)
     (himp.bForall (bound := fun n => 2 ^ n) (primrec_two_pow primrec_id))
   rw [funCons_iff P₀ P₁ c]
@@ -778,11 +743,7 @@ theorem stepFun_funListOf_appendCode (a b : ℕ) :
   rw [decodeList_appendCode]
   simp only [funListOf, List.map_append, List.map_reverse, mem_stepFun, Set.mem_inter_iff,
     List.mem_append, List.mem_reverse]
-  constructor
-  · intro h; exact ⟨fun p hp => h p (Or.inr hp), fun p hp => h p (Or.inl hp)⟩
-  · rintro ⟨ha, hb⟩ p (hp | hp)
-    · exact hb p hp
-    · exact ha p hp
+  grind
 
 /-! ### Milestone 5 — the function-space inclusion characterization (choice-free).
 
@@ -945,11 +906,7 @@ theorem condSet_cons_pos {k : ℕ} {A : Set β} {e : ℕ} {el : List ℕ}
     condSet P₀ P₁ k A (e :: el) = condSet P₀ P₁ k (A ∩ P₁.X e.unpair.2) el := by
   ext z
   simp only [mem_condSet, List.mem_cons, Set.mem_inter_iff]
-  constructor
-  · rintro ⟨hzA, hall⟩
-    exact ⟨⟨hzA, hall e (Or.inl rfl) h⟩, fun e' he' hsub => hall e' (Or.inr he') hsub⟩
-  · rintro ⟨⟨hzA, hzE⟩, hall⟩
-    exact ⟨hzA, fun e' he' hsub => he'.elim (fun heq => heq ▸ hzE) (fun hmem => hall e' hmem hsub)⟩
+  grind
 
 /-- `condSet` cons-step when the input does not dominate the head entry's input:
 drop the head. -/
@@ -958,12 +915,7 @@ theorem condSet_cons_neg {k : ℕ} {A : Set β} {e : ℕ} {el : List ℕ}
     condSet P₀ P₁ k A (e :: el) = condSet P₀ P₁ k A el := by
   ext z
   simp only [mem_condSet, List.mem_cons]
-  constructor
-  · rintro ⟨hzA, hall⟩
-    exact ⟨hzA, fun e' he' hsub => hall e' (Or.inr he') hsub⟩
-  · rintro ⟨hzA, hall⟩
-    exact ⟨hzA, fun e' he' hsub => he'.elim (fun heq => absurd (heq ▸ hsub) h) (
-      fun hmem => hall e' hmem hsub)⟩
+  grind
 
 /-- `condSet k Δ₁ el` is exactly `interYs Δ₁ (funListOf el) (X₀_k)`. -/
 theorem condSet_eq_interYs (k : ℕ) (el : List ℕ) :
@@ -1159,9 +1111,7 @@ theorem andFoldl_eq_one_iff (g : ℕ → ℕ) :
     rcases (show a = 0 ∨ a = 1 by omega) with h | h <;> subst h
     · rw [selectFn_zero]; simp
     · rw [selectFn_one, List.forall_mem_cons, isOne_eq_one_iff]
-      constructor
-      · rintro ⟨hge, hall⟩; exact ⟨rfl, hge, hall⟩
-      · rintro ⟨_, hge, hall⟩; exact ⟨hge, hall⟩
+      grind
 
 theorem andFoldl_one (g : ℕ → ℕ) (el : List ℕ) :
     List.foldl (fun acc x => selectFn acc (isOne (g x)) 0) 1 el = 1 ↔ ∀ e ∈ el, g e = 1 := by
@@ -1685,10 +1635,7 @@ theorem Xenum_isComputableElement_iff (gN : ℕ → ℕ) (hgNp : Nat.Primrec gN)
         : Set (ApproximableMap V₀ V₁)).Nonempty
       rw [stepFun_singleton]
       exact (step_mem (P₀.mem_X _) (P₁.mem_X _)).2
-    rw [hbridge (Nat.pair s 0 + 1), hdec]
-    constructor
-    · intro hRs _ e he; rw [List.mem_singleton] at he; subst he; exact hRs
-    · intro h; exact h hcons s (List.mem_singleton.mpr rfl)
+    grind
   · -- map computable ⟹ element computable: guard the bounded-`∀` by the decidable `gN c = 1`.
     intro hmap
     have hR' : REPred (fun s => φ.mem (step (P₀.X s.unpair.1) (P₁.X s.unpair.2))) := hmap
@@ -1854,9 +1801,7 @@ theorem mem_Xenum_iff_map (gN : ℕ → ℕ) (f : ApproximableMap V₀ V₁) (c 
       obtain ⟨e, he, rfl⟩ := hp
       exact himp h e he
   · rw [Xenum_neg P₀ P₁ h]
-    constructor
-    · intro _ hcon; exact absurd hcon h
-    · intro _; exact Set.mem_univ f
+    grind
 
 /-- **Bridge for `curry`.** `(X₀ₙ) curry(g) (Xenum c)` iff, *when `c` is
 consistent*, `g` relates

@@ -178,10 +178,7 @@ lemma Finite.exists_ne_map_eq_of_infinite_lt {α β} [LinearOrder α] [Infinite 
   : ∃ x y : α, (x < y) ∧ f x = f y
   := by
     obtain ⟨i, j, hij, e⟩ := Finite.exists_ne_map_eq_of_infinite f;
-    rcases lt_trichotomy i j with (hij | rfl | hij);
-    · exact ⟨i, j, hij, e⟩;
-    · contradiction;
-    · exact ⟨j, i, hij, e.symm⟩;
+    grind
 
 lemma antisymm_of_WCWF {R : α → α → Prop} : WCWF R → ∀ ⦃x y⦄, R x y → R y x → x = y := by
   contrapose;
@@ -219,8 +216,7 @@ lemma WCWF_of_finite_trans_antisymm {R : α → α → Prop} (hFin : Finite α)
       induction hij with
       | refl => exact hf i |>.2;
       | step _ ih => exact R_trans ih <| hf _ |>.2;
-    have := H (i + 1) j this;
-    simpa [e];
+    grind
 
 end «lp_section_4»
 

@@ -77,8 +77,7 @@ theorem reducible_vanishing
                 (hs := hZ_closed) Gsh ⟨x, hxZ⟩)
           exact stalk_zero_of_ses_g_iso S hSE x inferInstance a
         · exact stalk_zero_of_shortExact_kernel S hSE x (hG_stalks x (by
-            simpa only [Finset.coe_insert, Set.sUnion_insert, Set.mem_union, not_or]
-              using ⟨hxZ, hx⟩)) a
+            grind)) a
     haveI : IrreducibleSpace (TopCat.of Z) := isIrreducible_iff_irreducibleSpace.mp hZ_comp.1
     exact subsingleton_sheafH_of_closedImmersion_middle
       (Z := Z) (hZ := hZ_closed) Gsh n hker
@@ -142,8 +141,6 @@ theorem GrothendieckVanishing (X : TopCat.{u}) [NoetherianSpace X]
             by_cases hposY : topologicalKrullDim Y > 0
             · exact irreducible_pos_vanishing (F := G.obj) G.property hposY m hY
                 (by
-                  intro Z _ m' G' hG' hlt hm'
-                  exact ih (topologicalKrullDim Z) (lt_of_lt_of_le hlt (hd ▸ hle))
-                    Z m' ⟨G', hG'⟩ rfl hm')
+                  grind)
             · exact irreducible_dim_zero_vanishing G m hY (le_of_not_gt hposY)))
     X n F rfl h

@@ -124,8 +124,7 @@ lemma generatorsProdDiag_subset_generators_prod :
     | inr hlp =>
       obtain ⟨p', hp', rfl⟩ := hlp
       simp only [Finset.mem_product, Finset.mem_insert, List.mem_toFinset, List.mem_map, and_self]
-      right
-      use p'
+      grind
 
 lemma generatorsProdDiag_unitPairs {p : g.NT × g.NT} (hp : p ∈ g.generatorsProdDiag) :
     UnitPair p.1 p.2 := by
@@ -170,31 +169,12 @@ lemma collectUnitPairs_unitPair_rec {nᵢ nₒ : g.NT} {p : g.NT × g.NT} {l : L
     p ∈ x ∨ ∃ v, (nₒ, v) ∈ l ∧ p = (nᵢ, v) := by
   induction l generalizing x with
   | nil =>
-    left
-    exact hp
+    grind
   | cons a l ih =>
     simp only [addUnitPair, List.foldr_cons] at hp
     split at hp <;> rename_i ha
-    · simp only [Finset.mem_insert] at hp
-      cases hp with
-      | inl hpd =>
-        right
-        exact ⟨a.2, ha ▸ List.mem_cons_self, hpd⟩
-      | inr hpl =>
-        specialize ih hpl
-        cases ih with
-        | inl => left; assumption
-        | inr hlp =>
-          obtain ⟨v, hvl, hpv⟩ := hlp
-          right
-          exact ⟨v, List.mem_cons_of_mem a hvl, hpv ▸ rfl⟩
-    · specialize ih hp
-      cases ih with
-      | inl => left; assumption
-      | inr hlp =>
-        obtain ⟨v, hvl, hpv⟩ := hlp
-        right
-        exact ⟨v, List.mem_cons_of_mem a hvl, hpv ▸ rfl⟩
+    · grind
+    · grind
 
 lemma collectUnitPairs_unitPair {r : ContextFreeRule T g.NT} {l : List (g.NT × g.NT)}
     (hrg : r ∈ g.rules) (hp : ∀ p ∈ l, UnitPair p.1 p.2) :
@@ -235,9 +215,7 @@ lemma collectUnitPairs_subset_generatorsProd {r : ContextFreeRule T g.NT} (l : F
     constructor
     · exact input_mem_generators hrg
     · rw [Finset.mem_toList] at hvl
-      specialize hlg hvl
-      rw [Finset.mem_product] at hlg
-      exact hlg.2
+      grind
   | [] => simp [heq] at hp
   | [Symbol.terminal _] => simp [heq] at hp
   | _ :: _ :: _ => simp [heq] at hp
@@ -378,8 +356,7 @@ lemma mem_addUnitPairs {l : Finset (g.NT × g.NT)} {n₁ n₂ n₃ : g.NT} (hl :
   revert hgnn n₂ l
   induction g.rules.toList.attach with
   | nil =>
-    intro _ n₂ _ hg h
-    contradiction
+    grind
   | cons r t ih =>
     intro _ _ hl hg hrt
     cases hrt
@@ -405,10 +382,7 @@ lemma unitPair_mem_addUnitPairsIter {l : Finset (g.NT × g.NT)} {n₁ n₂ : g.N
     unfold generators at hvg
     unfold generatorsProdDiag
     rw [List.mem_toFinset, List.mem_map] at hvg ⊢
-    obtain ⟨r, hrg, hr⟩ := hvg
-    use r
-    rw [hr]
-    exact ⟨hrg, rfl⟩
+    grind
   | trans hur hp ih =>
     rw [addUnitPairsIter_fixpoint]
     exact mem_addUnitPairs ih hur
@@ -461,13 +435,7 @@ lemma nonUnit_rules_mem {p : g.NT × g.NT} {r : ContextFreeRule T g.NT}
     r.input = p.1 ∧ ∃ r' ∈ g.rules, r.output = r'.output ∧ r'.input = p.2 := by
   simp only [List.mem_filterMap, Finset.mem_toList, Option.ite_none_right_eq_some,
     computeUnitPairRules] at hrp
-  obtain ⟨r', hrg, hrp, hrr⟩ := hrp
-  split at hrr
-  · contradiction
-  · rw [Option.some.injEq] at hrr
-    rw [← hrr]
-    simp only [true_and]
-    use r'
+  grind
 
 lemma mem_removeUnitRules_exists_UnitPair [DecidableEq T] {l : Finset (g.NT × g.NT)}
     {r : ContextFreeRule T g.NT} (hrl : r ∈ removeUnitRules l) :
@@ -507,14 +475,7 @@ lemma nonUnit_mem_computeUnitPairRules {n₁ n₂ : g.NT} {w : List (Symbol T g.
     ⟨n₂, w⟩ ∈ computeUnitPairRules (n₂, n₁) := by
   simp only [computeUnitPairRules, List.mem_filterMap, Finset.mem_toList,
     Option.ite_none_right_eq_some]
-  use ⟨n₁, w⟩
-  simp only [true_and]
-  use hg
-  match w with
-  | [Symbol.nonterminal _] => exact False.elim hw
-  | [Symbol.terminal _] => rfl
-  | [] => rfl
-  | _ :: _ :: _ => simp
+  grind
 
 lemma nonUnit_mem_removeUnitRules [DecidableEq T] {n₁ n₂ : g.NT} {u : List (Symbol T g.NT)}
     {l : Finset (g.NT × g.NT)} (hug : ⟨n₂, u⟩ ∈ g.rules) (hu : NonUnit u) (hnn : (n₁, n₂) ∈ l) :

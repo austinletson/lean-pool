@@ -92,21 +92,15 @@ private theorem mkConstGateP_eval {G : Nat} [NeZero m] (val : Bool) (bound : Nat
     (mkConstGateP (k := k) (m := m) (G := G) val bound).val.eval wv = val := by
   unfold mkConstGateP
   split
-  · rename_i hval; rw [andOr2_eval_two]; simp only
-    cases wv ⟨0, by have := NeZero.ne m; omega⟩ <;> simp [hval]
-  · rename_i hval; rw [andOr2_eval_two]; simp only
-    cases wv ⟨0, by have := NeZero.ne m; omega⟩ <;>
-      simp only [Bool.not_eq_true, ↓reduceIte, bne_self_eq_false, one_ne_zero, Bool.bne_false,
-        Bool.and_true, Bool.false_eq, Bool.bne_true, Bool.not_false, Bool.and_false] at hval ⊢ <;>
-      exact hval
+  · rename_i hval; rw [andOr2_eval_two]; grind
+  · rename_i hval; rw [andOr2_eval_two]; grind
 
 private theorem mkIdentGateP_eval {G : Nat} (op : AONOp) (w : Fin (k + m + G)) (neg : Bool)
     (bound : Nat) (hw : w.val < k + m + bound)
     (wv : BitString (k + m + G)) :
     (mkIdentGateP (k := k) (m := m) (G := G) op w neg bound hw).val.eval wv = (neg ^^ wv w) := by
   unfold mkIdentGateP
-  rw [andOr2_eval_two]; simp only
-  cases op <;> cases (neg ^^ wv w) <;> simp
+  rw [andOr2_eval_two]; grind
 
 /-- Transform a gate by hardwiring wire 0 to constant `b`.
 

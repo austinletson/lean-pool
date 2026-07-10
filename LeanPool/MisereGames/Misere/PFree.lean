@@ -178,8 +178,7 @@ private lemma isSpecial_of_isPFree_not_winsGoingFirst_right_succ {g : GameForm} 
     apply h_g_plus_one_not_right_end
     rw [isEnd_def] at h_g_right_end ⊢
     rw [moves_add, rightMoves_one, Set.image_empty, Set.union_empty]
-    simp only [Set.image_eq_empty]
-    exact h_g_right_end
+    grind
   · -- for each right move gr of g, show either gr has outcome L or ∃ special
     -- left move
     intro gr h_gr_mem
@@ -188,8 +187,7 @@ private lemma isSpecial_of_isPFree_not_winsGoingFirst_right_succ {g : GameForm} 
     -- g+1
     have h_gr_plus_one_mem : gr + 1 ∈ moves .right (g + 1) := by
       rw [moves_add]
-      left
-      use gr, h_gr_mem
+      grind
     -- 4. Since Right does not win g+1 going first (by h2), we know that Left
     -- must win gr+1 going first
     have h_left_wins_gr_plus_one : WinsGoingFirst .left (gr + 1) := by
@@ -261,8 +259,7 @@ private lemma isSpecial_of_isPFree_not_winsGoingFirst_right_succ {g : GameForm} 
           | inl h_R =>
             exfalso
             rw [misereOutcome_R_iff_winsGoingFirst] at h_R
-            obtain ⟨h_right_wins_gr, _⟩ := h_R
-            exact h_right_not_wins_gr h_right_wins_gr
+            grind
           | inr h_N =>
             exfalso
             have h_right_wins_gr : WinsGoingFirst .right gr := by
@@ -436,8 +433,7 @@ private theorem not_winsGoingFirst_add_one_of_isPFree_not_winsGoingFirst_left {g
         rw [winsGoingFirst_iff] at h1
         simp only [isEndLike_iff_isEnd, Player.neg_left, not_or, not_exists, not_and,
           not_not] at h1
-        obtain ⟨h1, h6⟩ := h1
-        exact h6 gll h2)
+        grind)
       exact h3 h6
 termination_by g
 decreasing_by form_wf
@@ -499,8 +495,7 @@ private theorem not_winsGoingFirst_sub_one_of_not_winsGoingFirst_right {g : Game
         rw [winsGoingFirst_iff] at h1
         simp only [isEndLike_iff_isEnd, Player.neg_right, not_or, not_exists, not_and,
           not_not] at h1
-        obtain ⟨h1, h6⟩ := h1
-        exact h6 gll h2)
+        grind)
       exact h3 h6
 termination_by g
 decreasing_by form_wf

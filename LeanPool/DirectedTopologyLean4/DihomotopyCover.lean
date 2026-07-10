@@ -105,8 +105,7 @@ lemma right_path_image_interval_subset_of_dihomotopy_subset (F : Dihomotopy f g)
     · constructor
       · exact (div_le_one (show (n.succ : ℝ) > 0 by
           exact Nat.cast_pos.mpr (Nat.succ_pos n))).mpr (Nat.cast_le.mpr (Nat.le_succ n))
-      · rw [div_self]
-        exact Nat.cast_ne_zero.mpr (ne_of_gt (Nat.succ_pos n))
+      · grind
     · convert ht <;> exact Nat.cast_succ _
   · simp
     rfl
@@ -148,15 +147,7 @@ lemma coveredPartwise_exists (F : Dihomotopy f g) (hX : X₀ ∪ X₁ = univ) (X
   rcases (lebesgue_number_lemma_unitSquare h₁ h₂) with ⟨n, hn⟩
   refine ⟨n, n, ?_⟩
   intros i j hi hj
-  obtain ⟨ι, hι⟩ := hn i j hi hj
-  rw [c_def] at hι
-  by_cases h : ι = 0
-  · left
-    simp only [h, if_pos] at hι
-    exact Set.image_subset_iff.mpr hι
-  · right
-    simp only [if_neg h] at hι
-    exact Set.image_subset_iff.mpr hι
+  grind
 
 /-- The image of a dihomotopy F of the subrectangles `[0, 1/(n+2)] × [j/(m+1), (j+1)/(m+1)]`
   contains the image of the first part of F, split at `1/(n+2)`, of `[0, 1]
@@ -208,9 +199,7 @@ lemma spv_aux₁_coed {t : ℝ} {n i : ℕ} (_ : i < n.succ) (ht : (i : ℝ) / (
   have h₁ : 0 ≤ t := le_trans h₀ ht
   have h₂ : (n.succ : ℝ) > 0 := Nat.cast_pos.mpr (Nat.succ_pos n)
   have h₃ : 0 ≤ (n : ℝ) + 1 := by
-    apply le_of_lt
-    rw [Nat.cast_succ _] at h₂
-    exact h₂
+    grind
   have hne : ((n : ℝ) + 1 + 1) ≠ 0 := by positivity
   rw [show (↑n.succ : ℝ) = (n : ℝ) + 1 from by push_cast; ring] at ht h₂
   have h₃' : ((n : ℝ) + 1) > 0 := h₂
@@ -219,10 +208,8 @@ lemma spv_aux₁_coed {t : ℝ} {n i : ℕ} (_ : i < n.succ) (ht : (i : ℝ) / (
   have ht' : (i : ℝ) ≤ t * (↑n + 1) := (div_le_iff₀ h₃').mp ht
   have hexpand : ((1 - 1 / ((n : ℝ) + 1 + 1)) * t + 1 / ((n : ℝ) + 1 + 1)) * ((n : ℝ) + 1 + 1) =
       ((n : ℝ) + 1) * t + 1 := by
-    field_simp
-    ring
-  rw [hexpand]
-  linarith
+    grind
+  grind
 
 /-- If `i/(n+1) ≤ t`, then `(i+1)/(n+2) ≤ (σ q) * t + q`, where `q = 1/(n+2)`
 -/
@@ -250,10 +237,8 @@ lemma spv_aux₂_coed {t : ℝ} {n i : ℕ} (_ : i < n.succ) (_ : 0 ≤ t)
   have ht' : t * ((n : ℝ) + 1) ≤ (i : ℝ) + 1 := (le_div_iff₀ h₀).mp ht
   have hexpand : ((1 - 1 / ((n : ℝ) + 1 + 1)) * t + 1 / ((n : ℝ) + 1 + 1)) * ((n : ℝ) + 1 + 1) =
       ((n : ℝ) + 1) * t + 1 := by
-    field_simp
-    ring
-  rw [hexpand]
-  linarith
+    grind
+  grind
 
 /-- If `t ≤ (i+1)/(n+1)`, then `(σ q) * t + q ≤ (i+2)/(n+2)`, where `q = 1/(n+2)`
 -/
@@ -265,8 +250,7 @@ lemma spv_aux₂ {t : I} {n i : ℕ} (hi : i < n.succ)
   apply Subtype.coe_le_coe.mp
   convert spv_aux₂_coed hi t.2.1 ht using 1
   · simp
-  rw [Fraction.Fraction_coe]
-  congr 1 <;> rw [Nat.cast_succ, Nat.cast_succ] <;> linarith
+  grind
 
 /-- The image of a dihomotopy F of the subrectangle `[(i+1)/(n+2), (i+2)/(n+2)] × [j/(m+1),
 (j+1)/(m+1)]`

@@ -280,13 +280,7 @@ lemma tripleAt_strictMono : StrictMono tripleAt := by
   intro n
   simp only [tripleAt, Prod.mk_lt_mk, lt_self_iff_false, Prod.mk_le_mk, tsub_le_iff_right,
     false_and, le_refl, true_and, false_or]
-  right
-  constructor
-  · rw [mul_add_one, pow_add]
-    omega
-  · gcongr
-    · simp
-    · simp
+  grind
 
 lemma abcExceptions_zero_infinite : (abcExceptions 0).Infinite :=
   ((Set.Ioi_infinite 0).image tripleAt_strictMono.injective.injOn).mono
@@ -331,8 +325,7 @@ theorem mem_dyadicPoints (α β γ : ℝ) (X : ℕ) (a b c : ℕ) :
       X ≤ 2 * c ∧ c ≤ X := by
   simp only [dyadicPoints, Finset.mem_filter, Finset.mem_Icc, Prod.mk_le_mk, Nat.add_one_le_iff,
     similar, Set.mem_Icc, ← and_assoc, and_congr_left_iff]
-  intro ha hb hc hc_le_X hX_le_c hrc hrb hra habc hbc hac
-  omega
+  grind
 
 /--
 This is $$S^*_{α,β,γ}(X)$$ in the paper and blueprint.
@@ -357,8 +350,7 @@ private theorem mem_indexSet (ε : ℝ) (X : ℕ) (i j k n : ℕ) :
       i ≤ Nat.log 2 X ∧ j ≤ Nat.log 2 X ∧ k ≤ Nat.log 2 X ∧
       1 ≤ n ∧ n ≤ Nat.log 2 X + 1 ∧ i + j + k ≤ (1 - ε) * n := by
   simp [indexSet]
-  norm_cast
-  aesop
+  grind
 
 theorem Nat.Coprime.isRelPrime (a b : ℕ) (h : a.Coprime b) : IsRelPrime a b := by
   rwa [← Nat.coprime_iff_isRelPrime]
@@ -409,16 +401,12 @@ theorem Finset.abcExceptionsBelow_subset_union_dyadicPoints (ε : ℝ) (X : ℕ)
         norm_cast
     rw [← Real.rpow_le_rpow_left_iff (show 1 < (2 : ℝ) by norm_num)]
     norm_cast at this ⊢
-    convert this using 2
-    · rfl
-    · ring_nf
+    grind
   have {a : ℕ} : (2 ^ n : ℝ) ^ (Nat.log 2 (radical a) / n : ℝ) =
       2 ^ Nat.log 2 (radical a) := by
     rw [← Real.rpow_natCast_mul (by norm_num)]
     have : n * (Nat.log 2 (radical a) / n : ℝ) = Nat.log 2 (radical a) := by
-      rw [mul_div_cancel₀]
-      simp [n]
-      norm_cast
+      grind
     rw [this]
     simp
   have hc2 : 2 ≤ c := by omega
@@ -610,12 +598,8 @@ private theorem prod_y_pow_eq_n_subset {s : Finset ℕ}
   · apply Finset.prod_congr rfl
     intro k hk
     apply Finset.prod_congr rfl
-    simp only [Finset.mem_filter, Nat.mem_primeFactors, ne_eq, and_imp]
-    rintro _ _ _ _ rfl
-    rfl
-  · simp only [Nat.mem_primeFactors, ne_eq, and_imp]
-    intro p hp hpn hn'
-    apply hs p hp hpn
+    grind
+  · grind
 
 private theorem prod_y_pow_eq_n : ∏ m ∈ Finset.Icc 1 d ∪ Finset.Ioc d n, y m ^ m = n := by
   apply prod_y_pow_eq_n_subset
@@ -643,8 +627,7 @@ private theorem hy_cop (i j : ℕ) (hij : i ≠ j) : Nat.Coprime (y i) (y j) := 
   intro p hp hpi hpj
   apply p_dvd_y_iff _ _ hp at hpi
   apply p_dvd_y_iff _ _ hp at hpj
-  subst hpi hpj
-  exact hij rfl
+  grind
 
 open Function in
 omit data in
@@ -770,8 +753,7 @@ private theorem x_pairwise_coprime (i j : Fin d) (hij : i ≠ j) : Nat.gcd (x i)
   simp_rw [x]
   rw [← Nat.coprime_iff_gcd_eq_one]
   split_ifs with hik hjk
-  · rw [← hik] at hjk
-    exact (hij''.symm hjk).elim
+  · grind
   · rw [Nat.coprime_mul_iff_left, mul_one]
     refine ⟨hy_cop _ _ hij'', ?_⟩
     rw [Nat.coprime_prod_left_iff]
@@ -842,8 +824,7 @@ private theorem c_mul_prod_x_eq_n : c * ∏ j, x j ^ (j.val + 1) = n := by
   rw [Finset.prod_union]
   · have : (Finset.range d).map (addRightEmbedding 1) = Finset.Icc 1 d := by
       rw [range_eq_Ico, Finset.map_add_right_Ico, zero_add, Ico_add_one_right_eq_Icc]
-    rw [← this]
-    simp
+    grind
   refine Finset.disjoint_left.mpr ?_
   simp +contextual
 
@@ -990,8 +971,7 @@ theorem x_K_le_X_pow : x KIndex ≤ (X : ℝ) ^ ε := by
           · simp
           · positivity
         · simp only [disjoint_singleton_left, mem_Ioc, not_and, not_le]
-          intro
-          linarith
+          grind
     _ ≤ (∏ m ∈ Finset.Icc 1 d ∪ Finset.Ioc d n, y m ^ m) ^ (K⁻¹:ℝ)  := by
       gcongr
       · intros
@@ -1043,9 +1023,7 @@ private theorem X_pow_mul_prod_le_radical : (X : ℝ)^(-ε) * ∏ j, x j ≤ (ra
       simp only [Finset.mem_filter, Finset.mem_univ, true_and]
       intro j h
       have : j.val + 1 ≠ K := by
-        intro hK
-        have hj : j.val = K - 1 := by omega
-        exact h ((hKIndex j).mp hj)
+        grind
       simp [x, y, mul_one, this]
     _ ≤ ∏ j : Fin d, if j.val + 1 ≠ (K:ℕ) then y (j.val + 1) else 1 := by
       gcongr with j
@@ -1076,8 +1054,7 @@ private theorem X_pow_mul_prod_le_radical : (X : ℝ)^(-ε) * ∏ j, x j ≤ (ra
     _ ≤ ∏ m ∈ Finset.Icc 1 d ∪ Finset.Ioc d n, y m := by
       norm_cast
       apply Finset.prod_le_prod_of_subset_of_one_le'
-      · intro x
-        simp +contextual
+      · grind
       · simp only [Finset.mem_union, Finset.mem_Icc, not_and]
         intro i _ _
         apply hy_pos
@@ -1147,10 +1124,7 @@ theorem exists_nice_factorization
       apply Finset.prod_eq_zero (Finset.mem_univ i)
       simp [h]
     have hn_zero : ProofData.n = 0 := by
-      calc
-        ProofData.n = c * (∏ j : Fin ProofData.d, x j ^ (j.val + 1)) := hn
-        _ = c * 0 := by rw [hprod]
-        _ = 0 := by rw [mul_zero]
+      grind
     exact (Nat.ne_of_gt (lt_of_lt_of_le Nat.zero_lt_one ProofData.h1n)) hn_zero
   exact ⟨x, c, hn, hc, hcop, h_le_rad, h_rad_le, hc_pos, hx_pos, x_le_X⟩
 
@@ -1369,8 +1343,7 @@ theorem B_to_triple_surjOn {α β γ : ℝ} (x : ℕ) (ε : ℝ)
           · simp only [Real.rpow_one]
             trans 2 * (c₂ *(∏ i, (w i : ℝ) ^ (i.val + 1)))
             · norm_cast
-              rw [← c_eq_c_mul_prod]
-              apply hxc
+              grind
             · rw [← mul_assoc, mul_comm 2, mul_assoc]
               gcongr
           · apply Real.rpow_pos_of_pos
@@ -1416,8 +1389,7 @@ theorem B_to_triple_surjOn {α β γ : ℝ} (x : ℕ) (ε : ℝ)
     · apply fun i ↦ (similar_pow_log (hu_pos i))
     · apply fun i ↦ (similar_pow_log (hv_pos i))
     · apply fun i ↦ (similar_pow_log (hw_pos i))
-    · rw [←a_eq_c_mul_prod, ←b_eq_c_mul_prod, ←c_eq_c_mul_prod]
-      exact habc
+    · grind
     · apply coprime_mul_prod_aux _ _ (a_eq_c_mul_prod ▸ b_eq_c_mul_prod ▸ hab) <;> omega
     · apply coprime_mul_prod_aux _ _ (a_eq_c_mul_prod ▸ c_eq_c_mul_prod ▸ hac) <;> omega
     · apply coprime_mul_prod_aux _ _ (b_eq_c_mul_prod ▸ c_eq_c_mul_prod ▸ hbc) <;> omega
@@ -1506,8 +1478,7 @@ theorem const_spec {ε : ℝ} (hε_pos : 0 < ε) (hε : ε < 1 / 2) :
     let d := ⌊10 * ε⁻¹ ^ 4⌋₊
     ∀ x : ℕ, 2 ≤ x → (Nat.log 2 x + 1) ^ (3 * d) ≤ const ε * (x : ℝ)^(ε/4) := by
   rw [const, dif_pos hε_pos, dif_pos hε]
-  extract_lets d _ _ _ hd
-  apply Classical.choose_spec (tmp hε_pos d hd)
+  grind
 
 theorem const_nonneg {ε : ℝ} : 0 ≤ const ε := by
   by_cases hε_pos : 0 < ε
@@ -1607,9 +1578,7 @@ theorem refinedCountTriplesStar_isBigO_B
   refine ⟨by assumption, by assumption, by assumption, by assumption, by assumption, by assumption,
     by assumption, by assumption, by assumption, by assumption, by assumption, by assumption,
     by assumption, ?_, ?_⟩
-  · intro i
-    apply Nat.succ_le_of_lt
-    apply hc i |>.1
+  · grind
   · intro i
     calc
       (c i : ℝ) ≤ (⌊(x:ℝ) ^ (ε / 4)⌋₊ : ℝ) := by

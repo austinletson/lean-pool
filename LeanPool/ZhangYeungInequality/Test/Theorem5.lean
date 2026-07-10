@@ -130,13 +130,7 @@ example {Ω : Type*} [MeasurableSpace Ω]
     3 * I[U : Z; μ] ≤ I[X 0 : ⟨U, Z⟩; μ] := by
   have h := theorem5 (n := 3) (S := fun _ => Fin 2) hU hZ hX μ 0 (by decide)
   rw [Fin.sum_univ_three] at h
-  rw [h0, h1, h2] at h
-  have htail' :
-      I[X 0 : ⟨U, Z⟩; μ] + ∑ j : Fin 3, H[X j; μ]
-        - H[(fun ω : Ω => fun j : Fin 3 => X j ω); μ] = I[X 0 : ⟨U, Z⟩; μ] := by
-    linarith
-  rw [htail'] at h
-  simpa using h
+  grind
 
 end AssumptionSpecialization
 
@@ -197,22 +191,12 @@ example
             - 3 * ∑ j : Fin 3, I[U : Z | X j; μ] := by
             rw [hsumCond]
       _ = 3 * lhs := by
-            change 3 ^ 2 * I[U : Z; μ]
-                - 3 * ∑ x : Fin 3, I[U : Z | X x; μ]
-                - 3 * ∑ j : Fin 3, I[U : Z | X j; μ]
-              = 3 * (3 * I[U : Z; μ]
-                - 2 * ∑ j : Fin 3, I[U : Z | X j; μ])
-            ring
+            grind
   have hright : ∑ i : Fin 3, (rhs i + tail) = (∑ i : Fin 3, rhs i) + 3 * tail := by
     simp only [rhs, tail, Finset.sum_add_distrib, Finset.sum_const,
       Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
     ring
-  have hscaled : 3 * lhs ≤ (∑ i : Fin 3, rhs i) + 3 * tail := by
-    simpa [hleft, hright] using hsum
-  have hfinal : lhs ≤ (1 / 3 : ℝ) * (∑ i : Fin 3, rhs i) + tail := by
-    nlinarith [hscaled]
-  simpa [lhs, rhs, tail, sub_eq_add_neg, add_assoc, add_left_comm, add_comm,
-    mul_add, add_mul] using hfinal
+  grind
 
 end AveragedFromPointForm
 

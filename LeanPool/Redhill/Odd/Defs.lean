@@ -231,8 +231,7 @@ lemma not_dvd_tup (dx : ↑(Y n F) ∣ x) (dF : Disjoint {0, 1, 2, 5, 10} F) :
     ∀ f ∈ F, ∀ i, ¬↑f ∣ tup n F x i := fun f hf i ↦ by
   simp_rw [disjoint_insert_left, disjoint_singleton_left] at dF
   have lf : 3 ≤ f := by
-    by_contra h
-    interval_cases f <;> simp_all
+    grind
   cases i using Fin.addCases with
   | left i =>
     rw [tup_castAdd]

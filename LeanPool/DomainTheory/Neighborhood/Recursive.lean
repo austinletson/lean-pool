@@ -115,8 +115,7 @@ theorem lt_iter_succ_sq (n guess : ℕ) (hn : n < (guess + 1) * (guess + 1)) :
     exact Nat.add_lt_add_left
       (Nat.lt_mul_div_succ _ (lt_of_le_of_lt (Nat.zero_le _) h)) _
   else
-    rw [dif_neg h]
-    exact hn
+    grind
   termination_by guess
   decreasing_by exact h
 
@@ -125,9 +124,7 @@ theorem sqrt_le (n : ℕ) : Nat.sqrt n * Nat.sqrt n ≤ n := by
   rcases Nat.lt_or_ge 1 n with h | h
   · rw [Nat.sqrt, if_neg (Nat.not_le.mpr h)]
     exact iter_sq_le _ _
-  · rw [Nat.sqrt, if_pos h]
-    calc n * n ≤ 1 * n := Nat.mul_le_mul_right n h
-      _ = n := Nat.one_mul n
+  · grind
 
 /-- `n < (sqrt n + 1)²` (choice-free; mathlib's `Nat.lt_succ_sqrt` is classical).
 The initial guess
@@ -144,9 +141,7 @@ theorem lt_succ_sqrt (n : ℕ) : n < (Nat.sqrt n + 1) * (Nat.sqrt n + 1) := by
       _ ≤ 2 ^ (2 * (n.log2 / 2 + 1)) := Nat.pow_le_pow_right (by decide) (by omega)
       _ = g * g := hgg.symm
       _ ≤ (g + 1) * (g + 1) := Nat.mul_le_mul (Nat.le_succ g) (Nat.le_succ g)
-  · rw [Nat.sqrt, if_pos h]
-    exact Nat.lt_of_lt_of_le (Nat.lt_succ_self n)
-      (Nat.le_mul_of_pos_right (n + 1) (Nat.succ_pos n))
+  · grind
 
 /-- **The square-root characterization (choice-free).** If `q² ≤ m < (q+1)²` then
 `sqrt m = q`. The
@@ -175,8 +170,7 @@ theorem sqrt_eq_of {m q : ℕ} (h1 : q * q ≤ m) (h2 : m < (q + 1) * (q + 1)) :
 classical). -/
 theorem sqrt_add_eq (q a : ℕ) (h : a ≤ q + q) : Nat.sqrt (q * q + a) = q := by
   refine sqrt_eq_of (Nat.le_add_right _ _) ?_
-  have expand : (q + 1) * (q + 1) = q * q + q + q + 1 := Nat.succ_mul_succ q q
-  omega
+  grind
 
 /-! ## Choice-free pairing round-trip
 
@@ -213,9 +207,7 @@ theorem unpair_pair_snd (a b : ℕ) : (Nat.pair a b).unpair.2 = b := by rw [unpa
 /-- `n ≤ (sqrt n)² + 2·sqrt n` (choice-free; needed for `pair_unpair`). -/
 theorem sqrt_le_add (n : ℕ) : n ≤ Nat.sqrt n * Nat.sqrt n + Nat.sqrt n + Nat.sqrt n := by
   have h := lt_succ_sqrt n
-  have e : (Nat.sqrt n + 1) * (Nat.sqrt n + 1)
-      = Nat.sqrt n * Nat.sqrt n + Nat.sqrt n + Nat.sqrt n + 1 := Nat.succ_mul_succ _ _
-  omega
+  grind
 
 /-- **`pair ∘ unpair = id` (choice-free).** Mirrors `Nat.pair_unpair`. -/
 theorem pair_unpair (n : ℕ) : Nat.pair (Nat.unpair n).1 (Nat.unpair n).2 = n := by
@@ -260,8 +252,7 @@ private theorem rec_mul (a b : ℕ) : Nat.rec 0 (fun _ IH => a + IH) b = a * b :
   induction b with
   | zero => rfl
   | succ k ih =>
-    change a + Nat.rec 0 (fun _ IH => a + IH) k = a * (k + 1)
-    rw [Nat.mul_succ]; omega
+    grind
 
 /-- Addition is primitive recursive (choice-free). -/
 theorem primrec_add : Nat.Primrec (Nat.unpaired (· + ·)) :=
@@ -459,10 +450,7 @@ theorem RecDecidable.not {p : ℕ → Prop} (hp : RecDecidable p) : RecDecidable
 1`, decidable
 equality on `ℕ`); useful for choice-free De Morgan. -/
 theorem RecDecidable.em {p : ℕ → Prop} (hp : RecDecidable p) (n : ℕ) : p n ∨ ¬ p n := by
-  obtain ⟨f, _, hfe⟩ := hp
-  rcases Nat.decEq (f n) 1 with h | h
-  · exact Or.inr (fun hp => h ((hfe n).mp hp))
-  · exact Or.inl ((hfe n).mpr h)
+  grind
 
 /-- **Disjunction.** Recursive decidability is closed under `∨`, via choice-free
 De Morgan
@@ -470,16 +458,7 @@ De Morgan
 theorem RecDecidable.or {p q : ℕ → Prop} (hp : RecDecidable p) (hq : RecDecidable q) :
     RecDecidable (fun n => p n ∨ q n) := by
   refine RecDecidable.of_iff (fun n => ?_) (hp.not.and hq.not).not
-  constructor
-  · rintro (h | h) ⟨hnp, hnq⟩
-    · exact hnp h
-    · exact hnq h
-  · intro h
-    rcases hp.em n with hp' | hp'
-    · exact Or.inl hp'
-    · rcases hq.em n with hq' | hq'
-      · exact Or.inr hq'
-      · exact absurd ⟨hp', hq'⟩ h
+  grind
 
 /-! ## "Recursively enumerable" predicates (Scott's notion, Definition 7.2)
 
@@ -574,8 +553,7 @@ theorem REPred.and {p q : ℕ → Prop} (hp : REPred p) (hq : REPred q) :
   constructor
   · rintro ⟨⟨i, hi⟩, ⟨j, hj⟩⟩
     exact ⟨Nat.pair i j, by simp only [unpair_pair_fst, unpair_pair_snd]; exact ⟨hi, hj⟩⟩
-  · rintro ⟨w, hw1, hw2⟩
-    exact ⟨⟨w.unpair.1, hw1⟩, ⟨w.unpair.2, hw2⟩⟩
+  · grind
 
 /-- **Existential projection.** If `p` is r.e. then so is `fun n => ∃ i, p ⟨i,
 n⟩`: fold the new
@@ -594,10 +572,7 @@ theorem REPred.proj {p : ℕ → Prop} (hp : REPred p) :
     rw [hqe (Nat.pair i n)] at hi
     obtain ⟨j, hj⟩ := hi
     exact ⟨Nat.pair i j, by simpa only [unpair_pair_fst, unpair_pair_snd] using hj⟩
-  · rintro ⟨w, hw⟩
-    refine ⟨w.unpair.1, ?_⟩
-    rw [hqe (Nat.pair w.unpair.1 n)]
-    exact ⟨w.unpair.2, hw⟩
+  · grind
 
 /-- **Disjunction of r.e. predicates is r.e.** A witness `w` carries a tag `w.1 ∈
 {0,1}` selecting
@@ -628,9 +603,7 @@ theorem REPred.or {p q : ℕ → Prop} (hp : REPred p) (hq : REPred q) :
         · simp only [unpair_pair_fst]
     · rintro ⟨w, hw⟩
       simp only [unpair_pair_fst, unpair_pair_snd] at hw
-      rcases hw with ⟨hi, _⟩ | ⟨hi, _⟩
-      · exact Or.inl ⟨w.unpair.2, hi⟩
-      · exact Or.inr ⟨w.unpair.2, hi⟩
+      grind
 
 /-! ## A choice-free primitive-recursive fold engine over `Nat`-coded lists
 
@@ -801,8 +774,7 @@ theorem decodeList_length_le (c : ℕ) : (decodeList c).length ≤ c := by
     | succ d =>
       rw [decodeList_succ, List.length_cons]
       have hle := unpair_snd_le d
-      have := ih d.unpair.2 (Nat.lt_succ_of_le hle)
-      omega
+      grind
 
 /-- **Correctness of `foldCode` on an arbitrary code.** `foldCode` over any
 natural `c` equals the
@@ -990,18 +962,9 @@ theorem bForallFn_eq_one_iff (g : ℕ → ℕ) (n N : ℕ) :
     rw [hstep]
     rcases (show bForallFn g n N = 0 ∨ bForallFn g n N = 1 by omega) with h0 | h1
     · rw [h0, selectFn_zero]
-      constructor
-      · intro hcontra; exact absurd hcontra (by decide)
-      · intro hall
-        have hb : bForallFn g n N = 1 := ih.mpr (fun i hi => hall i (Nat.lt_succ_of_lt hi))
-        rw [h0] at hb; exact hb
+      grind
     · rw [h1, selectFn_one, isOne_eq_one_iff]
-      constructor
-      · intro hgN i hi
-        rcases (show i < N ∨ i = N by omega) with hlt | heq
-        · exact (ih.mp h1) i hlt
-        · subst heq; exact hgN
-      · intro hall; exact hall N (Nat.lt_succ_self N)
+      grind
 
 /-- **Bounded universal quantifier preserves recursive decidability.** If `p` is
 recursively
@@ -1139,16 +1102,13 @@ theorem reForallF_foldl_eq_one_iff (qc : ℕ → ℕ) :
       refine ⟨hsplit.1, fun k hk => ?_⟩
       rcases k with _ | k'
       · rw [List.getD_cons_zero, hi]; exact hsplit.2
-      · rw [List.getD_cons_succ, htail]
-        exact hrest k' (by simp only [List.length_cons] at hk; omega)
+      · grind
     · rintro ⟨hflag1, hall⟩
       have hhead : qc (Nat.pair (w - 1).unpair.1 x) = 1 := by
-        have := hall 0 (by simp only [List.length_cons]; omega)
-        rwa [List.getD_cons_zero, hi] at this
+        grind
       refine ⟨?_, fun k hk => ?_⟩
       · rw [hflag'def, hflag1, selectFn_one, isOne_eq_one_iff]; exact hhead
-      · have := hall (k + 1) (by simp only [List.length_cons]; omega)
-        rwa [List.getD_cons_succ, htail] at this
+      · grind
 
 theorem reForallChar_eq_one_iff (qc : ℕ → ℕ) (w c : ℕ) :
     reForallChar qc w c = 1 ↔
@@ -1230,21 +1190,13 @@ theorem REPred.forall_mem_decodeList {p : ℕ → Prop} (hp : REPred p) :
         obtain ⟨j, hj⟩ := hh e (List.mem_cons.mpr (Or.inl rfl))
         obtain ⟨iws, hiws⟩ := ih (fun e' he' => hh e' (List.mem_cons.mpr (Or.inr he')))
         refine ⟨j :: iws, fun k hk => ?_⟩
-        rcases k with _ | k'
-        · rw [List.getD_cons_zero, List.getD_cons_zero]; exact hj
-        · rw [List.getD_cons_succ, List.getD_cons_succ]
-          exact hiws k' (by simp only [List.length_cons] at hk; omega)
+        grind
     obtain ⟨iws, hiws⟩ := hwit (decodeList c) (fun e he => (hpe e).mp (hall e he))
     refine ⟨encodeList iws, (reForallChar_eq_one_iff qc _ c).mpr (fun k hk => ?_)⟩
     rw [decodeList_encodeList]; exact hiws k hk
   · rintro ⟨w, hw⟩
     rw [reForallChar_eq_one_iff] at hw
-    intro e he
-    obtain ⟨k, hk, hek⟩ := hmemgetD (decodeList c) e he
-    rw [hpe e]
-    refine ⟨(decodeList w).getD k 0, ?_⟩
-    have := hw k hk
-    rwa [hek] at this
+    grind
 
 /-! ### Bounded `∀` over a coded list with a parameter (for `curry`, Theorem 7.5)
 

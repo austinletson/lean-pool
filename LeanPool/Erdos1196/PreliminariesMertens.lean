@@ -62,8 +62,7 @@ private lemma sum_vonMangoldt_mul_div_eq_log_factorial (N : ℕ) :
     (Finset.Icc 1 N).sum (fun m => Λ m * ((N / m : ℕ) : ℝ)) =
       Real.log (Nat.factorial N) := by
   have hI : Finset.Icc 1 N = Finset.Ioc 0 N := by
-    ext n
-    simp [Finset.mem_Icc, Finset.mem_Ioc, Nat.succ_le_iff]
+    grind
   have hprod : (∏ n ∈ Finset.Icc 1 N, (n : ℝ)) = Nat.factorial N := by
     rw [← Finset.Ico_add_one_right_eq_Icc 1 N, Finset.prod_Ico_eq_prod_range]
     simpa [Nat.succ_eq_add_one, add_comm] using
@@ -205,8 +204,7 @@ lemma mertensEstimate :
   calc
     |Real.log (Nat.factorial t) / t + mertensFractionalError t - Real.log (t : ℝ)|
       = |(Real.log (Nat.factorial t) / t - Real.log (t : ℝ)) + mertensFractionalError t| := by
-          congr
-          ring
+          grind
     _ ≤ |Real.log (Nat.factorial t) / t - Real.log (t : ℝ)| + |mertensFractionalError t| :=
         abs_add_le _ _
     _ = |Real.log (Nat.factorial t) / t - Real.log (t : ℝ)| + mertensFractionalError t := by

@@ -118,10 +118,7 @@ private lemma hasDerivAt_hFunc (n : ℕ) {r : ℝ} (hr : 0 < r) :
     have h : HasDerivAt (fun x : ℝ => (x - rStar n) ^ 2)
         ((2 : ℕ) * (r - rStar n) ^ (2 - 1) * (1 - 0)) r :=
       ((hasDerivAt_id r).sub (hasDerivAt_const r (rStar n))).pow 2
-    have hval : ((2 : ℕ) : ℝ) * (r - rStar n) ^ (2 - 1) * (1 - 0)
-        = 2 * (r - rStar n) := by
-      norm_num
-    rwa [hval] at h
+    grind
   have hadd := (hasDerivAt_phiFunc n hr).add hsq
   rw [show ((2 * ↑n + 1) / r - 2 * r) + 2 * (r - rStar n)
       = (2 * (↑n : ℝ) + 1) / r - 2 * rStar n by ring] at hadd
@@ -270,9 +267,7 @@ private lemma distToInterval_le_abs_sub (x r : ℝ) (j : ℕ)
     (hrj : (j : ℝ) ≤ r) (hrj1 : r ≤ (j : ℝ) + 1) :
     distToInterval x j ≤ |r - x| := by
   unfold distToInterval
-  exact max_le
-    (max_le (by linarith [le_abs_self (r - x)]) (by linarith [neg_le_abs (r - x)]))
-    (abs_nonneg _)
+  grind
 
 private lemma distToInterval_sq_le_sq (x r : ℝ) (j : ℕ)
     (hrj : (j : ℝ) ≤ r) (hrj1 : r ≤ (j : ℝ) + 1) :

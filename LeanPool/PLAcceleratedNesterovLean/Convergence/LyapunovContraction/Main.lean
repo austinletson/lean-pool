@@ -237,8 +237,7 @@ private abbrev lyapunovContractionProof
       _ < Real.sqrt 1 := Real.sqrt_lt_sqrt hle (by linarith)
       _ = 1 := Real.sqrt_one
   have h_rho_id : (1 + a) * ρ = 1 - a := by
-    have h1a : (0 : ℝ) < 1 + a := by linarith
-    exact rho_identity a ρ h1a.ne' hρ
+    grind
   -- ─────────────────────────────────────────────────────────────
   -- Step 3 (Complete the square for normal terms)
   --   ((1-a)/2)·‖v‖² + (1-a)·√μ'·⟨v,e⟩ + ((1-a)·μ'/2)·‖e‖²
@@ -395,8 +394,7 @@ private abbrev lyapunovContractionProof
       rw [hlam_def]
       have h2ma : (0 : ℝ) < 2 * (1 - a) := by linarith
       rw [div_le_div_iff₀ two_pos h2ma]
-      have h_asq := sq_nonneg a
-      linarith
+      grind
     -- ── Contraction assembly ──
     -- Two-step: (A) L_{n+1} ≤ (1-a)·L_n + δ, (B) δ ≤ (a/2)·L_n → L_{n+1} ≤ (1-a/2)·L_n
 
@@ -477,9 +475,7 @@ private abbrev lyapunovContractionProof
         rw [← Real.sqrt_mul (le_of_lt hμ')]
       -- Key coefficient identity: 2·√μ'·√η = 2·a (for norm simplification)
       have h2a : 2 * Real.sqrt μ' * Real.sqrt η = 2 * a := by
-        have : (2 : ℝ) * Real.sqrt μ' * Real.sqrt η =
-            2 * (Real.sqrt μ' * Real.sqrt η) := by ring
-        rw [this, h_sqrt_prod]
+        grind
       -- ═══ E: ‖wn‖²/2 with √μ'·√η replaced by a ═══
       have h_wn_half : ‖wn‖ ^ 2 / 2 =
           (1 - a) ^ 2 / 2 * ‖sn.v - P sn.v‖ ^ 2 + μ' / 2 * ‖en‖ ^ 2 +
@@ -621,9 +617,7 @@ private abbrev lyapunovContractionProof
       _ ≤ η * ((L : ℝ) * dist x'n m_star) + dist x'n m_star := by
           linarith [mul_le_mul_of_nonneg_left hgrad_lip (le_of_lt hη_pos)]
       _ = 2 * dist x'n m_star := by
-          have : η * ((L : ℝ) * dist x'n m_star) = dist x'n m_star := by
-            rw [← mul_assoc, hηL, one_mul]
-          linarith
+          grind
       _ < 2 * r₀ / 3 := by linarith [hx'_ball_r09]
   case x'_next_in =>
     /- x'_{n+1} = (1+ρ)·x_{n+1} - ρ·x_n  (convex-like combination).
@@ -669,9 +663,7 @@ private abbrev lyapunovContractionProof
         _ ≤ η * ((L : ℝ) * dist x'n m_star) + dist x'n m_star := by
             linarith [mul_le_mul_of_nonneg_left hgrad_lip (le_of_lt hη_pos)]
         _ = 2 * dist x'n m_star := by
-            have : η * ((L : ℝ) * dist x'n m_star) = dist x'n m_star := by
-              rw [← mul_assoc, hηL, one_mul]
-            linarith
+            grind
         _ < 2 * (r₀ / 9) := by linarith [hx'_ball_r09]
     -- Subtract m_star using the convex combination identity
     have h_sub : sn1.lookahead η - m_star =

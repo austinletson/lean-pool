@@ -128,8 +128,7 @@ private lemma card_affine_le_projective_bound (n : ℕ) (hn : 0 < n) :
   have hq_le_pow : q ≤ q ^ n := Nat.le_self_pow hn.ne' q
   have hmul : q ^ n * (q - 1) = q ^ (n + 1) - q ^ n := by
     rw [Nat.mul_sub_left_distrib, mul_one, pow_succ', mul_comm]
-  rw [hmul]
-  exact Nat.sub_le_sub_left hq_le_pow _
+  grind
 
 /--
 Auxiliary form of Theorem 1: a map into `F^(n+1)` over a small finite set admits
@@ -190,10 +189,8 @@ lemma theorem_1_aux {X : Type*} [Finite X] (n : ℕ) (f : X → (Fin (n + 1) →
     by_contra hfx
     have hmem : f x ∈ LinearMap.ker M := by
       simpa [LinearMap.mem_ker] using hx
-    rw [hM] at hmem
-    exact hp_avoid x hfx hmem
-  · intro hx
-    simp [show f x = 0 by simpa using hx]
+    grind
+  · grind
 
 /--
 Base case of Theorem 1: `n + 1` equations over a small finite set can be replaced
@@ -215,8 +212,7 @@ lemma theorem_1_base_case {X : Type*} [Finite X] (n : ℕ) (S : Set (X → F))
   have hf_range : Set.range f = S := by
     ext g
     constructor
-    · rintro ⟨i, rfl⟩
-      exact (eS.symm i).2
+    · grind
     · intro hg
       exact ⟨eS ⟨g, hg⟩, by simp [f]⟩
   obtain ⟨M, hM⟩ := theorem_1_aux (F := F) n (fun x i => f i x) hX
@@ -354,8 +350,7 @@ private lemma exists_lift_of_subset_span_image {K V W : Type*} [Field K]
     exact hvspan y
   · ext y
     constructor
-    · rintro ⟨x, ⟨u, rfl⟩, rfl⟩
-      simp [hvmap u, u.2]
+    · grind
     · intro hy
       exact ⟨v ⟨y, hy⟩, ⟨⟨y, hy⟩, rfl⟩, hvmap ⟨y, hy⟩⟩
 

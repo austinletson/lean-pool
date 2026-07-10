@@ -113,9 +113,7 @@ private theorem liftClass_growth_bound
       simp only [show (x₁ ∈ S) = True from propext ⟨fun _ => trivial, fun _ => hx₁⟩,
         show (x₂ ∈ S) = True from propext ⟨fun _ => trivial, fun _ => hx₂⟩,
         dite_true] at heq
-      calc x₁ = Sum.inl (getH x₁ hx₁) := (hno_inr x₁ hx₁).choose_spec
-        _ = Sum.inl (getH x₂ hx₂) := congrArg Sum.inl heq
-        _ = x₂ := ((hno_inr x₂ hx₂).choose_spec).symm
+      grind
     have hSH_shat : (boolFamilyToFinsetFamily A).Shatters SH := by
       intro t ht
       let f : ↥S → Bool := fun ⟨x, hx⟩ => decide (getH x hx ∈ t)
@@ -168,8 +166,7 @@ private theorem liftClass_growth_bound
   have h_inj : Function.Injective toSub := by
     intro f g hfg; funext x
     have := Finset.ext_iff.mp hfg x
-    simp only [toSub, Finset.mem_filter, Finset.mem_univ, true_and] at this
-    cases hf : f x <;> cases hg : g x <;> simp_all
+    grind
   set 𝒜 := RS_fs.image toSub
   have h1 : RS_fs.card = 𝒜.card := (Finset.card_image_of_injective _ h_inj).symm
   have h_vcdim_le : 𝒜.vcDim ≤ d := by
@@ -339,11 +336,7 @@ theorem finite_support_vc_approx
       apply hx
       change (μ.toPMF.map Sum.inl) x = 0
       rw [PMF.map_apply]
-      apply ENNReal.tsum_eq_zero.mpr; intro h
-      -- goal: (if x = Sum.inl h then μ.toPMF h else 0) = 0
-      split_ifs with heq
-      · exact absurd ⟨h, heq.symm⟩ habs
-      · rfl
+      apply ENNReal.tsum_eq_zero.mpr; grind
     have hD_inl : D (Set.range Sum.inl)ᶜ = 0 := by
       rw [hD_eq, @PMF.toMeasure_apply_eq_toOuterMeasure X ⊤ p ⟨fun _ => trivial⟩]
       rw [PMF.toOuterMeasure_apply]

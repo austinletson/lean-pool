@@ -131,20 +131,13 @@ lemma finite_support_smul_pairNO_heiOper_apply {𝕂 : Type*} [SMulZeroClass �
   by_contra con
   apply hk
   rw [pairNO_apply_eq_zero heiOper hN ?_, smul_zero]
-  by_cases h : N ≤ n + k
-  · exact le_sup_of_le_right h
-  · apply le_sup_of_le_left
-    simp only [Set.mem_Ioo, not_and, not_lt, tsub_le_iff_right] at con
-    by_contra con'
-    linarith [con (by linarith)]
+  grind
 
 include heiTrunc in
 omit heiComm in
 lemma finite_support_pairNO_heiOper_apply (n m : ℤ) (v : V) :
     (Function.support fun k ↦ ((pairNO heiOper (m - k) (n + k)) v)).Finite := by
   apply (finite_support_smul_pairNO_heiOper_apply heiTrunc n m  (fun _ ↦ 1) v).subset
-  intro k hk
-  simp only [Function.mem_support, ne_eq, one_smul] at hk ⊢
   grind
 
 include heiTrunc in
@@ -232,10 +225,7 @@ lemma heiPairNO_trunc_cofinite_sub (n : ℤ) (v : V) :
   have filt : (Set.Ioo B T)ᶜ ∈ cofinite :=
     Set.Finite.compl_mem_cofinite (show (Set.Ioo B T).Finite from Set.finite_Ioo B T)
   filter_upwards [filt] with k hkBT
-  simp only [Set.mem_compl_iff, Set.mem_Ioo, not_and, not_lt] at hkBT
-  by_cases hk : k ≤ B
-  · exact hB k hk
-  · exact hT k (hkBT <| by grind only) -- the whole line is `grind`able
+  grind -- the whole line is `grind`able
 
 open Topology
 
@@ -308,8 +298,7 @@ lemma commutator_sugawaraGen_apply_eq_finsum_commutator_apply (n : ℤ) (A : V �
   · apply (finite_support_pairNO_heiOper_apply₀ heiTrunc n v).subset
     refine Function.support_subset_iff'.mpr ?_
     simp only [Function.mem_support, ne_eq, not_not, neg_eq_zero, ← sub_eq_add_neg]
-    intro k hk
-    simp [hk]
+    grind
 
 lemma sugawaraGen_commutator_apply_eq_finsum_commutator_apply (n : ℤ) (A : V →ₗ[𝕜] V) (v : V) :
     A.commutator (sugawaraGen heiTrunc n) v =
@@ -388,19 +377,15 @@ lemma commutator_sugawaraGen_heiOper [CharZero 𝕜] (n m : ℤ) :
     · apply (show Set.Finite {-m} from Set.finite_singleton (-m)).subset
       simp only [Set.subset_singleton_iff, Function.mem_support, ne_eq, ite_eq_right_iff,
                  smul_eq_zero, Classical.not_imp, not_or, and_imp]
-      intro j hjm _ _
-      linarith
+      grind
     · apply (show Set.Finite {n + m} from Set.finite_singleton (n + m)).subset
       simp only [Set.subset_singleton_iff, Function.mem_support, ne_eq, ite_eq_right_iff,
                  smul_eq_zero, Classical.not_imp, not_or, and_imp]
-      intro j hjm _ _
-      linarith
+      grind
   · rw [finsum_eq_single _ (-m)]
-    · intro j hjm
-      simp [show j + m ≠ 0 by grind]
+    · grind
   · rw [finsum_eq_single _ (n + m)]
-    · intro j hjnm
-      simp [show n - j + m ≠ 0 by intro con; apply hjnm; linarith]
+    · grind
 
 /-- `[L(n), J(m-k)J(k)] = -k • J(m-k)J(n+k) - (m-k) • J(n+m-k)J(k)` -/
 lemma commutator_sugawaraGen_heiOperPair [CharZero 𝕜] (n m k : ℤ) :
@@ -474,13 +459,7 @@ lemma commutator_sugawaraGen_heiPairNO' [CharZero 𝕜] (n m k : ℤ) :
       have hnk' : ¬ -n ≤ k := by linarith
       simp only [pairNO', hk, hk', hnk, hnk', ↓reduceIte, and_false, false_and, add_zero, neg_smul,
         zsmul_eq_mul, Int.cast_sub, ← Module.End.mul_eq_comp]
-      rw [obs]
-      rw [sub_eq_add_neg _ ((k : V →ₗ[𝕜] V) * _), sub_eq_add_neg _ ((m - k : V →ₗ[𝕜] V) * _)]
-      rw [add_comm _ (-_)]
-      simp only [← neg_mul]
-      simp only [add_right_inj, add_sub]
-      congr 1
-      simp
+      grind
 
 /-- `[L(n), :J(m-k)J(k):] v = -k • :J(m-k)J(n+k): v - (m-k) • :J(n+m-k)J(k): v + extra terms • v` -/
 lemma commutator_sugawaraGen_heiPairNO'_apply [CharZero 𝕜] (n m k : ℤ) (v : V) :
@@ -604,9 +583,7 @@ lemma _root_.VirasoroProject.commutator_sugawaraGen [CharZero 𝕜] (n m : ℤ) 
                 · intro k _
                   simp; ring
               · intro i hi; simp only [Finset.mem_Ioc.mp hi, and_self, ↓reduceIte, neg_smul]
-            · refine Function.support_subset_iff'.mpr ?_; intro k hk
-              simp only [Finset.coe_Ioc, Set.mem_Ioc] at hk
-              simp [hk]
+            · refine Function.support_subset_iff'.mpr ?_; grind
           · have obs (i : ℤ) : ¬ (-n < i ∧ i ≤ 0) := by intro maybe; linarith
             simp only [obs, ↓reduceIte]
             rw [finsum_eq_sum_of_support_subset _ (s := Finset.Ioc 0 (-n)) ?_]
@@ -633,9 +610,7 @@ lemma _root_.VirasoroProject.commutator_sugawaraGen [CharZero 𝕜] (n m : ℤ) 
                       (fun x ↦ (↑x + 1) * (n + (x + 1))) (fun x ↦ x * (↑x + ↑n))
                       (fun i ↦ i + 1) (by aesop) ..]
                 · intro i hi
-                  simp only [Finset.coe_range, Set.mem_Iio, Finset.coe_Ioc, Set.mem_Ioc,
-                    Int.succ_ofNat_pos, true_and, n_natAbs] at hi ⊢
-                  omega
+                  grind
                 · intro k hk hk'
                   exfalso
                   simp only [n_natAbs, Finset.mem_Ioc, Finset.coe_range,
@@ -643,16 +618,12 @@ lemma _root_.VirasoroProject.commutator_sugawaraGen [CharZero 𝕜] (n m : ℤ) 
                   exact hk' (k - 1).toNat (by omega) (by omega)
                 · intro k _; simp only [mul_eq_mul_left_iff] ; left ; ring
               · aesop
-            · refine Function.support_subset_iff'.mpr ?_; intro k hk
-              simp only [Finset.coe_Ioc, Set.mem_Ioc, and_comm] at hk
-              simp [hk]
+            · refine Function.support_subset_iff'.mpr ?_; grind
         · simp [hnm]
     · simpa [Function.HasFiniteSupport, ← sub_eq_add_neg] using
         finite_support_smul_pairNO'_heiOper_apply₀ heiTrunc heiComm ..
     · apply ((Set.finite_Ioc (n+m) m).union (Set.finite_Ioc m (n+m))).subset
-      refine Function.support_subset_iff'.mpr ?_; intro k hk
-      simp only [Set.Ioc_union_Ioc_symm, Set.mem_Ioc, inf_lt_iff, le_sup_iff] at hk
-      grind
+      refine Function.support_subset_iff'.mpr ?_; grind
   · have aux₀ := finite_support_pairNO'_heiOper_apply heiTrunc heiComm 0 (n + m) v
     simp only [sub_eq_add_neg, zero_add] at aux₀
     apply ((aux₀.union (Set.finite_Ioc (m+n) m)).union (Set.finite_Ioc m (m+n))).subset
@@ -667,10 +638,7 @@ lemma _root_.VirasoroProject.commutator_sugawaraGen [CharZero 𝕜] (n m : ℤ) 
         heiTrunc heiComm n m id v).subset
     intro k hk
     simp only [Function.mem_support, ne_eq] at hk ⊢
-    intro hsource
-    apply hk
-    rw [show n + m + -(m + -k) = n + k by ring]
-    simpa [sub_eq_add_neg] using congr_arg Neg.neg hsource
+    grind
 
 end commutator_sugawaraGen
 
@@ -714,8 +682,7 @@ noncomputable def _root_.VirasoroProject.VirasoroAlgebra.representationOfCentral
           simp only [hnm, ↓reduceIte, map_smul]
           simp only [obs, LieAlgebra.representationOfBasisAux_apply_basis]
           simp only [← smul_assoc, smul_eq_mul]
-          congr 1
-          field_simp
+          grind
         · simp [hnm]
 
 lemma _root_.VirasoroProject.VirasoroAlgebra.representationOfCentralChargeOfL_cgen
@@ -752,11 +719,7 @@ noncomputable def _root_.VirasoroProject.sugawaraRepresentation [CharZero 𝕜] 
   intro n m
   simp only [commutator_sugawaraGen heiOper heiTrunc heiComm n m, zsmul_eq_mul, Int.cast_sub,
              one_div, add_right_inj]
-  by_cases hnm : n + m = 0
-  · simp [hnm]
-    congr 1
-    field_simp
-  · simp [hnm]
+  grind
 
 open VirasoroAlgebra in
 /-- The central element `C` of the Virasoro algebra acts as `1` on the representation obtained

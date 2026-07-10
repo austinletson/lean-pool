@@ -206,8 +206,7 @@ private lemma integral_const_add_polyEvalCircle_sq {D : ℕ}
         (fun t =>
           ‖c‖ ^ 2 + 2 * c.re * (polyEvalCircle a r t).re +
             2 * c.im * (polyEvalCircle a r t).im) := by
-      ext t
-      exact h_key t
+      grind
     rw [h_congr]
     have h_split1 :
         ∫ t : AddCircle T,
@@ -415,17 +414,12 @@ private lemma integrableOn_polar_norm {D : ℕ} (a : Fin D → ℂ) :
                     apply mul_le_mul_of_nonneg_left _ hT
                     exact mul_le_mul_of_nonneg_right h hexp_pos.le
                 _ = bound r := by
-                    unfold bound
-                    rw [hr_abs]
-                    ring
+                    grind
             rw [hS_def, hr_abs]
             have hsum_factor : ∑ k : Fin D, ‖a k‖ * r ^ (k.val + 1) =
                 r * ∑ k : Fin D, ‖a k‖ * r ^ k.val := by
               rw [Finset.mul_sum]
-              congr 1
-              ext k
-              rw [pow_succ]
-              ring
+              grind
             rw [hsum_factor]
             ring_nf
             have hC_nn : 0 ≤ C := Finset.sum_nonneg (fun k _ => norm_nonneg (a k))
@@ -563,8 +557,7 @@ private lemma integral_cauchy_schwarz {α : Type*} [MeasurableSpace α]
             ((fun x => t ^ 2 * f x ^ 2) + (fun x => (-2 * t) * (f x * g x))) from by
           ext x; simp [Pi.add_apply]]
         exact integral_add (hf2.const_mul _) (hfg.const_mul _)
-      rw [h_step1, h_step2, hI1, hI2]
-      ring
+      grind
     linarith
   by_cases hA_zero : A = 0
   · have hf_ae : ∀ᵐ x ∂μ, f x = 0 := by
@@ -603,9 +596,7 @@ private lemma integrableOn_polar_const (u : ℝ) :
       Set.Ioo_subset_Icc_self
   · set bound := fun r : ℝ => T * (u ^ 2 * (|r| ^ 1 * Real.exp (-r ^ 2)))
     have hbound_def : bound = fun r : ℝ => (T * u ^ 2) * (|r| ^ 1 * Real.exp (-r ^ 2)) := by
-      funext r
-      unfold bound
-      ring
+      grind
     apply Integrable.mono'
       (g := bound)
     · rw [hbound_def]
@@ -651,8 +642,7 @@ private lemma integrableOn_polar_const (u : ℝ) :
         _ ≤ bound r := by
             unfold bound
             rw [abs_of_pos hr]
-            ring_nf
-            exact le_rfl
+            grind
 
 private lemma integrableOn_polar_const_add {D : ℕ} (a : Fin D → ℂ) (c : ℂ) :
     IntegrableOn
@@ -699,12 +689,7 @@ private lemma integrableOn_polar_const_add {D : ℕ} (a : Fin D → ℂ) (c : �
             ≤ p.1 * ((2 * ‖c‖ ^ 2 + 2 * ‖q‖ ^ 2) * Real.exp (-p.1 ^ 2)) := mul_le_mul_of_nonneg_left
           (mul_le_mul_of_nonneg_right hbase (le_of_lt (Real.exp_pos _)))
           (le_of_lt hr)
-      calc
-        p.1 * (‖c + q‖ ^ 2 * Real.exp (-p.1 ^ 2))
-            ≤ p.1 * ((2 * ‖c‖ ^ 2 + 2 * ‖q‖ ^ 2) * Real.exp (-p.1 ^ 2)) := hmul
-        _ = g p := by
-            unfold g q
-            ring
+      grind
     · exact mul_nonneg (le_of_lt hr)
         (mul_nonneg (sq_nonneg ‖c + polyEvalCircle a p.1 (QuotientAddGroup.mk p.2)‖)
           (le_of_lt (Real.exp_pos _)))
@@ -729,9 +714,7 @@ private lemma radial_gaussian_integral (n : ℕ) :
     intro r _
     congr 1
     · rw [← rpow_natCast r (2 * n + 1)]
-      congr 1
-      push_cast
-      ring
+      grind
     · congr 1
       congr 1
       rw [← rpow_natCast r 2]
@@ -784,20 +767,13 @@ private lemma fockNorm_polar_local {D : ℕ} (a : Fin D → ℂ) :
         r * (‖polyEvalCircle a r (QuotientAddGroup.mk θ)‖ ^ 2 * Real.exp (-r ^ 2)) =
           (r * Real.exp (-r ^ 2)) *
             ‖polyEvalCircle a r (QuotientAddGroup.mk θ)‖ ^ 2 := by
-      intro θ
-      ring
+      grind
     simp_rw [h1]
     rw [MeasureTheory.integral_const_mul]
     have := integral_Ioo_eq_T_smul_haar (fun t : AddCircle T =>
       ‖polyEvalCircle a r t‖ ^ 2)
     simp only [smul_eq_mul] at this
-    rw [show (∫ θ in Set.Ioo (-Real.pi) Real.pi,
-          ‖polyEvalCircle a r (QuotientAddGroup.mk θ)‖ ^ 2) =
-        (∫ θ in Set.Ioo (-Real.pi) Real.pi,
-          (fun t : AddCircle T => ‖polyEvalCircle a r t‖ ^ 2) (QuotientAddGroup.mk θ))
-        from by rfl]
-    rw [this]
-    ring
+    grind
   simp_rw [inner_eq]
   rw [MeasureTheory.integral_const_mul]
   have hT_eq : (1 / Real.pi) * T = 2 := by
@@ -840,21 +816,13 @@ lemma gaussian_integral_const_add_polyEval {D : ℕ} (a : Fin D → ℂ) (c : �
         r * (‖c + polyEvalCircle a r (QuotientAddGroup.mk θ)‖ ^ 2 * Real.exp (-r ^ 2)) =
           (r * Real.exp (-r ^ 2)) *
             ‖c + polyEvalCircle a r (QuotientAddGroup.mk θ)‖ ^ 2 := by
-      intro θ
-      ring
+      grind
     simp_rw [h1]
     rw [MeasureTheory.integral_const_mul]
     have := integral_Ioo_eq_T_smul_haar (fun t : AddCircle T =>
       ‖c + polyEvalCircle a r t‖ ^ 2)
     simp only [smul_eq_mul] at this
-    rw [show (∫ θ in Set.Ioo (-Real.pi) Real.pi,
-          ‖c + polyEvalCircle a r (QuotientAddGroup.mk θ)‖ ^ 2) =
-        (∫ θ in Set.Ioo (-Real.pi) Real.pi,
-          (fun t : AddCircle T => ‖c + polyEvalCircle a r t‖ ^ 2)
-            (QuotientAddGroup.mk θ))
-        from by rfl]
-    rw [this]
-    ring
+    grind
   simp_rw [inner_eq, integral_const_add_polyEvalCircle_sq]
   set whole : ℝ → ℝ := fun r =>
     T * (r * Real.exp (-r ^ 2) *
@@ -909,9 +877,7 @@ lemma gaussian_integral_const_add_polyEval {D : ℕ} (a : Fin D → ℂ) (c : �
     ring
   have hsecond_int : Integrable second (volume.restrict (Set.Ioi 0)) := by
     rw [show second = whole - first by
-      funext r
-      simp [whole, first, second]
-      ring]
+      grind]
     exact hwhole_int.sub hfirst_int
   rw [show (∫ r in Set.Ioi (0 : ℝ), whole r) =
       ∫ r in Set.Ioi (0 : ℝ), (first + second) r by rw [hsum]]
@@ -923,8 +889,7 @@ lemma gaussian_integral_const_add_polyEval {D : ℕ} (a : Fin D → ℂ) (c : �
     unfold first
     rw [show (fun r : ℝ => T * (r * Real.exp (-r ^ 2) * ‖c‖ ^ 2)) =
       fun r => (T * (r * Real.exp (-r ^ 2))) * ‖c‖ ^ 2 by
-        ext r
-        ring]
+        grind]
     rw [MeasureTheory.integral_mul_const]
     have hT_eq : (1 / Real.pi) * T = 2 := by
       simp only [T]
@@ -962,17 +927,7 @@ lemma gaussian_integral_const_add_polyEval {D : ℕ} (a : Fin D → ℂ) (c : �
       _ = (1 / Real.pi) * ∫ z : ℂ, ‖polyEval a z‖ ^ 2 * Real.exp (-‖z‖ ^ 2) := by
             simpa using (fockNorm_polar_local a).symm
       _ = fockNormSq a := fockNorm_eq_gaussian_integral a
-  have hfinal :
-      (1 / Real.pi) * (∫ r in Set.Ioi (0 : ℝ), first r) +
-        (1 / Real.pi) * ∫ r in Set.Ioi (0 : ℝ), second r = ‖c‖ ^ 2 + fockNormSq a := by
-    rw [hfirst_eval, hsecond_eval]
-  have hparen2 :
-      (1 / Real.pi) *
-          ((∫ r in Set.Ioi (0 : ℝ), first r) +
-            ∫ r in Set.Ioi (0 : ℝ), second r) =
-        (1 / Real.pi) * (∫ r in Set.Ioi (0 : ℝ), first r) +
-          (1 / Real.pi) * ∫ r in Set.Ioi (0 : ℝ), second r := by ring
-  exact hparen2.trans hfinal
+  grind
 
 private lemma gaussian_integral_real_const_add_polyEval {D : ℕ} (a : Fin D → ℂ) (u : ℝ) :
     (1 / Real.pi) * ∫ z : ℂ, ‖(u : ℂ) + polyEval a z‖ ^ 2 * Real.exp (-‖z‖ ^ 2) =
@@ -1210,12 +1165,7 @@ private lemma rho_const_add_le (u : ℝ) (w : ℂ) :
       |‖(1 : ℂ) + w‖ - ‖(1 : ℂ) + ((u : ℂ) + w)‖|
           ≤ ‖((1 : ℂ) + w) - ((1 : ℂ) + ((u : ℂ) + w))‖ := abs_norm_sub_norm_le _ _
       _ = |u| := by simp [Complex.norm_real]
-  have htri :
-      |‖(1 : ℂ) + w‖ - 1| ≤
-        |‖(1 : ℂ) + w‖ - ‖(1 : ℂ) + ((u : ℂ) + w)‖| +
-          |‖(1 : ℂ) + ((u : ℂ) + w)‖ - 1| := by
-    simpa using abs_sub_le ‖(1 : ℂ) + w‖ ‖(1 : ℂ) + ((u : ℂ) + w)‖ 1
-  exact le_trans htri (add_le_add hnorm le_rfl)
+  grind
 
 /-- The Gaussian integral of `(rho ∘ q.eval)²` is bounded by `(|u| + m)²`, where
 `R` is the (nonnegative) `rho`-magnitude of the recentred polynomial and `m` its
@@ -1275,9 +1225,7 @@ private lemma rho_centered_integral_bound
           = ∫ z, (u ^ 2 + 2 * |u| * R z + R z ^ 2) ∂gaussianMeasure := by
               apply integral_congr_ae
               filter_upwards with z
-              calc
-                (|u| + R z) ^ 2 = |u| ^ 2 + 2 * |u| * R z + R z ^ 2 := by ring
-                _ = u ^ 2 + 2 * |u| * R z + R z ^ 2 := by rw [sq_abs]
+              grind
       _ = ∫ z, (u ^ 2 + 2 * |u| * R z) ∂gaussianMeasure +
             ∫ z, R z ^ 2 ∂gaussianMeasure := hsplit1
       _ = |u| ^ 2 + 2 * |u| * ∫ z, R z ∂gaussianMeasure + m ^ 2 := by
@@ -1402,29 +1350,13 @@ private lemma local_fock_closing_arith
       exact le_trans hscalar_sq hms2
     exact le_of_sq_le_sq hsq' h_rhs_nonneg
   have hu_bound : |u| ≤ ((2 + x) / 2) * m + x2 / 2 := by
-    have htwo : |2 * u| ≤ |2 * u + x2| + x2 := by
-      calc
-        |2 * u| = |(2 * u + x2) + (-x2)| := by congr 1; ring
-        _ ≤ |2 * u + x2| + |-x2| := abs_add_le _ _
-        _ = |2 * u + x2| + x2 := by rw [abs_neg, abs_of_nonneg hx2_nonneg]
-    have htwo' : 2 * |u| ≤ (2 + x) * m + x2 := by
-      calc
-        2 * |u| = |2 * u| := by rw [abs_mul]; norm_num
-        _ ≤ |2 * u + x2| + x2 := htwo
-        _ ≤ (2 + x) * m + x2 := by gcongr
-    nlinarith [htwo']
+    grind
   have hu_bound_delta : |u| ≤ ((2 + (1 / 4601 : ℝ)) / 2) * m + x ^ 2 / 2 := by
     nlinarith [hu_bound, hx_le_delta, hx_sq, hx_nonneg]
   have hy_le : y ≤ 4600 * (|u| + m) := by
     have h_rhs_nonneg : 0 ≤ 4600 * (|u| + m) := by nlinarith [hm_nonneg, abs_nonneg u]
     have hq2_le : y ^ 2 ≤ (4600 * (|u| + m)) ^ 2 := by
-      rw [hy_sq]
-      calc
-        q2 ≤ (4600 : ℝ) ^ 2 * (|u| + m) ^ 2 := by
-          calc
-            q2 ≤ (4600 : ℝ) ^ 2 * rq2 := by simpa using hq_basic
-            _ ≤ (4600 : ℝ) ^ 2 * (|u| + m) ^ 2 := mul_le_mul_of_nonneg_left hrq2_le (by positivity)
-        _ = (4600 * (|u| + m)) ^ 2 := by ring
+      grind
     exact le_of_sq_le_sq hq2_le h_rhs_nonneg
   have hx_le_uy : x ≤ |u| + y := by
     have h_rhs_nonneg : 0 ≤ |u| + y := by nlinarith [abs_nonneg u, hy_nonneg]
@@ -1443,14 +1375,9 @@ private lemma local_fock_closing_arith
       x ≤ (4600 + 4601 * ((2 + (1 / 4601 : ℝ)) / 2)) * m + (1 / 2 : ℝ) * x := by
     nlinarith [hpre, hx_sq_small]
   have hx_final : x ≤ 23003 * m := by
-    have hconst :
-        2 * (4600 + 4601 * ((2 + (1 / 4601 : ℝ)) / 2)) ≤ (23003 : ℝ) := by norm_num
-    nlinarith
+    grind
   have hsq : x ^ 2 ≤ (23003 * m) ^ 2 := pow_le_pow_left₀ hx_nonneg hx_final 2
-  calc
-    x2 = x ^ 2 := hx_sq.symm
-    _ ≤ (23003 * m) ^ 2 := hsq
-    _ = 23003 ^ 2 * m2 := by rw [← hm_sq]; ring
+  grind
 
 theorem LocalFockSPR_of_small_norm
     (p : Polynomial ℂ)
@@ -1482,14 +1409,7 @@ theorem LocalFockSPR_of_small_norm
     intro z
     simp [q]
   have hp_eval : ∀ z, p.eval z = (u : ℂ) + polyEval a z := by
-    intro z
-    calc
-      p.eval z = q.eval z + (u : ℂ) := by
-        rw [hq_sub z]
-        ring
-      _ = (u : ℂ) + polyEval a z := by
-        rw [hq_eval]
-        ring
+    grind
   let x2 : ℝ := (1 / Real.pi) * ∫ z : ℂ, ‖p.eval z‖ ^ 2 * Real.exp (-‖z‖ ^ 2)
   let m2 : ℝ := (1 / Real.pi) * ∫ z : ℂ, (rho (p.eval z)) ^ 2 * Real.exp (-‖z‖ ^ 2)
   let q2 : ℝ := (1 / Real.pi) * ∫ z : ℂ, ‖q.eval z‖ ^ 2 * Real.exp (-‖z‖ ^ 2)
@@ -1543,9 +1463,7 @@ theorem LocalFockSPR_of_small_norm
         ((continuous_const.add
           (continuous_const.add (continuous_polyEval a) :
             Continuous (fun z : ℂ => (u : ℂ) + polyEval a z))).norm).add continuous_const
-      refine h.congr ?_
-      intro z
-      simp only [B, hp_eval]
+      grind
     exact hcont.aestronglyMeasurable
   have hN2_int : Integrable (fun z => N z ^ 2) gaussianMeasure := by
     simpa [N, hp_eval] using integrable_sq_gaussianMeasure_real_const_add_polyEval a u

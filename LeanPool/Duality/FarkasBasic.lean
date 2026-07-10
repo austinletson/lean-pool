@@ -109,8 +109,7 @@ theorem basicLinearAlgebra (A : Matrix I J F) (b : I → F) :
   else
     use -y
     rw [Matrix.mulVec_neg, hAy, neg_zero, dotProduct_neg, neg_lt_zero]
-    push Not at hlt
-    exact ⟨rfl, lt_of_le_of_ne hlt hby.symm⟩
+    grind
 
 /- Let's move to the "symmetric" variants now. They will also be used in the upcoming extended
 setting and in the upcoming theory of linear programming. -/

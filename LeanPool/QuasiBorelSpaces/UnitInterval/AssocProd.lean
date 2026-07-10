@@ -87,11 +87,7 @@ lemma mul_symm_assocProd
   simp only [
     Set.Icc.coe_mul, coe_symm_eq, assocProd_coe,
     mul_sub, mul_one, mul_div]
-  rw [← mul_right_cancel_iff_of_pos hpq]
-  simp only [
-    sub_mul, one_mul, isUnit_iff_ne_zero, ne_eq,
-    hpq', not_false_eq_true, IsUnit.div_mul_cancel]
-  ring_nf
+  grind
 
 @[simp]
 lemma mul_symm_assocProd'
@@ -122,11 +118,6 @@ lemma mul_symm_assocProd'
         simp only [hp, mul_lt_mul_iff_left₀, coe_lt_one, hpq]
       · simp only [one_mul, p.property.2]
   simp only [Set.Icc.coe_mul, coe_symm_eq, assocProd_coe, mul_sub, mul_comm (p : ℝ) q]
-  rw [eq_div_iff, sub_mul]
-  · simp only [mul_one, mul_assoc]
-    rw [div_mul_cancel₀]
-    · ring_nf
-    · exact hpq
-  · exact hpq
+  grind
 
 end unitInterval

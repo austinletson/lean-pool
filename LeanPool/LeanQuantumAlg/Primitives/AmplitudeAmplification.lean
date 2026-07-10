@@ -87,8 +87,7 @@ theorem amplitudeAmplificationStep_apply_state (θ : ℝ) (k : ℕ) :
   have hangle : amplitudeAmplificationAngle θ (k + 1) =
       amplitudeAmplificationAngle θ k + 2 * θ := by
     unfold amplitudeAmplificationAngle
-    norm_num
-    ring
+    grind
   fin_cases i
   · change (amplitudeAmplificationStep θ).apply (amplitudeAmplificationState θ k) 0 =
       amplitudeAmplificationState θ (k + 1) 0

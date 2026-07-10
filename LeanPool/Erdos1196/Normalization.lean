@@ -44,9 +44,7 @@ lemma hasSum_normalizationFirstEntryPart {x Y : ℕ} (hx : 1 ≤ x)
     · rw [if_pos hm, tsum_mul_left, firstEntryTail, if_pos hm]
     · simp [hm]
   have hIcc : ∀ m : ℕ, (1 ≤ m ∧ m < x) ↔ m ∈ Finset.Icc 1 (x - 1) := by
-    intro m
-    simp [Finset.mem_Icc]
-    omega
+    grind
   have hslice : ∀ m : ℕ, Summable (fun q : ℕ => firstEntryPairWeight x Y (m, q)) := by
     intro m
     rw [firstEntryPairWeight_row]
@@ -56,8 +54,7 @@ lemma hasSum_normalizationFirstEntryPart {x Y : ℕ} (hx : 1 ≤ x)
       exact (hsummable hm1 hmx).mul_left (1 / (m : ℝ))
     · simp [hm]
   have hrow_zero : ∀ m ∉ Finset.Icc 1 (x - 1), row m = 0 := fun m hm => by
-    rw [hrow m, if_neg]
-    simpa [hIcc m] using hm
+    grind
   have hrow_summable : Summable row :=
     summable_of_hasFiniteSupport ((Finset.Icc 1 (x - 1)).finite_toSet.subset
       (fun m hm => by by_contra hm'; exact hm (hrow_zero m hm')))
@@ -87,8 +84,7 @@ lemma hasSum_normalizationFirstEntryPart {x Y : ℕ} (hx : 1 ≤ x)
   rw [hrows] at hfirst
   rw [tsum_eq_sum (s := Finset.Icc 1 (x - 1)) hrow_zero] at hfirst
   convert hfirst using 1
-  exact Finset.sum_congr rfl fun m hm => by rw [hrow m, if_pos]
-                                            simpa [hIcc m] using hm
+  exact Finset.sum_congr rfl fun m hm => by grind
 
 /--
 For fixed `Y ≥ 2`, the first-entry contribution to `B_x` is summable and equals
@@ -168,12 +164,7 @@ lemma normalizationFirstEntryPart_estimate {Y : ℕ} (hY : 2 ≤ Y) :
   calc
     |(∑' n : ℕ, normalizationFirstEntryPart x Y n) - 1|
       = |((H - Real.log (x : ℝ)) / Real.log (x : ℝ)) + E| := by
-          rw [hfirst_eq, hsplit]
-          have hrew : (1 / Real.log (x : ℝ)) * H + E - 1 =
-              ((H - Real.log (x : ℝ)) / Real.log (x : ℝ)) + E := by
-            field_simp [hxlog_pos.ne']
-            ring
-          simpa [sub_eq_add_neg] using congrArg abs hrew
+          grind
       _ ≤ |(H - Real.log (x : ℝ)) / Real.log (x : ℝ)| + |E| := abs_add_le _ _
       _ ≤ 1 / Real.log (x : ℝ) + (2 * C0) / Real.log (x : ℝ) := by
             gcongr

@@ -86,8 +86,7 @@ include T in private theorem ker_pf_span_eq
     (⊥ : Ideal R.carrier) (Ideal.span {p}) Ideal.isPrime_bot hbot_lt hbot_fin
   rw [Ideal.height_bot] at h0
   rw [show (↑(1 : ℕ) : ℕ∞) = 1 from rfl, Order.lt_one_iff] at hspan_ht
-  rw [hspan_ht] at h0
-  exact lt_irrefl _ h0
+  grind
 
 omit [IsAdicComplete (IsLocalRing.maximalIdeal T) T] in
 /-- Helper for `intersection_close_up`: kernel proof for x₁ = t₁ + u·y₂.
@@ -340,8 +339,7 @@ private def intersection_close_up_proof
     have hceq : (↑c : T) = t₁ * (↑y₁ : T) + t₂ * (↑y₂ : T) := by
       rw [smul_eq_mul, smul_eq_mul] at hc_eq
       exact hc_eq.symm
-    rw [hceq]
-    ring
+    grind
   -- It suffices to find x₁, x₂ transcendental over R with c = x₁·y₁ + x₂·y₂
   suffices ∃ (x₁ x₂ : T),
       (↑c : T) = x₁ * (↑y₁ : T) + x₂ * (↑y₂ : T) ∧
@@ -353,8 +351,7 @@ private def intersection_close_up_proof
         ∃ (hle : R.carrier ≤ S.carrier) (x₁' : S.carrier),
           (⟨(c : T), hle c.2⟩ : S.carrier) - x₁' * ⟨(y₁ : T), hle y₁.2⟩ ∈
             Ideal.span {⟨(y₂ : T), hle y₂.2⟩}) by
-    obtain ⟨_, _, _, _, _, _, _, hS⟩ := this
-    exact hS
+    grind
   -- D₁, D₂ = values of u making x₁ = t₁+u·y₂ or x₂ = t₂-u·y₁ algebraic over R
   set D₁ : Set T := ⋃ (f : Polynomial R.carrier) (_ : f ≠ 0),
     {u : T | (aeval (t₁ + u * (↑y₂ : T)) f : T) = 0}
@@ -384,8 +381,7 @@ private def intersection_close_up_proof
       intro u₁ u₂ h
       dsimp only at h
       have h' : u₁ * (↑y₁ : T) = u₂ * (↑y₁ : T) := by
-        rw [sub_eq_sub_iff_add_eq_add] at h
-        exact add_left_cancel h.symm
+        grind
       exact mul_right_cancel₀ hy₁ h'
     have hmap_ne : Polynomial.map R.carrier.subtype f ≠ 0 := by
       rw [Ne, ← Polynomial.map_zero R.carrier.subtype]
@@ -453,8 +449,7 @@ private def intersection_close_up_proof
         fun (v : T ⧸ P) => Ideal.Quotient.mk P t₁ + v * Ideal.Quotient.mk P (↑y₂ : T) := by
       intro v₁ v₂ h
       have key : (v₁ - v₂) * Ideal.Quotient.mk P (↑y₂ : T) = 0 := by
-        rw [sub_mul]
-        exact sub_eq_zero.mpr (add_left_cancel h)
+        grind
       exact sub_eq_zero.mp ((mul_eq_zero.mp key).resolve_right hy₂_ne)
     apply Set.Finite.image
     exact (Polynomial.finite_setOf_isRoot hmap_ne).preimage
@@ -473,9 +468,7 @@ private def intersection_close_up_proof
         fun (v : T ⧸ P) => Ideal.Quotient.mk P t₂ - v * Ideal.Quotient.mk P (↑y₁ : T) := by
       intro v₁ v₂ h
       have key : (v₁ - v₂) * Ideal.Quotient.mk P (↑y₁ : T) = 0 := by
-        rw [sub_mul]
-        have := sub_right_injective h
-        exact sub_eq_zero.mpr this
+        grind
       exact sub_eq_zero.mp ((mul_eq_zero.mp key).resolve_right hy₁_ne)
     apply Set.Finite.image
     exact (Polynomial.finite_setOf_isRoot hmap_ne).preimage

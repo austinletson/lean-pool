@@ -65,11 +65,7 @@ lemma pinv_pullback_eq
   set P := Lhalf * Lhalf_pinv with hP_def
   have h_lhs : Lhalf * (Lhalf_pinv * inducedLaplacian G S * Lhalf_pinv) * Lhalf =
       P * inducedLaplacian G S * P := by
-    rw [hP_def]
-    calc Lhalf * (Lhalf_pinv * inducedLaplacian G S * Lhalf_pinv) * Lhalf
-        = (Lhalf * Lhalf_pinv) * inducedLaplacian G S * (Lhalf_pinv * Lhalf) := by
-          simp only [Matrix.mul_assoc]
-      _ = P * inducedLaplacian G S * P := by rw [hP_def, ← hMP4]
+    grind
   rw [h_lhs]
   have hP_herm : P.IsHermitian := by
     change Pᴴ = P
@@ -77,10 +73,7 @@ lemma pinv_pullback_eq
   have hP_idem : P * P = P := hMP3
   have hP_ker : ∀ x : V → ℝ, graphLaplacian G *ᵥ x = 0 ↔ P *ᵥ x = 0 := by
     have hLP_half : Lhalf * P = Lhalf := by
-      calc Lhalf * P = Lhalf * (Lhalf_pinv * Lhalf) := by rw [hMP4]
-        _ = (Lhalf * Lhalf_pinv) * Lhalf := by rw [Matrix.mul_assoc]
-        _ = P * Lhalf := rfl
-        _ = Lhalf := hMP1
+      grind
     intro x; constructor
     · intro hLx
       have hLhalf_x : Lhalf *ᵥ x = 0 :=
@@ -146,11 +139,7 @@ lemma normalized_laplacian_eq_proj
     (hMP4 : Lhalf * Lhalf_pinv = Lhalf_pinv * Lhalf) :
     Lhalf_pinv * graphLaplacian G * Lhalf_pinv = Lhalf * Lhalf_pinv := by
   rw [← hLhalf_sq]
-  calc Lhalf_pinv * (Lhalf * Lhalf) * Lhalf_pinv
-      = (Lhalf_pinv * Lhalf) * (Lhalf * Lhalf_pinv) := by
-        simp only [Matrix.mul_assoc]
-    _ = (Lhalf * Lhalf_pinv) * (Lhalf * Lhalf_pinv) := by rw [← hMP4]
-    _ = Lhalf * Lhalf_pinv := hMP3
+  grind
 
 lemma proj_le_one
     (P : Matrix V V ℝ)

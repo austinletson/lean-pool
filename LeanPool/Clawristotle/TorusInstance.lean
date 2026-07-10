@@ -98,9 +98,7 @@ private theorem curl_div_harmonic_rn' {n : ℕ} (F : (Fin n → ℝ) → (Fin n 
         fderiv ℝ (fun y => fderiv ℝ (fun z => F z j) y (Pi.single i 1)) x (Pi.single i 1) = 0 := by
   have hcurl_fun : ∀ i, (fun y => fderiv ℝ (fun z => F z j) y (Pi.single i 1)) =
       (fun y => fderiv ℝ (fun z => F z i) y (Pi.single j 1)) := by
-    intro i
-    ext y
-    exact hcurl y i j
+    grind
   simp_rw [hcurl_fun]
   simp_rw [clairaut_fderiv (fun z => F z _) x _ j (hF _)]
   have hdiff_comp : ∀ i,
@@ -151,8 +149,7 @@ theorem torus_hLaplacianMaxNonpos (φ : Torus3 → ℝ) (x₀ : Torus3)
     have hmax_gi : IsLocalMax gᵢ 0 :=
       Filter.Eventually.mono Filter.univ_mem fun t _ => by
         simp only [gᵢ, zero_smul, add_zero, periodicLift, Function.comp_apply]
-        rw [(torusMk_surjective x₀).choose_spec]
-        exact hmax (torusMk (x₀' + t • eᵢ))
+        grind
     -- Helper: the path t ↦ x₀' + t • eᵢ has derivative eᵢ
     have hpath_hd : ∀ t, HasDerivAt (fun s => x₀' + s • eᵢ) eᵢ t := fun t => by
       have hsmul : HasDerivAt (fun s : ℝ => s • eᵢ) eᵢ t := by

@@ -29,8 +29,7 @@ namespace HermiteLEAN
 /-- Square blocks have the expected odd cardinality. -/
 theorem squareBlock_card (ℓ : ℕ) : (squareBlock ℓ).card = 2 * ℓ + 1 := by
   rw [squareBlock, Nat.card_Ico]
-  ring_nf
-  omega
+  grind
 
 -- to_mathlib: Mathlib/Data/Real/Interval
 /-- A convenient interval-distance lower bound for annulus arguments. -/
@@ -38,21 +37,7 @@ theorem annulus_distance_lower_bound (j : ℕ) (x : ℝ) :
     posPart (|((j : ℕ) : ℝ) - x| - 1)
       ≤ min |((j : ℕ) : ℝ) - x| |(((j + 1 : ℕ) : ℝ) - x)| := by
   dsimp [posPart]
-  set a : ℝ := |((j : ℕ) : ℝ) - x|
-  set b : ℝ := |(((j + 1 : ℕ) : ℝ) - x)|
-  have ha0 : 0 ≤ a := by simp [a]
-  have hb0 : 0 ≤ b := by simp [b]
-  have habs : |a - b| ≤ 1 := by
-    have h := abs_abs_sub_abs_le_abs_sub ((j : ℝ) - x) ((((j + 1 : ℕ) : ℝ) - x))
-    have hrhs : |((j : ℝ) - x) - ((((j + 1 : ℕ) : ℝ) - x))| = 1 := by
-      push_cast
-      rw [abs_eq (by norm_num)]
-      right
-      ring
-    simpa [a, b, hrhs] using h
-  rw [le_min_iff]
-  refine ⟨max_le (by linarith) ha0, max_le ?_ hb0⟩
-  linarith [(abs_sub_le_iff.mp habs).1]
+  grind
 
 -- to_mathlib: Mathlib/Analysis/SpecialFunctions/Gaussian/Basic
 /-- A reusable Gaussian absorption lemma. -/
@@ -82,8 +67,7 @@ theorem polynomial_times_gaussian_le_gaussian
       ((x ^ 2 : ℝ) ^ ((k : ℝ) / 2)) = x ^ ((((2 : ℕ) : ℝ)) * ((k : ℝ) / 2)) := by
         rw [← Real.rpow_natCast_mul hx 2 ((k : ℝ) / 2)]
       _ = x ^ ((k : ℝ)) := by
-        congr 2
-        ring
+        grind
   have hgtendsto : Tendsto g Filter.atTop (𝓝 0) := by simpa [g, add_mul] using hexp.add hpoly
   have hsmall : ∀ᶠ x : ℝ in Filter.atTop, g x < 1 := (tendsto_order.1 hgtendsto).2 1 zero_lt_one
   rcases Filter.eventually_atTop.1 hsmall with ⟨R, hR⟩
@@ -101,10 +85,8 @@ theorem polynomial_times_gaussian_le_gaussian
     · have hcompact : g x ≤ C0 := by
         simpa [Real.norm_eq_abs, g, abs_of_nonneg (by positivity : 0 ≤ 1 + x ^ k)] using
           hC0 x ⟨hx, hxr⟩
-      simp only [C]
-      linarith [le_abs_self C0]
-    · simp only [C]
-      nlinarith [hR x (le_of_not_ge hxr), abs_nonneg C0]
+      grind
+    · grind
   have hsplit :
       Real.exp (-a * x ^ 2) =
         Real.exp (-(a / 2) * x ^ 2) * Real.exp (-(a / 2) * x ^ 2) := by

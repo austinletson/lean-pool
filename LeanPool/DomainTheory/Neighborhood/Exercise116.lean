@@ -104,10 +104,7 @@ theorem mem_compl_of_finite (x : cofiniteSystem.Element) {F : Set ℕ} (hF : F.F
 
 /-- For `n ∉ Y`, the neighbourhood `Y` is contained in `{n}ᶜ`. -/
 theorem subset_compl_singleton {Y : Set ℕ} {n : ℕ} (hn : n ∈ Yᶜ) : Y ⊆ ({n} : Set ℕ)ᶜ := by
-  intro m hm
-  rw [Set.mem_compl_iff, Set.mem_singleton_iff]
-  rintro rfl
-  exact hn hm
+  grind
 
 theorem toExcluded_ofExcluded (E : Set ℕ) : toExcluded (ofExcluded E) = E := by
   ext n

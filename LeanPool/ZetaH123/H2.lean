@@ -140,8 +140,7 @@ theorem noCarry_mod (q a b i : ℕ) (hq : 1 < q)
           exact Nat.mul_le_mul_right _ (h e (Finset.mem_range.mp he))
       _ = (q - 1) * ∑ e ∈ Finset.range i, q ^ e := by rw [Finset.mul_sum]
       _ = q ^ i - 1 := geom_pred q i (le_of_lt hq)
-  have : 1 ≤ q ^ i := Nat.one_le_pow _ _ (by omega)
-  omega
+  grind
 
 /-- Kummer's theorem (one direction): if adding `k` and `n-k` produces no carry in
 any base-`q` position, then `q ∤ C(n,k)`. -/
@@ -152,9 +151,7 @@ theorem not_dvd_choose (q n k : ℕ) (hq : q.Prime) (hkn : k ≤ n)
   have hfac : (Nat.choose n k).factorization q = 0 := by
     rw [Nat.factorization_choose hq hkn hb, Finset.card_eq_zero,
         Finset.filter_eq_empty_iff]
-    intro i _
-    simp only [not_le]
-    exact hcarry i
+    grind
   have hpos : 0 < Nat.choose n k := Nat.choose_pos hkn
   intro hdvd
   have := (Nat.Prime.dvd_iff_one_le_factorization hq (by omega)).mp hdvd
@@ -219,9 +216,7 @@ theorem main_zero_mem (q : ℕ) (hq : q.Prime) (d k : ℕ) (_hd : 1 < d) (hk : 0
         rw [qdigit_eq _ _ _ hq2]; exact digit_special q k e hq2
       have h3 : qdigit q (k - 1) k = 0 := by
         rw [qdigit_eq _ _ _ hq2, Nat.div_eq_of_lt hLlt]; simp
-      rcases eq_or_ne e k with he | he
-      · subst he; rw [h2, if_pos rfl, h3]; omega
-      · rw [h2, if_neg he]; omega
+      grind
   -- The infimum is attained: extract a minimizer.
   have hmem : sInf S ∈ S := Nat.sInf_mem hne
   obtain ⟨m, hmT, hval⟩ := hmem
@@ -387,8 +382,7 @@ theorem comp_id_le (q : ℕ) (hq : q.Prime) (d k : ℕ) (hd : 1 < d) (hk : 0 < k
   have hcf1 : ∀ e, qdigit q (k - 1) e + qdigit q μ e ≤ q - 1 := by
     intro e
     have := hnc₁ e
-    rw [hofn1] at this
-    simpa [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, hμ] using this
+    grind
   -- minimizer for s q d' (s q 1 k)
   obtain ⟨mν, hmνT, hmνval⟩ := s_minimizer q d' (s q 1 k) hq2 hs1pos
   obtain ⟨hposν, hdvdν, hncν⟩ := hmνT
@@ -416,9 +410,7 @@ theorem comp_id_le (q : ℕ) (hq : q.Prime) (d k : ℕ) (hd : 1 < d) (hk : 0 < k
         rw [qdigit_eq _ _ _ hq2, qdigit_eq _ _ _ hq2, qdigit_eq _ _ _ hq2]
         exact qdigit_add q (k - 1) μ e hq2 (fun f => by
           have := hcf1 f; rw [qdigit_eq _ _ _ hq2, qdigit_eq _ _ _ hq2] at this; exact this)
-      rw [hadd] at hν
-      simp only [Function.comp_apply] at hν ⊢
-      omega
+      grind
   -- objective value of the constructed tuple
   have hobj : ∑ i : Fin (d'+1), (i.val + 1) * m i
       = (∑ i : Fin d', (i.val + 1) * mν i) + (d'+1) * μ := by
@@ -434,10 +426,7 @@ theorem comp_id_le (q : ℕ) (hq : q.Prime) (d k : ℕ) (hd : 1 < d) (hk : 0 < k
     exact ⟨m, hmem, rfl⟩
   -- final algebra
   rw [hmνval, hs1]
-  rw [hobj] at hbound
-  calc s q (d'+1) k
-      ≤ (d'+1)*k + (∑ i : Fin d', (i.val+1)*mν i + (d'+1)*μ) := hbound
-    _ = (d' * (k + μ) + ∑ i : Fin d', (i.val+1)*mν i) + (k + μ) := by ring
+  grind
 
 /-
 Slot-list machinery for the slot formula. `M` is made concrete as `slotList q k1 L`:
@@ -517,8 +506,7 @@ theorem blockSum_Lindep (q k1 L₁ L₂ r : ℕ) (h : L₁ ≤ L₂) (hr : 1 ≤
   rw [ht]
   have heq : (r - 1) * (q - 1) + (q - 1) = r * (q - 1) := by
     cases r with | zero => omega | succ m => simp; ring
-  rw [List.drop_append_of_le_length (by omega),
-      List.take_append_of_le_length (by rw [List.length_drop]; omega)]
+  grind
 
 /-- (L3, pure reindexing) Split off the first block of `Φ_d`:
 `Φ_d(M) = d·β₁ + ∑_{r<d-1} (d-1-r)·β_{r+2}`. -/
@@ -528,13 +516,7 @@ theorem Phi_split (q k1 d L : ℕ) (hd : 1 ≤ d) :
   unfold Phi
   obtain ⟨e, rfl⟩ : ∃ e, d = e + 1 := ⟨d - 1, by omega⟩
   rw [Finset.sum_range_succ']
-  simp only [Nat.add_sub_cancel, Nat.sub_zero]
-  rw [Nat.add_comm]
-  congr 1
-  apply Finset.sum_congr rfl; intro r hr; simp only [Finset.mem_range] at hr
-  have h1 : e + 1 - (r + 1) = e - r := by omega
-  have h2 : r + 1 + 1 = r + 2 := by ring
-  rw [h1, h2]
+  grind
 
 -- Recurrence for `slotList`: appending the slots at position `Lx`.
 theorem slotList_succ (q k1 Lx : ℕ) :
@@ -584,17 +566,12 @@ theorem slotList_take (q k1 L : ℕ) :
     rw [slotList_succ] at hn ⊢
     rw [List.length_append, List.length_replicate] at hn
     by_cases hcase : n ≤ (slotList q k1 L).length
-    · obtain ⟨p, hpL, r, htake, hlen, hr⟩ := ih n hcase
-      refine ⟨p, by omega, r, ?_, hlen, hr⟩
-      rw [List.take_append_of_le_length hcase]; exact htake
+    · grind
     · push Not at hcase
       refine ⟨L, by omega, n - (slotList q k1 L).length, ?_, by omega, by omega⟩
       rw [List.take_append]
       rw [List.take_of_length_le (by omega)]
-      congr 1
-      rw [List.take_replicate]
-      congr 1
-      omega
+      grind
 
 -- `take` of `c·n` slots equals the sum of the first `c` blocks.
 theorem take_blocks (q k1 L c : ℕ) :
@@ -624,9 +601,7 @@ theorem abel_swap (d : ℕ) (b : ℕ → ℕ) :
       rw [this]; ring
     rw [Finset.sum_congr rfl hcong, Finset.sum_add_distrib]
     rw [Finset.sum_range_succ (f := fun r => b (r+1))]
-    have h1 : d + 1 - d = 1 := by omega
-    rw [h1, Nat.one_mul]
-    ring
+    grind
 
 /-- Abel reformulation of `Φ_d(M)`: the layer-cake identity
 `Φ_d(M) = ∑_{c<d} (sum of the smallest (c + 1)·n slots)`. -/
@@ -647,9 +622,7 @@ theorem greedy_core (q p L : ℕ) (hq : 2 ≤ q) (hpL : p ≤ L)
     (hcount : (∑ e ∈ Finset.range p, s e) + r ≤ ∑ e ∈ Finset.range L, b e) :
     (∑ e ∈ Finset.range p, s e * q ^ e) + r * q ^ p ≤ ∑ e ∈ Finset.range L, b e * q ^ e := by
   have hsplit : Finset.range L = Finset.range p ∪ Finset.Ico p L := by
-    ext e
-    simp
-    omega
+    grind
   have hdisj : Disjoint (Finset.range p) (Finset.Ico p L) := by
     rw [Finset.range_eq_Ico]; exact Finset.Ico_disjoint_Ico_consecutive 0 p L
   set A := ∑ e ∈ Finset.range p, b e * q ^ e with hA
@@ -678,20 +651,15 @@ theorem greedy_core (q p L : ℕ) (hq : 2 ≤ q) (hpL : p ≤ L)
   have hcountIco : (∑ e ∈ Finset.range p, (s e - b e)) + r ≤ ∑ e ∈ Finset.Ico p L, b e := by
     have hb_le_s : ∑ e ∈ Finset.range p, b e ≤ ∑ e ∈ Finset.range p, s e := by
       apply Finset.sum_le_sum
-      intro e he
-      simp only [Finset.mem_range] at he
-      exact hbs e (by omega)
+      grind
     have hsubsum : ∑ e ∈ Finset.range p, (s e - b e)
         = (∑ e ∈ Finset.range p, s e) - ∑ e ∈ Finset.range p, b e := by
       rw [← Finset.sum_tsub_distrib]
-      intro e he
-      simp only [Finset.mem_range] at he
-      exact hbs e (by omega)
+      grind
     have hLsplit2 : ∑ e ∈ Finset.range L, b e
         = (∑ e ∈ Finset.range p, b e) + ∑ e ∈ Finset.Ico p L, b e := by
       rw [hsplit, Finset.sum_union hdisj]
-    rw [hsubsum]
-    omega
+    grind
   rw [hRHS, hLHSsplit]
   have hpp : 1 ≤ q ^ p := Nat.one_le_pow _ _ (by omega)
   calc A + ∑ e ∈ Finset.range p, (s e - b e) * q ^ e + r * q ^ p
@@ -831,12 +799,9 @@ theorem rhs_reindex (d : ℕ) (m : Fin d → ℕ) :
   have hcard : (Finset.range d |>.filter (fun c => d - 1 - c ≤ i.val)).card = i.val + 1 := by
     have hsub : (Finset.range d).filter (fun c => d - 1 - c ≤ i.val)
         = Finset.Ico (d - 1 - i.val) d := by
-      ext c; simp only [Finset.mem_filter, Finset.mem_range, Finset.mem_Ico]
-      have hi : i.val < d := i.isLt
-      omega
+      grind
     rw [hsub, Nat.card_Ico]
-    have hi : i.val < d := i.isLt
-    omega
+    grind
   rw [hcard, smul_eq_mul, Nat.mul_comm]
 
 /-- Optimality lower bound (the `≥` half of the slot formula): every tuple in
@@ -888,10 +853,7 @@ theorem slot_lower_bound (q d k : ℕ) (hq : 2 ≤ q) (hk : 0 < k)
     have hthis := hcf e
     have hmono : ∑ i ∈ I, qdigit q (m i) e ≤ ∑ i : Fin d, qdigit q (m i) e :=
       Finset.sum_le_sum_of_subset (Finset.subset_univ I)
-    calc qdigit q k1 e + ∑ i ∈ I, qdigit q (m i) e
-        ≤ qdigit q k1 e + ∑ i : Fin d, qdigit q (m i) e := by
-          exact Nat.add_le_add_left hmono _
-      _ ≤ q - 1 := hthis
+    grind
   · -- hm_len
     have hb := slotList_length_ge q k1 Ls hq
     have hk1k : k1 + 1 = k := by omega
@@ -936,9 +898,7 @@ theorem digit_of_sum_aux (q : ℕ) (hq : 2 ≤ q) (m : ℕ) (coeff : ℕ → ℕ
       = (∑ e ∈ Finset.range f, coeff e * q ^ e) + coeff f * q ^ f
         + (∑ e ∈ Finset.Ico (f + 1) m, coeff e * q ^ e) := by
     have h1 : Finset.range m = Finset.range (f + 1) ∪ Finset.Ico (f + 1) m := by
-      ext e
-      simp
-      omega
+      grind
     rw [h1, Finset.sum_union (by
       rw [Finset.range_eq_Ico]; apply Finset.Ico_disjoint_Ico_consecutive)]
     rw [Finset.sum_range_succ]
@@ -951,8 +911,7 @@ theorem digit_of_sum_aux (q : ℕ) (hq : 2 ≤ q) (m : ℕ) (coeff : ℕ → ℕ
             apply Nat.mul_le_mul_right; have := hc e (by simp at he; omega); omega
         _ = (q - 1) * ∑ e ∈ Finset.range f, q ^ e := by rw [Finset.mul_sum]
         _ = q ^ f - 1 := geom_pred q f (by omega)
-    have : 1 ≤ q ^ f := Nat.one_le_pow _ _ hqpos
-    omega
+    grind
   have hhigh : q ^ (f + 1) ∣ ∑ e ∈ Finset.Ico (f + 1) m, coeff e * q ^ e := by
     apply Finset.dvd_sum; intro e he; simp only [Finset.mem_Ico] at he
     exact Dvd.dvd.mul_left (pow_dvd_pow q (by omega)) _
@@ -975,8 +934,7 @@ theorem sum_lt_pow_aux (q : ℕ) (hq : 2 ≤ q) (m : ℕ) (coeff : ℕ → ℕ)
           apply Nat.mul_le_mul_right; have := hc e (by simp at he; omega); omega
       _ = (q - 1) * ∑ e ∈ Finset.range m, q ^ e := by rw [Finset.mul_sum]
       _ = q ^ m - 1 := geom_pred q m (by omega)
-  have : 1 ≤ q ^ m := Nat.one_le_pow _ _ (by omega)
-  omega
+  grind
 
 theorem qdigit_le_aux (q k1 e : ℕ) (hq : 2 ≤ q) : qdigit q k1 e ≤ q - 1 := by
   rw [qdigit_eq _ _ _ hq]; have := Nat.mod_lt (k1 / q ^ e) (by omega : 0 < q); omega
@@ -1007,16 +965,12 @@ theorem wsum_eq (q L : ℕ) (hq : 2 ≤ q) (w : List ℕ)
           rw [haeq]
           intro hcontra
           exact h (Nat.pow_right_injective hq hcontra.symm)
-      have hbeq : (if (a == q ^ e) = true then 1 else 0) = (if a = q ^ e then 1 else 0) := by
-        simp [beq_iff_eq]
-      omega
+      grind
     have hrw : ∑ e ∈ Finset.range L, (a :: t).count (q ^ e) * q ^ e
         = (∑ e ∈ Finset.range L, (if e = ea then 1 else 0) * q ^ e)
           + ∑ e ∈ Finset.range L, t.count (q ^ e) * q ^ e := by
       rw [← Finset.sum_add_distrib]
-      apply Finset.sum_congr rfl
-      intro e _
-      rw [hcount e, Nat.add_mul]
+      grind
     have hfirst : ∑ e ∈ Finset.range L, (if e = ea then 1 else 0) * q ^ e = a := by
       rw [Finset.sum_eq_single ea]
       · simp [haeq]
@@ -1041,11 +995,7 @@ theorem qdigit_window (q L : ℕ) (hq : 2 ≤ q) (w : List ℕ)
 theorem slotList_pow (q k1 L : ℕ) : ∀ x ∈ slotList q k1 L, ∃ e, e < L ∧ x = q ^ e := by
   intro x hx
   unfold slotList at hx
-  rw [List.mem_flatMap] at hx
-  obtain ⟨e, he, hx2⟩ := hx
-  rw [List.mem_replicate] at hx2
-  rw [List.mem_range] at he
-  exact ⟨e, he, hx2.2⟩
+  grind
 
 theorem slotList_count (q k1 L : ℕ) (hq : 2 ≤ q) (e : ℕ) (he : e < L) :
     (slotList q k1 L).count (q ^ e) = (q - 1) - qdigit q k1 e := by
@@ -1075,8 +1025,7 @@ theorem take_blocks_count {α : Type*} [BEq α] (L : List α) (n c : ℕ) (x : �
 
 theorem window_len {α : Type*} (L : List α) (a n : ℕ) (h : a + n ≤ L.length) :
     ((L.drop a).take n).length = n := by
-  rw [List.length_take, List.length_drop]
-  omega
+  grind
 
 theorem pow_sum_modEq (q : ℕ) (hq : 2 ≤ q) (w : List ℕ)
     (hpow : ∀ x ∈ w, ∃ e, x = q ^ e) :
@@ -1142,9 +1091,7 @@ theorem slot_upper_bound (q d k : ℕ) (hq : 2 ≤ q) (hk : 0 < k) :
         ∃ e, e < L ∧ x = q ^ e := by
     intro i x hx
     have hsub : x ∈ slotList q k1 L := by
-      have h1 : x ∈ (slotList q k1 L).drop ((d - 1 - i.val) * (q - 1)) :=
-        List.mem_of_mem_take hx
-      exact List.mem_of_mem_drop h1
+      grind
     exact slotList_pow q k1 L x hsub
   -- window count ≤ slotList count
   have hWcount : ∀ i : Fin d, ∀ x,
@@ -1178,12 +1125,9 @@ theorem slot_upper_bound (q d k : ℕ) (hq : 2 ≤ q) (hk : 0 < k) :
             (q ^ e)) d]
       rw [← Finset.sum_range_reflect]
       apply Finset.sum_congr rfl
-      intro s hs; simp only [Finset.mem_range] at hs
-      have hse : d - 1 - (d - 1 - s) = s := by omega
-      rw [hse]
+      grind
     rw [hreindex, take_blocks_count]
-    apply List.Sublist.count_le
-    exact List.take_sublist _ _
+    grind
   -- count of any power in slotList is < q
   have hSltq : ∀ e', (slotList q k1 L).count (q ^ e') < q := by
     intro e'
@@ -1205,8 +1149,7 @@ theorem slot_upper_bound (q d k : ℕ) (hq : 2 ≤ q) (hk : 0 < k) :
     intro i e
     rw [hmwin i]
     refine qdigit_window q L hq _ (hWpow i) ?_ e
-    intro e'
-    exact lt_of_le_of_lt (hWcount i (q ^ e')) (hSltq e')
+    grind
   -- membership in TSet
   have hmem : m ∈ TSet q d k1 := by
     refine ⟨?_, ?_, ?_⟩
@@ -1256,10 +1199,7 @@ theorem slot_upper_bound (q d k : ℕ) (hq : 2 ≤ q) (hk : 0 < k) :
     unfold Phi
     rw [← Finset.sum_range_reflect (fun r => (d - r) * blockSum q k1 L (r + 1)) d]
     apply Finset.sum_congr rfl
-    intro j hj; simp only [Finset.mem_range] at hj
-    have h1 : d - 1 - j + 1 = d - j := by omega
-    have h2 : d - (d - 1 - j) = j + 1 := by omega
-    rw [h1, h2]
+    grind
   exact Nat.sInf_le ⟨m, hmem, hobj.symm⟩
 
 /-- **The reciprocal slot formula** `s_d(k) = d·k + Φ_d(M)`. Assembled by
@@ -1298,8 +1238,7 @@ theorem slotList_drop (q k1 p r : ℕ)
     rw [List.drop_eq_nil_of_le (by omega)]
     symm
     rw [List.flatMap_eq_nil_iff]
-    intro e he; simp only [List.mem_range] at he
-    rw [if_pos (by omega)]; simp
+    grind
   · push Not at hLx
     set g : ℕ → List ℕ := fun e =>
       List.replicate (if e < p then 0 else if e = p then ((q - 1)-qdigit q k1 p) - r
@@ -1313,11 +1252,7 @@ theorem slotList_drop (q k1 p r : ℕ)
           (fun e => List.replicate ((q - 1)-qdigit q k1 e) (q ^ e))
         = ((List.range (Lx-(p + 1))).map ((p + 1) + ·)).flatMap g := by
       apply List.flatMap_congr
-      intro e he
-      simp only [List.mem_map, List.mem_range] at he
-      obtain ⟨a, _, rfl⟩ := he
-      rw [hg]; simp only
-      rw [if_neg (by omega), if_neg (by omega)]
+      grind
     have hLHS :
         slotList q k1 Lx =
           (slotList q k1 p ++ List.replicate ((q - 1)-qdigit q k1 p) (q ^ p))
@@ -1335,18 +1270,14 @@ theorem slotList_drop (q k1 p r : ℕ)
       rw [List.range_succ, List.flatMap_append]
       have hhead : (List.range p).flatMap g = [] := by
         rw [List.flatMap_eq_nil_iff]
-        intro e he; simp only [List.mem_range] at he
-        rw [hg]; simp only; rw [if_pos he]; simp
-      rw [hhead, List.nil_append]
-      simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil]
-      rw [hg]; simp
+        grind
+      grind
     rw [hLHS, hRHS, htail]
     rw [List.drop_append_of_le_length (by simp; omega)]
     rw [List.drop_append]
     rw [List.drop_eq_nil_of_le (by omega), List.nil_append]
     rw [List.drop_replicate]
-    congr 2
-    omega
+    grind
 
 -- Digit extraction from a base-`q` expansion with bounded coefficients.
 theorem digit_of_sum (q : ℕ) (hq : 2 ≤ q) (m : ℕ) (coeff : ℕ → ℕ)
@@ -1357,9 +1288,7 @@ theorem digit_of_sum (q : ℕ) (hq : 2 ≤ q) (m : ℕ) (coeff : ℕ → ℕ)
       = (∑ e ∈ Finset.range f, coeff e * q ^ e) + coeff f * q ^ f
         + (∑ e ∈ Finset.Ico (f + 1) m, coeff e * q ^ e) := by
     have h1 : Finset.range m = Finset.range (f + 1) ∪ Finset.Ico (f + 1) m := by
-      ext e
-      simp
-      omega
+      grind
     rw [h1, Finset.sum_union (by
       rw [Finset.range_eq_Ico]; apply Finset.Ico_disjoint_Ico_consecutive)]
     rw [Finset.sum_range_succ]
@@ -1372,8 +1301,7 @@ theorem digit_of_sum (q : ℕ) (hq : 2 ≤ q) (m : ℕ) (coeff : ℕ → ℕ)
             apply Nat.mul_le_mul_right; have := hc e (by simp at he; omega); omega
         _ = (q - 1) * ∑ e ∈ Finset.range f, q ^ e := by rw [Finset.mul_sum]
         _ = q ^ f - 1 := geom_pred q f (by omega)
-    have : 1 ≤ q ^ f := Nat.one_le_pow _ _ hqpos
-    omega
+    grind
   have hhigh : q ^ (f + 1) ∣ ∑ e ∈ Finset.Ico (f + 1) m, coeff e * q ^ e := by
     apply Finset.dvd_sum; intro e he; simp only [Finset.mem_Ico] at he
     exact Dvd.dvd.mul_left (pow_dvd_pow q (by omega)) _
@@ -1397,8 +1325,7 @@ theorem sum_lt_pow (q : ℕ) (hq : 2 ≤ q) (m : ℕ) (coeff : ℕ → ℕ)
           apply Nat.mul_le_mul_right; have := hc e (by simp at he; omega); omega
       _ = (q - 1) * ∑ e ∈ Finset.range m, q ^ e := by rw [Finset.mul_sum]
       _ = q ^ m - 1 := geom_pred q m (by omega)
-  have : 1 ≤ q ^ m := Nat.one_le_pow _ _ (by omega)
-  omega
+  grind
 
 -- A base-`q` digit is at most `q - 1`.
 theorem qdigit_le (q k1 e : ℕ) (hq : 2 ≤ q) : qdigit q k1 e ≤ q - 1 := by
@@ -1415,21 +1342,14 @@ theorem beta_digit (q k1 p r : ℕ) (hq : 2 ≤ q)
   have hβsum : β = ∑ e ∈ Finset.range (p + 1), bcoeff e * q ^ e := by
     rw [hβ, slotList_sum, Finset.sum_range_succ]
     congr 1
-    · apply Finset.sum_congr rfl; intro e he; simp only [Finset.mem_range] at he
-      rw [hbc]; simp only; rw [if_neg (by omega)]
+    · apply Finset.sum_congr rfl; grind
     · rw [hbc]; simp
   have hcbound : ∀ e, e < p+1 → bcoeff e < q := by
-    intro e he; rw [hbc]; simp only
-    by_cases h : e = p
-    · rw [if_pos h]; subst h; omega
-    · rw [if_neg h]; omega
+    grind
   rw [qdigit_eq _ _ _ hq, hβsum]
   by_cases hf : f < p+1
   · rw [digit_of_sum q hq (p + 1) bcoeff hcbound f hf]
-    rw [hbc]; simp only
-    by_cases h : f = p
-    · rw [if_pos h]; subst h; rw [if_neg (by omega), if_pos rfl]
-    · rw [if_neg h]; rw [if_pos (by omega)]
+    grind
   · have hlt : (∑ e ∈ Finset.range (p + 1), bcoeff e * q ^ e) < q ^ (p + 1) :=
       sum_lt_pow q hq (p + 1) bcoeff hcbound
     have : (∑ e ∈ Finset.range (p + 1), bcoeff e * q ^ e) / q ^ f = 0 := by
@@ -1453,23 +1373,12 @@ theorem newmult_eq (q k1 p r : ℕ) (hq : 2 ≤ q)
     rw [← qdigit_eq _ _ _ hq, ← qdigit_eq _ _ _ hq]
     rw [beta_digit q k1 p r hq hr f]
     have hk := qdigit_le q k1 f hq
-    by_cases h1 : f < p
-    · rw [if_pos h1]; omega
-    · rw [if_neg h1]
-      by_cases h2 : f = p
-      · rw [if_pos h2]; subst h2; omega
-      · rw [if_neg h2]; omega
+    grind
   have hadd : qdigit q (k1 + β) e = qdigit q k1 e + qdigit q β e := by
     rw [qdigit_eq _ _ _ hq, qdigit_eq _ _ _ hq, qdigit_eq _ _ _ hq]
     exact qdigit_add q k1 β e hq hcf
   rw [hadd, beta_digit q k1 p r hq hr e]
-  have hk := qdigit_le q k1 e hq
-  by_cases h1 : e < p
-  · rw [if_pos h1, if_pos h1]; omega
-  · rw [if_neg h1, if_neg h1]
-    by_cases h2 : e = p
-    · rw [if_pos h2, if_pos h2]; subst h2; omega
-    · rw [if_neg h2, if_neg h2]; omega
+  grind
 
 /-- (L2, slot subtraction) The slot list of `k1 + β₁`, where `β₁` is the sum of
 the `q-1` smallest slots of `k1`, equals the slot list of `k1` with its first
@@ -1560,11 +1469,7 @@ theorem layer_cake (q d k : ℕ) (hq : 2 ≤ q) (hd : 1 < d) (hk : 0 < k) :
     intro r Lx
     unfold blockSum
     rw [hL2 Lx, List.drop_drop]
-    have hidx : q - 1 + (r + 1 - 1) * (q - 1) = (r + 2 - 1) * (q - 1) := by
-      have e1 : r + 1 - 1 = r := by omega
-      have e2 : r + 2 - 1 = r + 1 := by omega
-      rw [e1, e2]; ring
-    rw [hidx]
+    grind
   -- length bound for the s1-1 slot list at L'
   have hlenL' : (d - 1) * (q - 1) ≤ (slotList q (s1 - 1) L').length := by
     have hb := slotList_length_ge q (s1 - 1) L' hq
@@ -1572,8 +1477,7 @@ theorem layer_cake (q d k : ℕ) (hq : 2 ≤ q) (hd : 1 < d) (hk : 0 < k) :
     rw [hLk] at hb
     have hL'val : L' = s1 + (d - 1) * (s1 + 1) + 1 := by simp [hL'def, slotLen]
     have hge : (d - 1) ≤ L' - s1 := by
-      have hdd : (d - 1) ≤ (d - 1) * (s1 + 1) := Nat.le_mul_of_pos_right (d - 1) (by omega)
-      omega
+      grind
     calc (d - 1) * (q - 1) = (q - 1) * (d - 1) := by ring
       _ ≤ (q - 1) * (L' - s1) := Nat.mul_le_mul_left _ hge
       _ ≤ (slotList q (s1 - 1) L').length := hb
@@ -1610,10 +1514,7 @@ theorem layer_cake (q d k : ℕ) (hq : 2 ≤ q) (hd : 1 < d) (hk : 0 < k) :
   -- goal: d*k + (d*β + S) = (d-1)*s1 + S + s1, with s1 = k+β
   have hkey : d * k + d * β = (d - 1) * s1 + s1 := by
     have hd1 : d - 1 + 1 = d := by omega
-    calc d * k + d * β = d * (k + β) := by ring
-      _ = d * s1 := by rw [hL1]
-      _ = (d - 1 + 1) * s1 := by rw [hd1]
-      _ = (d - 1) * s1 + s1 := by ring
+    grind
   omega
 
 
@@ -1671,15 +1572,12 @@ theorem wlen_eq (q L : ℕ) (hq : 2 ≤ q) (w : List ℕ)
         · rw [if_neg h, if_neg]
           rw [haeq]; intro hcontra
           exact h (Nat.pow_right_injective hq hcontra.symm)
-      have hbeq : (if (a == q ^ e) = true then 1 else 0) = (if a = q ^ e then 1 else 0) := by
-        simp [beq_iff_eq]
-      omega
+      grind
     have hrw : ∑ e ∈ Finset.range L, (a :: t).count (q ^ e)
         = (∑ e ∈ Finset.range L, (if e = ea then 1 else 0))
           + ∑ e ∈ Finset.range L, t.count (q ^ e) := by
       rw [← Finset.sum_add_distrib]
-      apply Finset.sum_congr rfl
-      intro e _; rw [hcount e]
+      grind
     have hfirst : ∑ e ∈ Finset.range L, (if e = ea then 1 else 0) = 1 := by
       rw [Finset.sum_eq_single ea]
       · simp
@@ -1701,9 +1599,7 @@ theorem newmult_gen (q k1 u e : ℕ) (hq : 2 ≤ q)
     (hcf : ∀ f, qdigit q k1 f + qdigit q u f ≤ q - 1) :
     (q - 1) - qdigit q (k1 + u) e + qdigit q u e = (q - 1) - qdigit q k1 e := by
   rw [qdigit_add2 q k1 u e hq hcf]
-  have hk := qdigit_le q k1 e hq
-  have := hcf e
-  omega
+  grind
 
 /-- Digit sum of `u` over `range L` (with `u < q ^ L`) is the multiset size `m`. -/
 theorem digitsum_eq (q u L : ℕ) (hq : 2 ≤ q) (huL : u < q ^ L) :
@@ -1787,11 +1683,7 @@ theorem removal_bound (q k1 u Lbig : ℕ) (hq : 2 ≤ q)
     have hc2 : (slotList q (k1+u) Lbig).count (q ^ e) = (q - 1) - qdigit q (k1+u) e := by
       by_cases he : e < Lbig
       · exact slotList_count q (k1+u) Lbig hq e he
-      · rw [List.count_eq_zero.mpr]
-        · have hkk := qdigit_le q (k1+u) e hq; omega
-        · intro hmem
-          obtain ⟨e', he'L, hxe⟩ := slotList_pow q (k1+u) Lbig _ hmem
-          exact absurd (Nat.pow_right_injective hq hxe) (by omega)
+      · grind
     have hmg := newmult_gen q k1 u e hq hcf
     omega
   -- count condition: ∑_{e<p} s_e + r = t + m = ∑_{e<Lbig} b_e
@@ -1803,8 +1695,7 @@ theorem removal_bound (q k1 u Lbig : ℕ) (hq : 2 ≤ q)
   -- apply greedy_core
   have hgc := greedy_core q p Lbig hq hpL bcoef (fun e => (q - 1) - qdigit q k1 e) r hbs
     hcountcond
-  rw [hcandval] at hgc
-  simpa using hgc
+  grind
 
 /-- Converse Kummer/Lucas: if `k`+`(n - k)` has a carry in base `q` at some
 position (`q ^ i ≤ k%q ^ i + (n - k)%q ^ i`), then `q ∣ C(n,k)`. Proved via
@@ -1824,18 +1715,15 @@ theorem dvd_choose_of_carry (q n k : ℕ) (hq : q.Prime) (hkn : k ≤ n)
     by_contra h
     have hi0 : i = 0 := by omega
     subst hi0
-    simp only [pow_zero, Nat.mod_one] at hi
-    omega
+    grind
   have hib : i < b := by
     by_contra h
     have hlt : Nat.log q n < i := by omega
     have hnq : n < q ^ i := Nat.lt_pow_of_log_lt hq.two_le hlt
     have hk : k % q ^ i = k := Nat.mod_eq_of_lt (by omega)
     have hnk : (n - k) % q ^ i = n - k := Nat.mod_eq_of_lt (by omega)
-    rw [hk, hnk] at hi
-    omega
-  have hmem : i ∈ Finset.Ico 1 b := Finset.mem_Ico.mpr ⟨hi1, hib⟩
-  exact hcon hmem hi
+    grind
+  grind
 
 /-- Carry-free correspondence from admissibility. For `j ∈ Jset q k` set
 `β = blockSum q (k - 1) (slotLen q 1 k) 1` and `u = β + j`. Then `u` adds to `k-1`
@@ -1884,8 +1772,7 @@ theorem admissible_carryfree (q : ℕ) (hq : q.Prime) (k : ℕ) (hk : 0 < k)
   have hbound : (da + db) * q ^ e ≤ k1 % q ^ (e + 1) + u % q ^ (e + 1) := by
     rw [hke, hue]; nlinarith [Nat.zero_le (k1 % q ^ e), Nat.zero_le (u % q ^ e)]
   have hmul : q * q ^ e ≤ (da + db) * q ^ e := Nat.mul_le_mul_right _ hge
-  have h1' : k1 % q ^ (e + 1) + u % q ^ (e + 1) < q ^ e * q := by rw [← hpe]; exact h1
-  nlinarith [hbound, hmul, h1']
+  grind
 
 /-- Prefix-sum monotonicity: taking more (nonneg ℕ) elements never decreases the sum. -/
 theorem take_sum_mono (w : List ℕ) {a b : ℕ} (h : a ≤ b) :
@@ -1893,10 +1780,7 @@ theorem take_sum_mono (w : List ℕ) {a b : ℕ} (h : a ≤ b) :
   have hsplit : w.take b = w.take a ++ (w.take b).drop a := by
     conv_lhs => rw [← List.take_append_drop a (w.take b)]
     rw [List.take_take, Nat.min_eq_left h]
-  calc (w.take a).sum ≤ (w.take a).sum + ((w.take b).drop a).sum := Nat.le_add_right _ _
-    _ = (w.take b).sum := by
-        conv_rhs => rw [hsplit]
-        rw [List.sum_append]
+  grind
 
 /-- `Phi` is independent of the truncation length once it contains the first `d` blocks. -/
 theorem Phi_Lindep (q k1 d L₁ Lbig : ℕ) (h : L₁ ≤ Lbig)
@@ -1959,9 +1843,7 @@ theorem extraction_core (q : ℕ) (hq : 2 ≤ q) (k1 : ℕ) (d : ℕ) (hd : 1 < 
   obtain ⟨ℓ, hℓ⟩ := hmdvd
   have hnpos : 0 < n := by omega
   have hℓpos : 1 ≤ ℓ := by
-    rcases Nat.eq_zero_or_pos ℓ with h | h
-    · rw [h, Nat.mul_zero] at hℓ; omega
-    · exact h
+    grind
   -- length lower bound for M' at Lbig
   have hM'len : (d - 1) * n ≤ (slotList q (k1 + u) Lbig).length :=
     le_trans hL₂ (slotList_length_mono q (k1+u) hL₂big)
@@ -1981,10 +1863,7 @@ theorem extraction_core (q : ℕ) (hq : 2 ≤ q) (k1 : ℕ) (d : ℕ) (hd : 1 < 
       calc (c + 1) * n ≤ (d - 1) * n := Nat.mul_le_mul_right _ (by omega)
         _ ≤ (slotList q (k1 + u) Lbig).length := hM'len
     have hrb := removal_bound q k1 u Lbig hq hcf huLbig m hmdef ((c + 1)*n) htlen
-    have hidx : (c + 1) * n + m = (c + 1 + ℓ) * n := by
-      rw [hℓ]; ring
-    rw [hidx] at hrb
-    exact hrb
+    grind
   -- monotonicity: P (c+2) ≤ P (c+1+ℓ)  since c+2 ≤ c+1+ℓ (ℓ ≥ 1)
   have hmono : ∀ c, P (c + 2) ≤ P (c + 1 + ℓ) := by
     intro c
@@ -2019,8 +1898,7 @@ theorem extraction_core (q : ℕ) (hq : 2 ≤ q) (k1 : ℕ) (d : ℕ) (hd : 1 < 
         = P 1 + ∑ c ∈ Finset.range (d-1), P (c + 2) := by
       obtain ⟨e, rfl⟩ : ∃ e, d = e + 1 := ⟨d - 1, by omega⟩
       rw [Finset.sum_range_succ']
-      simp only [Nat.add_sub_cancel, Nat.zero_add]
-      rw [Nat.add_comm]
+      grind
     rw [hsplitL]
     have hmonosum :
         ∑ c ∈ Finset.range (d - 1), P (c + 2) ≤
@@ -2034,12 +1912,7 @@ theorem extraction_core (q : ℕ) (hq : 2 ≤ q) (k1 : ℕ) (d : ℕ) (hd : 1 < 
     conv_lhs => rw [show d = (d - 1) + 1 by omega]
     ring
   -- combine StepI: Φ' + (d-1)*u ≥ ∑ P(c+1+ℓ)
-  have hkey1 : (∑ c ∈ Finset.range (d - 1), P (c + 1 + ℓ))
-      ≤ Phi q (k1 + u) (d - 1) L₂ + (d - 1) * u := hStepI
-  -- and StepII + hP1
-  have hkey2 : ∑ c ∈ Finset.range d, P (c + 1) < (∑ c ∈ Finset.range (d-1), P (c + 1 + ℓ)) + u := by
-    have := hStepII; omega
-  omega
+  grind
 
 /-- Pillar 2, the extraction inequality in strict form: for admissible `j > 0`,
 `s_d(k) < F(j)` (informal.tex Lem. lem:H2-extraction). With `u = β₁ + j`,
@@ -2067,16 +1940,11 @@ theorem extraction_strict (q : ℕ) (hq : q.Prime) (d k : ℕ) (hd : 1 < d)
       have hsl : slotLen q 1 k - ((k - 1) + 1) = k + 2 := by
         simp [slotLen]; omega
       rw [hsl] at hb
-      have : (q - 1) * 1 ≤ (q - 1) * (k + 2) := by
-        apply Nat.mul_le_mul_left; omega
-      omega
+      grind
     rw [hβdef, blockSum]
     set w := ((slotList q (k - 1) (slotLen q 1 k)).drop ((1 - 1) * (q - 1))).take (q - 1) with hwdef
     have hwlen : w.length = q - 1 := by
-      rw [hwdef]
-      apply window_len
-      simp only [Nat.sub_self, Nat.zero_mul, Nat.zero_add]
-      exact hlen0
+      grind
     have hmod := pow_sum_modEq q hq2 w (fun x hx => by
       rw [hwdef] at hx
       have h1 : x ∈ (slotList q (k - 1) (slotLen q 1 k)).drop ((1 - 1) * (q - 1)) :=
@@ -2118,47 +1986,28 @@ theorem extraction_strict (q : ℕ) (hq : q.Prime) (d k : ℕ) (hd : 1 < d)
     have hsl : slotLen q 1 k - ((k - 1) + 1) = k + 2 := by
       simp [slotLen]; omega
     rw [hsl] at hb
-    have : (q - 1) * 1 ≤ (q - 1) * (k + 2) := by
-      apply Nat.mul_le_mul_left; omega
-    omega
+    grind
   have hL₁ : d * (q - 1) ≤ (slotList q (k - 1) (slotLen q d k)).length := by
     have hb := slotList_length_ge q (k - 1) (slotLen q d k) hq2
     have hsl : slotLen q d k - ((k - 1) + 1) = d * (k + 1) + 1 := by
       simp [slotLen]; omega
     rw [hsl] at hb
-    have hge : d ≤ d * (k + 1) + 1 := by
-      have : d * 1 ≤ d * (k + 1) := by apply Nat.mul_le_mul_left; omega
-      omega
-    have : d * (q - 1) ≤ (q - 1) * (d * (k + 1) + 1) := by
-      rw [Nat.mul_comm]
-      apply Nat.mul_le_mul_left; exact hge
-    omega
+    grind
   have hL₂ : (d - 1) * (q - 1)
       ≤ (slotList q ((k - 1) + u) (slotLen q (d - 1) (s1 + j))).length := by
     have hb := slotList_length_ge q ((k - 1) + u) (slotLen q (d - 1) (s1 + j)) hq2
     have hsl : slotLen q (d - 1) (s1 + j) - (((k - 1) + u) + 1)
         = (d - 1) * ((k + u) + 1) + 1 := by
       simp only [slotLen, ↓reduceIte]
-      rw [hnval]
-      omega
+      grind
     rw [hsl] at hb
-    have hge : (d - 1) ≤ (d - 1) * ((k + u) + 1) + 1 := by
-      have : (d - 1) * 1 ≤ (d - 1) * ((k + u) + 1) := by
-        apply Nat.mul_le_mul_left; omega
-      omega
-    have : (d - 1) * (q - 1) ≤ (q - 1) * ((d - 1) * ((k + u) + 1) + 1) := by
-      rw [Nat.mul_comm]
-      apply Nat.mul_le_mul_left; exact hge
-    omega
+    grind
   have hcore : Phi q (k - 1) d (slotLen q d k)
       < d * u + Phi q ((k - 1) + u) (d - 1) (slotLen q (d - 1) (s1 + j)) :=
     extraction_core q hq2 (k - 1) d hd u hudvd hcf (slotLen q 1 k)
       (slotLen q d k) (slotLen q (d - 1) (s1 + j)) hβlen hugt hL₁ hL₂
   -- assemble
-  rw [hsd, hFexp]
-  -- goal: d*k + Phi(M) < d*(k+u) + Phi(M\U);  d*(k+u) = d*k + d*u
-  have : d * (k + u) = d * k + d * u := by ring
-  omega
+  grind
 
 /-- `F` attains its minimum over `J` uniquely at `j = 0`: for every admissible
 `j ∈ J` with `j > 0` we have `F(0) < F(j)`.

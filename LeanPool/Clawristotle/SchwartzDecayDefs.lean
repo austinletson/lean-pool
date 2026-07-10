@@ -141,8 +141,7 @@ lemma integrable_of_schwartz_bound
     (integrable_one_add_norm_pow_mul hφ K).const_mul C
   exact hdom.mono' hg_meas (by
     filter_upwards with v
-    calc ‖g v‖ ≤ C * (1 + ‖v‖) ^ K * |φ v| := hbound v
-    _ = C * ((1 + ‖v‖) ^ K * |φ v|) := by ring)
+    grind)
 
 /-- Extract pointwise (k=0) decay from the Schwartz hypothesis.
     Generalized to any normed space (dimension-independent). -/

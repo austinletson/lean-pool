@@ -47,10 +47,8 @@ lemma open_leastNumber {P : V → Prop}
     · exact hP
     case zero => exact zero
     case succ n ih =>
-      push Not at A
-      exact A n ih
-  have : P a := this a
-  contradiction
+      grind
+  grind
 
 lemma div_exists_unique_pos (a : V) {b} (pos : 0 < b) : ∃! u, b * u ≤ a ∧ a < b * (u + 1) := by
   have : ∃ u, b * u ≤ a ∧ a < b * (u + 1) := by
@@ -328,8 +326,7 @@ lemma mod_mul_add_of_lt (a b : V) {r} (hr : r < b) : (a * b + r) % b = r := by
 @[simp] lemma mod_lt (a : V) {b} (pos : 0 < b) : a % b < b := by
   rcases div_spec_of_pos' a pos with ⟨r, hr, ha⟩
   have : ((a / b) * b + r) % b = r := mod_mul_add_of_lt _ _ hr
-  have : a % b = r := by simpa [←ha] using this
-  simp [this, hr]
+  grind
 
 @[simp] lemma mod_le (a b : V) : a % b ≤ a := by simp [mod_def]
 
@@ -555,9 +552,7 @@ def pairUnexpander : Lean.PrettyPrinter.Unexpander
 lemma pair_graph {a b c : V} :
     c = ⟪a, b⟫ ↔ (a < b ∧ c = b * b + a) ∨ (b ≤ a ∧ c = a * a + a + b) := by
   simp [pair]
-  by_cases h : a < b
-  · simp [h, show ¬b ≤ a from by simpa using h]
-  · simp [h, show b ≤ a from by simpa using h]
+  grind
 
 /-- Imported declaration from the Incompleteness formalization. -/
 def _root_.LO.FirstOrder.Arith.pairDef : Sg0.Semisentence 3 :=
@@ -714,8 +709,7 @@ lemma pair_lt_pair_right (a : V) {b₁ b₂} (h : b₁ < b₂) : ⟪a, b₁⟫ <
           exact lt_succ_iff_le.mpr (by simp only [add_le_add_iff_left, le_two_mul_left])
         _              ≤ b₂ * b₂ + b₁           := by simpa [←sq, succ_le_iff_lt] using h₂
         _              ≤ b₂ * b₂ + a            := by simpa using h₁
-    · simp only [h₂, ↓reduceIte]
-      simpa [add_comm] using add_lt_add_left h (a * a + a)
+    · grind
 
 lemma pair_le_pair_right (a : V) {b₁ b₂} (h : b₁ ≤ b₂) : ⟪a, b₁⟫ ≤ ⟪a, b₂⟫ := by
   rcases h with (rfl | lt)
@@ -762,8 +756,7 @@ def _root_.LO.FirstOrder.Arith.pair₆Def : Sg0.Semisentence 7 :=
   .mkSigma “p a b c d e f. ∃ bcdef <⁺ p, !pair₅Def bcdef b c d e f ∧ !pairDef p a bcdef” (by simp)
 
 theorem fegergreg (v : Fin 4 → ℕ) : v (0 : Fin (Nat.succ 1)).succ.succ = v 2 := by
-  { simp only [Nat.succ_eq_add_one,
-  Nat.reduceAdd, Fin.isValue, Fin.succ_zero_eq_one, Fin.succ_one_eq_two] }
+  { grind
 
 theorem fin4 {n} : (2 : Fin (n + 3)).succ = 3 := rfl
 
@@ -772,8 +765,7 @@ theorem fin4 {n} : (2 : Fin (n + 3)).succ = 3 := rfl
 @[simp] theorem _root_.LO.Arith.Fin.succ_two_eq_three {n} : (2 : Fin (n + 3)).succ = 3 := fin4
 
 theorem ss (v : Fin 4 → ℕ) : v (Fin.succ (0 : Fin (Nat.succ 1))).succ = v 2 := by
-  { simp [Nat.succ_eq_add_one, Nat.reduceAdd, Fin.isValue, Fin.succ_zero_eq_one,
-    Fin.succ_one_eq_two] }
+  { grind
 
 lemma pair₃_defined : Sg0-Function₃ ((⟪·, ·, ·⟫) : V → V → V → V) via pair₃Def := by
   intro v

@@ -65,8 +65,7 @@ theorem integral_cos_sq_unifAngle : ∫ x, Real.cos x ^ 2 ∂unifAngle = 1 / 2 :
     ← intervalIntegral.integral_of_le hpi, integral_cos_sq,
     Real.cos_pi, Real.sin_pi, Real.cos_neg, Real.sin_neg, Real.cos_pi, Real.sin_pi,
     ENNReal.toReal_inv, ENNReal.toReal_ofReal (by positivity), smul_eq_mul]
-  field_simp
-  ring
+  grind
 
 /-- `∫ cos⁴θ` over the uniform measure on `[-π,π]` equals `3/8`. -/
 theorem integral_cos_pow4_unifAngle : ∫ x, Real.cos x ^ 4 ∂unifAngle = 3 / 8 := by
@@ -75,13 +74,11 @@ theorem integral_cos_pow4_unifAngle : ∫ x, Real.cos x ^ 4 ∂unifAngle = 3 / 8
   have hI : ∫ x in (-Real.pi)..Real.pi, Real.cos x ^ 4 = 3 * Real.pi / 4 := by
     rw [show (4 : ℕ) = 2 + 2 from rfl, integral_cos_pow, integral_cos_sq,
       Real.cos_pi, Real.sin_pi, Real.cos_neg, Real.sin_neg, Real.cos_pi, Real.sin_pi]
-    push_cast
-    ring
+    grind
   rw [unifAngle, MeasureTheory.integral_smul_measure, integral_Icc_eq_integral_Ioc,
     ← intervalIntegral.integral_of_le hpi, hI,
     ENNReal.toReal_inv, ENNReal.toReal_ofReal (by positivity), smul_eq_mul]
-  field_simp
-  ring
+  grind
 
 instance instIsProbabilityMeasureRyMeasure (n : ℕ) : IsProbabilityMeasure (ryMeasure n) := by
   unfold ryMeasure; infer_instance

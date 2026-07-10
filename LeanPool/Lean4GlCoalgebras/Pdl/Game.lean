@@ -152,8 +152,7 @@ theorem good_or_other {g : Game} (p : g.Pos) : good (g.turn p) p ∨ good (other
   case pos E =>
     apply Or.inl
     unfold good
-    apply Or.inl
-    simpa only [exists_prop, true_and] using E
+    grind
   case neg A =>
     apply Or.inr
     unfold good
@@ -202,13 +201,7 @@ theorem good_cone {i} {g : Game} {p r : g.Pos} (W : good i p) (h : inMyCone (goo
     exact (ih.resolve_left (not_and_of_not_left _ <| not_eq_i_eq_other.mpr turn)).right _ h
   | @myStep q a nempty turn ih =>
     unfold goodStrat
-    by_cases hq : good i q
-    · simp only [hq, ↓reduceDIte]
-      unfold good at hq
-      have E := And.right <| hq.resolve_right (not_and_of_not_left _ <| not_eq_other_eq_i.mpr turn)
-      exact E.choose_spec.choose_spec
-    · simp only [hq, ↓reduceDIte]
-      contradiction
+    grind
 
 /-! ## Zermelo's Theorem -/
 
@@ -281,13 +274,7 @@ lemma not_in_cone_of_move {i g} {p q : g.Pos} (q_in : q ∈ g.moves p) (sI : Str
   have claim : Relation.TransGen g.wf.rel p p := by
     have m_to_p := g.move_rel _ q q_in
     have := game_wf_rel_of_cone _ hyp
-    rw [Relation.reflTransGen_iff_eq_or_transGen] at this
-    cases this
-    · subst_eqs
-      absurd m_to_p
-      exact WellFoundedRelation.asymmetric m_to_p
-    · apply Relation.TransGen.trans _ (Relation.TransGen.single m_to_p)
-      aesop
+    grind
   absurd claim
   exact Std.Irrefl.irrefl p
 

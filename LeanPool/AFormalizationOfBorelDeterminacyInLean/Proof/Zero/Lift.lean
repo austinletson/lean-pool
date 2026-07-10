@@ -225,9 +225,7 @@ lemma extension_conLong hp R : (hW.toWLift'.extensionLift hp R).ConLong := by
   rw [List.getElem?_take, if_pos (by omega)] at hget
   rw [List.getElem?_take, if_pos (by omega)] at hget
   have hleft : 2 * k + 1 < (hW.toWLift'.extensionMap hp R).val'.length := by
-    have hlen := ExtensionsAt.val'_length (hW.toWLift'.extensionMap hp R)
-    rw [hlen]
-    exact Nat.lt_of_lt_of_le H.h'lvl (Nat.le_succ _)
+    grind
   rw [List.getElem?_eq_getElem hleft, List.getElem?_eq_getElem H.h'lvl] at hget
   exact Option.some.inj hget
 end Winnable
@@ -463,8 +461,7 @@ lemma lift_mem n : hL.1.mk.toWLLift.liftMediumVal ++
         · rw [mem_pullSub_short (by as_aux_lemma => simp; omega)]
           constructor
           · have hdrop : n < (List.drop (2 * k + 2) H.x.val).length := by
-              simp [List.length_drop]
-              omega
+              grind
             rw [(show H.x.val[2 * k + 2 + n] =
                 (H.x.val.drop (2 * k + 2))[n]'hdrop by
               rw [List.getElem_drop'])]
@@ -480,8 +477,7 @@ lemma lift_mem n : hL.1.mk.toWLLift.liftMediumVal ++
             apply take_mem ⟨_, _⟩
             simp [mem_subAt]
           have hdrop : n < (List.drop (2 * k + 2) H.x.val).length := by
-            simp [List.length_drop]
-            omega
+            grind
           rw [(show H.x.val[2 * k + 2 + n] =
               (H.x.val.drop (2 * k + 2))[n]'hdrop by
             rw [List.getElem_drop'])]

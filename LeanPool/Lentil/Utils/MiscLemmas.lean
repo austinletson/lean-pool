@@ -89,12 +89,7 @@ namespace Nat
 theorem find_min {p : Nat → Prop} (n : Nat) (h : p n) :
   ∃ n', n' ≤ n ∧ p n' ∧ ∀ m, m < n' → ¬ p m := by
   induction n using Nat.strongRecOn
-  rename_i n ih
-  by_cases h' : ∃ m, m < n ∧ p m
-  · rcases h' with ⟨m, hlt, h'⟩
-    have ⟨n', hle, ha, hb⟩ := ih _ hlt h'
-    exists n'; apply And.intro (by omega) (And.intro ‹_› ‹_›)
-  · simp at h'; exists n; simp_all
+  grind
 
 theorem find_min' {p : Nat → Prop} (n : Nat) (h : p n) :
   ∃ n', n' ≤ n ∧ p n' ∧ ∀ m, p m → n' ≤ m := by

@@ -64,8 +64,7 @@ lemma losable_of_losable_not_lost n (hL : (takeLift y n).Losable)
     have htakeLen :
         2 * k + 2 + (2 * k + 1 + max 1 pnum - (2 * k + 2)) =
           min (2 * k + 2 + n) (2 * k + 1 + hL.2.num + (1 - pnum)) := by
-      rw [hpnum_def]
-      omega
+      grind
     have hW : (takeLift y m).Winnable := hW
     replace hW := hW.take (2 * k + 1 + max 1 pnum) (by omega)
     replace hL := hL.take (n := 1 - pnum) (by omega)

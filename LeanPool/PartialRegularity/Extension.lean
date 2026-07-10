@@ -230,8 +230,7 @@ lemma rat_den_dvd_mul_of_int_mul (q : ℚ) (n : ℕ) (_hn : 0 < n) :
   exact Nat.mul_dvd_mul_right (gcd_natAbs_mul_num_dvd_n n q) ((↑n * q).den)
 
 lemma choose_two_k_plus_one_two_k (k : ℕ) : (2 * k + 1).choose (2 * k) = 2 * k + 1 := by
-  conv_lhs => rw [Nat.choose_symm_add]
-  simp
+  grind
 
 lemma sum_bernoulli_eq_neg_mul (k : ℕ) (hk : 2 ≤ k) :
     ∑ j ∈ Finset.range (2 * k), (↑((2 * k + 1).choose j) : ℚ) * bernoulli j =
@@ -326,8 +325,7 @@ lemma bernoulli_den_dvd_factorial (k : ℕ) (hk : 1 ≤ k) :
       exact bernoulli_den_dvd_factorial_base
     · apply bernoulli_den_dvd_factorial_step
       · omega
-      · intro m hm1 hmk
-        exact ih m (by omega) hm1
+      · grind
 
 lemma pi_sq_div_six_lt_two : Real.pi ^ 2 / 6 < 2 := by
   have h2 : Real.pi ^ 2 < 3.1416 ^ 2 := sq_lt_sq' (by linarith [Real.pi_pos]) Real.pi_lt_d4
@@ -369,10 +367,8 @@ lemma bernoulli_eq_zeta_formula (k : ℕ) (hk : 1 ≤ k) :
       2 ^ (2 * k - 1) * Real.pi ^ (2 * k) * ↑(bernoulli (2 * k)) / ↑(2 * k).factorial := by
     conv_lhs => rw [(hasSum_zeta_nat (by omega : k ≠ 0)).tsum_eq]
     have hsq : ((-1 : ℝ) ^ (k + 1)) ^ 2 = 1 := by rw [← pow_mul, mul_comm, pow_mul]; simp
-    field_simp
-    rw [hsq, one_mul]
-  field_simp [hdenom_pos.ne', hfact_pos.ne'] at heq' ⊢
-  linarith
+    grind
+  grind
 
 lemma bernoulli_abs_le_formula (k : ℕ) (hk : 1 ≤ k) :
     |(bernoulli (2 * k) : ℝ)| ≤
@@ -432,8 +428,7 @@ lemma descFactorial_le_factorial (n k : ℕ) (hkn : k ≤ n) :
 
 lemma two_k_add_one_le_ten_k_sub (k i : ℕ) (hi : i ∈ Finset.range (8 * k)) :
     2 * k + 1 ≤ 10 * k - i := by
-  simp only [Finset.mem_range] at hi
-  omega
+  grind
 
 lemma factorial_ten_k_ge_power (k : ℕ) (hk : 1 ≤ k) :
     (2 * k + 1) ^ (8 * k) ≤ (10 * k).factorial := by
@@ -472,8 +467,7 @@ lemma sq_add_one_le_two_sq (A : ℝ) (hA : A ≥ 1 + Real.sqrt 2) : (A + 1) ^ 2 
   have h1 : 0 ≤ A - (1 + Real.sqrt 2) := by linarith
   have h2 : 0 ≤ A - (1 - Real.sqrt 2) := by linarith
   have factored : A^2 - 2*A - 1 = (A - (1 + Real.sqrt 2)) * (A - (1 - Real.sqrt 2)) := by
-    have sq2 : Real.sqrt 2 ^ 2 = 2 := Real.sq_sqrt (by norm_num)
-    nlinarith [sq2]
+    grind
   nlinarith [mul_nonneg h1 h2, factored]
 
 lemma tendsto_sqrt_div_log_pow_atTop (α : ℝ) (_hα : 0 < α) :
@@ -524,8 +518,7 @@ lemma rpow_div_log_monotoneOn (α : ℝ) (hα : 0 < α) :
   change x ^ (1 / (2 * α)) / Real.log x ≤ y ^ (1 / (2 * α)) / Real.log y
   have h_eq_one_div : ∀ z : ℝ, 0 < z →
       z ^ (1 / (2 * α)) / Real.log z = 1 / (Real.log z / z ^ (1 / (2 * α))) := by
-    intro z hz
-    field_simp [(Real.rpow_pos_of_pos hz (1 / (2 * α))).ne']
+    grind
   rw [h_eq_one_div x hx_pos, h_eq_one_div y hy_pos]
   exact one_div_le_one_div_of_le hgy_pos hanti_xy
 
@@ -534,8 +527,7 @@ lemma rpow_div_log_pow_eq_sqrt_div_log_pow (α : ℝ) (hα : 0 < α) (x : ℝ) (
     (x ^ (1 / (2 * α)) / Real.log x) ^ α = Real.sqrt x / (Real.log x) ^ α := by
   rw [Real.div_rpow (Real.rpow_nonneg hx.le _) hlogx_pos.le, ← Real.rpow_mul hx.le,
       Real.sqrt_eq_rpow]
-  congr 1
-  field_simp
+  grind
 
 lemma sqrt_div_log_monotoneOn (α : ℝ) (hα : 0 < α) :
     MonotoneOn (fun x : ℝ => Real.sqrt x / (Real.log x) ^ α) {x | Real.exp (2 * α) ≤ x} := by
@@ -633,8 +625,7 @@ lemma sum_range_le_sq (K : ℕ) :
     | zero => simp
     | succ n ih =>
       rw [Finset.sum_range_succ, ih]
-      push_cast
-      ring
+      grind
   nlinarith [sq_nonneg (K : ℝ), h_main, Nat.cast_nonneg (α := ℝ) K]
 
 lemma irregularPrimes_ncard_le_sum (α : ℝ) (X : ℕ) :
@@ -671,9 +662,7 @@ theorem irregularPrimes_isBigO (α : ℝ) (hα : 1 / 2 < α) :
           mul_le_mul_of_nonneg_left (sum_range_le_sq _) hC_pos.le
     _ ≤ bernoulliOmegaConst * ((X : ℝ) / (Real.log X) ^ (2 * α)) := by
           apply mul_le_mul_of_nonneg_left _ hC_pos.le
-          have h := div_le_div_of_nonneg_right hK_bound (by norm_num : (0 : ℝ) ≤ 2)
-          simp only [mul_div_assoc] at h
-          linarith
+          grind
     _ ≤ bernoulliOmegaConst * |((X : ℝ) / (Real.log X) ^ (2 * α))| :=
           mul_le_mul_of_nonneg_left (le_abs_self _) hC_pos.le
 

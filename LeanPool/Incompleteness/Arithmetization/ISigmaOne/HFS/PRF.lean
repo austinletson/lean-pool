@@ -150,9 +150,7 @@ lemma _root_.LO.Arith.PR.Construction.CSeq.successor {s l z : V} (Hs : c.CSeq v 
     simp only [Hs.seq.lh_seqCons, add_tsub_cancel_right]
     intro i hi w hiw
     have hiws : ⟪i, w⟫ ∈ s := by
-      simp only [mem_seqCons_iff] at hiw; rcases hiw with (⟨rfl, rfl⟩ | h)
-      · simp at hi
-      · assumption
+      simp only [mem_seqCons_iff] at hiw; grind
     have : i ≤ l := by simpa [←hl, lt_succ_iff_le] using hi
     rcases this with (rfl | hil)
     · have : w = z := Hs.seq.isMapping.uniq hiws hz

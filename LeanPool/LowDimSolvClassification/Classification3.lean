@@ -35,8 +35,7 @@ lemma aux_dim_comm (dim3 : Module.finrank K L = 3) :
     rw [← dim3]
     have : Module.Finite K L := Module.finite_of_finrank_eq_succ dim3
     apply Submodule.finrank_le
-  interval_cases h : (Module.finrank K (commutator K L)) using hl, hu
-  all_goals simp
+  grind
 
 /-- Characterization of the three-dimensional Heisenberg Lie algebra. -/
 theorem heisenberg_iff : Nonempty (L ≃ₗ⁅K⁆ (Heisenberg K)) ↔
@@ -309,8 +308,7 @@ theorem classification (dim3 : finrank K L = 3) (hs : IsSolvable L) :
     (∃ α, α ≠ 0 ∧ Nonempty (L ≃ₗ⁅K⁆ (Family K α 1))) := by
   have : FiniteDimensional K L := by
     apply FiniteDimensional.of_finrank_pos
-    rw [dim3]
-    norm_num
+    grind
   rcases aux_dim_comm dim3 with dc₀|dc₁|dc₂|dc₃
   · left -- dim commutator is 0
     rw [LieAlgebra.abelian_iff_dim_comm_zero] at dc₀
@@ -356,10 +354,7 @@ theorem classification (dim3 : finrank K L = 3) (hs : IsSolvable L) :
     apply eq_top_of_finrank_eq at dc₃
     have : (derivedSeries K L 1).toSubmodule < ⊤ := by
       assumption
-    rw [← dc₃] at this
-    unfold commutator at this
-    apply (lt_self_iff_false _).mp at this
-    contradiction
+    grind
 
 namespace Family
 
@@ -562,8 +557,7 @@ theorem iso_iff {α α' β β' : K} (hα : α ≠ 0) (hα' : α' ≠ 0) :
         intro x y
         simp only [Fin.isValue, bracket, Nat.succ_eq_add_one, Nat.reduceAdd, Matrix.cons_val_zero,
           mul_zero, Matrix.cons_val_one, Matrix.cons_val]
-        rw [hα, hβ]
-        ring_nf
+        grind
       invFun := fun l => ![γ⁻¹ * l 0, l 1, γ⁻¹ * l 2]
       left_inv := by
         intro x
@@ -604,8 +598,7 @@ theorem not_iso_hyperbolic {α β : K} (hα : α ≠ 0) : IsEmpty (Family K α �
       unfold e₁up
       rw [LieEquiv.commutator_equiv_apply]
       simp only [LieEquiv.symm_apply_apply]
-    rw [← this]
-    exact e₁up.prop
+    grind
   --restrict ad(e₁) and ad(f(e₁)) to the respective commutators.
   let ade₁ := Family.ade₁Restr α β
   let adfe₁ := Hyperbolic.adRestr (f Family.e₁)
@@ -661,10 +654,7 @@ theorem iso_1 {α α' : K} (hα : α ≠ 0) (hα' : α' ≠ 0) : (Family K α 1 
     α = α' := by
   intro f
   let ⟨γ, ha, hb⟩ := (Family.iso_iff hα hα').mp ⟨f⟩
-  simp only [mul_one] at hb
-  rw [← hb] at ha
-  simp only [one_pow, one_mul] at ha
-  exact ha
+  grind
 
 theorem not_iso_0_1 {α α' : K} (hα : α ≠ 0) (hα' : α' ≠ 0) : IsEmpty
     (Family K α 0 ≃ₗ⁅K⁆ Family K α' 1) := by

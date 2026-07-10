@@ -184,8 +184,7 @@ private theorem commProb_le_five_eighths_of_finite (G : Type*) [Group G] [Finite
         rw [mul_comm]
     _ = #ₜZ(G) / #ₜG
         + (∑ g with g ∉ Z(G), #ₛ{ h : G | g * h = h * g }) / #ₜG ^ 2 := by
-        unfold typeQCard
-        field_simp
+        grind
     _ = centralFraction G
         + (∑ g with g ∉ Z(G), (#ₛ{ h : G | g * h = h * g }) / #ₜG) / #ₜG := by
         congr 1
@@ -233,8 +232,7 @@ private theorem commProb_le_five_eighths_of_finite (G : Type*) [Group G] [Finite
     _ = centralFraction G + (1 / 2) * (1 - centralFraction G) := by
         congr
     _ = 1 / 2 + centralFraction G / 2 := by
-        field_simp
-        ring
+        grind
     _ ≤ 1 / 2 + 1 / 8 := by
         linarith [centralFraction_le_quarter h]
     _ = 5 / 8 := by norm_num

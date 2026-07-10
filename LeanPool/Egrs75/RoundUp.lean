@@ -70,8 +70,7 @@ decreasing_by
     have hp3 : 3 ≤ p := by omega
     have _hpx : p ≤ x := by omega
     have hdiv : x / p ≤ x / 3 := Nat.div_le_div_left hp3 (by omega)
-    have _hx3 : x / 3 + 1 < x := by omega
-    omega
+    grind
 
 /-! ## `LowDigits` of `ru` (kernel-clean)
 
@@ -82,8 +81,7 @@ recursion: `LowDigits p (p·m + d) ` holds when `d ≤ (p-1)/2` and `LowDigits p
 lemma lowDigits_zero (p : ℕ) : LowDigits p 0 := by
   unfold LowDigits
   rw [Nat.digits_zero]
-  intro d hd
-  exact absurd hd List.not_mem_nil
+  grind
 
 /-- A low last digit on top of a low number stays low: `LowDigits p (p*m + d)`
 when `d ≤ (p-1)/2` and `LowDigits p m` (and `2 ≤ p`). -/
@@ -100,17 +98,11 @@ lemma lowDigits_cons {p m d : ℕ} (hp : 2 ≤ p) (hd : d ≤ (p - 1) / 2)
     have hdiv : (p * m + d) / p = m := by
       rw [Nat.mul_add_div (by omega : 0 < p), Nat.div_eq_of_lt hdp, Nat.add_zero]
     rw [Nat.digits_def' hp1 (Nat.pos_of_ne_zero h0), hmod, hdiv]
-    intro e he
-    rw [List.mem_cons] at he
-    rcases he with rfl | he
-    · exact hd
-    · exact hm _ he
+    grind
 
 /-- For `p ≥ 3`, the digit `1 ≤ (p-1)/2`. -/
 lemma one_le_half {p : ℕ} (hp : 3 ≤ p) : (1 : ℕ) ≤ (p - 1) / 2 := by
-  have : 2 ≤ p - 1 := by omega
-  calc (1 : ℕ) = 2 / 2 := by norm_num
-    _ ≤ (p - 1) / 2 := Nat.div_le_div_right this
+  grind
 
 /-- `LowDigits p 1` for `p ≥ 3` (digits of `1` are `[1]`, and `1 ≤ (p-1)/2`). -/
 lemma lowDigits_one {p : ℕ} (hp : 3 ≤ p) : LowDigits p 1 := by
@@ -159,11 +151,7 @@ lemma ru_bounds {p : ℕ} (hp : 3 ≤ p) (hodd : Odd p) :
   -- `Odd p` ⟹ `2 * ((p-1)/2) + 1 = p`, i.e. the half is exact: `(p-1)/2 = (p-1)/2`
   -- and any digit `> (p-1)/2` is `≥ (p+1)/2`, so `2*digit ≥ p+1 > p`.
   have hhalf : 2 * ((p - 1) / 2) + 1 = p := by
-    obtain ⟨k, hk⟩ := hodd
-    subst hk
-    have : (2 * k + 1 - 1) / 2 = k := by
-      rw [show 2 * k + 1 - 1 = 2 * k by omega, Nat.mul_div_cancel_left k (by norm_num)]
-    omega
+    grind
   intro x
   induction x using Nat.strong_induction_on with
   | _ x ih =>
@@ -176,9 +164,7 @@ lemma ru_bounds {p : ℕ} (hp : 3 ≤ p) (hodd : Odd p) :
     · -- carry to p (here ¬(x ≤ (p-1)/2), and hsmall : x < p ∨ p < 3, with p ≥ 3 so x < p)
       -- ru = p.  Need x ≤ p (since x < p) and p < 2x.
       -- ¬hlow : (p-1)/2 < x, and 2*((p-1)/2)+1 = p ⟹ p ≤ 2x - 1 < 2x. x ≤ p since x < p.
-      refine ⟨by omega, ?_⟩
-      -- p < 2x : from (p-1)/2 < x ⟹ p = 2*((p-1)/2)+1 ≤ 2*(x-1)+1 = 2x-1 < 2x
-      omega
+      grind
     · -- keep low digit: ru = p * ru(x/p) + x%p,  hlow2 : x%p ≤ (p-1)/2
       -- Need x/p ≥ 1 to apply IH. Since ¬hsmall ⟹ p ≤ x ⟹ x/p ≥ 1.
       have hpx : p ≤ x := by omega
@@ -197,13 +183,11 @@ lemma ru_bounds {p : ℕ} (hp : 3 ≤ p) (hodd : Odd p) :
         have hstrict : p * ru p (x / p) < 2 * (p * (x / p)) := by
           have := Nat.mul_lt_mul_of_pos_left hhi (show 0 < p by omega)
           -- this : p * ru(x/p) < p * (2 * (x/p));  p*(2*(x/p)) = 2*(p*(x/p))
-          calc p * ru p (x / p) < p * (2 * (x / p)) := this
-            _ = 2 * (p * (x / p)) := by ring
+          grind
         -- linear in atoms {p*ru(x/p), p*(x/p), x, x%p}:
         --   hsplit : x = p*(x/p) + x%p;  hstrict : p*ru(x/p) < 2*(p*(x/p))
         --   goal   : p*ru(x/p) + x%p < 2*x.
-        have hge0 : 0 ≤ x % p := Nat.zero_le _
-        linarith [hsplit, hstrict, hge0]
+        grind
     · -- carry branch: ru = p * ru(x/p + 1),  ¬hlow2 : (p-1)/2 < x%p
       have hpx : p ≤ x := by omega
       have hdec : x / p + 1 < x := by

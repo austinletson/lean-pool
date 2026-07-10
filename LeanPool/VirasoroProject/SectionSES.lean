@@ -119,8 +119,7 @@ variable {f : U →* V} {g : V →* W}
   apply unique_corrector hf (v₁ * v₂) _ _ (corrector_spec hfg hgσ (v₁ * v₂))
   nth_rw 1 [corrector_spec hfg hgσ v₁]
   nth_rw 1 [corrector_spec hfg hgσ v₂]
-  simp only [map_mul, mul_assoc, mul_right_inj]
-  simpa [← mul_assoc, mul_left_inj] using CommGroup.mul_comm _ _
+  grind
 
 /-- The corrector homomorphism `γ : V → U` associated to a multiplicative section `σ : W → V`
 of a short exact sequence `1 ⟶ U ⟶ V ⟶ W ⟶ 1`. -/
@@ -263,8 +262,7 @@ lemma ses_directSum_isInternal (hf : ker f = ⊥) (hfg : range f = ker g) (hgσ 
       have obs₀ : f ((corrector hf hfg hgσ) v) = 0 := by
         obtain ⟨w, hw⟩ := M_le₀ v_in_M
         have gv_eq_w : g v = w := by simpa [← hw] using LinearMap.congr_fun hgσ w
-        have v_eq_σgv : v = σ (g v) := by nth_rw 1 [← hw]; rw [← gv_eq_w]
-        rw [(corrector_eq_iff hf hfg hgσ v 0).mpr (by simp [← v_eq_σgv]), map_zero]
+        grind
       rw [corrector_spec hf hfg hgσ v]
       simp [obs₁, obs₀]
     intro j M M_le M_le' v v_in_M

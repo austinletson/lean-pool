@@ -46,8 +46,7 @@ private theorem pkappa_ne_zero_of_norm_eq_one
           (Finset.sum (0 : Pkappa d kappa).support
             (fun alpha => ‖(0 : Pkappa d kappa) alpha‖ ^ 2)) = 0
     simp
-  rw [hzero] at hF_norm
-  norm_num at hF_norm
+  grind
 
 theorem pkappaInner_smul_left
     {d : Nat} {kappa : MultiIndex d} (c : ℂ)
@@ -100,10 +99,7 @@ private theorem lpNorm_congr_ae {α E : Type*} [MeasurableSpace α] [NormedAddCo
   by_cases hf : AEStronglyMeasurable f μ
   · have hg : AEStronglyMeasurable g μ := hmeas.mp hf
     simp [hf, hg, eLpNorm_congr_ae hfg]
-  · have hg : ¬ AEStronglyMeasurable g μ := by
-      intro hg
-      exact hf (hmeas.mpr hg)
-    simp [hf, hg]
+  · grind
 
 private theorem gaussianL2Norm_eq_lpNorm
     {d : Nat} {α : Type*} [NormedAddCommGroup α] [MeasurableSpace α] [NormedSpace ℝ α]
@@ -157,8 +153,7 @@ theorem evalPkappaL2_sub
   rw [sub_eq_add_neg, evalPkappaL2_add hd kappa F (-G)]
   have hneg : evalPkappaL2 kappa (-G) = -evalPkappaL2 kappa G := by
     simpa using evalPkappaL2_smul hd kappa (-1 : ℂ) G
-  rw [hneg]
-  simp [sub_eq_add_neg]
+  grind
 
 theorem inner_evalPkappaL2_eq_star_pkappaInner
     {d : Nat} (hd : 0 < d) (kappa : MultiIndex d)
@@ -178,10 +173,8 @@ theorem inner_evalPkappaL2_eq_star_pkappaInner
       · rw [Finsupp.sum_single_index]
         · simp [coeffPkappa]
         · simp
-      · intro a ha
-        simp
-      · intro a ha b1 b2
-        ring
+      · grind
+      · grind
 
 private theorem defect_lpNorm_eq
     {d : Nat} (kappa : MultiIndex d)
@@ -242,8 +235,7 @@ private theorem phase_alignment
   have hg_right : inner ℂ g f0 = 0 :=
     (inner_eq_zero_symm (𝕜 := ℂ) (x := g) (y := f0)).2 hg_left
   have hu_decomp : u = a • f0 + g := by
-    dsimp [g]
-    abel_nf
+    grind
   rcases Complex.exists_norm_eq_mul_self β with ⟨phase, hphase, hphaseβ⟩
   refine ⟨phase, hphase, ?_⟩
   dsimp
@@ -528,11 +520,7 @@ theorem localPhaseStability
       rw [hH_L2]
       change ‖H‖ = ‖evalPkappaL2 kappa H‖
       rw [evalPkappaL2_norm hd kappa H]
-    calc
-      ‖H‖ = ‖phase • (f0 + u) - f0‖ := hH_norm_eq
-      _ ≤ ‖u‖ := hphase_norm
-      _ = ‖Q - F‖ := hu_norm
-      _ ≤ δ := hQδ
+    grind
   have hH_gauge : (pkappaInner H F).im = 0 := by
     have hinner : (inner ℂ (evalPkappaL2 kappa H) (evalPkappaL2 kappa F)).im = 0 := by
       have hphase_gauge' :
@@ -545,8 +533,7 @@ theorem localPhaseStability
     have hconj := hstar_im
     rw [show star (pkappaInner H F) = (starRingEnd ℂ) (pkappaInner H F) from rfl,
       Complex.conj_im] at hconj
-    rw [neg_eq_zero] at hconj
-    exact hconj
+    grind
   refine ⟨phase, hphase, ?_⟩
   calc
     phasedCoeffDistance F Q phase = ‖H‖ := rfl

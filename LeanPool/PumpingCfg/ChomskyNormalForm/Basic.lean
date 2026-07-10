@@ -82,9 +82,7 @@ lemma Rewrites.exists_parts (hr : r.Rewrites u v) :
     use [], s
     simp
   | cons r x rw hrs =>
-    rcases hrs with ⟨p, q, rfl, rfl⟩
-    use x :: p, q
-    simp
+    grind
 
 lemma Rewrites.input_output : r.Rewrites [.nonterminal r.input] r.output := by
   cases r
@@ -405,23 +403,14 @@ lemma DerivesIn.append_split {p q w : List (Symbol T g.NT)} {n : ℕ}
       rw [List.append_eq_append_iff] at hpqxvy
       cases hpqxvy with
       | inl hxq =>
-        obtain ⟨a, _, hq⟩ := hxq
-        right
-        use a
+        grind
       | inr hpy =>
         obtain ⟨a, rfl, hq⟩ := hpy
         cases a with
         | nil =>
-          right
-          use []
-          rw [hq, List.append_nil, List.append_nil]
-          exact ⟨rfl, rfl⟩
+          grind
         | cons d l =>
-          left
-          use l
-          rw [List.cons_append, List.cons.injEq] at hq
-          rw [hq.1]
-          exact ⟨hq.2, rfl⟩
+          grind
     rcases append_eq_append_cons heq with ⟨a, hq', hp⟩ | ⟨a, hp', hq⟩
     · rw [hv, hq', ← List.append_assoc] at hd
       obtain ⟨x, y, m₁, m₂, hw, hd₁, hd₂, hn⟩ := hd.append_split
@@ -461,8 +450,7 @@ lemma DerivesIn.head_induction_on {b : List (Symbol T g.NT)}
   | tail _ _ _ _ last ih =>
     apply ih
     · exact head last _ refl
-    · intro _ _ _ produc deriv
-      exact head produc (deriv.tail _ _ _ _ last)
+    · grind
 
 end derivesIn
 

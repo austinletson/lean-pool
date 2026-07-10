@@ -359,9 +359,7 @@ theorem birkhoffErgodicTheorem_aux {ε : ℝ} (hε : 0 < ε) (hf : MeasurePreser
     intro r hr
     rcases hx r hr with ⟨n, hn⟩
     use n + 1
-    intro k hk
-    rw [← this k (Nat.zero_lt_of_lt hk)]
-    exact hn k (Nat.le_of_succ_le hk)
+    grind
   have condexpφ_invariant : invCondexp μ f φ ∘ f = invCondexp μ f φ :=
     MeasurableSpace.comp_eq_of_measurable_invariants stronglyMeasurable_condExp.measurable
   intro n hn
@@ -399,8 +397,7 @@ theorem birkhoffErgodicTheorem (hf : MeasurePreserving f μ μ) (hφ : Integrabl
       rw [hx₃, birkhoffAverage_neg] at hn₂
       norm_num at hn₂
       linarith
-    · specialize hn₁ m (le_of_max_le_left hm)
-      linarith
+    · grind
   refine this.mono fun x hx => Metric.tendsto_atTop.mpr fun ε hε => ?_
   rcases Archimedean.arch 1 hε with ⟨k, hk⟩
   have hk' : 1 < (k + 1) • ε := hk.trans_lt <| smul_lt_smul_of_pos_right (lt_add_one k) hε
@@ -410,8 +407,7 @@ theorem birkhoffErgodicTheorem (hf : MeasurePreserving f μ μ) (hφ : Integrabl
   intro n hn
   apply (hN n hn).trans
   rw [inv_lt_iff_one_lt_mul₀ (Nat.cast_pos.mpr k.succ_pos)]
-  norm_num at hk' ⊢
-  linarith
+  grind
 
 /-- Here we drop the assumption that the observable is `Measurable`. -/
 theorem birkhoffErgodicTheorem' {Φ : α → ℝ} (hf : MeasurePreserving f μ μ)

@@ -120,8 +120,7 @@ private lemma norm_shift_neg_inv_eq {z s : ℂ} (hz_re : z.re = 1 / 2) (hs_unit 
 omit f hf in
 private lemma neg_inv_involution {s : ℂ} (hs_unit : ‖s‖ = 1) :
     -(1 : ℂ) / (-(1 : ℂ) / s) = s := by
-  have hs_ne : s ≠ 0 := by intro h; rw [h, norm_zero] at hs_unit; norm_num at hs_unit
-  field_simp
+  grind
 
 omit f hf in
 private lemma norm_neg_inv_of_norm_one {s : ℂ} (hs : ‖s‖ = 1) :
@@ -144,8 +143,7 @@ private lemma truncation_iff_shift_union
     · have h_unit := sArcOfS_unit S s h_arc
       refine ⟨-(1 : ℂ) / s, Finset.mem_union_left _ (sArcOfS_closed S s h_arc), ?_⟩
       have h_eq := norm_shift_neg_inv_eq hz_re (norm_neg_inv_of_norm_one h_unit)
-      rw [neg_inv_involution h_unit] at h_eq
-      linarith
+      grind
     · obtain ⟨s', hs', h_le'⟩ := (truncation_iff_shift S z hz_re ε).mpr ⟨s, h_vert, h_le⟩
       exact ⟨s', Finset.mem_union_right _ hs', h_le'⟩
 
@@ -186,8 +184,7 @@ private lemma integral_seg4_cov (G : ℝ → ℂ) :
     ∫ t in (3 : ℝ)..4, G t = ∫ u in (0 : ℝ)..1, G (4 - u) := by
   have h := @intervalIntegral.integral_comp_sub_left
     ℂ _ _ (a := 0) (b := 1) G 4
-  simp only [sub_zero, show (4 : ℝ) - 1 = 3 from by norm_num] at h
-  exact h.symm
+  grind
 
 omit hf in
 private lemma pvIntegrand_seg4_eq_neg_seg1 (_S : Finset UpperHalfPlane) (Sx : Finset ℂ)
@@ -229,13 +226,7 @@ private lemma integral_neg_of_pw_neg (g : ℝ → ℂ)
   apply intervalIntegral.integral_congr_ae
   rw [Filter.Eventually, MeasureTheory.mem_ae_iff]
   apply measure_mono_null (t := {(1 : ℝ)})
-  · intro u hu
-    simp only [Set.mem_compl_iff, Set.mem_setOf_eq, not_forall] at hu
-    obtain ⟨hu_mem, hu_ne⟩ := hu
-    rw [Set.uIoc_of_le (show (0 : ℝ) ≤ 1 from by norm_num)] at hu_mem
-    rw [Set.mem_singleton_iff]
-    by_contra h
-    exact hu_ne (h_pw u ⟨hu_mem.1, lt_of_le_of_ne hu_mem.2 h⟩)
+  · grind
   · exact MeasureTheory.measure_singleton _
 
 omit f hf in
@@ -311,10 +302,7 @@ private theorem tendsto_pvIntegral_seg5
       (𝓝 (2 * ↑Real.pi * I * (orderAtCusp' f : ℂ))) := by
   set L := 2 * ↑Real.pi * I * (orderAtCusp' f : ℂ)
   have h_below : ∀ s ∈ (sArcOfS S ∪ sVertOfS S : Finset ℂ), s.im < H := by
-    intro s hs
-    rcases Finset.mem_union.mp hs with h | h
-    · exact h_arc_below_H s h
-    · exact h_vert_below_H s h
+    grind
   have h_seg5_im : ∀ t, 4 < t → (fdBoundaryH H t).im = H := by
     intro t ht
     rw [fdBoundary_H_eq_seg5_H ht]
@@ -323,8 +311,7 @@ private theorem tendsto_pvIntegral_seg5
       ∀ t, 4 < t → t ≤ 5 →
         ¬∃ s ∈ sArcOfS S ∪ sVertOfS S, ‖fdBoundaryH H t - s‖ ≤ ε := by
     rcases (sArcOfS S ∪ sVertOfS S).eq_empty_or_nonempty with h_empty | h_ne
-    · filter_upwards [self_mem_nhdsWithin] with ε _
-      intro t _ _; simp [h_empty]
+    · filter_upwards [self_mem_nhdsWithin] with ε grind
     · set δ := (sArcOfS S ∪ sVertOfS S).inf' h_ne (fun s => H - s.im)
       have hδ_pos : 0 < δ :=
         (Finset.lt_inf'_iff h_ne).mpr (fun s hs => by linarith [h_below s hs])
@@ -479,18 +466,12 @@ private lemma pvIntegrand_intervalIntegrable
   set K' := {t ∈ Icc (0 : ℝ) 5 | ∀ s ∈ S₀, ε ≤ ‖γ t - (s : ℂ)‖} with hK'_def
   set K := {t ∈ uIoc a b | ¬∃ s ∈ (S₀ : Set ℂ), ‖γ t - s‖ ≤ ε} with hK_def
   have hK_subset_K' : K ⊆ K' := by
-    intro t ⟨ht_uioc, h_not_near⟩
-    have ht_Icc : t ∈ Icc (0 : ℝ) 5 :=
-      uIcc_subset_Icc ha hb (uIoc_subset_uIcc ht_uioc)
-    refine ⟨ht_Icc, fun s hs => ?_⟩
-    by_contra h_contra; push Not at h_contra
-    exact h_not_near ⟨s, Finset.mem_coe.mpr hs, h_contra.le⟩
+    intro t grind
   have hF_K : EqOn F (fun t => logDeriv g (γ t) * deriv γ t) K := by
     intro t ⟨_, h_not_near⟩
     change cauchyPrincipalValueIntegrandOn S₀ (logDeriv g) γ ε t = _
     simp only [cauchyPrincipalValueIntegrandOn]
-    simp only [Finset.mem_coe] at h_not_near
-    exact if_neg h_not_near
+    grind
   have h_compl_zero : EqOn F 0 (uIoc a b \ K) := by
     intro t ⟨ht_uioc, h_not_K⟩
     change cauchyPrincipalValueIntegrandOn S₀ (logDeriv g) γ ε t = 0
@@ -631,9 +612,7 @@ private lemma modular_side_h_capture
         · subst h3'
           rw [fdBoundary_H_at_three_eq_rho]
           exact Finset.mem_coe.mpr (Finset.mem_union_left _ (sArcOfS_rho_in S))
-        · exact Finset.mem_coe.mpr (Finset.mem_union_left _
-            (h_oncurve_arc t ⟨lt_of_le_of_ne h1 (Ne.symm h1'),
-              lt_of_le_of_ne h3 h3'⟩ h_zero))
+        · grind
     · push Not at h3
       by_cases h4 : t ≤ 4
       · by_cases h4' : t = 4

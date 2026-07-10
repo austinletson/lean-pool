@@ -296,11 +296,7 @@ theorem Tcolim_sub_colim (s : Setup.{w}) {X : Set s.Tok} (hX : (Tcolim s).mem X)
   -- conclude `X ∈ Tⁿ⁺¹({Γ}) ⊆ 𝒟`.
   refine ⟨n + 1, ?_⟩
   rw [Dsys_succ s n, mem_cast (Dceq s n)]
-  have key : ((Dceq s n).symm ▸ X : Set (s.T.obj ⟨s.Tok, Dsys s n⟩).carrier)
-      = (s.hmono (hℱ ⟨n, rfl⟩)).carrier_eq ▸ Y₀ := by
-    rw [hY₀, set_rec_trans]
-  rw [key]
-  exact hmemD
+  grind
 
 /-- **`T(𝒟) = 𝒟`** (Scott's `𝒟 = T(𝒟)`): the two systems have the same
 neighbourhoods (mutual
@@ -399,8 +395,7 @@ theorem iSupRho_eq_id (s : Setup.{w}) : iSupRho s = idMap (colim s) := by
   constructor
   · rintro ⟨n, hr⟩
     rw [rho_rel] at hr
-    obtain ⟨hcX, hcY, z, _, hXz, hzY⟩ := hr
-    exact ⟨hcX, hcY, hXz.trans hzY⟩
+    grind
   · rintro ⟨hcX, hcY, hXY⟩
     obtain ⟨n, hX⟩ := hcX
     exact ⟨n, (rho_rel s n).mpr ⟨⟨n, hX⟩, hcY, X, hX, subset_rfl, hXY⟩⟩
@@ -492,13 +487,7 @@ theorem map_comp_proj_heq {Tok : Type w} {Pc Qc : Type w} (cn : Pc = Tok) (cc : 
     (Tmi : ApproximableMap Ps Qs) (Tmj : ApproximableMap Qs Ps)
     (hi : HEq Tmi sub.inj) (hj : HEq Tmj sub.proj) :
     HEq (Tmi.comp Tmj) (hsub'.inj.comp hsub'.proj) := by
-  subst cn
-  subst cc
-  obtain rfl := hDn1
-  obtain rfl := hCol
-  have e1 : Tmi = sub.inj := eq_of_heq hi
-  have e2 : Tmj = sub.proj := eq_of_heq hj
-  rw [e1, e2]
+  grind
 
 /-- **`T(ρₙ) = ρₙ₊₁`, heterogeneously.** The image `T(ρₙ)` of the `n`-th
 projection, living over

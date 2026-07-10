@@ -65,8 +65,7 @@ theorem forallQuantify_eq_not_existQuantify_not
     (f : BitString (k + m) → Bool) (y : BitString m) :
     forallQuantify f y = !(existQuantify (fun z => !(f z)) y) := by
   unfold forallQuantify existQuantify
-  cases h : decide (∀ x : BitString k, f (Fin.append x y) = true) <;>
-    simp_all [decide_eq_false_iff_not, not_forall]
+  grind
 
 /-- De Morgan duality: existential quantification equals negated universal
     of negation. -/
@@ -74,8 +73,7 @@ theorem existQuantify_eq_not_forallQuantify_not
     (f : BitString (k + m) → Bool) (y : BitString m) :
     existQuantify f y = !(forallQuantify (fun z => !(f z)) y) := by
   unfold existQuantify forallQuantify
-  cases h : decide (∃ x : BitString k, f (Fin.append x y) = true) <;>
-    simp_all [decide_eq_false_iff_not, not_exists]
+  grind
 
 /-- Monotonicity: if `f` implies `g` pointwise, existential quantification
     preserves this. -/
@@ -83,16 +81,14 @@ theorem existQuantify_mono {f g : BitString (k + m) → Bool}
     (h : ∀ z, f z = true → g z = true) {y : BitString m} :
     existQuantify f y = true → existQuantify g y = true := by
   simp only [existQuantify_eq_true]
-  rintro ⟨x, hx⟩
-  exact ⟨x, h _ hx⟩
+  grind
 
 /-- Monotonicity for universal quantification. -/
 theorem forallQuantify_mono {f g : BitString (k + m) → Bool}
     (h : ∀ z, f z = true → g z = true) {y : BitString m} :
     forallQuantify f y = true → forallQuantify g y = true := by
   simp only [forallQuantify_eq_true]
-  intro hf x
-  exact h _ (hf x)
+  grind
 
 /-- Constant true: existential quantification is always true. -/
 @[simp]
@@ -148,9 +144,7 @@ theorem existQuantify_succ (f : BitString ((k + 1) + m) → Bool) (y : BitString
       · congr 1
         simp [Fin.ext_iff]
         omega
-      · congr 1
-        simp [Fin.ext_iff]
-        omega
+      · grind
     · left
       refine ⟨fun i => a ⟨i.val + 1, by omega⟩, ?_⟩
       convert ha using 2
@@ -161,9 +155,7 @@ theorem existQuantify_succ (f : BitString ((k + 1) + m) → Bool) (y : BitString
       · congr 1
         simp [Fin.ext_iff]
         omega
-      · congr 1
-        simp [Fin.ext_iff]
-        omega
+      · grind
   · rintro (⟨x, hx⟩ | ⟨x, hx⟩)
     · refine ⟨fun i => if h : i.val = 0 then false else x ⟨i.val - 1, by omega⟩, ?_⟩
       convert hx using 2
@@ -172,9 +164,7 @@ theorem existQuantify_succ (f : BitString ((k + 1) + m) → Bool) (y : BitString
       split_ifs <;> simp_all <;> try omega
       · exfalso
         simp_all [Fin.castLT]
-      · congr 1
-        simp [Fin.ext_iff]
-        omega
+      · grind
     · refine ⟨fun i => if h : i.val = 0 then true else x ⟨i.val - 1, by omega⟩, ?_⟩
       convert hx using 2
       ext ⟨i, hi⟩
@@ -182,8 +172,6 @@ theorem existQuantify_succ (f : BitString ((k + 1) + m) → Bool) (y : BitString
       split_ifs <;> simp_all <;> try omega
       · exfalso
         simp_all [Fin.castLT]
-      · congr 1
-        simp [Fin.ext_iff]
-        omega
+      · grind
 
 end CircuitComplexity

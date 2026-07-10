@@ -38,9 +38,7 @@ def factDigit (i n : ℕ) : ℕ := (n / i !) % (i + 1)
 theorem sum_lt_factorial_of_lt (T : Finset ℕ) (hT : ∀ a ∈ T, 1 ≤ a) (i : ℕ) :
     ∑ a ∈ T.filter (· < i), a ! < i ! := by
   have hsub : T.filter (· < i) ⊆ Finset.Ico 1 i := by
-    intro a ha
-    rw [Finset.mem_filter] at ha
-    exact Finset.mem_Ico.mpr ⟨hT a ha.1, ha.2⟩
+    grind
   have h1 : ∑ a ∈ T.filter (· < i), a ! ≤ ∑ a ∈ Finset.Ico 1 i, a ! :=
     Finset.sum_le_sum_of_subset hsub
   rcases Nat.eq_zero_or_pos i with hi | hi
@@ -55,8 +53,7 @@ theorem sum_lt_factorial_of_lt (T : Finset ℕ) (hT : ∀ a ∈ T, 1 ≤ a) (i :
       rw [herase] at hae
       simpa using hae
     have hr := sum_range_factorial_le i
-    have hpos : 1 ≤ i ! := Nat.factorial_pos i
-    omega
+    grind
 
 /-- **The digits of a sum of distinct factorials are its indicators.** For `T` a finite set of
 positive integers, `d_i(∑_{a∈T} a!) = [i ∈ T] ∈ {0,1}`. (The "representable ⟹ all digits ≤ 1"
@@ -67,15 +64,9 @@ theorem factDigit_sum_factorial (T : Finset ℕ) (hT : ∀ a ∈ T, 1 ≤ a) {i 
   set e : ℕ := if i ∈ T then 1 else 0 with he
   -- set equalities used to refold the trichotomy filters
   have hset1 : (T.filter (¬ · < i)).filter (· = i) = T.filter (· = i) := by
-    ext x; simp only [Finset.mem_filter]
-    constructor
-    · rintro ⟨⟨hx, _⟩, hq⟩; exact ⟨hx, hq⟩
-    · rintro ⟨hx, hq⟩; exact ⟨⟨hx, by omega⟩, hq⟩
+    grind
   have hset2 : (T.filter (¬ · < i)).filter (¬ · = i) = T.filter (i < ·) := by
-    ext x; simp only [Finset.mem_filter]
-    constructor
-    · rintro ⟨⟨hx, hp⟩, hq⟩; exact ⟨hx, by omega⟩
-    · rintro ⟨hx, hr⟩; exact ⟨⟨hx, by omega⟩, by omega⟩
+    grind
   have hEi : ∑ a ∈ T.filter (· = i), a ! = e * i ! := by
     rw [Finset.filter_eq', he]; split_ifs <;> simp
   -- decompose the sum as  (∑_{<i}) + (e·i! + ∑_{>i})
@@ -139,10 +130,7 @@ theorem factSum_digit_dichotomy (S : Finset ℕ) {n : ℕ} (hn : factSum S = n) 
   · left
     intro i hi
     have hpos : ∀ a ∈ S, 1 ≤ a := by
-      intro a ha
-      rcases Nat.eq_zero_or_pos a with rfl | h
-      · exact absurd ha h0
-      · exact h
+      grind
     rw [← hn]; exact factDigit_factSum_le_one _ hpos hi
 
 /-- **Non-representability criterion.** If *both* `n` and `n - 1` carry a factorial digit `≥ 2`

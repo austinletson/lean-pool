@@ -226,8 +226,7 @@ private theorem lemma317_p1b [HasInt A] {g h : GameForm}
     have h1 : LTippingPoint hsh = NTippingPoint hsh + 1 :=
       LTippingPoint_eq_NTippingPoint_add_one_of_isEnd_right hAh hsh hend
     have h2 : NTippingPoint hsh = 0 := NTippingPoint_eq_zero_of_N hsh hNh
-    rw [h2] at h1
-    omega
+    grind
   obtain ⟨hr, hr_mem, hRhr, hnhr⟩ :
       ∃ hr, ∃ (hr_mem : hr ∈ moves .right h), MisereOutcome hr = .R ∧
         NTippingPoint (Short.of_mem_moves hsh hr_mem) = LTippingPoint hsh := by
@@ -335,8 +334,7 @@ private theorem lemma317_p4a_gr {g h : GameForm}
       rw [add_comm] at hN; exact hN.ge
     · have hbd : birthday h + birthday gr < birthday g + birthday h := by
         have hlt' := birthday_lt_of_mem_moves hgr
-        calc birthday h + birthday gr < birthday h + birthday g := by gcongr
-          _ = birthday g + birthday h := add_comm _ _
+        grind
       have hN := (IH h gr hsh (Short.of_mem_moves hsg hgr) hAh hAgr hbd).p2b
         hRh hgrN he
       rw [add_comm] at hN; exact hN.ge
@@ -415,9 +413,7 @@ private theorem lemma317_p4b_left {g h : GameForm}
   · by_cases hcase : NTippingPoint hsg = RTippingPoint hsg - 1
     · obtain ⟨hl, hl_mem, hlhl⟩ :=
         exists_mem_moves_left_LTippingPoint_eq_NTippingPoint hAh hsh hRh
-      refine left_via_hl hl hl_mem ?_
-      rw [hlhl]
-      omega
+      grind
     · obtain ⟨gl, gl_mem, hglL, hgln⟩ :=
         exists_mem_moves_left_L_NTippingPoint_eq_RTippingPoint hAg hsg
           hLg hcase
@@ -580,8 +576,7 @@ theorem misereOutcome_ne_P_of_propertyX {g h : GameForm}
         <;> simp +decide only [h']
     · exact absurd hg (PFree.misereOutcome_ne_P_of_pfree (A := IsPFree) hAg.isPFree)
     · rcases hh : MisereOutcome h with _ | _ | _ | _
-      · have := lr h g hAh hAg hsh hsg hh hg
-        rwa [add_comm] at this
+      · grind
       · refine Or.inr ?_
         rcases OutcomeStable.misereOutcome_of_add_RN hAg hAh hg hh with h' | h'
         <;> simp +decide only [h']

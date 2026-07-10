@@ -68,8 +68,7 @@ theorem Config.main_lemma (n : ℕ) : C.MainGoal n := by
     have c_mem : c ∈ S := by rw [← mem_Sl, eq_Sl]; simp
     have abc_lt : a < b ∧ b < c := by
       have sorted : Sl.Pairwise (· < ·) := (Finset.sortedLT_sort S).pairwise
-      rw [eq_Sl, List.pairwise_cons, List.pairwise_cons] at sorted
-      exact ⟨sorted.1 b (by simp), sorted.2.1 c (by simp)⟩
+      grind
     have laced1 := hasLaced_pair C a_mem b_mem abc_lt.left
     have laced2 := hasLaced_pair C b_mem c_mem abc_lt.right
     exact ⟨a, b, b, c, ⟨abc_lt.left, le_refl b, abc_lt.right⟩, laced1, laced2⟩

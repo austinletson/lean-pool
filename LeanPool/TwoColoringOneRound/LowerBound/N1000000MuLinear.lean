@@ -150,26 +150,21 @@ private theorem corrAvg_tgt_eq_xFromColoring
       have hbLt : pm.srcSyms.get bIdx < n := hsrcLtMem _ (List.get_mem _ _)
       have hGet : pm.srcSyms.get aIdx = pm.srcSyms.get bIdx :=
         symOfNat_injective_of_lt haLt hbLt (by simpa [aIdx, bIdx] using hab)
-      have hIdx : aIdx = bIdx := hinjSrc hGet
-      simpa [aIdx, bIdx] using congrArg Fin.val hIdx⟩
+      grind⟩
   let tgtEmb : Fin t ↪ Sym n :=
     ⟨fun j => symOfNat (pm.tgtSyms.get ⟨j.1, by
-        have : j.1 < pm.srcSyms.length := by simp [t]
-        exact lt_of_lt_of_eq this hlen⟩), by
+        grind⟩), by
       intro a b hab
       apply Fin.ext
       let aIdx : Fin pm.tgtSyms.length := ⟨a.1, by
-        have : a.1 < pm.srcSyms.length := by simp [t]
-        exact lt_of_lt_of_eq this hlen⟩
+        grind⟩
       let bIdx : Fin pm.tgtSyms.length := ⟨b.1, by
-        have : b.1 < pm.srcSyms.length := by simp [t]
-        exact lt_of_lt_of_eq this hlen⟩
+        grind⟩
       have haLt : pm.tgtSyms.get aIdx < n := htgtLtMem _ (List.get_mem _ _)
       have hbLt : pm.tgtSyms.get bIdx < n := htgtLtMem _ (List.get_mem _ _)
       have hGet : pm.tgtSyms.get aIdx = pm.tgtSyms.get bIdx :=
         symOfNat_injective_of_lt haLt hbLt (by simpa [aIdx, bIdx] using hab)
-      have hIdx : aIdx = bIdx := hinjTgt hGet
-      simpa [aIdx, bIdx] using congrArg Fin.val hIdx⟩
+      grind⟩
   -- A permutation sending `srcEmb` to `tgtEmb`.
   letI : MulAction.IsMultiplyPretransitive G (Sym n) t :=
     Equiv.Perm.isMultiplyPretransitive (α := Sym n) t
@@ -195,11 +190,7 @@ private theorem corrAvg_tgt_eq_xFromColoring
     have hj :
         σ (symOfNat (pm.srcSyms.get ⟨k, hkSrc⟩)) = symOfNat (pm.tgtSyms.get ⟨k, hkTgt⟩) := by
       simpa [srcEmb, tgtEmb] using hσ_apply ⟨k, hk⟩
-    have hsrc : pm.srcSyms.getD k 0 = pm.srcSyms.get ⟨k, hkSrc⟩ := by
-      simpa using (List.getD_eq_get pm.srcSyms 0 ⟨k, hkSrc⟩)
-    have htgt : pm.tgtSyms.getD k 0 = pm.tgtSyms.get ⟨k, hkTgt⟩ := by
-      simpa using (List.getD_eq_get pm.tgtSyms 0 ⟨k, hkTgt⟩)
-    rwa [hsrc, htgt]
+    grind
   -- Rewrite the `getD` identities in the bracketed `get?` form used by the simplifications below.
   have hsrcU0' : pm.srcSyms[0]?.getD 0 = pm.srcU.1 := by simpa using hsrcU0
   have hsrcU1' : pm.srcSyms[1]?.getD 0 = pm.srcU.2.1 := by simpa using hsrcU1
@@ -309,13 +300,9 @@ private lemma aDot_eq_box (f : Coloring n) (k : Mu) (hk : muBoxCoeff[k.1]! ≠ 0
   calc
     (∑ i : Var, aCoeff k i * xFromColoring f i) =
         ∑ i : Var, (if i = boxVar k then boxCoeff k else 0) * xFromColoring f i := by
-          refine Finset.sum_congr rfl ?_
-          intro i _hi
-          simp [hCoeff i]
+          grind
     _ = ∑ i : Var, if i = boxVar k then (boxCoeff k * xFromColoring f i) else 0 := by
-          refine Finset.sum_congr rfl ?_
-          intro i _hi
-          by_cases h : i = boxVar k <;> simp [h]
+          grind
     _ = boxCoeff k * xFromColoring f (boxVar k) := by
           exact
             (Fintype.sum_ite_eq' (ι := Var) (M := Q) (i := boxVar k)
@@ -470,16 +457,12 @@ private lemma aDot_eq_triLinear (f : Coloring n) (k : Mu) (hk : muBoxCoeff[k.1]!
       simp [triCoeff, huv, huw, hvw, add_mul, add_assoc, add_left_comm, add_comm]
   calc
     (∑ i : Var, aCoeff k i * xFromColoring f i) = ∑ i : Var, triCoeff k i * xFromColoring f i := by
-        refine Finset.sum_congr rfl ?_
-        intro i _hi
-        simp [hCoeff i]
+        grind
     _ = ∑ i : Var,
           ((if i = uvVar k then cuv k * xFromColoring f i else 0) +
             (if i = uwVar k then cuw k * xFromColoring f i else 0) +
               (if i = vwVar k then cvw k * xFromColoring f i else 0)) := by
-        refine Finset.sum_congr rfl ?_
-        intro i _hi
-        simp [hpoint i]
+        grind
     _ =
         (∑ i : Var, if i = uvVar k then cuv k * xFromColoring f i else 0) +
             (∑ i : Var, if i = uwVar k then cuw k * xFromColoring f i else 0) +
@@ -586,39 +569,27 @@ private lemma tri_case (f : Coloring n) (k : Mu) (hk : muBoxCoeff[k.1]! = 0) :
       have hU : pmUv.tgtU = (muWitV[k.1]!) := by simpa [pmUv] using hUV.1
       have hV : pmUv.tgtV = (muWitU[k.1]!) := by simpa [pmUv] using hUV.2
       have hc : corrAvg f u v = corrAvg f v u := by simpa [u, v] using (corrAvg_comm (f := f) u v)
-      have htgtUv' : corrAvg f v u = xFromColoring f (uvVar k) := by
-        simpa [hU, hV, u, v] using htgtUv
-      simpa using hc.trans htgtUv'
+      grind
     · have hUV := pmUv_targets_false (k := k) hk (by simpa [pmUv] using hs)
-      have hU : pmUv.tgtU = (muWitU[k.1]!) := by simpa [pmUv] using hUV.1
-      have hV : pmUv.tgtV = (muWitV[k.1]!) := by simpa [pmUv] using hUV.2
-      simpa [hs, hU, hV, u, v] using htgtUv
+      grind
   have huw : corrAvg f u w = xFromColoring f (uwVar k) := by
     by_cases hs : pmUw.swap
     · have hUW := pmUw_targets_true (k := k) hk (by simpa [pmUw] using hs)
       have hU : pmUw.tgtU = (muWitW[k.1]!) := by simpa [pmUw] using hUW.1
       have hV : pmUw.tgtV = (muWitU[k.1]!) := by simpa [pmUw] using hUW.2
       have hc : corrAvg f u w = corrAvg f w u := by simpa [u, w] using (corrAvg_comm (f := f) u w)
-      have htgtUw' : corrAvg f w u = xFromColoring f (uwVar k) := by
-        simpa [hU, hV, u, w] using htgtUw
-      simpa using hc.trans htgtUw'
+      grind
     · have hUW := pmUw_targets_false (k := k) hk (by simpa [pmUw] using hs)
-      have hU : pmUw.tgtU = (muWitU[k.1]!) := by simpa [pmUw] using hUW.1
-      have hV : pmUw.tgtV = (muWitW[k.1]!) := by simpa [pmUw] using hUW.2
-      simpa [hs, hU, hV, u, w] using htgtUw
+      grind
   have hvw : corrAvg f v w = xFromColoring f (vwVar k) := by
     by_cases hs : pmVw.swap
     · have hVW := pmVw_targets_true (k := k) hk (by simpa [pmVw] using hs)
       have hU : pmVw.tgtU = (muWitW[k.1]!) := by simpa [pmVw] using hVW.1
       have hV : pmVw.tgtV = (muWitV[k.1]!) := by simpa [pmVw] using hVW.2
       have hc : corrAvg f v w = corrAvg f w v := by simpa [v, w] using (corrAvg_comm (f := f) v w)
-      have htgtVw' : corrAvg f w v = xFromColoring f (vwVar k) := by
-        simpa [hU, hV, v, w] using htgtVw
-      simpa using hc.trans htgtVw'
+      grind
     · have hVW := pmVw_targets_false (k := k) hk (by simpa [pmVw] using hs)
-      have hU : pmVw.tgtU = (muWitV[k.1]!) := by simpa [pmVw] using hVW.1
-      have hV : pmVw.tgtV = (muWitW[k.1]!) := by simpa [pmVw] using hVW.2
-      simpa [hs, hU, hV, v, w] using htgtVw
+      grind
   have haDot := aDot_eq_triLinear (f := f) (k := k) hk
   have haDot' :
       aDot k (xFromColoring f) =

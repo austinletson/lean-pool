@@ -125,10 +125,7 @@ private def close_up_aux_b2_nonzero_proof
     let div_p_b2 : R.carrier → R.carrier :=
       fun x => if h : p ∣ x then Classical.choose h else x
     have hdiv_b2 : ∀ x ∈ s', x = p * div_p_b2 x := by
-      intro x hx
-      change x = p * (if h : p ∣ x then Classical.choose h else x)
-      rw [dif_pos (hp_dvd x hx)]
-      exact Classical.choose_spec (hp_dvd x hx)
+      grind
     let s'_div := s'.image div_p_b2
     have h_ie_b2 : span (↑s' : Set R.carrier) =
         span {p} * span (↑s'_div : Set R.carrier) :=
@@ -157,11 +154,7 @@ private def close_up_aux_b2_nonzero_proof
         have := congr_arg Subtype.val hw_eq
         simp only [Subring.coe_mul, AddSubgroupClass.coe_sub] at this
         linear_combination this
-      have h2 : (c : T) = (a : T) * t_val_b2 + (p : T) * w_b2 := by
-        have heq := huv_b2
-        rw [ht_eq_b2, hw_b2_eq] at heq
-        exact heq.symm
-      linear_combination h2 - h1
+      grind
     have h_diff_mem : (a : T) * ((↑x₁ : T) - t_val_b2) ∈ Ideal.span {(p : T)} := by
       have : (a : T) * ((↑x₁ : T) - t_val_b2) = (p : T) * (w_b2 - (↑w : T)) := by
         linear_combination h_eq_T
@@ -197,9 +190,7 @@ private def close_up_aux_b2_nonzero_proof
       have hle_comp : R.carrier ≤ S₂.carrier := le_trans hle₁ hle₂
       refine ⟨S₂, isAExtension_trans' hAext₁ hAext₂, hle_comp, ?_⟩
       have hc_val : (c : T) = (↑x₁ : T) * (a : T) + (p : T) * (↑w : T) := by
-        have := congr_arg Subtype.val hw_eq
-        simp only [Subring.coe_mul, AddSubgroupClass.coe_sub] at this
-        linear_combination this
+        grind
       change (⟨(c : T), hle_comp c.2⟩ : S₂.carrier) ∈
         Ideal.map (Subring.inclusion hle_comp)
           (span (↑s : Set R.carrier))
@@ -258,8 +249,7 @@ private def close_up_aux_b2_nonzero_proof
       by_cases hs'_div_card : s'_div.card ≤ n'' + 1
       · -- |insert a s'_div| ≤ n''+2
         have h_ins_card3 : (insert a s'_div).card ≤ n'' + 1 + 1 := by
-          rw [Finset.card_insert_of_notMem ha_s'_div]
-          omega
+          grind
         let liftR₁ := Subring.inclusion hle₁
         let s₁ := (insert a s'_div).image liftR₁
         have hs₁_card : s₁.card ≤ n'' + 1 + 1 := Finset.card_image_le.trans h_ins_card3
@@ -279,8 +269,7 @@ private def close_up_aux_b2_nonzero_proof
       · -- s'_div.card = n''+2, need WF on GCD complexity
         push Not at hs'_div_card
         have hs'_div_card_eq : s'_div.card = n'' + 1 + 1 := by
-          have h_le : s'_div.card ≤ n'' + 1 + 1 := Finset.card_image_le.trans hs'_card
-          omega
+          grind
         let liftR₁' := Subring.inclusion hle₁
         let s₁' := (insert a s'_div).image liftR₁'
         have hw_s₁' : (↑w : T) ∈
@@ -313,12 +302,9 @@ private def close_up_aux_b2_nonzero_proof
           have hstrict : gcdComplexity (insert a s'_div) < gcdComplexity s :=
             gcdComplexity_div_prime_strict hs_insert hs'_def
               (by
-                 rw [hs'_def, Finset.card_erase_of_mem ha_mem, hs_eq]
-                 omega)
+                 grind)
               hp div_p_b2 hdiv_b2 ha_s'_div
-          calc gcdComplexity s₁' = gcdComplexity (insert a s'_div) := hcross
-            _ < gcdComplexity s := hstrict
-            _ ≤ m := hs_gcd
+          grind
         obtain ⟨S₂, hAext₂, hle₂, hw_S₂⟩ :=
           ih_m (gcdComplexity s₁') hgcd_s₁' S₁ hS₁_card (liftR₁' a) s₁' le_rfl hs₁'_card
             ha_s₁' w hw_s₁'
@@ -441,8 +427,7 @@ theorem close_up_aux_b2
         rw [ht_eq]
         change (a : T) * t = 0
         rw [ha_zero, zero_mul]
-      rw [← huv, hu_zero, zero_add]
-      exact hv
+      grind
     obtain ⟨S, hAext, hle, hmem⟩ := ih R hR_card s' hs'_card c hc_s'
     exact ⟨S, hAext, hle,
       Ideal.map_mono (Ideal.span_mono (Finset.coe_subset.mpr

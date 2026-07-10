@@ -147,8 +147,7 @@ theorem siftedSum_as_delta : s.siftedSum = ∑ d ∈ s.support, a d * δ (Nat.gc
   apply sum_congr rfl
   intro d _
   dsimp only [Nat.Coprime, delta] at *
-  rw [mul_ite_zero]
-  exact if_congr Iff.rfl (symm <| mul_one _) rfl
+  grind
 
 -- Unused ?
 theorem nu_lt_self_of_dvd_prodPrimes : ∀ d : ℕ, d ∣ P → d ≠ 1 → ν d < 1 := by
@@ -258,8 +257,7 @@ theorem upper_bound_of_UpperBoundSieve (μPlus : UpperBoundSieve) :
     rw [Nat.dvd_gcd_iff, and_iff_right (dvd_of_mem_divisors hd)]
   rw [sum_comm, sum_congr rfl]; intro d _
   dsimp only [multSum]
-  rw [mul_sum, sum_congr rfl]; intro n _
-  rw [←ite_zero_mul, mul_comm]
+  rw [mul_sum, sum_congr rfl]; grind
 
 theorem siftedSum_le_mainSum_errSum_of_UpperBoundSieve (μPlus : UpperBoundSieve) :
     s.siftedSum ≤ X * s.mainSum μPlus + s.errSum μPlus := by
@@ -311,9 +309,7 @@ theorem _root_.Sieve.lambdaSquared_eq_zero_of_support (w : ℕ → ℝ) (y : ℝ
       have : (0:ℝ) ≤ (d') ^ 2 := by norm_num
       linarith
     apply sum_eq_zero; intro d1 _
-    apply sum_eq_zero; intro d2 _
-    rw [this d1, this d2]
-    simp only [ite_self, MulZeroClass.mul_zero]
+    apply sum_eq_zero; grind
   apply sum_eq_zero; intro d1 _; apply sum_eq_zero; intro d2 _
   split_ifs with h
   swap
@@ -360,8 +356,7 @@ theorem _root_.Sieve.lambdaSquared_mainSum_eq_quad_form (w : ℕ → ℝ) :
           if d = d1.lcm d2 then w d1 * w d2 * ν d else 0)
   · rw [sum_congr rfl]; intro d _
     rw [sum_mul, sum_congr rfl]; intro d1 _
-    rw [sum_mul, sum_congr rfl]; intro d2 _
-    rw [ite_zero_mul]
+    rw [sum_mul, sum_congr rfl]; grind
   trans (∑ d ∈ divisors P, ∑ d1 ∈ divisors P, ∑ d2 ∈ divisors P,
           if d = d1.lcm d2 then w d1 * w d2 * ν d else 0)
   · apply conv_lambda_sq_larger_sum
@@ -387,9 +382,7 @@ theorem _root_.Sieve.lambdaSquared_mainSum_eq_diag_quad_form (w : ℕ → ℝ) :
   · apply sum_congr rfl; intro d1 hd1; apply sum_congr rfl; intro d2 _
     have hgcd_dvd: d1.gcd d2 ∣ P := Trans.trans (Nat.gcd_dvd_left d1 d2) (dvd_of_mem_divisors hd1)
     rw [s.nu_eq_conv_one_div_selbergTerms _ hgcd_dvd, mul_sum]
-    apply sum_congr rfl; intro l _
-    rw [mul_ite_zero]; apply if_congr Iff.rfl _ rfl
-    ring
+    grind
   trans (∑ l ∈ divisors P, ∑ d1 ∈ divisors P, ∑ d2 ∈ divisors P,
         if l ∣ Nat.gcd d1 d2 then 1 / selbergTerms s l * (ν d1 * w d1) * (ν d2 * w d2) else 0)
   · apply symm; rw [sum_comm, sum_congr rfl]; intro d1 _; rw[sum_comm];

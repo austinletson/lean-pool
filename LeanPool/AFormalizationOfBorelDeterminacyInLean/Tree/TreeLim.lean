@@ -66,8 +66,7 @@ def constTree (k : ℕ) : Type* ⥤ Trees where
     apply tree_ext
     change List.map (ConcreteCategory.hom g ∘ ConcreteCategory.hom f) x.val =
       List.map (ConcreteCategory.hom g) (List.map (ConcreteCategory.hom f) x.val)
-    exact (List.map_map (f := ConcreteCategory.hom f) (g := ConcreteCategory.hom g)
-      (l := x.val)).symm
+    grind
 @[simp] lemma head_constTree_map {B} (k : ℕ) (f : A ⟶ B)
   {x : constTreeObj k A} (h : x.val ≠ []) :
   List.head (((constTree k).map f) x).val (LenHom.map_ne_nil _ h)
@@ -91,8 +90,7 @@ def resEqCounitComp k T : (constTree k).obj ((resEq k).obj T) ⟶ T where
   monotone' := by
     intro x y h; by_cases hx : x.val = []
     · change List.take x.val.length (headD x).val <+: List.take y.val.length (headD y).val
-      rw [hx]
-      exact List.nil_prefix
+      grind
     · have h' : headD x = headD y := by simpa only [← headD_nonempty] using h.head hx
       change List.take x.val.length (headD x).val <+: List.take y.val.length (headD y).val
       rw [h']
@@ -175,10 +173,7 @@ def resEqAdj (k : ℕ) : constTree k ⊣ resEq k := Adjunction.mkOfUnitCounit {
     rw [take_coe]
     have hxl : x.val.length = k := x.prop.2
     rcases k with _ | k
-    · change List.take (List.replicate 0 x).length (headD (resEq.val'
-        ((resEqUnit 0).app ((resEq 0).obj T) x))).val = x.val
-      rw [List.replicate_zero, List.length_nil, List.take_zero]
-      exact (List.eq_nil_of_length_eq_zero hxl).symm
+    · grind
     · let u := resEq.val' ((resEqUnit (k + 1)).app ((resEq (k + 1)).obj T) x)
       have hu : u.val ≠ [] := by
         change (List.replicate (k + 1) x) ≠ []
@@ -190,9 +185,7 @@ def resEqAdj (k : ℕ) : constTree k ⊣ resEq k := Adjunction.mkOfUnitCounit {
       have hlen : u.val.length = k + 1 := by
         change (List.replicate (k + 1) x).length = k + 1
         exact List.length_replicate
-      rw [show resEq.val' ((resEqUnit (k + 1)).app ((resEq (k + 1)).obj T) x) = u from rfl]
-      rw [hlen, hhead]
-      exact List.take_of_length_le (by omega)
+      grind
 }
 instance (k : ℕ) : Functor.IsRightAdjoint (Tree.resEq k) :=
   ⟨Tree.constTree k, ⟨Tree.resEqAdj k⟩⟩

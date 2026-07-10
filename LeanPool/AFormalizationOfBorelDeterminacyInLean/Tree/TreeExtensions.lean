@@ -49,11 +49,9 @@ def extensionsRes T :
   toFun a := ⟨a.val, by
     constructor
     · change T.2.val.take (T.2.val.length + 1) ++ [a.val] ∈ T.1.2
-      rw [List.take_of_length_le (Nat.le_succ T.2.val.length)]
-      exact a.prop
+      grind
     · change (T.2.val.take (T.2.val.length + 1) ++ [a.val]).length ≤ T.2.val.length + 1
-      rw [List.take_of_length_le (Nat.le_succ T.2.val.length)]
-      simp only [List.length_append, List.length_singleton, le_refl]⟩
+      grind⟩
   invFun a := ⟨a.val, by
     have hbase : ((pointedRes (T.2.val.length + 1)).obj T).2.val = T.2.val := by
       change T.2.val.take (T.2.val.length + 1) = T.2.val
@@ -119,8 +117,7 @@ def extensionsEquiv (hx : Fixing (x.val.length + 1) f := by as_aux_lemma => synt
 @[simp] lemma ExtensionsAt.cast_valT' {A : Type*} {T : tree A} {x y : T}
   (h : x = y) (a : ExtensionsAt x) :
   (cast (congrArg ExtensionsAt h) a).valT' = a.valT' := by
-  cases h
-  rfl
+  grind
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
 def pointedResIso' (hy : Fixing (y.val.length + 1) f := by as_aux_lemma => synthFixing) :
   (pointedRes (y.val.length + 1)).obj (mkPointed y)

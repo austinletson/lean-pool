@@ -109,8 +109,7 @@ lemma Submodule.exists_generator_of_finrank_eq_one_basis (b : Basis (Fin 2) R M)
   · rw [Submodule.span_le]
     have : c 0 • b 0 + β • b 1 = β • ((c 0 / β) • b 0 + b 1) := by
       rw [smul_add, smul_smul]
-      have hscalar : β * (c 0 / β) = c 0 := by field_simp [this]
-      rw [hscalar]
+      grind
     simp only [Fin.isValue, Set.singleton_subset_iff, SetLike.mem_coe]
     nth_rw 1 [this]
     apply Submodule.smul_mem
@@ -208,8 +207,7 @@ lemma lt_of_ne_top (p : Submodule R M) {p' : Submodule R p}
     rw [eq_top_iff]
     rintro x -
     have : x.val ∈ Submodule.map p.subtype q := by
-      rw [hc]
-      exact x.property
+      grind
     simpa using this
 
 end

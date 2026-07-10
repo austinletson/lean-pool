@@ -234,8 +234,7 @@ theorem range_inr_eq_ker_fst : LieHom.range inr = (rightIdeal φ).toLieSubalgebr
     rw [LieHom.coe_toLinearMap]
     nth_rw 2 [← inl_left_add_inr_right x]
     simp only [fst, LieHom.coe_mk] at h
-    rw [h]
-    simp only [map_zero, zero_add]
+    grind
 
 theorem finrank_eq [StrongRankCondition K] [Module.Free K L] [Module.Free K J]
       [Module.Finite K L] [Module.Finite K J] :
@@ -362,9 +361,7 @@ def leftIdealEquivLeft : leftIdeal K L J ≃ₗ⁅K⁆ L := {
   left_inv := by
     intro x
     have : x.val.2 = 0 := x.prop
-    ext
-    · rfl
-    · rw [this]
+    grind
   right_inv := fun _ ↦ rfl
 }
 
@@ -386,9 +383,7 @@ def rightIdealEquivRight : rightIdeal K L J ≃ₗ⁅K⁆ J := {
   left_inv := by
     intro x
     have : x.val.1 = 0 := x.prop
-    ext
-    · rw [this]
-    · rfl
+    grind
   right_inv := fun _ ↦ rfl
 }
 

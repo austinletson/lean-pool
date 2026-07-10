@@ -134,9 +134,7 @@ theorem diag_rec (x : V.Element) :
   set φ := (curry (push V)).toElementMap x with hφ
   have hfix := fixMap_fixed (iterSys V) φ
   have hval := toElementMap_curry_apply (push V) x ((fixMap (iterSys V)).toElementMap φ)
-  rw [← hφ] at hval
-  rw [hval] at hfix
-  exact hfix.symm
+  grind
 
 /-- **Exercise 5.11 (Scott 1981, PRG-19).** Scott's emphasised property: *all*
 components of

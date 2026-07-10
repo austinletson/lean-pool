@@ -58,10 +58,8 @@ theorem dim_max_subfield (k : SubField K D) (hk : IsMax k) :
           simp only [add_mul, h1, h2, mul_add]
         · intro _ _ _ _ _ _ h1 h2
           simp only [add_mul, h1, h2, mul_add]
-        · intro _ _ _ _ _ _ h1 h2
-          rw [mul_assoc, h2, ← mul_assoc, h1, mul_assoc]
-        · intro _ _ _ _ _ _ h1 h2
-          rw [← mul_assoc, h1, mul_assoc, h2, mul_assoc] }
+        · grind
+        · grind }
     have : IsField (Algebra.adjoin K (insert a k) : Subalgebra K D) := by
       rw [← Algebra.IsIntegral.isField_iff_isField (R := K)]
       · exact Semifield.toIsField K
@@ -72,8 +70,7 @@ theorem dim_max_subfield (k : SubField K D) (hk : IsMax k) :
         have := this.2 ⟨x, hx⟩ ⟨y, hy⟩
         change (⟨x * y, Subalgebra.mul_mem _ hx hy⟩ :
           (Algebra.adjoin K (insert a k.1) : Subalgebra K D)) = ⟨_, _⟩ at this
-        simp only [Subtype.mk.injEq] at this ⊢
-        exact this
+        grind
       exists_inverse x hx hx0 := by
          have := this.3 (Subtype.coe_ne_coe.1 hx0 : (⟨x, hx⟩ :
           (Algebra.adjoin K (insert a k.1) : Subalgebra K D)) ≠ 0)

@@ -87,25 +87,7 @@ private lemma dist_peak_to_interval {n ℓ : ℕ} (hℓ : 1 ≤ ℓ) (hn : n ∈
   obtain ⟨hlo, hhi⟩ := monomial_peak_localization hℓ hn
   unfold distToInterval rStar at *
   push_cast
-  simp only [le_max_iff, max_le_iff]
-  by_cases hjl : j ≥ ℓ + 1
-  · left; left
-    constructor
-    · linarith
-    · have : (j : ℝ) ≥ ℓ + 1 := by exact_mod_cast hjl
-      linarith
-  · push Not at hjl
-    by_cases hjl2 : j + 1 ≤ ℓ
-    · left; right
-      constructor
-      · have : (j : ℝ) + 1 ≤ ℓ := by exact_mod_cast hjl2
-        linarith
-      · have : (j : ℝ) + 1 ≤ ℓ := by exact_mod_cast hjl2
-        linarith
-    · push Not at hjl2
-      have hje : j = ℓ := by omega
-      right; subst hje
-      constructor <;> linarith
+  grind
 
 /-- `distToInterval` is always nonneg. -/
 private lemma distToInterval_nonneg (x : ℝ) (j : ℕ) : 0 ≤ distToInterval x j := by
@@ -214,8 +196,7 @@ private lemma blockPoly_circle_norm_sq {D : ℕ} (a : Fin D → ℂ) (ℓ : ℕ)
         by_cases hkk : k1 = k2
         · subst hkk
           simp only [ite_true, mul_one, Complex.mul_conj']; push_cast; rfl
-        · have hne : ¬((k1.val + 1 : ℕ) : ℤ) = ((k2.val + 1 : ℕ) : ℤ) := by push_cast; omega
-          simp only [hne, ite_false, mul_zero, hkk]
+        · grind
       simp_rw [heval, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
       push_cast; ring
     -- From complex integral to real integral:
@@ -288,9 +269,7 @@ theorem block_annulus_leakage {D : ℕ} (a : Fin D → ℂ) {ℓ : ℕ} (hℓ : 
         then ‖a k‖ ^ 2 * (r ^ (2 * (k.val + 1) + 1) * Real.exp (-r ^ 2)) else 0 := by
     intro r
     rw [Finset.mul_sum]
-    congr 1; ext k; split_ifs with h
-    · ring
-    · simp
+    grind
   simp_rw [integrand_eq]
   -- Step 3: Bound each radial integral using monomial_integral_bound
   -- For each k with k+1 ∈ I_ℓ:
@@ -426,9 +405,7 @@ private lemma block_annulus_leakage_symmetric {D : ℕ} (a : Fin D → ℂ) {ℓ
           then ‖a k‖ ^ 2 * r ^ (2 * (k.val + 1)) else 0) =
       ∑ k : Fin D, if (k.val + 1) ∈ freqBlock ℓ
         then ‖a k‖ ^ 2 * (r ^ (2 * (k.val + 1) + 1) * Real.exp (-r ^ 2)) else 0 := by
-    intro r; rw [Finset.mul_sum]; congr 1; ext k; split_ifs with h
-    · ring
-    · simp
+    intro r; rw [Finset.mul_sum]; grind
   simp_rw [integrand_eq]
   -- Per-k bounds using dist_peak_ge_symmetric
   have hk_bound : ∀ k : Fin D, (k.val + 1) ∈ freqBlock ℓ →
@@ -541,11 +518,7 @@ private lemma polyEval_eq_sum_blockPoly {D : ℕ} (a : Fin D → ℂ) (z : ℂ) 
     rw [Nat.le_sqrt]
     have hfb : k.val + 1 ∈ freqBlock ℓ := hℓmem
     unfold freqBlock at hfb
-    simp only [Finset.mem_Icc] at hfb
-    have : k.val + 1 ≤ D := Nat.succ_le_of_lt k.isLt
-    calc ℓ * ℓ = ℓ ^ 2 := by ring
-      _ ≤ k.val + 1 := hfb.1
-      _ ≤ D := this
+    grind
 
 /-- `remainderPoly a M j z = ∑_{far ℓ} blockPoly a ℓ z` where "far" means
 `j + M < ℓ ∨ ℓ + M < j`. -/
@@ -698,8 +671,7 @@ private lemma remainder_annulus_le_far_blocks {D : ℕ} (a : Fin D → ℂ) {M :
     intro r hr
     rw [Set.uIcc_of_le (show (j : ℝ) ≤ j + 1 by linarith)] at hr
     have hr0 : (0 : ℝ) ≤ r := le_trans (Nat.cast_nonneg j) hr.1
-    dsimp only
-    rw [hpw r hr0]
+    grind
   rw [heq]
   -- Step 3: Distribute weight over the sum inside the integral
   have integrand_eq : ∀ r : ℝ,
@@ -782,9 +754,7 @@ private lemma inner_sum_bound (M J ℓ : ℕ) (hM : 2 ≤ M) (hℓJ : ℓ ≤ J)
       _ ≤ _ := Finset.sum_le_sum_of_subset_of_nonneg
           (fun m hm => by
             simp only [Finset.mem_image, Finset.mem_filter] at hm
-            obtain ⟨j, ⟨hjR, hjf⟩, rfl⟩ := hm
-            have := Finset.mem_range.mp hjR
-            exact Finset.mem_Icc.mpr ⟨by omega, by omega⟩)
+            grind)
           (fun _ _ _ => le_of_lt (Real.exp_pos _))
   · -- Left half: j + M < ℓ, distance = ℓ - j - 1
     rw [one_mul]
@@ -990,8 +960,7 @@ theorem eta_5_bound : etaCoeff 5 100 < 4 / (10 : ℝ) ^ 11 := by
     Real.exp (-25) + ∑ m ∈ (Finset.Icc 6 100 : Finset ℕ), Real.exp (-(m : ℝ) ^ 2) := by
     rw [show (Finset.Icc 5 100 : Finset ℕ) = insert 5 (Finset.Icc 6 100) from by
       ext m; simp [Finset.mem_Icc]; omega]
-    rw [Finset.sum_insert (by decide)]
-    congr 1; norm_num
+    grind
   rw [hsplit]
   -- Bound the tail: Σ_{m=6}^{100} exp(-m²) ≤ 95 · exp(-36)
   have htail : ∑ m ∈ (Finset.Icc 6 100 : Finset ℕ), Real.exp (-(m : ℝ) ^ 2) ≤
@@ -1020,7 +989,6 @@ theorem eta_5_bound : etaCoeff 5 100 < 4 / (10 : ℝ) ^ 11 := by
       (Real.exp (-25) + ∑ m ∈ (Finset.Icc 6 100 : Finset ℕ), Real.exp (-(m : ℝ) ^ 2)) <
       2 * (13 / 10) * (14 / 10 ^ 12 + 95 / 10 ^ 14) := by
     nlinarith [exp_quarter_lt, Real.exp_pos (1 / 4 : ℝ)]
-  linarith [show (2 : ℝ) * (13 / 10) * (14 / 10 ^ 12 + 95 / 10 ^ 14) < 4 / 10 ^ 11
-    from by norm_num]
+  grind
 
 end FockSPR

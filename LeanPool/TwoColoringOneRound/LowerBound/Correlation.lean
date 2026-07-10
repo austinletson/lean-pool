@@ -99,12 +99,7 @@ lemma corrAvg_le_one {n : Nat} (f : Coloring n) (u v : Vertex n) : corrAvg f u v
   have hsum' :
       s.sum (fun σ : G n => spin (f (σ • u)) * spin (f (σ • v))) ≤
         (Fintype.card (G n) : Q) := by
-    have hcard : (s.card : Q) = (Fintype.card (G n) : Q) := by
-      have : s.card = Fintype.card (G n) := by simp [s]
-      exact_mod_cast this
-    have : s.sum (fun σ : G n => spin (f (σ • u)) * spin (f (σ • v))) ≤ (s.card : Q) := by
-      simpa [nsmul_one] using hsum
-    simpa [hcard] using this
+    grind
   exact (div_le_one (cardG_pos n)).2 hsum'
 
 lemma neg_one_le_corrAvg {n : Nat} (f : Coloring n) (u v : Vertex n) :
@@ -121,14 +116,7 @@ lemma neg_one_le_corrAvg {n : Nat} (f : Coloring n) (u v : Vertex n) :
   have :
       (-1 : Q) * (Fintype.card (G n) : Q) ≤
         s.sum (fun σ : G n => spin (f (σ • u)) * spin (f (σ • v))) := by
-    have hcard : (s.card : Q) = (Fintype.card (G n) : Q) := by
-      have : s.card = Fintype.card (G n) := by simp [s]
-      exact_mod_cast this
-    have :
-        (-1 : Q) * (s.card : Q) ≤
-          s.sum (fun σ : G n => spin (f (σ • u)) * spin (f (σ • v))) := by
-      simpa [nsmul_eq_mul, mul_comm, mul_left_comm, mul_assoc] using hsum
-    simpa [hcard] using this
+    grind
   exact (_root_.le_div_iff₀ hpos).2 this
 
 lemma triangle_inequalities (b0 b1 b2 : Bool) :
@@ -167,8 +155,7 @@ lemma corrAvg_triangle {n : Nat} (f : Coloring n) (u v w : Vertex n) :
     simpa [Finset.sum_const, nsmul_eq_mul, hne] using hdiv
   have avg_le_one_of_eq (g : G n → Q) (hg : ∀ σ : G n, g σ ≤ (1 : Q)) (rhs : Q)
       (hEq : (∑ σ : G n, g σ) / (Fintype.card (G n) : Q) = rhs) : rhs ≤ 1 := by
-    have h := avg_le_one (g := g) hg
-    simpa [hEq] using h
+    grind
   have hterm (σ : G n) :
       (-(corr f (σ • u) (σ • v) + corr f (σ • u) (σ • w) + corr f (σ • v) (σ • w) : Q) ≤ 1) ∧
         (corr f (σ • u) (σ • v) + corr f (σ • u) (σ • w) - corr f (σ • v) (σ • w) ≤ 1) ∧
@@ -185,11 +172,7 @@ lemma corrAvg_triangle {n : Nat} (f : Coloring n) (u v w : Vertex n) :
       unfold corrAvg
       field_simp [hne]
       simp [Finset.sum_add_distrib, Finset.sum_neg_distrib, add_assoc]
-    exact
-      avg_le_one_of_eq
-        (g := fun σ =>
-          -(corr f (σ • u) (σ • v) + corr f (σ • u) (σ • w) + corr f (σ • v) (σ • w)))
-        (fun σ => (hterm σ).1) _ hrew
+    grind
   have h1 : corrAvg f u v + corrAvg f u w - corrAvg f v w ≤ 1 := by
     have hrew :
         (∑ σ : G n,
@@ -199,11 +182,7 @@ lemma corrAvg_triangle {n : Nat} (f : Coloring n) (u v w : Vertex n) :
       unfold corrAvg
       field_simp [hne]
       simp [Finset.sum_add_distrib, Finset.sum_neg_distrib, sub_eq_add_neg, add_assoc]
-    exact
-      avg_le_one_of_eq
-        (g := fun σ =>
-          corr f (σ • u) (σ • v) + corr f (σ • u) (σ • w) - corr f (σ • v) (σ • w))
-        (fun σ => (hterm σ).2.1) _ hrew
+    grind
   have h2 : corrAvg f u v - corrAvg f u w + corrAvg f v w ≤ 1 := by
     have hrew :
         (∑ σ : G n,
@@ -213,11 +192,7 @@ lemma corrAvg_triangle {n : Nat} (f : Coloring n) (u v w : Vertex n) :
       unfold corrAvg
       field_simp [hne]
       simp [Finset.sum_add_distrib, Finset.sum_neg_distrib, sub_eq_add_neg, add_assoc]
-    exact
-      avg_le_one_of_eq
-        (g := fun σ =>
-          corr f (σ • u) (σ • v) - corr f (σ • u) (σ • w) + corr f (σ • v) (σ • w))
-        (fun σ => (hterm σ).2.2.1) _ hrew
+    grind
   have h3 : -corrAvg f u v + corrAvg f u w + corrAvg f v w ≤ 1 := by
     have hrew :
         (∑ σ : G n,
@@ -227,11 +202,7 @@ lemma corrAvg_triangle {n : Nat} (f : Coloring n) (u v w : Vertex n) :
       unfold corrAvg
       field_simp [hne]
       simp [Finset.sum_add_distrib, Finset.sum_neg_distrib, add_assoc]
-    exact
-      avg_le_one_of_eq
-        (g := fun σ =>
-          -corr f (σ • u) (σ • v) + corr f (σ • u) (σ • w) + corr f (σ • v) (σ • w))
-        (fun σ => (hterm σ).2.2.2) _ hrew
+    grind
   exact ⟨h0, ⟨h1, ⟨h2, h3⟩⟩⟩
 
 end Correlation

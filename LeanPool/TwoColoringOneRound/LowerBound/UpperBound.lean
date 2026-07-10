@@ -389,12 +389,10 @@ private lemma bound_le_quarter_of_even (m : Nat) (hm : 3 ≤ m) :
   have hm1 : 1 ≤ m := le_trans (by decide : 1 ≤ 3) hm
   have hm2 : 2 ≤ m := le_trans (by decide : 2 ≤ 3) hm
   have h2m1 : 1 ≤ 2 * m := by
-    have : 2 ≤ 2 * m := by simpa [two_mul] using Nat.mul_le_mul_left 2 hm1
-    exact le_trans (by decide : 1 ≤ 2) this
+    grind
   have h2m2 : 2 ≤ 2 * m := by simpa [two_mul] using Nat.mul_le_mul_left 2 hm1
   have h2m3 : 3 ≤ 2 * m := by
-    have : 6 ≤ 2 * m := by simpa [two_mul] using Nat.mul_le_mul_left 2 hm
-    exact le_trans (by decide : 3 ≤ 6) this
+    grind
   have hmQ : (3 : ℚ) ≤ (m : ℚ) := by exact_mod_cast hm
   have hdiff :
       ((2 * m).descFactorial 4 : ℚ)
@@ -438,15 +436,7 @@ private lemma bound_le_quarter_of_odd (m : Nat) (hm : 2 ≤ m) :
         =
         (4 : ℚ) * (m : ℚ) * ((m : ℚ) - 1) * ((4 : ℚ) * (m : ℚ) - 5) := by
     -- Restrict to cast lemmas: we don't want `simp` to unfold `Nat.descFactorial`.
-    simp only [Nat.cast_add, Nat.cast_mul]
-    rw [cast_descFactorial_four (a := 2 * m + 1)]
-    rw [cast_descFactorial_four (a := m)]
-    rw [cast_descFactorial_four (a := m + 1)]
-    rw [cast_descFactorial_two (a := m)]
-    rw [cast_descFactorial_two (a := m + 1)]
-    -- Expand remaining casts like `↑(m + 1)` into `↑m + 1` so `ring_nf` can normalize.
-    simp [Nat.cast_add, Nat.cast_mul]
-    ring_nf
+    grind
   have hm1 : 1 ≤ m := le_trans (by decide : 1 ≤ 2) hm
   have hmQ : (2 : ℚ) ≤ (m : ℚ) := by exact_mod_cast hm
   have hm1Q : (1 : ℚ) ≤ (m : ℚ) := by exact_mod_cast hm1
@@ -479,8 +469,7 @@ theorem monoFraction_f_le_one_quarter : monoFraction (f (n := n) hn) ≤ (1 : �
     let e0 : Edge n :=
       ⟨fun i => ⟨i.1, lt_of_lt_of_le i.2 hn4⟩, by
         intro i j hij
-        apply Fin.ext
-        exact congrArg (fun x : Fin n => x.1) hij⟩
+        grind⟩
     have : Nonempty (Edge n) := ⟨e0⟩
     have : 0 < Fintype.card (Edge n) := Fintype.card_pos_iff.2 this
     simpa [edgeCount] using (show (0 : ℚ) < (Fintype.card (Edge n) : ℚ) from by exact_mod_cast this)
@@ -497,17 +486,9 @@ theorem monoFraction_f_le_one_quarter : monoFraction (f (n := n) hn) ≤ (1 : �
     · -- even `n = m + m`
       have hm : 3 ≤ m := by
         -- if `m ≤ 2` then `m + m ≤ 4`, contradicting `hn : 5 ≤ m + m`
-        by_contra h
-        have hmLt : m < 3 := Nat.lt_of_not_ge h
-        have hmLe2 : m ≤ 2 := Nat.lt_succ_iff.mp hmLt
-        have hsum : m + m ≤ 4 := by
-          have := Nat.add_le_add hmLe2 hmLe2
-          simpa using this
-        have : 5 ≤ 4 := le_trans hn hsum
-        exact (by decide : ¬ 5 ≤ 4) this
+        grind
       have hDiv : (m + m) / 2 = m := by
-        rw [← two_mul m]
-        simp
+        grind
       have hSmall : Fintype.card (Small (n := m + m) hn) = m := by
         calc
           Fintype.card (Small (n := m + m) hn) = (m + m) / 2 := by simp [Small, two]
@@ -515,10 +496,7 @@ theorem monoFraction_f_le_one_quarter : monoFraction (f (n := n) hn) ≤ (1 : �
       have hBig : Fintype.card (Big (n := m + m) hn) = m := by
         have hCard : Fintype.card (Big (n := m + m) hn) = (m + m) - (m + m) / 2 := by
           simp [Big, two]
-        calc
-          Fintype.card (Big (n := m + m) hn) = (m + m) - (m + m) / 2 := hCard
-          _ = (m + m) - m := by simp [hDiv]
-          _ = m := by simp
+        grind
       have hEdgeQ : (edgeCount (m + m) : ℚ) = ((m + m).descFactorial 4 : ℚ) := by
         exact_mod_cast (edgeCount_eq_descFactorial (n := m + m))
       rw [hEdgeQ]
@@ -531,21 +509,9 @@ theorem monoFraction_f_le_one_quarter : monoFraction (f (n := n) hn) ≤ (1 : �
     · -- odd `n = 2*m+1`
       have hm : 2 ≤ m := by
         -- if `m ≤ 1` then `2*m + 1 ≤ 3`, contradicting `hn : 5 ≤ 2*m + 1`
-        by_contra h
-        have hmLt : m < 2 := Nat.lt_of_not_ge h
-        have hmLe1 : m ≤ 1 := Nat.lt_succ_iff.mp hmLt
-        have hmul : 2 * m ≤ 2 := by
-          have := Nat.mul_le_mul_left 2 hmLe1
-          simpa [Nat.mul_assoc, Nat.mul_left_comm, Nat.mul_comm] using this
-        have hsum : 2 * m + 1 ≤ 3 := by
-          have := Nat.succ_le_succ hmul
-          simpa [Nat.succ_eq_add_one, Nat.add_assoc] using this
-        have : 5 ≤ 3 := le_trans hn hsum
-        exact (by decide : ¬ 5 ≤ 3) this
+        grind
       have hDiv : (2 * m + 1) / 2 = m := by
-        have : (1 + 2 * m) / 2 = m := by
-          simpa using (Nat.add_mul_div_left 1 m (y := 2) (by decide : 0 < 2))
-        simpa [Nat.add_comm, Nat.add_left_comm, Nat.add_assoc] using this
+        grind
       have hSmall : Fintype.card (Small (n := 2 * m + 1) hn) = m := by
         calc
           Fintype.card (Small (n := 2 * m + 1) hn) = (2 * m + 1) / 2 := by simp [Small, two]
@@ -554,14 +520,7 @@ theorem monoFraction_f_le_one_quarter : monoFraction (f (n := n) hn) ≤ (1 : �
         have hCard :
             Fintype.card (Big (n := 2 * m + 1) hn) = (2 * m + 1) - (2 * m + 1) / 2 := by
           simp [Big, two]
-        have hRewrite : 2 * m + 1 = m + (m + 1) := by simpa [two_mul] using (Nat.add_assoc m m 1)
-        calc
-          Fintype.card (Big (n := 2 * m + 1) hn) = (2 * m + 1) - (2 * m + 1) / 2 := hCard
-          _ = (2 * m + 1) - m := by simp [hDiv]
-          _ = m + 1 := by
-            calc
-              (2 * m + 1) - m = (m + (m + 1)) - m := by simp [hRewrite]
-              _ = m + 1 := by simp
+        grind
       have hEdgeQ : (edgeCount (2 * m + 1) : ℚ) = ((2 * m + 1).descFactorial 4 : ℚ) := by
         exact_mod_cast (edgeCount_eq_descFactorial (n := 2 * m + 1))
       rw [hEdgeQ]
@@ -596,9 +555,7 @@ theorem monoFraction_f_le_one_quarter : monoFraction (f (n := n) hn) ≤ (1 : �
                 + (2 * ((Fintype.card (Small (n := n) hn)).descFactorial 2
                   * (Fintype.card (Big (n := n) hn)).descFactorial 2)) : Nat) : ℚ)
           ≤ ((1 : ℚ) / 4) * (edgeCount n : ℚ) := by
-      have h :=
-          mul_le_mul_of_nonneg_left hQuarter (by norm_num : (0 : ℚ) ≤ (1 : ℚ) / 4)
-      simpa [mul_assoc, hmul] using h
+      grind
     exact (div_le_iff₀ hEpos').2 hBoundLe
   exact le_trans hFracBound hBoundFrac
 

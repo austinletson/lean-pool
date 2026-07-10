@@ -86,8 +86,7 @@ omit [NeZero n] in
 lemma T_gen_exp_monotone (k : Fin n) :
     Monotone (fun i : Fin n => if (i : ℕ) < n - 1 - (k : ℕ) then 0 else 1) := by
   intro i j hij
-  simp only
-  split_ifs with h1 h2 h2 <;> omega
+  grind
 
 include hp
 /-- The k-th generator of RP: `T(1,...,1,p,...,p)` with `k+1` entries of `p`. -/

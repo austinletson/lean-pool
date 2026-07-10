@@ -81,8 +81,7 @@ instance Halfspace.SetLike : SetLike (Halfspace E) E where
       have hv'1 : 0 < f1.1 v' := by
         rw [hf1, InnerProductSpace.toDual_apply_apply, real_inner_smul_right, inner_sub_right,
           real_inner_self_eq_norm_sq, hp1norm, sq, one_mul, mul_pos_iff]
-        left
-        exact ⟨ hDiffNormPos, by linarith ⟩
+        grind
       have hv'2 : f2.1 v' < 0 := by
         rw [hf2, InnerProductSpace.toDual_apply_apply, real_inner_smul_right, inner_sub_right,
           real_inner_self_eq_norm_sq, hp2norm, sq, one_mul, mul_neg_iff]
@@ -107,16 +106,8 @@ instance Halfspace.SetLike : SetLike (Halfspace E) E where
       rcases hv'1out with ⟨ M1, hM1 ⟩
       rcases hv'2in with ⟨ M2, hM2 ⟩
       have : M1 < 1 + max M1 M2 := by
-        have := le_max_left M1 M2
-        linarith
-      have : M2 < 1 + max M1 M2 := by
-        have := le_max_right M1 M2
-        linarith
-      rw [← Set.symmDiff_nonempty, Set.nonempty_def]
-      use (1 + max M1 M2) • v'
-      rw [Set.mem_symmDiff]
-      right
-      exact ⟨ hM2 (1 + max M1 M2) (by assumption), hM1 (1 + max M1 M2) (by assumption) ⟩
+        grind
+      grind
     congr
     contrapose! h
     rw [← Set.symmDiff_nonempty, Set.nonempty_def]
@@ -127,14 +118,12 @@ instance Halfspace.SetLike : SetLike (Halfspace E) E where
       rw [hmax1, Set.mem_preimage, Set.mem_setOf, ContinuousLinearMap.map_smul, smul_eq_mul,
         Set.mem_preimage, Set.mem_setOf, ContinuousLinearMap.map_smul, smul_eq_mul, ← hfeq, hf1p1,
         mul_one]
-      rw [max_eq_left_iff] at hmax1
-      exact ⟨ le_refl _, not_le_of_gt <| lt_of_le_of_ne hmax1 h.symm ⟩
+      grind
     · right
       rw [hmax2, Set.mem_preimage, Set.mem_setOf, ContinuousLinearMap.map_smul, smul_eq_mul,
         Set.mem_preimage, Set.mem_setOf, ContinuousLinearMap.map_smul, smul_eq_mul, ← hfeq, hf1p1,
         mul_one]
-      rw [max_eq_right_iff] at hmax2
-      exact ⟨ le_refl _, not_le_of_gt <| lt_of_le_of_ne hmax2 h ⟩
+      grind
 
 /-- The coercion of a halfspace to a set equals the sublevel preimage of its functional. -/
 lemma Halfspace.h (H_ : Halfspace E) : ↑H_ = H_.f.1 ⁻¹' {x | x ≤ H_.α} := rfl
@@ -203,9 +192,7 @@ lemma frontierHalfspace_Hyperplane {Hi_ : Halfspace E} :
   have := ContinuousLinearMap.frontier_preimage Hi_.f.1 (unitSphereDual_surj Hi_.f) (Set.Iic Hi_.α)
   simp only [Set.nonempty_Ioi, frontier_Iic'] at this
   change frontier ( Hi_.f.1 ⁻¹' {x | x ≤ Hi_.α}) = Hi_.f.1 ⁻¹' {Hi_.α} at this
-  rw [Hi_.h, this]; clear this
-  unfold Set.preimage
-  simp only [Set.mem_singleton_iff]
+  rw [Hi_.h, this]; grind
 
 omit [CompleteSpace E] in
 lemma Hyperplane_convex (Hi_ : Halfspace E) :

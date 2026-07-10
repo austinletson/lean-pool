@@ -162,8 +162,7 @@ lemma cons_of_length_succ {α : Type} (l : List α) {p : ℕ} (h : l.length = p 
   | nil =>
     simp at h
   | cons a t =>
-    simp at h
-    use a, t
+    grind
 /-- Shift a braid move one position to the right. -/
 def shiftBraidMove (bm : cs.BraidMove) : cs.BraidMove :=
   match bm with
@@ -208,8 +207,7 @@ theorem alternatingWord_succ_ne_alternatingWord_eraseIdx [MatsumotoCondition cs]
   revert i j
   induction p with
   | zero =>
-    intro i j
-    simp[alternatingWord, cs.wordProd_cons]
+    grind
   | succ p ih =>
     intro i j hp hij k hk
     have hp' : p < M i j := by linarith
@@ -225,22 +223,18 @@ theorem alternatingWord_succ_ne_alternatingWord_eraseIdx [MatsumotoCondition cs]
       simp only [wordProd_append] at h_contra
       rw[mul_right_cancel_iff] at h_contra
       have hij' : j ≠ i := by
-        intro h
-        apply hij
-        rw[h]
+        grind
       have h_erase' : k < p := by
         simpa only [length_alternatingWord] using h_erase
       apply ih j i hp'' hij' k h_erase' h_contra
     · have h_erase' : (alternatingWord j i p).length ≤ k := by
-        apply Nat.le_of_not_lt
-        exact h_erase
+        grind
       rw[List.eraseIdx_append_of_length_le h_erase' [j]]
       have h_erase_k : [j].eraseIdx (k - (alternatingWord j i p).length) = [] := by
         have h_index : k - (alternatingWord j i p).length = 0 := by
           have hk_le : k ≤ p := by omega
           simpa [length_alternatingWord] using Nat.sub_eq_zero_of_le hk_le
-        rw [h_index]
-        rfl
+        grind
       rw[h_erase_k]
       simp only [List.append_nil, ne_eq]
       intro h_contra
@@ -260,14 +254,12 @@ theorem alternatingWord_succ_ne_alternatingWord_eraseIdx [MatsumotoCondition cs]
         simp only [mul_inv_rev, inv_simple] at h_contra
         rw[← pow_add] at h_contra
         have : p / 2 + 1 + p / 2 = p + 1 := by
-          have h_half : 2 * (p / 2) = p := Nat.two_mul_div_two_of_even p_even
-          omega
+          grind
         rw[this] at h_contra
         apply MatsumotoCondition.alternatingWords_ne_one i j hij (p + 1) zero_lt_p_succ _ h_contra
         linarith
       · have p_odd : ¬ Even (p + 2) := by
-          intro h
-          exact p_even ((Nat.even_add.mp h).mpr (by norm_num : Even 2))
+          grind
         rw [if_neg p_odd, if_neg p_even] at h_contra
         apply (@mul_left_cancel_iff _ _ _ (s j) _ _).mpr at h_contra
         simp only [simple_mul_simple_cancel_left] at h_contra
@@ -285,10 +277,7 @@ theorem alternatingWord_succ_ne_alternatingWord_eraseIdx [MatsumotoCondition cs]
         simp only [mul_inv_rev, inv_simple] at h_contra
         rw[← pow_add] at h_contra
         have : p / 2 + 1 + (p / 2 + 1) = p + 1 := by
-          have p_odd_base : Odd p := Nat.not_even_iff_odd.mp p_even
-          calc
-            p / 2 + 1 + (p / 2 + 1) = 1 + p / 2 * 2 + 1 := by ring_nf
-            _ = p + 1 := by rw [Nat.one_add_div_two_mul_two_of_odd p_odd_base]
+          grind
         rw[this] at h_contra
         apply MatsumotoCondition.alternatingWords_ne_one i j hij (p + 1) zero_lt_p_succ _ h_contra
         linarith
@@ -335,17 +324,7 @@ lemma prefix_braidWord_aux [MatsumotoCondition cs] (w : W) (l l' : List B) (i j 
           rw [IsReduced] at htr
           rw [List.cons_append]
           rw[cs.wordProd_cons]
-          rw[hw]
-          rw[htr]
-          calc
-            (alternatingWord i j p ++ t).length = p + t.length := by
-              rw [List.length_append, length_alternatingWord]
-            _ = (j :: (alternatingWord i j p ++ t.eraseIdx k)).length := by
-              rw [List.length_cons, List.length_append, length_alternatingWord,
-                List.length_eraseIdx_of_lt k.2]
-              have h_t_pos : 0 < t.length :=
-                Nat.lt_of_le_of_lt (Nat.zero_le k) k.2
-              omega
+          grind
       have h_left_inversion_j :
           cs.IsLeftInversion (cs.wordProd (alternatingWord i j p ++ t)) (s j) := by
         rw[ht, ← hjl']
@@ -371,10 +350,7 @@ lemma prefix_braidWord_aux [MatsumotoCondition cs] (w : W) (l l' : List B) (i j 
         rw[List.eraseIdx_append_of_length_le k_ge_len t] at hk
         rw[hk]
         have : k - (alternatingWord i j p).length < t.length := by
-          have kle := k.2
-          simp only [List.length_append, length_alternatingWord] at kle
-          simp only [length_alternatingWord]
-          omega
+          grind
         use ⟨k - (alternatingWord i j p).length, this⟩
     · rw [if_neg p_even]
       change ∃ t_1 : List B,
@@ -395,17 +371,7 @@ lemma prefix_braidWord_aux [MatsumotoCondition cs] (w : W) (l l' : List B) (i j 
           rw [IsReduced] at htr
           rw [List.cons_append]
           rw[cs.wordProd_cons]
-          rw[hw]
-          rw[htr]
-          calc
-            (alternatingWord i j p ++ t).length = p + t.length := by
-              rw [List.length_append, length_alternatingWord]
-            _ = (i :: (alternatingWord i j p ++ t.eraseIdx k)).length := by
-              rw [List.length_cons, List.length_append, length_alternatingWord,
-                List.length_eraseIdx_of_lt k.2]
-              have h_t_pos : 0 < t.length :=
-                Nat.lt_of_le_of_lt (Nat.zero_le k) k.2
-              omega
+          grind
       have h_left_inversion_i :
           cs.IsLeftInversion (cs.wordProd (alternatingWord i j p ++ t)) (s i) := by
         rw[ht, ← hil]
@@ -431,10 +397,7 @@ lemma prefix_braidWord_aux [MatsumotoCondition cs] (w : W) (l l' : List B) (i j 
         rw[List.eraseIdx_append_of_length_le k_ge_len t] at hk
         rw[hk]
         have : k - (alternatingWord i j p).length < t.length := by
-          have kle := k.2
-          simp only [List.length_append, length_alternatingWord] at kle
-          simp only [length_alternatingWord]
-          omega
+          grind
         use ⟨k - (alternatingWord i j p).length, this⟩
 
 lemma prefix_braidWord [MatsumotoCondition cs] (l l' : List B) (i j : B)
@@ -446,11 +409,7 @@ lemma prefix_braidWord [MatsumotoCondition cs] (l l' : List B) (i j : B)
   have h' : π (j :: l') = π (i :: l) := Eq.symm pi_eq
   rcases cs.prefix_braidWord_aux (π (i :: l)) l l' i j i_ne_j rfl h' hr hr'
       (M i j) h with ⟨t, ht, htr⟩
-  use t
-  rw[braidWord]
-  constructor
-  · simp[ht]
-  · exact htr
+  grind
 
 theorem apply_braidMove_sequence_append (bms bms' : List (cs.BraidMove)) (l : List B) :
     cs.applyBraidMoveSequence (bms ++ bms') l =
@@ -474,19 +433,14 @@ theorem isReduced_of_eq_length (l l' : List B) (h_len : l.length = l'.length) (h
    (hr : cs.IsReduced l) : cs.IsReduced l' := by
   rw[IsReduced]
   rw[IsReduced] at hr
-  calc
-    len π l' = len π l := by rw[h_eq]
-    _ = l.length := by rw[hr]
-    _ = l'.length := by rw[h_len]
+  grind
 
 theorem eq_length_of_isReduced (l l' : List B)
 (h_eq : π l = π l') (hr : cs.IsReduced l) (hr' : cs.IsReduced l') :
     l.length = l'.length := by
   rw[IsReduced] at hr
   rw[IsReduced] at hr'
-  calc l.length = len π l := by rw[hr]
-    _ = len π l' := by rw[h_eq]
-    _ = l'.length := by rw[hr']
+  grind
 
 lemma matsumoto_reduced_inductionStep_of_firstLetterEq (p : ℕ) (l_t l'_t : List B) (i : B)
     (len_l_t_eq_p : l_t.length = p) (len_l'_t_eq_p : l'_t.length = p)
@@ -521,9 +475,7 @@ theorem matsumoto_reduced_aux [MatsumotoCondition cs] (p : ℕ) (l l' : List B)
     intro l l' hl hl' _ _ _
     use []
     change l = l'
-    rw[List.length_eq_zero_iff] at hl
-    rw[List.length_eq_zero_iff] at hl'
-    rw[hl, hl']
+    grind
   | succ p ih =>
     intro l l' len_l_eq_p len_l'_eq_p l_reduced l'_reduced h_eq
     rcases cons_of_length_succ l len_l_eq_p with ⟨i, l_t, rfl, len_l_t_eq_p⟩
@@ -543,13 +495,11 @@ theorem matsumoto_reduced_aux [MatsumotoCondition cs] (p : ℕ) (l l' : List B)
         exact hm
       by_cases m_even : Even m
       · have j_ne_i : j ≠ i := by
-          intro hji
-          exact first_letter_eq hji.symm
+          grind
         obtain ⟨b_tail, hb, b_reduced⟩ :=
           cs.prefix_braidWord l'_t l_t j i j_ne_i (Eq.symm h_eq) l'_reduced l_reduced
         have hb' : cs.wordProd (i :: l_t) = cs.wordProd (braidWord M j i ++ b_tail) := by
-          rw[← hb]
-          exact h_eq
+          grind
         apply cs.concatenate_braidMove_sequences (i :: l_t) (braidWord M j i ++ b_tail) (j :: l'_t)
         · have b_word_cons :
               (braidWord M j i ++ b_tail) = i :: (alternatingWord j i m ++ b_tail) := by
@@ -561,9 +511,7 @@ theorem matsumoto_reduced_aux [MatsumotoCondition cs] (p : ℕ) (l l' : List B)
               rw[← cs.eq_length_of_isReduced (i :: l_t) (braidWord M j i ++ b_tail)
                 hb' l_reduced b_reduced]
               exact len_l_eq_p
-            rw[b_word_cons] at h_length
-            simp only [List.length_cons, List.length_append, length_alternatingWord] at h_length ⊢
-            omega
+            grind
           rw[b_word_cons] at hb'
           rw[b_word_cons] at b_reduced
           apply cs.matsumoto_reduced_inductionStep_of_firstLetterEq p l_t
@@ -597,8 +545,7 @@ theorem matsumoto_reduced_aux [MatsumotoCondition cs] (p : ℕ) (l l' : List B)
               · exact switch_braidWord
               · exact b_reduced
             have hb' : cs.wordProd (j :: l'_t) = cs.wordProd (braidWord M i j ++ b_tail) := by
-              rw[← hb']
-              exact Eq.symm h_eq
+              grind
             have b_word_cons :
                 (braidWord M i j ++ b_tail) = j :: (alternatingWord i j m ++ b_tail) := by
               rw[braidWord, hm, alternatingWord_succ', if_pos m_even, List.cons_append]
@@ -608,9 +555,7 @@ theorem matsumoto_reduced_aux [MatsumotoCondition cs] (p : ℕ) (l l' : List B)
                 rw[← cs.eq_length_of_isReduced (j :: l'_t) (braidWord M i j ++ b_tail)
                   hb' l'_reduced b_reduced']
                 exact len_l'_eq_p
-              rw[b_word_cons] at h_length
-              simp only [List.length_cons, List.length_append, length_alternatingWord] at h_length ⊢
-              omega
+              grind
             rw[b_word_cons] at hb'
             rw[b_word_cons] at b_reduced'
             rw[b_word_cons]
@@ -629,15 +574,12 @@ theorem matsumoto_reduced_aux [MatsumotoCondition cs] (p : ℕ) (l l' : List B)
               rw[← cs.eq_length_of_isReduced (i :: l_t) (braidWord M i j ++ b_tail)
                 hb l_reduced b_reduced]
               exact len_l_eq_p
-            rw[b_word_cons] at h_length
-            simp only [List.length_cons, List.length_append, length_alternatingWord] at h_length ⊢
-            omega
+            grind
           have i_tail_reduced : cs.IsReduced l_t := by
             apply cs.isReduced_cons i l_t l_reduced
           have aword_is_reduced : cs.IsReduced (alternatingWord i j m ++ b_tail) := by
             apply cs.isReduced_cons i ((alternatingWord i j m) ++ b_tail)
-            rw[← b_word_cons]
-            exact b_reduced
+            grind
           have i_tail_eq_aword : π l_t = π (alternatingWord i j m ++ b_tail) := by
             rw[b_word_cons] at hb
             rw[wordProd_cons, wordProd_cons] at hb
@@ -647,11 +589,7 @@ theorem matsumoto_reduced_aux [MatsumotoCondition cs] (p : ℕ) (l l' : List B)
             i_tail_reduced aword_is_reduced i_tail_eq_aword with ⟨bms, ih'⟩
           use (List.map cs.shiftBraidMove bms)
           rw[← braidMoveSequence_cons]
-          suffices cs.applyBraidMoveSequence bms l_t = (alternatingWord i j m ++ b_tail)
-            from by
-              rw[this]
-              rw[← b_word_cons]
-          exact ih'
+          grind
         · apply cs.concatenate_braidMove_sequences (braidWord M i j ++ b_tail)
             (braidWord M j i ++ b_tail) (j :: l'_t)
           · use [BraidMove.mk i j 0]
@@ -675,9 +613,7 @@ theorem matsumoto_reduced_aux [MatsumotoCondition cs] (p : ℕ) (l l' : List B)
                 π (braidWord M j i ++ b_tail) = π (braidWord M i j ++ b_tail) := by
               rw[wordProd_append, wordProd_append, cs.wordProd_braidWord_eq j i]
             have hb' : cs.wordProd (j :: l'_t) = cs.wordProd (braidWord M j i ++ b_tail) := by
-              rw[switch_braidWord]
-              rw[← hb]
-              exact Eq.symm h_eq
+              grind
             have b_reduced' : cs.IsReduced (braidWord M j i ++ b_tail) := by
               apply cs.isReduced_of_eq_length (braidWord M i j ++ b_tail)
                 (braidWord M j i ++ b_tail)
@@ -691,15 +627,12 @@ theorem matsumoto_reduced_aux [MatsumotoCondition cs] (p : ℕ) (l l' : List B)
                 rw[← cs.eq_length_of_isReduced (j :: l'_t) (braidWord M j i ++ b_tail)
                   hb' l'_reduced b_reduced']
                 exact len_l'_eq_p
-              rw[b_word_cons] at h_length
-              simp only [List.length_cons, List.length_append, length_alternatingWord] at h_length ⊢
-              omega
+              grind
             have j_tail_reduced : cs.IsReduced l'_t := by
               apply cs.isReduced_cons j l'_t l'_reduced
             have aword_is_reduced : cs.IsReduced (alternatingWord j i m ++ b_tail) := by
               apply cs.isReduced_cons j ((alternatingWord j i m) ++ b_tail)
-              rw[← b_word_cons]
-              exact b_reduced'
+              grind
             have j_tail_eq_aword : π (alternatingWord j i m ++ b_tail) = π l'_t := by
               rw[b_word_cons] at hb'
               rw[wordProd_cons, wordProd_cons] at hb'
@@ -710,10 +643,7 @@ theorem matsumoto_reduced_aux [MatsumotoCondition cs] (p : ℕ) (l l' : List B)
             use (List.map cs.shiftBraidMove bms)
             rw[b_word_cons]
             rw[← braidMoveSequence_cons]
-            suffices cs.applyBraidMoveSequence bms (alternatingWord j i m ++ b_tail) = l'_t
-              from by
-                rw[this]
-            exact ih'
+            grind
 
 theorem matsumoto_reduced [MatsumotoCondition cs] (l l' : List B)
 (hr : cs.IsReduced l) (hr' : cs.IsReduced l') (h : π l = π l') :

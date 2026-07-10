@@ -112,17 +112,7 @@ theorem div_by_D_eq_div_by_div_gcd (s : Int) :
       _ = (s / (g : Int)) * ((g : Int) * Int.ofNat (D / g)) := by simp [mul_assoc]
       _ = (s / (g : Int)) * Int.ofNat D := by
             -- `g * (D/g) = D` in `ℤ` (proved by casting the exact `Nat` identity).
-            have hNat : (D / g) * g = D := hD_mul
-            have hInt' : (Int.ofNat (D / g) : Int) * (g : Int) = Int.ofNat D := by
-              -- Cast `hNat` to `ℤ` and rewrite `Nat` multiplication under the cast.
-              have hCast : (Int.ofNat ((D / g) * g) : Int) = Int.ofNat D :=
-                congrArg Int.ofNat hNat
-              -- `↑((D/g) * g) = ↑(D/g) * ↑g`.
-              simpa [Int.natCast_mul] using hCast
-            have hInt : (g : Int) * Int.ofNat (D / g) = Int.ofNat D := by
-              -- swap factors
-              simpa [mul_comm, mul_left_comm, mul_assoc] using hInt'
-            exact congrArg (fun t => (s / (g : Int)) * t) hInt
+            grind
   -- Convert back from `Rat.divInt` to `/` in `ℚ`.
   calc
     (s : Q) / (D : Q) = Rat.divInt s (Int.ofNat D) := by
@@ -170,21 +160,7 @@ theorem compBasis_entry_eq_div (r : Block) (d : DirIdx) (p q : Fin 3) :
     intro k a
     apply (eq_div_iff hden2).2
     simp [bVal, den, num, qOfNat, iOfNat, div_eq_mul_inv]
-    field_simp [hden]
-    -- Cancel the remaining `basisDen` factor against its inverse.
-    have hb : (basisDen r : Q) ≠ 0 := basisDenQ_ne_zero r
-    -- Regroup into a `d * d⁻¹` subterm using associativity+commutativity, then simplify.
-    let x : Q :=
-      (↑(baseTypeCount k) * ↑(N k a d) * ↑(bValNum r p k) * ↑(bValNum r q a) : Q)
-    have hx :
-        (↑(baseTypeCount k) * ↑(N k a d) * ↑(bValNum r p k) * ↑(basisDen r) * ↑(bValNum r q a) *
-              (↑(basisDen r))⁻¹ : Q)
-          =
-          x * (↑(basisDen r) * (↑(basisDen r))⁻¹) := by
-      dsimp [x]
-      ac_rfl
-    have hx' : x * (↑(basisDen r) * (↑(basisDen r))⁻¹) = x := by simp [hb]
-    simpa [x, div_eq_mul_inv] using hx.trans hx'
+    grind
   have hsum :
       (Finset.univ.sum fun k : DirIdx =>
         Finset.univ.sum fun a : DirIdx =>
@@ -192,11 +168,7 @@ theorem compBasis_entry_eq_div (r : Block) (d : DirIdx) (p q : Fin 3) :
         (Finset.univ.sum fun k : DirIdx =>
           Finset.univ.sum fun a : DirIdx =>
             ((num k a : Int) : Q) / (den * den)) := by
-    refine Finset.sum_congr rfl ?_
-    intro k hk
-    refine Finset.sum_congr rfl ?_
-    intro a ha
-    simpa using hterm k a
+    grind
   have hinner (k : DirIdx) :
       (Finset.univ.sum fun a : DirIdx => ((num k a : Int) : Q) / (den * den)) =
         (Finset.univ.sum fun a : DirIdx => ((num k a : Int) : Q)) / (den * den) := by

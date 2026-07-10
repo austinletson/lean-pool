@@ -67,11 +67,9 @@ noncomputable def project (c : Chain (Option A)) (h : ∃ n, (c n).isSome) : Cha
     | some x =>
     cases hj : c (Nat.find h + j) with
     | none =>
-      simp only [hj, Option.le_none] at hhj
-      simp only [Option.isSome_iff_exists, hhj, Option.isSome_none, Bool.false_eq_true] at hh
+      grind
     | some y =>
-    simp only [hi, hj, Option.some_le_some] at hhij
-    simp only [Option.getD_some, hhij]⟩
+    grind⟩
 
 @[simp]
 lemma project_coe

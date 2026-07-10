@@ -172,9 +172,7 @@ omit [∀ i, QuasiBorelSpace (P i)] in
 private lemma cast_mono
     [∀ i, Preorder (P i)] {i j : I} (h : i = j)
     : Monotone (cast (congr_arg P h)) := by
-  intro _ _ h'
-  subst h
-  exact h'
+  intro _ grind
 
 /-- Converts a `Chain` of `Var`s into a `Var` of `Chain`s. -/
 noncomputable def chain [∀ i, Preorder (P i)] (φ : Chain (Var I P)) : Var I fun r ↦ Chain (P r) :=
@@ -203,26 +201,7 @@ noncomputable def chain [∀ i, Preorder (P i)] (φ : Chain (Var I P)) : Var I f
         classical
         have h₀ := (OrderHomClass.mono φ) hi r
         simp only [Sigma.le_def, apply_fst, apply_snd] at h₀
-        change (if h : (i : I) = ((φ i₁).apply r).fst then _ else _) ≤
-               (if h : (i : I) = ((φ i₂).apply r).fst then _ else _)
-        by_cases h₁ : (i : I) = ((φ i₁).apply r).fst
-        · by_cases h₂ : (i : I) = ((φ i₂).apply r).fst
-          · rw [dif_pos h₁, dif_pos h₂]
-            rw [eqRec_eq_cast, eqRec_eq_cast]
-            have hkey := cast_mono h₂.symm h₀.snd
-            simp only [eqRec_eq_cast] at hkey
-            convert hkey using 2
-            exact (cast_heq _ _).symm
-          · exfalso
-            apply h₂
-            simp only [apply_fst] at h₁ h₂ ⊢
-            rw [← h₀.fst]; exact h₁
-        · by_cases h₂ : (i : I) = ((φ i₂).apply r).fst
-          · exfalso
-            apply h₁
-            simp only [apply_fst] at h₁ h₂ ⊢
-            rw [h₀.fst]; exact h₂
-          · simp only [h₁, h₂, ↓reduceDIte, le_refl]
+        grind
     })
     (isHom_var := by
       simp only [

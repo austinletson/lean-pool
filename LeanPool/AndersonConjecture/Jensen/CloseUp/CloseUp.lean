@@ -61,18 +61,13 @@ theorem close_up_aux_wf
   set s' := s.erase a with hs'_def
   have hs_insert : s = insert a s' := (Finset.insert_erase ha_mem).symm
   have hs'_card : s'.card ≤ n'' + 1 + 1 := by
-    rw [Finset.card_erase_of_mem ha_mem, hs_eq]
-    omega
+    grind
   by_cases hgcd : ∃ p : R.carrier, Prime p ∧ ∀ x ∈ s', p ∣ x
   · obtain ⟨p, hp, hp_dvd⟩ := hgcd
     by_cases hpa : p ∣ a
     · -- Case p | a: divide out and recurse.
       have hp_dvd_all : ∀ x ∈ s, p ∣ x := by
-        intro x hx
-        rw [hs_insert, Finset.mem_insert] at hx
-        rcases hx with rfl | hx'
-        · exact hpa
-        · exact hp_dvd x hx'
+        grind
       have h_span_le : span (↑s : Set R.carrier) ≤ span {p} :=
         Ideal.span_le.mpr fun x hx =>
           Ideal.mem_span_singleton.mpr (hp_dvd_all x (Finset.mem_coe.mp hx))
@@ -85,8 +80,7 @@ theorem close_up_aux_wf
       let div_p : R.carrier → R.carrier := fun x =>
         if h : p ∣ x then Classical.choose h else x
       have hdiv_spec : ∀ x ∈ s, x = p * div_p x := by
-        intro x hx
-        simpa only [div_p, dif_pos (hp_dvd_all x hx)] using Classical.choose_spec (hp_dvd_all x hx)
+        grind
       let t_set := s.image div_p
       have h_ideal_eq : span (↑s : Set R.carrier) =
           span {p} * span (↑t_set : Set R.carrier) :=
@@ -124,10 +118,7 @@ theorem close_up_aux_wf
           rw [hdiv_spec a ha_mem, ha'_zero, mul_zero]
         set t₀ := t_set.erase (div_p a) with ht₀_def
         have ht₀_card : t₀.card ≤ n'' + 1 + 1 := by
-          have h1 : t_set.card ≤ n'' + 1 + 1 + 1 :=
-            (Finset.card_image_le (f := div_p) (s := s)).trans (le_of_eq hs_eq)
-          simp only [ht₀_def, Finset.card_erase_of_mem ha'_mem]
-          omega
+          grind
         have hspan_eq : span (↑t_set : Set R.carrier) =
             span (↑t₀ : Set R.carrier) := by
           apply le_antisymm
@@ -140,12 +131,7 @@ theorem close_up_aux_wf
                 (Finset.mem_erase.mpr ⟨hne, Finset.mem_coe.mp hx⟩))
           · exact Ideal.span_mono (Finset.coe_subset.mpr
               (Finset.erase_subset _ _))
-        have hc'_t₀ : (c' : T) ∈ Ideal.map R.carrier.subtype
-            (span (↑t₀ : Set R.carrier)) := hspan_eq ▸ hc'_mem
-        obtain ⟨S, hAext, hle, hmem⟩ := ih R hR_card t₀ ht₀_card c' hc'_t₀
-        exact ⟨S, hAext, hle, Ideal.map_mono
-          (Ideal.span_mono (Finset.coe_subset.mpr
-            (Finset.erase_subset _ _))) hmem⟩
+        grind
       · by_cases ha'_unit : IsUnit (div_p a)
         · refine ⟨R, ⟨le_refl _, fun r hr => hr, le_max_right _ _⟩,
               le_refl _, ?_⟩
@@ -164,21 +150,12 @@ theorem close_up_aux_wf
               (hdiv_spec a ha_mem).trans (mul_comm p (div_p a))⟩⟩
           have ht_card : t_set.card = n'' + 1 + 1 + 1 := by
             have hinj : Set.InjOn div_p ↑s := fun x hx y hy hxy => by
-              have hx_eq := hdiv_spec x (Finset.mem_coe.mp hx)
-              have hy_eq := hdiv_spec y (Finset.mem_coe.mp hy)
-              calc x = p * div_p x := hx_eq
-                _ = p * div_p y := by rw [hxy]
-                _ = y := hy_eq.symm
-            rw [show t_set = s.image div_p from rfl,
-              Finset.card_image_of_injOn hinj, hs_eq]
+              grind
+            grind
           have ht_gcd : gcdComplexity t_set ≤ m := le_trans (by
             change gcdComplexity t_set ≤ gcdComplexity s
             have hinj : Set.InjOn div_p ↑s := fun x hx y hy hxy => by
-              have hx_eq := hdiv_spec x (Finset.mem_coe.mp hx)
-              have hy_eq := hdiv_spec y (Finset.mem_coe.mp hy)
-              calc x = p * div_p x := hx_eq
-                _ = p * div_p y := by rw [hxy]
-                _ = y := hy_eq.symm
+              grind
             exact gcdComplexity_div_le p hp s hp_dvd_all div_p hdiv_spec hinj) hs_gcd
           exact ih_a (div_p a) hdvd t_set ht_gcd ht_card ha'_mem c' hc'_mem
     · by_cases hgcd_factor :

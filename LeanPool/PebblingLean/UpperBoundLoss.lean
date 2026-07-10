@@ -230,8 +230,7 @@ theorem first_loss_le_pow_mul_bound
         loss n ≤ q * loss (next n) := hfirst
         _ ≤ q * (q ^ k * M) := hmul
         _ = q ^ (k + 1) * M := by
-              rw [pow_succ]
-              ring
+              grind
 
 /-- Geometric domination of a finite loss sum along an active recursive path. -/
 theorem lossSum_le_geomSum_mul_bound

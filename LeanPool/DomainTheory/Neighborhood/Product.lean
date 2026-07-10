@@ -333,8 +333,7 @@ def proj₀ (V₀ : NeighborhoodSystem α) (V₁ : NeighborhoodSystem β) :
     exact ⟨⟨A, B, hA, ‹_›, rfl⟩, V₀.inter_mem hX' hX'' hA (Set.subset_inter hsub hsub'),
       Set.subset_inter hsub hsub'⟩
   mono := by
-    rintro W W₂ X' X₂' ⟨_, _, hsub⟩ hW₂W hX'X₂' hW₂ hX₂'
-    exact ⟨hW₂, hX₂', ((Set.preimage_mono hW₂W).trans hsub).trans hX'X₂'⟩
+    grind
 
 /-- **Definition 3.3 (Scott 1981, PRG-19).** The projection `p₁ : 𝒟₀ × 𝒟₁ → 𝒟₁`,
 `(X ∪ Y) p₁ Y' ↔ Y ⊆ Y'`. -/
@@ -351,8 +350,7 @@ def proj₁ (V₀ : NeighborhoodSystem α) (V₁ : NeighborhoodSystem β) :
     exact ⟨⟨A, B, ‹_›, hB, rfl⟩, V₁.inter_mem hY' hY'' hB (Set.subset_inter hsub hsub'),
       Set.subset_inter hsub hsub'⟩
   mono := by
-    rintro W W₂ Y' Y₂' ⟨_, _, hsub⟩ hW₂W hY'Y₂' hW₂ hY₂'
-    exact ⟨hW₂, hY₂', ((Set.preimage_mono hW₂W).trans hsub).trans hY'Y₂'⟩
+    grind
 
 /-- **Definition 3.3 (Scott 1981, PRG-19).** The paired mapping `⟨f, g⟩ : 𝒟₂ → 𝒟₀
 × 𝒟₁`,

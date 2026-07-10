@@ -119,8 +119,7 @@ theorem embBit_not_subset_cross {b b' : Bool} (h : b ≠ b') {X Y : Set Str} (hX
     (hsub : embBit b X ⊆ embBit b' Y) : False := by
   obtain ⟨t, ht⟩ := hX
   obtain ⟨w', he, -⟩ := hsub ⟨t, rfl, ht⟩
-  simp only [List.cons.injEq] at he
-  exact h he.1
+  grind
 
 /-! ## The functorial action of sum on maps -/
 
@@ -656,9 +655,7 @@ def singletonSys (Γ : Set Str) (h : Γ.Nonempty) : ScottSys where
       master := Γ
       master_mem := rfl
       inter_mem := by
-        intro X Y Z hX hY _ _
-        show X ∩ Y = Γ
-        rw [hX, hY, Set.inter_self]
+        grind
       sub_master := by intro X hX; rw [show X = Γ from hX] }
   ne := by intro X hX; rw [show X = Γ from hX]; exact h
 
@@ -817,8 +814,7 @@ theorem mFun_iter_fixed (T : FExpr) (hT : T.RootedConst) :
   have hU : ∀ v, v ∈ (⋃ n, mIter T n) ↔ ∃ S ∈ Set.range (mIter T), v ∈ S := by
     intro v
     constructor
-    · intro hv; rw [Set.mem_iUnion] at hv; obtain ⟨n, hn⟩ := hv
-      exact ⟨mIter T n, ⟨n, rfl⟩, hn⟩
+    · intro hv; rw [Set.mem_iUnion] at hv; grind
     · rintro ⟨S, ⟨n, rfl⟩, hv⟩; exact Set.mem_iUnion.mpr ⟨n, hv⟩
   apply Set.ext; intro w
   rw [mFun_continuous T hdir hne hU w]

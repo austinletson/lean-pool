@@ -118,15 +118,7 @@ theorem sectorCurve_seg3 (r : ℝ) (α : ℝ) (t : ℝ) (ht : t ∈ Icc 2 3) :
 theorem sectorCurve_continuousOn (r : ℝ) (α : ℝ) :
     ContinuousOn (sectorCurve r α) (Icc 0 3) := by
   have h_union : Icc (0 : ℝ) 3 = Icc 0 1 ∪ Icc 1 2 ∪ Icc 2 3 := by
-    ext x; simp only [mem_Icc, mem_union]
-    constructor
-    · intro ⟨h0, h3⟩
-      by_cases h1 : x ≤ 1
-      · exact Or.inl (Or.inl ⟨h0, h1⟩)
-      · push Not at h1; by_cases h2 : x ≤ 2
-        · exact Or.inl (Or.inr ⟨le_of_lt h1, h2⟩)
-        · push Not at h2; exact Or.inr ⟨le_of_lt h2, h3⟩
-    · rintro ((⟨h0, h1⟩ | ⟨h1, h2⟩) | ⟨h2, h3⟩) <;> exact ⟨by linarith, by linarith⟩
+    grind
   rw [h_union]
   have hc1 : ContinuousOn (sectorCurve r α) (Icc 0 1) :=
     (continuous_ofReal.comp (continuous_id.mul continuous_const)).continuousOn.congr
@@ -261,8 +253,7 @@ theorem integral_seg3_eq_log (ε : ℝ) (hε : 0 < ε) (_hε1 : ε < 1) :
   have h1 : ∫ t in (2 : ℝ)..(3 - ε), (3 - t)⁻¹ = ∫ u in ε..1, u⁻¹ := by
     have := intervalIntegral.integral_comp_sub_left (fun u => u⁻¹) (3 : ℝ)
       (a := (2 : ℝ)) (b := 3 - ε)
-    rw [this]
-    congr 1 <;> ring
+    grind
   rw [h1, integral_inv_of_pos hε one_pos,
     Real.log_div one_ne_zero (ne_of_gt hε), Real.log_one, zero_sub, neg_neg]
 
@@ -293,8 +284,7 @@ theorem log_cancellation (r : ℝ) (hr : 0 < r) (ε : ℝ) (hε : 0 < ε) (hεr 
       have := intervalIntegral.integral_comp_sub_left (fun u => u⁻¹) (3 : ℝ)
         (a := (2 : ℝ)) (b := 3 - ε / r)
       rw [this]; congr 1 <;> ring
-    rw [h_sub, integral_inv_of_pos hεr_pos one_pos, Real.log_div one_ne_zero
-      (ne_of_gt hεr_pos), Real.log_one, zero_sub, neg_neg]
+    grind
   have h1c : ∫ t in (ε / r)..(1 : ℝ), (↑(t⁻¹) : ℂ) = ↑(-(Real.log (ε / r))) := by
     rw [← h1, intervalIntegral.integral_ofReal]
   have h2c : ∫ t in (2 : ℝ)..(3 - ε / r), (-(↑((3 - t)⁻¹)) : ℂ) =

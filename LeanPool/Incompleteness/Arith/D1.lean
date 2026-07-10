@@ -97,10 +97,7 @@ lemma _root_.LO.FirstOrder.Derivation2.Sequent.mem_codeIn
   case empty => simp at hx
   case insert a Γ _ ih =>
     have : x = ⌜a⌝ ∨ x ∈ (⌜Γ⌝ : V) := by simpa using hx
-    rcases this with (rfl | hx)
-    · exact ⟨a, by simp⟩
-    · rcases ih hx with ⟨p, hx, rfl⟩
-      exact ⟨p, by simp [*]⟩
+    grind
 
 lemma _root_.LO.FirstOrder.Derivation2.Sequent.mem_codeIn_iff'
     {Γ : Finset (SyntacticFormula L)} : x ∈ (⌜Γ⌝ :
@@ -442,8 +439,7 @@ lemma _root_.LO.Arith.Language.Theory.Provable.sound2
   rcases h with ⟨d, hp, hd⟩
   rcases hd.sound with ⟨Γ, e, b⟩
   have : Γ = {φ} := Sequent.quote_inj (V := ℕ) <| by simp [e, hp]
-  rcases this
-  exact b
+  grind
 
 end «lp_section_3»
 

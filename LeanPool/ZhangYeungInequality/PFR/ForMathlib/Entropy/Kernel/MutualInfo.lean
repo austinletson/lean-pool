@@ -418,8 +418,7 @@ lemma _root_.ProbabilityTheory.Kernel.entropy_triple_add_entropy_le'
   have hκ : Hk[κ, μ] = Hk[κ', μ] := by
     rw [hκ'_def, entropy_map_of_injective _ _ _ (by fun_prop)]
     exact MeasurableEquiv.prodAssoc.symm.injective
-  rw [h_right, h_middle, hκ, ← h_compProd_triple_eq, fst_compProd]
-  · exact h
+  grind
 
 /-- The submodularity inequality:
 $$ H[X,Y,Z] + H[Z] \leq H[X,Z] + H[Y,Z].$$ -/

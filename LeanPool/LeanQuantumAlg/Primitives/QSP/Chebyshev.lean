@@ -150,8 +150,7 @@ private theorem qspMat_step (P Q : ℂ[X]) (φ : ℝ) {x : ℝ}
   fin_cases i <;> fin_cases j
   · simp [qspMat, signalO, rotZ, rotZOp, Matrix.mul_apply, conj_exp_I, conj_exp_neg_I,
       Complex.conj_ofReal]
-    linear_combination (-(Complex.exp ((φ : ℂ) * Complex.I) *
-      Q.eval (x : ℂ))) * hs
+    grind
   · simp [qspMat, signalO, rotZ, rotZOp, Matrix.mul_apply, conj_exp_I, conj_exp_neg_I,
       Complex.conj_ofReal]
     ring
@@ -160,8 +159,7 @@ private theorem qspMat_step (P Q : ℂ[X]) (φ : ℝ) {x : ℝ}
     ring
   · simp [qspMat, signalO, rotZ, rotZOp, Matrix.mul_apply, conj_exp_I, conj_exp_neg_I,
       Complex.conj_ofReal]
-    linear_combination (-(Complex.exp (-((φ : ℂ) * Complex.I)) *
-      starRingEnd ℂ (Q.eval (x : ℂ)))) * hs
+    grind
 
 /-! ### The QSP pair conditions -/
 
@@ -298,8 +296,7 @@ private theorem IsQSPPair.leading_coeff_rel {d : ℕ} {P Q : ℂ[X]}
       coeff_mul_at_bound_add (a := d) (b := d) (by omega) hQb hQb',
       conjP_coeff]
     ring
-  rw [e1, e2, if_neg (by omega : ¬ (2 * d + 2 = 0))] at hkey
-  linear_combination hkey
+  grind
 
 /-- First inverse-recurrence polynomial `e^{-iφ}·X·P + e^{iφ}·(1-X²)·Q`
 (with `v = e^{iφ}`, `w = e^{-iφ}`). -/
@@ -359,22 +356,16 @@ private theorem isQSPPair_unstep {d : ℕ} {P Q : ℂ[X]} (h : IsQSPPair (d + 1)
       rcases Nat.eq_zero_or_pos d with rfl | hd
       · simp [h1, h2]
       · have h3 : Q.coeff (d - 1) = 0 := h.parQ.coeff_eq_zero (by omega)
-        have hlt : ¬ (d + 1 < 2) := by omega
-        simp [h1, h2, h3, hlt]
+        grind
     · rcases Nat.lt_or_ge m (d + 3) with hm3 | hm3
       · have hmeq : m = d + 2 := by omega
         subst hmeq
         have h2 : Q.coeff (d + 2) = 0 := h.coeff_Q_eq_zero (by omega)
-        rw [if_neg (by omega : ¬ (d + 2 = 0)),
-          if_neg (by omega : ¬ (d + 2 < 2)), h2,
-          show d + 2 - 1 = d + 1 by omega, show d + 2 - 2 = d by omega,
-          ← hpq]
-        linear_combination (v * Q.coeff d) * hvw
+        grind
       · have h1 : P.coeff (m - 1) = 0 := h.coeff_P_eq_zero (by omega)
         have h2 : Q.coeff m = 0 := h.coeff_Q_eq_zero (by omega)
         have h3 : Q.coeff (m - 2) = 0 := h.coeff_Q_eq_zero (by omega)
-        have hlt : ¬ (m < 2) := by omega
-        simp [h1, h2, h3, hlt]
+        grind
   · rw [unstepQ, Polynomial.coeff_sub, Polynomial.coeff_C_mul,
       Polynomial.coeff_C_mul, coeff_X_mul']
     rcases Nat.lt_or_ge m (d + 1) with hm1 | hm1
@@ -385,18 +376,12 @@ private theorem isQSPPair_unstep {d : ℕ} {P Q : ℂ[X]} (h : IsQSPPair (d + 1)
         simp [h1]
       · have h1 : P.coeff m = 0 := h.parP.coeff_eq_zero (by omega)
         have h2 : Q.coeff (m - 1) = 0 := h.parQ.coeff_eq_zero (by omega)
-        have hne : ¬ (m = 0) := by omega
-        simp [h1, h2, hne]
+        grind
     · rcases Nat.lt_or_ge m (d + 2) with hm2 | hm2
-      · have hmeq : m = d + 1 := by omega
-        subst hmeq
-        rw [if_neg (by omega : ¬ (d + 1 = 0)),
-          show d + 1 - 1 = d by omega, ← hpq]
-        linear_combination (-(v * Q.coeff d)) * hvw
+      · grind
       · have h1 : P.coeff m = 0 := h.coeff_P_eq_zero (by omega)
         have h2 : Q.coeff (m - 1) = 0 := h.coeff_Q_eq_zero (by omega)
-        have hne : ¬ (m = 0) := by omega
-        simp [h1, h2, hne]
+        grind
   · exact ((h.parP.X_mul.congr (by omega)).C_mul w).add
       (((h.parQ.one_sub_X_sq_mul).congr (by omega)).C_mul v)
   · exact ((h.parQ.X_mul.congr (by omega)).C_mul v).sub (h.parP.C_mul w)
@@ -510,8 +495,7 @@ theorem qspO_converse (d : ℕ) (P Q : ℂ[X]) (h : IsQSPPair d P Q) :
           | 1 => exact hp
           | (k' + 2) => exact h.coeff_P_eq_zero (by omega)
         have hnorm := h.norm
-        rw [hP0, hQ0] at hnorm
-        simp at hnorm
+        grind
       · -- `IsQSPPair (m+2) → IsQSPPair m`, then pad with `(π/2, -π/2)`.
         have hpair : IsQSPPair m P Q := by
           refine isQSPPair_of_coeff (fun k hk => ?_) (fun k hk => ?_)
@@ -519,18 +503,14 @@ theorem qspO_converse (d : ℕ) (P Q : ℂ[X]) (h : IsQSPPair d P Q) :
           · rcases Nat.lt_or_ge k (m + 2) with hk2 | hk2
             · exact h.parP.coeff_eq_zero (by omega)
             · rcases Nat.lt_or_ge k (m + 3) with hk3 | hk3
-              · have : k = m + 2 := by omega
-                subst this
-                exact hp
+              · grind
               · exact h.coeff_P_eq_zero (by omega)
           · rcases Nat.lt_or_ge k (m + 1) with hk1 | hk1
             · have : k = m := by omega
               subst this
               exact h.parQ.coeff_eq_zero (by omega)
             · rcases Nat.lt_or_ge k (m + 2) with hk2 | hk2
-              · have : k = m + 1 := by omega
-                subst this
-                exact hq
+              · grind
               · exact h.coeff_Q_eq_zero (by omega)
         obtain ⟨φ₀, φs, hlen, hmat⟩ := ih m (by omega) P Q hpair
         refine ⟨φ₀, Real.pi / 2 :: -(Real.pi / 2) :: φs, by simp [hlen],
@@ -615,8 +595,7 @@ theorem ReflectionBasedQuantumSignalProcessing.main (d : ℕ) (P Q : ℂ[X]) :
     have hPQ : ∀ x ∈ Set.Icc (-1 : ℝ) 1, qspMat P Q x = qspMat P' Q' x :=
       fun x hx => by rw [← hmat x hx, hmat' x hx]
     obtain ⟨hP, hQ⟩ := qspMat_inj hPQ
-    rw [hP, hQ]
-    exact hpair
+    grind
 
 /-! ### The Wx-convention (XZX form)
 

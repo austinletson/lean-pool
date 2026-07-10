@@ -399,8 +399,7 @@ theorem existsUnique_trace [Fintype n] [DecidableEq n] [Nontrivial n] :
           _ = (1 / (Fintype.card n : 𝕜)) • ite (j = i) 1 0 := ?_
         · simp_rw [single_mul_single_same, one_mul]
           simp only [one_div, Finset.sum_const, nsmul_eq_mul, smul_eq_mul]
-          rw [← mul_assoc]
-          simp_rw [hcard_inv, one_mul]
+          grind
         · simp_rw [h.1]
         · simp_rw [single_hMul, one_mul, _root_.map_smul, smul_eq_mul, boole_mul,
             Finset.sum_ite_irrel, Finset.sum_const_zero, map_sum]

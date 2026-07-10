@@ -281,8 +281,7 @@ lemma hasDerivAt_primitiveOnBall (f : ℂ → ℂ)
         · exact fun t ht =>
             by simpa [abs_of_nonneg (show 0 ≤ t by
               norm_num at ht; linarith)] using lt_of_le_of_lt (mul_le_of_le_one_left (by
-                positivity) (show |t| ≤ 1 by norm_num at ht; exact abs_le.mpr ⟨by
-                  linarith, by linarith⟩)) (by simpa using hz)
+                positivity) (show |t| ≤ 1 by norm_num at ht; grind)) (by simpa using hz)
       · refine ContinuousOn.mul ?_ ?_
         · exact Continuous.continuousOn (by continuity)
         · have h_cont_deriv : ContinuousOn (deriv f) (ball 0 1) :=
@@ -453,14 +452,11 @@ theorem square_root_transform_in_S (f : ℂ → ℂ) (hf : f ∈ classS) :
           DifferentiableAt.hasDerivAt) (hasDerivAt_pow 2 0))) using 1 <;>
         first | rfl | norm_num [h_eq, Function.comp_def]
   · intro z hz; by_cases hz' : z = 0
-    · subst hz'
-      simp [hf.2.2.1, h_eq.1]
+    · grind
     · have hz2 : z ^ 2 ∈ ball (0 : ℂ) 1 := by
         rw [mem_ball, dist_zero_right, norm_pow]
         exact pow_lt_one₀ (norm_nonneg _) (by simpa using hz) (by norm_num)
-      rw [show (z * h (z ^ 2)) ^ 2 = z ^ 2 * h (z ^ 2) ^ 2 from by ring,
-        h_eq.2 (z ^ 2) hz2 (pow_ne_zero 2 hz')]
-      rw [mul_div_cancel₀ _ (pow_ne_zero 2 hz')]
+      grind
 
 /-- For `f` in `classS`, the slope `f z / z` tends to `1 = deriv f 0` as `z → 0`. -/
 private lemma tendsto_f_div_z_atZero (f : ℂ → ℂ) (hf : f ∈ classS) :
@@ -503,9 +499,7 @@ lemma inv_f_sub_inv_id_analytic (f : ℂ → ℂ) (hf : f ∈ classS) :
           have hh1_z : h₁ z = z⁻¹ * f z := hh₁.2 z (by simpa using hz) h
           rw [H] at hh1_z
           have hf_z : f z = 0 := by
-            have : z⁻¹ * f z = 0 := hh1_z.symm
-            have hz_inv : z⁻¹ ≠ 0 := inv_ne_zero h
-            exact (mul_eq_zero.mp this).resolve_left hz_inv
+            grind
           simp only [Set.InjOn, mem_ball, dist_zero_right] at hinj
           exact absurd (@hinj z (by simpa using hz) 0 (by norm_num)
             (by simp [hf_z, hf.2.2.1])) h
@@ -543,14 +537,8 @@ lemma inv_f_sub_inv_id_analytic (f : ℂ → ℂ) (hf : f ∈ classS) :
           simp  [slope_def_field, h_h, hz']
       use fun z => dslope (fun z => h₁ z) 0 z
       exact ⟨analyticOn_dslope_of_analyticOn _ hh₁.1, fun z hz => h_h z hz ▸ rfl⟩
-    exact ⟨h_h.choose, h_h.choose_spec.1, fun z hz hz' =>
-      by rw [← h_h.choose_spec.2 z hz, mul_div_cancel_right₀ _ hz']⟩
-  obtain ⟨h, hh⟩ := h_h
-  use h
-  refine ⟨hh.1, ?_⟩
-  intro z hz hz'
-  rw [hh.2 z hz hz', hh₁.2 z hz hz']
-  field_simp
+    grind
+  grind
 
 /--
 The function `1/f(1/z)` is analytic on the exterior of the unit disk.

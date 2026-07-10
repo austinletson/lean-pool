@@ -135,25 +135,17 @@ theorem square_free : ∀ {g : P}, g * g = (1 : P) → g = (1 : P)
       intro h
       rw [sq_square] at h
       change ((p + p + 1, 0, 0), Q.e) = (((0, 0, 0) : K), Q.e) at h
-      injection h with hk _
-      injection hk with hp _
-      exact False.elim (Int.odd_ne_zero p hp)
+      grind
   | ((p, q, r), .b) => by
       intro h
       rw [sq_square] at h
       change ((0, q + q + 1, 0), Q.e) = (((0, 0, 0) : K), Q.e) at h
-      injection h with hk _
-      injection hk with _ hqr
-      injection hqr with hq _
-      exact False.elim (Int.odd_ne_zero q hq)
+      grind
   | ((p, q, r), .c) => by
       intro h
       rw [sq_square] at h
       change ((0, 0, r + r + 1), Q.e) = (((0, 0, 0) : K), Q.e) at h
-      injection h with hk _
-      injection hk with _ hqr
-      injection hqr with _ hr
-      exact False.elim (Int.odd_ne_zero r hr)
+      grind
 
 
 /-! ### **Step 4:** Showing square powers of torsion elements are trivial. -/

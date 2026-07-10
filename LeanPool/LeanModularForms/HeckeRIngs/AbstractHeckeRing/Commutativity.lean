@@ -211,9 +211,7 @@ private lemma conj_kernel_mem_of_stabilizer_mem
     ConjAct.smul_def] at hrel
   simp only [map_inv, ConjAct.ofConjAct_toConjAct, inv_inv,
     Subgroup.coe_mul, Subgroup.coe_inv] at hrel
-  have : g₂⁻¹ * (a₁ : G)⁻¹ * (a₂ : G) * g₂ =
-      g₂⁻¹ * ((a₁ : G)⁻¹ * (a₂ : G)) * g₂ := by group
-  rw [this]; exact hrel
+  grind
 
 private lemma fwd_inj_i (g₁ g₂ : P.Δ) (g_D : G)
     (i₁ i₂ : decompQuot P g₁)
@@ -427,11 +425,9 @@ fixes every double coset. -/
 theorem mul_comm_of_antiInvolution (h_fix : ∀ D : HeckeCoset P, ι.onHeckeCoset D = D)
     (f g : 𝕋 P ℤ) : f * g = g * f := by
   apply induction_linear_𝕋 P f
-  · rw [@zero_mul _ (instNonUnitalNonAssocSemiring P).toMulZeroClass,
-        @mul_zero _ (instNonUnitalNonAssocSemiring P).toMulZeroClass]
+  · grind
   · intro D₁ a; apply induction_linear_𝕋 P g
-    · rw [@zero_mul _ (instNonUnitalNonAssocSemiring P).toMulZeroClass,
-          @mul_zero _ (instNonUnitalNonAssocSemiring P).toMulZeroClass]
+    · grind
     · intro D₂ b
       rw [T_single_mul_T_single, T_single_mul_T_single,
         m_comm_of_onHeckeCoset_eq ι h_fix D₁ D₂, smul_comm]

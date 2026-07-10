@@ -94,8 +94,7 @@ lemma cartan_decomposition_unique'_aux (x a : GL (Fin k) R) (f f' : Fin k → �
     rw [IsUnit.mul_iff] at hσ
     simp_rw [IsUnit.prod_iff] at hσ
     use σ
-    intro i
-    exact hσ.right i (Finset.mem_univ i)
+    grind
   obtain ⟨σ, hσ⟩ := this
   have hxij (i j : Fin k) :
       x.val i j = ϖ.val ^ (f i - f' j) * a.val i j := by
@@ -123,8 +122,7 @@ lemma cartan_decomposition_unique'_aux (x a : GL (Fin k) R) (f f' : Fin k → �
     · exact hsumzero
     · exact fun i _ ↦ hgezero i
   use σ
-  ext i
-  simpa using Int.eq_of_sub_eq_zero (hzero i (Finset.mem_univ i))
+  grind
 
 theorem cartan_decomposition_unique' {k₁ k₂ k₁' k₂' : GL (Fin k) R}
     {f f' : Fin k → ℤ}

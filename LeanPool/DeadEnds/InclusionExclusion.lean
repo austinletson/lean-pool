@@ -92,11 +92,7 @@ lemma indicator_conjunction_eq_prod (b N : ℕ) (T : Finset ℕ) :
       have hprod : (∏ d ∈ T, shiftSqfreeIndicator b N d) = 0 := by
         apply Finset.prod_eq_zero hd
         simp [shiftSqfreeIndicator, hd_not_sqfree]
-      have hnot : ¬(Squarefree N ∧ ∀ x ∈ T, Squarefree (b * N + x)) := by
-        rintro ⟨_, hall⟩
-        exact hd_not_sqfree (hall d hd)
-      rw [if_neg hnot, hprod]
-      simp [sqfreeIndicator, hsq]
+      grind
   · simp [sqfreeIndicator, hsq]
 
 lemma countJointSquarefree_as_sum (b X : ℕ) (T : Finset ℕ) :
@@ -162,9 +158,7 @@ lemma sum_div_eq_div_sum (b : ℕ) (X : ℕ) (_hX : 0 < X) :
     (∑ T ∈ (Finset.range b).powerset,
       ((-1 : ℝ) ^ T.card) * (countJointSquarefree b T X : ℝ)) / (X : ℝ) := by
   rw [Finset.sum_div]
-  apply Finset.sum_congr rfl
-  intro T _
-  ring
+  grind
 
 /-! ## Main theorems -/
 

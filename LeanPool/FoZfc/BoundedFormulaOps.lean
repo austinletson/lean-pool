@@ -266,9 +266,7 @@ theorem realize_liftAt' {n' m : ℕ} {h_n_prime_nezero : n' > 0} {s : ℕ → V}
         s (fixedSnoc xs a) := by
       rw [realize_castLE_of_eq (h := h_bar_n)]
       have h1_1 : (fixedSnoc xs a ∘ Fin.cast h_bar_n) = xs1 := by
-        funext k
-        unfold xs1
-        simp
+        grind
       rw [h1_1]
     rw [← h1]
     have h2 : (xs1 ∘ fun (i : Fin (_n+1)) ↦ if ↑i < m then Fin.castAdd n' i
@@ -388,9 +386,7 @@ theorem replaceInitialValues_2_1 {s : ℕ → V} {a b : V} :
 theorem realize_makeTsN {n m k : ℕ} {ts : Fin (m + 1) → L.Term (ℕ ⊕ Fin n)}
     {h : k < m + 1} : makeTsN ts k = ts (Fin.ofNat (m+1) k) := by
   unfold makeTsN
-  simp only [Fin.ofNat_eq_cast, ite_eq_left_iff, not_lt]
-  intro h1
-  omega
+  grind
 
 end ReplaceFV
 

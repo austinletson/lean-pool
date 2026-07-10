@@ -91,8 +91,7 @@ lemma typeA_card_eq_one (p : ℕ) (hp : Nat.Prime p) : (typeA p).card = 1 := by
       exact absurd (Nat.le_of_dvd (Nat.pos_of_ne_zero (by simp_all)) h₃) (by linarith)
     · intro h
       simp_all [pow_pos hp.pos 2]
-  rw [h₁]
-  simp
+  grind
 
 lemma b_coprime_p_sq (p : ℕ) (hp : Nat.Prime p) (b : ℕ) (hb : 2 ≤ b) (hbp : b < p) :
     b.Coprime (p ^ 2) := by
@@ -109,20 +108,10 @@ lemma r_eq_inv_image (p : ℕ) (hp : Nat.Prime p) (b : ℕ) (hb : 2 ≤ b) (hbp 
   have hZero : ((b * r + d : ℕ) : ZMod (p ^ 2)) = 0 := by
     rwa [ZMod.natCast_eq_zero_iff]
   have hEq : (b : ZMod (p ^ 2)) * (r : ZMod (p ^ 2)) = -((d : ℕ) : ZMod (p ^ 2)) := by
-    have h1 : ((b * r + d : ℕ) : ZMod (p ^ 2)) = (b : ZMod (p ^ 2)) * (r : ZMod (p ^ 2)) +
-        ((d : ℕ) : ZMod (p ^ 2)) := by
-          push_cast
-          ring
-    rw [h1] at hZero
-    linear_combination hZero
+    grind
   have hR : (r : ZMod (p ^ 2)) = -((d : ℕ) : ZMod (p ^ 2)) * ((b : ℕ) : ZMod (p ^ 2))⁻¹ := by
     have key := ZMod.inv_mul_of_unit (b : ZMod (p ^ 2)) hbUnit
-    calc (r : ZMod (p ^ 2))
-        = ((b : ℕ) : ZMod (p ^ 2))⁻¹ * ((b : ℕ) : ZMod (p ^ 2)) * r := by
-          rw [key]
-          ring
-      _ = ((b : ℕ) : ZMod (p ^ 2))⁻¹ * (-((d : ℕ) : ZMod (p ^ 2))) := by rw [mul_assoc, hEq]
-      _ = -((d : ℕ) : ZMod (p ^ 2)) * ((b : ℕ) : ZMod (p ^ 2))⁻¹ := by ring
+    grind
   calc r = ((r : ℕ) : ZMod (p ^ 2)).val := (ZMod.val_natCast_of_lt hr).symm
     _ = (-((d : ℕ) : ZMod (p ^ 2)) * ((b : ℕ) : ZMod (p ^ 2))⁻¹).val := by rw [hR]
 
@@ -172,14 +161,12 @@ lemma valid_residues_card_ge (p : ℕ) (hp : Nat.Prime p) (b : ℕ) (hb : 2 ≤ 
   have hbad := bad_residues_card_le p hp b hb hbp T hT
   have hfilter_compl : ∀ r, (¬(p ^ 2 ∣ r) ∧ ∀ d ∈ T, ¬(p ^ 2 ∣ (b * r + d))) ↔
       ¬((p ^ 2 ∣ r) ∨ ∃ d ∈ T, (p ^ 2 ∣ (b * r + d))) := by
-    intro r
-    simp only [not_or, not_exists, not_and]
+    grind
   simp_rw [hfilter_compl]
   have h1 : (Finset.range (p ^ 2)).card = p ^ 2 := Finset.card_range _
   have hcard := @Finset.card_filter_add_card_filter_not ℕ (Finset.range (p ^ 2))
       (fun r => (p ^ 2 ∣ r) ∨ ∃ d ∈ T, (p ^ 2 ∣ (b * r + d))) _ _
-  rw [h1] at hcard
-  omega
+  grind
 
 lemma localDensityFactor_le_one (p : ℕ) (b : ℕ) (T : Finset ℕ) :
     localDensityFactor p b T ≤ 1 := by
@@ -220,8 +207,7 @@ lemma localDensityFactor_ge_sub (p : ℕ) (hp : Nat.Prime p) (b : ℕ) (hb : 2 �
   have hTcard_bound : T.card + 1 ≤ p ^ 2 := by nlinarith [hp.two_le, Nat.le_mul_self p]
   have hcast2 : ((p : ℝ) ^ 2) - (↑T.card + 1) = ((p ^ 2 - (T.card + 1) : ℕ) : ℝ) := by
     rw [Nat.cast_sub hTcard_bound]
-    push_cast
-    ring
+    grind
   rw [hcast2]
   exact Nat.cast_le.mpr hcard
 
@@ -230,9 +216,7 @@ lemma localDensityFactor_near_one_large_prime (p : ℕ) (hp : Nat.Prime p) (b : 
     |localDensityFactor p b T - 1| ≤ (T.card + 1 : ℝ) / (p ^ 2 : ℝ) := by
   have hμ_le := localDensityFactor_le_one p b T
   have hμ_ge := localDensityFactor_ge_sub p hp b hb hbp T hT
-  have h_div_nonneg : 0 ≤ (T.card + 1 : ℝ) / (p ^ 2 : ℝ) := by positivity
-  rw [abs_sub_comm, abs_of_nonneg (by linarith : 0 ≤ 1 - localDensityFactor p b T)]
-  linarith
+  grind
 
 lemma primes_summable_one_div_sq : Summable (fun p : Nat.Primes => 1 / ((p : ℕ) : ℝ) ^ 2) := by
   have h : Summable (fun p : Nat.Primes => ((p : ℕ) : ℝ) ^ (-2 : ℝ)) :=

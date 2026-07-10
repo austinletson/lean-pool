@@ -35,18 +35,7 @@ lemma integral_equality_help (s t : ℝ) (s0 : 0 < s) (s1 : s < 1) (t0 : 0 < t) 
       rw[← sub_pos] at t1
       obtain h11 := mul_lt_of_lt_one_right t1 hu1
       linarith
-    rw[div_add_div]
-    · field_simp
-      rw[div_eq_div_iff]
-      · ring_nf
-      · apply ne_of_gt
-        apply mul_pos
-        · apply mul_pos <;> nlinarith
-        · nlinarith
-      · apply ne_of_gt
-        apply mul_pos <;> nlinarith
-    · linarith
-    · linarith
+    grind
   rw[← intervalIntegral.integral_congr]
   intro a b
   simp only [one_div, mul_inv_rev]
@@ -61,11 +50,7 @@ lemma integral_equality_help (s t : ℝ) (s0 : 0 < s) (s1 : s < 1) (t0 : 0 < t) 
     · rw [b21]
       field_simp [show t ≠ 0 by linarith, show 1 - (1 - s) * t ≠ 0 by linarith]
       ring_nf
-    · have b12 : 0 < a := lt_of_le_of_ne b1 (Ne.symm b11)
-      have b22 : a < 1 := lt_of_le_of_ne b2 b21
-      obtain b00 := eq1 a b12 b22
-      rw [b00]
-      ring_nf
+    · grind
 
 lemma integral_equality (s t : ℝ) (s0 : 0 < s) (s1 : s < 1) (t0 : 0 < t) (t1 : t < 1) :
     ∫ (u : ℝ) in (0)..1, 1 /(1 - (1 - (1 - s) * t) * u) =
@@ -105,8 +90,7 @@ lemma integral_equality (s t : ℝ) (s0 : 0 < s) (s1 : s < 1) (t0 : 0 < t) (t1 :
     rw[← mul_assoc, show (1 - t)⁻¹ * (1 - t) = 1 by field_simp, one_mul] at eq4_1
     simp_rw [← div_eq_mul_inv] at eq4_1
     rw [eq4_1, ← Real.log_inv, ← one_div, ← eq4_3]
-    simp_rw [one_mul, sub_zero, ← sub_add, sub_self, zero_add] at eq4_2
-    exact eq4_2
+    grind
   rw[integral_equality_help , intervalIntegral.integral_const_mul, h3,
     intervalIntegral.integral_add, eq3, eq4, ← neg_add, ← Real.log_mul]
   · field_simp
@@ -114,8 +98,7 @@ lemma integral_equality (s t : ℝ) (s0 : 0 < s) (s1 : s < 1) (t0 : 0 < t) (t1 :
   · positivity
   · have hs_rewrite : ∀ x : ℝ,
         s / (1 - (1 - x) * s) = s * 1 / (1 - (1 - x) * s) := by
-      intro x
-      simp
+      grind
     simp_rw [hs_rewrite]
     apply IntervalIntegrable.continuousOn_mul (hg := continuousOn_const)
     apply intervalIntegral.intervalIntegrable_inv
@@ -125,8 +108,7 @@ lemma integral_equality (s t : ℝ) (s0 : 0 < s) (s1 : s < 1) (t0 : 0 < t) (t1 :
       rw [sub_eq_zero] at r
       have ineq3 : (1 - x) * s ≤ 1 * s := by
         apply mul_le_mul <;> linarith
-      rw [one_mul] at ineq3
-      linarith
+      grind
     · apply ContinuousOn.sub continuousOn_const
       apply ContinuousOn.mul ?_ continuousOn_const
       apply ContinuousOn.sub continuousOn_const continuousOn_id
@@ -142,8 +124,7 @@ lemma integral_equality (s t : ℝ) (s0 : 0 < s) (s1 : s < 1) (t0 : 0 < t) (t1 :
       rw [sub_eq_zero] at a
       have ineq : (1 - t) * x ≤ (1 - t) * 1 := by
         apply mul_le_mul <;> linarith
-      rw [mul_one] at ineq
-      linarith
+      grind
     apply ContinuousOn.sub continuousOn_const
     apply ContinuousOn.mul continuousOn_const continuousOn_id
   · exact s0

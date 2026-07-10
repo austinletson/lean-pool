@@ -210,8 +210,7 @@ lemma cpv_at_endpoint (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
     have := min_le_right c (min 1 δ); have := min_le_right 1 δ; linarith
   suffices h_formula : ∀ η, 0 < η → η < c → η < 1 → η < δ →
       F η = ↑(Real.log c) + C by
-    rw [h_formula ε hε hε_c hε_1 hε_δ,
-      h_formula (ε₀/2) hε₀2_pos hε₀2_c hε₀2_1 hε₀2_δ]
+    grind
   intro η hη hη_c hη_1 hη_δ
   have hη_div_c_pos : 0 < η / c := div_pos hη hc
   have hη_div_c_lt_1 : η / c < 1 := (div_lt_one hc).mpr hη_c
@@ -260,8 +259,7 @@ lemma cpv_at_endpoint (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
       then (fdBoundaryH H t - s)⁻¹ * deriv (fdBoundaryH H) t else 0) +
     (∫ t in (4 : ℝ)..5, if η < ‖fdBoundaryH H t - s‖
       then (fdBoundaryH H t - s)⁻¹ * deriv (fdBoundaryH H) t else 0) := by
-    change (∫ t in (0 : ℝ)..5, _) = _
-    rw [h_01_15, h_14_45, add_assoc]
+    grind
   have h_I14 : (∫ t in (1 : ℝ)..4, if η < ‖fdBoundaryH H t - s‖
       then (fdBoundaryH H t - s)⁻¹ * deriv (fdBoundaryH H) t else 0) = C := by
     apply intervalIntegral.integral_congr
@@ -326,14 +324,7 @@ lemma cpv_at_endpoint (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
           ∫ _ in (5 - η)..5, (0 : ℂ) :=
         intervalIntegral.integral_congr (fun t ht => by
           rw [Set.uIcc_of_le (by linarith : 5 - η ≤ 5)] at ht
-          rw [if_neg]; push Not
-          by_cases ht5 : t = 5
-          · rw [ht5, fdBoundary_H_at_five, hs_def, sub_self, norm_zero]; exact hη.le
-          · have ht5' : t < 5 := lt_of_le_of_ne ht.2 ht5
-            by_cases ht4 : t ≤ 4
-            · linarith [ht.1]
-            · push Not at ht4
-              rw [h_norm_seg5 t ht4 ht.2]; linarith [ht.1])
+          rw [if_neg]; grind)
       rw [this, intervalIntegral.integral_zero]
     rw [h_zero, add_zero]
     refine intervalIntegral.integral_congr_ae' ?_ (by
@@ -570,22 +561,13 @@ lemma cpv_at_corner (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
             ∫ _ in (4 : ℝ)..(4 + η), (0 : ℂ) :=
           intervalIntegral.integral_congr (fun t ht => by
             rw [Set.uIcc_of_le (by linarith : (4 : ℝ) ≤ 4 + η)] at ht
-            rw [if_neg]; push Not
-            by_cases ht4 : t = 4
-            · subst ht4
-              rw [fdBoundary_H_at_four H, hs_def]
-              norm_num
-              linarith
-            · have ht4' : 4 < t := lt_of_le_of_ne ht.1 (Ne.symm ht4)
-              rw [h_norm_seg5 t ht4']; linarith [ht.2])
+            grind)
         rw [this, intervalIntegral.integral_zero]
       rw [h_zero, zero_add]
       refine intervalIntegral.integral_congr_ae' ?_ (by
         filter_upwards with t ht; exfalso; linarith [ht.1, ht.2])
       filter_upwards with t ht
-      have ht4 : 4 < t := by linarith [ht.1]
-      rw [if_pos, h_integrand_seg5 t ht4]
-      rw [h_norm_seg5 t ht4]; linarith [ht.1]
+      grind
     have h_sub34 : (∫ t in (3 : ℝ)..(4 - η / c), (↑(t - 4) : ℂ)⁻¹) =
         ∫ u in (-1 : ℝ)..(-η / c), (↑u : ℂ)⁻¹ := by
       rw [integral_inv_shift_four, show (3 : ℝ) - 4 = -1 from by ring,

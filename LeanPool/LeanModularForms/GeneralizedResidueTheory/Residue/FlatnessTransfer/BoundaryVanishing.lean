@@ -48,8 +48,7 @@ theorem continuousOn_zpow_comp_sub
     (hne : ∀ t ∈ A, γ t ≠ s) :
     ContinuousOn (fun t => (γ t - s) ^ n) A := by
   apply ContinuousOn.zpow₀ (hγ.sub continuousOn_const)
-  intro t ht
-  exact Or.inl (sub_ne_zero.mpr (hne t ht))
+  grind
 
 /-! ## L1: FTC for negative powers on parameterized curves
 
@@ -85,18 +84,10 @@ theorem integral_zpow_comp_sub_mul_deriv
     have hne : γ t ≠ s := hγ_ne t (Ioo_subset_Icc_self ht)
     have h_zpow := hasDerivAt_zpow_comp_sub (n := n + 1) hγ_da hne
     have h_div := h_zpow.div_const (↑(n + 1) : ℂ)
-    change HasDerivAt F ((γ t - s) ^ n * ↑(deriv γ t)) t
-    have : (↑(n + 1) : ℂ) * (γ t - s) ^ (n + 1 - 1) * ↑(deriv γ t) / (↑(n + 1) : ℂ)
-        = (γ t - s) ^ n * ↑(deriv γ t) := by
-      rw [show (n + 1 : ℤ) - 1 = n from by ring]
-      rw [mul_assoc, mul_div_cancel_left₀ _ hn1_cast]
-    rw [← this]
-    exact h_div
+    grind
   have h_ftc := MeasureTheory.integral_eq_of_hasDerivAt_off_countable_of_le
     F f hab hE_count hF_cont hF_deriv h_int
-  rw [h_ftc]
-  simp only [F]
-  rw [← sub_div]
+  grind
 
 /-! ## L2: Exit times and direction convergence
 
@@ -119,15 +110,13 @@ private lemma tendsto_add_nhdsGT (t₀ : ℝ) :
     Tendsto (fun ε : ℝ => t₀ + ε) (𝓝[>] (0 : ℝ)) (𝓝[>] t₀) := by
   apply tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within
   · simpa using ((continuous_const_add t₀).tendsto (0 : ℝ)).mono_left nhdsWithin_le_nhds
-  · filter_upwards [self_mem_nhdsWithin] with ε (hε : (0 : ℝ) < ε)
-    exact lt_add_of_pos_right t₀ hε
+  · filter_upwards [self_mem_nhdsWithin] with ε grind
 
 private lemma tendsto_sub_nhdsLT (t₀ : ℝ) :
     Tendsto (fun ε : ℝ => t₀ - ε) (𝓝[>] (0 : ℝ)) (𝓝[<] t₀) := by
   apply tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within
   · simpa using ((continuous_sub_left t₀).tendsto (0 : ℝ)).mono_left nhdsWithin_le_nhds
-  · filter_upwards [self_mem_nhdsWithin] with ε (hε : (0 : ℝ) < ε)
-    exact sub_lt_self t₀ hε
+  · filter_upwards [self_mem_nhdsWithin] with ε grind
 
 private lemma slope_tendsto_right_of_deriv
     (γ : PiecewiseC1Immersion) (s : ℂ) (t₀ : ℝ)

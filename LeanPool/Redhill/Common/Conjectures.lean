@@ -76,9 +76,7 @@ lemma nConjecture_3_iff_ABC : NConjecture 3 ↔ ABCConjecture := by
     have ga' : a (i₀ + 2) = 1 ∨ a (i₀ + 2) = -1 := by grind
     intro i
     have mi := ueq ▸ mem_univ i
-    simp only [mem_insert, mem_singleton] at mi
-    obtain rfl | rfl | rfl := mi
-    all_goals grind
+    grind
   exact (Set.Finite.pi' fun _ ↦ Set.finite_Icc ..).subset sE
 
 variable {n : ℕ} {F F' : Finset ℕ}

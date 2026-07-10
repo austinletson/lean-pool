@@ -232,13 +232,7 @@ theorem groundEdge_mem_groundComp {graph : SimpleGraph V}
     obtain ⟨u, v⟩ := e'
     simp only [SimpleGraph.mem_edgeSet, ne_eq, Sym2.mem_iff, Sym2.eq, Sym2.rel_iff', Prod.mk.injEq,
                Prod.swap_prod_mk] at he' hne hgnd ⊢
-    obtain hgnd | hgnd := hgnd
-    · subst hgnd
-      use v, ground, Or.inr ⟨rfl, rfl⟩
-      exact ⟨he'.symm, Or.inr rfl⟩
-    · subst hgnd
-      use u, ground, Or.inl ⟨rfl, rfl⟩
-      exact ⟨he', Or.inr rfl⟩
+    grind
   · subst h3
     simp only [h1, ne_eq] at hne
     simp only [groundComp, SimpleGraph.deleteEdges_adj, Set.mem_singleton_iff, h1,
@@ -317,8 +311,7 @@ theorem groundCount_remove_non_ground {hack : Hackenbush V} {e : Sym2 V} {p : Pl
   unfold groundCount
   rw [← hack.groundEdges_remove_eq e p, Finset.erase_eq_of_notMem]
   simp only [groundEdges, Finset.mem_filter, mem_edgeFinset, not_and]
-  intro _ hg
-  exact absurd hg hng
+  grind
 
 /--
 Removing a p-coloured edge preserves (-p)-coloured ground count.
@@ -507,8 +500,7 @@ theorem groundCount_zero_of_option {hack : Hackenbush V} {p : Player} {e : Sym2 
     simp only [groundEdges, Finset.mem_filter, mem_edgeFinset]
     exact ⟨he'_G, he'_gnd, he'_col⟩
   rw [groundCount, Finset.card_eq_zero] at hgc
-  rw [hgc] at this
-  exact absurd this (Finset.notMem_empty _)
+  grind
 
 /-!
 ### Stride theory
@@ -593,8 +585,7 @@ theorem not_isSolved_of_groundCount_pos {hack : Hackenbush V} {p : Player}
       rw [isEnd_def, moves_toGameForm, Set.image_eq_empty]
       ext
       simp only [Hackenbush.moves, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
-      rintro ⟨e, he, hc, _⟩
-      exact absurd hc (h_neg e he)
+      grind
 
 /--
 The p-stride of a Hackenbush position equals the number of p-coloured ground
@@ -637,8 +628,7 @@ theorem hasStride_groundCount (hack : Hackenbush V) (p : Player) :
           (by rw [← he₀_col]; exact toGameForm_remove_mem_moves he₀_mem), ?_, ?_⟩
         · have : (hack.remove e₀).groundCount p = k := by
             rw [groundCount_remove_ground he₀_mem he₀_gnd he₀_col, hk, Nat.add_sub_self_right]
-          rw [← this]
-          exact ih_remove e₀ he₀_mem p
+          grind
         · intro g'' hg'' m hm
           obtain ⟨e', he', hc', rfl⟩ := mem_moves_toGameForm_iff.mp hg''
           have hs1 := ih_remove e' he' (-p)
@@ -653,8 +643,7 @@ theorem hasStride_groundCount (hack : Hackenbush V) (p : Player) :
         use (hack.remove e).groundCount p
         have hgc_eq : (hack.remove e).groundCount p = k + 1 := by
           rw [groundCount_remove_neg hc, hk]
-        rw [← hgc_eq]
-        exact ⟨le_refl _, ih_remove e he p⟩
+        grind
       · -- (v): Opponent best response
         intro hne
         obtain ⟨g', hg'⟩ := Set.nonempty_iff_ne_empty.mpr hne
@@ -662,15 +651,13 @@ theorem hasStride_groundCount (hack : Hackenbush V) (p : Player) :
         use (hack.remove e).toGameForm, mem_moves_toGameForm_iff.mpr ⟨e, he, hc, rfl⟩
         have hgc_eq : (hack.remove e).groundCount p = k + 1 := by
           rw [groundCount_remove_neg hc, hk]
-        rw [← hgc_eq]
-        exact ih_remove e he p
+        grind
 
 instance : Ruleset (Hackenbush V) where
   toGameForm := toGameForm
   moves_toGameForm p r g' h_g' := by
     simp only [moves_toGameForm, Set.mem_image] at h_g'
-    obtain ⟨r', _, h_r'⟩ := h_g'
-    use r'
+    grind
 
 /--
 The underlying star graph for Hackenbush: ground vertex `0` connected to
@@ -679,13 +666,9 @@ vertices `1, ..., n`.
 private def starGraph (n : ℕ) : SimpleGraph ℕ where
   Adj u v := (u = 0 ∧ 1 ≤ v ∧ v ≤ n) ∨ (1 ≤ u ∧ u ≤ n ∧ v = 0)
   symm.symm u v h := by
-    cases h with
-    | inl h => exact Or.inr ⟨h.2.1, h.2.2, h.1⟩
-    | inr h => exact Or.inl ⟨h.2.2, h.1, h.2.1⟩
+    grind
   loopless.irrefl v h := by
-    cases h with
-    | inl h => omega
-    | inr h => omega
+    grind
 
 /--
 A star Hackenbush position over ℕ with `l` left ground edges and `r` right
@@ -716,9 +699,7 @@ def starPos (l r : ℕ) : Hackenbush ℕ where
     · intro ⟨_, hv⟩; exact hv
     · intro ⟨w, hw⟩
       refine ⟨?_, ⟨w, hw⟩⟩
-      cases hw with
-      | inl h => omega
-      | inr h => omega
+      grind
 
 theorem starPos_groundCount_left (l r : ℕ) :
     (Hackenbush.starPos l r).groundCount .left = l := by
@@ -785,8 +766,7 @@ instance : GameForm.Strided (Ruleset.Forms (Hackenbush ℕ)) where
     have ⟨r, h_r⟩ := Ruleset.Forms.exists hg
     simp only [Ruleset.toGameForm] at h_r
     have := hasStride_groundCount r p
-    use r.groundCount p
-    convert this
+    grind
 
 /-- The misère quotient of finite-star Hackenbush positions is equivalent to `ℤ`. -/
 protected noncomputable def equivInt : MisereQuotient (Ruleset.Forms (Hackenbush ℕ)) ≃ ℤ :=

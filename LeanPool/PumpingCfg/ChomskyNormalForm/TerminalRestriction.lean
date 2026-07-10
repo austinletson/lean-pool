@@ -158,11 +158,7 @@ lemma restrictTerminalRule_right_terminal_output {t : T} {r : ContextFreeRule T 
   cases hrr <;> rename_i hrr
   · split at hrr <;> rw [hrr] at hrt <;> simp at hrt
   · simp only [newTerminalRules, List.mem_filterMap] at hrr
-    obtain ⟨s, _, hsr⟩ := hrr
-    cases s <;> simp only [Option.some.injEq, reduceCtorEq] at hsr
-    rw [← hsr] at hrt ⊢
-    simp only [Sum.inr.injEq, List.cons.injEq, Symbol.terminal.injEq, and_true] at hrt ⊢
-    exact hrt
+    grind
 
 lemma restrictTerminalRules_right_terminal_output [DecidableEq T] [DecidableEq g.NT] {t : T}
     {r : ContextFreeRule T (g.NT ⊕ T)} (hrg : r ∈ restrictTerminalRules g.rules.toList)
@@ -186,10 +182,7 @@ lemma restrictTerminalRule_left {n : g.NT} {r : ContextFreeRule T g.NT}
     · rw [projectString_rightEmbedString_id]
       exact ⟨hrn, rfl⟩
   · simp only [newTerminalRules, List.mem_filterMap] at hrr
-    obtain ⟨r'', _, hrr⟩ := hrr
-    cases r'' <;> simp only [Option.some.injEq, reduceCtorEq] at hrr
-    rw [← hrr] at hrn
-    tauto
+    grind
 
 lemma terminal_mem_newTerminalRules {t : T} {r : ContextFreeRule T g.NT}
     (htr : Symbol.terminal t ∈ r.output) :
@@ -245,9 +238,7 @@ lemma restrictTerminals_derives_rightEmbedString_embedString {u : List (Symbol T
     simp only [List.mem_cons, List.map_cons] at hu ⊢
     rw [← List.singleton_append, ← @List.singleton_append _ (embedSymbol a)]
     apply Derives.append_left_trans
-    · apply ih
-      intro t ht
-      exact hu t (Or.inr ht)
+    · grind
     · cases a with
       | nonterminal => rfl
       | terminal t =>
@@ -286,8 +277,7 @@ lemma derives_restrictTerminals_derives_embedString {u v : List (Symbol T g.NT)}
       · unfold restrictTerminals restrictTerminalRules restrictTerminalRule
         simp only [List.mem_toFinset, List.mem_flatten, List.mem_map, Finset.mem_toList,
           exists_exists_and_eq_and]
-        use r, hrg
-        simp [hrt]
+        grind
       · rw [hrt]
         simp only [List.map_cons, List.map_nil]
         exact ContextFreeRule.Rewrites.input_output
@@ -300,18 +290,14 @@ lemma derives_restrictTerminals_derives_embedString {u v : List (Symbol T g.NT)}
               List.mem_map.2 ⟨r, Finset.mem_toList.2 hrg, rfl⟩, ?_⟩)
             unfold restrictTerminalRule
             split <;> rename_i heq
-            · rename_i t'
-              exfalso
-              apply hrt
-              use t'
+            · grind
             · exact List.mem_cons_self
           exact hmem
         · unfold embedString embedSymbol
           simp only [List.map_cons, List.map_nil]
           exact ContextFreeRule.Rewrites.input_output
       · apply restrictTerminals_derives_rightEmbedString_embedString
-        intros
-        use r
+        grind
 
 theorem restrictTerminals_correct : g.language = g.restrictTerminals.language := by
   apply Set.eq_of_subset_of_subset <;> intro w hw

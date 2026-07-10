@@ -318,10 +318,7 @@ lemma EF.smul_lt_smul_left {k : F≥0} (hk : 0 < k) (r s : F∞) :
       · simp
       rfl
     | ⊤ =>
-      convert_to False ↔ False
-      · apply lt_self_iff_false
-      · apply lt_self_iff_false
-      rfl
+      grind
     | (_ : F) =>
       convert_to True ↔ True
       · rw [EF.pos_smul_top hk, iff_true]
@@ -380,9 +377,7 @@ lemma EF.smul_neg {k : F≥0} {r : F∞} (hkr : k = 0 → r ≠ ⊥ ∧ r ≠ �
 lemma EF.pos_smul_neg {k : F≥0} (hk : 0 < k) (r : F∞) :
     k • (-r) = -(k • r) := by
   apply EF.smul_neg
-  intro h0
-  exfalso
-  exact (h0 ▸ hk).false
+  grind
 
 lemma EF.smul_smul {k : F≥0} (hk : 0 < k) (l : F≥0) (r : F∞) :
     l • (k • r) = k • (l • r) := by
@@ -663,12 +658,7 @@ lemma ValidELP.unbounded_of_feasible_of_neg (P : ValidELP I J F) (hP : P.IsFeasi
             · exact EF.smul_nonpos zeros k
         · rw [dotWeig_add, hce, dotWeig_smul k_pos, hcx₀]
           change toE (e + ((s - e) / d) * d) = toE s
-          rw [EF.coe_eq_coe_iff, div_mul_cancel_of_imp]
-          · exact add_sub_cancel e s
-          · intro d_eq_0
-            exfalso
-            rw [d_eq_0] at hx₀
-            exact hx₀.false
+          grind
 
 variable [Fintype I]
 
@@ -704,8 +694,7 @@ lemma ValidELP.unbounded_of_feasible_of_infeasible (P : ValidELP I J F)
           exact P.hAb ⟨i.val, by aesop, by aesop⟩
         · erw [←Finset.sum_coe_sort_eq_attach]
           apply Finset.subtype_univ_sum_eq_subtype_univ_sum
-          · ext
-            simp
+          · grind
           · intros
             rfl
       · simp only [dotWeig, dite_not, dite_smul]
@@ -719,8 +708,7 @@ lemma ValidELP.unbounded_of_feasible_of_infeasible (P : ValidELP I J F)
           erw [←Finset.sum_coe_sort_eq_attach]
           rw [←hby]
           apply Finset.subtype_univ_sum_eq_subtype_univ_sum
-          · ext
-            simp
+          · grind
           · intros
             rfl
   | inr caseJ =>
@@ -1041,8 +1029,7 @@ lemma ValidELP.strongDuality_of_both_feasible (P : ValidELP I J F)
     rw [←EF.coe_le_coe_iff, EF.coe_add, EF.coe_zero]
     exact P.weakDuality hp hq
   have hqp : -q = p := by
-    rw [neg_eq_iff_add_eq_zero, add_comm]
-    exact le_antisymm hpq h0pq
+    grind
   exact ⟨q, hqp ▸ hp, hq⟩
 
 end extended_LP_properties

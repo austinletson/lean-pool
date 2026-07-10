@@ -44,8 +44,7 @@ section «lp_section_1»
       simpa using h (mem_under_iff.mpr this),
    by intro hij x
       simp only [mem_under_iff]
-      intro hx
-      exact lt_of_lt_of_le hx hij⟩
+      grind⟩
 
 end «lp_section_1»
 
@@ -314,16 +313,13 @@ private lemma domain_graph {u s : V} :
       exact ⟨by
         rintro ⟨y, hy⟩
         exact ⟨y, lt_of_le_of_lt (le_pair_right x y) (lt_of_mem hy), ⟪x, y⟫, hy, rfl⟩, by
-        rintro ⟨y, _, z, hz, hz_eq⟩
-        rcases hz_eq
-        exact ⟨y, hz⟩⟩,
+        grind⟩,
    by intro h; apply mem_ext; intro x; simp only [mem_domain_iff]
       constructor
       · intro hx
         rcases h x (lt_of_lt_of_le (lt_of_mem hx) (by simp)) |>.mp hx with ⟨y, _, z, hy,
           hz_eq⟩
-        rcases hz_eq
-        exact ⟨y, hy⟩
+        grind
       · rintro ⟨y, hy⟩
         exact h x (lt_of_lt_of_le (lt_of_le_of_lt (le_pair_left x y) (lt_of_mem hy)) (by simp))
           |>.mpr ⟨y, lt_of_le_of_lt (le_pair_right x y) (lt_of_mem hy), _, hy, rfl⟩⟩
@@ -348,13 +344,7 @@ instance domain_definable' (ℌ : HierarchySymbol) : ℌ-Function₁ (domain :
 
 @[simp] lemma domain_union (a b : V) : domain (a ∪ b) = domain a ∪ domain b := mem_ext (by
   simp only [mem_domain_iff, mem_cup_iff]
-  intro x; constructor
-  · rintro ⟨y, (hy | hy)⟩
-    · left; exact ⟨y, hy⟩
-    · right; exact ⟨y, hy⟩
-  · rintro (⟨y, hy⟩ | ⟨y, hy⟩)
-    · exact ⟨y, Or.inl hy⟩
-    · exact ⟨y, Or.inr hy⟩)
+  grind)
 
 @[simp] lemma domain_singleton (x y : V) : (domain {⟪x, y⟫} :
     V) = {x} :=
@@ -416,16 +406,13 @@ private lemma range_graph {s' s : V} :
       exact ⟨by
         rintro ⟨x, hx⟩
         exact ⟨x, lt_of_mem_dom hx, ⟪x, y⟫, hx, rfl⟩, by
-        rintro ⟨x, _, z, hz, hz_eq⟩
-        rcases hz_eq
-        exact ⟨x, hz⟩⟩,
+        grind⟩,
    by intro h; apply mem_ext; intro y; simp only [mem_range_iff]
       constructor
       · intro hy
         rcases h y (lt_of_lt_of_le (lt_of_mem hy) (by simp)) |>.mp hy with ⟨x, _, z, hx,
           hz_eq⟩
-        rcases hz_eq
-        exact ⟨x, hx⟩
+        grind
       · rintro ⟨x, hx⟩
         exact h y (lt_of_lt_of_le (lt_of_mem_rng hx) (by simp))
           |>.mpr ⟨x, lt_of_mem_dom hx, _, hx, rfl⟩⟩
@@ -683,9 +670,7 @@ theorem sigma₁_replacement {f : V → V} (hf : Sg1-Function₁ f) (s : V) :
   · intro s' hs'
     apply mem_ext; intro y
     simp only [hs', mem_domain_iff, mem_range_iff]
-    constructor
-    · rintro ⟨x, ⟨y, hxy⟩, rfl⟩; exact ⟨x, by rcases hF _ _ hxy; exact hxy⟩
-    · rintro ⟨x, hxy⟩; exact ⟨x, ⟨y, hxy⟩, hF _ _ hxy⟩
+    grind
 
 theorem sigma₁_replacement₂ {f : V → V → V} (hf : Sg1-Function₂ f) (s₁ s₂ : V) :
     ∃! t : V, ∀ y, y ∈ t ↔ ∃ x₁ ∈ s₁, ∃ x₂ ∈ s₂, y = f x₁ x₂ := by

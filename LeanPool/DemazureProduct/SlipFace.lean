@@ -49,27 +49,19 @@ instance : CoeFun SlipFace (fun _ => ℤ → ℤ → ℤ) :=
 
 lemma SF_ext (s t : SlipFace) : s = t ↔ ∀ a b, s a b = t a b := by
   constructor
-  · rintro rfl
-    simp
+  · grind
   · intro h
     have hχ : s.χ = t.χ := by
       obtain ⟨As, hAs⟩ := s.large_a 0
       obtain ⟨At, hAt⟩ := t.large_a 0
       let A := max As At
       have hs : s.χ = s A 0 - A := by
-        have := hAs A (le_max_left _ _)
-        omega
-      have ht : t.χ = t A 0 - A := by
-        have := hAt A (le_max_right _ _)
-        omega
-      rw [hs, ht, h A 0]
+        grind
+      grind
     cases s
     cases t
     rw [SlipFace.mk.injEq]
-    constructor
-    · funext a b
-      exact h a b
-    · exact hχ
+    grind
 
 namespace SlipFace
 variable (sf : SlipFace)
@@ -105,30 +97,22 @@ def dual : SlipFace := {
     rintro b
     obtain ⟨A, hA⟩ := sf.small_b b
     use A
-    rintro a ha
-    rw [hA a ha]
-    omega
+    grind
   large_a := by
     rintro b
     obtain ⟨A, hA⟩ := sf.large_b b
     use A
-    rintro a ha
-    rw [hA a ha]
-    omega
+    grind
   small_b := by
     rintro a
     obtain ⟨B, hB⟩ := sf.small_a a
     use B
-    rintro b hb
-    rw [hB b hb]
-    omega
+    grind
   large_b := by
     rintro a
     obtain ⟨B, hB⟩ := sf.large_a a
     use B
-    rintro b hb
-    rw [hB b hb]
-    omega
+    grind
 }
 
 lemma dual_dual (s : SlipFace) : s.dual.dual = s := by
@@ -175,11 +159,7 @@ lemma eq_iff_nonspecial (a b : ℤ) : sf a b = max 0 (a - b + sf.χ)
     by_cases hs : sf a b > 0
     · right; exact le_antisymm (h hs) (sf.dual.nonneg b a)
     · left; exact le_antisymm (le_of_not_gt hs) (sf.nonneg a b)
-  · rintro (h | h) ⟨hs, hdual⟩
-    · rw [h] at hs
-      exact (lt_irrefl 0 hs).elim
-    · rw [h] at hdual
-      exact (lt_irrefl 0 hdual).elim
+  · grind
 
 /-- The one-sided monotonicity and vanishing conditions providing a simplified
 criterion for slipfaces.
@@ -268,18 +248,12 @@ lemma sf_of_D_props {s t : ℤ → ℤ → ℤ} {χ : ℤ}
       intro b
       obtain ⟨A, hA⟩ := tp.large_b b
       use A
-      intro a ha
-      specialize hA a ha
-      specialize h a b
-      rwa [hA, sub_zero] at h
+      grind
     small_b := by
       intro a
       obtain ⟨B, hB⟩ := tp.small_a a
       use B
-      intro b hb
-      specialize hB b hb
-      specialize h a b
-      rwa [hB, sub_zero] at h
+      grind
     large_b := by
       intro a
       obtain ⟨B, hB⟩ := sp.large_b a
@@ -337,8 +311,7 @@ noncomputable def SlipValley (s t : SlipFace) (a b : ℤ) : Valley where
     suffices {n : ℤ | s a n + t n b ≤ m} ⊆ Finset.Icc L R by
       apply Set.Finite.subset _ this
       apply Set.Finite.ofFinset (Finset.Icc L R)
-      intro x
-      simp only [Finset.mem_Icc, Finset.coe_Icc, Set.mem_Icc]
+      grind
     intro n hn
     simp only [Set.mem_setOf_eq] at hn
     suffices n ≥ L ∧ n ≤ R by simpa
@@ -385,8 +358,7 @@ lemma star_dual_eq (s t : SlipFace) (a b : ℤ) :
   have : s.dual.χ = - s.χ := by dsimp [SlipFace.dual]
   rw [this] at ineq
   have : t.dual.χ = - t.χ := by dsimp [SlipFace.dual]
-  rw [this] at ineq
-  omega
+  grind
 
 private lemma D_props_of_star_func (s t : SlipFace) : D_props (s.starFunc t) := by
   constructor
@@ -527,18 +499,13 @@ comparison lemmas relating that order to the product `⋆`.
 instance : PartialOrder SlipFace where
   le (s t : SlipFace) := ∀ a b, s a b ≤ t a b
   le_refl := by
-    intro s a b
-    exact le_refl <| s a b
+    grind
   le_trans := by
-    intro s t u hst htu a b
-    exact le_trans (hst a b) (htu a b)
+    grind
   le_antisymm := by
     intro s t hst hts
     apply (SF_ext s t).mpr
-    intro a b
-    have le1 : s a b ≤ t a b := hst a b
-    have le2 : t a b ≤ s a b := hts a b
-    exact le_antisymm le1 le2
+    grind
 
 lemma star_val_le (s t : SlipFace) (a b l : ℤ) : (s ⋆ t) a b ≤ s a l + t l b := by
   let v := SlipValley s t a b
@@ -572,8 +539,7 @@ lemma le_star_val_iff (r s t : SlipFace) (a b : ℤ) :
     let l := starWit s t a b
     have : (s ⋆ t) a b = s a l + t l b := by
       exact star_wit_spec s t a b
-    rw [this]
-    exact h l
+    grind
 
 /-- An upper bound for `(s ⋆ t) a b` is equivalent to exhibiting a single
 witness `l` that realizes it. -/
@@ -623,18 +589,13 @@ def id : SlipFace := {
     func := fun a b => max (a - b) 0,
     χ := 0,
     a_step := by
-      intro a b
-      by_cases ha : a - b ≥ 0 <;> omega
+      grind
     b_step := by
-      intro a b
-      by_cases hb : a - (b + 1) ≥ 0 <;> omega
+      grind
     nonneg := by
-      intro a b
-      exact le_max_right (a - b) 0
+      grind
     ge_diff := by
-      intro a b
-      rw [add_zero]
-      exact le_max_left (a - b) 0
+      grind
     small_a := by
       intro b
       use b
@@ -733,33 +694,7 @@ lemma lres_wit_exists (s t : SlipFace) (a b : ℤ) : ∃ m, ∀ l,
   obtain ⟨m, -, hm_max⟩ := Finset.exists_max_image
     (Finset.Icc L U) (fun l => s a l - t.dual b l) hne
   use m
-  intro l
-  by_cases hlL : l ≤ L
-  · -- l is in the left constant regime: f(l) = f(L)
-    have hsl : s a l = a - l + s.χ := hB₁ l (le_trans hlL (min_le_left _ _))
-    have htl : t.dual b l = b - l + t.dual.χ := hB₂ l (le_trans hlL (min_le_right _ _))
-    have hsL : s a L = a - L + s.χ := hB₁ L (min_le_left _ _)
-    have htL : t.dual b L = b - L + t.dual.χ := hB₂ L (min_le_right _ _)
-    have hm_L := hm_max L (Finset.mem_Icc.mpr ⟨le_refl _, L_le_U⟩)
-    omega
-  · push Not at hlL
-    by_cases hUl : l ≤ U
-    · -- l is in the finite interval: directly bounded by argmax
-      exact hm_max l (Finset.mem_Icc.mpr ⟨le_of_lt hlL, hUl⟩)
-    · push Not at hUl
-      -- l is in the right zero regime: f(l) = 0 ≤ f(U) ≤ f(m)
-      have hU₁l : U₁ ≤ l :=
-        le_trans (le_trans (le_max_left _ _) (le_max_left _ L)) hUl.le
-      have hU₂l : U₂ ≤ l :=
-        le_trans (le_trans (le_max_right _ _) (le_max_left _ L)) hUl.le
-      have hU₁U : U₁ ≤ U := le_trans (le_max_left _ _) (le_max_left _ L)
-      have hU₂U : U₂ ≤ U := le_trans (le_max_right _ _) (le_max_left _ L)
-      have hs0 : s a l = 0 := hU₁ l hU₁l
-      have ht0 : t.dual b l = 0 := hU₂ l hU₂l
-      have hsU : s a U = 0 := hU₁ U hU₁U
-      have htU : t.dual b U = 0 := hU₂ U hU₂U
-      have hm_U := hm_max U (Finset.mem_Icc.mpr ⟨L_le_U, le_refl _⟩)
-      omega
+  grind
 
 
 
@@ -790,8 +725,7 @@ lemma lres_func_nonneg (s t : SlipFace) (a b : ℤ) : 0 ≤ lresFunc s t a b := 
   have hs0 : s a l = 0 := hU₁ l (le_max_left _ _)
   have ht0 : t.dual b l = 0 := hU₂ l (le_max_right _ _)
   have hmax := lres_val_ge s t a b l
-  rw [hs0, ht0] at hmax
-  omega
+  grind
 
 private lemma D_props_of_lres_func (s t : SlipFace) : D_props (lresFunc s t) := by
   -- Proof written by GPT 5.5.
@@ -847,8 +781,7 @@ private lemma D_props_of_lres_func (s t : SlipFace) : D_props (lresFunc s t) := 
       change t.dual b l ≥ b - l + t.dual.χ
       exact t.dual.ge_diff b l
     by_cases hl_left : l ≤ L
-    · have hs : s a l = a - l + s.χ := hL₀ l hl_left
-      omega
+    · grind
     · push Not at hl_left
       by_cases hl_right : U ≤ l
       · have hU₀_le_l : U₀ ≤ l := le_trans (le_max_left U₀ L) hl_right
@@ -857,8 +790,7 @@ private lemma D_props_of_lres_func (s t : SlipFace) : D_props (lresFunc s t) := 
         omega
       · push Not at hl_right
         have hl_mem : l ∈ middle := by
-          simp only [Finset.mem_Icc, middle]
-          omega
+          grind
         have hval_mem : s a l + l + t.χ ∈ middleBounds := by
           exact Finset.mem_image.mpr ⟨l, hl_mem, rfl⟩
         have hval_le_M : s a l + l + t.χ ≤ M := by
@@ -911,8 +843,7 @@ private lemma D_props_of_lres_func (s t : SlipFace) : D_props (lresFunc s t) := 
         omega
       · push Not at hl_right
         have hl_mem : l ∈ middle := by
-          simp only [Finset.mem_Icc, middle]
-          omega
+          grind
         let A_l := Classical.choose (s.small_a l)
         have hAl_mem : A_l ∈ cutoffs := by
           exact Finset.mem_image.mpr ⟨l, hl_mem, rfl⟩
@@ -940,33 +871,7 @@ private lemma rres_exists (s t : SlipFace) (a b : ℤ) : ∃ m, ∀ l,
   obtain ⟨m, -, hm_max⟩ := Finset.exists_max_image
     (Finset.Icc L U) (fun l => t l b - s.dual l a) hne
   use m
-  intro l
-  by_cases hlL : l ≤ L
-  · -- l is in the left zero regime: g(l) = 0 = g(L) ≤ g(m)
-    have htl : t l b = 0 := hA₁ l (le_trans hlL (min_le_left _ _))
-    have hsl : s.dual l a = 0 := hA₂ l (le_trans hlL (min_le_right _ _))
-    have htL : t L b = 0 := hA₁ L (min_le_left _ _)
-    have hsL : s.dual L a = 0 := hA₂ L (min_le_right _ _)
-    have hm_L := hm_max L (Finset.mem_Icc.mpr ⟨le_refl _, L_le_U⟩)
-    omega
-  · push Not at hlL
-    by_cases hUl : l ≤ U
-    · -- l is in the finite interval: directly bounded by argmax
-      exact hm_max l (Finset.mem_Icc.mpr ⟨le_of_lt hlL, hUl⟩)
-    · push Not at hUl
-      -- l is in the right constant regime: g(l) = g(U) ≤ g(m)
-      have hU₁l : U₁ ≤ l :=
-        le_trans (le_trans (le_max_left _ _) (le_max_left _ L)) hUl.le
-      have hU₂l : U₂ ≤ l :=
-        le_trans (le_trans (le_max_right _ _) (le_max_left _ L)) hUl.le
-      have hU₁U : U₁ ≤ U := le_trans (le_max_left _ _) (le_max_left _ L)
-      have hU₂U : U₂ ≤ U := le_trans (le_max_right _ _) (le_max_left _ L)
-      have htl : t l b = l - b + t.χ := hU₁ l hU₁l
-      have hsl : s.dual l a = l - a + s.dual.χ := hU₂ l hU₂l
-      have htU : t U b = U - b + t.χ := hU₁ U hU₁U
-      have hsU : s.dual U a = U - a + s.dual.χ := hU₂ U hU₂U
-      have hm_U := hm_max U (Finset.mem_Icc.mpr ⟨L_le_U, le_refl _⟩)
-      omega
+  grind
 
 /-- The argmax witnessing the right residual value $s \triangleright t (a,b)$. -/
 noncomputable def rresWit (s t : SlipFace) (a b : ℤ) : ℤ :=
@@ -995,8 +900,7 @@ lemma rres_func_nonneg (s t : SlipFace) (a b : ℤ) : 0 ≤ rresFunc s t a b := 
   have ht0 : t l b = 0 := hA₁ l (min_le_left _ _)
   have hs0 : s.dual l a = 0 := hA₂ l (min_le_right _ _)
   have hmax := rres_val_ge s t a b l
-  rw [ht0, hs0] at hmax
-  omega
+  grind
 
 private lemma D_props_of_rres_func (s t : SlipFace) : D_props (rresFunc s t) := by
   -- Proof written by GPT 5.5.
@@ -1049,9 +953,7 @@ private lemma D_props_of_rres_func (s t : SlipFace) : D_props (rresFunc s t) := 
     have hb_B₁ : B₁ ≤ b := le_trans (le_max_right _ _) hb
     have ht_le_B₀ : t l b ≤ t l B₀ := t.nondec (le_refl l) hb_B₀
     by_cases hl_left : l ≤ L
-    · have htB₀ : t l B₀ = 0 := hLₜ l (le_trans hl_left (min_le_left _ _))
-      have hs_nonneg : s.dual l a ≥ 0 := s.dual.nonneg l a
-      omega
+    · grind
     · push Not at hl_left
       by_cases hl_right : U ≤ l
       · have hUₜ_le_l : Uₜ ≤ l :=
@@ -1065,8 +967,7 @@ private lemma D_props_of_rres_func (s t : SlipFace) : D_props (rresFunc s t) := 
         omega
       · push Not at hl_right
         have hl_mem : l ∈ middle := by
-          simp only [Finset.mem_Icc, middle]
-          omega
+          grind
         let B_l := Classical.choose (t.large_b l)
         have hBl_mem : B_l ∈ cutoffs := by
           exact Finset.mem_image.mpr ⟨l, hl_mem, rfl⟩
@@ -1115,13 +1016,10 @@ private lemma D_props_of_rres_func (s t : SlipFace) : D_props (rresFunc s t) := 
       omega
     · push Not at hl_left
       by_cases hl_right : U ≤ l
-      · have hU₀_le_l : U₀ ≤ l := le_trans (le_max_left U₀ L) hl_right
-        have ht : t l b = l - b + t.χ := hU₀ l hU₀_le_l
-        omega
+      · grind
       · push Not at hl_right
         have hl_mem : l ∈ middle := by
-          simp only [Finset.mem_Icc, middle]
-          omega
+          grind
         have hval_mem : l - s.χ - t l b ∈ middleBounds := by
           exact Finset.mem_image.mpr ⟨l, hl_mem, rfl⟩
         have hA_le_val : A ≤ l - s.χ - t l b := by
@@ -1243,8 +1141,7 @@ lemma rres_eq_max (s t : SlipFace) (a b : ℤ) :
 @[simp] lemma chi_rres (s t : SlipFace) : (s ▹ t).χ = s.χ + t.χ := by
   dsimp [rres, SlipFace.dual]
   rw [chi_lres]
-  dsimp [SlipFace.dual]
-  omega
+  grind
 
 /-- The stated left/right residual duality.
 *Proposition 3.9 (`prop:sfAlgebraDefined`) of
@@ -1276,13 +1173,7 @@ lemma bend_set_finite (t : SlipFace) (b : ℤ) : Finite (bendSet t b) := by
   obtain ⟨A0, hA0⟩ := t.small_a b
   have : bendSet t b ⊆ Finset.Icc A0 A1 := by
     rintro l ⟨hl_left,hl_right⟩
-    rw [Finset.mem_coe, Finset.mem_Icc]
-    constructor
-    · contrapose! hl_right with l_lt_A0
-      rw [hA0 l (by omega), hA0 (l+1) (by omega)]
-    · contrapose! hl_left with A1_lt_l
-      rw [hA1 (l-1) (by omega), hA1 l (by omega)]
-      omega
+    grind
   apply Set.Finite.subset _ this
   apply Finset.finite_toSet
 
@@ -1291,22 +1182,13 @@ private lemma bend_set_witness_helper (s t : SlipFace) (a b l : ℤ) (hl : t l b
   by_cases h : t (l-1) b = t l b
   · use l
   have hl' : t (l-1) b ≠ t ((l-1)+1) b := by
-    contrapose! h with hl'
-    rw [hl']
-    simp only [sub_add_cancel]
+    grind
   obtain ⟨m, ⟨teq, tneq, sumle⟩⟩ := bend_set_witness_helper s t a b (l-1) hl'
   use m, teq, tneq
   apply le_trans sumle
   have hs_step := s.b_step a (l-1)
   have ht_step := t.a_step (l-1) b
-  have hs_le : s a (l-1) ≤ s a l + 1 := by
-    apply le_of_le_of_eq hs_step.2
-    congr; omega
-  have ht_eq : t l b = t (l-1) b + 1 := by
-    have hpred_succ : l - 1 + 1 = l := sub_add_cancel l 1
-    rw [hpred_succ] at ht_step
-    omega
-  omega
+  grind
 termination_by (t l b).toNat
 decreasing_by
   simp_wf
@@ -1340,8 +1222,7 @@ lemma bend_set_witness (s t : SlipFace) (a b : ℤ) :
       exact Eq.symm v.f_M
     have hM_le_m : s a v.M + t v.M b ≤ s a m + t m b := by
       exact (v.M_spec m).1
-    have hm_eq : s a m + t m b = s a v.M + t v.M b := le_antisymm hm_le hM_le_m
-    rw [hstarM, hm_eq]
+    grind
 
 private lemma bend_set_witness_lres_right_helper (s t : SlipFace) (a b l : ℤ)
     (hmax : ∀ n, s a n - t.dual b n ≤ s a l - t.dual b l) :
@@ -1361,13 +1242,10 @@ private lemma bend_set_witness_lres_right_helper (s t : SlipFace) (a b l : ℤ)
       omega
     have hmax_next :
         ∀ n, s a n - t.dual b n ≤ s a (l+1) - t.dual b (l+1) := by
-      intro n
-      have hn := hmax n
-      omega
+      grind
     obtain ⟨m, hm_right, hm_le⟩ :=
       bend_set_witness_lres_right_helper s t a b (l+1) hmax_next
-    use m, hm_right
-    exact le_trans hle_next hm_le
+    grind
   · use l, hright
 termination_by (s a l).toNat
 decreasing_by
@@ -1383,29 +1261,18 @@ private lemma bend_set_witness_lres_helper (s t : SlipFace) (a b l : ℤ)
   by_cases h : t (l-1) b = t l b
   · use l, h, hl
   have hl' : t (l-1) b ≠ t ((l-1)+1) b := by
-    contrapose! h with hl'
-    rw [hl']
-    simp only [sub_add_cancel]
+    grind
   obtain ⟨m, hm_left, hm_right, hm_le⟩ :=
     bend_set_witness_lres_helper s t a b (l-1) hl'
   use m, hm_left, hm_right
   have hs_step := s.b_step a (l-1)
   have ht_step := t.a_step (l-1) b
   have ht_eq : t l b = t (l-1) b + 1 := by
-    have hpred_succ : l - 1 + 1 = l := sub_add_cancel l 1
-    rw [hpred_succ] at ht_step
-    omega
+    grind
   have hdual : t.dual b (l-1) = t.dual b l := by
     rw [t.s'_eq b (l-1), t.s'_eq b l, ht_eq]
     omega
-  have hs_le : s a l ≤ s a (l-1) := by
-    have hpred_succ : l - 1 + 1 = l := sub_add_cancel l 1
-    rw [hpred_succ] at hs_step
-    exact hs_step.1
-  have hcurr_prev : s a l - t.dual b l ≤ s a (l-1) - t.dual b (l-1) := by
-    rw [hdual]
-    omega
-  exact le_trans hcurr_prev hm_le
+  grind
 termination_by (t l b).toNat
 decreasing_by
   simp_wf
@@ -1431,9 +1298,7 @@ lemma bend_set_witness_lres (s t : SlipFace) (a b : ℤ) :
   constructor
   · exact ⟨hm_left, hm_right⟩
   · rw [lres_wit_spec]
-    apply le_antisymm
-    · exact le_trans hlr hrm
-    · exact hmax m
+    grind
 
 /-!
   ## Minimal slipfaces in each shift
@@ -1446,53 +1311,29 @@ def iotaSf (n : ℤ) : SlipFace  := {
   func := fun a b => max (a - b + n) 0
   χ := n
   a_step := by
-    intro a b
-    by_cases h : 0 ≤ a - b + n
-    · have h' : 0 ≤ a + 1 - b + n := by omega
-      simp [h,h']
-      omega
-    · have h' : a + 1 - b + n ≤ 0 := by omega
-      simp [h']
-      omega
+    grind
   b_step := by
-    intro a b
-    by_cases h : 0 < a - b + n
-    · have h' : 0 ≤ a - (b+1) + n := by omega
-      simp [h']
-      omega
-    · have h' : a - (b+1) + n ≤ 0 := by omega
-      simp [h']
-      omega
+    grind
   nonneg := by
-    intro a b
-    apply Int.le_max_right (a-b+n) 0
+    grind
   ge_diff := by
-    intro a b
-    apply Int.le_max_left (a-b+n) 0
+    grind
   small_a := by
     intro a
     use a - n
-    intro b hb
-    apply Int.max_eq_right
-    omega
+    grind
   large_a := by
     intro a
     use a - n
-    intro b hb
-    apply Int.max_eq_left
-    omega
+    grind
   small_b := by
     intro b
     use b + n
-    intro a ha
-    apply Int.max_eq_left
-    omega
+    grind
   large_b := by
     intro b
     use b + n
-    intro a ha
-    apply Int.max_eq_right
-    omega
+    grind
 }
 
 private lemma bend_set_iota (n b : ℤ) : bendSet (iotaSf n) b = {b - n} := by
@@ -1504,16 +1345,14 @@ private lemma bend_set_iota (n b : ℤ) : bendSet (iotaSf n) b = {b - n} := by
       by_contra!
       rw [show iotaSf n (m-1) b = m -1 - b + n  by exact max_eq_left (by omega)] at h1
       rw [show iotaSf n m b = m - b + n by exact max_eq_left (by omega)] at h1 h2
-      rw [show iotaSf n (m+1) b = m + 1 - b + n by exact max_eq_left (by omega)] at h2
-      omega
+      grind
     have mge : b - n ≤ m := by
       by_contra!
       rw [show iotaSf n (m-1) b = 0 by exact max_eq_right (by omega)] at h1
       rw [show iotaSf n m b = 0 by exact max_eq_right (by omega)] at h1 h2
       rw [show iotaSf n (m+1) b = 0 by exact max_eq_right (by omega)] at h2
       omega
-    rw [antisymm mle mge]
-    rfl
+    grind
   · intro h
     rw [show m = b - n by exact h]
     constructor <;>  rw [show iotaSf n (b-n) b = 0 by exact max_eq_right (by omega)]
@@ -1730,8 +1569,7 @@ lemma Δ_zero_of_s_zero (a b : ℤ) (h0 : sf (a + 1) b = 0) : sf.Δ a b = 0 := b
     apply sf.zero_below (a' := a+1) (b' := b)
     repeat linarith
   dsimp [Δ]
-  rw [h0, h1, h2, h3]
-  norm_num
+  grind
 
 lemma sum_a {a₁ a₂ : ℤ} (ha : a₁ ≤ a₂) (b : ℤ) :
   ∑ a ∈ Finset.Ico a₁ a₂, sf.Δ a b
@@ -1746,9 +1584,6 @@ lemma sum_a {a₁ a₂ : ℤ} (ha : a₁ ≤ a₂) (b : ℤ) :
     rw [Nat.cast_add n 1, Nat.cast_one, ← add_assoc]
     have disj : Disjoint (Finset.Ico a₁ (a₁ + n)) {a₁ + n} := by simp
     have union : Finset.Ico a₁ (a₁ + n + 1) = Finset.Ico a₁ (a₁ + n) ∪ {a₁ + n} := by
-      apply Finset.ext
-      intro x
-      repeat rw [Finset.mem_union, Finset.mem_Ico, Finset.mem_Ico]
       grind
     rw [union, Finset.sum_union disj, Finset.sum_singleton, SlipFace.Δ, ih]
     omega
@@ -1766,9 +1601,6 @@ lemma sum_b (a : ℤ) {b₁ b₂ : ℤ} (hb : b₁ ≤ b₂) :
     rw [Nat.cast_add n 1, Nat.cast_one, ← add_assoc]
     have disj : Disjoint (Finset.Ico b₁ (b₁ + n)) {b₁ + n} := by simp
     have union : Finset.Ico b₁ (b₁ + n + 1) = Finset.Ico b₁ (b₁ + n) ∪ {b₁ + n} := by
-      apply Finset.ext
-      intro x
-      repeat rw [Finset.mem_union, Finset.mem_Ico, Finset.mem_Ico]
       grind
     rw [union, Finset.sum_union disj, Finset.sum_singleton, SlipFace.Δ, ih]
     omega
@@ -1789,9 +1621,6 @@ lemma sum_ab {a₁ a₂ b₁ b₂ : ℤ} (ha : a₁ ≤ a₂) (hb : b₁ ≤ b�
     rw [Nat.cast_add n 1, Nat.cast_one, ← add_assoc]
     have disj : Disjoint (Finset.Ico b₁ (b₁ + n)) {b₁ + n} := by simp
     have union : Finset.Ico b₁ (b₁ + n + 1) = Finset.Ico b₁ (b₁ + n) ∪ {b₁ + n} := by
-      apply Finset.ext
-      intro x
-      repeat rw [Finset.mem_union, Finset.mem_Ico, Finset.mem_Ico]
       grind
     rw [union, Finset.sum_union disj, Finset.sum_singleton, ih, sf.sum_a ha (b₁ + n)]
     omega
@@ -1841,9 +1670,7 @@ lemma ess_step (s t : SlipFace) (a b : ℤ) (wit : s a b > t a b) :
       have : (a-1, b) ∈ steps := by
         simp [steps]
       by_cases h' : s (a-1) b > t (a-1) b
-      · specialize h (a-1) b this h'
-        rw [fsub s (a-1) b, fsub s a b] at h
-        omega
+      · grind
       · contrapose! h'
         have : t (a-1) b ≤ t a b := by
           have := (t.a_step (a-1) b).1
@@ -1865,9 +1692,7 @@ lemma ess_step (s t : SlipFace) (a b : ℤ) (wit : s a b > t a b) :
       have : (a, b+1) ∈ steps := by
         simp [steps]
       by_cases h' : s a (b+1) > t a (b+1)
-      · specialize h a (b+1) this h'
-        rw [fsub s a (b+1), fsub s a b] at h
-        omega
+      · grind
       · push Not at h'
         have := (t.b_step a b).1
         omega
@@ -1878,15 +1703,13 @@ lemma ess_step (s t : SlipFace) (a b : ℤ) (wit : s a b > t a b) :
       · specialize h a (b-1) this h'
         rw [fsub s a (b-1), fsub s a b] at h
         have := (s.b_step a (b-1)).1
-        norm_num at this
-        omega
+        grind
       · push Not at h'
         have := (t.b_step a (b-1)).2
         norm_num at this
         apply le_antisymm
         · have := (s.b_step a (b-1)).1
-          norm_num at this
-          exact this
+          grind
         · omega
     exact ⟨h1, h2, h3, h4⟩
 
@@ -1903,15 +1726,11 @@ private lemma ess_seeker (s t : SlipFace) (nle : ¬ s ≤ t) (M : ℕ) :
     omega
   | succ M ih =>
     rcases ih with ⟨a, b, s_gt_t, (ab_ess | ab_ge_M)⟩
-    · use a, b, s_gt_t
-      left; exact ab_ess
+    · grind
     · by_cases ab_ess : (a, b) ∈ s.ess
-      · use a, b, s_gt_t
-        left; exact ab_ess
+      · grind
       obtain ⟨a', b', _, s'_gt_t', sum_ineq⟩ :=  ess_step s t a b s_gt_t ab_ess
-      use a', b', s'_gt_t'
-      right
-      omega
+      grind
 
 /-- *Definition 7.3 (`defn:cliffordSF`) of
 [An extended Demazure product](https://arxiv.org/abs/2206.14227).* -/

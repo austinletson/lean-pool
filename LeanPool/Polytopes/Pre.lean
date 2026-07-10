@@ -19,18 +19,7 @@ open Pointwise Module
 lemma Set.Subtype {α : Type*} {property : α → Prop} (S : Set α) (hS : ∀ s ∈ S, property s) :
     ∃ S' : Set {x : α // property x}, Subtype.val '' S' = S ∧ Subtype.val ⁻¹' S = S' := by
   have : ∃ S' : Set {x : α // property x}, Subtype.val '' S' = S := CanLift.prf S hS
-  rcases this with ⟨S', hS'⟩
-  refine ⟨S', hS', ?_⟩
-  ext x
-  rw [Set.mem_preimage, ← hS', Set.mem_image]
-  constructor
-  · -- 1.
-    rintro ⟨x', hx', hxx⟩
-    rw [Subtype.coe_inj] at hxx
-    exact hxx ▸ hx'
-  · -- 2.
-    intro hx
-    exact ⟨x, hx, rfl⟩
+  grind
 
 lemma Set.Finite.translation {α : Type} [AddGroup α] {S : Set α} (hS : S.Finite) (x : α) :
   (S + ({x} : Set α)).Finite := by
@@ -78,12 +67,10 @@ lemma Set.Nonempty.sInter_inter_comm {α : Type u_1} {s : Set (Set α)} (hs : s.
     refine ⟨ ?_, (h (hs.some ∩ t) this).2⟩
     intro y hy
     have : y ∩ t ∈ (fun x => x ∩ t) '' s := by
-      rw [mem_image]
-      exact ⟨y, hy, rfl⟩
+      grind
     exact (h (y ∩ t) this).1
   · -- 2.
-    rintro h y ⟨ z, hz, rfl ⟩
-    exact mem_inter (h.1 z hz) h.2
+    grind
 
 lemma Set.Nonempty.image_sInter {α β : Type*} {S : Set (Set α)} (hS : S.Nonempty)
   {f : α → β} (hf : f.Injective) :
@@ -92,11 +79,7 @@ lemma Set.Nonempty.image_sInter {α β : Type*} {S : Set (Set α)} (hS : S.Nonem
   intro y hy
   simp only [mem_iInter, mem_image] at hy ⊢
   rcases hy hS.some hS.some_mem with ⟨x, _hxInhSsome_, rfl⟩
-  refine ⟨x, ?_, rfl⟩
-  intro s hsInS
-  rcases hy s hsInS with ⟨z, hzIns, hfzEqfx⟩
-  convert hzIns
-  exact hf hfzEqfx.symm
+  grind
 
 /-- The equivalence `P ≃ E` sending a point `p` to the vector `p -ᵥ x`. -/
 def Equiv.VSubconst {E P : Type} [AddCommGroup E] [AddTorsor E P] (x : P) : P ≃ E where
@@ -142,8 +125,7 @@ lemma Submodule.mem_orthogonal_Basis {𝕜 : Type u_1} {E : Type u_2} {ι : Type
   v ∈ Kᗮ ↔ ∀ i : ι, inner 𝕜 (↑(b i)) v = (0:𝕜) := by
   rw [Submodule.mem_orthogonal]
   constructor
-  · intro h i
-    exact h _ (Submodule.coe_mem (b i))
+  · grind
   · intro h x hx
     rw [Basis.mem_submodule_iff b] at hx
     rcases hx with ⟨ a, rfl ⟩
@@ -213,8 +195,7 @@ lemma Fin.mem_fin_list_range {n : ℕ} (i : Fin n) : i ∈ n.finListRange := by
       apply List.mem_cons_of_mem
       simp only [List.mem_map]
       use m'
-      use ih m'
-      rfl
+      grind
 
 /-- Drops the first `m` entries from a length-indexed vector. -/
 def Vector.Listdrop {R : Type*} {n : ℕ} (m : ℕ) : Vector R n → Vector R (n - m) :=

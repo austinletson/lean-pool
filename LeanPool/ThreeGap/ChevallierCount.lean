@@ -139,8 +139,7 @@ theorem chevallier_count (hr : RecordsContinue r) {N : ℕ} (hN : 2 ≤ N) {n m 
     rw [Finset.mem_range] at hq
     obtain ⟨i, hmi, hin, hgap⟩ :=
       gapVal_eq_record r hr hN hn1 hn2 hm1 hm2 (q := q) (by omega)
-    rw [Finset.mem_image]
-    exact ⟨i, Finset.mem_Icc.mpr ⟨hmi, hin⟩, hgap.symm⟩
+    grind
   calc ((Finset.range (N + 1)).image (gapVal r N)).card
       ≤ ((Finset.Icc m n).image (fun i => r (bestDenom r hr i))).card := Finset.card_le_card hsub
     _ ≤ (Finset.Icc m n).card := Finset.card_image_le

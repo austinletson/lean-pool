@@ -146,9 +146,7 @@ private noncomputable def rmulMapLmul_apply_Upsilon_apply_aux :
     (A →ₗ[ℂ] B) →ₗ[ℂ] ((A ⊗[ℂ] B) →ₗ[ℂ] (A ⊗[ℂ] B)) where
   toFun x :=
   { toFun := fun y => Upsilon (x •ₛ Upsilon.symm y)
-    map_add' := fun _ _ => by simp only [LinearEquiv.trans_symm, map_add, LinearEquiv.trans_apply,
-      LinearEquiv.TensorProduct.map_symm_apply, LinearEquiv.symm_symm, QuantumSet.Psi_symm_apply,
-      schurMul_apply_apply, QuantumSet.Psi_apply, LinearEquiv.TensorProduct.map_apply]
+    map_add' := fun _ _ => by grind
     map_smul' := fun _ _ => by simp only [LinearEquiv.trans_symm, LinearMapClass.map_smul,
       LinearEquiv.trans_apply, LinearEquiv.TensorProduct.map_symm_apply, LinearEquiv.symm_symm,
       QuantumSet.Psi_symm_apply, schurMul_apply_apply, QuantumSet.Psi_apply,
@@ -742,11 +740,7 @@ theorem QuantumGraph.Real.upsilonOrthogonalProjection {f : A →ₗ[ℂ] A}
     = LinearMap.toContinuousLinearMap
       ((TensorProduct.toIsBimoduleMap (Upsilon f)).1) := by
   unfold upsilonSubmodule
-  exact Classical.choose_spec
-    (orthogonal_projection_iff.mpr
-    (And.comm.mp
-    (ContinuousLinearMap.isOrthogonalProjection_iff'.mp
-      ((quantumGraphReal_iff_Upsilon_toBimodule_orthogonalProjection gns).mp hf))))
+  grind
 
 theorem QuantumGraph.Real.upsilonOrthogonalProjection' {f : A →ₗ[ℂ] A}
   (gns : hA.k = 0)

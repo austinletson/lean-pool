@@ -25,21 +25,7 @@ open V0ExtModel V0Model BASICModel
 lemma carry_comm : ∀ {X Y : str}, ∀ {i : num}, Carry i X Y ↔ Carry i Y X := by
   intro X Y i
   unfold Carry
-  constructor
-  · intro h
-    obtain ⟨k, hk_lt_i, hkX, hkY, hkprop⟩ := h
-    refine ⟨k, hk_lt_i, hkY, hkX, ?_⟩
-    intro j hj_lt_i hk_lt_j
-    rcases hkprop j hj_lt_i hk_lt_j with hjX | hjY
-    · exact Or.inr hjX
-    · exact Or.inl hjY
-  · intro h
-    obtain ⟨k, hk_lt_i, hkY, hkX, hkprop⟩ := h
-    refine ⟨k, hk_lt_i, hkX, hkY, ?_⟩
-    intro j hj_lt_i hk_lt_j
-    rcases hkprop j hj_lt_i hk_lt_j with hjY | hjX
-    · exact Or.inr hjY
-    · exact Or.inl hjX
+  grind
 
 lemma mem_add_iff_xor : ∀ {X Y : str}, ∀ {i : num},
     i ∈ X + Y ↔ Xor (Xor (i ∈ X) (i ∈ Y)) (Carry i X Y) := by
@@ -64,8 +50,7 @@ theorem str_add_comm : ∀ {X Y : str}, X + Y = Y + X := by
   rw [mem_add_iff_xor (X := X) (Y := Y) (i := i)]
   rw [mem_add_iff_xor (X := Y) (Y := X) (i := i)]
   rw [carry_comm (X := X) (Y := Y) (i := i)]
-  unfold Xor
-  tauto
+  grind
 
 /-- Named alias emphasizing that this theorem is conditional on the strengthened V0 extension. -/
 theorem str_add_comm_strengthened_v0 : ∀ {X Y : str}, X + Y = Y + X :=

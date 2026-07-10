@@ -245,9 +245,7 @@ theorem eq01_natPartrec : Nat.Partrec eq01 := by
       simpa using
         (Computable.cond (c := fun p : ℕ => decide ((Nat.unpair p).1 = (Nat.unpair p).2))
           (f := fun _ : ℕ => (0 : ℕ)) (g := fun _ : ℕ => (1 : ℕ)) hdec h0 h1)
-    refine Computable.of_eq hcond ?_
-    intro p
-    by_cases h : (Nat.unpair p).1 = (Nat.unpair p).2 <;> simp [h]
+    grind
   have hpart : _root_.Partrec eq01 := by
     refine _root_.Partrec.of_eq (Computable.partrec hcomp) ?_
     intro p
@@ -379,9 +377,7 @@ theorem RecursiveIn_cond {O : Set (ℕ →. ℕ)} {c : ℕ → Bool} {f g : ℕ 
   have hr : RecursiveIn O
       (fun n => Nat.rfind (fun k => (fun m => m = 0) <$> cmp (Nat.pair n k))) :=
     RecursiveIn.rfind hcmp
-  refine RecursiveIn.of_eq hr ?_
-  intro n
-  simpa using congrArg (fun h => h n) hEq
+  grind
 
 theorem turingJoin_recursiveIn_pair (f g : ℕ →. ℕ) :
     RecursiveIn ({f, g} : Set (ℕ →. ℕ)) (f ⊕ g) := by
@@ -432,12 +428,7 @@ theorem join_le (f g h : ℕ →. ℕ) (hf : TuringReducible f h) (hg : TuringRe
   have hj : RecursiveIn ({f, g} : Set (ℕ →. ℕ)) (f ⊕ g) := turingJoin_recursiveIn_pair f g
   have hO : ∀ k, k ∈ ({f, g} : Set (ℕ →. ℕ)) →
       RecursiveIn ({h} : Set (ℕ →. ℕ)) k := by
-    intro k hk
-    have hk' : k = f ∨ k = g := by
-      simpa [Set.mem_insert_iff, Set.mem_singleton_iff] using hk
-    rcases hk' with hkf | hkg
-    · simpa [hkf] using hf
-    · simpa [hkg] using hg
+    grind
   exact RecursiveIn_subst (O := ({f, g} : Set (ℕ →. ℕ))) (O' := ({h} : Set (ℕ →. ℕ)))
     (f := (f ⊕ g)) hj hO
 

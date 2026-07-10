@@ -185,8 +185,7 @@ theorem upperTriGL_mem_doubleCoset (a : Fin n → ℕ) (hpos : ∀ i, 0 < a i)
       ((a i : ℤ) : ℚ) * ((unipMat n a hdiv B i j : ℤ) : ℚ)
     simp only [upperTriMat, unipMat]
     split_ifs <;> push_cast <;> ring
-  · intro k _ hk
-    simp [Ne.symm hk]
+  · grind
   · intro h; exact absurd (Finset.mem_univ i) h
 
 /-- For `k ≠ j` and columns `< j` already identity-like, the product `σ i k * M₂ k j`
@@ -204,14 +203,10 @@ private lemma coset_sum_eq {a : Fin n → ℕ} {hdiv : DivChain n a}
       if k = i ∧ i < j then M₂ i j else 0 := by
     intro k hkj
     rcases lt_or_ge k j with hkj' | hkj'
-    · rw [ih k (by exact_mod_cast hkj') i]
-      rcases eq_or_ne i k with rfl | hik
-      · simp [hkj']
-      · simp [hik, show k ≠ i from fun h => hik h.symm]
+    · grind
     · have hjk : j < k := lt_of_le_of_ne hkj' (Ne.symm hkj)
       have hM₂ : M₂ k j = 0 := upperTriMat_apply_gt n a hdiv B₂ hjk
-      simp [hM₂, show ¬(k = i ∧ i < j) from
-        fun ⟨hki, hilj⟩ => not_lt.mpr (le_of_lt (hki ▸ hjk)) hilj]
+      grind
   rw [← Finset.sum_erase_add (f := fun k => σ.val i k * M₂ k j)
     Finset.univ (Finset.mem_univ j),
     show M₂ j j = (a j : ℤ) from upperTriMat_apply_diag n a hdiv B₂ j]
@@ -222,13 +217,9 @@ private lemma coset_sum_eq {a : Fin n → ℕ} {hdiv : DivChain n a}
     rw [Finset.sum_eq_single_of_mem i
         (Finset.mem_erase.mpr ⟨Fin.ne_of_lt hij, Finset.mem_univ i⟩)]
     · rw [h_sum_rest i (Fin.ne_of_lt hij)]; simp [hij]
-    · intro k hk hki
-      rw [Finset.mem_erase] at hk; rw [h_sum_rest k hk.1]
-      simp [show ¬(k = i ∧ i < j) from fun ⟨h, _⟩ => hki h]
+    · grind
   · simp only [hij, ite_false]
-    apply Finset.sum_eq_zero; intro k hk
-    rw [Finset.mem_erase] at hk; rw [h_sum_rest k hk.1]
-    simp [show ¬(k = i ∧ i < j) from fun ⟨_, h⟩ => hij h]
+    apply Finset.sum_eq_zero; grind
 
 /-- When `i < j`, the entry `σ i j` must be zero: the bounded difference of `B₁` and `B₂`
     cannot absorb a nonzero integer multiple of `a_j / a_i`. -/
@@ -250,19 +241,14 @@ private lemma coset_entry_zero_of_lt {a : Fin n → ℕ} {hpos : ∀ i, 0 < a i}
   have h_cancel : σ.val i j * (q : ℤ) =
       ((B₁ ⟨(i, j), hij⟩ : ℕ) : ℤ) - ((B₂ ⟨(i, j), hij⟩ : ℕ) : ℤ) := by
     apply mul_left_cancel₀ h_ai_ne
-    rw [← mul_assoc, mul_comm (a i : ℤ) (σ.val i j), mul_assoc, ← h_aj_eq]
-    linarith
+    grind
   have h1 : ((B₁ ⟨(i, j), hij⟩ : ℕ) : ℤ) < (q : ℤ) := by exact_mod_cast (B₁ ⟨(i, j), hij⟩).isLt
   have h2 : ((B₂ ⟨(i, j), hij⟩ : ℕ) : ℤ) < (q : ℤ) := by exact_mod_cast (B₂ ⟨(i, j), hij⟩).isLt
   by_contra hσ_ne
   have h_abs : (q : ℤ) ≤ |σ.val i j * (q : ℤ)| := by
     rw [abs_mul, abs_of_nonneg (by omega : (q : ℤ) ≥ 0)]
     exact le_mul_of_one_le_left (by omega) (Int.one_le_abs hσ_ne)
-  rw [h_cancel] at h_abs
-  rcases le_or_gt ((B₁ ⟨(i, j), hij⟩ : ℕ) : ℤ)
-    ((B₂ ⟨(i, j), hij⟩ : ℕ) : ℤ) with h | h
-  · rw [abs_of_nonpos (by omega)] at h_abs; omega
-  · rw [abs_of_pos (by omega)] at h_abs; omega
+  grind
 
 /-- Distinct entry assignments give distinct left cosets of `SL_n(ℤ)`. -/
 theorem upperTriMat_distinct_cosets (a : Fin n → ℕ)

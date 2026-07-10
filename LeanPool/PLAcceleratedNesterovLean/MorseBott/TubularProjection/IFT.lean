@@ -84,8 +84,7 @@ private lemma contDiff_adjoint
       (ContinuousLinearMap.adjoint : (F₁ →L[ℝ] F₂) → (F₂ →L[ℝ] F₁)) :=
   IsBoundedLinearMap.contDiff {
     map_add := fun A B => by
-      ext x; exact ext_inner_left ℝ fun y => by
-        simp only [map_add, add_apply]
+      grind
     map_smul := fun c A => by
       ext x; exact ext_inner_left ℝ fun y => by
         simp only [map_smul, smul_apply]
@@ -163,8 +162,7 @@ lemma optimalityEqn_partial_v_eq_neg_id
       · rfl
       · funext v
         rfl
-      · ext v
-        simp
+      · grind
     exact h_vE.neg.congr_of_eventuallyEq (Filter.Eventually.of_forall fun v => by
       change (0 : E) - (v : E) - (φ v : E) = -((v : E) + (φ v : E)); abel)
   have hterm1 : HasFDerivAt
@@ -254,14 +252,7 @@ lemma localMin_sq_dist_implies_optimalityEqn
     have h3 := ((hasFDerivAt_const r v').sub h1).sub h2
     have : (0 : V →L[ℝ] E) - ιV - ιW.comp Dφ = res' :=
       ContinuousLinearMap.ext fun w => by
-        simp only [zero_sub,
-          FunLike.coe_sub,
-          ContinuousLinearMap.coe_comp,
-          Pi.sub_apply,
-          neg_apply,
-          Function.comp_apply, neg_add_rev,
-          add_apply, res']
-        abel
+        grind
     rwa [this] at h3
   have hg_fda : HasFDerivAt g (2 • (innerSL ℝ (res v')).comp res') v' :=
     hres_fda.norm_sq
@@ -433,8 +424,7 @@ lemma tubularProj_contDiffAt_S {S U : Set E}
   have hF_partial_inv :
       (fderiv ℝ (optimalityEqn φ m) (0, (0 : V)) ∘L
         ContinuousLinearMap.inr ℝ E V).IsInvertible := by
-    rw [hF_fda.fderiv]
-    exact hF_right_inv
+    grind
   -- ── Step 4: IFT gives C¹ implicit function ──
   set v_impl := hF_cda.implicitFunction one_ne_zero hF_partial_inv with hv_impl_def
   set v_star : E → V := fun y => v_impl (y - m) with hv_def
@@ -507,16 +497,7 @@ lemma tubularProj_contDiffAt_S {S U : Set E}
   have hπ_eq_χ : π =ᶠ[𝓝 m] χ := by
     filter_upwards [hU_open.mem_nhds hm_U, hπ_near_m, h_uniq_pulled,
         h_opt_near, h_chart_repr] with y hy_U hπ_ball h_uniq h_opt h_repr
-    set w_y := V.orthogonalProjectionOnto (π y - m) with hw_def
-    have h_solve : optimalityEqn φ m (y - m, w_y) = 0 := h_opt hy_U hπ_ball
-    have h_eq_base : optimalityEqn φ m (y - m, w_y) =
-        optimalityEqn φ m (0, (0 : V)) := by rw [h_solve, hF_zero]
-    have h_impl_eq : v_impl (y - m) = w_y := by
-      simpa [Prod.fst, Prod.snd] using h_uniq.mp h_eq_base
-    have hπ_chart := h_repr hy_U hπ_ball
-    change π y = m + (v_star y : E) + (φ (v_star y) : E)
-    change π y = m + (v_impl (y - m) : E) + (φ (v_impl (y - m)) : E)
-    rw [h_impl_eq]; exact hπ_chart
+    grind
   -- ── Step 7: Transfer C¹ from χ to π ──
   exact hχ_cd.congr_of_eventuallyEq hπ_eq_χ
 

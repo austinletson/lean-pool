@@ -212,8 +212,7 @@ theorem angle_eq_of_opp_side (v0 vi vj : EuclideanSpace ℝ (Fin 2)) (h0 : v0 �
   refine Real.injOn_cos ⟨InnerProductGeometry.angle_nonneg _ _,
     InnerProductGeometry.angle_le_pi _ _⟩ ⟨?_, ?_⟩ hcos
   · rw [sub_nonneg, abs_le]; constructor <;> linarith
-  · have : 0 ≤ |π - x| := abs_nonneg _
-    linarith
+  · grind
 
 open RealInnerProductSpace in
 /-- **Step B (flanking wedge).** If `vᵢ, vⱼ` are on opposite sides of `v₀` with angle sum
@@ -225,11 +224,7 @@ theorem angle_lt_of_opp_side_of_sum_gt (v0 vi vj : EuclideanSpace ℝ (Fin 2)) (
     (hsum : 5 * π / 3 < InnerProductGeometry.angle v0 vi + InnerProductGeometry.angle v0 vj) :
     InnerProductGeometry.angle vi vj < π / 3 := by
   rw [angle_eq_of_opp_side v0 vi vj h0 hi hj hopp]
-  have hpi := Real.pi_pos
-  have hnp : π - (InnerProductGeometry.angle v0 vi + InnerProductGeometry.angle v0 vj) ≤ 0 := by
-    linarith
-  rw [abs_of_nonpos hnp]
-  linarith
+  grind
 
 /-! ## The packing core (real-number form) -/
 
@@ -251,10 +246,7 @@ theorem not_four_in_interval (θ : Fin 4 → ℝ) (a : ℝ) (hmem : ∀ i, θ i 
   have g0 := gap 0 1 (by decide) (by decide)
   have g1 := gap 1 2 (by decide) (by decide)
   have g2 := gap 2 3 (by decide) (by decide)
-  have hb0 := (Set.mem_Icc.mp (hmem (σ 0))).1
-  have hb3 := (Set.mem_Icc.mp (hmem (σ 3))).2
-  have hpi := Real.pi_pos
-  linarith
+  grind
 
 /-- **At most 2 reals in an interval of length `2π/3` can be pairwise more than `π/3` apart.** Three
 are impossible: sorting, the two consecutive gaps each exceed `π/3` so sum to `> 2π/3`, but the span
@@ -274,10 +266,7 @@ theorem not_three_in_interval (θ : Fin 3 → ℝ) (a : ℝ)
     rwa [abs_sub_comm, abs_of_nonneg (sub_nonneg.2 hmle)] at this
   have g0 := gap 0 1 (by decide) (by decide)
   have g1 := gap 1 2 (by decide) (by decide)
-  have hb0 := (Set.mem_Icc.mp (hmem (σ 0))).1
-  have hb2 := (Set.mem_Icc.mp (hmem (σ 2))).2
-  have hpi := Real.pi_pos
-  linarith
+  grind
 
 /-- The reduced angle `|(↑Δ).toReal|` never exceeds `|Δ|`: reducing modulo `2π` into `(-π,π]` can
 only shrink the magnitude (or keep it, when `|Δ| ≤ π`). -/
@@ -317,21 +306,14 @@ theorem not_six_circular (θ : Fin 6 → ℝ)
     intro i j hle hne
     have hm : θ (σ i) ≤ θ (σ j) := hmono hle
     have hs := hsep (σ i) (σ j) (hinj.ne hne)
-    have heq : |θ (σ i) - θ (σ j)| = θ (σ j) - θ (σ i) := by
-      rw [abs_sub_comm, abs_of_nonneg (by linarith)]
-    have := (lt_min_iff.mp hs).1
-    rwa [heq] at this
+    grind
   have g01 := gap 0 1 (by decide) (by decide)
   have g12 := gap 1 2 (by decide) (by decide)
   have g23 := gap 2 3 (by decide) (by decide)
   have g34 := gap 3 4 (by decide) (by decide)
   have g45 := gap 4 5 (by decide) (by decide)
   have hw := hsep (σ 5) (σ 0) (hinj.ne (by decide))
-  have hmono50 : θ (σ 0) ≤ θ (σ 5) := hmono (by decide)
-  have heqw : |θ (σ 5) - θ (σ 0)| = θ (σ 5) - θ (σ 0) := abs_of_nonneg (by linarith)
-  have hwrap := (lt_min_iff.mp hw).2
-  rw [heqw] at hwrap
-  linarith
+  grind
 
 /-- **At most 5 vectors in the plane can be pairwise more than `π/3` apart.** Six nonzero vectors
 of `ℝ²` cannot be pairwise `> π/3` apart: assigning each a circular coordinate
@@ -422,15 +404,8 @@ theorem card_image_le_five_of_record_assignment {ι : Type*} (s : Finset ι) (va
       obtain ⟨a, ha, rfl⟩ := Finset.mem_image.mp hv
       obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp ha
       exact hne i hi
-    · intro v hv u hu hvu
-      obtain ⟨a, ha, rfl⟩ := Finset.mem_image.mp hv
-      obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp ha
-      obtain ⟨b, hb, rfl⟩ := Finset.mem_image.mp hu
-      obtain ⟨j, hj, rfl⟩ := Finset.mem_image.mp hb
-      refine hsep i hi j hj (fun h => hvu ?_)
-      rw [h]
-  rw [hcard_eq] at hle
-  exact hle
+    · grind
+  grind
 
 open RealInnerProductSpace in
 /-- **Step A: at most 3 vectors can be on one side of `v₀` and pairwise `> π/3`.** Four nonzero
@@ -537,9 +512,7 @@ theorem exists_pos_det2 (v0 : EuclideanSpace ℝ (Fin 2)) (w : Fin 4 → Euclide
   obtain ⟨t, hts, htc⟩ := Finset.exists_subset_card_eq hneg
   set e := (t.equivFinOfCardEq htc).symm with he
   have hnegi : ∀ i : Fin 3, det2 v0 (w (e i : Fin 4)) < 0 := by
-    intro i
-    have := hts (e i).2
-    simp only [Finset.mem_filter] at this; exact this.2
+    grind
   exact not_three_same_side v0 (fun i => w (e i : Fin 4)) h0 (fun i => hw _)
     (fun i j => mul_pos_of_neg_of_neg (hnegi i) (hnegi j)) (fun i => hbeta _)
     (fun i j hij => hsep _ _ (fun heq => hij (e.injective (Subtype.ext heq))))
@@ -572,9 +545,7 @@ theorem exists_neg_det2 (v0 : EuclideanSpace ℝ (Fin 2)) (w : Fin 4 → Euclide
   obtain ⟨t, hts, htc⟩ := Finset.exists_subset_card_eq hpos3
   set e := (t.equivFinOfCardEq htc).symm with he
   have hposi : ∀ i : Fin 3, 0 < det2 v0 (w (e i : Fin 4)) := by
-    intro i
-    have := hts (e i).2
-    simp only [Finset.mem_filter] at this; exact this.2
+    grind
   exact not_three_same_side v0 (fun i => w (e i : Fin 4)) h0 (fun i => hw _)
     (fun i j => mul_pos (hposi i) (hposi j)) (fun i => hbeta _)
     (fun i j hij => hsep _ _ (fun heq => hij (e.injective (Subtype.ext heq))))

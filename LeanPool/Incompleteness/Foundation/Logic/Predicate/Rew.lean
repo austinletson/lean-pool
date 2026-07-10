@@ -305,8 +305,7 @@ lemma positive_iff {t : Semiterm L ξ (n + 1)} : t.Positive ↔ ∃ t', t = bShi
         choose w hw using this
         exact ⟨func f w, by
           simp only [Rew.func, func.injEq, heq_eq_eq, true_and]
-          funext i
-          exact hw i⟩,
+          grind⟩,
    by rintro ⟨t', rfl⟩; exact bShift_positive t'⟩
 
 @[simp] lemma leftConcat_bShift_comp_bvar :
@@ -488,8 +487,7 @@ lemma q_toS :
   ext x
   · cases x using Fin.cases
     · rfl
-    · rename_i i
-      exact Fin.elim0 i
+    · grind
   · rfl
 
 @[simp] lemma qpow_castLE {n n'} (h : n ≤ n') :
@@ -504,8 +502,7 @@ lemma q_embSubsts (w : Fin k → Semiterm L ξ n) :
     (embSubsts w).q = embSubsts (#0 :> bShift ∘ w) := by
       ext x
       · cases x using Fin.cases <;> simp
-      · simp only [q_fvar, Nat.succ_eq_add_one]
-        exact Empty.elim x
+      · grind
 
 end «lp_section_13»
 
@@ -624,8 +621,7 @@ lemma shift_comp_substs1 (t : SyntacticSemiterm L n₂) :
   ext x
   · cases x using Fin.cases
     · simp only [comp_app, substs_bvar, shift_bvar, Matrix.cons_val_fin_one]
-    · rename_i i
-      exact Fin.elim0 i
+    · grind
   · rfl
 
 @[simp] lemma rewrite_comp_emb {o : Type v₁} [e : IsEmpty o] (f : ξ₂ → Semiterm L ξ₃ n) :
@@ -873,10 +869,7 @@ lemma «fvar?_rew» [DecidableEq ξ₁] [DecidableEq ξ₂]
     intro h; right; exact ⟨z, by simp [h]⟩
   case func k F v ih =>
     simp only [Rew.func, fvar?_func, forall_exists_index]
-    intro i hx
-    rcases ih i hx with (h | ⟨z, hi, hz⟩)
-    · left; exact h
-    · right; exact ⟨z, ⟨i, hi⟩, hz⟩
+    grind
 
 @[simp] lemma «fvar?_bShift» [DecidableEq ξ] {t : Semiterm L ξ n} {x} :
     (Rew.bShift t).FVar? x ↔ t.FVar? x := by

@@ -39,11 +39,9 @@ theorem Config.join_n2_n2_interweaved {S : Finset α} {n : ℕ} {c1 : List α}
   have p_in_S : p ∈ S := c1_in_S p (by rw [eq_c1]; simp)
   have r_in_S : r ∈ S := c2_in_S r (by rw [eq_c2]; simp)
   have hc2d_head : x ∈ c2.dropLast.head? := by
-    rw [eq_c2, show (x :: c2') ++ [r] = x :: (c2' ++ [r]) by simp,
-      List.dropLast_cons_of_ne_nil (by simp), List.head?_cons]; rfl
+    grind
   have hc1t_last : x ∈ c1.tail.getLast? := by
-    rw [eq_c1, show (p :: c1') ++ [x] = p :: (c1' ++ [x]) by simp, List.tail_cons,
-      List.getLast?_concat]; rfl
+    grind
   refine ⟨p, x, x, r, ⟨p_lt_x, le_refl x, x_lt_r⟩, ?_, ?_⟩
   · -- HasLaced (n+2) S p x
     have hp : C.NCup 1 [p] := by simp

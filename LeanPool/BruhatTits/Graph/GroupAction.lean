@@ -188,8 +188,7 @@ lemma pow_smul_range_eq_range_iff {ι : Type*} [Finite ι] [Nonempty ι] {ϖ : R
     simp only [Pi.single_eq_same] at this
     change (z i).val = ϖ.val ^ n at this
     have : ϖ.val ^ n ∈ R := by
-      rw [← this]
-      exact (z i).property
+      grind
     rw [irreducible_zpow_mem_subring_iff _ hϖ] at this
     omega
 

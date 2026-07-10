@@ -73,22 +73,12 @@ private lemma filter_yielding_singleton_attach_sum {m : ℕ} {R V : Type*} [Semi
     f ⟨m, m.lt_add_one⟩ • v := by
   have singlet : Finset.univ.filter (fun i : Fin m.succ => ¬(i.val < m)) =
       {⟨m, m.lt_add_one⟩} := by
-    rw [Finset.ext_iff]
-    intro i
-    constructor <;> rw [Finset.mem_singleton, Finset.mem_filter] <;> intro hi
-    · have him := hi.right
-      push Not at him
-      exact le_antisymm (Nat.le_of_lt_succ i.isLt) him
-    · refine ⟨Finset.mem_univ i, ?_⟩
-      rw [hi]
-      push Not
-      rfl
+    grind
   rw [singlet, Finset.sum_attach _ (fun j : Fin m.succ => f j • v), Finset.sum_singleton]
 
 private lemma impossible_index {m : ℕ} {i : Fin m.succ} (hi : ¬(i.val < m))
     (i_neq_m : i ≠ ⟨m, m.lt_add_one⟩) : False := by
-  push Not at hi
-  exact i_neq_m (le_antisymm (Fin.succ_le_succ_iff.→ i.isLt) hi)
+  grind
 
 variable {R V W : Type*}
 
@@ -169,8 +159,7 @@ lemma industepFarkasBartl {m : ℕ} [DivisionRing R] [LinearOrder R] [IsStrictOr
       else if hiM : i = M then
         rw [hiM, hAA, Pi.zero_apply]
       else
-        exfalso
-        exact impossible_index hi hiM
+        grind
     have hbAb : ∀ w : W,
         0 ≤ (withoutLastMap A - (A · M • withoutLastMap A y)) w → 0 ≤ (b - (A · M • b y)) w := by
       simpa using hbA

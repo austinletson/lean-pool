@@ -108,8 +108,7 @@ theorem pac_bayes_per_hypothesis {X : Type u} [MeasurableSpace X]
       have ht_sq_zero : Real.log (1 / (P.prob h₀ * δ)) / (2 * ↑m) = 0 := by
         rwa [Real.sqrt_eq_zero h_quot_nonneg] at ht_pos_case
       have h_log_zero : Real.log (1 / (P.prob h₀ * δ)) = 0 := by
-        by_contra h_ne
-        exact absurd (div_ne_zero h_ne (ne_of_gt h_denom_pos)) (not_not.mpr ht_sq_zero)
+        grind
       have h_le : 1 / (P.prob h₀ * δ) ≤ 1 := by
         by_contra h_not_le
         push Not at h_not_le
@@ -119,8 +118,7 @@ theorem pac_bayes_per_hypothesis {X : Type u} [MeasurableSpace X]
         push Not at h_not_ge
         have := Real.log_neg (by linarith [h_inv_pos]) h_not_ge
         linarith [h_log_nonneg]
-      have h_inv_eq_one : 1 / (P.prob h₀ * δ) = 1 := le_antisymm h_le h_ge
-      rw [div_eq_one_iff_eq (ne_of_gt hPδ_pos)] at h_inv_eq_one; linarith
+      grind
     calc μ { S | TrueErrorReal X (hs h₀) c D >
             EmpiricalError X Bool (hs h₀) (fun i => (S i, c (S i)))
               (zeroOneLoss Bool) + t }
@@ -137,9 +135,7 @@ theorem pac_bayes_per_hypothesis {X : Type u} [MeasurableSpace X]
           EmpiricalError X Bool (hs h₀) (fun i => (S i, c (S i))) (zeroOneLoss Bool) + t }
       ⊆ { xs : Fin m → X | EmpiricalError X Bool (hs h₀) (fun i => (xs i, c (xs i)))
           (zeroOneLoss Bool) ≤ TrueErrorReal X (hs h₀) c D - t } := by
-      intro xs hxs
-      simp only [Set.mem_setOf_eq] at hxs ⊢
-      linarith
+      grind
     -- Measurability for Hoeffding
     have hmeas : MeasurableSet {x : X | hs h₀ x ≠ c x} :=
       (measurableSet_eq_fun (hhs_meas h₀) hc_meas).compl
@@ -299,9 +295,7 @@ private lemma jensen_sqrt_finpmf {H : Type*} [Fintype H]
     linarith
   have h_expand_term : ∀ h : H, Q.prob h * (Real.sqrt (f h) - c) ^ 2 =
       Q.prob h * f h - 2 * Q.prob h * Real.sqrt (f h) * c + Q.prob h * c ^ 2 := by
-    intro h
-    have hsq : Real.sqrt (f h) * Real.sqrt (f h) = f h := Real.mul_self_sqrt (hf h)
-    nlinarith [sq_nonneg (Real.sqrt (f h) - c), Q.prob_nonneg h, sq_nonneg c, hsq]
+    grind
   have h_sum_qf : ∑ h : H, Q.prob h * (Real.sqrt (f h) - c) ^ 2 =
       ∑ h : H, (Q.prob h * f h - 2 * Q.prob h * Real.sqrt (f h) * c + Q.prob h * c ^ 2) := by
     congr 1; ext h; exact h_expand_term h
@@ -315,8 +309,7 @@ private lemma jensen_sqrt_finpmf {H : Type*} [Fintype H]
   have h_sum_tail : ∑ h : H, Q.prob h * c ^ 2 = c ^ 2 := by
     simp_rw [show ∀ h : H, Q.prob h * c ^ 2 = c ^ 2 * Q.prob h from fun h => by ring]
     rw [← Finset.mul_sum, Q.prob_sum_one, mul_one]
-  rw [h_sum_mid, h_sum_tail] at h_var_nonneg
-  linarith [sq_nonneg c]
+  grind
 
 /-- Auxiliary: on the good event from pac_bayes_all_hypotheses, the Gibbs bound holds
     for any posterior Q. This is the deterministic core of the PAC-Bayes bound. -/
@@ -381,20 +374,7 @@ private lemma gibbs_bound_of_pointwise {X : Type u} [MeasurableSpace X]
     simp_rw [h_split, Finset.sum_add_distrib]
     congr 1
     rw [← Finset.sum_mul, Q.prob_sum_one, one_mul]
-  have h_sqrt_eq : Real.sqrt (∑ h : H, Q.prob h * g h) =
-      Real.sqrt ((crossEntropyFinitePMF Q P + Real.log (1 / δ)) / (2 * ↑m)) := by
-    rw [h_sum_g]
-  calc ∑ h : H, Q.prob h * TrueErrorReal X (hs h) c D
-      ≤ ∑ h : H, Q.prob h * EmpiricalError X Bool (hs h) (fun i => (S i, c (S i)))
-          (zeroOneLoss Bool) +
-        ∑ h : H, Q.prob h * Real.sqrt (g h) := h_step1
-    _ ≤ ∑ h : H, Q.prob h * EmpiricalError X Bool (hs h) (fun i => (S i, c (S i)))
-          (zeroOneLoss Bool) +
-        Real.sqrt (∑ h : H, Q.prob h * g h) := by linarith [h_jensen]
-    _ = ∑ h : H, Q.prob h * EmpiricalError X Bool (hs h) (fun i => (S i, c (S i)))
-          (zeroOneLoss Bool) +
-        Real.sqrt ((crossEntropyFinitePMF Q P + Real.log (1 / δ)) / (2 * ↑m)) := by
-        rw [h_sqrt_eq]
+  grind
 
 /-- McAllester's PAC-Bayes bound (finite hypothesis class, union-bound version).
 

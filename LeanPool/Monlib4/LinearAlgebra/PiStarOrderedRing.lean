@@ -59,8 +59,7 @@ theorem AddSubmonoid.piOfPi {ι : Type _} {B : ι → Type _} [DecidableEq ι] [
   · intro hx j
     by_cases hj : j = i
     · rw [hj, Pi.single_eq_same]
-      intro _
-      exact hx
+      grind
     · simp [Pi.single_eq_of_ne hj, (h j).zero_mem]
 
 theorem Set.ofPi_mem' {ι : Type _} {B : ι → Type _} [DecidableEq ι] [∀ i, AddZeroClass (B i)]

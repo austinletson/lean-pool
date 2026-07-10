@@ -175,8 +175,7 @@ def _root_.VirasoroProject.LieOneCochain.bdryHom :
     ext
     · rfl
     · change Z.2 + W.2 + β (Z.1 + W.1) = Z.2 + β Z.1 + (W.2 + β W.1)
-      simp only [map_add]
-      ac_rfl
+      grind
   map_smul' c Z := by
     ext
     · rfl

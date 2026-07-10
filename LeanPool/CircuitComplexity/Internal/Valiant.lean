@@ -70,8 +70,7 @@ edge-count set. -/
 private lemma zero_mem_canonicalLabel_set (G : Digraph V) (v : V) :
     (0 : ℕ) ∈ { n | ∃ p : Fin (n + 1) → V, G.IsSimplePath p ∧ p (Fin.last n) = v } := by
   refine ⟨fun _ => v, ⟨fun i h => by omega, ?_⟩, rfl⟩
-  intro a b _
-  exact Fin.ext (by omega)
+  intro a b grind
 
 /-- Every canonical label is at least `1`: immediate from the outer
 `+ 1` in the definition. -/
@@ -98,8 +97,7 @@ private lemma canonicalLabel_sub_one_lt_two_pow
     (G : Digraph V) (hac : IsAcyclic G) {k : ℕ} (hd : G.depth ≤ 2 ^ k)
     (v : V) : G.canonicalLabel v - 1 < 2 ^ k := by
   have h1 := (canonicalLabel_le_depth G hac v).trans hd
-  have h2 := one_le_canonicalLabel G v
-  omega
+  grind
 
 omit [Fintype V] in
 /-- **Cycle contradiction.** A simple path `p` of length `m` ending at `u`,
@@ -132,36 +130,13 @@ private lemma not_acyclic_of_cycle_witness
   by_cases hwrap : k.val % (m - iv.val) + 1 = m - iv.val
   · have h_next : (k.val + 1) % (m - iv.val) = 0 := by
       rw [h_add_mod, hwrap, Nat.mod_self]
-    have h_a_eq : k.val % (m - iv.val) = m - iv.val - 1 := by omega
-    have hu_eq : p ⟨iv.val + k.val % (m - iv.val), h_bnd k.val⟩ = u := by
-      have hval : iv.val + k.val % (m - iv.val) = iu.val := by omega
-      rw [show (⟨iv.val + k.val % (m - iv.val), h_bnd k.val⟩ : Fin m) = iu from
-        Fin.ext hval, hpu]
-    have hv_eq : p ⟨iv.val + (k.val + 1) % (m - iv.val), h_bnd (k.val + 1)⟩ = v := by
-      have : (⟨iv.val + (k.val + 1) % (m - iv.val), h_bnd (k.val + 1)⟩ : Fin m) = iv := by
-        apply Fin.ext
-        change iv.val + (k.val + 1) % (m - iv.val) = iv.val
-        rw [h_next]; rfl
-      rw [this, hpv]
-    change G.Adj (p ⟨iv.val + k.val % (m - iv.val), h_bnd k.val⟩)
-               (p ⟨iv.val + (k.val + 1) % (m - iv.val), h_bnd (k.val + 1)⟩)
-    rw [hu_eq, hv_eq]
-    exact huv
+    grind
   · have hlt : k.val % (m - iv.val) + 1 < m - iv.val := by omega
     have h_next : (k.val + 1) % (m - iv.val) = k.val % (m - iv.val) + 1 := by
       rw [h_add_mod, Nat.mod_eq_of_lt hlt]
     have hbnd2 : iv.val + k.val % (m - iv.val) + 1 < m := by omega
     have step := hpath ⟨iv.val + k.val % (m - iv.val), h_bnd k.val⟩ hbnd2
-    have h_target :
-        (⟨iv.val + (k.val + 1) % (m - iv.val), h_bnd (k.val + 1)⟩ : Fin m) =
-        ⟨iv.val + k.val % (m - iv.val) + 1, hbnd2⟩ := by
-      apply Fin.ext
-      change iv.val + (k.val + 1) % (m - iv.val) = iv.val + k.val % (m - iv.val) + 1
-      omega
-    change G.Adj (p ⟨iv.val + k.val % (m - iv.val), h_bnd k.val⟩)
-               (p ⟨iv.val + (k.val + 1) % (m - iv.val), h_bnd (k.val + 1)⟩)
-    rw [h_target]
-    exact step
+    grind
 
 omit [Fintype V] in
 /-- **Extending a simple path by an edge.** In an acyclic digraph, a
@@ -180,20 +155,12 @@ private lemma extend_simple_path (G : Digraph V) (hac : IsAcyclic G)
     dsimp only
     split_ifs with h₁ h₂
     · exact hpath ⟨k.val, h₁⟩ h₂
-    · have heq : (⟨k.val, h₁⟩ : Fin (n + 1)) = Fin.last n := by
-        apply Fin.ext; change k.val = n; omega
-      rw [heq, hpu]; exact huv
+    · grind
     · omega
     · omega
   · rintro ⟨a, ha⟩ ⟨b, hb⟩ hab
-    dsimp only at hab
-    split_ifs at hab with h₁ h₂ h₃
-    · apply Fin.ext; exact Fin.mk_eq_mk.mp (hinj hab)
-    · exact absurd hab (hv_notin ⟨a, h₁⟩)
-    · exact absurd hab.symm (hv_notin ⟨b, h₃⟩)
-    · apply Fin.ext; change a = b; omega
-  · change (if h : (Fin.last (n + 1)).val < n + 1 then _ else v) = v
-    simp [Fin.last]
+    grind
+  · grind
 
 /-- **Canonical labeling is legal in acyclic graphs.** Any simple path
 ending at `u` followed by the edge `(u,v)` is a strictly longer simple
@@ -224,16 +191,14 @@ private lemma legal_label_add_le
   intro k
   induction k with
   | zero =>
-    intro a _ _
-    rfl
+    grind
   | succ k ih =>
     intro a h₁ h₂
     have hak : a + k < m := by omega
     have ihk := ih a h₁ hak
     have stepl : ℓ (p ⟨a + k, hak⟩) < ℓ (p ⟨a + k + 1, h₂⟩) :=
       hℓ _ _ (hp ⟨a + k, hak⟩ h₂)
-    change ℓ (p ⟨a, h₁⟩) + (k + 1) ≤ ℓ (p ⟨a + k + 1, h₂⟩)
-    omega
+    grind
 
 /-- The label sequence along a directed walk under a legal labeling
 is strictly monotonic. -/
@@ -246,11 +211,7 @@ private lemma legal_label_strictMono
   have hjm : j.val < m := j.isLt
   have hd : i.val + (j.val - i.val) < m := by omega
   have key := legal_label_add_le hℓ hp (j.val - i.val) i.val i.isLt hd
-  have e2 : (⟨i.val + (j.val - i.val), hd⟩ : Fin m) = j :=
-    Fin.ext (show i.val + (j.val - i.val) = j.val by omega)
-  rw [show (⟨i.val, i.isLt⟩ : Fin m) = i from rfl, e2] at key
-  change ℓ (p i) < ℓ (p j)
-  omega
+  grind
 
 end LegalLabelHelpers
 
@@ -269,10 +230,7 @@ lemma depth_le_image_card (G : Digraph V)
     have hsubset :
         (Finset.univ : Finset (Fin m)).image (fun i => ℓ (p i)) ⊆
           Finset.univ.image ℓ := by
-      intro x hx
-      simp only [Finset.mem_image, Finset.mem_univ, true_and] at hx ⊢
-      obtain ⟨i, hi⟩ := hx
-      exact ⟨p i, hi⟩
+      grind
     have hcard :
         ((Finset.univ : Finset (Fin m)).image (fun i => ℓ (p i))).card = m := by
       rw [Finset.card_image_of_injective _ hinj, Finset.card_univ, Fintype.card_fin]
@@ -291,9 +249,7 @@ leftmost (MSB) bit at which they first disagree. -/
 private lemma testBit_eq_of_xor_testBit_false
     {x y m : ℕ} (hxor_m : (x ^^^ y).testBit m = false) :
     x.testBit m = y.testBit m := by
-  rw [Nat.testBit_xor] at hxor_m
-  cases hxb : x.testBit m <;> cases hyb : y.testBit m <;>
-    simp [hxb, hyb] at hxor_m <;> rfl
+  grind
 
 /-- `firstDifferBit k a b` is the 1-indexed MSB position at which the
 `k`-bit binary representations of `a` and `b` first disagree, or `0`
@@ -401,17 +357,11 @@ private lemma exists_r_subset_sum_le
   intro n
   induction n with
   | zero =>
-    intro s hs r hr
-    have hr0 : r = 0 := Nat.le_zero.mp hr
-    subst hr0
-    have : s = ∅ := Finset.card_eq_zero.mp hs
-    subst this
-    exact ⟨∅, Finset.empty_subset _, rfl, by simp⟩
+    grind
   | succ n' ih =>
     intro s hs r hr
     by_cases hr_eq : r = n' + 1
-    · subst hr_eq
-      exact ⟨s, Finset.Subset.refl _, hs, le_refl _⟩
+    · grind
     · have hr_lt : r ≤ n' := by omega
       have hs_ne : s.Nonempty := Finset.card_pos.mp (by rw [hs]; omega)
       obtain ⟨jmax, hjmax_mem, hjmax_max⟩ := s.exists_max_image a hs_ne
@@ -428,14 +378,7 @@ private lemma exists_r_subset_sum_le
         exact Finset.sum_le_card_nsmul I a (a jmax) hbound
       rw [hI_card] at hsumI_le
       rw [hsum_s]
-      have h_lhs_expand :
-          (n' + 1) * (∑ i ∈ I, a i) =
-            n' * (∑ i ∈ I, a i) + (∑ i ∈ I, a i) := by ring
-      have h_rhs_expand :
-          r * (∑ i ∈ s', a i + a jmax) = r * (∑ i ∈ s', a i) + r * a jmax := by ring
-      rw [h_lhs_expand, h_rhs_expand]
-      have hih_step : n' * (∑ i ∈ I, a i) ≤ r * (∑ i ∈ s', a i) := hI_le
-      omega
+      grind
 
 /-- **Averaging.** There is a choice of `r` levels whose total edge
 count is at most `r * S / k` (equivalently, `k * total ≤ r * S`). -/
@@ -450,9 +393,7 @@ lemma exists_r_levels_small
   obtain ⟨I, hI_sub, hI_card, hI_le⟩ :=
     exists_r_subset_sum_le (fun i => (levelEdges G k i).card)
       k (Finset.Ioc 0 k) hcard r hrk
-  refine ⟨I, hI_sub, hI_card, ?_⟩
-  rw [hsum] at hI_le
-  exact hI_le
+  grind
 
 /-- Restrict `x` to its `k` low bits, then zero out the bits at MSB
 positions `i ∈ I` (1-indexed; equivalently, LSB positions `k - i`). -/
@@ -468,8 +409,7 @@ private lemma sum_range_pow_two (n : ℕ) :
   | zero => simp
   | succ n ih =>
     rw [Finset.sum_range_succ, ih, pow_succ]
-    have h1 : 1 ≤ 2 ^ n := Nat.one_le_two_pow
-    omega
+    grind
 
 omit [Fintype V] [DecidableEq V] in
 /-- **Split the mask sum at a pivot.** For `j ∈ (Ioc 0 k) \ I`, the
@@ -491,14 +431,9 @@ private lemma maskOutI_split_at_pivot
     conv_lhs => rw [(Finset.insert_erase hj).symm]
     rw [Finset.sum_insert (Finset.notMem_erase _ _)]
   have h_filt_lt : (D.erase j).filter (· < j) = D.filter (· < j) := by
-    ext i
-    simp only [Finset.mem_filter, Finset.mem_erase]
-    refine ⟨fun ⟨⟨_, hD⟩, hlt⟩ => ⟨hD, hlt⟩, fun ⟨hD, hlt⟩ => ⟨⟨?_, hD⟩, hlt⟩⟩
-    omega
+    grind
   have h_filt_gt : (D.erase j).filter (fun i => ¬ i < j) = D.filter (j < ·) := by
-    ext i
-    simp only [Finset.mem_filter, Finset.mem_erase]
-    refine ⟨fun ⟨⟨_, hD⟩, hnlt⟩ => ⟨hD, ?_⟩, fun ⟨hD, hgt⟩ => ⟨⟨?_, hD⟩, ?_⟩⟩ <;> omega
+    grind
   rw [hmask, ← (Finset.sum_filter_add_sum_filter_not (D.erase j) (· < j) _),
       h_filt_lt, h_filt_gt]
   ring
@@ -516,25 +451,20 @@ private lemma maskOutI_sum_below_lt
       ∑ i ∈ Finset.Ioc j k, 2 ^ (k - i) := by
     refine le_trans (Finset.sum_le_sum (fun i _ => ?_))
       (Finset.sum_le_sum_of_subset_of_nonneg (fun i hi => ?_) (fun _ _ _ => Nat.zero_le _))
-    · split_ifs
-      · rfl
-      · exact Nat.zero_le _
-    · simp only [Finset.mem_filter, Finset.mem_Ioc] at hi ⊢
-      exact ⟨hi.2, (Finset.mem_Ioc.mp (Finset.mem_sdiff.mp hi.1).1).2⟩
+    · grind
+    · grind
   have h2 : (∑ i ∈ Finset.Ioc j k, (2 : ℕ) ^ (k - i)) = 2 ^ (k - j) - 1 := by
     rw [show (∑ i ∈ Finset.Ioc j k, (2:ℕ) ^ (k - i)) =
             ∑ m ∈ Finset.range (k - j), (2:ℕ) ^ m from ?_, sum_range_pow_two]
     apply Finset.sum_nbij (fun i => k - i)
     · intro i hi; simp only [Finset.mem_Ioc, Finset.mem_range] at hi ⊢; omega
     · intro a ha b hb hab
-      simp only [Finset.coe_Ioc, Set.mem_Ioc] at ha hb
-      dsimp at hab; omega
+      grind
     · intro m hm
       simp only [Finset.coe_range, Set.mem_Iio] at hm
       exact ⟨k - m, by simp only [Finset.coe_Ioc, Set.mem_Ioc]; omega, by dsimp; omega⟩
     · intros; rfl
-  have h3 : 0 < 2 ^ (k - j) := Nat.two_pow_pos _
-  omega
+  grind
 
 omit [Fintype V] [DecidableEq V] in
 /-- **Key legality.** If `x < y < 2 ^ k` and their first MSB disagreement
@@ -570,8 +500,7 @@ private lemma maskOutI_lt_of_firstDifferBit_not_mem
   rw [hy_bit_true] at hmask_y
   simp only [Bool.false_eq_true, if_false, add_zero, if_true] at hmask_x hmask_y
   have hlow_x_lt := maskOutI_sum_below_lt I hj_le x
-  rw [hmask_x, hmask_y, ← hup_eq]
-  omega
+  grind
 
 omit [DecidableEq V] in
 /-- **Image bound.** The image of `maskOutI k I` over any function `f : V → ℕ`
@@ -599,8 +528,7 @@ private lemma maskOutI_image_card_le
       (fun i => if (f v).testBit (k - i) then 2 ^ (k - i) else 0)).symm
   calc (Finset.univ.image (fun v => maskOutI k I (f v))).card
       = (Finset.univ.image (fun v => φ (gbar v))).card := by
-          apply congrArg Finset.card
-          exact Finset.image_congr (fun v _ => heq v)
+          grind
     _ = ((Finset.univ.image gbar).image φ).card := by
           rw [show (fun v => φ (gbar v)) = φ ∘ gbar from rfl, ← Finset.image_image]
     _ ≤ (Finset.univ.image gbar).card := Finset.card_image_le

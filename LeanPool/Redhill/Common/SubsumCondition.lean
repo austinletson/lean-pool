@@ -105,8 +105,7 @@ lemma StrongSSC.one_lt_natAbs_prod (ha : StrongSSC a) (hn : 3 ≤ n) : 1 < (∏ 
   simp_rw [mem_univ, true_and]
   contrapose! ha
   replace ha (i : Fin n) : a i = 1 ∨ a i = -1 := by
-    rw [← Int.natAbs_eq_natAbs_iff]
-    exact le_antisymm (ha _) (g _)
+    grind
   let nzn : NeZero n := ⟨by lia⟩
   obtain h | h | h : a 0 = a 1 ∨ a 1 = a 2 ∨ a 2 = a 0 := by grind [ha 0, ha 1, ha 2]
   all_goals
@@ -178,8 +177,7 @@ theorem of_sum_natAbs_lt (f : Fin k ↪ Fin n)
   specialize hf hs
   rw [← sum_add_sum_compl (univ.map f), Ne, add_eq_zero_iff_eq_neg', sum_map]
   suffices (∑ i ∉ univ.map f, b i * a i).natAbs ≠ (∑ i, b (f i) * a (f i)).natAbs by
-    contrapose this
-    rw [this, Int.natAbs_neg]
+    grind
   refine Int.natAbs_sum_le .. |>.trans (sum_le_sum fun i _ ↦ ?_) |>.trans_lt hf |>.ne
   cases b i <;> simp
 

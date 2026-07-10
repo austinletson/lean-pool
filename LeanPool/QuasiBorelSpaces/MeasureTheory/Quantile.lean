@@ -144,8 +144,7 @@ private lemma le_cdf_quantile (u μ) [IsProbabilityMeasure μ] : u ≤ cdf μ (q
   simp only [quantile]
   rw [MonotoneOn.map_sInf_of_continuousWithinAt (f := cdf μ)]
   · simp only [le_sInf_iff, Set.mem_image, Set.mem_setOf_eq, forall_exists_index, and_imp]
-    rintro j k h rfl
-    exact h
+    grind
   · have := cdf_continuous μ (sInf {r | u ≤ cdf μ r})
     apply ContinuousWithinAt.mono this
     intro j hj
@@ -176,8 +175,7 @@ lemma eq_quantile_volume
         simp only [Set.mem_setOf_eq, h]
     simp only [Set.preimage, Set.mem_Iic, lemma₁]
     have lemma₂ : {r : I | r ≤ cdf μ i} = Set.Iic (cdf μ i) := by
-      ext ⟨_, _⟩
-      simp only [Set.mem_setOf_eq, Set.mem_Iic]
+      grind
     simp only [
       lemma₂, unitInterval.volume_Iic, cdf_apply_val, ne_eq,
       measure_ne_top, not_false_eq_true, ENNReal.ofReal_toReal]

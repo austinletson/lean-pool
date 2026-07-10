@@ -54,8 +54,7 @@ theorem rFullPart_ne_zero (r M : ℕ) : rFullPart r M ≠ 0 := by
   intro p hp
   have hsupp : p ∈ M.factorization.support := by
     have h := Finsupp.support_filter (p := fun p => r ≤ M.factorization p) (f := M.factorization)
-    rw [h] at hp
-    exact Finset.mem_of_mem_filter p hp
+    grind
   have hp2 : p.Prime := Nat.prime_of_mem_primeFactors (by rwa [Nat.support_factorization] at hsupp)
   exact pow_ne_zero _ hp2.pos.ne'
 
@@ -364,13 +363,11 @@ theorem T3 :
     have hP_gt : 729 * (Cpoly t / 9)^3 * (2 * N * s^3) ≥ t^13 + 1 := by
       have hP_gt : 729 * (Cpoly t / 9)^3 ≥ t^12 + 1 := by
         have hP_gt : 729 * (Cpoly t / 9)^3 = Cpoly t^3 := by
-          rw [ ← Nat.mul_div_cancel' ( show 9 ∣ Cpoly t from L3a s t₀ t hcong ht ) ]; ring_nf;
-          norm_num;
+          rw [ ← Nat.mul_div_cancel' ( show 9 ∣ Cpoly t from L3a s t₀ t hcong ht ) ]; grind
         exact hP_gt.symm ▸ Nat.succ_le_of_lt ( Cpoly_cube_gt t );
       nlinarith [ pow_pos
         (show 0 < t by
-          linarith [show 0 < N * s ^ 3 by
-            exact mul_pos ( by decide ) ( pow_pos hs.pos _ )])
+          grind)
         12 ];
     -- By Fact (B1_ge), we have $(Cpoly t / 9)^3 * s^3 \leq rFullPart 3 (nn t + 1)$.
     have h_B1_ge : (Cpoly t / 9)^3 * s^3 ≤ rFullPart 3 (nn t + 1) := by

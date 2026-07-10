@@ -177,9 +177,7 @@ private lemma Gamma0_relindex_step_inj (k : ℕ) (hk : 0 < k) :
           Int.natCast_nonneg c₂, show (c₁ : ℤ) < p from by exact_mod_cast hc₁]
     · linarith [show (p : ℤ) ≤ (p : ℤ) * m from by nlinarith [hp.pos],
           Int.natCast_nonneg c₁, show (c₂ : ℤ) < p from by exact_mod_cast hc₂]
-  subst hm0
-  simp only [Fin.mk.injEq, mul_zero, sub_eq_zero] at hm ⊢
-  exact_mod_cast hm.symm
+  grind
 
 private lemma Gamma0_relindex_step_surj (k : ℕ) (hk : 0 < k) :
     Function.Surjective (fun c : Fin p =>

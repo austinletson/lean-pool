@@ -100,8 +100,7 @@ lemma empty_Hpolytope [Nontrivial E] :
   have h1 := h (Halfspace.mk f (-1)) (by simp)
   have h2 := h (Halfspace.mk (-f) (-1)) (by simp)
   rw [unitSphereDual_neg, neg_apply, neg_le, neg_neg] at h2
-  change f.1 x ≤ -1 at h1
-  linarith
+  grind
 
 lemma origin_Hpolytope [FiniteDimensional ℝ E] :
     ∃ (H_ : Set (Halfspace E)) (hH_ : H_.Finite), Hpolytope hH_ = ({0} : Set E) := by
@@ -144,8 +143,7 @@ lemma hyperplane_Hpolytope : ∀ (f : {f : (StrongDual ℝ E) // norm f = 1}) (c
     have h1 := h (Halfspace.mk f c) (by simp)
     have h2 := h (Halfspace.mk (-f) (-c)) (by simp)
     rw [unitSphereDual_neg, neg_apply, neg_le, neg_neg] at h2
-    change f.1 x ≤ c at h1
-    exact le_antisymm h1 h2
+    grind
   · -- 2.
     intro h Hi hHi
     simp only [Set.mem_singleton_iff, Set.mem_insert_iff] at hHi
@@ -158,19 +156,7 @@ lemma inter_Hpolytope (H_1 H_2 : Set (Halfspace E)) (hH_1 : H_1.Finite) (hH_2 : 
   Hpolytope (Set.Finite.union hH_1 hH_2) = Hpolytope hH_1 ∩ Hpolytope hH_2 := by
   ext x
   rw [mem_Hpolytope, Set.mem_inter_iff, mem_Hpolytope, mem_Hpolytope]
-  constructor
-  · -- 1
-    intro h
-    constructor <;> intro Hi_ hH_ <;>
-      exact h Hi_ (by simp only [Set.mem_union, hH_, true_or, or_true])
-  · -- 2
-    intro h Hi hHi
-    rw [Set.mem_union] at hHi
-    rcases hHi with hHi | hHi
-    · -- 2.1
-      exact h.1 Hi hHi
-    · -- 2.2
-      exact h.2 Hi hHi
+  grind
 
 omit [CompleteSpace E] in
 lemma Vpolytope_translation {S : Set E} (hS : S.Finite) (x : E) :

@@ -30,12 +30,7 @@ private lemma psd_resolvent_conj_inv (U B Uhalf K : Matrix V V ℝ)
     (Matrix.mul_inv_rev Uhalf Uhalf).symm ▸ congrArg Inv.inv hUhalf_sq
   have hUinv_sub_B : U⁻¹ - B = Uhalf⁻¹ * ((1 : Matrix V V ℝ) - K) * Uhalf⁻¹ := by
     rw [Matrix.mul_sub, Matrix.sub_mul, Matrix.mul_one, hUhalf_inv_sq]
-    congr 1
-    rw [hK_def]
-    symm
-    have : Uhalf⁻¹ * (Uhalf * B * Uhalf) * Uhalf⁻¹ =
-        (Uhalf⁻¹ * Uhalf) * B * (Uhalf * Uhalf⁻¹) := by simp only [Matrix.mul_assoc]
-    simp only [this, hUU, hUU', one_mul, mul_one]
+    grind
   rw [hUinv_sub_B]
   have hIK_pd : ((1 : Matrix V V ℝ) - K).PosDef :=
     one_sub_posDef_of_trace_lt_one K hK_psd htrK_lt
@@ -49,8 +44,7 @@ private lemma psd_resolvent_conj_inv (U B Uhalf K : Matrix V V ℝ)
             (Uhalf⁻¹ * Uhalf) * ((1 : Matrix V V ℝ) - K)⁻¹ * Uhalf := by
           simp only [Matrix.mul_assoc]
       _ = Uhalf⁻¹ * (((1 : Matrix V V ℝ) - K) * ((1 : Matrix V V ℝ) - K)⁻¹) * Uhalf := by
-          rw [hUU]
-          simp only [Matrix.mul_one, Matrix.mul_assoc]
+          grind
       _ = 1 := by rw [Matrix.mul_nonsing_inv _ hIK_det, Matrix.mul_one, hUU]
   exact Matrix.inv_eq_right_inv h_prod
 
@@ -92,9 +86,7 @@ private lemma psd_resolvent_trace_le (U B Uhalf K : Matrix V V ℝ) (hU : U.PosD
     conv_lhs => rw [show (1 : Matrix V V ℝ) = eigQ * star eigQ from hQ_mul_star.symm]
     rw [show eigQ * star eigQ - eigQ * Matrix.diagonal eig * star eigQ =
         eigQ * ((1 : Matrix V V ℝ) - Matrix.diagonal eig) * star eigQ from by
-          conv_lhs =>
-            rw [show eigQ * star eigQ = eigQ * 1 * star eigQ from by rw [Matrix.mul_one]]
-          rw [← Matrix.sub_mul, ← Matrix.mul_sub]]
+          grind]
     congr 1
     congr 1
     rw [D_def]
@@ -132,9 +124,7 @@ private lemma psd_resolvent_trace_le (U B Uhalf K : Matrix V V ℝ) (hU : U.PosD
         show invD * (star eigQ * U) * eigQ = invD * (star eigQ * U * eigQ) from by
           simp only [Matrix.mul_assoc],
         ← hU'_def, invD_def, trace_diag_mul]
-    apply Finset.sum_congr rfl
-    intro i _
-    rw [div_eq_inv_mul]
+    grind
   have htr_U : U.trace = ∑ i, U' i i := by
     rw [show U = eigQ * star eigQ * U from by rw [hQ_mul_star, one_mul],
         show eigQ * star eigQ * U = eigQ * (star eigQ * U) from Matrix.mul_assoc _ _ _,
@@ -157,9 +147,7 @@ private lemma psd_resolvent_trace_le (U B Uhalf K : Matrix V V ℝ) (hU : U.PosD
   have h_split_sum : ∑ i : V, U' i i / (1 - eig i) =
       ∑ i : V, U' i i + ∑ i : V, eig i * U' i i / (1 - eig i) := by
     rw [← Finset.sum_add_distrib]
-    apply Finset.sum_congr rfl; intro i _
-    field_simp [ne_of_gt (h_1_sub_pos i)]
-    ring
+    grind
   rw [h_split_sum]
   gcongr
   rw [Finset.sum_div]

@@ -110,9 +110,7 @@ lemma exists_fin_iff_zero_or_exists_succ {P : Fin (k + 1) → Prop} : (∃ i, P 
       cases i using Fin.cases
       · left; exact hi
       · right; exact ⟨_, hi⟩,
-   by rintro (hz | ⟨i, h⟩)
-      · exact ⟨0, hz⟩
-      · exact ⟨_, h⟩⟩
+   by grind⟩
 
 lemma forall_vec_iff_forall_forall_vec {P : (Fin (k + 1) → α) → Prop} :
     (∀ v : Fin (k + 1) → α, P v) ↔ ∀ x, ∀ v : Fin k → α, P (x :> v) := by
@@ -231,11 +229,7 @@ lemma «mem_fvarList_iff_fvar?» [DecidableEq ξ] {t : Semiterm L ξ n} :
     simp only [fvarList, List.mem_singleton, fvar?_fvar, eq_comm]
   | func _ v ih =>
     simp only [fvarList, List.mem_flatten, Matrix.mem_toList_iff, fvar?_func]
-    constructor
-    · rintro ⟨_, ⟨i, rfl⟩, hx⟩
-      exact ⟨i, (ih i).mp hx⟩
-    · rintro ⟨i, hx⟩
-      exact ⟨(v i).fvarList, ⟨i, rfl⟩, (ih i).mpr hx⟩
+    grind
 
 end Semiterm
 

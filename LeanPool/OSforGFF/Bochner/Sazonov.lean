@@ -114,10 +114,7 @@ lemma inner_sq_le_quadForm_mul (hS : S.IsPositive) (x y : H) :
     have e1 : 2 * @inner ℝ H _ x (S y) *
         (-(quadForm S x + 1) / (2 * @inner ℝ H _ x (S y))) = -(quadForm S x + 1) := by
       field_simp
-    have e2 : 2 * @inner ℝ H _ x (S y) *
-        (-(quadForm S x - 1) / (2 * @inner ℝ H _ x (S y))) = -(quadForm S x - 1) := by
-      field_simp
-    linarith
+    grind
   · have hcpos : 0 < quadForm S y := lt_of_le_of_ne (quadForm_nonneg hS y) (Ne.symm hy)
     have h0 : ∀ t : ℝ, 0 ≤ quadForm S x + 2 * @inner ℝ H _ x (S y) * t +
         quadForm S y * t ^ 2 := by

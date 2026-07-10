@@ -147,8 +147,7 @@ def mulAux : FormalSum R G → R[G] → R[G] := by
     intro x₀
     rw [← append_coords]
     let l := mul_monom_zero g x₀ s
-    rw [l]
-    simp only [zero_add]
+    grind
   | addCoeffs a b x tail =>
     apply Quotient.sound
     apply funext; intro x₀
@@ -168,14 +167,7 @@ def mulAux : FormalSum R G → R[G] → R[G] := by
     apply Quotient.sound
     apply funext; intro x₀
     simp only [mul, ← append_coords]
-    rw [← add_assoc]
-    rw [← add_assoc]
-    simp only [add_left_inj]
-    let lc :=
-      add_comm
-        (coords (mulMonom a₁ x₁ s) x₀)
-        (coords (mulMonom a₂ x₂ s) x₀)
-    rw [lc]
+    grind
 
 open ElementaryMove
 /-- invariance under moves of multiplication by monomials -/
@@ -280,10 +272,7 @@ instance : AddCommGroup (R[G]) :=
     zero_add := FreeModule.zero_addn
     add_comm := FreeModule.addn_comm
     neg_add_cancel := by
-        intro x
-        let l := FreeModule.coeffs_distrib (-1 : R) (1 : R) x
-        rw [neg_add_cancel, FreeModule.unit_coeffs, FreeModule.zero_coeffs] at l
-        exact l
+        grind
   }
 
 /-- The group ring is a ring -/
@@ -358,11 +347,7 @@ instance : Ring (R[G]) :=
       | cons h t ih =>
         rw [FormalSum.mul]
         simp only [mulMonom, List.nil_append]
-        apply funext; intro x₀
-        let lih := congrFun ih x₀
-        rw [coords] at lih
-        rw [lih]
-        simp only [coords]
+        grind
 
     mul_zero := by
       apply Quotient.ind
@@ -480,8 +465,7 @@ theorem groupInclusionHom_injective {F : Type} [Field F] [DecidableEq F]
     Function.Injective (groupInclusionHom (R := F) G) := by
   intro _ _
   apply groupInclusionHom_injective'
-  have : (0 : F) ≠ (1 : F) := zero_ne_one
-  simp_all only [ne_eq, zero_ne_one, not_false_iff, one_ne_zero]
+  grind
 
 /-- The ring homomorphism `R → R[G]` given by `a ↦  a ⬝ 1` -/
 def ringInclusionHom (G : Type) [Group G] [DecidableEq G] : R →+* R[G] :=
@@ -505,9 +489,7 @@ def ringInclusionHom (G : Type) [Group G] [DecidableEq G] : R →+* R[G] :=
       funext x
       rw [← FormalSum.append_coords]
       simp only [FormalSum.coords, monomCoeff]
-      by_cases h : (1 : G) == x
-      · simp only [h, add_zero]
-      · simp only [h, add_zero]
+      grind
   }
 
 

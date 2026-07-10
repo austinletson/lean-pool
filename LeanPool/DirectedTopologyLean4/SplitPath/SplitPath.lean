@@ -55,11 +55,7 @@ lemma continuous_trans_reparam {T : I} (hT₀ : 0 < T) (hT₁ : T < 1) : Continu
   · continuity
   · continuity
   · continuity
-  intro x hx
-  apply (div_eq_div_iff (ne_of_gt (unitIAux.double_pos_of_pos hT₀))
-    (ne_of_gt (unitIAux.double_sigma_pos_of_lt_one hT₁))).mpr
-  simp [hx]
-  ring
+  grind
 
 lemma trans_reparam_mem_I (t : I) {T : I} (hT₀ : 0 < T) (hT₁ : T < 1) :
     transReparam T t ∈ I := by
@@ -68,9 +64,7 @@ lemma trans_reparam_mem_I (t : I) {T : I} (hT₀ : 0 < T) (hT₁ : T < 1) :
   · refine ⟨?_, ?_⟩
     · exact div_nonneg t.2.1 (le_of_lt (unitIAux.double_pos_of_pos hT₀))
     · apply (div_le_one (unitIAux.double_pos_of_pos hT₀)).mpr
-      have hpos : 0 < (T : ℝ) := hT₀
-      have hle : (T : ℝ) ≤ (2 * T : ℝ) := by linarith
-      apply le_trans h₀ hle
+      grind
   · refine ⟨?_, ?_⟩
     · apply div_nonneg _ (le_of_lt (unitIAux.double_sigma_pos_of_lt_one hT₁))
       linarith [unitIAux.double_sigma_pos_of_lt_one hT₁]
@@ -81,8 +75,7 @@ lemma trans_reparam_zero (T : I) : transReparam T 0 = 0 := by
   unfold transReparam
   simp only [Set.Icc.coe_zero, zero_div, add_zero, ite_eq_left_iff, not_le, div_eq_zero_iff,
     mul_eq_zero, OfNat.ofNat_ne_zero, false_or]
-  intro hT
-  linarith [unitInterval.nonneg T]
+  grind
 
 lemma trans_reparam_one {T : I} (hT₁ : T < 1) : transReparam T 1 = 1 := by
   unfold transReparam
@@ -94,9 +87,7 @@ lemma trans_reparam_one {T : I} (hT₁ : T < 1) : transReparam T 1 = 1 := by
     apply (div_eq_one_iff_eq _).mpr
     · change (1 : ℝ) + 1 - 2 * T = 2 * (1 - T)
       ring
-    · simp only [ne_eq, mul_eq_zero, OfNat.ofNat_ne_zero, false_or]
-      have h₁ : T ≠ 1 := ne_of_lt hT₁
-      exact fun h₂ => h₁ (Subtype.coe_inj.mp ((sub_eq_zero.mp h₂).symm))
+    · grind
 
 lemma monotone_trans_reparam {T : I} (hT₀ : 0 < T) (hT₁ : T < 1) :
     Monotone (transReparam T) := by
@@ -127,15 +118,11 @@ lemma first_trans_second_reparam_eq_self_aux (γ : Path x₀ x₁) (t : I) {T : 
   · congr
     apply Subtype.coe_inj.mp
     change (t : ℝ) = (T : ℝ) * (2 * ((t : ℝ) / (2 * (T : ℝ))))
-    calc (t : ℝ)
-      _ = t * 1 := (mul_one (t : ℝ)).symm
-      _ = t * ((2 * T) / (2 * T)) := by rw [div_self (mul_ne_zero two_ne_zero hT_ne_zero)]
-      _ = T * (2 * (t / (2 * T))) := by ring
+    grind
   · exfalso
     have hT_lt_t : ↑T < ↑t := by
       have h₂' : (2⁻¹ : ℝ) < ↑t / (2 * ↑T) := by
-        rw [show (2⁻¹ : ℝ) = 1 / 2 from by norm_num]
-        exact lt_of_not_ge h₂
+        grind
       have h2T : (0 : ℝ) < 2 * T := unitIAux.double_pos_of_pos hT₀
       calc (T : ℝ)
         _ = 1 * T                     := (one_mul (T : ℝ)).symm
@@ -150,20 +137,13 @@ lemma first_trans_second_reparam_eq_self_aux (γ : Path x₀ x₁) (t : I) {T : 
     have h2σT : (0 : ℝ) < 2 * (1 - T) := unitIAux.double_sigma_pos_of_lt_one hT₁
     have hle : (1 + (t : ℝ) - 2 * ↑T) ≤ (1 - ↑T) := by
       rw [div_le_iff₀ h2σT] at h₂
-      simp at h₂
-      simp [h₂]
+      grind
     apply h₁ (Subtype.coe_le_coe.mp _)
     linarith
   · congr
     apply Subtype.coe_inj.mp
     change (t : ℝ) = ((σ T : ℝ)) * (2 * ((1 + ↑t - 2 * ↑T) / (2 * (1 - ↑T))) - 1) + ↑T
-    rw [unitInterval.coe_symm_eq]
-    calc (t : ℝ)
-      _ = (1 + t - 2 * T) - 1 + 2 * T := by ring
-      _ = (1 + t - 2 * T) * (2 * (1 - T)) / (2 * (1 - T)) - 1 + 2 * ↑T
-            := by rw [mul_div_cancel_right₀ ((1 : ℝ) + t - 2 * T)
-                  (ne_of_gt (unitIAux.double_sigma_pos_of_lt_one hT₁))]
-      _ = (1 - T) * (2 * ((1 + t - 2 * T) / (2 * (1 - T))) - 1) + T := by ring
+    grind
 
 lemma first_trans_second_reparam_eq_self (γ : Path x₀ x₁) {T : I} (hT₀ : 0 < T) (hT₁ : T < 1) :
     γ = ((FirstPart γ T).trans (SecondPart γ T)).reparam

@@ -1045,8 +1045,7 @@ private lemma partialInterpolationLeftPath_inl {𝕏 : Proof} [fin_X : Fintype �
       case succ k ih =>
         have step := f.2.2 (k + 1)
         rcases fk_def : f.1 (k + 1) with _ | l | r
-        · have := isRight k
-          simp [fk_def] at this
+        · grind
         · rcases (by
             simpa [partialInterpolationLeftAlpha, Ext.edge, Ext.p, fk_def] using step) with
             ⟨next_left, _next_mem, next_eq⟩
@@ -1059,25 +1058,21 @@ private lemma partialInterpolationLeftPath_inl {𝕏 : Proof} [fin_X : Fintype �
       intro n
       have step := f.2.2 (n + 1)
       rcases fn_def : f.1 (n + 1) with _ | _ | gn_def
-      · have := isRight n
-        simp [fn_def] at this
+      · grind
       · rcases (by
           simpa [partialInterpolationLeftAlpha, Ext.edge, Ext.p, fn_def] using step) with
           ⟨next_left, next_mem, next_eq⟩
         simpa [g, fn_def, ←next_eq, partialInterpolationLeftAlpha, Ext.edge, Ext.p]
           using next_mem
-      · have := isLeft n
-        simp [fn_def] at this
+      · grind
     intro n
     have ⟨m, m_prop⟩ := (partialEquationLeft x).path
       (partialEquationLeft x).root ⟨g, g_zero, g_succ⟩ n
     use m + 1
     rcases fn_def : f.1 (n + m + 1) with _ | current_left | gn_def
-    · have := isRight (n + m)
-      simp [fn_def] at this
+    · grind
     · simpa [g, partialInterpolationLeftAlpha, Ext.r, fn_def] using m_prop
-    · have := isLeft (n + m)
-      simp [fn_def] at this
+    · grind
   · have isRight : ∀ n, (f.1 (n + 1)).isRight := by
       intro n
       induction n
@@ -1101,8 +1096,7 @@ private lemma partialInterpolationLeftPath_inl {𝕏 : Proof} [fin_X : Fintype �
       case succ k ih =>
         have step := f.2.2 (k + 1)
         rcases fk_def : f.1 (k + 1) with _ | l | r
-        · have := isRight k
-          simp [fk_def] at this
+        · grind
         · simp [fk_def] at ih
         · rcases (by
             simpa [partialInterpolationLeftAlpha, Ext.edge, Ext.p, fk_def] using step) with
@@ -1115,10 +1109,8 @@ private lemma partialInterpolationLeftPath_inl {𝕏 : Proof} [fin_X : Fintype �
       intro n
       have step := f.2.2 (n + 1)
       rcases fn_def : f.1 (n + 1) with _ | _ | gn_def
-      · have := isRight n
-        simp [fn_def] at this
-      · have := isRight' n
-        simp [fn_def] at this
+      · grind
+      · grind
       · rcases (by
           simpa [partialInterpolationLeftAlpha, Ext.edge, Ext.p, fn_def] using step) with
           ⟨z, z_mem, next_eq⟩
@@ -1127,15 +1119,10 @@ private lemma partialInterpolationLeftPath_inl {𝕏 : Proof} [fin_X : Fintype �
     have ⟨m, m_prop⟩ := inf_path_has_inf_boxes g g_succ n
     use m + 1
     rcases fn_def : f.1 (n + m + 1) with _ | _ | gn_def
-    · have := isRight (n + m)
-      simp [fn_def] at this
-    · have := isRight' (n + m)
-      simp [fn_def] at this
+    · grind
+    · grind
     · simp only [partialInterpolationLeftAlpha, Ext.r]
-      apply split_to_ext_isBox
-      convert m_prop
-      unfold g
-      simp [fn_def]
+      grind
 
 /-- The `Sum.inr (Sum.inl _)` arm of `partialInterpolationLeftPath`. -/
 private lemma partialInterpolationLeftPath_inlz {𝕏 : Proof} [fin_X : Fintype 𝕏.X] (x : 𝕏.X)
@@ -1167,8 +1154,7 @@ private lemma partialInterpolationLeftPath_inlz {𝕏 : Proof} [fin_X : Fintype 
     case succ k ih =>
       have step := f.2.2 k
       rcases fk_def : f.1 k with _ | l | r
-      · have := isRight k
-        simp [fk_def] at this
+      · grind
       · rcases (by
           simpa [partialInterpolationLeftAlpha, Ext.edge, Ext.p, fk_def] using step) with
           ⟨z, _z_mem, next_eq⟩
@@ -1181,22 +1167,18 @@ private lemma partialInterpolationLeftPath_inlz {𝕏 : Proof} [fin_X : Fintype 
     intro n
     have step := f.2.2 n
     rcases fn_def : f.1 n with _ | _ | gn_def
-    · have := isRight n
-      simp [fn_def] at this
+    · grind
     · rcases (by simpa [partialInterpolationLeftAlpha, Ext.edge, Ext.p, fn_def] using step) with
         ⟨z, z_mem, next_eq⟩
       simpa [g, fn_def, ←next_eq, partialInterpolationLeftAlpha, Ext.edge, Ext.p] using z_mem
-    · have := isLeft n
-      simp [fn_def] at this
+    · grind
   intro n
   have ⟨m, m_prop⟩ := (partialEquationLeft x).path z ⟨g, g_zero, g_succ⟩ n
   use m
   rcases fn_def : f.1 (n + m) with _ | _ | gn_def
-  · have := isRight (n + m)
-    simp [fn_def] at this
+  · grind
   · simpa [g, partialInterpolationLeftAlpha, Ext.r, fn_def] using m_prop
-  · have := isLeft (n + m)
-    simp [fn_def] at this
+  · grind
 
 /-- The `Sum.inr (Sum.inr _)` arm of `partialInterpolationLeftPath`. -/
 private lemma partialInterpolationLeftPath_inrz {𝕏 : Proof} [fin_X : Fintype 𝕏.X] (x : 𝕏.X)
@@ -1232,8 +1214,7 @@ private lemma partialInterpolationLeftPath_inrz {𝕏 : Proof} [fin_X : Fintype 
     case succ k ih =>
       have step := f.2.2 k
       rcases fk_def : f.1 k with _ | l | r
-      · have := isRight k
-        simp [fk_def] at this
+      · grind
       · simp [fk_def] at ih
       · rcases (by
           simpa [partialInterpolationLeftAlpha, Ext.edge, Ext.p, fk_def] using step) with
@@ -1246,10 +1227,8 @@ private lemma partialInterpolationLeftPath_inrz {𝕏 : Proof} [fin_X : Fintype 
     intro n
     have step := f.2.2 n
     rcases fn_def : f.1 n with _ | _ | gn_def
-    · have := isRight n
-      simp [fn_def] at this
-    · have := isRight' n
-      simp [fn_def] at this
+    · grind
+    · grind
     · rcases (by simpa [partialInterpolationLeftAlpha, Ext.edge, Ext.p, fn_def] using step) with
         ⟨z, z_mem, next_eq⟩
       simpa [g, fn_def, ←next_eq, edge] using z_mem
@@ -1257,15 +1236,10 @@ private lemma partialInterpolationLeftPath_inrz {𝕏 : Proof} [fin_X : Fintype 
   have ⟨m, m_prop⟩ := inf_path_has_inf_boxes g g_succ n
   use m
   rcases fn_def : f.1 (n + m) with _ | _ | gn_def
-  · have := isRight (n + m)
-    simp [fn_def] at this
-  · have := isRight' (n + m)
-    simp [fn_def] at this
+  · grind
+  · grind
   · simp only [partialInterpolationLeftAlpha, Ext.r]
-    apply split_to_ext_isBox
-    convert m_prop
-    unfold g
-    simp [fn_def]
+    grind
 
 /-- The `path` field of the cut-based left interpolation proof: every infinite path through the
 combined coalgebra meets a box rule infinitely often. -/
@@ -1411,8 +1385,7 @@ private lemma partialInterpolationRightPath_inl {𝕏 : Proof} [fin_X : Fintype 
       case succ k ih =>
         have step := f.2.2 (k + 1)
         rcases fk_def : f.1 (k + 1) with _ | l | r
-        · have := isRight k
-          simp [fk_def] at this
+        · grind
         · rcases (by
             simpa [partialInterpolationRightAlpha, Ext.edge, Ext.p, fk_def] using step) with
             ⟨next_left, _next_mem, next_eq⟩
@@ -1425,25 +1398,21 @@ private lemma partialInterpolationRightPath_inl {𝕏 : Proof} [fin_X : Fintype 
       intro n
       have step := f.2.2 (n + 1)
       rcases fn_def : f.1 (n + 1) with _ | _ | gn_def
-      · have := isRight n
-        simp [fn_def] at this
+      · grind
       · rcases (by
           simpa [partialInterpolationRightAlpha, Ext.edge, Ext.p, fn_def] using step) with
           ⟨next_left, next_mem, next_eq⟩
         simpa [g, fn_def, ←next_eq, partialInterpolationRightAlpha, Ext.edge, Ext.p]
           using next_mem
-      · have := isLeft n
-        simp [fn_def] at this
+      · grind
     intro n
     have ⟨m, m_prop⟩ := (partialEquationRight x).path
       (partialEquationRight x).root ⟨g, g_zero, g_succ⟩ n
     use m + 1
     rcases fn_def : f.1 (n + m + 1) with _ | current_left | gn_def
-    · have := isRight (n + m)
-      simp [fn_def] at this
+    · grind
     · simpa [g, partialInterpolationRightAlpha, Ext.r, fn_def] using m_prop
-    · have := isLeft (n + m)
-      simp [fn_def] at this
+    · grind
   · have isRight : ∀ n, (f.1 (n + 1)).isRight := by
       intro n
       induction n
@@ -1467,8 +1436,7 @@ private lemma partialInterpolationRightPath_inl {𝕏 : Proof} [fin_X : Fintype 
       case succ k ih =>
         have step := f.2.2 (k + 1)
         rcases fk_def : f.1 (k + 1) with _ | l | r
-        · have := isRight k
-          simp [fk_def] at this
+        · grind
         · simp [fk_def] at ih
         · rcases (by
             simpa [partialInterpolationRightAlpha, Ext.edge, Ext.p, fk_def] using step) with
@@ -1481,10 +1449,8 @@ private lemma partialInterpolationRightPath_inl {𝕏 : Proof} [fin_X : Fintype 
       intro n
       have step := f.2.2 (n + 1)
       rcases fn_def : f.1 (n + 1) with _ | _ | gn_def
-      · have := isRight n
-        simp [fn_def] at this
-      · have := isRight' n
-        simp [fn_def] at this
+      · grind
+      · grind
       · rcases (by
           simpa [partialInterpolationRightAlpha, Ext.edge, Ext.p, fn_def] using step) with
           ⟨z, z_mem, next_eq⟩
@@ -1493,15 +1459,10 @@ private lemma partialInterpolationRightPath_inl {𝕏 : Proof} [fin_X : Fintype 
     have ⟨m, m_prop⟩ := inf_path_has_inf_boxes g g_succ n
     use m + 1
     rcases fn_def : f.1 (n + m + 1) with _ | _ | gn_def
-    · have := isRight (n + m)
-      simp [fn_def] at this
-    · have := isRight' (n + m)
-      simp [fn_def] at this
+    · grind
+    · grind
     · simp only [partialInterpolationRightAlpha, Ext.r]
-      apply split_to_ext_isBox
-      convert m_prop
-      unfold g
-      simp [fn_def]
+      grind
 
 /-- The `Sum.inr (Sum.inl _)` arm of `partialInterpolationRightPath`. -/
 private lemma partialInterpolationRightPath_inlz {𝕏 : Proof} [fin_X : Fintype 𝕏.X] (x : 𝕏.X)
@@ -1534,8 +1495,7 @@ private lemma partialInterpolationRightPath_inlz {𝕏 : Proof} [fin_X : Fintype
     case succ k ih =>
       have step := f.2.2 k
       rcases fk_def : f.1 k with _ | l | r
-      · have := isRight k
-        simp [fk_def] at this
+      · grind
       · rcases (by
           simpa [partialInterpolationRightAlpha, Ext.edge, Ext.p, fk_def] using step) with
           ⟨z, _z_mem, next_eq⟩
@@ -1548,23 +1508,19 @@ private lemma partialInterpolationRightPath_inlz {𝕏 : Proof} [fin_X : Fintype
     intro n
     have step := f.2.2 n
     rcases fn_def : f.1 n with _ | _ | gn_def
-    · have := isRight n
-      simp [fn_def] at this
+    · grind
     · rcases (by
         simpa [partialInterpolationRightAlpha, Ext.edge, Ext.p, fn_def] using step) with
         ⟨z, z_mem, next_eq⟩
       simpa [g, fn_def, ←next_eq, partialInterpolationRightAlpha, Ext.edge, Ext.p] using z_mem
-    · have := isLeft n
-      simp [fn_def] at this
+    · grind
   intro n
   have ⟨m, m_prop⟩ := (partialEquationRight x).path z ⟨g, g_zero, g_succ⟩ n
   use m
   rcases fn_def : f.1 (n + m) with _ | _ | gn_def
-  · have := isRight (n + m)
-    simp [fn_def] at this
+  · grind
   · simpa [g, partialInterpolationRightAlpha, Ext.r, fn_def] using m_prop
-  · have := isLeft (n + m)
-    simp [fn_def] at this
+  · grind
 
 /-- The `Sum.inr (Sum.inr _)` arm of `partialInterpolationRightPath`. -/
 private lemma partialInterpolationRightPath_inrz {𝕏 : Proof} [fin_X : Fintype 𝕏.X] (x : 𝕏.X)
@@ -1601,8 +1557,7 @@ private lemma partialInterpolationRightPath_inrz {𝕏 : Proof} [fin_X : Fintype
     case succ k ih =>
       have step := f.2.2 k
       rcases fk_def : f.1 k with _ | l | r
-      · have := isRight k
-        simp [fk_def] at this
+      · grind
       · simp [fk_def] at ih
       · rcases (by
           simpa [partialInterpolationRightAlpha, Ext.edge, Ext.p, fk_def] using step) with
@@ -1615,10 +1570,8 @@ private lemma partialInterpolationRightPath_inrz {𝕏 : Proof} [fin_X : Fintype
     intro n
     have step := f.2.2 n
     rcases fn_def : f.1 n with _ | _ | gn_def
-    · have := isRight n
-      simp [fn_def] at this
-    · have := isRight' n
-      simp [fn_def] at this
+    · grind
+    · grind
     · rcases (by
         simpa [partialInterpolationRightAlpha, Ext.edge, Ext.p, fn_def] using step) with
         ⟨z, z_mem, next_eq⟩
@@ -1627,15 +1580,10 @@ private lemma partialInterpolationRightPath_inrz {𝕏 : Proof} [fin_X : Fintype
   have ⟨m, m_prop⟩ := inf_path_has_inf_boxes g g_succ n
   use m
   rcases fn_def : f.1 (n + m) with _ | _ | gn_def
-  · have := isRight (n + m)
-    simp [fn_def] at this
-  · have := isRight' (n + m)
-    simp [fn_def] at this
+  · grind
+  · grind
   · simp only [partialInterpolationRightAlpha, Ext.r]
-    apply split_to_ext_isBox
-    convert m_prop
-    unfold g
-    simp [fn_def]
+    grind
 
 /-- The `path` field of the cut-based right interpolation proof: every infinite path through the
 combined coalgebra meets a box rule infinitely often. -/

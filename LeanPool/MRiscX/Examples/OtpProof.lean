@@ -269,14 +269,10 @@ theorem proof_otp_loopBody : ∀ (p k c l : UInt64) (s : MState),
   · simp only [ne_eq, ge_iff_le, gt_iff_lt]
     simpSetEq
   · simpSetEq
-  · intro neq
-    have hmem : (4 : UInt64) ∈ (({4} ∪ {14}): Set UInt64) := Or.inl rfl
-    rw [neq] at hmem
-    contradiction
+  · grind
   · exact h_code'
   · exact h_pc
-  · rcases h_terminated with ⟨h_i, h_x0, h_x1, h_x2, h_x3, h_I_pre⟩
-    exact ⟨⟨h_condition, h_i, h_x0, h_x1, h_x2, h_x3, h_var, h_I_pre⟩, h_I⟩
+  · grind
 
 /-- The loop branch (program counter 4 to 14) of the One-Time-Pad correctness
 proof, extracted from `proof_otp` to keep each proof body within the size gate. -/
@@ -353,11 +349,7 @@ theorem proof_otp_loop (p k c l l' : UInt64) (h_l' : l' ∈ ({4} : Set UInt64)) 
                           ¬st.terminated = true)
                     s' ∧
                   s'.pc ∉ {n | n ≠ 14} := by
-            simp only [ne_eq, MState.getMemoryAt_def, Bool.not_eq_true, Set.mem_setOf_eq,
-              Decidable.not_not, forall_exists_index, and_imp]
-            intros s' h_ex h_fo h_ter h_pc
-            exists s'
-            exact ⟨h_ex, fun i h_i => ⟨h_fo i h_i, h_ter⟩, h_pc⟩
+            grind
       apply this
       clear this
       apply specification_JumpEqZero_true (label := "finish") (newPc := 14)
@@ -377,35 +369,23 @@ theorem proof_otp_loop (p k c l l' : UInt64) (h_l' : l' ∈ ({4} : Set UInt64)) 
         refine ⟨fun i h_i => ?_, ?_⟩
         · apply h i
           simp only [MState.getRegisterAt_def]
-          rw [h_reg_3]
-          simpa only [UInt64.sub_zero] using h_i
+          grind
         · simp only [MState.get_label_from_code, MState.getRegisterAt_def, Bool.not_eq_true]
           refine ⟨?_, ?_⟩
           · rw [h_code']
             simp [p_update_eq]
-          · simp only [Bool.not_eq_true] at h_term
-            exact ⟨h_reg_3, h_term⟩
-    · ext a
-      simp
+          · grind
+    · grind
     · simp
     · exact h_code'
     · exact h_pc
-    · obtain ⟨h_cond, ⟨h_I, _⟩, h_terminated⟩ := pre
-      exact ⟨h_cond, h_terminated, h_I⟩
-  · ext a
-    simp
+    · grind
+  · grind
   · simp
   · exact s_code
   · exact h_pc
   -- x[3] = l so this is the beginning
-  · unfold iPre at pre
-    rcases pre with ⟨⟨h_x0, h_x1, h_x2, h_x3, h_noOverlap⟩, h_terminated⟩
-    rw [h_x3]
-    refine ⟨⟨fun i h_i' => by simp at h_i', ?_⟩, h_terminated⟩
-    unfold iPre
-    simp only [MState.getRegisterAt_def, UInt64.sub_self, UInt64.add_zero, Std.le_refl,
-      true_and]
-    exact ⟨h_x0, h_x1, h_x2, h_noOverlap⟩
+  · grind
 
 theorem proof_otp : ∀ (p k c l: UInt64),
   mriscx

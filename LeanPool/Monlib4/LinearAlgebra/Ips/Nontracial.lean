@@ -918,9 +918,7 @@ theorem pi_lmul_toMatrix [hψ : ∀ i, (ψ i).IsFaithfulPosMap] (x : PiMat ℂ k
   · rw [eq_comm] at h
     simp only [eq_mpr_eq_cast, mul_apply, mul_ite, mul_one, mul_zero, ite_and,
       Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte, ite_eq_right_iff]
-    intro ha
-    rw [eq_comm] at ha
-    contradiction
+    grind
   · rw [eq_comm] at h; contradiction
   · rfl
   · rfl
@@ -958,9 +956,7 @@ theorem pi_rmul_toMatrix [hψ : ∀ i, (ψ i).IsFaithfulPosMap] (x : PiMat ℂ k
     simp only [eq_mpr_eq_cast, one_div, sig_apply, mul_apply, ite_mul, one_mul,
       zero_mul, ite_and, Finset.sum_ite_irrel, Finset.sum_ite_eq, Finset.mem_univ,
       ↓reduceIte, Finset.sum_const_zero, ite_eq_right_iff]
-    intro ha
-    rw [eq_comm] at ha
-    contradiction
+    grind
   · rw [eq_comm] at h; contradiction
   · rfl
   · rfl

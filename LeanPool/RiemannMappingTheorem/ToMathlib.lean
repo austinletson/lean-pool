@@ -167,10 +167,7 @@ theorem integral_eq_sub'' (h : ContDiffOn ℝ 1 f (Icc a b)) (hab : a ≤ b) (ht
     rw [uIoo_eq_uIoc_sdiff_ends, Set.mem_sdiff, mem_uIoc, Set.mem_insert_iff,
       Set.mem_singleton_iff] at hu
     rw [mem_uIoo]
-    rcases hu.1 with ⟨hau, hut⟩ | ⟨htu, hua⟩
-    · refine Or.inl ⟨hau, lt_of_le_of_ne (hut.trans ht.2) ?_⟩
-      exact fun h => hu.2 (Or.inr (le_antisymm hut (h ▸ ht.2)))
-    · linarith [ht.1]
+    grind
   convert (derivWithin_of_mem_uIoo l3) using 2
   simp [uIcc, hab]
 

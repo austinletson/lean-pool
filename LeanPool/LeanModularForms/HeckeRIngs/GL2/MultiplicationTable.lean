@@ -67,16 +67,10 @@ private theorem HA_zero_mul (a : HeckeAlgebra 2) : 0 * a = 0 := instNUNAS.zero_m
 private theorem HA_mul_zero (a : HeckeAlgebra 2) : a * 0 = 0 := instNUNAS.mul_zero a
 
 private theorem HA_mul_neg (a b : HeckeAlgebra 2) : a * (-b) = -(a * b) := by
-  have h := HA_mul_add a b (-b)
-  rw [add_neg_cancel, HA_mul_zero] at h
-  -- h : 0 = a * b + a * -b
-  exact eq_neg_of_add_eq_zero_right h.symm
+  grind
 
 private theorem HA_neg_mul (a b : HeckeAlgebra 2) : (-a) * b = -(a * b) := by
-  have h := HA_add_mul a (-a) b
-  rw [add_neg_cancel, HA_zero_mul] at h
-  -- h : 0 = a * b + -a * b
-  exact eq_neg_of_add_eq_zero_right h.symm
+  grind
 
 private theorem HA_mul_sub (a b c : HeckeAlgebra 2) :
     a * (b - c) = a * b - a * c := by rw [sub_eq_add_neg, HA_mul_add, HA_mul_neg, ← sub_eq_add_neg]
@@ -144,8 +138,7 @@ theorem T_ad_one_ppow_eq (k : ℕ) (hk : 2 ≤ k) :
   rw [Finset.sum_congr rfl shift,
     show Finset.range ((k - 2) / 2 + 1) = Finset.range (k / 2) from by congr 1; omega,
     Finset.sum_range_succ']
-  simp only [pow_zero, Nat.sub_zero]
-  abel
+  grind
 
 end Telescoping
 
@@ -270,8 +263,7 @@ private lemma mulSupport_pp_dvd_p (k : ℕ) (_hk : 0 < k) (a : Fin 2 → ℕ)
       ((SL_j₀ : GL (Fin 2) ℚ) *
         ((SL_L₂ : GL (Fin 2) ℚ) * dpk * (SL_R₂ : GL (Fin 2) ℚ))) =
       (SL_La : GL (Fin 2) ℚ) * da * (SL_Ra : GL (Fin 2) ℚ) := by
-    rw [← hi₀, ← hj₀, ← hD1_eq, ← hD2_eq]
-    exact h_prod_eq_a
+    grind
   have := congr_arg₂ (· * ·) (congr_arg ((SL_La : GL (Fin 2) ℚ)⁻¹ * ·) hprod)
     (show (SL_Ra : GL (Fin 2) ℚ)⁻¹ = (SL_Ra : GL (Fin 2) ℚ)⁻¹ from rfl)
   simp only [mul_assoc, inv_mul_cancel_left] at this
@@ -586,16 +578,11 @@ include hp in
 private lemma T_ad_p_ppow_eq (k : ℕ) (hk : 0 < k) :
     TAd p (p ^ k) = TPp p * TAd 1 (p ^ (k - 1)) := by
   have h0 := T_pp_mul_T_ad_ppow p hp 0 (k - 1) (Nat.zero_le _)
-  simp only [pow_zero, zero_add, pow_one] at h0
-  rw [show k - 1 + 1 = k from Nat.succ_pred_eq_of_pos hk] at h0
-  exact h0.symm
+  grind
 
 include hp in
 private lemma T_pp_comm_T_ad_one_p : TPp p * TAd 1 p = TAd 1 p * TPp p := by
-  rw [T_ad_of_pos 1 p Nat.one_pos hp.pos (one_dvd _)]
-  exact T_pp_comm_T_elem p hp _
-    (fun i => by fin_cases i <;> first | exact Nat.one_pos | exact hp.pos)
-    (fun i hi => by (have : i = 0 := by omega); subst this; simp)
+  grind
 
 /-- `TSum(p^0) = 1`. -/
 private lemma T_sum_ppow_zero : TSum ⟨p ^ 0, pow_pos hp.pos 0⟩ = 1 := by
@@ -629,31 +616,7 @@ private lemma T_sum_ppow_recurrence_step (k : ℕ) (hk_pos : 0 < k)
   have h2k1 := T_ad_one_ppow_eq p hp (k + 1) (by omega)
   conv at h2k1 => rhs; rw [show (k + 1) - 2 = k - 1 from by omega]
   rw [h2k1] at h5
-  conv at h5 => lhs; rw [show k + 2 - 2 = k from by omega]
-  conv at h5 => rhs; rw [show TPp p *
-      (TSum ⟨p ^ (k + 1), pow_pos hp.pos (k + 1)⟩ -
-       TPp p * TSum ⟨p ^ (k - 1), pow_pos hp.pos (k - 1)⟩) =
-      TPp p * TSum ⟨p ^ (k + 1), pow_pos hp.pos (k + 1)⟩ -
-      TPp p * (TPp p * TSum ⟨p ^ (k - 1), pow_pos hp.pos (k - 1)⟩)
-    from HA_mul_sub _ _ _]
-  rw [smul_sub,
-    ← HA_mul_assoc (TSum ⟨p, hp.pos⟩) (TPp p)
-      (TSum ⟨p ^ k, pow_pos hp.pos k⟩),
-    show TSum ⟨p, hp.pos⟩ * TPp p = TPp p * TSum ⟨p, hp.pos⟩ from by
-    rw [T_sum_prime p hp]; exact (T_pp_comm_T_ad_one_p p hp).symm,
-    HA_mul_assoc (TPp p) (TSum ⟨p, hp.pos⟩)
-      (TSum ⟨p ^ k, pow_pos hp.pos k⟩),
-    show TSum ⟨p, hp.pos⟩ * TSum ⟨p ^ k, pow_pos hp.pos k⟩ =
-      TSum ⟨p ^ (k + 1), pow_pos hp.pos (k + 1)⟩ +
-      (↑p : ℤ) • (TPp p *
-        TSum ⟨p ^ (k - 1), pow_pos hp.pos (k - 1)⟩) from by
-    rw [ih k (by omega) hk_pos]; abel,
-    HA_mul_add (TPp p), mul_smul_comm (↑p : ℤ),
-    ← HA_mul_assoc (TPp p) (TPp p), sub_eq_iff_eq_add] at h5
-  have h6 : TSum ⟨p, hp.pos⟩ * TSum ⟨p ^ (k + 2), pow_pos hp.pos (k + 2)⟩ =
-      TSum ⟨p ^ (k + 2 + 1), pow_pos hp.pos (k + 2 + 1)⟩ +
-      (↑p : ℤ) • (TPp p * TSum ⟨p ^ (k + 1), pow_pos hp.pos (k + 1)⟩) := by rw [h5]; abel
-  exact eq_sub_iff_add_eq.mpr h6.symm
+  grind
 
 /-- Theorem 3.24(6 recurrence): `T(p^{k+1}) = T(p) T(p^k) - p T(p,p) T(p^{k-1})` for k >= 1. -/
 theorem T_sum_ppow_recurrence : ∀ k : ℕ, 0 < k →
@@ -678,10 +641,7 @@ theorem T_sum_ppow_recurrence : ∀ k : ℕ, 0 < k →
       by congr 1; exact Subtype.ext (pow_one p)]
     rw [T_ad_one_ppow_one, T_sum_prime p hp] at h5
     rw [T_sum_prime p hp]
-    rw [show (↑(p + 1) : ℤ) • TPp p = (↑p : ℤ) • TPp p + TPp p from by
-      rw [show (↑(p + 1) : ℤ) = (↑p : ℤ) + 1 from by push_cast; ring,
-        add_smul, one_smul]] at h5
-    rw [eq_sub_iff_add_eq]; have h5' := h5; abel_nf at h5' ⊢; exact h5'.symm
+    grind
   | 2, _, _ =>
     simp only [show (2 : ℕ) ≠ 1 from by omega, ite_false,
                show (2 : ℕ) - 1 = 1 from by omega] at h5 ⊢
@@ -691,9 +651,7 @@ theorem T_sum_ppow_recurrence : ∀ k : ℕ, 0 < k →
     rw [show TSum ⟨p ^ 1, pow_pos hp.pos 1⟩ = TSum ⟨p, hp.pos⟩ from
       by congr 1; exact Subtype.ext (pow_one p)] at h5 ⊢
     rw [T_sum_prime p hp] at h5 ⊢
-    rw [(T_pp_comm_T_ad_one_p p hp).symm] at h5
-    rw [sub_eq_iff_eq_add] at h5; rw [eq_sub_iff_add_eq]
-    have h5' := h5; abel_nf at h5' ⊢; exact h5'.symm
+    grind
   | k + 3, _, ih =>
     exact T_sum_ppow_recurrence_step p hp (k + 1) (by omega) ih
 
@@ -703,28 +661,15 @@ theorem T_sum_ppow_recurrence : ∀ k : ℕ, 0 < k →
     for r ≤ s. Proved by induction on r using `T_sum_ppow_recurrence`. -/
 private lemma T_pp_comm_T_sum_ppow (k : ℕ) : TPp p * TSum ⟨p ^ k, pow_pos hp.pos k⟩ =
     TSum ⟨p ^ k, pow_pos hp.pos k⟩ * TPp p := by
-  rw [T_sum_ppow_expansion p hp k, Finset.mul_sum, Finset.sum_mul]
-  apply Finset.sum_congr rfl; intro i _
-  by_cases h : 0 < p ^ i ∧ 0 < p ^ (k - i) ∧ p ^ i ∣ p ^ (k - i)
-  · obtain ⟨_, _, hdvd⟩ := h
-    rw [T_ad_of_pos (p ^ i) (p ^ (k - i)) (pow_pos hp.pos i) (pow_pos hp.pos (k - i)) hdvd]
-    exact T_pp_comm_T_elem p hp _
-      (fun i' => by fin_cases i' <;> first | exact pow_pos hp.pos i | exact pow_pos hp.pos (k - i))
-      (fun i' hi' => by (have : i' = 0 := by omega); subst this; simpa using hdvd)
-  · simp [T_ad_eq_zero h, HA_mul_zero, HA_zero_mul]
+  grind
 
 private lemma T_pp_pow_comm_T_sum_ppow (i k : ℕ) : TPp p ^ i *
     TSum ⟨p ^ k, pow_pos hp.pos k⟩ = TSum ⟨p ^ k, pow_pos hp.pos k⟩ * TPp p ^ i := by
-  induction i with
-  | zero => simp
-  | succ i ih => rw [pow_succ', HA_mul_assoc, ih, ← HA_mul_assoc, T_pp_comm_T_sum_ppow p hp k,
-      HA_mul_assoc, ← pow_succ']
+  grind
 
 private lemma T_sum_p_comm_T_pp_pow (i : ℕ) : TSum ⟨p, hp.pos⟩ * TPp p ^ i =
     TPp p ^ i * TSum ⟨p, hp.pos⟩ := by
-  rw [show TSum ⟨p, hp.pos⟩ =
-    TSum ⟨p ^ 1, pow_pos hp.pos 1⟩ from by congr 1; exact (Subtype.ext (pow_one p)).symm]
-  exact (T_pp_pow_comm_T_sum_ppow p hp i 1).symm
+  grind
 
 private lemma T_sum_p_comm_T_pp_pow_T_sum (i k : ℕ) : TSum ⟨p, hp.pos⟩ *
     (TPp p ^ i * TSum ⟨p ^ k, pow_pos hp.pos k⟩) =
@@ -741,17 +686,7 @@ private lemma T_sum_ppow_mul_summand_split (r s i : ℕ) (hi : i ≤ r) (hrs : r
       TSum ⟨p ^ (r + s - 2 * i), pow_pos hp.pos _⟩) := by
   have h_pos : 0 < r + 1 + s - 2 * i := by omega
   have h_rec_i := T_sum_ppow_recurrence p hp (r + 1 + s - 2 * i) h_pos
-  rw [show (r + 1 + s - 2 * i) + 1 = r + 2 + s - 2 * i from by omega,
-      show r + 1 + s - 2 * i - 1 = r + s - 2 * i from by omega] at h_rec_i
-  have h_eq : TSum ⟨p, hp.pos⟩ * TSum ⟨p ^ (r + 1 + s - 2 * i), pow_pos hp.pos _⟩ =
-      TSum ⟨p ^ (r + 2 + s - 2 * i), pow_pos hp.pos _⟩ +
-      (p : ℤ) • (TPp p * TSum ⟨p ^ (r + s - 2 * i), pow_pos hp.pos _⟩) := by
-    rw [eq_sub_iff_add_eq] at h_rec_i; exact h_rec_i.symm
-  rw [h_eq, HA_mul_add, smul_add]
-  congr 1
-  rw [mul_smul_comm, smul_smul, show (p : ℤ) ^ i * (p : ℤ) = (p : ℤ) ^ (i + 1) from by ring]
-  congr 1
-  rw [← HA_mul_assoc, ← pow_succ]
+  grind
 
 /-- Distribute `T(p)` into each summand of S1 using commutativity. -/
 private lemma T_sum_ppow_mul_lhs1_distrib (r s : ℕ) :
@@ -764,8 +699,7 @@ private lemma T_sum_ppow_mul_lhs1_distrib (r s : ℕ) :
         (TSum ⟨p, hp.pos⟩ *
           TSum ⟨p ^ (r + 1 + s - 2 * i), pow_pos hp.pos _⟩)) := by
   rw [Finset.mul_sum]
-  apply Finset.sum_congr rfl; intro i _
-  rw [mul_smul_comm, T_sum_p_comm_T_pp_pow_T_sum p hp i _, ← HA_mul_assoc]
+  grind
 
 /-- Distribute `p • (Tpp * S2)` into a shifted-index sum. -/
 private lemma T_sum_ppow_mul_lhs2_shift (r s : ℕ) : (p : ℤ) • (TPp p *
@@ -776,9 +710,7 @@ private lemma T_sum_ppow_mul_lhs2_shift (r s : ℕ) : (p : ℤ) • (TPp p *
       (p : ℤ) ^ (i + 1) • (TPp p ^ (i + 1) *
         TSum ⟨p ^ (r + s - 2 * i), pow_pos hp.pos _⟩) := by
   rw [Finset.mul_sum, Finset.smul_sum]
-  apply Finset.sum_congr rfl; intro i _
-  rw [mul_smul_comm, smul_smul, mul_comm ((p : ℤ)) ((p : ℤ) ^ i), ← pow_succ]
-  congr 1; rw [← HA_mul_assoc, ← pow_succ']
+  grind
 
 /-- The last two summands of `T_sum_ppow_mul` for the `r + 2` case: expand the top-index term
     using the recurrence for `T(p^{s-r-1})`. -/
@@ -792,20 +724,7 @@ private lemma T_sum_ppow_mul_last_two_terms (r s : ℕ) (hrs : r + 2 ≤ s) :
   have hexp_C : r + 1 + s - 2 * (r + 1) = s - r - 1 := by omega
   have h_sr_pos : 0 < s - r - 1 := by omega
   have h_rec_final := T_sum_ppow_recurrence p hp (s - r - 1) h_sr_pos
-  rw [show (s - r - 1) + 1 = s - r from by omega,
-      show s - r - 1 - 1 = s - r - 2 from by omega] at h_rec_final
-  have h_expand : TSum ⟨p, hp.pos⟩ * TSum ⟨p ^ (s - r - 1), pow_pos hp.pos _⟩ =
-      TSum ⟨p ^ (s - r), pow_pos hp.pos _⟩ +
-      (p : ℤ) • (TPp p * TSum ⟨p ^ (s - r - 2), pow_pos hp.pos _⟩) := by
-    rw [eq_sub_iff_add_eq] at h_rec_final; exact h_rec_final.symm
-  rw [hexp_C, h_expand, HA_mul_add, smul_add, mul_smul_comm, smul_smul,
-      show (p : ℤ) ^ (r + 1) * (p : ℤ) = (p : ℤ) ^ (r + 2) from by ring,
-      ← HA_mul_assoc,
-      show TPp p ^ (r + 1) * TPp p = TPp p ^ (r + 2) from
-        (pow_succ (TPp p) (r + 1)).symm]
-  have hnat2 : s - r - 2 = r + 2 + s - 2 * (r + 2) := by omega
-  have hnat1 : s - r = r + 2 + s - 2 * (r + 1) := by omega
-  rw [hnat2, hnat1]
+  grind
 
 /-- Theorem 3.24(4): `T(p^r) T(p^s) = sum_{i=0}^{r} p^i T(p^i,p^i) T(p^{r+s-2i})` for r <= s. -/
 theorem T_sum_ppow_mul : ∀ r s : ℕ, r ≤ s →
@@ -1037,8 +956,7 @@ lemma gcd_factor_prime_pow (q : ℕ) (hq : q.Prime) (a b : ℕ) (m' n' : ℕ+)
     simp only [Finsupp.single_apply, Nat.factorization_eq_zero_of_not_dvd hqm,
       Nat.factorization_eq_zero_of_not_dvd hqn, add_zero, min_zero]; rfl
   · rw [Nat.Prime.factorization_pow hq, Nat.Prime.factorization_pow hq,
-      Nat.Prime.factorization_pow hq]; simp only [Finsupp.single_apply,
-      show q ≠ p' from Ne.symm hpq, if_false, zero_add]
+      Nat.Prime.factorization_pow hq]; grind
 
 /-- RHS computation for the inner summand: TSumNat product equals the combined quotient. -/
 private lemma T_sum_mul_peel_prime_summand_rhs (q : ℕ) (hq : q.Prime) (a b : ℕ) (m' n' : ℕ+)
@@ -1101,15 +1019,7 @@ private lemma T_sum_mul_peel_prime_summand (q : ℕ) (hq : q.Prime) (a b : ℕ) 
       (TAd (q ^ i) (q ^ i) * TAd d' d') * (TSum ⟨q ^ (r + s - 2 * i), pow_pos hq.pos _⟩ *
         TSumNat (↑m' * ↑n' / (d' * d'))) from by
       -- (a * b) * (c * d) = (a * c) * (b * d) via assoc + comm
-      set A := TAd (q ^ i) (q ^ i)
-      set B := TSum ⟨q ^ (r + s - 2 * i), pow_pos hq.pos _⟩
-      set C := TAd d' d'
-      set D := TSumNat (↑m' * ↑n' / (d' * d'))
-      calc A * B * (C * D) = A * (B * (C * D)) := HA_mul_assoc ..
-        _ = A * (B * C * D) := by rw [← HA_mul_assoc B C D]
-        _ = A * (C * B * D) := by rw [HA_mul_comm B C]
-        _ = A * (C * (B * D)) := by rw [HA_mul_assoc C B D]
-        _ = A * C * (B * D) := by rw [← HA_mul_assoc A C]]
+      grind]
   have hcop_sq : Nat.Coprime (q ^ i * (q ^ i)) (d' * d') :=
     (hcop_qi_d'.mul_right hcop_qi_d').mul_left (hcop_qi_d'.mul_right hcop_qi_d')
   congr 1
@@ -1134,8 +1044,7 @@ private lemma T_sum_mul_peel_prime_aux (q : ℕ) (hq : q.Prime) (a b : ℕ) (_ha
     show TSum ⟨q ^ b * n', _⟩ = TSum qb * TSum n' from (T_sum_mul_coprime qb n' hcop_qn).symm,
     show TSum qa * TSum m' * (TSum qb * TSum n') =
       (TSum qa * TSum qb) * (TSum m' * TSum n') from by
-      rw [HA_mul_assoc, ← HA_mul_assoc (TSum m'),
-          HA_mul_comm (TSum m'), HA_mul_assoc, ← HA_mul_assoc]]
+      grind]
   set r := min a b with hr_def; set g := Nat.gcd (m' : ℕ) n'
   have hcop_rg : Nat.Coprime (q ^ r) g :=
     (Nat.Prime.coprime_pow_of_not_dvd hq (fun h => hqm (dvd_trans h (Nat.gcd_dvd_left _ _)))).symm

@@ -147,12 +147,9 @@ private theorem deriv2_hermiteFunction (n : ℕ) (x : ℝ) :
   -- when n = 0. Case split:
   cases n with
   | zero =>
-    simp only [a, b, Nat.cast_zero, zero_div, Real.sqrt_zero, zero_mul, neg_zero, zero_sub,
-               zero_add, Nat.zero_sub]
-    ring
+    grind
   | succ m =>
-    rw [show m + 1 - 1 = m from Nat.succ_sub_one m]
-    ring
+    grind
 
 -- Helper: x^2 * hermiteFunction expanded via mul_x_hermiteFunction twice.
 -- The ψ_{n-1+1} term equals ψ_n when n ≥ 1 and the coefficient vanishes when n = 0,
@@ -178,11 +175,9 @@ private theorem x_sq_mul_hermiteFunction (n : ℕ) (x : ℝ) :
   -- When n ≥ 1: n-1+1 = n so this is √(n/2) * √(n/2) * ψ_n
   cases n with
   | zero =>
-    simp [Real.sqrt_zero]
-    ring
+    grind
   | succ m =>
-    rw [show m + 1 - 1 = m from Nat.succ_sub_one m, show m + 1 = m + 1 from rfl]
-    ring
+    grind
 
 theorem hermiteFunction_harmonic_oscillator_eigenvalue (n : ℕ) (x : ℝ) :
     -(iteratedDeriv 2 (hermiteFunction n) x) + x ^ 2 * hermiteFunction n x =
@@ -194,15 +189,7 @@ theorem hermiteFunction_harmonic_oscillator_eigenvalue (n : ℕ) (x : ℝ) :
   -- Now the ψ_{n+2} and ψ_{n-1-1} terms cancel, leaving coefficient calculation on ψ_n
   -- √(n/2)^2 + √((n+1)/2)^2 + √((n+1)/2)^2 + √(n/2)^2
   -- equals n/2 + (n+1)/2 + (n+1)/2 + n/2 = 2n+1.
-  have hsq_np1 :
-      Real.sqrt ((↑(n + 1) : ℝ) / 2) * Real.sqrt ((↑(n + 1) : ℝ) / 2) =
-        (↑(n + 1) : ℝ) / 2 :=
-    Real.mul_self_sqrt (by positivity)
-  have hsq_n : Real.sqrt ((↑n : ℝ) / 2) * Real.sqrt ((↑n : ℝ) / 2) = (↑n : ℝ) / 2 :=
-    Real.mul_self_sqrt (by positivity)
-  rw [hsq_np1, hsq_n]
-  push_cast
-  ring
+  grind
 
 /-! ## Section 4: Integration by Parts
 
@@ -298,17 +285,7 @@ theorem hermiteCoeff_harmonic_oscillator (n : ℕ) (f : SchwartzMap ℝ ℝ) :
           f x * iteratedDeriv 2 (hermiteFunction n) x := by
       intro x
       have h := hermiteFunction_harmonic_oscillator_eigenvalue n x
-      have : x ^ 2 * hermiteFunction n x =
-          (2 * ↑n + 1) * hermiteFunction n x +
-            iteratedDeriv 2 (hermiteFunction n) x := by
-        linarith
-      calc x ^ 2 * f x * hermiteFunction n x
-          = f x * (x ^ 2 * hermiteFunction n x) := by ring
-        _ = f x * ((2 * ↑n + 1) * hermiteFunction n x +
-              iteratedDeriv 2 (hermiteFunction n) x) := by
-            rw [this]
-        _ = (2 * ↑n + 1) * (f x * hermiteFunction n x) +
-            f x * iteratedDeriv 2 (hermiteFunction n) x := by ring
+      grind
     simp_rw [heigen]; exact (hint_fψ.const_mul _).add hint_fψ''
   -- Step 1: Rewrite integrand using eigenvalue equation and factor
   -- (-f''(x) + x²f(x)) * ψₙ(x) = f(x) * ((2n+1)ψₙ(x)) + (f(x)*ψₙ''(x) - f''(x)*ψₙ(x))
@@ -325,29 +302,13 @@ theorem hermiteCoeff_harmonic_oscillator (n : ℕ) (f : SchwartzMap ℝ ℝ) :
       f x * iteratedDeriv 2 (hermiteFunction n) x := by
     intro x
     have h := hermiteFunction_harmonic_oscillator_eigenvalue n x
-    have hx2 : x ^ 2 * hermiteFunction n x =
-        (2 * ↑n + 1) * hermiteFunction n x +
-          iteratedDeriv 2 (hermiteFunction n) x := by
-      linarith
-    calc x ^ 2 * f x * hermiteFunction n x
-        = f x * (x ^ 2 * hermiteFunction n x) := by ring
-      _ = f x * ((2 * ↑n + 1) * hermiteFunction n x +
-            iteratedDeriv 2 (hermiteFunction n) x) := by
-          rw [hx2]
-      _ = _ := by ring
+    grind
   -- Rewrite full integrand
   have h_integrand : ∀ x, (-(iteratedDeriv 2 (⇑f) x) + x ^ 2 * f x) * hermiteFunction n x =
       (2 * ↑n + 1) * (f x * hermiteFunction n x) +
       (f x * iteratedDeriv 2 (hermiteFunction n) x -
         iteratedDeriv 2 (⇑f) x * hermiteFunction n x) := by
-    intro x
-    have h1 := heigen x
-    -- Expand and simplify: both sides equal -f''·ψ + (2n+1)·f·ψ + f·ψ''
-    have hlhs : (-(iteratedDeriv 2 (⇑f) x) + x ^ 2 * f x) * hermiteFunction n x =
-        -(iteratedDeriv 2 (⇑f) x * hermiteFunction n x) +
-          x ^ 2 * f x * hermiteFunction n x := by
-      ring
-    rw [hlhs, h1]; ring
+    grind
   simp_rw [h_integrand]
   -- Split: ∫ (a + b) = ∫ a + ∫ b
   have hint_main := hint_fψ.const_mul (2 * ↑n + 1)
@@ -421,8 +382,7 @@ private lemma cauchy_schwarz_integral (f g : ℝ → ℝ) (hf : Integrable (fun 
       have : (fun x => f x * g x) =ᵐ[MeasureTheory.volume] (fun _ => 0) := by
         filter_upwards [hg2_ae] with x hx
         simp only [Pi.zero_apply] at hx
-        have := sq_eq_zero_iff.mp hx
-        rw [this, mul_zero]
+        grind
       rw [hC_def, integral_congr_ae this, integral_zero]
     simp [hC0, hB, abs_zero]
   · -- B > 0: substitute t = -C/B
@@ -1352,8 +1312,7 @@ private lemma schwartz_seminorm_remainder_le (f : SchwartzMap ℝ ℝ) (k l : �
         (contDiff_const.mul (hermiteFunction_contDiff i l)).of_le le_rfl)
     -- ⇑r = ⇑f - (finite sum function)
     have hcoe_r : (⇑r : ℝ → ℝ) = fun y => f y - ∑ i ∈ s, g i y := by
-      ext y; simp only [hr_def, sub_apply]
-      exact congrArg (f y - ·) (hsum_coe y)
+      grind
     rw [hcoe_r]
     -- Compute iteratedFDeriv of (f - sum) via iteratedFDeriv_add + iteratedFDeriv_neg
     set h_sum := fun y => ∑ i ∈ s, g i y with h_sum_def

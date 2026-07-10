@@ -156,23 +156,10 @@ lemma largeEigenspaceProjector_comp
   have hTorth_mem : T (x - P x) ∈ U.orthogonal := by
     simpa [t] using hU_orth_forall (x - P x) hx_orth
   have hx_decomp : x = P x + (x - P x) := by
-    calc
-      x = (x - P x) + P x := (sub_add_cancel x (P x)).symm
-      _ = P x + (x - P x) := by ac_rfl
+    grind
   have hP_TPx : P (T (P x)) = T (P x) :=
     (Submodule.starProjection_eq_self_iff (K := U)).2 hTP_mem
   have hP_Torth : P (T (x - P x)) = 0 :=
     (Submodule.starProjection_apply_eq_zero_iff (K := U)).2 hTorth_mem
-  have hPTx : P (T x) = T (P x) := by
-    calc
-      P (T x) = P (T (P x + (x - P x))) := by
-            exact congrArg (fun y => P (T y)) hx_decomp
-      _ = P (T (P x) + T (x - P x)) := by
-            exact congrArg P (T.map_add (P x) (x - P x))
-      _ = P (T (P x)) + P (T (x - P x)) := by
-            exact P.map_add (T (P x)) (T (x - P x))
-      _ = T (P x) := by
-            rw [hP_TPx, hP_Torth]
-            simp
-  simpa [ContinuousLinearMap.comp_apply] using hPTx
+  grind
 end CompactSelfAdjoint

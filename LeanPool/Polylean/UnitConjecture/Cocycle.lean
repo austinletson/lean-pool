@@ -61,8 +61,7 @@ Some easy consequences of the definition of an action by automorphisms.
 omit [AddGroup A] [AutAction α] in
 @[aesop norm (rule_sets := [AutAction])]
 lemma apply_zero : ∀ {a : A}, α a (0 : B) = (0 : B) := by
-  intro a
-  exact map_zero (α a)
+  grind
 
 @[aesop norm (rule_sets := [AutAction])]
 lemma zero_apply : ∀ {b : B}, α (0 : A) b = b := by
@@ -73,8 +72,7 @@ lemma zero_apply : ∀ {b : B}, α (0 : A) b = b := by
 omit [AddGroup A] [AutAction α] in
 @[aesop norm (rule_sets := [AutAction])]
 lemma apply_add : ∀ {a : A} {b b' : B}, α a (b + b') = α a b + α a b' := by
-  intro a b b'
-  exact map_add (α a) b b'
+  grind
 
 @[aesop safe (rule_sets := [AutAction])]
 lemma compatibility' : ∀ {a a' : A} {b : B}, α a (α a' b) = α (a + a') b := by
@@ -90,8 +88,7 @@ lemma act_neg_act {a : A} {b : B} : α a (α (-a) b) = b := by
 omit [AddGroup A] [AutAction α] in
 @[aesop safe (rule_sets := [AutAction])]
 lemma apply_neg : ∀ {a : A} {b : B}, α a (-b) = -α a b := by
-  intro a b
-  exact map_neg (α a) b
+  grind
 
 end AutAction
 

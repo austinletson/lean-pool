@@ -172,8 +172,7 @@ lemma pow_mul_pow_inv_cancel (K : Type*) [Field K] (P : PowerSeries K) (t e : �
         rw [map_pow]
         exact pow_ne_zero _ hP),
     one_mul]
-  congr 1
-  omega
+  grind
 
 theorem genFun_eq_reduced (K : Type*) [Field K] (m μ : ℕ) {s : ℕ}
     (ξ : Nat.Partition s) (_hm : 2 ≤ m) (h_parts : ∀ i ∈ ξ.parts, i ≤ m)
@@ -242,10 +241,7 @@ theorem polyP_coeff (R : Type*) [CommRing R] (n j : ℕ) :
           show m + 1 - (j + 1) = m - j by omega,
           show m + 2 - (j + 1) = m + 1 - j by omega]
         have key := polyP_coeff_step_pos R m (j + 1) (by omega)
-        simp only [Nat.add_sub_cancel,
-          show m + 1 - (j + 1) = m - j by omega,
-          show m + 2 - (j + 1) = m + 1 - j by omega] at key
-        exact key
+        grind
 
 theorem D_coeff_mk (K : Type*) [Field K] (m a b : ℕ) :
     (↑(polyP K a * polyP K b) : PowerSeries K) * ((↑(polyP K m) : PowerSeries K))⁻¹ =
@@ -549,9 +545,7 @@ private lemma double_submatrix_eq_stripMatrix (n : ℕ) (j₀ : Fin (n + 2)) (hj
     (by simp [Fin.succAbove_last, Fin.val_castSucc])
     (by simp only [Fin.succAbove_last]
         have : j.castSucc.castSucc < j₀ := by
-          rw [Fin.lt_def]
-          simp [Fin.val_castSucc]
-          omega
+          grind
         simp only [Fin.succAbove, this, ite_true, Fin.val_castSucc])
 
 private lemma neg_one_pow_double (n : ℕ) : (-1 : PowerSeries ℚ) ^ (n + n) = 1 :=
@@ -661,12 +655,10 @@ private lemma md_minor_left_block_det (n : ℕ) (a j : Fin (n + 1))
       simp only [Matrix.submatrix_apply, Matrix.toSquareBlockProp_def, Matrix.of_apply]
       apply stripMatrix_val_eq
       · have : (↑u : Fin n).castSucc < j := by
-          simp [Fin.lt_def, Fin.val_castSucc]
-          omega
+          grind
         simp [Fin.succAbove_of_castSucc_lt _ _ this, Fin.val_castSucc, e]
       · have : (↑v : Fin n).castSucc < a := by
-          simp [Fin.lt_def, Fin.val_castSucc]
-          omega
+          grind
         simp [Fin.succAbove_of_castSucc_lt _ _ this, Fin.val_castSucc, e],
     Matrix.det_submatrix_equiv_self]
 
@@ -687,8 +679,7 @@ private lemma md_middle_block_upper_entry_zero (n : ℕ) (a j : Fin (n + 1))
         (by simp only [Fin.lt_def, Fin.val_castSucc]; exact x.prop.2),
       Fin.succAbove_of_le_castSucc _ _
         (by simp only [Fin.le_def, Fin.val_castSucc]; exact y.prop.1)]
-  simp [Fin.val_castSucc, Fin.val_succ]
-  omega
+  grind
 
 private lemma md_middle_block_B_lower_triangular (n : ℕ) (a j : Fin (n + 1)) :
     let M := (stripMatrix (n + 1)).submatrix j.succAbove a.succAbove
@@ -720,9 +711,7 @@ private lemma md_nested_subtype_card (n : ℕ) (a j : Fin (n + 1)) :
     Fintype.card_congr {
       toFun := fun ⟨x, hx⟩ => ⟨x.val, Finset.mem_Ico.mpr ⟨hx.1, hx.2⟩⟩
       invFun := fun ⟨k, hk⟩ => ⟨⟨k, by
-          have := (Finset.mem_Ico.mp hk).2
-          have := j.isLt
-          omega⟩,
+          grind⟩,
         (Finset.mem_Ico.mp hk).1, (Finset.mem_Ico.mp hk).2⟩
       left_inv := fun ⟨x, hx⟩ => by simp_all
       right_inv := fun ⟨k, hk⟩ => by simp_all }
@@ -951,15 +940,7 @@ private lemma sum_stripMatrix_split (m : ℕ) (v : Fin m → PowerSeries ℚ) (i
   apply Finset.sum_congr rfl
   intro j _
   simp only [stripMatrix]
-  by_cases h1 : i = j
-  · simp [h1]
-  · by_cases h2 : j.val = i.val + 1
-    · simp [h1, h2]
-      omega
-    · by_cases h3 : i.val = j.val + 1
-      · simp [h1, h3]
-        simp_all
-      · simp [h1, h2, h3]
+  grind
 
 private lemma sum_superdiag (m : ℕ) (v : Fin m → PowerSeries ℚ) (i : Fin m) :
     ∑ j : Fin m, (if j.val = i.val + 1 then -(v j) else 0) =
@@ -967,8 +948,7 @@ private lemma sum_superdiag (m : ℕ) (v : Fin m → PowerSeries ℚ) (i : Fin m
   by_cases hm : i.val + 1 < m
   · simp only [hm, dite_true]
     have : ∀ j : Fin m, (j.val = i.val + 1) = (j = ⟨i.val + 1, hm⟩) := by
-      intro j
-      simp [Fin.ext_iff]
+      grind
     simp_rw [this]
     simp [Finset.sum_ite_eq', Finset.mem_univ]
   · simp only [hm, dite_false]
@@ -981,9 +961,7 @@ private lemma sum_subdiag (m : ℕ) (v : Fin m → PowerSeries ℚ) (i : Fin m)
   by_cases h : 0 < i.val
   · simp only [h, dite_true]
     have : ∀ j : Fin m, (i.val = j.val + 1) = (j = ⟨i.val - 1, pf h⟩) := by
-      intro j
-      simp [Fin.ext_iff]
-      omega
+      grind
     simp_rw [this]
     exact Fintype.sum_ite_eq' ⟨i.val - 1, pf h⟩ (fun j => -(PowerSeries.X * v j))
   · simp only [h, dite_false]

@@ -51,10 +51,7 @@ theorem not_N_mem_empty : ¬ N.mem (∅ : Set ℕ) := by
 /-- Distinct singletons are disjoint. -/
 private theorem singleton_inter_eq_empty {n m : ℕ} (hmn : m ≠ n) :
     ({n} : Set ℕ) ∩ {m} = ∅ := by
-  ext k
-  simp only [Set.mem_inter_iff, Set.mem_singleton_iff, Set.mem_empty_iff_false, iff_false, not_and]
-  rintro rfl h2
-  exact hmn h2.symm
+  grind
 
 /-- **Exercise 4.18 (Scott 1981, PRG-19).** Element classification: every element
 of `|N|` is either

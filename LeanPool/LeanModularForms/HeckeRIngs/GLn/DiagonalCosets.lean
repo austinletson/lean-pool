@@ -252,15 +252,12 @@ private lemma sign_correct_unit_transform (A : Matrix (Fin n) (Fin n) ℤ) (d : 
       · simp [h]
     have hflip_diag : flip * Matrix.diagonal d * flip = Matrix.diagonal d := by
       have hcomm : flip * Matrix.diagonal d = Matrix.diagonal d * flip := by
-        rw [Matrix.diagonal_mul_diagonal, Matrix.diagonal_mul_diagonal]; congr 1; ext i
-        simp only [Function.update_apply]; by_cases hi : i = 0 <;> simp [hi, mul_comm]
+        rw [Matrix.diagonal_mul_diagonal, Matrix.diagonal_mul_diagonal]; grind
       rw [hcomm, Matrix.mul_assoc, hflip_sq, Matrix.mul_one]
     have hflip_L_det : (flip * L_mat).det = 1 := by rw [det_mul, hflip_det, hLd]; norm_num
     have hflip_Q_det : (Q_mat * flip).det = 1 := by rw [det_mul, hQd, hflip_det]; norm_num
     have hflip_eq : flip * L_mat * A * (Q_mat * flip) = Matrix.diagonal d := by
-      have : flip * L_mat * A * (Q_mat * flip) = flip * (L_mat * A * Q_mat) * flip :=
-        by simp only [Matrix.mul_assoc]
-      rw [this, hL_eq, hflip_diag]
+      grind
     exact ⟨⟨flip * L_mat, hflip_L_det⟩, ⟨Q_mat * flip, hflip_Q_det⟩, hflip_eq⟩
 
 /-- Every integer matrix with positive determinant is `SL_n(ℤ)`-equivalent to a positive
@@ -329,27 +326,18 @@ theorem exists_diagonal_of_posdet (A : Matrix (Fin n) (Fin n) ℤ) (hdet : 0 < A
   set sv := fun i => if (0 : ℤ) < a i then (1 : ℤ) else -1 with hsv_def
   have hsv_sq : ∀ i, sv i * sv i = 1 := fun i => by simp only [hsv_def]; split_ifs <;> ring
   have hsv_mul_d : ∀ i, sv i * d i = a i := by
-    intro i; simp only [hsv_def, hd_def]; rcases lt_trichotomy (a i) 0 with h | h | h
-    · rw [if_neg (not_lt.mpr h.le), abs_of_neg h]; ring
-    · exact absurd h (ha_ne i)
-    · rw [if_pos h, abs_of_pos h, one_mul]
+    grind
   have h_sd : Matrix.diagonal a = Matrix.diagonal sv * Matrix.diagonal d := by
     rw [Matrix.diagonal_mul_diagonal]; congr 1; ext i; exact (hsv_mul_d i).symm
   have hss : Matrix.diagonal sv * Matrix.diagonal sv = 1 := by
     rw [Matrix.diagonal_mul_diagonal]; ext i j; simp only [Matrix.diagonal_apply, Matrix.one_apply]
-    by_cases h : i = j
-    · subst h; simp [hsv_sq]
-    · simp [h]
+    grind
   have hs_det_unit : IsUnit (Matrix.diagonal sv).det := by
     rw [Matrix.det_diagonal]; exact IsUnit.of_mul_eq_one _
       (by rw [← Finset.prod_mul_distrib]; exact Finset.prod_eq_one (fun i _ => hsv_sq i))
   set L_mat := Matrix.diagonal sv * P_mat⁻¹ with hL_def
   have hL_eq : L_mat * A * Q_mat = Matrix.diagonal d := by
-    rw [hL_def, show Matrix.diagonal sv * P_mat⁻¹ * A * Q_mat =
-        Matrix.diagonal sv * (P_mat⁻¹ * A * Q_mat) from by simp only [Matrix.mul_assoc],
-      h_diag_eq, h_sd, show Matrix.diagonal sv * (Matrix.diagonal sv * Matrix.diagonal d) =
-        (Matrix.diagonal sv * Matrix.diagonal sv) * Matrix.diagonal d from by rw [Matrix.mul_assoc],
-      hss, Matrix.one_mul]
+    grind
   have hL_unit : IsUnit L_mat.det := by
     rw [hL_def, det_mul]; exact IsUnit.mul hs_det_unit (isUnit_nonsing_inv_det _ hP_unit)
   have hLQ_one : L_mat.det * Q_mat.det = 1 := by
@@ -406,17 +394,7 @@ private lemma gcd_2x2_mul (a b : ℤ) :
     simp only [Fin.zero_eta, Fin.isValue, mul_apply, of_apply, cons_val', cons_val_fin_one,
       cons_val_zero, Fin.sum_univ_two, mul_one, cons_val_one, Fin.mk_one, mul_neg, neg_mul, neg_neg]
   · linarith
-  · have key : -(s * a * (t * q)) + t * b * (1 - t * q) =
-        (1 - (s * p + t * q)) * (t * q * g) := by rw [← hpg, ← hqg]; ring
-    rw [key]
-    have h2 : (1 - (s * p + t * q)) * g = 0 := by
-      have : (s * p + t * q) * g = g := by
-        calc (s * p + t * q) * g = s * (p * g) + t * (q * g) := by ring
-          _ = s * a + t * b := by rw [hpg, hqg]
-          _ = g := hbez
-      linarith
-    have : (1 - (s * p + t * q)) * (t * q * g) = t * q * ((1 - (s * p + t * q)) * g) := by ring
-    linarith [mul_eq_zero_of_right (t * q) h2]
+  · grind
   · rw [← hpg, ← hqg]; ring
   · rw [← hpg, ← hqg]; ring
 
@@ -497,8 +475,7 @@ private lemma gcd_step_general (k : ℕ) (d : Fin (k + 2) → ℤ) (hd : ∀ i, 
   have hj_ne_zero : j ≠ (0 : Fin (k + 2)) := fun h => hj (by rw [h]; rfl)
   refine ⟨⟨L_big, hL_det_big⟩, ⟨R_big, hR_det_big⟩, d', hd'_pos,
     by show d' ⟨0, _⟩ = g; simp [d'], ?_, ?_, ?_, ?_⟩
-  · intro i hi1 hi2; show d' i = d i
-    simp only [d']; rw [if_neg (show i ≠ (0 : Fin (k + 2)) from hi1), if_neg hi2]
+  · grind
   · exact Nat.le_of_dvd (Int.natAbs_pos.mpr (ne_of_gt ha))
       (Int.natAbs_dvd_natAbs.mpr (Int.gcd_dvd_left a b))
   · intro hndvd
@@ -594,16 +571,12 @@ private lemma make_first_divide_all (k : ℕ) (d : Fin (k + 2) → ℤ) (hd : �
       obtain ⟨L₁, R₁, d₁, hd₁_pos, hd₁_zero, hd₁_rest, _, hlt, hmul₁⟩ :=
         gcd_step_general k d hd j hj_ne
       have hN₁ : (d₁ (0 : Fin (k + 2))).natAbs < N := by
-        rw [show d₁ (0 : Fin (k + 2)) = d₁ ⟨0, by omega⟩ from rfl, hd₁_zero, ← hN]
-        exact hlt hj_ndvd
+        grind
       obtain ⟨d₂, hd₂_pos, hd₂_div, L₂, R₂, hmul₂⟩ :=
         ih _ hN₁ d₁ hd₁_pos (hd₁_pos 0) rfl
       refine ⟨d₂, hd₂_pos, hd₂_div, L₂ * L₁, R₁ * R₂, ?_⟩
       simp only [SpecialLinearGroup.coe_mul]
-      rw [show ((L₂ : Matrix _ _ ℤ) * (L₁ : Matrix _ _ ℤ)) * Matrix.diagonal d *
-        ((R₁ : Matrix _ _ ℤ) * (R₂ : Matrix _ _ ℤ)) = (L₂ : Matrix _ _ ℤ) *
-        ((L₁ : Matrix _ _ ℤ) * Matrix.diagonal d * (R₁ : Matrix _ _ ℤ)) * (R₂ : Matrix _ _ ℤ)
-        by simp [Matrix.mul_assoc], hmul₁, hmul₂]
+      grind
 
 private noncomputable def slSuccEmbed {k : ℕ} (M : SpecialLinearGroup (Fin (k + 1)) ℤ) :
     SpecialLinearGroup (Fin (k + 2)) ℤ := by
@@ -731,10 +704,7 @@ private theorem exists_divchain_diagonal_of_posdet (A : Matrix (Fin n) (Fin n) �
   change (↑(L₁ * L₀) : Matrix _ _ ℤ) * A *
     (↑(R₀ * R₁) : Matrix _ _ ℤ) = Matrix.diagonal d'
   simp only [SpecialLinearGroup.coe_mul]
-  calc (↑L₁ : Matrix _ _ ℤ) * ↑L₀ * A * (↑R₀ * ↑R₁)
-      = ↑L₁ * (↑L₀ * A * ↑R₀) * ↑R₁ := by simp only [Matrix.mul_assoc]
-    _ = ↑L₁ * Matrix.diagonal d₀ * ↑R₁ := by rw [hLR₀]
-    _ = Matrix.diagonal d' := hLR₁
+  grind
 
 variable [NeZero n]
 
@@ -914,10 +884,7 @@ theorem T_diag_span (f : HeckeAlgebra n) :
     fun t => ⟨a_fn t, ha_fn t, hdiv_fn t⟩
   set S : Finset { p : Fin n → ℕ // (∀ i, 0 < p i) ∧ DivChain n p } := f.support.image toSub
   have htoSub_inj : ∀ t₁ t₂ : HeckeCoset (GLPair n), toSub t₁ = toSub t₂ → t₁ = t₂ := by
-    intro t₁ t₂ h; have ha : a_fn t₁ = a_fn t₂ := congr_arg Subtype.val h
-    calc t₁ = TDiag (a_fn t₁) := hrep_fn t₁
-      _ = TDiag (a_fn t₂) := by simp only [TDiag, diagMatDelta, ha]
-      _ = t₂ := (hrep_fn t₂).symm
+    grind
   refine ⟨S, fun s => f.toFun (TDiag s.1.1), ?_⟩
   have h_smul : ∀ (a : Fin n → ℕ) (c : ℤ), c • TElem a = Finsupp.single (TDiag a) c := by
     intro a c; unfold TElem; rw [Finsupp.smul_single, smul_eq_mul, mul_one]
@@ -933,17 +900,9 @@ theorem T_diag_span (f : HeckeAlgebra n) :
     rw [Finset.sum_eq_single_of_mem ⟨⟨a_fn x, ha_fn x, hdiv_fn x⟩, hmem⟩
       (Finset.mem_attach _ _)]
     · simp only [show TDiag (a_fn x) = x from (hrep_fn x).symm, Finsupp.single_eq_same]; rfl
-    · intro s _ hs; apply Finsupp.single_eq_of_ne
-      intro heq; apply hs; apply Subtype.ext
-      obtain ⟨t, _, hts⟩ := Finset.mem_image.mp s.2
-      have h_tx : t = x := (h_Tdiag s.1 t hts).symm.trans heq.symm
-      subst h_tx; exact hts.symm
+    · grind
   · have hfx : Finsupp.toFun f x = 0 := Finsupp.notMem_support_iff.mp hx
-    change Finsupp.toFun f x = _; rw [hfx]; symm; apply Finset.sum_eq_zero; intro s _
-    exact Finsupp.single_eq_of_ne (fun heq => by
-      obtain ⟨t, ht, hts⟩ := Finset.mem_image.mp s.2
-      have h_tx : t = x := (h_Tdiag s.1 t hts).symm.trans heq.symm
-      subst h_tx; exact absurd ht hx)
+    change Finsupp.toFun f x = _; rw [hfx]; symm; apply Finset.sum_eq_zero; grind
 
 end SmithNormalForm
 

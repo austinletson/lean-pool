@@ -217,12 +217,7 @@ omit [IsLocalRing R] [IsNoetherianRing R] in lemma filtration_smul_le
       Ideal.Quotient.mk_surjective).mp hdiff_quot
     suffices h0 : Ideal.Quotient.mk (Mi ^ (n + 1 + 1)) m *
         (evalₐ Mi (n + 1 + 1) y - Ideal.Quotient.mk (Mi ^ (n + 1 + 1)) r) = 0 by
-      have := h0
-      rw [mul_sub] at this
-      rw [show Ideal.Quotient.mk (Mi ^ (n + 1 + 1)) m *
-          Ideal.Quotient.mk (Mi ^ (n + 1 + 1)) r =
-          Ideal.Quotient.mk (Mi ^ (n + 1 + 1)) (m * r) from by rw [← map_mul]] at this
-      exact sub_eq_zero.mp this
+      grind
     have hseq' : Ideal.Quotient.mk (Mi ^ (n + 1 + 1)) s =
         evalₐ Mi (n + 1 + 1) y - Ideal.Quotient.mk (Mi ^ (n + 1 + 1)) r := hseq
     rw [← hseq', ← map_mul, Ideal.Quotient.eq_zero_iff_mem]
@@ -356,9 +351,7 @@ omit [IsLocalRing R] [IsNoetherianRing R] in lemma extract_filtration_rep
   have hr_FN : r ∈ FN (n0 + K) := by
     rw [hFN_def]
     exact ⟨hr_pow, Ideal.mem_comap.mpr (hr_eq ▸ Ideal.mem_map_of_mem _ heJ)⟩
-  refine ⟨r, ?_, hr_eq.symm⟩
-  rw [hn0_pow]
-  exact (hFN_def (n0 + K) ▸ hr_FN : r ∈ (FN (n0 + K) : Submodule R R))
+  grind
 
 /-- Every ideal of the adic completion of a Noetherian local ring is finitely generated. -/
 private def adicCompletion_ideal_fg_proof : PLift (
@@ -641,8 +634,7 @@ private def adicCompletion_ideal_fg_proof : PLift (
           have hrw : x - y₀ - Finset.sum genS (fun g => (c_K g + d g) * g) =
               (x - y₀ - sumG c_K) - sumG d := by rw [hsplit]
                                                  abel
-          exact ⟨by rw [hrw]
-                    exact hd.2,
+          exact ⟨by grind,
             by rw [hrw]
                exact J.sub_mem hJK (hI0_le_J (hsum_in_I₀ d))⟩⟩
       let csdAll := buildAdicSeq csd0 csdS
@@ -760,8 +752,7 @@ private def adicCompletion_ideal_fg_proof : PLift (
         have ha_fin : a ∈ S_J := ha
         exact (Ideal.mem_map_iff_of_surjective _ (surjective_evalₐ Mi n0)).mpr
           ⟨if h : a ∈ S_J then lJ a h else 0, hgenJ_sub a ha_fin, by
-            rw [dif_pos ha_fin]
-            exact hlJ_eq a ha_fin⟩
+            grind⟩
     | succ K ih =>
       intro x hx
       obtain ⟨y, hy, e, he, hxye⟩ := Submodule.mem_sup.mp (ih x hx)

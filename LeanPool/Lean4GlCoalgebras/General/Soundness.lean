@@ -43,8 +43,7 @@ noncomputable def chain
             by_cases evaluate ⟨M, w_ih⟩ (at n)
             case pos w_n =>
               have w_ih_prop := by simpa [r_def, f] using w_ih_prop
-              have := w_ih_prop (at n) in_Δ.1
-              simp_all
+              grind
             case neg not_w_n =>
               have w_ih_prop := by simpa [r_def, f] using w_ih_prop
               have := w_ih_prop (na n) in_Δ.2
@@ -187,9 +186,7 @@ lemma chain_model_prop {𝕏 : Proof}
     intro _
     simp only
     split
-    · exact (Classical.not_imp.1 (Classical.choose_spec
-        (not_forall.1 (fun z ↦
-          (not_exists.1 w_ih_prop) (□ φ) ⟨(r_def ▸ in_Δ), z⟩)))).1
+    · grind
     all_goals
       exfalso
       have step := 𝕏.step x_ih
@@ -216,23 +213,14 @@ lemma has_children_of_chain_model {𝕏 : Proof}
       simp only [ih] at *
       have h := h (k + 1)
       have chain_model_prop := chain_model_prop prop w_prop (n + k)
-      by_cases (r 𝕏.α (chain prop w_prop (n + k)).fst).isBox
-      case pos box =>
-        have chain_model_prop := by simpa [box] using chain_model_prop
-        exfalso
-        exact h chain_model_prop
-      case neg nbox =>
-        have chain_model_prop := by simpa [nbox] using chain_model_prop
-        exact chain_model_prop
+      grind
   have g2 : ∀ m, ¬ (r 𝕏.α (chain prop w_prop (n + m)).fst).isBox := by
     intro m con
     have eq1 := g1 m
     have eq2 := g1 (m + 1)
     rw [eq1] at eq2
     have chain_model_prop := chain_model_prop prop w_prop (n + m)
-    have chain_model_prop := by simpa [con] using chain_model_prop
-    rw [eq2, add_assoc] at chain_model_prop
-    apply (instModelIsIrref M).irrefl _ chain_model_prop
+    grind
   have ⟨k, k_prop⟩ :=
     inf_path_has_inf_boxes (fun n ↦ (chain prop w_prop n).1) (chain_proof_prop prop w_prop) n
   apply g2 k k_prop
@@ -261,11 +249,7 @@ lemma incChainEventualIncChain_prop {β}
       congr
       · skip
       · unfold incChainEventualIncChain
-    rcases incChainEventualIncChain Q_prop n with ⟨ih, ih_prop⟩
-    simp only
-    have := (Q_prop ih_prop.choose).choose_spec
-    convert this
-    · exact ih_prop.choose_spec
+    grind
 
 /-- Soundness theorem for the GL-proof system. -/
 theorem soundness (Γ : Sequent) : ⊢ Γ → ⊨ Γ := by

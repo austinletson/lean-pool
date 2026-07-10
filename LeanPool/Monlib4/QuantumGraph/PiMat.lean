@@ -830,9 +830,7 @@ theorem QuantumGraph.Real.PiMat_eq :
       by_cases h₁ : j₁ = i.1
       · subst j₁
         have h₂ : j₂ ≠ i.2 := by
-          intro h₂
-          apply hj
-          ext <;> simp [h₂]
+          grind
         refine Fintype.sum_eq_zero _ fun _ => Fintype.sum_eq_zero _ fun _ =>
           Fintype.sum_eq_zero _ fun _ => ?_
         simpa only [AlgEquiv.one_apply] using PiMat_eq_right_block_miss h₂ _ _
@@ -1215,8 +1213,7 @@ theorem Matrix.kronecker_mulVec_euclideanSpaceTensor' {n m : Type*} [Fintype n] 
         ((WithLp.toLp 2 (A *ᵥ x.ofLp)) ⊗ₜ[ℂ] (WithLp.toLp 2 (B *ᵥ y.ofLp)))) a := rfl
   rw [euclideanSpaceTensor'_apply]
   simp_rw [mulVec, dotProduct, Finset.sum_mul, Finset.mul_sum, Finset.sum_product_univ, mul_assoc]
-  congr; ext; congr; ext
-  ring_nf
+  grind
 
 theorem StarAlgEquiv.piCongrRight_apply_includeBlock {ι : Type*}
   {p : ι → Type*} [∀ i, Fintype (p i)] [DecidableEq ι]
@@ -1320,8 +1317,7 @@ theorem modAut_eq_id_iff :
         constructor
         · intro h i a
           simpa [Matrix.includeBlock_apply_same] using h (Matrix.includeBlock a) i
-        · intro h a i
-          exact h i (a i)
+        · grind
     _ ↔ r = 0 ∨ Module.Dual.IsTracial (Module.Dual.pi φ) := by
       simp_rw [sig_eq_id_iff, forall_or_left, Module.Dual.pi_isTracial_iff]
 
@@ -1466,9 +1462,7 @@ theorem QuantumGraph.Real.PiMat_conj_unitary_submodule_eq_map :
     rcases x with ⟨x₁, x₂⟩
     by_cases h₂ : x₂ = i.2
     · by_cases h₁ : x₁ = i.1
-      · exfalso
-        apply hx
-        ext <;> assumption
+      · grind
       · simp [h₂, h₁]
     · simp [h₂]
 

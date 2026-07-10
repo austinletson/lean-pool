@@ -95,8 +95,7 @@ lemma H₂_T_action : (H₂ ∣[(2 : ℤ)] T) = -H₂ := by
     apply tsum_congr fun b ↦ ?_
     rw [coe_vadd, ofReal_one]
     repeat rw [← Complex.exp_add]
-    congr
-    ring_nf
+    grind
   _ = cexp (π * I / 4) * ∑' (n : ℤ), cexp (π * I * (n ^ 2 + n) + π * I * (n + 1 / 2) ^ 2 * x) := by
     rw [tsum_mul_left]
   _ = _ := by
@@ -158,21 +157,14 @@ lemma H₂_S_action : (H₂ ∣[(2 : ℤ)] S) = -H₄ := by
     rw [modular_slash_S_apply, H₂, Θ₂_as_jacobiTheta₂]
     simp only [inv_neg, mul_neg, mul_pow, ← Complex.exp_nat_mul, Nat.cast_ofNat, Int.reduceNeg,
       _root_.zpow_neg, neg_mul, mul_eq_mul_right_iff, inv_eq_zero]
-    rw [mul_comm 4, div_mul_cancel₀ _ (by norm_num)]
-    left
-    congr 3
-    · rw [← div_eq_mul_inv, neg_div]
-    · rw [← one_div, neg_div, div_div, mul_comm, neg_div]
-    · rw [← one_div, neg_div]
+    grind
   _ = cexp (-π * I / x) * x ^ (-2 : ℤ)
         * (1 / (I / x) ^ ((1 : ℂ) / 2) * cexp (π * I / (4 * x)) * jacobiTheta₂ (1 / 2) x) ^ 4 := by
     rw [mul_right_comm, jacobiTheta₂_functional_equation]
     congr 4
     · ring_nf
     · congr 1
-      rw [neg_mul, neg_div, one_div, neg_div, div_neg, neg_mul, neg_div, neg_neg]
-      ring_nf
-      simp [sq, ← mul_assoc, inv_mul_cancel_right₀ hx']
+      grind
     · ring_nf; simp [hx']
     · ring_nf; simp [inv_inv]
   _ = cexp (-π * I / x) * x ^ (-2 : ℤ)
@@ -317,9 +309,7 @@ lemma H₂_SIF_MDifferentiable : MDiff H₂SIF := by
     refine Filter.eventually_of_mem hU ?_
     intro z hz
     have h_arg : cexp (((π : ℂ) * I / 4) * z) = cexp (π * I * z / 4) := by
-      have : ((π : ℂ) * I / 4) * z = (π * I * z) / 4 := by
-        simp [div_eq_mul_inv, mul_comm, mul_assoc]
-      simp [this]
+      grind
     simp [F, H₂, Θ₂_as_jacobiTheta₂, ofComplex_apply_of_im_pos hz, h_arg]
   exact (DifferentiableAt.congr_of_eventuallyEq hF h_ev.symm)
 
@@ -543,9 +533,7 @@ theorem isBoundedAtImInfty_H_slash : IsBoundedAtImInfty (H₂ ∣[(2 : ℤ)] γ)
     rw [Set.mem_iInter, SetLike.mem_coe]
     intro hs
     have hs2 : {S, T} ⊆ (s : Set (SL(2, ℤ))) := by
-      apply subset_trans _ hs
-      simp only [Set.singleton_subset_iff, Set.mem_insert_iff, Set.mem_singleton_iff, true_or,
-        Set.insert_subset_insert]
+      grind
     simp only [top_le_iff.mp <| SL2Z_generate.symm ▸ (Subgroup.closure_le s).mpr hs2,
       Subgroup.mem_top]
 
@@ -623,18 +611,14 @@ lemma jacobi_g_S_action : (jacobiG ∣[(2 : ℤ)] S) = -jacobiG := by
   change ((H₂ + H₄ - H₃) ∣[(2 : ℤ)] S) = -(H₂ + H₄ - H₃)
   simp only [sub_eq_add_neg, SlashAction.add_slash, SlashAction.neg_slash,
     H₂_S_action, H₃_S_action, H₄_S_action]
-  ext z
-  simp only [Pi.add_apply, Pi.neg_apply]
-  ring
+  grind
 
 /-- T-action on g: g|[2]T = -g -/
 lemma jacobi_g_T_action : (jacobiG ∣[(2 : ℤ)] T) = -jacobiG := by
   change ((H₂ + H₄ - H₃) ∣[(2 : ℤ)] T) = -(H₂ + H₄ - H₃)
   simp only [sub_eq_add_neg, SlashAction.add_slash, SlashAction.neg_slash,
     H₂_T_action, H₃_T_action, H₄_T_action]
-  ext z
-  simp only [Pi.add_apply, Pi.neg_apply]
-  ring
+  grind
 
 /-- Rewrite jacobiF as a pointwise product -/
 lemma jacobi_f_eq_mul : jacobiF = jacobiG * jacobiG := by
@@ -700,8 +684,7 @@ theorem jacobiTheta₂_half_mul_apply_tendsto_atImInfty :
     simp
   · intro n
     have : n = -1 ∨ n = 0 ∨ n ∉ ({-1, 0} : Set ℤ) := by
-      rw [Set.mem_insert_iff, Set.mem_singleton_iff]
-      tauto
+      grind
     rcases this with (rfl | rfl | hn) <;> ring_nf
     · simp
     · simp
@@ -714,8 +697,7 @@ theorem jacobiTheta₂_half_mul_apply_tendsto_atImInfty :
         · positivity
         · apply Real.exp_lt_one_iff.mpr (by simp only [Left.neg_neg_iff]; positivity)
         convert_to 0 < ((n * (n + 1) : ℤ) : ℝ)
-        · push_cast
-          ring_nf
+        · grind
         · apply Int.cast_pos.mpr
           by_cases hn' : 0 < n
           · apply mul_pos hn' (by omega)
@@ -1001,8 +983,7 @@ lemma Delta_eq_H₂_H₃_H₄ (τ : ℍ) :
   have h := hc_pw τ
   rw [hc_eq] at h
   simp only [theta_prod_sq] at h
-  rw [eq_div_iff (show (256 : ℂ) ≠ 0 by norm_num), mul_comm]
-  exact h
+  grind
 
 /-!
 ## Imaginary Axis Properties
@@ -1182,16 +1163,14 @@ theorem H₄_imag_axis_pos : ResToImagAxis.Pos H₄ := by
       simp only [Function.resToImagAxis_apply, ResToImagAxis, h1t_pos, ↓reduceDIte, Pi.neg_apply]
     rw [hNeg, hI_neg2, h1t_neg2, h1_div_1t] at hSlash
     have hEq : H₂.resToImagAxis (1 / t) = (t : ℂ) ^ 2 * H₄.resToImagAxis t := by
-      simp only [neg_mul, one_mul] at hSlash
-      exact neg_inj.mp hSlash
+      grind
     have hH₂_pos := H₂_imag_axis_pos.2 (1 / t) h1t_pos
     have hH₄_real := H₄_imag_axis_real t ht
     have hProd_re : ((t : ℂ) ^ 2 * H₄.resToImagAxis t).re =
         (t : ℝ) ^ 2 * (H₄.resToImagAxis t).re := by
       simp only [Function.resToImagAxis_apply, ResToImagAxis, ht, ↓reduceDIte] at hH₄_real ⊢
       simp only [sq, Complex.mul_re, ofReal_re, ofReal_im, zero_mul, sub_zero]
-      ring_nf
-      simp only [hH₄_real, mul_zero, sub_zero]
+      grind
     rw [hEq, hProd_re, mul_comm] at hH₂_pos
     exact pos_of_mul_pos_left hH₂_pos (le_of_lt (sq_pos_of_pos ht))
 

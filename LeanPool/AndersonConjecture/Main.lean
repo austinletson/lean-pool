@@ -74,10 +74,8 @@ lemma X0_not_mem_conjI :
   have hle2 : ¬ (Finsupp.single (1 : Fin 3) 1 ≤ Finsupp.single (0 : Fin 3) 1) := by
     intro h
     have := h (1 : Fin 3)
-    simp only [Fin.isValue, Finsupp.single_eq_same, ne_eq, one_ne_zero, not_false_eq_true,
-      Finsupp.single_eq_of_ne, nonpos_iff_eq_zero] at this
-  rw [if_neg hle2, neg_zero] at h2
-  exact one_ne_zero h2
+    grind
+  grind
 
 /-- Q is not the zero ideal of T. (xbar ≠ 0 since X₀ ∉ conjI.) -/
 lemma Q_ne_bot : Q ≠ ⊥ := by
@@ -248,8 +246,7 @@ instance residueField_isPrecomplete (A : Type*) [CommRing A] [IsLocalRing A] :
     use f 1
     intro n
     by_cases hn : n = 0
-    · subst hn
-      simpa only [pow_zero, Ideal.one_eq_top, Submodule.top_smul] using SModEq.top
+    · grind
     · rw [pow_smul_top_eq_bot_quotient n hn]
       have h1 := hf (Nat.one_le_iff_ne_zero.mpr hn)
       rw [pow_one, smul_top_eq_bot_quotient] at h1
@@ -531,9 +528,7 @@ lemma quotient_prime_dim_one
     rw [h_fiber_height, add_zero] at h_gd
     rw [← IsLocalRing.maximalIdeal_height_eq_ringKrullDim]
     rw [← IsLocalRing.maximalIdeal_height_eq_ringKrullDim (R := Ahat)] at hdim_Ahat
-    rw [show (↑(IsLocalRing.maximalIdeal A).height : WithBot ℕ∞) =
-      ↑(IsLocalRing.maximalIdeal Ahat).height from congrArg _ h_gd.symm]
-    exact hdim_Ahat.ge)
+    grind)
   rw [hdim_A] at h_eq
   have hne : ringKrullDim (A ⧸ Ideal.span {a}) ≠ ⊥ := by
     intro h

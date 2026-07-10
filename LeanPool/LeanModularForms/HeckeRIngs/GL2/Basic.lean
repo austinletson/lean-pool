@@ -120,14 +120,7 @@ private lemma scalar_product_mem_doubleCoset
         (diagMat 2 (fun _ => c) * h₂c) := by group
     _ = x1 * h₁b * (diagMat 2 b *
           (diagMat 2 (fun _ => c) * (h₂b * x2 * h₁c))) * h₂c := by
-        have : (h₂b * x2 * h₁c) * diagMat 2 (fun _ => c) =
-            diagMat 2 (fun _ => c) * (h₂b * x2 * h₁c) := h_comm.symm
-        calc x1 * h₁b * (diagMat 2 b * (h₂b * x2 * h₁c)) *
-            (diagMat 2 (fun _ => c) * h₂c)
-            = x1 * h₁b * (diagMat 2 b *
-                ((h₂b * x2 * h₁c) * diagMat 2 (fun _ => c))) * h₂c := by group
-          _ = x1 * h₁b * (diagMat 2 b *
-                (diagMat 2 (fun _ => c) * (h₂b * x2 * h₁c))) * h₂c := by rw [this]
+        grind
     _ = x1 * h₁b * (diagMat 2 (b * (fun _ => c)) *
           (h₂b * x2 * h₁c)) * h₂c := by
         rw [show diagMat 2 b * (diagMat 2 (fun _ => c) * (h₂b * x2 * h₁c)) =

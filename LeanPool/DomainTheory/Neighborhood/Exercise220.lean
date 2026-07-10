@@ -99,8 +99,7 @@ def ofSet (S : Set ℕ) : powerSet.Element where
     refine ⟨powerSet_inter_mem hZ hW, ?_⟩
     rw [Set.compl_inter]; exact Set.union_subset hZS hWS
   up_mem := by
-    rintro Z W ⟨hZ, hZS⟩ hW hZW
-    exact ⟨hW, (Set.compl_subset_compl.mpr hZW).trans hZS⟩
+    grind
 
 /-- **Filters are determined on cofinite sets by their singleton-complements.**
 For cofinite `Z`,
@@ -123,8 +122,7 @@ theorem toSet_ofSet (S : Set ℕ) : toSet (ofSet S) = S := by
   simp only [mem_toSet]
   constructor
   · rintro ⟨_, hsub⟩
-    rw [compl_compl] at hsub
-    exact hsub (Set.mem_singleton n)
+    grind
   · intro hn
     exact ⟨mem_compl_singleton n, by rw [compl_compl]; exact Set.singleton_subset_iff.mpr hn⟩
 
@@ -258,8 +256,7 @@ def unionMap : ApproximableMap₂ powerSet powerSet powerSet where
     rintro X Y Z Z' ⟨hX, hY, hZ, hsub⟩ ⟨_, _, hZ', hsub'⟩
     exact ⟨hX, hY, powerSet_inter_mem hZ hZ', Set.subset_inter hsub hsub'⟩
   mono := by
-    rintro X X' Y Y' Z Z' ⟨_, _, _, hsub⟩ hX'X hY'Y hZZ' hX' hY' hZ'
-    exact ⟨hX', hY', hZ', (Set.inter_subset_inter hX'X hY'Y).trans (hsub.trans hZZ')⟩
+    grind
 
 /-- **Exercise 2.20 — `x ∩ y` is approximable (two variables).** `X, Y f Z ↔ X ∪ Y
 ⊆ Z`
@@ -275,8 +272,7 @@ def interMap₂ : ApproximableMap₂ powerSet powerSet powerSet where
     rintro X Y Z Z' ⟨hX, hY, hZ, hsub⟩ ⟨_, _, hZ', hsub'⟩
     exact ⟨hX, hY, powerSet_inter_mem hZ hZ', Set.subset_inter hsub hsub'⟩
   mono := by
-    rintro X X' Y Y' Z Z' ⟨_, _, _, hsub⟩ hX'X hY'Y hZZ' hX' hY' hZ'
-    exact ⟨hX', hY', hZ', (Set.union_subset_union hX'X hY'Y).trans (hsub.trans hZZ')⟩
+    grind
 
 theorem toSet_unionMap (x y : powerSet.Element) :
     toSet (unionMap.toElementMap₂ x y) = toSet x ∪ toSet y := by

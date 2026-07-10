@@ -214,19 +214,11 @@ theorem execList_exists_finite [DecidableEventStructure es] {c : Conf es} {e : e
         intro y
         simp only [cF'', Finset.mem_insert, c'', Path.nextConf, Set.mem_union,
           Set.mem_singleton_iff]
-        rw [hcF']
-        tauto
+        grind
       have hcF''sub : cF'' ⊆ cF := by
-        intro y hy
-        rcases Finset.mem_insert.mp hy with rfl | hy
-        · exact hxcF
-        · exact hcF'sub hy
+        grind
       have hcard'' : (cF \ cF'').card = n - 1 := by
-        have h_eq : cF \ cF'' = (cF \ cF').erase x := by
-          ext y
-          simp only [cF'', Finset.mem_sdiff, Finset.mem_erase, Finset.mem_insert]
-          tauto
-        rw [h_eq, Finset.card_erase_of_mem hxsdiff, hcard]
+        grind
       obtain ⟨⟨t, hexec⟩⟩ := ih (n - 1) (by omega) c'' cF'' hcF'' hcF''sub hcard''
       exact ⟨⟨x :: t, Path.ExecList.cons x henab hexec⟩⟩
 

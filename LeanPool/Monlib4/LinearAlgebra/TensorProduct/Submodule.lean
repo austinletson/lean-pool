@@ -218,8 +218,7 @@ theorem orthogonalProjection_of_tensorProduct {E F : Type*}
   (hA : ∃ (U : Submodule ℂ E) (V : Submodule ℂ F),
     (orthogonalProjection' (U.tensorProduct V)).toLinearMap = A) :
   ∃ (U : Submodule ℂ (E ⊗[ℂ] F)), (orthogonalProjection' U).toLinearMap = A := by
-  obtain ⟨U, V, hUV⟩ := hA
-  exact ⟨U.tensorProduct V, hUV⟩
+  grind
 
 local notation x" ⊗ₘ "y => TensorProduct.map x y
 

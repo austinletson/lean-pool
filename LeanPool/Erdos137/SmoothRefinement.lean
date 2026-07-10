@@ -84,8 +84,7 @@ theorem not_powerful_of_large' (hBlock : BlockRadLB) {k n : ℕ}
   have hmaster := master_ineq hBlock hk hn hPow
   have hcast : (((k ^ (2 * k)) ^ 3 * P k ^ 6 : ℕ) : ℝ) < ((n ^ k * L k ^ 3 : ℕ) : ℝ) := by
     exact_mod_cast hthr
-  push_cast at hcast hmaster
-  linarith [hcast, hmaster]
+  grind
 
 /-- **Per-fixed-`k` finiteness via the smooth-refined threshold.** For each `k ≥ 3`, under
 `BlockRadLB`, the set of `n ≥ 1` with `F k n` powerful is finite: every such `n` satisfies

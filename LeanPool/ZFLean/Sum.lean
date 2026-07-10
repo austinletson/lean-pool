@@ -41,8 +41,7 @@ theorem _root_.ZFSet.Sum.inl.injEq
     injection heq with heq
     rw [pair_inj] at heq
     exact Subtype.val_inj.mp heq.2
-  · intro
-    congr
+  · grind
 
 theorem _root_.ZFSet.Sum.inr.injEq
     {A B : ZFSet} {x y : {x // x ∈ B}} : (inr x : A ⊎ B) = inr y ↔ x = y := by
@@ -51,8 +50,7 @@ theorem _root_.ZFSet.Sum.inr.injEq
     injection heq with heq
     rw [pair_inj] at heq
     exact Subtype.val_inj.mp heq.2
-  · intro
-    congr
+  · grind
 
 theorem cases {A B : ZFSet} (x : A ⊎ B) : x.val.π₂ ∈ A ∨ x.val.π₂ ∈ B := by
   let ⟨x, hx⟩ := x
@@ -142,8 +140,7 @@ noncomputable def casesOn {A B : ZFSet.{u}} {motive : A ⊎ B → Sort v} (x : A
             rw [π₂_pair]
       · congr
         conv_lhs => rw [pair_eta hx]
-        rw [pair_inj]
-        exact ⟨x₁_eq_true, rfl⟩
+        grind
     rw [this]
     apply inr
 
@@ -272,16 +269,14 @@ theorem _root_.ZFSet.Option.some.injEq
     injection heq with heq
     rw [pair_inj] at heq
     exact Subtype.val_inj.mp heq.2
-  · intro
-    congr
+  · grind
 
 theorem some_val_injEq {T : ZFSet} {x y : {x // x ∈ T}} :
     (some x).val = (some y).val ↔ x = y := by
   constructor
   · intro heq
     exact some.injEq.mp (Subtype.ext heq)
-  · intro heq
-    rw [heq]
+  · grind
 
 theorem ne_none_is_some {T : ZFSet} (x : Option T) : x ≠ none → ∃ y, x = some y := by
   intro h
@@ -293,14 +288,7 @@ theorem _root_.ZFSet.Option.into.inj {T : ZFSet} :
     Function.Injective (into : Option T → _root_.Option {x // x ∈ T}) := by
   intro x y heq
   unfold into at heq
-  split_ifs at heq with hx hy hy
-  · rw [hx, hy]
-  · injection heq with heq
-    obtain ⟨x, rfl⟩ := ne_none_is_some x hx
-    obtain ⟨y, rfl⟩ := ne_none_is_some y hy
-    generalize_proofs px py at heq
-    rw [Classical.choose_spec px, Classical.choose_spec py]
-    congr
+  grind
 
 theorem _root_.ZFSet.Option.into.surj {T : ZFSet} :
     Function.Surjective (into : Option T → _root_.Option {x // x ∈ T}) := by
@@ -363,8 +351,7 @@ theorem _root_.ZFSet.Option.outof.inj {T : ZFSet} :
     exact (notMem_empty ∅) <| (mem_singleton.eq ▸ contr ∅).mp rfl
   · injection heq with heq
     rw [pair_inj] at heq
-    have := Subtype.val_inj.mp <| Subtype.mk_eq_mk.mp <| Subtype.val_inj.mp heq.2
-    congr
+    grind
 
 theorem _root_.ZFSet.Option.outof.surj {T : ZFSet} :
     Function.Surjective (outof : _root_.Option {x // x ∈ T} → Option T) := by
@@ -513,19 +500,12 @@ theorem flift_bijective {f A B : ZFSet} (hf : IsFunc A B f) :
         · have z_eq_some := congrArg Subtype.val (Classical.choose_spec issome)
           have chosen_pair : (Classical.choose issome).val.pair y ∈ f := by
             have hdom : (Classical.choose issome).val ∈ f.Dom := by
-              rw [is_func_dom_eq hf]
-              exact (Classical.choose issome).property
+              grind
             have hpair := fapply.def (is_func_is_pfunc hf) hdom
             dsimp [ZFSet.Option.some, Sum.inr] at eq
             rw [pair_inj] at eq
             rwa [eq.2]
-          have chosen_eq : (Classical.choose issome).val = x :=
-            x_unq _ ⟨(Classical.choose issome).property, chosen_pair⟩
-          trans (ZFSet.Option.some (Classical.choose issome)).val
-          · exact z_eq_some
-          · dsimp [ZFSet.Option.some, Sum.inr]
-            rw [pair_inj]
-            exact ⟨rfl, chosen_eq⟩
+          grind
         · dsimp [ZFSet.Option.none, Sum.inl] at eq
           rw [pair_inj] at eq
           exact False.elim (zftrue_ne_zffalse eq.1)

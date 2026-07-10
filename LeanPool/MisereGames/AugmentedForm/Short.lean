@@ -54,8 +54,7 @@ theorem moves_toForm (p : Player) (L R : List ShortTree) (tL tR : Bool) :
   ext x
   simp only [Set.mem_range, Set.mem_image, Set.mem_setOf_eq]
   constructor
-  · rintro ⟨i, rfl⟩
-    exact ⟨_, List.get_mem _ _, rfl⟩
+  · grind
   · rintro ⟨y, hy, rfl⟩
     obtain ⟨i, rfl⟩ := List.mem_iff_get.mp hy
     exact ⟨i, rfl⟩
@@ -77,11 +76,7 @@ theorem exists_list_image (S : Set AugmentedForm.{u}) (hfin : S.Finite)
   ext y
   simp only [Set.mem_image, Set.mem_setOf_eq, List.mem_map, Finset.mem_toList,
     Finset.mem_attach, true_and, Subtype.exists, hfin.mem_toFinset]
-  constructor
-  · rintro ⟨t, ⟨z, hz, rfl⟩, rfl⟩; rw [hf z hz]
-    exact hz
-  · intro hy
-    exact ⟨f y hy, ⟨y, hy, rfl⟩, hf y hy⟩
+  grind
 
 /--
 Every short augmented form is in the range of `toForm`.

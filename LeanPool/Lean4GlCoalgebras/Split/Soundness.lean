@@ -42,9 +42,7 @@ noncomputable def chain
           | [y] =>
             have h : ¬evaluateSSeq (M, w_ih) (f (r 𝕏.α y)) := by
               have 𝕏h_x_ih := 𝕏.step x_ih
-              have 𝕏h_x_ih := by simpa [r_def, p_def, -Finset.union_singleton] using 𝕏h_x_ih
-              convert w_ih_prop using 2
-              rw [𝕏h_x_ih, r_def]
+              grind
               ⟨y, w_ih, h⟩
           | [] => False.elim (by have := 𝕏.step x_ih; simp [r_def, p_def] at this)
           | y :: z :: l => False.elim (by have := 𝕏.step x_ih; simp [r_def, p_def] at this)
@@ -147,8 +145,7 @@ noncomputable def chain
             by_cases evaluate ⟨M, w_ih⟩ (at n)
             case pos w_n =>
               have w_ih_prop := by simpa [r_def, f] using w_ih_prop
-              have := w_ih_prop.1 (at n) in_Δ.1
-              simp_all
+              grind
             case neg not_w_n =>
               have w_ih_prop := by simpa [r_def, f] using w_ih_prop
               have := w_ih_prop.1 (na n) in_Δ.2
@@ -158,8 +155,7 @@ noncomputable def chain
             by_cases evaluate ⟨M, w_ih⟩ (at n)
             case pos w_n =>
               have w_ih_prop := by simpa [r_def, f] using w_ih_prop
-              have := w_ih_prop.1 (at n) in_Δ.1
-              simp_all
+              grind
             case neg not_w_n =>
               have w_ih_prop := by simpa [r_def, f] using w_ih_prop
               have := w_ih_prop.2 (na n) in_Δ.2
@@ -169,8 +165,7 @@ noncomputable def chain
             by_cases evaluate ⟨M, w_ih⟩ (at n)
             case pos w_n =>
               have w_ih_prop := by simpa [r_def, f] using w_ih_prop
-              have := w_ih_prop.2 (at n) in_Δ.1
-              simp_all
+              grind
             case neg not_w_n =>
               have w_ih_prop := by simpa [r_def, f] using w_ih_prop
               have := w_ih_prop.1 (na n) in_Δ.2
@@ -180,8 +175,7 @@ noncomputable def chain
             by_cases evaluate ⟨M, w_ih⟩ (at n)
             case pos w_n =>
               have w_ih_prop := by simpa [r_def, f] using w_ih_prop
-              have := w_ih_prop.2 (at n) in_Δ.1
-              simp_all
+              grind
             case neg not_w_n =>
               have w_ih_prop := by simpa [r_def, f] using w_ih_prop
               have := w_ih_prop.2 (na n) in_Δ.2
@@ -454,41 +448,17 @@ lemma chain_proof_prop
       · simp [edge, p_def]
       all_goals simpa [r_def, p_def] using 𝕏.step x_ih
     case h_6 Δ in_Δ r_def =>
-      exfalso
-      apply w_ih_prop
-      exact ⟨Sum.inl ⊤, by simpa [f, r_def] using in_Δ, by simp⟩
+      grind
     case h_7 Δ in_Δ r_def =>
-      exfalso
-      apply w_ih_prop
-      exact ⟨Sum.inr ⊤, by simpa [f, r_def] using in_Δ, by simp⟩
+      grind
     case h_8 Δ i in_Δ r_def =>
-      exfalso
-      by_cases h : M.V w_ih i
-      · apply w_ih_prop
-        exact ⟨Sum.inl (at i), by simpa [f, r_def] using in_Δ.1, by simpa using h⟩
-      · apply w_ih_prop
-        exact ⟨Sum.inl (na i), by simpa [f, r_def] using in_Δ.2, by simpa using h⟩
+      grind
     case h_9 Δ i in_Δ r_def =>
-      exfalso
-      by_cases h : M.V w_ih i
-      · apply w_ih_prop
-        exact ⟨Sum.inl (at i), by simpa [f, r_def] using in_Δ.1, by simpa using h⟩
-      · apply w_ih_prop
-        exact ⟨Sum.inr (na i), by simpa [f, r_def] using in_Δ.2, by simpa using h⟩
+      grind
     case h_10 Δ i in_Δ r_def =>
-      exfalso
-      by_cases h : M.V w_ih i
-      · apply w_ih_prop
-        exact ⟨Sum.inr (at i), by simpa [f, r_def] using in_Δ.1, by simpa using h⟩
-      · apply w_ih_prop
-        exact ⟨Sum.inl (na i), by simpa [f, r_def] using in_Δ.2, by simpa using h⟩
+      grind
     case h_11 Δ i in_Δ r_def =>
-      exfalso
-      by_cases h : M.V w_ih i
-      · apply w_ih_prop
-        exact ⟨Sum.inr (at i), by simpa [f, r_def] using in_Δ.1, by simpa using h⟩
-      · apply w_ih_prop
-        exact ⟨Sum.inr (na i), by simpa [f, r_def] using in_Δ.2, by simpa using h⟩
+      grind
     case h_12 Δ φ ψ in_Δ r_def =>
       split <;> rename_i p_def
       · by_cases h : ¬evaluate (M, w_ih) φ <;> simp [edge, p_def, h]
@@ -557,9 +527,7 @@ lemma chain_model_prop {𝕏 : Proof}
     case h_16 Δ φ in_Δ r_def =>
       simp only [RuleApp.isBox, r_def] at box ⊢
       split
-      · exact (Classical.not_imp.1 (Classical.choose_spec
-          (not_forall.1 (fun z ↦
-            (not_exists.1 w_ih_prop) (Sum.inl (□ φ)) ⟨(r_def ▸ in_Δ), z⟩)))).1
+      · grind
       all_goals
         exfalso
         have step := 𝕏.step x_ih
@@ -567,9 +535,7 @@ lemma chain_model_prop {𝕏 : Proof}
     case h_17 Δ φ in_Δ r_def =>
       simp only [RuleApp.isBox, r_def] at box ⊢
       split
-      · exact (Classical.not_imp.1 (Classical.choose_spec
-          (not_forall.1 (fun z ↦
-            (not_exists.1 w_ih_prop) (Sum.inr (□ φ)) ⟨(r_def ▸ in_Δ), z⟩)))).1
+      · grind
       all_goals
         exfalso
         have step := 𝕏.step x_ih
@@ -596,23 +562,14 @@ lemma has_children_of_chain_model {𝕏 : Proof}
       simp only [ih] at *
       have h := h (k + 1)
       have chain_model_prop := chain_model_prop prop w_prop (n + k)
-      by_cases (r 𝕏.α (chain prop w_prop (n + k)).fst).isBox
-      case pos box =>
-        have chain_model_prop := by simpa [box] using chain_model_prop
-        exfalso
-        exact h chain_model_prop
-      case neg nbox =>
-        have chain_model_prop := by simpa [nbox] using chain_model_prop
-        exact chain_model_prop
+      grind
   have g2 : ∀ m, ¬ (r 𝕏.α (chain prop w_prop (n + m)).fst).isBox := by
     intro m con
     have eq1 := g1 m
     have eq2 := g1 (m + 1)
     rw [eq1] at eq2
     have chain_model_prop := chain_model_prop prop w_prop (n + m)
-    have chain_model_prop := by simpa [con] using chain_model_prop
-    rw [eq2, add_assoc] at chain_model_prop
-    apply (instModelIsIrref M).irrefl _ chain_model_prop
+    grind
   have ⟨k, k_prop⟩ := 𝕏.path x
     ⟨(fun n ↦ (chain prop w_prop n).1),
       ⟨by simp [chain], chain_proof_prop prop w_prop⟩⟩ n
@@ -642,11 +599,7 @@ lemma inc_chain_eventual_inc_chain_prop {β}
       congr
       · skip
       · unfold incChainEventualIncChain
-    rcases incChainEventualIncChain Q_prop n with ⟨ih, ih_prop⟩
-    change Q ih (g (Q_prop ih_prop.choose).choose)
-    have := (Q_prop ih_prop.choose).choose_spec
-    convert this
-    · exact ih_prop.choose_spec
+    grind
 
 /-- Soundness lemma for the GL-split proof system. -/
 lemma soundness (Γ : SplitSequent) : SplitSequent.isTrue Γ → ⊨ Γ := by

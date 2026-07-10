@@ -498,9 +498,7 @@ lemma exists_box_on_restr_loop {𝕏 : Proof} (x : 𝕏.X) (p : 𝕏.X → Prop)
       case single x_x => exact x_x.2.2
       case tail _x => exact _x.2.2
     case tail _z => exact _z.2.2
-  · cases z_prop.1
-    case refl => exact x_x
-    case tail x_ _z => apply Relation.TransGen.trans_right x_ (Relation.TransGen.single _z)
+  · grind
 
 /-- Every infinite path has an infinite number of nodes which are box rule applications. -/
 lemma inf_path_has_inf_boxes {𝕏 : Proof} (g : ℕ → 𝕏.X)

@@ -110,9 +110,7 @@ lemma inducedLaplacian_eq_graphLaplacian_inducedSubgraph
   · simp only [hij, ↓reduceIte]
     have h_iff : (inducedSubgraph G S).Adj i j ↔ G.Adj i j ∧ i ∈ S ∧ j ∈ S :=
       inducedSubgraph_adj G S i j
-    by_cases h : G.Adj i j ∧ i ∈ S ∧ j ∈ S
-    · rw [if_pos h, if_pos (h_iff.mpr h)]
-    · rw [if_neg h, if_neg (mt h_iff.mp h)]
+    grind
 
 /-- The graph Laplacian equals the Mathlib lapMatrix (degree minus adjacency). -/
 lemma graphLaplacian_eq_lapMatrix (G : SimpleGraph V) [DecidableRel G.Adj] :
@@ -157,9 +155,7 @@ lemma graphLaplacian_isHermitian (G : SimpleGraph V) [DecidableRel G.Adj] :
     · have : ¬(j = i) := fun h => hij (h.symm)
       simp [hij, this, hadj, G.adj_symm hadj]
     · have : ¬G.Adj j i := fun h => hadj (G.adj_symm h)
-      by_cases hji : j = i
-      · exact absurd hji.symm hij
-      · simp [hij, hji, hadj, this]
+      grind
 
 /-! ### Loewner monotonicity for lapMatrix -/
 
@@ -193,9 +189,7 @@ lemma lapMatrix_loewner_mono {H₁ H₂ : SimpleGraph V}
         univ.filter (H₁.Adj i) ∪ univ.filter (fun k => H₂.Adj i k ∧ ¬H₁.Adj i k) := by
       ext k; simp only [Finset.mem_filter, Finset.mem_union, Finset.mem_univ, true_and]
       constructor
-      · intro h2; by_cases h1 : H₁.Adj i k
-        · exact Or.inl h1
-        · exact Or.inr ⟨h2, h1⟩
+      · grind
       · rintro (h1 | ⟨h2, _⟩)
         · exact h h1
         · exact h2

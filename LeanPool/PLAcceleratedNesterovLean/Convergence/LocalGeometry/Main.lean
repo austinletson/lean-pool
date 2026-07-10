@@ -824,11 +824,9 @@ private abbrev localFiberwiseGeometryProof
     rw [hφ1, hφ0] at hgrowth
     -- dist(x, S) = ‖x − π(x)‖ = ‖e‖ by the projection property
     have hdist : Metric.infDist x S = ‖e‖ := by
-      have hxU : x ∈ U := hU_cl_U (subset_closure hx)
-      rw [← (hπ_proj x hxU).2, dist_eq_norm]
+      grind
     rw [hdist]
-    have : μ' * ‖e‖ ^ 2 / 2 = μ' / 2 * ‖e‖ ^ 2 := by ring
-    linarith
+    grind
   -- ----------------------------------------------------------------
   -- (c) Strong aiming: ⟨∇f(x), x−π(x)⟩ ≥ f(x)−f⋆ + (μ/8)‖x−π(x)‖²
   -- ----------------------------------------------------------------

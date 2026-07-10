@@ -203,9 +203,7 @@ lemma core_bound.atom_real_bound {P : Partition Ω} (hP' : ∀ s ∈ P, μ s > 0
     linarith
   have hp_le_α : p.toReal ≤ αr := by rw [hαr_def, le_div_iff₀ hms_pos_R]; linarith
   have heq : r.toReal = xr * αr + δ := by
-    have key : r.toReal * ms = mEAs + mEsdA := by rw [← hEs_R, ← hdecE_R]
-    have : r.toReal = (mEAs + mEsdA) / ms := by field_simp at key ⊢; linarith
-    rw [this, hxr_def, hαr_def, hδ_def]; field_simp
+    grind
   rw [show (μ (E ∩ A ∩ s) / μ (A ∩ s)).toReal = xr from ENNReal.toReal_div ..]
   exact atom_real_arith (div_nonneg ENNReal.toReal_nonneg hmAs_pos_R.le)
     ((div_le_one hmAs_pos_R).mpr hmEAs_le_mAs)

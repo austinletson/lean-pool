@@ -341,12 +341,7 @@ A game is solved if its stride equals zero.
 theorem hasStride_isSolved_iff_zero {p : Player} {g : GameForm} {n : ℕ}
     (h_hasStride : HasStride p g n) : IsSolved p g ↔ n = 0 := by
   unfold HasStride at h_hasStride
-  constructor
-  · intro h_isSolved
-    match n with
-    | .zero => rfl
-    | .succ k => exact absurd h_isSolved h_hasStride.left
-  · intro h_zero; subst h_zero; exact h_hasStride
+  grind
 
 theorem hasStride_not_isSolved_iff_pos {p : Player} {g : GameForm} {n : ℕ}
     (h_hasStride : HasStride p g n) : ¬IsSolved p g ↔ 0 < n := by
@@ -426,8 +421,7 @@ theorem hasStride_unique {p : Player} {g : GameForm} {n k : ℕ}
     have ⟨g2, hg2_mem, hg2_stride, _⟩ := hasStride_succ_exists_best h_k
     have ⟨j', hnj', hj'_stride⟩ := hasStride_succ_support h_n g2 hg2_mem
     have h_kj' : k = j' := hasStride_unique hg2_stride hj'_stride
-    subst h_kj'
-    exact Nat.le_antisymm hnj' hkj
+    grind
 termination_by g
 decreasing_by form_wf
 
@@ -439,9 +433,7 @@ theorem hasStride_mk_iff {p : Player} (n : ℕ) {k : ℕ} {g : GameForm} (h_stri
   constructor
   · intro h
     exact hasStride_unique h h_stride
-  · intro h
-    subst h
-    exact h_stride
+  · grind
 
 /--
 The good move preserves (-p)-stride: if HasStride p g (n+1) and HasStride (-p)
@@ -465,10 +457,7 @@ theorem hasStride_good_move_neg_stride {p : Player} {g : GameForm} {n r : ℕ}
     rw [neg_neg] at hg2_mem
     have ⟨k2, hk2_ge, hk2_stride⟩ := hg1_max g2 hg2_mem (r' + 1) hg2_stride
     have h_eq : k1 = k2 := hasStride_unique hk1_stride hk2_stride
-    rw [h_eq] at hk1_le
-    have : k2 = r' + 1 := Nat.le_antisymm hk1_le hk2_ge
-    rw [this] at hk2_stride
-    exact hk2_stride
+    grind
 
 /--
 Opponent moves have stride ≤ n.
@@ -603,8 +592,7 @@ theorem hasStride_add {p : Player} {g h : GameForm} {sL_g sL_h sR_g sR_h : ℕ}
           hasStride_add h_sR_g hh1_neg (by rwa [neg_neg]) (by rwa [neg_neg])
         refine ⟨g + h₁, add_left_mem_moves_add hh1_mem g, ?_, h_response_bound _ h_neg_gh1⟩
         have := hasStride_add h_sL_g hh1_p h_sR_g hh1_neg
-        rw [Nat.zero_add] at this
-        convert this using 1; omega
+        grind
       · -- sL_g > 0, good move comes from g
         have ⟨sL_g', hsL_g'⟩ : ∃ n, sL_g = n + 1 := ⟨sL_g - 1, by omega⟩
         subst hsL_g'
@@ -954,8 +942,7 @@ theorem ClosedUnderAdd.closure_has_stride_aux {R : Type u} [Ruleset R] (p : Play
   intro x hx q
   obtain ⟨r, h_r⟩ := Ruleset.Forms.exists hx
   refine ⟨stride r q, ?_⟩
-  rw [h_r]
-  exact hasStride r q
+  grind
 
 theorem ClosedUnderAdd.closure_mk_with_strides_aux {A : GameForm → Prop}
     (mk_stride_other_zero : (p : Player) → (n : ℕ) → ∃ g,
@@ -1209,8 +1196,7 @@ theorem MisereQuotient.strideDiff_surjective : Function.Surjective (strideDiff (
       simp only [Int.ofNat_eq_natCast, Nat.cast_zero, sub_zero]
     | .negSucc n =>
       use 0, n + 1
-      simp only [Int.negSucc_eq, neg_add_rev, Int.reduceNeg, Nat.cast_zero, Nat.cast_add,
-                 Nat.cast_one, zero_sub]
+      grind
   obtain ⟨t, ht_A, ht_l, ht_r⟩ := Strided.mk_with_strides (A := A) n m
   use Form.MisereQuotient.mk ⟨t, ht_A⟩
   rw [MisereQuotient.strideDiff_mk]

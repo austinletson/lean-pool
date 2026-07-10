@@ -130,10 +130,7 @@ lemma kernelTail_tendsto_zero (K : E → ℝ) (R₀ : ℝ)
       -- Two cases: z inside or outside the R₀ ball
       by_cases hz_R₀ : ‖z‖ ≤ R₀
       · -- Inside R₀ ball: kernelTail z = 0
-        simp only [kernelTail]
-        rw [indicator_of_notMem (by simp [hz_R₀] : z ∉ (closedBall (0 : E) R₀)ᶜ), mul_zero,
-            norm_zero]
-        exact hε
+        grind
       · -- Outside R₀ ball: use decay bound
         push Not at hz_R₀
         simp only [kernelTail]
@@ -143,14 +140,10 @@ lemma kernelTail_tendsto_zero (K : E → ℝ) (R₀ : ℝ)
         rw [indicator_of_mem hmem, mul_one]
         have hbound := hK_decay z hz_R₀.le
         have hz_large : ‖z‖ > (C / ε) ^ (1 / α) := by
-          calc ‖z‖ > R := hz
-            _ ≥ (C / ε) ^ (1 / α) + 1 := le_max_right _ _
-            _ > (C / ε) ^ (1 / α) := lt_add_one _
+          grind
         have hz_pos : 0 < ‖z‖ := by
           have h1 : 0 < (C / ε) ^ (1 / α) + 1 := by positivity
-          calc 0 < (C / ε) ^ (1 / α) + 1 := h1
-            _ ≤ R := le_max_right _ _
-            _ < ‖z‖ := hz
+          grind
         calc ‖K z‖ = |K z| := Real.norm_eq_abs _
           _ ≤ C / ‖z‖ ^ α := hbound
           _ < ε := by
@@ -361,13 +354,10 @@ theorem convolution_vanishes_of_integrable_and_C0
           have h1 : η * If < ε / 2 := by
             have hlt : η * If < η * (If + 1) := mul_lt_mul_of_pos_left (lt_add_one If) hη_pos
             have heq : η * (If + 1) = ε / 2 := by
-              simp only [η]
-              have hne : If + 1 ≠ 0 := by linarith
-              field_simp
+              grind
             linarith
           have h2 : max B 1 * (ε / (2 * max B 1)) = ε / 2 := by
-            have hne : max B 1 ≠ 0 := ne_of_gt hB_pos
-            field_simp
+            grind
           linarith
 
 /-! ## Product Space Integrability for Fubini
@@ -414,9 +404,7 @@ theorem schwartz_bilinear_prod_integrable
     rw [h, Complex.ofReal_add]
   have h_split : ∀ x y, f x * (K (x - y) : ℂ) * g (y - a) =
       f x * (K_sing (x - y) : ℂ) * g (y - a) + f x * (K_tail (x - y) : ℂ) * g (y - a) := by
-    intro x y
-    rw [hK_eq x y]
-    ring
+    grind
   -- K_sing part: f bounded, K_sing integrable (compact support), g integrable
   have h_sing_int : Integrable (Function.uncurry (fun x y => f x * (K_sing (x - y) : ℂ) * g (y -
     a)))
@@ -735,13 +723,10 @@ private lemma schwartz_bilinear_kernelTail_vanish
           have h1 : η * If < ε / 2 := by
             have hlt : η * If < η * (If + 1) := mul_lt_mul_of_pos_left (lt_add_one If) hη_pos
             have heq : η * (If + 1) = ε / 2 := by
-              simp only [η]
-              have hne : If + 1 ≠ 0 := by linarith
-              field_simp
+              grind
             linarith
           have h2 : M * (ε / (2 * M)) = ε / 2 := by
-            have hne : M ≠ 0 := ne_of_gt hM_pos
-            field_simp
+            grind
           linarith
 
 private lemma schwartz_bilinear_kernel_convolution_continuous
@@ -843,10 +828,7 @@ private lemma schwartz_bilinear_kernel_convolution_continuous
         rw [h_comp]
         apply Tendsto.comp _ (tendsto_const_nhds.sub tendsto_id)
         have hxy_ne_zero : x - y₀ ≠ 0 := by
-          intro h
-          apply hx_sing
-          rw [mem_singleton_iff]
-          exact sub_eq_zero.mp h
+          grind
         have hxy_not_sphere : ‖x - y₀‖ ≠ R₀ := by
           intro h
           apply hx_sphere
@@ -893,8 +875,7 @@ private lemma schwartz_bilinear_kernel_convolution_continuous
           rw [h_sub_zero y, hK_tail_zero]
         have hK_tail_xy₀ : K_tail (x - y₀) = 0 := hK_tail_const y₀
         have h_eq : (fun y => K_tail (x - y)) = fun _ => (0 : ℝ) := by
-          ext y
-          exact hK_tail_const y
+          grind
         rw [h_eq, hK_tail_xy₀]
         exact tendsto_const_nhds
 
@@ -1014,8 +995,7 @@ theorem schwartz_bilinear_translation_decay_proof
           measurable_const)
         exact (measurable_ofReal.comp h2).aestronglyMeasurable
       refine Integrable.mul_bdd (c := M) hf_int hK_tail_meas (Eventually.of_forall ?_)
-      intro x
-      exact hM (x - y)
+      grind
   -- Step 10: Final step - the double integral vanishes at infinity
   -- Strategy: Use Tendsto composition directly, avoiding ε-δ unfolding
   --
@@ -1115,8 +1095,7 @@ theorem schwartz_bilinear_translation_decay_proof
     have : ∫ x, f x * (K (x - y) : ℂ) * g (y - a) =
         (∫ x, f x * (K (x - y) : ℂ)) * g (y - a) :=
       integral_mul_const _ _
-    rw [this]
-    ring
+    grind
   -- Step 10e-ii: Translation y ↦ w = y - a
   have h_translate : ∫ y : E, g (y - a) * H y = ∫ w : E, g w * H (w + a) := by
     have : ∫ y : E, g (y - a) * H y = ∫ w : E, g ((w + a) - a) * H (w + a) := by

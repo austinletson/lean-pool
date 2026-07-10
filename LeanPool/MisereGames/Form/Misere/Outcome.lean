@@ -34,15 +34,9 @@ theorem winsGoingFirst_iff (g : G) (p : Player)
     : WinsGoingFirst p g ↔ IsEndLike p g ∨ (∃ g' ∈ moves p g, ¬WinsGoingFirst (-p) g') := by
   apply Iff.intro <;> intro h1
   · unfold WinsGoingFirst at h1
-    obtain h1 | ⟨g', h2, h3⟩ := h1
-    · exact Or.inl h1
-    · apply Or.inr
-      use g'
+    grind
   · unfold WinsGoingFirst
-    obtain h1 | ⟨g', h2⟩ := h1
-    · exact Or.inl h1
-    · apply Or.inr
-      use g'
+    grind
 
 @[simp]
 theorem winsGoingFirst_of_isEndLike {g : G} {p : Player} (h1 : IsEndLike p g) :
@@ -126,32 +120,28 @@ theorem misereOutcome_L_iff_miserePlayerOutcome {g : G}
     : (MisereOutcome g = .L) ↔
       ((MiserePlayerOutcome g .left = .left) ∧ (MiserePlayerOutcome g .right = .left)) := by
   simp [MiserePlayerOutcome, MisereOutcome, Outcome.ofPlayers]
-  by_cases h1 : WinsGoingFirst Player.left g
-  <;> by_cases h2 : WinsGoingFirst Player.right g
+  grind
   <;> simp [h1, h2]
 
 theorem misereOutcome_N_iff_miserePlayerOutcome {g : G}
     : (MisereOutcome g = .N) ↔
       ((MiserePlayerOutcome g .left = .left) ∧ (MiserePlayerOutcome g .right = .right)) := by
   simp [MiserePlayerOutcome, MisereOutcome, Outcome.ofPlayers]
-  by_cases h1 : WinsGoingFirst Player.left g
-  <;> by_cases h2 : WinsGoingFirst Player.right g
+  grind
   <;> simp [h1, h2]
 
 theorem misereOutcome_P_iff_miserePlayerOutcome {g : G}
     : (MisereOutcome g = .P) ↔
       ((MiserePlayerOutcome g .left = .right) ∧ (MiserePlayerOutcome g .right = .left)) := by
   simp [MiserePlayerOutcome, MisereOutcome, Outcome.ofPlayers]
-  by_cases h1 : WinsGoingFirst Player.left g
-  <;> by_cases h2 : WinsGoingFirst Player.right g
+  grind
   <;> simp [h1, h2]
 
 theorem misereOutcome_R_iff_miserePlayerOutcome {g : G}
     : (MisereOutcome g = .R) ↔
       ((MiserePlayerOutcome g .left = .right) ∧ (MiserePlayerOutcome g .right = .right)) := by
   simp [MiserePlayerOutcome, MisereOutcome, Outcome.ofPlayers]
-  by_cases h1 : WinsGoingFirst Player.left g
-  <;> by_cases h2 : WinsGoingFirst Player.right g
+  grind
   <;> simp [h1, h2]
 
 @[simp]
@@ -346,9 +336,7 @@ theorem miserePlayerOutcome_of_leftMoves {g gl : G} (h1 : gl ∈ moves .left g)
   apply And.intro h1
   simp only [Player.neg_left, Player.right_le, Player.le_right_eq]
   unfold MiserePlayerOutcome at h2
-  simp only [Player.le_left, Player.neg_right, Player.le_left_eq, ite_eq_right_iff,
-             reduceCtorEq, imp_false] at h2
-  exact h2
+  grind
 
 theorem miserePlayerOutcome_of_rightMoves {g gr : G} (h1 : gr ∈ moves .right g)
     (h2 : MiserePlayerOutcome gr .left = .right) : MiserePlayerOutcome g .right = .right := by
@@ -357,8 +345,7 @@ theorem miserePlayerOutcome_of_rightMoves {g gr : G} (h1 : gr ∈ moves .right g
   intro h3
   have h4 : MiserePlayerOutcome gr .left = .left := by
     rwa [miserePlayerOutcome_eq_iff_winsGoingFirst]
-  rw [h4] at h2
-  cases h2
+  grind
 
 theorem misereOutcome_ge_iff_miserePlayerOutcome_ge {g h : G}
     : MisereOutcome g ≥ MisereOutcome h ↔ (∀ p,
@@ -401,8 +388,7 @@ theorem MisereEQ.symm {A : G → Prop} {g h : G} (h1 : g =m A h) : h =m A g := b
 theorem MisereEQ.trans {A : G → Prop} {g h k : G} (h1 : g =m A h) (h2 : h =m A k) :
     g =m A k := by
   unfold MisereEQ at *
-  intro x h3
-  exact cast (congrArg (Eq (MisereOutcome (g + x))) (h2 x h3)) (h1 x h3)
+  grind
 
 /--
 The restricted misère preorder, working modulo a set `A`.
@@ -433,23 +419,18 @@ theorem MisereEq.of_antisymm {A : G → Prop} {g h : G} (h1 : g ≥m A h) (h2 : 
 theorem MisereGE.trans {A : G → Prop} {g h k : G} (h1 : g ≥m A h) (h2 : h ≥m A k) :
     g ≥m A k := by
   unfold MisereGE at *
-  intro x h3
-  exact le_trans (h2 x h3) (h1 x h3)
+  grind
 
 theorem misereGE_rw_left {A : G → Prop} {a b c : G} (h2 : b =m A c) (h1 : b ≥m A a) : c ≥m A a := by
   unfold MisereGE at h1 ⊢
   unfold MisereEQ at h2
-  intro x hx
-  rw [<-h2 x hx]
-  exact h1 x hx
+  grind
 
 theorem misereGE_rw_right {A : G → Prop} {a b c : G} (h2 : b =m A c) (h1 : a ≥m A c) :
     a ≥m A b := by
   unfold MisereGE at h1 ⊢
   unfold MisereEQ at h2
-  intro x hx
-  rw [h2 x hx]
-  exact h1 x hx
+  grind
 
 theorem misereGE_of_misereEQ {A : G → Prop} {g h : G} (h1 : g =m A h) : g ≥m A h := by
   intro x hx
@@ -459,8 +440,7 @@ theorem misereGE_of_misereEQ {A : G → Prop} {g h : G} (h1 : g =m A h) : g ≥m
 theorem misereGE_of_subset (U : G → Prop) {V : G → Prop}
     (h_v_subset_u : ∀ g, V g → U g) (g h : G) (h2 : g ≥m U h) : g ≥m V h := by
   unfold MisereGE at h2 ⊢
-  intro x hv
-  exact h2 x (h_v_subset_u x hv)
+  grind
 
 /--
 Adding a fixed element `c ∈ A` on the right preserves the restricted misère
@@ -491,24 +471,19 @@ equivalence.
 theorem misereEQ_add_left {A : G → Prop} [ClosedUnderAdd A] {g h c : G}
     (hc : A c) (h1 : g =m A h) : (c + g) =m A (c + h) := by
   have := misereEQ_add_right hc h1
-  intro x hx
-  have h2 := this x hx
-  rwa [add_comm c g, add_comm c h]
+  grind
 
 @[simp]
 theorem MisereGE.refl {A : G → Prop} (g : G) : g ≥m A g := by
   unfold MisereGE
-  intro x h3
-  exact le_refl MisereOutcome (g + x)
+  grind
 
 theorem not_misereEQ_of_not_misereGE {A : G → Prop} {g h : G} (h1 : ¬(g ≥m A h)) :
     ¬(g =m A h) := by
   simp only [MisereGE, ge_iff_le, not_forall] at h1
   obtain ⟨x, ⟨h1, h2⟩⟩ := h1
   simp only [MisereEQ, not_forall]
-  use x
-  use h1
-  exact Ne.symm (ne_of_not_le h2)
+  grind
 
 private theorem ClosedUnderNeg.not_ge_neg_iff.aux {A : G → Prop} [ClosedUnderNeg A]
     {g h : G} (h1 : g ≥m A h) : (-h) ≥m A (-g) := by
@@ -689,14 +664,11 @@ theorem misereOutcome_N_natCast_iff (n : ℕ) : MisereOutcome (n : G) = .N ↔ n
 theorem misereOutcome_P_intCast (n : ℤ) : ¬MisereOutcome (n : G) = .P := by
   apply Or.elim3 (Int.lt_trichotomy n 0) <;> intro h
   · rw [<-misereOutcome_L_intCast_iff (G := G)] at h
-    rw [h]
-    decide
+    grind
   · rw [<-misereOutcome_N_intCast_iff (G := G)] at h
-    rw [h]
-    decide
+    grind
   · rw [<-misereOutcome_R_intCast_iff (G := G)] at h
-    rw [h]
-    decide
+    grind
 
 @[simp]
 theorem misereOutcome_P_natCast (n : ℕ) : ¬MisereOutcome (n : G) = .P := by

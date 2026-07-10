@@ -35,9 +35,7 @@ theorem online_ne_of_line L : ∃ a b, a ≠ b ∧ OnLine  a L ∧ OnLine  b L :
 
 theorem online_ne_of_point_line a L : ∃ b, a ≠ b ∧ OnLine b L := by
   rcases online_ne_of_line L with ⟨b, c, bc, bL, cL⟩
-  by_cases h : c = a
-  · use b; rw[h] at bc; exact ⟨bc.symm, bL⟩
-  · use c; exact ⟨Ne.symm h, cL⟩
+  grind
 
 lemma len_pos_of_nq (ab : a ≠ b) : 0 < length a b :=
   (Ne.symm (not_imp_not.mpr length_eq_zero_iff.mp ab)).le_iff_lt.mp (length_nonneg a b)

@@ -139,8 +139,7 @@ private lemma fold_pointwise
               Rose.Encoding.fold (A := B) (mk := foldAlgHom mk hmk) ∘
               Rose.Encoding.encode (A := B)) children := by
         simp only [List.map_inj_left, Function.comp_apply]
-        intro child hmem
-        simpa using ih child hmem
+        grind
       simp [Rose.fold.eq_1, Rose.Encoding.encode_mk, Rose.Encoding.fold_mk,
         foldAlgHom, List.map_map, this]
 
@@ -201,8 +200,7 @@ private lemma fold_children_eq
               children
             = List.map (fun child ↦ (child, child.children)) children := by
         refine List.map_congr_left ?_
-        intro child hmem
-        simpa using ih child hmem
+        grind
       have hchildren :
           List.map (Prod.fst ∘ fun child ↦ (child, child.children)) children
             = children := by

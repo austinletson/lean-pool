@@ -56,8 +56,7 @@ lemma seq_defined : Sg0-Predicate (Seq : V → Prop) via seqDef := by
     exact ⟨l, hl, by
       rw [←hdom]
       simp, hdom.symm⟩
-  · rintro ⟨l, hl, _, hdom⟩
-    exact ⟨l, hl, hdom.symm⟩
+  · grind
 
 @[simp] lemma seq_defined_iff (v) :
     Semiformula.Evalbm V v seqDef.val ↔ Seq (v 0) := seq_defined.df.iff v
@@ -305,8 +304,7 @@ lemma domain_bitRemove_of_isMapping_of_mem {x y s : V} (hs : IsMapping s) (hxy :
   intro x₁
   constructor
   · rintro ⟨y₁, hy₁, hx₁y₁⟩; exact ⟨by rintro rfl; exact hy₁ rfl (hs.uniq hx₁y₁ hxy), y₁, hx₁y₁⟩
-  · intro ⟨hx, y₁, hx₁y₁⟩
-    exact ⟨y₁, by intro _; contradiction, hx₁y₁⟩
+  · grind
 
 lemma _root_.LO.Arith.Seq.eq_of_eq_of_subset {s₁ s₂ : V} (H₁ : Seq s₁) (H₂ : Seq s₂)
     (hl : lh s₁ = lh s₂) (h : s₁ ⊆ s₂) : s₁ = s₂ := by

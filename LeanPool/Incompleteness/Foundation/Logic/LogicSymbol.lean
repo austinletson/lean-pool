@@ -289,14 +289,7 @@ def conjLt (φ : ℕ → α) : ℕ → α
   | succ k ih =>
     simp only [conjLt_succ, LogicalConnective.HomClass.map_and, LogicalConnective.Prop.and_eq,
       ih]
-    constructor
-    · rintro ⟨hk, h⟩
-      intro i hi
-      rcases Nat.eq_or_lt_of_le (Nat.le_of_lt_succ hi) with (rfl | hi)
-      · exact hk
-      · exact h i hi
-    · rintro h
-      exact ⟨h k (by simp), fun i hi ↦ h i (Nat.lt_add_right 1 hi)⟩
+    grind
 
 /-- Imported declaration from the Incompleteness formalization. -/
 def disjLt (φ : ℕ → α) : ℕ → α
@@ -314,14 +307,7 @@ def disjLt (φ : ℕ → α) : ℕ → α
   | zero => simp
   | succ k ih =>
     simp only [disjLt_succ, LogicalConnective.HomClass.map_or, LogicalConnective.Prop.or_eq, ih]
-    constructor
-    · rintro (h | ⟨i, hi, h⟩)
-      · exact ⟨k, by simp, h⟩
-      · exact ⟨i, Nat.lt_add_right 1 hi, h⟩
-    · rintro ⟨i, hi, h⟩
-      rcases Nat.eq_or_lt_of_le (Nat.le_of_lt_succ hi) with (rfl | hi)
-      · left; exact h
-      · right; exact ⟨i, hi, h⟩
+    grind
 
 end «lp_section_4»
 

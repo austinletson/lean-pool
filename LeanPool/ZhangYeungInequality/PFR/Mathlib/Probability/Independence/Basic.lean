@@ -114,14 +114,7 @@ lemma _root_.ProbabilityTheory.IndepFun.finsetSum
     (h_disj : Disjoint s t) : IndepFun (∑ i ∈ s, f i) (∑ i ∈ t, f i) μ := by
   let S : Bool → Finset ι := fun b => if b then s else t
   have h_disjoint : Set.PairwiseDisjoint Set.univ S := by
-    intro b _ c _ hbc
-    cases b <;> cases c
-    · exact False.elim (hbc rfl)
-    · change Disjoint t s
-      exact h_disj.symm
-    · change Disjoint s t
-      exact h_disj
-    · exact False.elim (hbc rfl)
+    intro b grind
   have hindep := iIndepFun.finsetSum S h_disjoint hf_Indep hf_meas
   have h_true : S true = s := by simp [S]
   have h_false : S false = t := by simp [S]
@@ -313,14 +306,8 @@ lemma _root_.ProbabilityTheory.iIndepFun.pi
     symm
     rw [reindex_prod, reindex_inter, Finset.prod_coe_sort]
     apply hf (κ_σ i) (sets := fun ij ↦ sets' ij.fst ij.snd)
-    intro ij hij
-    rw [← Finset.mem_singleton.mp (Finset.mem_sigma.mp hij).left] at hi
-    convert (h_sets ⟨ij.fst, hi⟩).left ij.snd
-    simp [sets', hi]
-  intros ij hij
-  obtain ⟨hi, _⟩ := Finset.mem_sigma.mp hij
-  simp_rw [sets', hi]
-  exact (h_sets ⟨ij.fst, hi⟩).1 ij.snd
+    grind
+  grind
 
 
 /-- If a family of functions `(i, j) ↦ f i j` is independent, then the family of

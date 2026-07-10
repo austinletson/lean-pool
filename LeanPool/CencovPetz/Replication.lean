@@ -112,11 +112,7 @@ lemma coarsen_pushforward_replicate (m : ℕ) (hm : 0 < m) (p : Simplex α) :
           -- Split the sum over `α × Fin m` and evaluate.
           have : (m : ℝ) * (p.p a * (m : ℝ)⁻¹) = p.p a := by
             -- Rearrange to use `m * m⁻¹ = 1`.
-            calc
-              (m : ℝ) * (p.p a * (m : ℝ)⁻¹)
-                  = p.p a * ((m : ℝ) * (m : ℝ)⁻¹) := by
-                      simp [mul_assoc, mul_comm]
-              _ = p.p a := by simp [hm0]
+            grind
           simpa [Fintype.sum_prod_type, Finset.sum_const,
             Finset.card_univ, div_eq_mul_inv] using this
 
@@ -147,11 +143,7 @@ lemma coarsen_tangentPushforward_replicate (m : ℕ) (hm : 0 < m)
           simp [hq]
     _ = (u : α → ℝ) a := by
           have : (m : ℝ) * ((u : α → ℝ) a * (m : ℝ)⁻¹) = (u : α → ℝ) a := by
-            calc
-              (m : ℝ) * ((u : α → ℝ) a * (m : ℝ)⁻¹)
-                  = (u : α → ℝ) a * ((m : ℝ) * (m : ℝ)⁻¹) := by
-                      simp [mul_assoc, mul_comm]
-              _ = (u : α → ℝ) a := by simp [hm0]
+            grind
           simpa [Fintype.sum_prod_type, Finset.sum_const,
             Finset.card_univ, div_eq_mul_inv] using this
 

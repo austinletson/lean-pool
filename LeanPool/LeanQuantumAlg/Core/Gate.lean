@@ -124,10 +124,7 @@ theorem inner_applyVec_applyVec_of_mem_unitaryGroup {U : HilbertOperator n}
           * (φ k * starRingEnd ℂ (ψ j)) := by
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [map_sum, Finset.sum_mul_sum]
-        refine Finset.sum_congr rfl fun k _ =>
-          Finset.sum_congr rfl fun j _ => ?_
-        rw [map_mul]
-        ring
+        grind
     _ = ∑ k, ∑ j, (∑ i, U i k * starRingEnd ℂ (U i j))
           * (φ k * starRingEnd ℂ (ψ j)) := by
         rw [Finset.sum_comm]
@@ -197,8 +194,7 @@ theorem ext {G K : Gate n} (h : ∀ i j, G i j = K i j) : G = K := by
       have hGK : G = K := by
         ext i j
         exact h i j
-      subst hGK
-      rfl
+      grind
 
 /-- Build a gate from a unitary Hilbert operator. -/
 def ofUnitary (U : HilbertOperator n)

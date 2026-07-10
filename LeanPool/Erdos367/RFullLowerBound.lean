@@ -100,8 +100,7 @@ lemma rFullPart_pow (r m : ℕ) (hm : m ≠ 0) (hr : r ≠ 0) :
       · simp only [Nat.factorization_pow, Finsupp.coe_smul, Pi.smul_apply,
           smul_eq_mul, Finsupp.filter_smul, mul_eq_mul_left_iff,
           Finsupp.filter_apply, h]
-        left
-        rfl
+        grind
       · simp only [Nat.factorization_pow, Finsupp.coe_smul, Pi.smul_apply,
           smul_eq_mul, Finsupp.filter_smul, mul_eq_mul_left_iff,
           Finsupp.filter_apply, h]

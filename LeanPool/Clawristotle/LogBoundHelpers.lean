@@ -32,8 +32,7 @@ lemma op_norm_bound_from_basis (L : (Fin 3 → ℝ) →L[ℝ] ℝ) {C : ℝ}
       simp_rw [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
       rw [Finset.sum_eq_single j]
       · simp
-      · intro b _ hneq
-        simp [Pi.single_eq_of_ne hneq.symm]
+      · grind
       · intro hj; exfalso; exact hj (Finset.mem_univ j)
     have eq1 : L x = ∑ i : Fin 3, x i * L (Pi.single i 1 : Fin 3 → ℝ) := by
       calc L x = L (∑ i : Fin 3, x i • (Pi.single i 1 : Fin 3 → ℝ)) := by conv_lhs => rw [hx]
@@ -108,19 +107,7 @@ lemma log_f_zero_bound (f : Torus3 → (Fin 3 → ℝ) → ℝ)
   · intro x
     have h1 : Real.log (f xMin 0) ≤ Real.log (f x 0) := h_min (mem_univ x)
     have h2 : Real.log (f x 0) ≤ Real.log (f xMax 0) := h_max (mem_univ x)
-    have h3 : |Real.log (f x 0)| ≤ max |Real.log (f xMin 0)| |Real.log (f xMax 0)| := by
-      rw [abs_le]
-      constructor
-      · have h_neg : -Real.log (f x 0) ≤ max |Real.log (f xMin 0)| |Real.log (f xMax 0)| := by
-          calc -Real.log (f x 0) ≤ -Real.log (f xMin 0) := neg_le_neg h1
-            _ ≤ |Real.log (f xMin 0)| := neg_le_abs (Real.log (f xMin 0))
-            _ ≤ max |Real.log (f xMin 0)| |Real.log (f xMax 0)| := le_max_left _ _
-        exact neg_le.mp h_neg
-      · calc Real.log (f x 0) ≤ Real.log (f xMax 0) := h2
-          _ ≤ |Real.log (f xMax 0)| := le_abs_self _
-          _ ≤ max |Real.log (f xMin 0)| |Real.log (f xMax 0)| := le_max_right _ _
-    refine le_trans h3 (le_trans (max_le_add_of_nonneg (abs_nonneg _) (abs_nonneg _)) ?_)
-    linarith
+    grind
 
 lemma log_bound_from_grad (f : Torus3 → (Fin 3 → ℝ) → ℝ)
     (hf_pos : ∀ x v, 0 < f x v)
@@ -158,8 +145,7 @@ lemma log_bound_from_grad (f : Torus3 → (Fin 3 → ℝ) → ℝ)
       (f x w)⁻¹ * ‖fderiv ℝ (f x) w‖ ≤ (f x w)⁻¹ * (3 * (max 0 Cg * (1 + ‖w‖) ^ Kg * f x w)) := by
         gcongr
       _ = (f x w)⁻¹ * f x w * Cg' * (1 + ‖w‖) ^ Kg := by
-        dsimp [Cg']
-        ring
+        grind
       _ = Cg' * (1 + ‖w‖) ^ Kg := by
         rw [inv_mul_cancel₀ hw_pos.ne', one_mul]
   have h_mvt := mvt_test (fun v => log (f x v)) hg_diff Cg' Kg (by positivity) h_fderiv v

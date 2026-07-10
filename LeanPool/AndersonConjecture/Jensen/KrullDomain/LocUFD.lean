@@ -82,8 +82,7 @@ theorem localization_away_UFD (y : R₀) (hy : y ≠ 0) :
   let h := f.filter (fun p => p ∣ y)
   have hfgh : f = g + h := by
     have := Multiset.filter_add_not (· ∣ y) f
-    rw [add_comm] at this
-    exact this.symm
+    grind
   refine ⟨g.map (algebraMap R₀ (Localization.Away y)), ?_, ?_⟩
   · intro b hb
     rw [Multiset.mem_map] at hb

@@ -76,14 +76,11 @@ instance : DecidablePred (Pat0110 (two := two)) := by
 
 private lemma big_ne_small {n : Nat} {two : Sym n} (x : Big (two := two)) (y : Small (two := two)) :
     (x.1 : Sym n) ≠ y.1 := by
-  intro hxy
-  have hx : two ≤ (y.1 : Sym n) := hxy ▸ x.2
-  exact (not_lt_of_ge hx) y.2
+  grind
 
 private lemma small_ne_big {n : Nat} {two : Sym n} (x : Small (two := two)) (y : Big (two := two)) :
     (x.1 : Sym n) ≠ y.1 := by
-  intro hxy
-  exact big_ne_small (two := two) (x := y) (y := x) hxy.symm
+  grind
 
 private def bigValEmbedding {n : Nat} {two : Sym n} : Big (two := two) ↪ Sym n :=
   ⟨Subtype.val, Subtype.val_injective⟩

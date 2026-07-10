@@ -57,9 +57,7 @@ lemma centralizerιRange : Subalgebra.centralizer F A.ι.range = A.ι.range := b
       rintro _ ⟨x, rfl⟩ hx
       refine ⟨A.ι x⁻¹, by simp, ?_⟩
       simp only [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, ← map_mul]
-      rw [mul_inv_cancel₀, map_one]
-      rintro rfl
-      simp at hx }
+      grind }
   change Subalgebra.centralizer F (L.toSubalgebra : Set A) = L.toSubalgebra
   apply cor_two_3to1
   apply cor_two_2to3
@@ -113,8 +111,7 @@ variable {A ρ σ τ}
 def mul' (x : A.conjFactor σ) (y : A.conjFactor τ) : A.conjFactor (σ * τ) :=
 ⟨x.1 * y.1, fun c ↦ by
   simp only [AlgEquiv.mul_apply, Units.val_mul, _root_.mul_assoc, mul_inv_rev]
-  rw [← _root_.mul_assoc (A.ι c), ← mul_assoc (y.1 : A), ← mul_assoc (y.1 : A),
-    conjFactor_prop, ← _root_.mul_assoc, conjFactor_prop]⟩
+  grind⟩
 
 @[simp]
 lemma mul'_coe (x : A.conjFactor σ) (y : A.conjFactor τ) : (mul' x y).1.1 = x.1 * y.1 := rfl
@@ -536,9 +533,7 @@ lemma compare_toCocycles₂' (x_ : Π σ, A.conjFactor σ) (y_ : Π σ, B.conjFa
   rw [inv_mul_eq_iff_eq_mul, mul_comm _ (B.toCocycles₂ y_ _)]
   symm
   erw [compare_toCocycles₂]
-  simp only [← _root_.mul_assoc]
-  congr 1
-  rw [mul_comm]
+  grind
 
 end GoodRep
 
@@ -677,9 +672,7 @@ lemma conjFactor_linearIndependent (x_ : Π σ, A.conjFactor σ) :
   have eq6 (c : K) := linearIndependent_iff'' |>.1 LI (B.repr ⟨_, mem1⟩).support
     (fun τ => B.repr ⟨_, mem1⟩ τ * τ.1 c - σ c * (B.repr ⟨_, mem1⟩) τ)
     (by
-      intro i hi
-      simp only [Finsupp.mem_support_iff, ne_eq, Decidable.not_not] at hi
-      simp only [hi, zero_mul, mul_zero, sub_self]) (eq5 c)
+      grind) (eq5 c)
   simp only [sub_eq_zero, Subtype.forall] at eq6
   have : (B.repr ⟨_, mem1⟩).support ≠ ∅ := by
     intro rid
@@ -687,14 +680,8 @@ lemma conjFactor_linearIndependent (x_ : Π σ, A.conjFactor σ) :
   obtain ⟨τ, τ_mem⟩ := Finset.nonempty_of_ne_empty this
   have eq7 : σ = τ := by
     ext c
-    specialize eq6 c τ τ.2
-    rw [mul_comm] at eq6
-    simp only [Subtype.coe_eta, mul_eq_mul_right_iff] at eq6
-    refine eq6.recOn Eq.symm fun rid ↦ ?_
-    simp only [Finsupp.mem_support_iff, ne_eq] at τ_mem
-    contradiction
-  subst eq7
-  exact hσ τ.2
+    grind
+  grind
 
 variable [IsGalois F K] in
 /-- The basis of a good representative obtained from conjugating units. -/
@@ -874,8 +861,7 @@ noncomputable def fromSnd :
             rw [mul_comm (c σ).1, _root_.mul_assoc]
             congr 1
             field_simp at hc
-            field_simp [hc, mul_comm]
-            convert hc.symm using 1 <;> ring)
+            grind)
     apply IsBrauerEquivalent.iso_to_eqv (h := φ2)
 
 variable [IsGalois F K]

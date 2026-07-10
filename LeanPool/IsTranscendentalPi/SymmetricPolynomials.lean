@@ -99,5 +99,4 @@ lemma symmetric_poly_at_roots
     (P : MvPolynomial (Fin n) ℤ) (hP : MvPolynomial.IsSymmetric P) :
     ∃ z : R, MvPolynomial.aeval (σ := Fin n) (R := ℤ) (S₁ := S) a P = algebraMap R S z := by
   obtain ⟨Q, hQ⟩ := symmetric_poly_at_roots_eq_poly_of_esymm (B := B) (a := a) hmonic hroots P hP
-  exact ⟨MvPolynomial.aeval (σ := Fin n) (R := ℤ) (S₁ := R)
-    (fun i : Fin n => (-1) ^ (i.1 + 1) * B.coeff (n - (i.1 + 1))) Q, hQ⟩
+  grind

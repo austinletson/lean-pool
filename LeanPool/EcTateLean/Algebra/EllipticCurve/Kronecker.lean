@@ -24,10 +24,7 @@ section Obvious
 
 lemma div_succ_le_succ_div (m n : ℕ) : succ m / succ n ≤ succ (m / succ n) := by
   rw [Nat.succ_div]
-  split
-  · rw [succ_eq_add_one]
-  · rw [add_zero]
-    exact le_succ (m / succ n)
+  grind
 
 lemma div2_succ_succ_eq_succ_div2 (n : ℕ) : succ (succ n) / 2 = succ (n / 2) := by
   omega
@@ -87,8 +84,7 @@ lemma odd_part_le_self_nat (x : ℕ) : (valBinNat x).2 ≤ x := by
           have h : 0 < Nat.succ x ∧ Nat.succ x % 2 = 0 :=
           And.intro (zero_lt_succ x) even;
           rw [valBinNat_even h]
-          have h' := ih (Nat.succ x / 2) (div2_succ_le_self x);
-          exact le_trans h' (le_succ x)
+          grind
         | inr odd =>
           have not_even : Nat.succ x % 2 ≠ 0 := by omega
           rw [valBinNat, dif_neg (not_and_of_not_right (0 < Nat.succ x) not_even),

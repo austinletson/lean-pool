@@ -355,21 +355,7 @@ private lemma phi_iff (C p : V) :
     · right; refine ⟨q, ?_, h, rfl⟩; simp
   mpr := by
     unfold Phi
-    rintro (⟨k, _, r, _, v, _, hkr, hv, rfl⟩ | ⟨k, _, r, _, v, _, hkr, hv, rfl⟩ | H)
-    · left; exact ⟨k, r, v, hkr, hv, rfl⟩
-    · right; left; exact ⟨k, r, v, hkr, hv, rfl⟩
-    right; right
-    rcases H with (rfl | rfl | H)
-    · left; rfl
-    · right; left; rfl
-    right; right
-    rcases H with (⟨q, _, r, _, hq, hr, rfl⟩ | ⟨q, _, r, _, hq, hr, rfl⟩ | H)
-    · left; exact ⟨q, r, hq, hr, rfl⟩
-    · right; left; exact ⟨q, r, hq, hr, rfl⟩
-    right; right
-    rcases H with (⟨q, _, hq, rfl⟩ | ⟨q, _, hq, rfl⟩)
-    · left; exact ⟨q, hq, rfl⟩
-    · right; exact ⟨q, hq, rfl⟩
+    grind
 
 /-- Imported declaration from the Incompleteness formalization. -/
 def formulaAux : Sg0.Semisentence 2 := .mkSigma
@@ -428,19 +414,7 @@ def construction : Fixpoint.Construction V (blueprint pL) where
 
   monotone := by
     unfold Phi
-    rintro C C' hC _ x (h | h | h | h | H)
-    · left; exact h
-    · right; left; exact h
-    · right; right; left; exact h
-    · right; right; right; left; exact h
-    right; right; right; right
-    rcases H with (⟨q, r, hqC, hrC, rfl⟩ | ⟨q, r, hqC, hrC, rfl⟩ | H)
-    · left; exact ⟨q, r, hC hqC, hC hrC, rfl⟩
-    · right; left; exact ⟨q, r, hC hqC, hC hrC, rfl⟩
-    right; right
-    rcases H with (⟨q, hqC, rfl⟩ | ⟨q, hqC, rfl⟩)
-    · left; exact ⟨q, hC hqC, rfl⟩
-    · right; exact ⟨q, hC hqC, rfl⟩
+    grind
 
 instance : (construction L).StrongFinite V where
   strong_finite := by
@@ -833,9 +807,7 @@ private lemma phi_iff (C pr : V) :
     · left; exact ⟨p₁, p₂, y₁, y₂, h₁, h₂, rfl, rfl⟩
     · right; left; exact ⟨p₁, p₂, y₁, y₂, h₁, h₂, rfl, rfl⟩
     right; right
-    rcases H with (⟨p₁, _, y₁, _, h₁, rfl, rfl⟩ | ⟨p₁, _, y₁, _, h₁, rfl, rfl⟩)
-    · left; exact ⟨p₁, y₁, h₁, rfl, rfl⟩
-    · right; exact ⟨p₁, y₁, h₁, rfl, rfl⟩
+    grind
 
 /-- Imported declaration from the Incompleteness formalization. -/
 def construction : Fixpoint.Construction V (β.blueprint) where
@@ -886,20 +858,7 @@ def construction : Fixpoint.Construction V (β.blueprint) where
   monotone := by
     unfold Phi
     rintro C C' hC _ _ ⟨param, p, y, rfl, hp, H⟩
-    refine ⟨param, p, y, rfl, hp, ?_⟩
-    rcases H with (h | h | h | h | H)
-    · left; exact h
-    · right; left; exact h
-    · right; right; left; exact h
-    · right; right; right; left; exact h
-    right; right; right; right
-    rcases H with (⟨p₁, p₂, r₁, r₂, h₁, h₂, rfl, rfl⟩ | ⟨p₁, p₂, r₁, r₂, h₁, h₂, rfl, rfl⟩ | H)
-    · left; exact ⟨p₁, p₂, r₁, r₂, hC h₁, hC h₂, rfl, rfl⟩
-    · right; left; exact ⟨p₁, p₂, r₁, r₂, hC h₁, hC h₂, rfl, rfl⟩
-    right; right
-    rcases H with (⟨p₁, r₁, h₁, rfl, rfl⟩ | ⟨p₁, r₁, h₁, rfl, rfl⟩)
-    · left; exact ⟨p₁, r₁, hC h₁, rfl, rfl⟩
-    · right; exact ⟨p₁, r₁, hC h₁, rfl, rfl⟩
+    grind
 
 instance : c.construction.Finite where
   finite {C _ pr h} := by
@@ -1033,8 +992,7 @@ lemma graph_and_inv {p₁ p₂ r : V} :
   rcases Graph.case_iff.mp h with ⟨_, (⟨_, _, _, H, _⟩ | ⟨_, _, _, H, _⟩ | ⟨H, _⟩ | ⟨H, _⟩ |
     ⟨_, _, _, _, _, _, H, rfl⟩ | ⟨_, _, _, _, _, _, H, _⟩ | ⟨_, _, _, H, _⟩ | ⟨_, _, _, H, _⟩)⟩ <;>
     first
-    | (simp only [qqAnd_inj] at H; rcases H with ⟨rfl, rfl⟩
-       exact ⟨_, _, by assumption, by assumption, rfl⟩)
+    | (simp only [qqAnd_inj] at H; grind)
     | simp_all [qqRel, qqNRel, qqVerum, qqFalsum, qqAnd, qqOr, qqAll, qqEx]
 
 lemma graph_or {p₁ p₂ r₁ r₂ : V} (hp₁ : L.IsUFormula p₁) (hp₂ : L.IsUFormula p₂)
@@ -1050,8 +1008,7 @@ lemma graph_or_inv {p₁ p₂ r : V} :
   rcases Graph.case_iff.mp h with ⟨_, (⟨_, _, _, H, _⟩ | ⟨_, _, _, H, _⟩ | ⟨H, _⟩ | ⟨H, _⟩ |
     ⟨_, _, _, _, _, _, H, _⟩ | ⟨_, _, _, _, _, _, H, rfl⟩ | ⟨_, _, _, H, _⟩ | ⟨_, _, _, H, _⟩)⟩ <;>
     first
-    | (simp only [qqOr_inj] at H; rcases H with ⟨rfl, rfl⟩
-       exact ⟨_, _, by assumption, by assumption, rfl⟩)
+    | (simp only [qqOr_inj] at H; grind)
     | simp_all [qqRel, qqNRel, qqVerum, qqFalsum, qqAnd, qqOr, qqAll, qqEx]
 
 lemma graph_all {p₁ r₁ : V} (hp₁ : L.IsUFormula p₁) (h₁ : c.Graph (c.allChanges param) p₁ r₁) :
@@ -1065,8 +1022,7 @@ lemma graph_all_inv {p₁ r : V} :
   rcases Graph.case_iff.mp h with ⟨_, (⟨_, _, _, H, _⟩ | ⟨_, _, _, H, _⟩ | ⟨H, _⟩ | ⟨H, _⟩ |
     ⟨_, _, _, _, _, _, H, _⟩ | ⟨_, _, _, _, _, _, H, _⟩ | ⟨_, _, _, H, rfl⟩ | ⟨_, _, _, H, _⟩)⟩ <;>
     first
-    | (simp only [qqAll_inj] at H; rcases H with rfl
-       exact ⟨_, by assumption, rfl⟩)
+    | (simp only [qqAll_inj] at H; grind)
     | simp_all [qqRel, qqNRel, qqVerum, qqFalsum, qqAnd, qqOr, qqAll, qqEx]
 
 lemma graph_ex {p₁ r₁ : V} (hp₁ : L.IsUFormula p₁) (h₁ : c.Graph (c.exChanges param) p₁ r₁) :
@@ -1080,8 +1036,7 @@ lemma graph_ex_inv {p₁ r : V} :
   rcases Graph.case_iff.mp h with ⟨_, (⟨_, _, _, H, _⟩ | ⟨_, _, _, H, _⟩ | ⟨H, _⟩ | ⟨H, _⟩ |
     ⟨_, _, _, _, _, _, H, _⟩ | ⟨_, _, _, _, _, _, H, _⟩ | ⟨_, _, _, H, _⟩ | ⟨_, _, _, H, rfl⟩)⟩ <;>
     first
-    | (simp only [qqEx_inj] at H; rcases H with rfl
-       exact ⟨_, by assumption, rfl⟩)
+    | (simp only [qqEx_inj] at H; grind)
     | simp_all [qqRel, qqNRel, qqVerum, qqFalsum, qqAnd, qqOr, qqAll, qqEx]
 
 variable (param)

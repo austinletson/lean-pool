@@ -160,9 +160,7 @@ instance _root_.LO.Modal.Hilbert.Geach.Kripke.Canonical :
   unfold Hilbert.axiomInstances;
   use Axioms.Geach t (.atom 0);
   constructor;
-  · simp only [];
-    right;
-    aesop;
+  · grind
   · use (fun _ => φ); simp;
 ⟩
 

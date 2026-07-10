@@ -86,8 +86,7 @@ theorem euclidean_growth_four (α : Fin 2 → ℝ) (q : ℕ → ℤ) (p : ℕ �
           have := hmono.injective h; exact Fin.ext (by omega))
       have habs_pos : 0 < |m| := abs_pos.mpr hmne
       have habs_lt : |m| < q N := by
-        rw [hm, abs_sub_lt_iff]
-        constructor <;> [linarith [hub i, hlb j]; linarith [hub j, hlb i]]
+        grind
       have hdN_abs : deltaN (euclNorm 2) α (q N) < deltaN (euclNorm 2) α |m| :=
         hbest N |m| habs_pos habs_lt
       have hsym : deltaN (euclNorm 2) α |m| = deltaN (euclNorm 2) α m := by
@@ -99,17 +98,7 @@ theorem euclidean_growth_four (α : Fin 2 → ℝ) (q : ℕ → ℤ) (p : ℕ �
         deltaN_le (euclNorm 2) euclNorm_nonneg α m _
       rw [hsym] at hdN_abs; linarith [hdN_abs, hle]
     have hstrict : ‖w i‖ < deltaN (euclNorm 2) α (q N) ∨ ‖w j‖ < deltaN (euclNorm 2) α (q N) := by
-      rcases Nat.eq_zero_or_pos i.val with hi0 | hipos
-      · right
-        rw [hnorm_w]
-        have hj1 : 1 ≤ j.val := by
-          rcases Nat.eq_zero_or_pos j.val with hj0 | hjpos
-          · exact absurd (Fin.ext (by omega) : i = j) hij
-          · exact hjpos
-        exact lt_of_le_of_lt (hdec (N + 1) (N + j.val) (by omega)) (hdecstrict N)
-      · left
-        rw [hnorm_w]
-        exact lt_of_le_of_lt (hdec (N + 1) (N + i.val) (by omega)) (hdecstrict N)
+      grind
     exact EuclideanAngle.angle_gt_pi_div_three hwi hwj hui huj hsep hstrict
   -- the (5.3) record bound: `‖w 4 − w a − w b‖ > ‖w a‖` for `a, b ≠ 4`
   have h53 : ∀ a b : Fin 5, a ≠ 4 → b ≠ 4 → a ≠ b → ‖w a‖ < ‖w 4 - w a - w b‖ := by
@@ -159,26 +148,20 @@ theorem euclidean_growth_four (α : Fin 2 → ℝ) (q : ℕ → ℤ) (p : ℕ �
     · -- ‖w a‖ < ‖w b‖: cone edges (w a, w b)
       have hexcl := FiveDistanceHM.cone_exclusion (hwne a) (hwne b) (hwne 4)
         hs.le ht.le heq hla hnab hβa hβb
-      have h := h53 b a hb ha (Ne.symm hab)
-      rw [hcomm] at h
-      linarith
+      grind
     · -- ‖w b‖ < ‖w a‖: cone edges (w b, w a)
       have heq' : w 4 = t • w b + s • w a := by rw [heq]; abel
       have hexcl := FiveDistanceHM.cone_exclusion (hwne b) (hwne a) (hwne 4)
         ht.le hs.le heq' hlb' hnab hβb hβa
-      rw [hcomm] at hexcl
-      linarith [h53 a b ha hb hab]
+      grind
   -- apply Haynes–Marklof Theorem 8 to the reindexed tuple `v i = w (rev i)` (so `v 0 = w 4`)
   refine FiveDistance.hm_theorem8 (v := fun i => w i.rev) (fun i => hwne _) ?_ ?_
-  · intro i j hij
-    exact hwsep _ _ (fun h => hij (Fin.rev_injective h))
+  · grind
   · intro j k hj hk hjk
     have hj4 : j.rev ≠ 4 := by
-      intro h; rw [Fin.rev_eq_iff, show (4 : Fin 5).rev = 0 by decide] at h
-      exact absurd h (ne_of_gt hj)
+      grind
     have hk4 : k.rev ≠ 4 := by
-      intro h; rw [Fin.rev_eq_iff, show (4 : Fin 5).rev = 0 by decide] at h
-      exact absurd h (ne_of_gt hk)
+      grind
     exact hconeW j.rev k.rev hj4 hk4 (fun h => hjk (Fin.rev_injective h))
 
 end ThreeGap.SimApprox

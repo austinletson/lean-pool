@@ -218,17 +218,7 @@ private lemma cpv_residue_side_eventually_eq
   simp only [cauchyPrincipalValueIntegrandOn]
   have h_iff :
       (∃ s ∈ S0, ‖γ t - s‖ ≤ ε) ↔ (∃ s ∈ S_on, ‖γ t - s‖ ≤ ε) := by
-    constructor
-    · rintro ⟨s, hs, h_norm⟩
-      rw [hS0, Finset.mem_union] at hs
-      rcases hs with h_box | h_on
-      · by_cases h_on2 : s ∈ S_on
-        · exact ⟨s, h_on2, h_norm⟩
-        · exact absurd h_norm (not_le.mpr
-            (hε s (Finset.mem_sdiff.mpr ⟨h_box, h_on2⟩) t ht))
-      · exact ⟨s, h_on, h_norm⟩
-    · rintro ⟨s, hs, h_norm⟩
-      exact ⟨s, hS0 ▸ Finset.mem_union.mpr (Or.inr hs), h_norm⟩
+    grind
   split_ifs with h1 h2 h2
   · rfl
   · exact absurd (h_iff.mp h1) h2

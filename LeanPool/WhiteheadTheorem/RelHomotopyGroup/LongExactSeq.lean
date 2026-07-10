@@ -231,11 +231,9 @@ noncomputable def G''
       · intro ⟨t, ⟨yn, y⟩⟩ hyn
         dsimp only at hyn ⊢; rw [hyn]
         have h1 : (2 / (1 + ↑t) * ((1 + ↑t) / 2) : ℝ) = 1 := by
-          have : (1 : ℝ) + ↑t ≠ 0 := by linarith only [t.property.1]
-          field_simp
+          grind
         have h2 : (2 * ((1 + ↑t) / 2) - (1 + ↑t) : ℝ) = 0 := by
-          have : (1 : ℝ) + ↑t ≠ 0 := by linarith only [t.property.1]
-          field_simp; ring
+          grind
         rw [h1, h2]
         rw [Set.projIcc_left, Set.projIcc_right]
         have := Subtype.ext_iff.mp (H.apply_zero y)

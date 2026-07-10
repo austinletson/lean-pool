@@ -209,9 +209,7 @@ private abbrev tubularProj_hasFDerivAt_starProjection {S U : Set E}
     have h_star_eq : V.starProjection (x - m) = (v : E) :=
       Submodule.starProjection_apply V (x - m)
     have hχ_sub_m : χ x - m = (v : E) + (φ v : E) := by
-      change m + V.starProjection (x - m) + (φ (V.orthogonalProjectionOnto (x - m)) : E) - m =
-        (v : E) + (φ v : E)
-      rw [h_star_eq]; abel
+      grind
     have hχ_in_ball : χ x ∈ ball m δ := by
       rw [mem_ball, dist_comm, dist_eq_norm, norm_sub_rev,
         show χ x - m = (v : E) + (φ v : E) from hχ_sub_m]
@@ -237,11 +235,9 @@ private abbrev tubularProj_hasFDerivAt_starProjection {S U : Set E}
         _ = ‖x - χ x‖ := dist_eq_norm x (χ x)
     -- Decompose x - π_x and x - χ(x)
     have hxπ_eq : x - π_x = ((v : E) - (v_star : E)) + ((w : E) - (φ v_star : E)) := by
-      have : x - π_x = (x - m) - (π_x - m) := by abel
-      rw [this, hxm_decomp, hπ_sub]; abel
+      grind
     have hxχ_eq : x - χ x = (w : E) - (φ v : E) := by
-      have : x - χ x = (x - m) - (χ x - m) := by abel
-      rw [this, hxm_decomp, hχ_sub_m]; abel
+      grind
     -- Pythagorean theorem: V-component ⊥ V⊥-component of (x - π_x)
     set a_vec := (v : E) - (v_star : E) with ha_def
     set b_vec := (w : E) - (φ v_star : E) with hb_def
@@ -286,14 +282,7 @@ private abbrev tubularProj_hasFDerivAt_starProjection {S U : Set E}
       calc a * a + b * b ≤ ‖x - χ x‖ * ‖x - χ x‖ := hopt_sq
         _ ≤ (b + ε * a) * (b + ε * a) := mul_self_le_mul_self (norm_nonneg _) htri
     have hcore2 : a * a * (1 - ε * ε) ≤ 2 * b * ε * a := by
-      have hexp : (b + ε * a) * (b + ε * a) =
-          b * b + 2 * b * (ε * a) + ε * a * (ε * a) := by ring
-      have key : a * a ≤ 2 * b * (ε * a) + ε * a * (ε * a) := by
-        have h_combined := le_trans hcore (le_of_eq hexp)
-        linarith
-      have factored : a * a * (1 - ε * ε) = a * a - ε * ε * (a * a) := by ring
-      have rearranged : ε * a * (ε * a) = ε * ε * (a * a) := by ring
-      linarith
+      grind
     have hε_sq : 1 - ε * ε ≥ 15 / 16 := by
       have := mul_self_le_mul_self hε_pos.le hε_le
       linarith
@@ -304,13 +293,11 @@ private abbrev tubularProj_hasFDerivAt_starProjection {S U : Set E}
         have h_cancel : a * (1 - ε * ε) ≤ 2 * b * ε := by
           by_contra h; push Not at h
           have h1 := mul_lt_mul_of_pos_right h ha_pos
-          have : a * (1 - ε * ε) * a = a * a * (1 - ε * ε) := by ring
-          linarith [hcore2]
+          grind
         have h_step : a * (15 / 16) ≤ 2 * b * ε :=
           le_trans (mul_le_mul_of_nonneg_left (by linarith : (15:ℝ)/16 ≤ 1 - ε * ε) ha_nn)
                    h_cancel
-        have h_bε_nn : 0 ≤ b * ε := mul_nonneg hb_nn hε_pos.le
-        linarith
+        grind
     -- Bound b ≤ 2‖x-m‖
     have hw_norm : ‖(w : E)‖ ≤ ‖x - m‖ :=
       Submodule.norm_orthogonalProjectionOnto_apply_le V.orthogonal (x - m)
@@ -327,8 +314,7 @@ private abbrev tubularProj_hasFDerivAt_starProjection {S U : Set E}
     -- ‖π(x) - χ(x)‖ ≤ (1 + ε) * a
     have hdiff_bound : ‖tubularProj hTN hne x - χ x‖ ≤ (1 + ε) * a := by
       have h_eq : π_x - χ x = ((v_star : E) - (v : E)) + ((φ v_star : E) - (φ v : E)) := by
-        have : π_x - χ x = (π_x - m) - (χ x - m) := by abel
-        rw [this, hπ_sub, hχ_sub_m]; abel
+        grind
       have h_lip_coe : ‖(φ v_star : E) - (φ v : E)‖ ≤ ε * a := by
         calc ‖(φ v_star : E) - (φ v : E)‖
             = ‖((φ v_star - φ v : V.orthogonal) : E)‖ := by rw [coe_sub_W]
@@ -352,8 +338,7 @@ private abbrev tubularProj_hasFDerivAt_starProjection {S U : Set E}
     have h2 : (1 + ε) * (3 * b * ε) ≤ (1 + ε) * (3 * (2 * ‖x - m‖) * ε) := by
       apply mul_le_mul_of_nonneg_left _ (by linarith : (0:ℝ) ≤ 1 + ε)
       apply mul_le_mul_of_nonneg_right _ hε_pos.le
-      have h_bb := hb_bound
-      linarith
+      grind
     have h3 : (1 + ε) * (3 * (2 * ‖x - m‖) * ε) = (1 + ε) * 6 * ε * ‖x - m‖ := by ring
     have h4 : (1 + ε) * 6 * ε * ‖x - m‖ ≤ c * ‖x - m‖ := by
       apply mul_le_mul_of_nonneg_right _ hxm_nn
@@ -364,8 +349,7 @@ private abbrev tubularProj_hasFDerivAt_starProjection {S U : Set E}
             mul_le_mul h_1e h_6e (by positivity) (by positivity)
         _ = 5 * c / 8 := by ring
         _ ≤ c := by linarith
-    have h5 := hdiff_bound
-    linarith
+    grind
   -- Step 2: χ has Fréchet derivative V.starProjection at m
   -- (The φ-term vanishes because Dφ(0) = 0; the starProjection term is linear.)
   have h_chartHasFDeriv : HasFDerivAt χ V.starProjection m := by
@@ -524,8 +508,7 @@ theorem tubular_neighborhood_projection {S U : Set E}
         rw [← hdist_xπ, hπdist]; exact Metric.infDist_le_dist_of_mem hm
       have h_tri : dist x m ≤ dist x ((1 - t) • πx + t • x) +
           dist ((1 - t) • πx + t • x) m := dist_triangle _ _ _
-      rw [hdist_xy] at h_tri
-      linarith
+      grind
     -- Goal 2: infDist y S ≤ ‖y - πx‖ (upper bound via πx ∈ S)
     · calc Metric.infDist ((1 - t) • πx + t • x) S
           ≤ dist ((1 - t) • πx + t • x) πx := Metric.infDist_le_dist_of_mem hπS

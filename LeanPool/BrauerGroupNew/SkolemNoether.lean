@@ -147,19 +147,14 @@ lemma smul1_add (K A B M : Type u)
     have hadd : l (m1 + m2) = l m1 + l m2 := l.map_add m1 m2
     rw [hadd, smul_add]
     rfl
-  · rename_i a b ha hb
-    simp_all only [smul1, smul1AddHom, smul1AddHom', map_add, ZeroHom.toFun_eq_coe,
-      AddMonoidHom.toZeroHom_coe, LinearMap.coe_mk, AddHom.coe_mk, ← add_assoc, add_left_inj]
-    nth_rw 2 [add_assoc]; nth_rw 4 [add_comm]
-    rw [← add_assoc]
+  · grind
 
 lemma add_smul1 (K A B M : Type u)
     [Field K] [Ring A] [Algebra K A] [FiniteDimensional K A]
     [Ring B] [Algebra K B] [AddCommGroup M] [Module K M] [Module A M] [IsScalarTower K A M]
     (f : B →ₐ[K] A) (r s : B ⊗[K] Module.End A M) (x : moduleInst K A B M f) :
     smul1 K A B M f x (r + s) = smul1 K A B M f x r + smul1 K A B M f x s := by
-  simp only [smul1, ZeroHom.toFun_eq_coe, AddMonoidHom.toZeroHom_coe, map_add, LinearMap.coe_mk,
-    AddHom.coe_mk]
+  grind
 
 instance IsMod (K A B M : Type u)
     [Field K] [Ring A] [Algebra K A] [FiniteDimensional K A] [Ring B] [Algebra K B]

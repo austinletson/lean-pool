@@ -137,17 +137,13 @@ lemma round_near_eq_of (q : ℚ) (z : ℤ) :
   if h3 : z ≤ q then
     have : Int.fract q = q - z := by
       apply Int.fract_eq_iff.mpr
-      refine ⟨?_, ?_, ⟨z, ?_⟩⟩
-      · simp [h3]
-      · linarith
-      ring
+      grind
     rw [roundNearInt, this]
     simp_rw [sub_lt_iff_lt_add, add_comm, h2]
     simp only [↓reduceIte]
     symm
     apply Int.floor_eq_iff.mpr ⟨h3, ?_⟩
-    apply lt_trans h2
-    linarith
+    grind
   else
     simp only [not_le] at h3
     have floor_eq : ⌊q⌋ = z - 1 := by
@@ -194,8 +190,7 @@ lemma round_near_int_le (q : ℚ) :
   rw [abs_of_nonneg (by linarith [Int.le_ceil q])]
   rw [fract_eq_ceil_of_pos] at this
   · linarith
-  rw [this]
-  norm_num
+  grind
 
 lemma round_near_int_of_int (z : ℤ) :
   roundNearInt z = z := by
@@ -211,8 +206,7 @@ lemma round_near_add_half (z : ℤ) (h : z % 2 = 0) :
   simp only [one_div, Int.fract_intCast_add, this, lt_self_iff_false, ↓reduceIte,
     Int.floor_intCast_add]
   have : ⌊(2⁻¹ : ℚ)⌋ = 0 := by norm_num
-  rw [this, <-h]
-  simp [h]
+  grind
 
 lemma round_near_sub_half (z : ℤ) (h : z % 2 = 0) :
   roundNearInt (z - 1/2) = z := by
@@ -222,8 +216,7 @@ lemma round_near_sub_half (z : ℤ) (h : z % 2 = 0) :
   have : Int.fract (-(1 / 2 : ℚ)) = 1/2 := by
     rw [Int.fract_neg, this]
     · norm_num
-    rw [this]
-    norm_num
+    grind
   rw [sub_eq_add_neg]
   simp only [Int.fract_intCast_add, this, lt_self_iff_false, ↓reduceIte]
   rw [add_comm, Int.ceil_add_intCast]
@@ -232,11 +225,8 @@ lemma round_near_sub_half (z : ℤ) (h : z % 2 = 0) :
   rw [add_comm]
   have : ⌊(z : ℚ) + -(1/2)⌋ = z - 1 := by
     apply Int.floor_eq_iff.mpr
-    constructor
-    · qify; linarith
-    qify; linarith
-  rw [this]
-  omega
+    grind
+  grind
 
 lemma round_of_add_half (z : ℤ) :
   roundNearInt (z + 1/2) % 2 = 0 := by
@@ -298,8 +288,7 @@ lemma round_near_eq_iff (q : ℚ) (z : ℤ) :
       · contrapose! h'
         rw [h']
         convert round_of_add_half (roundNearInt q - 1) using 3
-        push_cast
-        linarith
+        grind
       contrapose! h'
       rw [h']
       exact round_of_add_half (roundNearInt q)

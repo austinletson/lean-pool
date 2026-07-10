@@ -68,11 +68,7 @@ lemma trans_of_validate_L : F ⊧ (Axioms.L (.atom 0)) → IsTrans F.World F.Rel
     · subst x;
       simpa using Satisfies.atom_def.mp <| @hx u Rvu;
     · apply Satisfies.atom_def.mpr;
-      constructor;
-      · assumption;
-      · by_contra hC;
-        subst x;
-        contradiction;
+      grind
   · apply Satisfies.box_def.not.mpr;
     push Not;
     use v;

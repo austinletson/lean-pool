@@ -46,8 +46,7 @@ protected theorem MeasureTheory.Measure.AbsolutelyContinuous.comap {α β : Type
     · exact hsm.nullMeasurableSet
   · rw [Measure.comap, dif_neg]
     · exact .zero _
-    · contrapose! hf
-      exact ⟨hf.1, hfν⟩
+    · grind
 
 theorem MeasurableEmbedding.quasiMeasurePreserving_iff_comap {α β : Type*}
     {_ : MeasurableSpace α} {_ : MeasurableSpace β} {e : α → β} (he : MeasurableEmbedding e)

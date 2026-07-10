@@ -41,16 +41,11 @@ theorem Finset.Ico_union_Icc_eq_Icc' {α : Type*} [LinearOrder α]
   · rintro (⟨h₃, h₄⟩ | ⟨h₃, h₄⟩)
     · exact ⟨h₃, Order.le_of_lt_add_one (h₄.trans_le h₂)⟩
     · exact ⟨h₁.trans h₃, h₄⟩
-  · rintro ⟨h₃, h₄⟩
-    obtain h₅ | h₅ := lt_or_ge i b
-    · exact Or.inl ⟨h₃, h₅⟩
-    · exact Or.inr ⟨h₅, h₄⟩
+  · grind
 
 theorem Nat.Icc_union_Icc_eq_Icc {a b c : ℕ} (h₁ : a ≤ b) (h₂ : b ≤ c) :
     Finset.Icc a b ∪ Finset.Icc (b + 1) c = Finset.Icc a c := by
-  ext i
-  simp only [Finset.mem_union, Finset.mem_Icc]
-  omega
+  grind
 
 @[to_additive]
 theorem Finset.prod_Icc_succ_bot {M : Type*} [CommMonoid M] {a b : ℕ}
@@ -61,8 +56,7 @@ theorem Finset.prod_Icc_succ_bot {M : Type*} [CommMonoid M] {a b : ℕ}
 
 lemma Finset.finite_subsets (s : Finset ℕ) : {a | a ⊆ s}.Finite := by
   rw [show {a : Finset ℕ | a ⊆ s} = (s.powerset : Set (Finset ℕ)) by
-    ext a
-    simp]
+    grind]
   exact s.powerset.finite_toSet
 
 @[to_additive]
@@ -81,12 +75,6 @@ lemma Iic_sdiff_Icc_eq_inter {α : Type*} [LinearOrder α]
 lemma Iic_sdiff_Icc_of_le {α : Type*} [LinearOrder α]
     [LocallyFiniteOrder α] [LocallyFiniteOrderBot α] {x y : α} (h : y ≤ x) :
     Finset.Iic x \ Finset.Icc y x = Finset.Iio y := by
-  ext a
-  simp only [Finset.mem_sdiff, Finset.mem_Iic, Finset.mem_Icc, Finset.mem_Iio]
-  constructor
-  · rintro ⟨hax, hnot⟩
-    exact lt_of_not_ge fun hya ↦ hnot ⟨hya, hax⟩
-  · intro hay
-    exact ⟨hay.le.trans h, fun hyx ↦ not_le_of_gt hay hyx.1⟩
+  grind
 
 end

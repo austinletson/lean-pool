@@ -307,12 +307,7 @@ private lemma fdBoundary_H_inner1234_cont (H : ℝ) : Continuous (fdBoundary_H_i
   intro t ht; simp only [id] at ht
   have : t = 2 := by linarith
   subst this; unfold fdBoundary_H_inner234
-  simp only [show (2 : ℝ) ≤ 3 from by norm_num, ite_true]
-  have h1 : (↑Real.pi / 3 + (↑(2 : ℝ) - 1) * (↑Real.pi / 2 - ↑Real.pi / 3)) * I =
-      ↑(Real.pi / 2) * I := by push_cast; ring
-  have h2 : (↑Real.pi / 2 + (↑(2 : ℝ) - 2) * (2 * ↑Real.pi / 3 - ↑Real.pi / 2)) * I =
-      ↑(Real.pi / 2) * I := by push_cast; ring
-  rw [h1, h2]
+  grind
 
 private lemma fdBoundary_H_eq_layered (H : ℝ) (t : ℝ) :
     fdBoundaryH H t =

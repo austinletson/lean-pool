@@ -36,8 +36,7 @@ lemma isVar_cases
   have hφk (n) : IsVar (φ (Function.invFun k n)) := by
     simp only [hφ]
   have := isVar_cases' hix' hφk
-  simp only [hk'] at this
-  apply this
+  grind
 
 @[simp]
 lemma isVar_iff_isHom {A : Type*} {_ : QuasiBorelSpace A} (f : ℝ → A) : IsVar f ↔ IsHom f := by
@@ -178,8 +177,7 @@ lemma isHom_of_subsingleton [Subsingleton A] (f : A → B) : IsHom f := by
 
 lemma isHom_of_lift {A} (f : A → B) : IsHom[lift f, _] f := by
   apply @IsHom.intro _ _ (lift f)
-  intro φ hφ
-  apply hφ
+  grind
 
 lemma isHom_to_lift
     {A} (f : A → B) (g : C → A)
@@ -257,8 +255,7 @@ lemma isHom_mono
   intro φ hφ
   specialize hf hφ
   rw [← isVar_iff_isHom] at ⊢ hf
-  apply hinst
-  apply hf
+  grind
 
 lemma measurableSet_toMeasurableSpace
     (X : Set A)

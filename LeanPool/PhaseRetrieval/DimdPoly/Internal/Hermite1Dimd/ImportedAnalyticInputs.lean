@@ -54,17 +54,14 @@ private theorem sum_Icc_eq_sum_Fin {α : Type*} [AddCommMonoid α]
       ∑ m : Fin L, f (N + m.1) := by
   symm
   apply Finset.sum_nbij (fun (m : Fin L) => N + m.val)
-  · intro m _
-    exact Finset.mem_Icc.mpr ⟨Nat.le_add_right N m.val, by omega⟩
-  · intro a _ b _ hab
-    exact Fin.ext (Nat.add_left_cancel hab)
+  · grind
+  · intro a grind
   · intro n hn
     obtain ⟨hlo, hhi⟩ := Finset.mem_Icc.mp hn
     refine ⟨⟨n - N, by omega⟩, Finset.mem_univ _, ?_⟩
     change N + (n - N) = n
     omega
-  · intro _ _
-    rfl
+  · grind
 
 private def bandCoeff (N L : ℕ) (c : Fin L → ℂ) : ℕ → ℂ :=
   fun n => if h : N ≤ n ∧ n < N + L then c ⟨n - N, by omega⟩ else 0
@@ -206,24 +203,7 @@ private theorem gaussianInner_oneDimPhi_eq_weightedInner
         ∫ z : ℂ,
           (HermitekLEAN.Phi k m z * conj (HermitekLEAN.Phi k n z)) *
             (Real.exp (-‖z‖ ^ 2) : ℂ) ∂(volume : Measure ℂ) := by
-          have hcomp' : ∫ z : CSpace 1,
-              (HermitekLEAN.Phi k m (z 0) * conj (HermitekLEAN.Phi k n (z 0))) *
-                (Real.exp (-‖z 0‖ ^ 2) : ℂ) ∂(volume : Measure (CSpace 1)) =
-              ∫ z : ℂ,
-                (HermitekLEAN.Phi k m z * conj (HermitekLEAN.Phi k n z)) *
-                  (Real.exp (-‖z‖ ^ 2) : ℂ) ∂(volume : Measure ℂ) := by
-            rw [show (fun z : CSpace 1 =>
-                  (HermitekLEAN.Phi k m (z 0) * conj (HermitekLEAN.Phi k n (z 0))) *
-                    (Real.exp (-‖z 0‖ ^ 2) : ℂ)) =
-                fun z : CSpace 1 =>
-                  HermitekLEAN.Phi k m (z 0) *
-                    ((Real.exp (-‖z 0‖ ^ 2) : ℂ) * conj (HermitekLEAN.Phi k n (z 0))) from
-                by funext z; ring,
-              hcomp]
-            apply integral_congr_ae
-            filter_upwards with z
-            ring
-          rw [hcomp']
+          grind
 
 private theorem annulusMass_oneDimPhi_eq_annulusIntegralSq
     (k n j : ℕ) :
@@ -268,10 +248,7 @@ private theorem annulusMass_oneDimPhi_eq_annulusIntegralSq
                   (if z ∈ productAnnulus (d := 1) (fun _ => j) then
                     ‖HermitekLEAN.Phi k n (z 0)‖ ^ 2 * Real.exp (-‖z 0‖ ^ 2)
                   else 0) ∂(volume : Measure (CSpace 1)) := by
-                apply integral_congr_ae
-                filter_upwards with z
-                by_cases hz : z ∈ productAnnulus (d := 1) (fun _ => j) <;> simp [hz,
-                    mul_left_comm, mul_comm]
+                grind
           exact hrew.trans (MeasureTheory.integral_const_mul _ _)
     _ =
       (1 / Real.pi) *
@@ -367,9 +344,7 @@ private lemma gaussianInner_finite_sum_one
                   conj (oneDimLift (oneDimPhi k (β 0)) z))) := by
     funext z
     rw [map_sum, Finset.mul_sum]
-    refine Finset.sum_congr rfl ?_
-    intro β hβ
-    simp [mul_assoc, mul_comm]
+    grind
   rw [hfun, MeasureTheory.integral_finsetSum]
   · refine Finset.sum_congr rfl ?_
     intro β hβ
@@ -394,9 +369,7 @@ private lemma gaussianInner_finite_sum_one
                 (oneDimLift (oneDimPhi k (α 0)) z * conj (oneDimLift (oneDimPhi k (β 0)) z))) by
             funext z
             rw [Finset.sum_mul]
-            refine Finset.sum_congr rfl ?_
-            intro α hα
-            ring]
+            grind]
       refine MeasureTheory.integrable_finsetSum _ (fun α hα => ?_)
       simpa [mul_assoc] using (integrable_oneDimBasis_cross k α β).const_mul (a α)
     simpa [mul_assoc] using hsumInt.const_mul (conj (b β))
@@ -489,12 +462,9 @@ theorem oneVariableFiniteParseval
                 fin_cases q
                 simpa using h0
               simp [oneVariableBasisOrthonormal, hne0]
-            · intro hnotin
-              exact False.elim (hnotin hβ)
+            · grind
         _ = Finset.sum G.support (fun α => G.coeff α * conj (G.coeff α)) := by
-            refine Finset.sum_congr rfl ?_
-            intro α hα
-            ring
+            grind
   unfold hermiteNormSq
   apply Complex.ofReal_injective
   calc
@@ -563,8 +533,7 @@ private lemma zero_shift_exp_compare
     have hsq' :
         ((j : ℝ) - ((k + 4 : ℕ) : ℝ)) ^ 2 ≤
           4 * (((j : ℝ) - ((k + 5 : ℕ) : ℝ)) ^ 2 + 1) := by
-      rw [hrel]
-      simpa [y] using hsq
+      grind
     nlinarith [hc0, hsq']
 
 /-- Imported positive-frequency circle estimate with frozen constant `144`. -/
@@ -589,8 +558,7 @@ theorem positiveFrequencyCircleEstimate
   simpa using
     HermitekLEAN.local_circle_estimate E
       (by
-        intro n hn
-        exact Nat.succ_le_of_lt (hpos n hn))
+        grind)
       b
 
 /-- Imported high-frequency band estimate with frozen constants `32` and `1343`. -/
@@ -690,8 +658,7 @@ theorem localizationIncludingZero
               nlinarith [hcle, sq_nonneg (posPart ((j : ℝ) - ((k + 4 : ℕ) : ℝ)))]
         _ = C * Real.exp (-c *
               max (|((j : ℕ) : ℝ) - Real.sqrt ((0 : ℕ) : ℝ)| - ((k + 4 : ℕ) : ℝ)) 0 ^ 2) := by
-              rw [hexact]
-              ring_nf
+              grind
     · have hn1 : 1 ≤ n := Nat.succ_le_of_lt (Nat.pos_of_ne_zero hn)
       have hbase := hloc1 n j hn1
       have hCle : C1 ≤ C := le_max_left _ _
@@ -763,9 +730,7 @@ theorem scaledPositiveFrequencyCircleEstimate
     have hmulP : (fun t => a * Q t) = positiveFrequencyPolynomial E b := by
       funext t
       simp only [Q, positiveFrequencyPolynomial, Finset.mul_sum]
-      refine Finset.sum_congr rfl ?_
-      intro n hn
-      field_simp [ha]
+      grind
     have hmulR : (fun t => rho a (a * Q t)) = fun t => ‖a‖ * rho 1 (Q t) := by
       funext t
       simp [rho_mul_right]
@@ -805,9 +770,7 @@ theorem scaledHighFrequencyBandEstimate
     have hmulP : (fun t => a * Q t) = bandLimitedPolynomial N L c := by
       funext t
       simp only [Q, bandLimitedPolynomial, Finset.mul_sum]
-      refine Finset.sum_congr rfl ?_
-      intro m hm
-      field_simp [ha]
+      grind
     have hmulR : (fun t => rho a (a * Q t)) = fun t => ‖a‖ * rho 1 (Q t) := by
       funext t
       simp [rho_mul_right]
@@ -842,8 +805,7 @@ private lemma oneVariableAngularFactorization_termwise
       (r : ℂ) ^ (k - j) * (r : ℂ) ^ (n - j) =
         (r : ℂ) ^ (n + k - j * 2) := by
     rw [← pow_add]
-    congr 1
-    omega
+    grind
   have hphase :
       Complex.exp (Complex.I * (t : ℂ)) ^ (n - j) *
           Complex.exp (-(Complex.I * (t : ℂ))) ^ (k - j) =
@@ -852,32 +814,7 @@ private lemma oneVariableAngularFactorization_termwise
     congr 1
     rw [Nat.cast_sub hjn, Nat.cast_sub hjk]
     ring
-  calc
-    (r : ℂ) ^ (k - j) *
-        ((r : ℂ) ^ (n - j) *
-          (Complex.exp (Complex.I * (t : ℂ)) ^ (n - j) *
-            ((Nat.choose k j : ℂ) *
-              ((Nat.factorial n : ℂ) / (Nat.factorial (n - j) : ℂ) *
-                (Complex.exp (-(Complex.I * (t : ℂ))) ^ (k - j) *
-                  ((-1 : ℂ) ^ j * ((↑√↑k.factorial)⁻¹ * (↑√↑n.factorial)⁻¹))))))) =
-      ((r : ℂ) ^ (k - j) * (r : ℂ) ^ (n - j)) *
-        ((Complex.exp (Complex.I * (t : ℂ)) ^ (n - j) *
-            Complex.exp (-(Complex.I * (t : ℂ))) ^ (k - j)) *
-          ((Nat.choose k j : ℂ) *
-            ((Nat.factorial n : ℂ) / (Nat.factorial (n - j) : ℂ) *
-              ((-1 : ℂ) ^ j * ((↑√↑k.factorial)⁻¹ * (↑√↑n.factorial)⁻¹))))) := by ring
-    _ =
-      (↑r : ℂ) ^ (n + k - j * 2) *
-        (Complex.exp (Complex.I * (↑t * (↑n - ↑k))) *
-          ((Nat.choose k j : ℂ) *
-            ((Nat.factorial n : ℂ) / (Nat.factorial (n - j) : ℂ) *
-              ((-1 : ℂ) ^ j * ((↑√↑k.factorial)⁻¹ * (↑√↑n.factorial)⁻¹))))) := by rw [hrpow, hphase]
-    _ =
-      Complex.exp (Complex.I * (↑t * (↑n - ↑k))) *
-        ((Nat.choose k j : ℂ) *
-          ((Nat.factorial n : ℂ) / (Nat.factorial (n - j) : ℂ) *
-            ((-1 : ℂ) ^ j * ((↑r : ℂ) ^ (n + k - j * 2) * ((↑√↑k.factorial)⁻¹ *
-                (↑√↑n.factorial)⁻¹))))) := by ring
+  grind
 
 theorem oneVariableAngularFactorization
     (k n : ℕ) :
@@ -905,11 +842,7 @@ theorem oneVariableAngularFactorization
           (Real.sqrt (Nat.factorial k : ℝ))⁻¹ *
             (Real.sqrt (Nat.factorial n : ℝ))⁻¹ := by
       rw [Real.sqrt_mul (show (0 : ℝ) ≤ Nat.factorial k by positivity)]
-      field_simp
-        [Real.sqrt_ne_zero'.2
-          (by exact_mod_cast Nat.factorial_pos k : (0 : ℝ) < Nat.factorial k),
-         Real.sqrt_ne_zero'.2
-          (by exact_mod_cast Nat.factorial_pos n : (0 : ℝ) < Nat.factorial n)]
+      grind
     exact_mod_cast hnormR
   have hstar_z :
       star ((r : ℂ) * Complex.exp (Complex.I * t)) =

@@ -97,9 +97,7 @@ theorem fiber_single_ne {n i : ℕ} (h : i ≠ n) (X : Set α) : fiber (single V
 theorem single_mono {n : ℕ} {X X' : Set α} (h : X ⊆ X') : single V n X ⊆ single V n X' := by
   intro p hp
   simp only [single, Set.mem_setOf_eq] at hp ⊢
-  by_cases hc : p.1 = n
-  · rw [if_pos hc] at hp ⊢; exact h hp
-  · rw [if_neg hc] at hp ⊢; exact hp
+  grind
 
 theorem single_inter {n : ℕ} (X X' : Set α) :
     single V n X ∩ single V n X' = single V n (X ∩ X') := by

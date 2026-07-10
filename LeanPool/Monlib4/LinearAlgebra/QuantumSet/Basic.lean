@@ -773,8 +773,7 @@ theorem _root_.QuantumSet.starAlgEquiv_commutes_with_modAut_of_isometry
   simp only [LinearMap.ext_iff, LinearMap.comp_apply, StarAlgEquiv.toLinearMap_apply,
     AlgEquiv.toLinearMap_apply] at this
   simp only [AlgEquiv.ext_iff, AlgEquiv.trans_apply, StarAlgEquiv.coe_toAlgEquiv]
-  nth_rw 2 [add_comm]
-  exact fun x => (this x).symm
+  grind
 
 theorem _root_.QuantumSet.starAlgEquiv_commutes_with_modAut_of_isometry'
     [QuantumSet A] [QuantumSet B] {f : A ≃⋆ₐ[ℂ] B} (hf : Isometry f) :
@@ -899,8 +898,7 @@ theorem _root_.tenSwap_apply_lTensor {R A B C : Type*}
     simp only [LinearMap.lTensor_tmul, LinearMap.op_apply, tenSwap_apply,
       LinearMap.rTensor_tmul]
     rfl
-  · intro x y hx hy
-    simp only [map_add, hx, hy]
+  · grind
 
 theorem Psi_inv_comp_swap_lTensor_op_comp_comul_eq_rmul [QuantumSet A] :
     (Psi 0 (k A + 1)).symm.toLinearMap

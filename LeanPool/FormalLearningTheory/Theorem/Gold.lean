@@ -31,25 +31,16 @@ theorem gold_theorem (X : Type u) [Countable X] [DecidableEq X]
     ((Finset.range (n + 1)).image (fun i => (φ i).val)) ∪
     ((Finset.range (n + 1)).image (fun i => (enum i).val))
   have hS_pos : ∀ n x, x ∈ S n → c_inf x = true := by
-    intro n x hx
-    simp only [S, Finset.mem_union, Finset.mem_image, Finset.mem_range] at hx
-    rcases hx with ⟨i, _, rfl⟩ | ⟨i, _, rfl⟩
-    · exact (φ i).prop
-    · exact (enum i).prop
+    grind
   have hS_ne : ∀ n, (fun x => decide (x ∈ S n)) ≠ c_inf := by
     intro n heq; apply hc_inf_inf
     suffices {x : X | c_inf x = true} ⊆ ↑(S n) from (S n).finite_toSet.subset this
-    intro x (hx : c_inf x = true)
-    simpa [hx] using congr_fun heq x
+    grind
   have hS_ne' : ∀ n, (S n).Nonempty :=
     fun n => ⟨(φ 0).val, Finset.mem_union.mpr (Or.inl (Finset.mem_image.mpr
       ⟨0, Finset.mem_range.mpr (Nat.zero_lt_succ n), rfl⟩))⟩
   have hS_mono : ∀ n, S n ⊆ S (n + 1) := by
-    intro n x hx
-    simp only [S, Finset.mem_union, Finset.mem_image, Finset.mem_range] at hx ⊢
-    rcases hx with ⟨i, hi, rfl⟩ | ⟨i, hi, rfl⟩
-    · exact Or.inl ⟨i, by omega, rfl⟩
-    · exact Or.inr ⟨i, by omega, rfl⟩
+    grind
   have hS_exh : ∀ x, c_inf x = true → ∃ n, x ∈ S n := by
     intro x hx; obtain ⟨n, hn⟩ := henum ⟨x, hx⟩
     exact ⟨n, Finset.mem_union.mpr (Or.inr (Finset.mem_image.mpr
@@ -72,9 +63,7 @@ theorem gold_theorem (X : Type u) [Countable X] [DecidableEq X]
       else ((S m).toList[(t - σ.length) % (S m).card]'(by
         rw [Finset.length_toList]; exact Nat.mod_lt _ hcard), true)
     have hobs_pos : ∀ t, (obs t).2 = true := by
-      intro t; simp only [obs]; split
-      · next h => exact hσ_pos _ (σ.getElem_mem h)
-      · rfl
+      grind
     have hobs_correct : ∀ t, (fun x => decide (x ∈ S m)) (obs t).1 = true := by
       intro t; simp only [obs]; split
       · next h => simp [hσ_in _ (σ.getElem_mem h)]
@@ -96,12 +85,10 @@ theorem gold_theorem (X : Type u) [Countable X] [DecidableEq X]
     · simp [dataUpTo]; omega
     · intro p hp
       simp only [dataUpTo, List.mem_map, List.mem_range] at hp
-      obtain ⟨i, _, rfl⟩ := hp
-      exact hobs_pos i
+      grind
     · intro p hp
       simp only [dataUpTo, List.mem_map, List.mem_range] at hp
-      obtain ⟨i, _, rfl⟩ := hp
-      simpa using hobs_correct i
+      grind
     · intro x hx
       obtain ⟨⟨idx, hidx⟩, heq⟩ := List.mem_iff_get.mp (Finset.mem_toList.mpr hx)
       have hidx' : idx < (S m).card := by rw [← Finset.length_toList]; exact hidx
@@ -224,16 +211,12 @@ theorem mind_change_characterization (X : Type u)
       have hpref : ∀ t ≥ t₀ + 1, L.conjecture (T.toDataStream.prefix t) = c := by
         intro t ht
         have h := ht₀ (t - 1) (by omega)
-        rw [bridge] at h
-        rwa [show t - 1 + 1 = t from by omega] at h
+        grind
       -- Changes are finite: no changes after t₀ + 1 (learner stabilized on c)
       have hfin : { t : ℕ | L.conjecture (T.toDataStream.prefix t) ≠
                              L.conjecture (T.toDataStream.prefix (t + 1)) }.Finite :=
         Set.Finite.subset (Finset.range (t₀ + 1)).finite_toSet (fun t ht => by
-          simp only [Set.mem_setOf] at ht
-          simp only [Finset.mem_coe, Finset.mem_range]
-          by_contra hge; push Not at hge
-          exact ht (by rw [hpref t (by omega), hpref (t + 1) (by omega)]))
+          grind)
       -- Unfold MindChangeOrdinal: Finite + correct convergence → (card : Ordinal) < omega0
       change MindChangeOrdinal X L c T.toDataStream < Ordinal.omega0
       unfold MindChangeOrdinal
@@ -252,8 +235,7 @@ theorem mind_change_characterization (X : Type u)
       · -- Extract convergence and bridge back to dataUpTo
         obtain ⟨t₀, ht₀⟩ := hconv
         exact ⟨t₀, fun t ht => by
-          rw [bridge]
-          exact ht₀ (t + 1) (by omega)⟩
+          grind⟩
       · -- Incorrect convergence → MindChangeOrdinal = omega0, contradicts < omega0
         rw [if_neg hconv] at hmco; exact absurd hmco (lt_irrefl _)
     · -- Infinite changes → MindChangeOrdinal = omega0, contradicts < omega0

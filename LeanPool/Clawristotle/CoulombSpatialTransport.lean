@@ -162,8 +162,7 @@ lemma spatial_transport_joint_integrable
       |g x v| ≤ C_total / (1 + ‖v‖) ^ 4 := by
     obtain ⟨C_total, hC_total_pos, hbound⟩ :=
       spatial_transport_uniform_bound hSchwartz C_log K_log hLB
-    exact ⟨C_total, hC_total_pos, fun x v => by
-      simpa only [hg_def] using hbound x v⟩
+    grind
   obtain ⟨C_total, hC_total_pos, h_bound⟩ := h_unif_bound
   -- Use integrable_prod_iff
   refine (integrable_prod_iff ?_).mpr ⟨?_, ?_⟩
@@ -335,10 +334,7 @@ lemma entropy_dissipation_continuous_coulomb
   have h_eq : (fun x => entropyDissipation coulombKernel (f x)) =
       (fun x => ν⁻¹ * ∫ v, v ⬝ᵥ FlatTorus3.gradX (fun y => f y v) x *
         Real.log (f x v)) := by
-    ext x
-    have := h_key x
-    field_simp at this ⊢
-    linarith
+    grind
   rw [h_eq]
   exact continuous_const.mul
     (spatial_transport_continuous hf_pos hf_smooth_v hf_smooth_x hSchwartz hLB')

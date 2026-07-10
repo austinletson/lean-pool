@@ -139,9 +139,7 @@ private theorem laurent_coeff_le_poleOrder (f : ℂ → ℂ) (s : ℂ)
         · push Not at hkm
           have hk_gt : m_idx < k :=
             lt_of_le_of_ne (Fin.mk_le_mk.mpr hkm) (Ne.symm hk)
-          have := hm_max k
-          have hk_eq : a_s k = 0 := by by_contra ha; exact absurd (this ha) (not_le.mpr hk_gt)
-          simp only [hk_eq, zero_mul]
+          grind
       · intro h; exact absurd (Finset.mem_univ m_idx) h
     rw [this]; exact hm_ne
   · filter_upwards [hf_eq_loc, self_mem_nhdsWithin] with z hfz hz
@@ -194,12 +192,7 @@ private theorem residueAt_ppMinusRes_eq_zero (f : ℂ → ℂ) (s : ℂ)
       have h_in : z ∈ Metric.ball s rp ∩ {s}ᶜ :=
         ⟨Metric.mem_ball.mpr (by rw [Metric.mem_sphere.mp hz]; exact hr_lt_rp),
          Set.mem_compl_singleton_iff.mpr hne⟩
-      have hfpp := hrp_eq h_in
-      simp only [Set.mem_setOf_eq] at hfpp
-      simp only
-      change meromorphicPrincipalPart f s z - residueAt f s / (z - s) =
-        f z - residueAt f s / (z - s) - g_rp z
-      linear_combination -hfpp
+      grind
     have hg_cont : ContinuousOn g_rp (Metric.closedBall s r) :=
       hg_ball.continuousOn.mono (Metric.closedBall_subset_ball hr_lt_rg)
     have hg_ci_zero : (∮ z in C(s, r), g_rp z) = 0 :=
@@ -222,10 +215,7 @@ private theorem residueAt_ppMinusRes_eq_zero (f : ℂ → ℂ) (s : ℂ)
     have h_sum_eq : ∀ z ∈ Metric.sphere s r,
         (fun z => (meromorphicPrincipalPart f s z - residueAt f s / (z - s)) + g_rp z) z =
         (fun z => f z - residueAt f s / (z - s)) z := by
-      intro z hz
-      have := h_eq_on z hz
-      simp only
-      linear_combination this
+      grind
     have h_int_eq : (∮ z in C(s, r),
         (fun z => (meromorphicPrincipalPart f s z - residueAt f s / (z - s)) + g_rp z) z) =
       (∮ z in C(s, r), (fun z => f z - residueAt f s / (z - s)) z) :=
@@ -310,10 +300,7 @@ private theorem assembly_regNF_differentiableWithinAt_pole
       assembly_regNF S0 f g_corr w
     simp only [assembly_regNF]
     by_cases hw_S : w ∈ S0
-    · have hw_eq : w = z := by
-        by_contra hne
-        exact hw_compl (Finset.mem_coe.mpr (Finset.mem_erase.mpr ⟨hne, hw_S⟩))
-      rw [hw_eq]; simp [hz_S]
+    · grind
     · have hw_ne_z : w ≠ z := fun heq => hw_S (heq ▸ hz_S)
       have h_fw : f w - meromorphicPrincipalPart f z w = g_corr z hz_S w :=
         hV_eq ⟨hw_V, hw_ne_z⟩
@@ -489,8 +476,7 @@ private theorem cpv_tendsto_zero_of_fin_sum {N : ℕ} (S0 : Finset ℂ)
     conv_rhs => rw [h0]
     exact tendsto_finsetSum Finset.univ (fun k _ => h_tendsto k)
   apply h_sum_tendsto.congr'
-  filter_upwards [self_mem_nhdsWithin] with ε (hε : 0 < ε)
-  exact (h_int_eq ε hε).symm
+  filter_upwards [self_mem_nhdsWithin] with ε grind
 
 /-- Given two functions whose CPV integrals each tend to 0, and a third function
 that agrees with their sum off `S0`, the CPV integral of the third also tends to 0.
@@ -605,8 +591,7 @@ private theorem cpv_perTerm_uncrossed (U : Set ℂ) (S0 : Finset ℂ)
           Set.mem_compl_singleton_iff.mpr (htz ▸ h_avoids t ht))
     · apply ContinuousOn.div continuousOn_const
         (continuousOn_id.sub continuousOn_const)
-      intro z ⟨t, ht, htz⟩
-      exact sub_ne_zero.mpr (htz ▸ h_avoids t ht)
+      grind
   have h_term_int_zero : ∫ t in γ.a..γ.b,
       term_s (γ.toFun t) * deriv γ.toFun t = 0 := by
     have h_term_diff : DifferentiableOn ℂ term_s (U \ {s}) :=
@@ -689,8 +674,7 @@ private theorem cpv_polar_term_tendsto (S0 : Finset ℂ) (f : ℂ → ℂ)
       (IsFlatOfOrder.of_le h_flat_s h_order_bound
         ((γ.continuous_toFun t₁ (Ioo_subset_Icc_self ht₁_Ioo)).continuousAt
           (Icc_mem_nhds ht₁_Ioo.1 ht₁_Ioo.2)))
-      (by rw [show (kv + 1 - 1 : ℕ) = kv from by omega]
-          exact h_angle ⟨kv, hkv⟩ ha_zero hk_ge)
+      (by grind)
     have h_eq := cpv_div_pow_eq_const_mul_zpow S0 γ (a_s ⟨kv, hkv⟩) s kv
     rw [h_eq, show (0 : ℂ) = a_s ⟨kv, hkv⟩ * 0 from (mul_zero _).symm]
     exact Filter.Tendsto.const_smul h_zpow (a_s ⟨kv, hkv⟩)
@@ -746,18 +730,10 @@ private theorem assembly_errNF_eventuallyEq (f : ℂ → ℂ) (s : ℂ)
         a_s ⟨0, hN_s_pos⟩ / (z - s) := by
       rw [← Finset.sum_sub_distrib]
       rw [Finset.sum_eq_single ⟨0, hN_s_pos⟩]
-      · simp only [zero_add, pow_one, ge_iff_le, nonpos_iff_eq_zero, one_ne_zero, ↓reduceIte,
-        sub_zero]
-      · intro k _ hk
-        have hkval : k.val ≥ 1 := by
-          by_contra h
-          push Not at h
-          have : k.val = 0 := by omega
-          exact hk (Fin.ext this)
-        simp only [hkval, if_true, sub_self]
+      · grind
+      · grind
       · intro h; exact absurd (Finset.mem_univ _) h
-    rw [h_a0_eq] at h_sum_split
-    linear_combination h_sum_split
+    grind
 
 private theorem assembly_polarHigher_differentiableOn
     {N_s : ℕ} (a_s : Fin N_s → ℂ) (s : ℂ) :
@@ -807,10 +783,7 @@ private theorem cpv_polarHigher_tendsto (U : Set ℂ) (S0 : Finset ℂ)
       · simp only [hk, ite_false]; exact continuousOn_const)
     (fun k => by
       by_cases hk : k.val ≥ 1
-      · have h_eq : (fun z => if k.val ≥ 1 then
-            a_s k / (z - s) ^ (k.val + 1) else 0) =
-          fun z => a_s k / (z - s) ^ (k.val + 1) := by ext z; simp [hk]
-        simp_rw [h_eq]; exact h_polar_term_tendsto k hk
+      · grind
       · have h_eq : (fun z => if k.val ≥ 1 then
             a_s k / (z - s) ^ (k.val + 1) else 0) =
           fun _ => (0 : ℂ) := by ext z; simp [hk]
@@ -880,8 +853,7 @@ private theorem assembly_ppMinusRes_continuousOn (S0 : Finset ℂ) (f : ℂ → 
       (fun z hz => Set.mem_compl_singleton_iff.mpr
         (fun heq => by subst heq; exact hz.2 (Finset.mem_coe.mpr hs)))
   · apply ContinuousOn.div continuousOn_const (continuousOn_id.sub continuousOn_const)
-    intro z ⟨_, hz_not_S0⟩
-    exact sub_ne_zero.mpr (fun heq => by subst heq; exact hz_not_S0 (Finset.mem_coe.mpr hs))
+    grind
 
 private theorem cpv_perTerm_dispatch (U : Set ℂ) (S0 : Finset ℂ)
     (f : ℂ → ℂ) (γ : PiecewiseC1Immersion)

@@ -85,10 +85,7 @@ private lemma mutualInfo_comp_right_of_injective
     let g : α × β → α × γ := fun p => (p.1, f p.2)
     have hg : Function.Injective g := by
       intro p q hpq
-      rcases p with ⟨xp, yp⟩
-      rcases q with ⟨xq, yq⟩
-      simp only [g, Prod.mk.injEq] at hpq
-      exact Prod.ext hpq.1 (hf hpq.2)
+      grind
     change H[g ∘ ⟨X, Y⟩; μ] = H[⟨X, Y⟩; μ]
     exact entropy_comp_of_injective μ (hX.prodMk hY) g hg
   rw [mutualInfo_def, mutualInfo_def, entropy_comp_of_injective μ hY f hf, h_joint]
@@ -230,8 +227,7 @@ private lemma mutualInfo_add_n_way_inequality
       have h_split :
           I[A : BinitTuple; μ] + I[A : Blast; μ]
             ≤ I[A : Btuple; μ] + H[BinitTuple; μ] + H[Blast; μ] - H[Btuple; μ] := by
-        rw [h_tuple_mi, h_pairInfo] at h_three
-        linarith
+        grind
       have h_sum_tail :
           ∑ k : Fin (n + 1), I[A : B k; μ]
             = (∑ k : Fin n, I[A : B k.castSucc; μ]) + I[A : Blast; μ] := by
@@ -240,8 +236,7 @@ private lemma mutualInfo_add_n_way_inequality
           ∑ k : Fin (n + 1), H[B k; μ]
             = (∑ k : Fin n, H[B k.castSucc; μ]) + H[Blast; μ] := by
         simpa [Blast] using (Fin.sum_univ_castSucc (f := fun k : Fin (n + 1) => H[B k; μ]))
-      rw [h_sum_tail, h_sum_entropy]
-      linarith
+      grind
 
 end Helpers
 
@@ -329,9 +324,7 @@ theorem _root_.ZhangYeung.theorem5
       n * I[Z : U; μ] - n * I[Z : U | X i; μ] - ∑ k : Fin n, I[Z : U | X k; μ]
         = ∑ k : Fin n, delta Z U (X i) (X k) μ := hDeltaSum.symm
       _ = ∑ k : Fin n, delta Z' U' (X' i) (XstarCoord k) ν := by
-        refine Finset.sum_congr rfl ?_
-        intro k _
-        exact hTransport k
+        grind
       _ ≤ ∑ k : Fin n, I[X' i : XstarCoord k; ν] := Finset.sum_le_sum fun k _ => hPair k
   have hChain := mutualInfo_add_n_way_inequality (A := X' i) (B :=
     XstarCoord) (hX' i) hXstarCoord ν
@@ -367,9 +360,7 @@ theorem _root_.ZhangYeung.theorem5
       hTupleSecond.comp (measurable_pi_apply k)
     exact hCoord.entropy_congr
   have hMargSingles : ∑ k : Fin n, H[XstarCoord k; ν] = ∑ k : Fin n, H[X k; μ] := by
-    refine Finset.sum_congr rfl ?_
-    intro k _
-    exact hMargSingle k
+    grind
   have hInternal :
       n * I[Z : U; μ] - ∑ j, I[Z : U | X j; μ] - n * I[Z : U | X i; μ]
         ≤ I[X i : (fun ω => (Z ω, U ω)); μ]
@@ -432,10 +423,7 @@ theorem _root_.ZhangYeung.theorem5_averaged
         I[U : Z | X j; μ] := by
             rw [hsumCond]
       _ = n * lhs := by
-            change n ^ 2 * I[U : Z; μ] - n * ∑ x : Fin n,
-              I[U : Z | X x; μ] - n * ∑ j : Fin n, I[U : Z | X j; μ]
-              = n * (n * I[U : Z; μ] - 2 * ∑ j : Fin n, I[U : Z | X j; μ])
-            ring
+            grind
   have hright : ∑ i : Fin n, (rhs i + tail) = (∑ i : Fin n, rhs i) + n * tail := by
     simp only [rhs, tail, Finset.sum_add_distrib, Finset.sum_const, Finset.card_univ,
       Fintype.card_fin,
@@ -450,9 +438,7 @@ theorem _root_.ZhangYeung.theorem5_averaged
   have hsplit : ((∑ i : Fin n, rhs i) + n * tail) / n = (1 / n : ℝ) * (∑ i : Fin n,
     rhs i) + tail := by
     field_simp [hn_ne]
-  rw [hsplit] at hdiv
-  simpa [lhs, rhs, tail, sub_eq_add_neg, add_assoc, add_left_comm, add_comm,
-    mul_add, add_mul, mul_comm, mul_left_comm, mul_assoc] using hdiv
+  grind
 
 end MainTheorems
 

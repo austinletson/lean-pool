@@ -52,8 +52,7 @@ lemma localDensityProduct_nonneg (b : ℕ) (T : Finset ℕ) (S : Finset Nat.Prim
 lemma interval_bound {a b lo hi d : ℝ}
     (ha_lo : lo ≤ a) (ha_hi : a ≤ hi) (hb_lo : lo ≤ b) (hb_hi : b ≤ hi)
     (hd : hi - lo ≤ d) : |a - b| ≤ d := by
-  rw [abs_le]
-  constructor <;> linarith
+  grind
 
 lemma floor_div_bounds (X M : ℕ) (hM : 0 < M) :
     (X / M) * M ≤ X ∧ X < (X / M + 1) * M :=
@@ -76,16 +75,14 @@ lemma count_real_bounds (b : ℕ) (hb : 2 ≤ b) (T : Finset ℕ) (hT : T ⊆ Fi
   simp only at hbounds
   have hA := validResidues_card_eq_mul b hb T hT S
   have hA' : (M : ℝ) * L = (validResiduesMod b T S).card := by
-    simp only [hA]
-    ring
+    grind
   constructor
   · calc (q : ℝ) * M * L = q * (M * L) := by ring
       _ = q * (validResiduesMod b T S).card := by rw [← hA']
       _ ≤ count := by exact_mod_cast hbounds.1
   · calc (count : ℝ) ≤ (q + 1) * (validResiduesMod b T S).card := by exact_mod_cast hbounds.2
       _ = (q + 1) * M * L := by
-        rw [← hA']
-        ring
+        grind
 
 lemma xL_real_bounds (X M : ℕ) (L : ℝ) (hL : 0 ≤ L) (hM : 0 < M) :
     let q := X / M
@@ -302,15 +299,9 @@ lemma sdiff_subset_violations (b : ℕ) (T : Finset ℕ) (S : Finset Nat.Primes)
     push Not at hNotAll
     obtain ⟨d, hd_mem, hd_not_sq⟩ := hNotAll
     obtain ⟨q, hq_dvd⟩ := not_squarefree_has_prime_sq_divisor (b * N + d) hd_not_sq
-    refine ⟨q, ?_, Or.inr ⟨d, hd_mem, hq_dvd⟩⟩
-    intro hqS
-    have := (hNS q hqS).2 d hd_mem
-    exact this hq_dvd
+    grind
   · obtain ⟨q, hq_dvd⟩ := not_squarefree_has_prime_sq_divisor N hSqN
-    refine ⟨q, ?_, Or.inl hq_dvd⟩
-    intro hqS
-    have := (hNS q hqS).1
-    exact this hq_dvd
+    grind
 
 lemma count_ge_finite_minus_violations (b : ℕ) (_hb : 2 ≤ b) (T : Finset ℕ)
     (_hT : T ⊆ Finset.range b) (S : Finset Nat.Primes) (X : ℕ) :
@@ -353,11 +344,8 @@ lemma combine_bounds_lower (b : ℕ) (hb : 2 ≤ b) (T : Finset ℕ) (hT : T ⊆
     have hXne : (X : ℝ) ≠ 0 := ne_of_gt hXpos
     rw [ge_iff_le, sub_sub, ← add_div, le_div_iff₀ hXpos]
     have heq : (L - ((M : ℝ) + (V : ℝ)) / (X : ℝ)) * (X : ℝ) = L * (X : ℝ) - (M : ℝ) - (V : ℝ) := by
-      field_simp
-      ring
-    rw [heq]
-    linarith
-  have hCdiv' : (C : ℝ) / (X : ℝ) ≥ D - (M : ℝ) / (X : ℝ) - (V : ℝ) / (X : ℝ) := by linarith
-  linarith
+      grind
+    grind
+  grind
 
 end LeanPool.DeadEnds

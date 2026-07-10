@@ -65,8 +65,7 @@ theorem sum_moveDistribution_mul [Fintype V] [DecidableEq V] (D : Pebbling V)
       · subst x
         have hvu : v ≠ u := fun h => hux h.symm
         simp [moveDistribution, hvu]
-        simp [hux]
-        ring_nf
+        grind
       · have hxu : x ≠ u := fun h => hux h.symm
         have hxv : x ≠ v := fun h => hvx h.symm
         simp [moveDistribution, hxu, hxv]
@@ -87,14 +86,7 @@ theorem sum_moveDistribution_mul [Fintype V] [DecidableEq V] (D : Pebbling V)
               (∑ x : V, if u = x then -2 * w u else if v = x then w v else 0)
                   = ∑ x : V, ((if u = x then -2 * w u else 0) +
                       (if v = x then w v else 0)) := by
-                    apply Finset.sum_congr rfl
-                    intro x _
-                    by_cases hux : u = x
-                    · have hvx_false : ¬ v = x := fun hvx => huv (hux.trans hvx.symm)
-                      simp [hux, hvx_false]
-                    · by_cases hvx : v = x
-                      · simp [hux, hvx]
-                      · simp [hux, hvx]
+                    grind
               _ = (∑ x : V, if u = x then -2 * w u else 0) +
                     (∑ x : V, if v = x then w v else 0) := by
                     exact Finset.sum_add_distrib
@@ -106,8 +98,7 @@ theorem sum_moveDistribution_mul [Fintype V] [DecidableEq V] (D : Pebbling V)
                         (∑ x : V, if v = x then w v else 0) = w v := by
                       simp
                     rw [hu_sum, hv_sum]
-          rw [hdelta]
-          ring_nf
+          grind
 
 /-- Exact change in target weight under one legal move. -/
 theorem weight_moveDistribution [Fintype V] [DecidableEq V] (dist : V → V → ℕ)

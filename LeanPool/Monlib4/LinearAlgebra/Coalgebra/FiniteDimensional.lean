@@ -243,8 +243,7 @@ theorem LinearMap.isAlgHom_iff_adjoint_isCoalgHom :
   simp_rw [isAlgHom_iff, isCoalgHom_iff, Coalgebra.counit_eq_unit_adjoint,
     Coalgebra.comul_eq_mul_adjoint, ← TensorProduct.map_adjoint, ← LinearMap.adjoint_comp]
   constructor
-  · rintro ⟨h1, h2⟩
-    simp_rw [h1, h2, and_self]
+  · grind
   · rintro ⟨h1, h2⟩
     apply_fun adjoint at h1 h2
     simp_rw [adjoint_adjoint] at h1 h2

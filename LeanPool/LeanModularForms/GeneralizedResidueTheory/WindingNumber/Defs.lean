@@ -106,8 +106,7 @@ theorem windingNumber_corner_crossing
     α / (2 * Real.pi) := by
   simp only [windingNumberWithAngles']
   rw [Fintype.sum_unique]
-  simp only [Finset.default_singleton]
-  rw [hangle]
+  grind
 
 /-- When γ avoids z₀, the PV cutoff is trivial below minimum distance. -/
 theorem cauchyPrincipalValue_eq_classical_off_curve'

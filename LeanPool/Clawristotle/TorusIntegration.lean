@@ -167,8 +167,7 @@ private lemma box3_fubini_slice (i : Fin 3) (g : (Fin 3 → ℝ) → ℝ) (hg : 
                 simp only [Fin.succAboveCases, Nat.reduceAdd, Fin.isValue, Fin.reduceEq,
                   ↓reduceDIte, Fin.reduceLT, Fin.castPred_zero, Fin.castPred_one]
                 congr
-                ext
-                split_ifs <;> tauto
+                grind
             · exact (insertNth_measurable i).aemeasurable
             · refine Measurable.aestronglyMeasurable ?_
               exact Measurable.indicator (hg.measurable)

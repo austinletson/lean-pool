@@ -84,8 +84,7 @@ lemma Wellformed.cases {r : ContextFreeRule T N} (hr : r.Wellformed) :
       right
       simp only [List.mem_cons, forall_eq_or_imp, true_and] at hu
       obtain ⟨u', huu⟩ := only_nonterminals hu
-      use n₁, n₂, u'
-      simp [huu.symm]
+      grind
 
 end ContextFreeRule
 
@@ -195,8 +194,7 @@ abbrev projectString (u : List (Symbol T g.NT')) : List (Symbol T g.NT) :=
 
 lemma projectString_append {u v : List (Symbol T g.NT')} :
     projectString (u ++ v) = projectString u ++ projectString v := by
-  unfold projectString
-  rw [List.map_append, List.flatten_append]
+  grind
 
 lemma projectString_embedString_id {u : List (Symbol T g.NT)} :
     projectString (embedString u) = u := by
@@ -251,8 +249,7 @@ lemma mem_computeRulesRec_projectString_input_eq_output {r : ContextFreeRule T g
       · rw [← hn₂]
         congr
         omega
-      · rw [List.nil_eq, List.drop_eq_nil_iff]
-        omega
+      · grind
   | succ _ ih =>
     simp only [computeRulesRec, List.get_eq_getElem] at hrri
     split at hrri <;>
@@ -445,8 +442,7 @@ lemma computeRulesRec_derives [DecidableEq T] [DecidableEq g.NT] {r : ContextFre
             ← List.map_drop]
           apply ChomskyNormalFormGrammar.Derives.append_left
           have hrₒ : r.output.length - 2 - (n + 1) + 1 = r.output.length - 2 - n := by omega
-          rw [hrₒ]
-          exact ih _ hx₂
+          grind
       · omega
     · rename_i hn
       obtain ⟨n₁, hn₁⟩ := hr.mem_nonterminal ⟨r.output.length - 2 - (n + 1), by omega⟩ (by omega)

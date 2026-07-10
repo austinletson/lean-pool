@@ -63,11 +63,7 @@ lemma maxwellian_landau_flux_zero (Ψ : ℝ → ℝ) (f : (Fin 3 → ℝ) → �
             (hasFDerivAt_apply _ _ |> HasFDerivAt.pow <| 2)
             (hasFDerivAt_const _ _)))]
       norm_num
-      ring_nf
-      fin_cases i <;> norm_num <;> ring_nf!
-      · simp
-      · simp
-      · simp
+      grind
     · apply_rules [DifferentiableAt.add,
         DifferentiableAt.mul, differentiableAt_id,
         differentiableAt_const]
@@ -136,8 +132,7 @@ lemma D_zero_implies_maxwellian (Ψ : ℝ → ℝ) (f : (Fin 3 → ℝ) → ℝ)
   have hf_exp : ∀ v, f v = Real.exp (a₀ + dotProduct b v + c₀ * normSq v) := by
     intro v
     rw [← Real.exp_log (hf_pos v)]
-    congr 1
-    simpa only [Function.comp] using hquad v
+    grind
   -- Step 5: c₀ < 0 from the form of f
   exact ⟨a₀, b, c₀, analysis_gaussian_integrability f a₀ b c₀ hf_pos hf_int hf_exp, hf_exp⟩
 

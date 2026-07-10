@@ -109,8 +109,7 @@ lemma span_moments_dense : (Submodule.span ℂ (Set.range (fun n : ℤ => Contin
       · apply StarAlgebra.subset_adjoin
         simp only [Set.mem_singleton_iff]
       · simp only [ContinuousMap.coe_mk, ne_eq]
-        intro h
-        exact hab (Subtype.ext h)
+        grind
     · intro c
       have h_eq : ContinuousMap.const (↑(sphere (0 : ℂ) 1)) c
           = algebraMap ℂ C(↑(sphere (0 : ℂ) 1), ℂ) c := by
@@ -209,11 +208,7 @@ lemma integral_eq_on_dense_set {X : Type*} [TopologicalSpace X] [CompactSpace X]
     exact mem_closure_iff_seq_limit.mp h_dense
   exact tendsto_nhds_unique (h_cont.1.continuousAt.tendsto.comp hf_n.2)
     (h_cont.2.continuousAt.tendsto.comp hf_n.2 |> Filter.Tendsto.congr (by
-      intro x
-      have hx : f_n x ∈ S := hf_n.1 x
-      dsimp [(· ∘ ·)]
-      symm
-      exact h (f_n x) hx))
+      grind))
 
 /-- If two probability measures on the unit circle have the same moments, then they are equal. -/
 lemma measure_eq_of_moments (μ₁ μ₂ : Measure (sphere (0 : ℂ) 1))
@@ -281,9 +276,7 @@ lemma coeffs_eq_of_series_eq (c1 c2 : ℕ → ℂ)
     intro z hz
     convert sub_eq_zero.mpr (h z hz) using 1
     rw [← Summable.tsum_sub]
-    · congr
-      ext n
-      ring
+    · grind
     · exact summable_zpow_mul hz hc1.choose_spec
     · exact summable_zpow_mul hz hc2.choose_spec
   induction n using Nat.strong_induction_on with
@@ -328,9 +321,7 @@ lemma coeffs_eq_of_series_eq (c1 c2 : ℕ → ℂ)
     rw [eq_div_iff <| pow_ne_zero _ hz]
     ring_nf
     rw [← tsum_mul_left]
-    congr
-    ext k
-    ring_nf
+    grind
   have h_zero_limit : Filter.Tendsto (fun z : ℂ =>
                                           (∑' k, z ^ (k + 1) * (c1 k - c2 k)) / z ^ (n + 1))
                                      (nhdsWithin 0 {0}ᶜ) (𝓝 0) :=
@@ -361,9 +352,7 @@ lemma kernel_expansion (z : ℂ) (hz : ‖z‖ < 1) (w : ℂ) (hw : ‖w‖ = 1)
       simp at hw
     field_simp [w_ne]
   convert h_expand using 1
-  · rw [one_add_div]
-    · ring
-    · exact sub_ne_zero_of_ne <| by rintro rfl; rw [hw] at hz ; exact (not_lt_of_ge (le_refl 1) hz)
+  · grind
   · simp only [star_pow, RCLike.star_def, div_pow, add_right_inj, mul_eq_mul_left_iff,
     OfNat.ofNat_ne_zero, or_false]
     congr! 2

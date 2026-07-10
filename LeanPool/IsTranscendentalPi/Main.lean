@@ -95,8 +95,7 @@ theorem IsTranscendentalPi : Transcendental ℚ (Real.pi : ℂ) := by
       simp only [Int.cast_mul, Int.cast_pow]
       rw [← hp, ← pow_mul, Nat.mul_comm]
       nth_rw 1 [← Nat.sub_add_cancel (Nat.succ_le_of_lt (Nat.mul_pos p.property.pos hn))]
-      rw [pow_succ']
-      ac_rfl
+      grind
   obtain ⟨N, hN⟩ := Filter.eventually_atTop.1 hUpper
   letI : Nonempty {p : ℕ // Nat.Prime p} := ⟨⟨2, by decide⟩⟩
   obtain ⟨q, hq⟩ := Filter.eventually_atTop.1 hLower

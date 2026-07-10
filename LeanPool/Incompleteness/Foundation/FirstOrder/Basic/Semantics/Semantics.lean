@@ -244,10 +244,7 @@ lemma val_toEmpty [DecidableEq ξ] (t : Semiterm L ξ n) (h : t.freeVariables = 
   case fvar => simp at h
   case func k f v ih =>
     simp only [val_func, Semiterm.toEmpty]
-    have : ∀ i, (v i).freeVariables = ∅ := by
-      simpa [Semiterm.freeVariables_func, Finset.biUnion_eq_empty] using h
-    congr 1; funext i
-    exact ih i (this i)
+    grind
 
 end Semiterm
 
@@ -575,10 +572,7 @@ lemma eval_close {ε} (φ : SyntacticFormula L) :
   · intro h f
     refine (eval_iff_of_funEqOn φ ?_).mp (h (fun x ↦ f x))
     intro x hx; simp [Rew.fixitr_fvar, lt_fvSup_of_fvar? hx]
-  · intro h f
-    refine (eval_iff_of_funEqOn φ ?_).mp (h (fun x ↦ if hx :
-        x < φ.fvSup then f ⟨x, by simp [hx]⟩ else ε 0))
-    intro x hx; simp [Rew.fixitr_fvar, lt_fvSup_of_fvar? hx]
+  · grind
 
 lemma eval_close₀ [Nonempty M] (φ : SyntacticFormula L) :
     Evalb s ![] (∀∀₀φ) ↔ ∀ f, Evalf s f φ := by

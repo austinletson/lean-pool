@@ -95,21 +95,13 @@ theorem stepFun_cons (p : Set α × Set β) (L : List (Set α × Set β)) :
     (stepFun (p :: L) : Set (ApproximableMap V₀ V₁)) = step p.1 p.2 ∩ stepFun L := by
   ext f
   simp only [mem_stepFun, List.mem_cons, Set.mem_inter_iff, mem_step]
-  constructor
-  · intro h; exact ⟨h p (Or.inl rfl), fun q hq => h q (Or.inr hq)⟩
-  · rintro ⟨hp, hrest⟩ q (rfl | hq)
-    · exact hp
-    · exact hrest q hq
+  grind
 
 theorem stepFun_append (L L' : List (Set α × Set β)) :
     (stepFun (L ++ L') : Set (ApproximableMap V₀ V₁)) = stepFun L ∩ stepFun L' := by
   ext f
   simp only [mem_stepFun, List.mem_append, Set.mem_inter_iff]
-  constructor
-  · intro h; exact ⟨fun p hp => h p (Or.inl hp), fun p hp => h p (Or.inr hp)⟩
-  · rintro ⟨hL, hL'⟩ p (hp | hp)
-    · exact hL p hp
-    · exact hL' p hp
+  grind
 
 theorem stepFun_singleton (X : Set α) (Y : Set β) :
     (stepFun [(X, Y)] : Set (ApproximableMap V₀ V₁)) = step X Y := by
@@ -149,10 +141,7 @@ def funSpace (V₀ : NeighborhoodSystem α) (V₁ : NeighborhoodSystem β) :
   inter_mem := by
     rintro W W' Z ⟨⟨L, hL, rfl⟩, _⟩ ⟨⟨L', hL', rfl⟩, _⟩ ⟨_, hZne⟩ hZsub
     refine ⟨⟨L ++ L', ?_, (stepFun_append _ _).symm⟩, hZne.mono hZsub⟩
-    intro p hp
-    rcases List.mem_append.mp hp with h | h
-    · exact hL p h
-    · exact hL' p h
+    grind
   sub_master := fun _ => Set.subset_univ _
 
 @[simp] theorem funSpace_master : (funSpace V₀ V₁).master = Set.univ := rfl
@@ -194,10 +183,7 @@ theorem mem_stepFun_iff (φ : (funSpace V₀ V₁).Element) {L : List (Set α ×
       have hne : (step p.1 p.2 ∩ stepFun L).Nonempty := (φ.sub hmem).2
       have htail : φ.mem (stepFun L) :=
         φ.up_mem hmem ⟨⟨L, hLtail, rfl⟩, hne.mono Set.inter_subset_right⟩ Set.inter_subset_right
-      intro q hq
-      rcases List.mem_cons.mp hq with rfl | hq
-      · exact hstep
-      · exact (ih hLtail).mp htail q hq
+      grind
     · intro hall
       have hstep : φ.mem (step p.1 p.2) := hall p (List.mem_cons.mpr (Or.inl rfl))
       have htail : φ.mem (stepFun L) :=
@@ -243,9 +229,7 @@ def toFilter (f : ApproximableMap V₀ V₁) : (funSpace V₀ V₁).Element wher
     obtain ⟨⟨L, hL, rfl⟩, _⟩ := hW
     obtain ⟨⟨L', hL', rfl⟩, _⟩ := hW'
     refine ⟨⟨⟨L ++ L', ?_, (stepFun_append _ _).symm⟩, ⟨f, ?_⟩⟩, ?_⟩
-    · intro p hp; rcases List.mem_append.mp hp with h | h
-      · exact hL p h
-      · exact hL' p h
+    · grind
     · exact Set.mem_inter hfW hfW'
     · exact Set.mem_inter hfW hfW'
   up_mem := by rintro W W' ⟨hW, hfW⟩ hW' hWW'; exact ⟨hW', hWW' hfW⟩
@@ -302,10 +286,7 @@ theorem funSpace_mem_inter {W W' : Set (ApproximableMap V₀ V₁)}
   obtain ⟨⟨L, hL, rfl⟩, _⟩ := hW
   obtain ⟨⟨L', hL', rfl⟩, _⟩ := hW'
   refine ⟨⟨L ++ L', ?_, (stepFun_append _ _).symm⟩, hne⟩
-  intro p hp
-  rcases List.mem_append.mp hp with h | h
-  · exact hL p h
-  · exact hL' p h
+  grind
 
 /-- Step neighbourhoods are *up-closed* under the map order: if `f ∈ stepFun L`
 and `f ⊑ f'`, then
@@ -346,16 +327,7 @@ theorem mem_interYs {m : Set β} {L : List (Set α × Set β)} {X : Set α} {z :
   | nil => simp
   | cons p L ih =>
     rw [interYs_cons]
-    simp only [Set.mem_inter_iff, Set.mem_setOf_eq, ih, List.mem_cons]
-    constructor
-    · rintro ⟨hp, hm, hL⟩
-      refine ⟨hm, ?_⟩
-      rintro q (rfl | hq) hXq
-      · exact hp hXq
-      · exact hL q hq hXq
-    · rintro ⟨hm, hall⟩
-      exact ⟨fun hXp => hall p (Or.inl rfl) hXp, hm,
-        fun q hq hXq => hall q (Or.inr hq) hXq⟩
+    grind
 
 /-- `interYs` is contained in the master neighbourhood. -/
 theorem interYs_subset_master {m : Set β} {L : List (Set α × Set β)} {X : Set α} :
@@ -431,14 +403,10 @@ theorem rel_interYs {L : List (Set α × Set β)} {f : ApproximableMap V₀ V₁
     · have hp : f.rel p.1 p.2 := hf p (List.mem_cons.mpr (Or.inl rfl))
       have hXp2 : f.rel X p.2 := f.mono hp hXp subset_rfl hX (f.rel_cod hp)
       have heq : interYs V₁.master (p :: L) X = p.2 ∩ interYs V₁.master L X := by
-        rw [interYs_cons]; ext z
-        simp only [Set.mem_inter_iff, Set.mem_setOf_eq]
-        exact ⟨fun ⟨h1, h2⟩ => ⟨h1 hXp, h2⟩, fun ⟨h1, h2⟩ => ⟨fun _ => h1, h2⟩⟩
+        rw [interYs_cons]; grind
       rw [heq]; exact f.inter_right hXp2 htail
     · have heq : interYs V₁.master (p :: L) X = interYs V₁.master L X := by
-        rw [interYs_cons]; ext z
-        simp only [Set.mem_inter_iff, Set.mem_setOf_eq]
-        exact ⟨fun h => h.2, fun h => ⟨fun hc => absurd hc hXp, h⟩⟩
+        rw [interYs_cons]; grind
       rw [heq]; exact htail
 
 /-- **Proposition 3.9 (Scott 1981, PRG-19).** `f₀` is the *minimal* element of the
@@ -734,10 +702,7 @@ theorem rel_stepFun_iff (h : ApproximableMap V₀ (funSpace V₁ V₂)) {X : Set
       have htail : h.rel X (stepFun L) :=
         h.mono hmem subset_rfl Set.inter_subset_right hX
           ⟨⟨L, hLtail, rfl⟩, hne.mono Set.inter_subset_right⟩
-      intro q hq
-      rcases List.mem_cons.mp hq with rfl | hq
-      · exact hstep
-      · exact (ih hLtail).mp htail q hq
+      grind
     · intro hall
       have hstep : h.rel X (step p.1 p.2) := hall p (List.mem_cons.mpr (Or.inl rfl))
       have htail : h.rel X (stepFun L) :=
@@ -875,8 +840,7 @@ def curryEquiv (V₀ : NeighborhoodSystem α) (V₁ : NeighborhoodSystem β)
         exact hu.2
       have h2 := hcurry _ _ h1
       have hu' : (uncurry (curry g')).rel W Z := ⟨g.rel_dom hrel, h2⟩
-      rw [uncurry_curry] at hu'
-      exact hu'
+      grind
     · intro hg X W hrel
       obtain ⟨hX, hW, hmem⟩ := hrel
       refine ⟨hX, hW, ?_⟩

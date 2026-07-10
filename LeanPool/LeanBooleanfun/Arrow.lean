@@ -50,9 +50,7 @@ instance : BooleanValued (@majority n) where
   one_or_neg_one := by
     intro x
     rw [majority.eq_def]
-    split_ifs
-    · left; rfl
-    · right; rfl
+    grind
 
 /-- A dictator is a Walsh character of a singleton set. -/
 abbrev dictator {n : ℕ} (i : Fin n) : BooleanFunc n := χ {i}
@@ -104,8 +102,7 @@ lemma zero_not_unanimous (f : BooleanFunc n) (hn : n = 0) : ¬IsUnanimous f := b
   intro h
   have : (1 : Fin n → Fin 2) = 0 := by
     rw [hn]; trivial
-  rw [this, h]
-  norm_num
+  grind
 
 /-- Explicit Walsh-Fourier expansion of the not-all-equal predicate on a 3-tuple composed with a
 Boolean valued function. A crucial step in the proof of Arrow's theorem. -/
@@ -191,9 +188,7 @@ lemma _eq_noise_operator : T = @noiseOperator n (-1/3) := by
     by_cases h : x i = y i
     · simp only [h, not_and, forall_const, Classical.ite_not, Fin.sum_univ_two, Fin.isValue, ne_eq,
         not_true_eq_false, if_false, add_zero]
-      induction y i using Fin.cases with
-      | zero => simp
-      | succ k => simp [Fin.fin_one_eq_zero]
+      grind
     · simp [h]; norm_num
   conv => enter [1, 2, 2, y]; rw [this, walshCharacter.eq_def]
           enter [1, 1]; rw [← filter_univ_mem (s := S)]
@@ -212,9 +207,7 @@ lemma _eq_noise_operator : T = @noiseOperator n (-1/3) := by
     induction v using Fin.cases with
     | zero => simp
     | succ k =>
-      simp only [Fin.fin_one_eq_zero k, Fin.isValue, Fin.succ_zero_eq_one, Fin.coe_ofNat_eq_mod,
-        Nat.mod_succ, pow_one, sub_self, Nat.zero_mod, pow_zero, one_mul, neg_add_cancel_left,
-        mul_neg, mul_one, neg_neg]
+      grind
   conv => enter [1, 2, 1, 2, i]; rw [ite_mul, ite_add_ite, ite_ite_same, haux2]
   rw [← prod_filter, filter_univ_mem, prod_mul_distrib, prod_const, ← walsh_def]
   conv => enter [1, 2, 2, 2, i]; rw [ite_mul, ite_add_ite, ite_ite_not']; arg 2; norm_num
@@ -261,10 +254,7 @@ theorem probabilityCondorcetWinner_eq :
   rw [this]
   have h16n : ((1 : ℝ) / 6) ^ n * 6 ^ n = 1 := by
     rw [div_pow, one_pow, div_mul_cancel₀ _ (pow_ne_zero _ (by norm_num : (6 : ℝ) ≠ 0))]
-  have hneg : (-(1 : ℝ)/3) = -(1/3) := by ring
-  rw [hneg]
-  linear_combination
-    ((3 : ℝ)/4 - 3/4 * noiseStability (-(1/3)) f) * h16n
+  grind
 
 /-- Arrow's theorem as formulated in [odonnell2014], Sec. 2.5 : Every unanimous voting rule that
 always admits a Condorcet winner is a dictatorship. -/
@@ -278,9 +268,7 @@ theorem dictator_of_condorcet_and_unanimous (h : IsUnanimous f) :
   let ρ : ℝ := -1/3
   have : noiseStability ρ f = ρ := by
     rw [probabilityCondorcetWinner_eq] at this
-    calc
-      _ = 1 - 4/3 * (3/4 * ((1 : ℝ) - (noiseStability ρ f))) := by ring
-      _ = _   := by rw [this]; ring
+    grind
   have hsumzero : ∑ S, (ρ^S.card - ρ) * |𝓕 f S|^2 = 0 := by
     simp_rw [sub_mul, sum_sub_distrib]
     rw [← noise_stability_eq_sum_fourier, this]
@@ -319,11 +307,7 @@ theorem dictator_of_condorcet_and_unanimous (h : IsUnanimous f) :
     obtain h|h|h|h := pow_eq_self_imp h
       <;> first | assumption | norm_num at h
   have : ∀ S, S.card ≠ 1 → 𝓕 f S = 0 := by
-    intro S hS
-    have := hmz S (by simp)
-    have := eq_zero_of_ne_zero_of_mul_left_eq_zero (hnez S.card hS) this
-    simp at this
-    assumption
+    grind
   have := fourier_eq_zero_iff_fourier_weight_eq.mp this
   rw [norm_sq_eq_one] at this
   obtain ⟨i, ⟨c, hfeq⟩⟩ := eq_character_of_fourier_weight_one_eq_one hn this

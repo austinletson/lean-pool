@@ -121,11 +121,7 @@ lemma isUnit_of_evalOneₐ_isUnit (x : AdicCompletion I R) (hu : IsUnit (evalOne
   have hu_all := evalₐ_isUnit_of_evalOneₐ_isUnit I x hu
   have hmul : mkInverse I x hu_all * x = 1 := mkInverse_mul I x hu_all
   have hmul' : x * mkInverse I x hu_all = 1 := by
-    apply ext_evalₐ
-    intro n
-    simp only [map_mul, map_one]
-    rw [evalₐ_mkInverse]
-    exact (hu_all n).mul_val_inv
+    grind
   exact ⟨⟨x, mkInverse I x hu_all, hmul', hmul⟩, rfl⟩
 
 end AdicCompletion
@@ -151,10 +147,7 @@ omit [IsLocalRing R] in
 lemma field_isUnit_or_isUnit {K : Type*} [Field K] {a b : K} (hab : a + b = 1) :
     IsUnit a ∨ IsUnit b := by
   by_cases ha : a = 0
-  · right
-    rw [ha, zero_add] at hab
-    rw [hab]
-    exact isUnit_one
+  · grind
   · exact Or.inl (IsUnit.mk0 a ha)
 
 theorem adicCompletion_isLocalRing :

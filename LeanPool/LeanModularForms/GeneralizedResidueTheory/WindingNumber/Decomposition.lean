@@ -34,9 +34,7 @@ private lemma no_endpoint_crossing_of_unique_interior
     (t₀ : ℝ) (ht₀ : t₀ ∈ Ioo γ.a γ.b)
     (honly : ∀ t ∈ Icc γ.a γ.b, γ.toFun t = z₀ → t = t₀) :
     γ.toFun γ.a ≠ z₀ ∧ γ.toFun γ.b ≠ z₀ := by
-  constructor
-  · intro h; have := honly γ.a (left_mem_Icc.mpr γ.hab.le) h; linarith [ht₀.1]
-  · intro h; have := honly γ.b (right_mem_Icc.mpr γ.hab.le) h; linarith [ht₀.2]
+  grind
 
 /-- CPV of `(z - z₀)⁻¹` exists when there is a unique crossing at `t₀`. -/
 private lemma cpv_exists_of_unique_crossing
@@ -119,8 +117,7 @@ private lemma externalWindingContribution_eq_int_of_cpv_eq
   have hpi_ne : (Real.pi : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr Real.pi_ne_zero
   have h2pi_ne : (2 : ℂ) * Real.pi ≠ 0 := mul_ne_zero two_ne_zero hpi_ne
   have h2pii_ne : 2 * Real.pi * I ≠ 0 := mul_ne_zero h2pi_ne I_ne_zero
-  field_simp
-  ring
+  grind
 
 /-- The external winding contribution is always an integer.
 This is the key structural result from H-W Proposition 2.2:
@@ -181,8 +178,7 @@ theorem generalizedWindingNumber_eq_neg_angleContribution_single
       -((angleAtCrossing γ t₀ ht₀ : ℂ) /
         (2 * Real.pi)) := by
   have := generalizedWindingNumber_eq_external_sub_angle γ z₀ t₀ ht₀
-  rw [h_external, zero_sub] at this
-  exact this
+  grind
 
 /-- At a smooth crossing with zero external winding, contribution is -1/2. -/
 theorem generalizedWindingNumber_eq_neg_half_smooth_crossing
@@ -260,11 +256,9 @@ theorem windingNumberWithAngles_union
     (hT_at : ∀ t ∈ T, γ.toFun t = z₀) :
     windingNumberWithAngles' γ z₀ (S ∪ T)
       (fun t ht => by
-        simp only [Finset.mem_union] at ht
-        exact ht.elim (hS_in t) (hT_in t))
+        grind)
       (fun t ht => by
-        simp only [Finset.mem_union] at ht
-        exact ht.elim (hS_at t) (hT_at t)) =
+        grind) =
     windingNumberWithAngles' γ z₀ S hS_in hS_at +
     windingNumberWithAngles' γ z₀ T hT_in hT_at := by
   simp only [windingNumberWithAngles']

@@ -79,8 +79,7 @@ noncomputable def standardBumpSequence (n : ℕ) (hn : n ≠ 0) : ContDiffBump (
       have hn' : (0 : ℝ) < n := Nat.cast_pos.mpr (Nat.pos_of_ne_zero hn)
       have h2n : (0 : ℝ) < 2 * n := by positivity
       have : (2 * (n : ℝ))⁻¹ < (n : ℝ)⁻¹ := inv_strictAnti₀ hn' (by linarith)
-      simp only [one_div]
-      exact this }
+      grind }
 
 /-- Two-point correlation function defined as the limit of smeared correlations.
 

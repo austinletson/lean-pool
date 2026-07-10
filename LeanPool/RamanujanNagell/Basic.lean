@@ -22,13 +22,10 @@ open Polynomial QuadraticAlgebra Algebra Nat
 
 private lemma alpha_sq : (2 * θ - 1 : R) ^ 2 = -7 := by
   have h_theta_sq : θ ^ 2 = θ - 2 := theta_sq
-  calc (2 * θ - 1 : R) ^ 2 = 4 * θ ^ 2 - 4 * θ + 1 := by ring
-    _ = 4 * (θ - 2) - 4 * θ + 1 := by rw [h_theta_sq]
-    _ = -7 := by ring
+  grind
 
 private lemma two_R_ne_zero : (2 : R) ≠ 0 := by
-  intro h0
-  have := congrArg QuadraticAlgebra.re h0; simp at this
+  grind
 
 private lemma theta_pow_mul_theta'_pow (m : ℕ) : θ ^ m * θ' ^ m = (2 : R) ^ m := by
   rw [theta'_eq_one_sub_theta, ← mul_pow, two_factorisation_R]
@@ -40,9 +37,7 @@ private lemma two_pow_R_im_zero (m : ℕ) : ((2 : R) ^ m).im = 0 := by
 private lemma alpha_ne_zero : (2 * θ - 1 : R) ≠ 0 := by
   intro h0
   have hsq := alpha_sq
-  rw [h0, zero_pow two_ne_zero] at hsq
-  have : ((0 : ℤ) : R) = ((-7 : ℤ) : R) := by exact_mod_cast hsq
-  have := congrArg QuadraticAlgebra.re this; simp at this
+  grind
 
 private lemma binom_two_theta (d : ℕ) :
     (2 * θ) ^ d = ∑ k ∈ Finset.range (d + 1), ((d.choose k : ℤ) : R) * (2 * θ - 1) ^ k := by
@@ -86,9 +81,7 @@ private lemma diff_two_pow_eq_binomB (d : ℕ) :
   rw [Finset.mul_sum]
   symm
   refine Finset.sum_bij (fun j _ => 2 * j + 1) ?_ ?_ ?_ ?_
-  · intro j hj; simp only [Finset.mem_range] at hj ⊢
-    simp only [Finset.mem_filter, Finset.mem_range]
-    exact ⟨by omega, ⟨j, by ring⟩⟩
+  · grind
   · intro a b _ _ h_ab; linarith
   · intro k hk; simp only [Finset.mem_filter, Finset.mem_range] at hk
     obtain ⟨j, hj⟩ := hk.2
@@ -111,8 +104,7 @@ lemma factors_in_R_with_product (x : ℤ) (m : ℕ) (hm_ge : m ≥ 3)
     have hx2t : x = 2 * t := by omega
     have h_div : (x ^ 2 + 7) / 4 = t ^ 2 + 1 := by
       rw [hx2t]
-      have : (2 * t) ^ 2 + 7 = (t ^ 2 + 1) * 4 + 3 := by ring
-      omega
+      grind
     rw [h_div] at h
     have h4_dvd_2m : (4 : ℤ) ∣ 2 ^ m :=
       ⟨2 ^ (m - 2), by
@@ -120,11 +112,9 @@ lemma factors_in_R_with_product (x : ℤ) (m : ℕ) (hm_ge : m ≥ 3)
     have h4_dvd : (4 : ℤ) ∣ (t ^ 2 + 1) := h ▸ h4_dvd_2m
     rcases Int.even_or_odd t with ⟨s, hs⟩ | ⟨s, hs⟩
     · have : (4 : ℤ) ∣ t ^ 2 := ⟨s ^ 2, by rw [hs]; ring⟩
-      have : (4 : ℤ) ∣ 1 := (Int.dvd_add_right this).mp h4_dvd
-      omega
+      grind
     · have : (4 : ℤ) ∣ (t ^ 2 - 1) := ⟨s ^ 2 + s, by rw [hs]; ring⟩
-      have h4_dvd_2 : (4 : ℤ) ∣ ((t ^ 2 + 1) - (t ^ 2 - 1)) := Int.dvd_sub h4_dvd this
-      omega
+      grind
   obtain ⟨k, hk⟩ := hx_odd
   -- (x²+7)/4 = k²+k+2 (exact division since x is odd)
   have hdiv : (x ^ 2 + 7) / 4 = k ^ 2 + k + 2 := by
@@ -156,10 +146,8 @@ lemma conjugate_factors_coprime (α β : R) (m : ℕ)
     have h0 : (0 : R) = -7 := by
       have h' : (0 : R) ^ 2 = (2 * θ - 1) ^ 2 := by rw [h_diff]
       rw [alpha_sq] at h'
-      simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow] at h'
-      exact h'
-    have : ((0 : ℤ) : R) = ((-7 : ℤ) : R) := by exact_mod_cast h0
-    have := congrArg QuadraticAlgebra.re this; simp at this
+      grind
+    grind
   · intro p hp hpa hpb
     -- 2 = θ * θ'; use p prime ⇒ p ∣ θ or p ∣ θ'
     have h_prod_val : α * β = (2 : R) ^ m := by
@@ -206,8 +194,7 @@ lemma factor_not_unit_left (α β : R) (m : ℕ)
     have h_im := congrArg QuadraticAlgebra.im h_diff
     simp [θ, h2m_im] at h_im
   · have hβ : β = -((2 : R) ^ m) := by
-      have hα : (-1 : R) * β = (2 : R) ^ m := h_prod
-      linear_combination -hα
+      grind
     rw [hβ] at h_diff
     have h_im := congrArg QuadraticAlgebra.im h_diff
     simp [θ, h2m_im] at h_im
@@ -227,9 +214,7 @@ lemma factor_not_unit_right (α β : R) (m : ℕ)
     have h_im := congrArg QuadraticAlgebra.im h_diff
     simp [θ, h2m_im] at h_im
   · have hα : α = -((2 : R) ^ m) := by
-      have h1 : α * (-1 : R) = (2 : R) ^ m := h_prod
-      have h2 : -α = (2 : R) ^ m := by linear_combination h1
-      linear_combination -h2
+      grind
     rw [hα] at h_diff
     have h_im := congrArg QuadraticAlgebra.im h_diff
     simp [θ, h2m_im] at h_im
@@ -246,25 +231,21 @@ lemma eliminate_x_conclude (α β : R) (m : ℕ)
   rcases h_assoc with (rfl | rfl) | (rfl | rfl)
   · left
     have hβ : β = θ' ^ m := mul_left_cancel₀ (pow_ne_zero m hθ_ne) h_prod
-    subst hβ
-    linear_combination -h_diff
+    grind
   · right
     have hβ : β = -(θ' ^ m) :=
       mul_left_cancel₀ (neg_ne_zero.mpr (pow_ne_zero m hθ_ne))
         (h_prod.trans (neg_mul_neg _ _).symm)
-    subst hβ
-    linear_combination h_diff
+    grind
   · right
     have hβ : β = θ ^ m :=
       mul_left_cancel₀ (pow_ne_zero m hθ'_ne) (h_prod.trans (mul_comm _ _))
-    subst hβ
-    linear_combination h_diff
+    grind
   · left
     have hβ : β = -(θ ^ m) :=
       mul_left_cancel₀ (neg_ne_zero.mpr (pow_ne_zero m hθ'_ne))
         (h_prod.trans ((mul_comm _ _).trans (neg_mul_neg _ _).symm))
-    subst hβ
-    linear_combination -h_diff
+    grind
 
 /-- The minus sign must hold in the disjunction. Proved by reducing modulo θ'²: if
     `2θ - 1 = θ^m - θ'^m`, then `θ^m - θ ≡ θ'^m - θ' (mod θ'²)`, and combining with
@@ -362,8 +343,7 @@ lemma expand_by_binomial (m : ℕ) (hm_ge : m ≥ 3)
       have h2m : (2 : R) ^ m = 2 ^ (m - 1) * 2 := by
         conv_lhs => rw [← Nat.sub_add_cancel (show 1 ≤ m by omega)]
         rw [pow_succ]
-      rw [h2m]
-      ring
+      grind
     obtain ⟨S, hS⟩ := hdiff
     have hcancel : -(2 : ℤ) ^ (m - 1) = S := by
       have h1 : -(2 : R) ^ m = 2 * (S : R) :=
@@ -397,11 +377,8 @@ lemma expand_by_binomial (m : ℕ) (hm_ge : m ≥ 3)
       apply Int.cast_injective (α := R)
       apply mul_left_cancel₀ h2α_ne
       rw [← hS, hα_def, diff_two_pow_eq_binomB m]
-    obtain ⟨q, hq⟩ := hT_mod
-    exact ⟨q, by rw [hcancel, hS_eq, hq]⟩
-  obtain ⟨q, hq⟩ := step2
-  rw [hq]
-  omega
+    grind
+  grind
 
 
 /-- Key consequence of unique factorization in ℤ[(1+√-7)/2]:
@@ -417,8 +394,7 @@ lemma odd_case_mod_seven_constraint :
       have hm_ge : n - 2 ≥ 3 := by omega
       have h_theta := main_m_condition x (n - 2) hm_odd hm_ge h_div
       have h_mod := expand_by_binomial (n - 2) hm_ge h_theta
-      rwa [show n - 3 = (n - 2) - 1 from by omega,
-        show ((n : ℤ) - 2) = ((n - 2 : ℕ) : ℤ) from by omega]
+      grind
 
 private lemma two_pow_six_pow_emod_seven (q : ℕ) : ((2 : ℤ) ^ 6) ^ q % 7 = 1 := by
   induction q with
@@ -477,11 +453,7 @@ private lemma seven_pow_gt_two_mul_add_one (j : ℕ) (hj : j ≥ 1) :
   induction j with
   | zero => omega
   | succ n ih =>
-    cases n with
-    | zero => norm_num
-    | succ m =>
-      have : 7 ^ (m + 2) = 7 * 7 ^ (m + 1) := by ring
-      omega
+    grind
 
 private lemma j_gt_padicValNat_two_mul_add_one (j : ℕ) (hj : j ≥ 1) :
     j > padicValNat 7 (2 * j + 1) := by
@@ -683,10 +655,7 @@ lemma traceSeq_eq (n : ℕ) : (traceSeq n : R) = θ ^ n + θ' ^ n := by
     rw [ih1, ih2]
     have h_prod : θ * θ' = 2 := theta_mul_theta'
     have h_sum : θ + θ' = 1 := theta_add_theta'
-    have key : θ ^ (n + 2) + θ' ^ (n + 2) =
-        (θ + θ') * (θ ^ (n + 1) + θ' ^ (n + 1)) - θ * θ' * (θ ^ n + θ' ^ n) := by ring
-    rw [key, h_sum, h_prod]
-    ring
+    grind
 
 private lemma traceSeq_mod7_period (m : ℕ) :
     traceSeq m % 7 = traceSeq (m % 3) % 7 := by
@@ -769,10 +738,7 @@ private lemma trace_mul_binomialB_eq (P : ℤ) (m d : ℕ)
       rw [mul_sub, mul_one]
       rw [← mul_assoc, Finset.mul_sum]
       rw [sub_eq_add_neg, ← Finset.sum_neg_distrib]
-      congr 1
-      apply Finset.sum_congr rfl
-      intro j hj
-      ring]
+      grind]
     simp_rw [← nat_even_iff_not_odd]
     rw [show Finset.filter Even (Finset.range (d + 1)) =
            Finset.image (fun j => 2 * j) (Finset.range (d / 2 + 1)) from by
@@ -780,10 +746,8 @@ private lemma trace_mul_binomialB_eq (P : ℤ) (m d : ℕ)
       simp only [Finset.mem_filter, Finset.mem_range, Finset.mem_image, Even]
       constructor
       · rintro ⟨hk, m, rfl⟩
-        refine ⟨m, ?_, (two_mul m)⟩
-        omega
-      · rintro ⟨m, hm, rfl⟩
-        refine ⟨by omega, ⟨m, two_mul m⟩⟩]
+        grind
+      · grind]
     rw [Finset.sum_image (fun a _ b _ hab => by omega)]
     rw [show d / 2 + 1 = (d / 2) + 1 from rfl]
     rw [Finset.sum_range_succ']
@@ -802,10 +766,7 @@ private lemma trace_mul_binomialB_eq (P : ℤ) (m d : ℕ)
       rw [hP_eq, h_cross, h_diff_eq]; ring
     have h_scaled : (P : R) * ((2 : R) ^ d * (θ ^ d - θ' ^ d)) =
         α * ((2 : R) ^ d * (θ ^ d + θ' ^ d) - (2 : R) ^ d * 2) := by
-      calc (P : R) * ((2 : R) ^ d * (θ ^ d - θ' ^ d))
-          = (2 : R) ^ d * ((P : R) * (θ ^ d - θ' ^ d)) := by ring
-        _ = (2 : R) ^ d * (α * (θ ^ d + θ' ^ d - 2)) := by rw [h_sub1]
-        _ = α * ((2 : R) ^ d * (θ ^ d + θ' ^ d) - (2 : R) ^ d * 2) := by ring
+      grind
     have h_lhs_eq : (2 : R) ^ d * (θ ^ d - θ' ^ d) =
         (2 * θ) ^ d - (2 * (1 - θ)) ^ d := by
       rw [mul_pow, mul_pow, h_theta']; ring
@@ -813,19 +774,9 @@ private lemma trace_mul_binomialB_eq (P : ℤ) (m d : ℕ)
     have h_rhs_eq : (2 : R) ^ d * (θ ^ d + θ' ^ d) =
         (2 * θ) ^ d + (2 * (1 - θ)) ^ d := by
       rw [mul_pow, mul_pow, h_theta']; ring
-    rw [h_rhs_eq, h_sum_binom] at h_scaled
-    have h_cancel : α * (2 * (P : R) * ((binomialB d : ℤ) : R)) =
-        α * (2 * (1 - 7 * ((binomialA' d : ℤ) : R) - (2 : R) ^ d)) := by
-      linear_combination h_scaled
-    exact mul_left_cancel₀ hα_ne h_cancel
+    grind
   apply Int.cast_injective (α := R)
-  have h_lhs : ((P * binomialB d : ℤ) : R) = (P : R) * ((binomialB d : ℤ) : R) := by
-    push_cast; ring
-  have h_rhs : ((1 - 7 * binomialA' d - (2 : ℤ) ^ d : ℤ) : R) =
-      (1 : R) - 7 * ((binomialA' d : ℤ) : R) - (2 : R) ^ d := by push_cast; ring
-  rw [h_lhs, h_rhs]
-  rw [mul_assoc] at h_in_R
-  exact mul_left_cancel₀ two_R_ne_zero h_in_R
+  grind
 
 /-- Each residue class mod 42 has at most one m solving the equation. -/
 lemma at_most_one_m_per_class (m₁ m₂ : ℕ)
@@ -837,13 +788,11 @@ lemma at_most_one_m_per_class (m₁ m₂ : ℕ)
     m₁ = m₂ := by
   by_contra h_ne
   wlog h_lt : m₁ < m₂ with H
-  · exact H m₂ m₁ h₂_odd h₁_odd h₂_ge h₁_ge h_cong.symm h₂_theta h₁_theta
-      (Ne.symm h_ne) (by omega)
+  · grind
   set d := m₂ - m₁ with hd_def
   have hd_pos : d > 0 := by omega
   have h_42_dvd : 42 ∣ d := by
-    rw [hd_def]
-    exact (Nat.modEq_iff_dvd' h_lt.le).mp h_cong
+    grind
   have h_7_dvd : (7 : ℕ) ∣ d := Nat.dvd_trans (by norm_num : 7 ∣ 42) h_42_dvd
   set l := padicValNat 7 d with hl_def
   haveI : Fact (Nat.Prime 7) := ⟨by decide⟩
@@ -862,8 +811,7 @@ lemma at_most_one_m_per_class (m₁ m₂ : ℕ)
   obtain ⟨P, hP_eq, hP_coprime⟩ := h_trace
   have h_pow_eq : θ ^ m₁ - θ' ^ m₁ = θ ^ m₁ * θ ^ d - θ' ^ m₁ * θ' ^ d := by
     have h_m2_eq : m₂ = m₁ + d := by omega
-    rw [h_m2_eq, pow_add, pow_add] at h_eq
-    exact h_eq
+    grind
   -- Key algebraic identity in R, lifted back to ℤ via `trace_mul_binomialB_eq`
   have h_identity : P * binomialB d = 1 - 7 * binomialA' d - (2 : ℤ) ^ d :=
     trace_mul_binomialB_eq P m₁ d hP_eq h₁_theta h_pow_eq
@@ -933,9 +881,7 @@ theorem odd_case_only_three_values :
   have h_mod := odd_case_only_three_values_mod_42 x n hn_odd hn_ge h_eq
   set m := n - 2 with hm_def
   have hm_odd : Odd m := by
-    obtain ⟨k, hk⟩ := hn_odd
-    refine ⟨k - 1, ?_⟩
-    omega
+    grind
   have hm_ge : m ≥ 3 := by omega
   have h_div := reduction_divide_by_4 x n hn_odd hn_ge h_eq
   have h_theta := main_m_condition x m hm_odd hm_ge h_div
@@ -962,12 +908,8 @@ lemma two_pow_min_seven_odd :
   intro n hn
   have hn' : 1 ≤ n := Nat.one_le_iff_ne_zero.mpr hn
   have h_even : Even ((2 : ℤ) ^ n) := by
-    obtain ⟨m, hm⟩ := Nat.exists_eq_add_of_le hn'
-    rw [hm, add_comm, pow_add, pow_one, mul_comm]
-    exact even_two_mul ((2 : ℤ) ^ m)
-  obtain ⟨k, hk⟩ := h_even
-  use k - 4
-  omega
+    grind
+  grind
 
 lemma x_is_odd :
   ∀ x : ℤ, ∀ n : ℕ, n ≠ 0 → x ^ 2 + 7 = 2 ^ n →
@@ -996,9 +938,7 @@ lemma ramanujan_nagell_even_pow_factors :
   have h_cases : (a = 1 ∧ b = 7) ∨ (a = 7 ∧ b = 1) := by
     rcases (show a = 1 ∨ a = 2 ∨ a = 3 ∨ a = 4 ∨ a = 5 ∨ a = 6 ∨ a = 7 by omega) with
       ha' | ha' | ha' | ha' | ha' | ha' | ha' <;> rw [ha'] at hab ⊢ <;> omega
-  rcases h_cases with ⟨ha_eq, hb_eq⟩ | ⟨ha_eq, hb_eq⟩
-  · exact Or.inr ⟨hb_eq, ha_eq⟩
-  · exact Or.inl ⟨hb_eq, ha_eq⟩
+  grind
 
 lemma helper_1
   {x : ℤ} {n : ℕ} (h₁ : x ^ 2 = 9) (h₂ : n = 4) :
@@ -1091,9 +1031,7 @@ theorem RamanujanNagell :
       have h₇ : 4 = 2 ^ 2 := by norm_num
       rw [h₇] at h₆
       exact Nat.pow_right_injective (by norm_num) h₆
-    have n_eq_4 : n = 4 := by linarith
-    refine helper_1 ?_ n_eq_4
-    rw [k_eq_2] at h; norm_num at h; linarith
+    grind
   · have m := Nat.le.dest n_ge_3
     rcases m with _ | m
     · have n_eq_3 : n = 3 := by linarith
@@ -1122,6 +1060,4 @@ theorem ramanujanNagellExact :
   intro x n
   constructor
   · exact RamanujanNagell x n
-  · intro h
-    rcases h with h | h | h | h | h | h | h | h | h | h <;>
-      (rw [Prod.mk.injEq] at h; obtain ⟨hx, hn⟩ := h; subst hx; subst hn; norm_num)
+  · grind

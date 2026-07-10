@@ -137,18 +137,7 @@ private lemma LDL_entry (r : Block) (i j : Fin 3) :
     -- This is definitional after unfolding `rhsInt`.
     simp [rhsInt, mul_assoc, mul_comm, mul_left_comm]
   -- Finish.
-  calc
-    (∑ k : Fin 3, (L r i k) * (Dvec r k) * (L r j k))
-        = (invDen * invDen * invDen) *
-            ∑ k : Fin 3,
-              ((DNum r).getD k.1 0 : Q) *
-                ((matGet (LNum r) i.1 k.1 : Q) * (matGet (LNum r) j.1 k.1 : Q)) := hterm
-    _ = (invDen * invDen * invDen) * (rhsInt r i j : Q) := by
-          -- Avoid cancellation (`simp` would turn this into a disjunction `... ∨ invDen = 0`).
-          simpa using congrArg (fun t => (invDen * invDen * invDen) * t) hsumNum
-    _ = (rhsInt r i j : Q) * (invDen * invDen * invDen) := by ac_rfl
-    _ = (rhsInt r i j : Q) * ((den r : Q) * (den r : Q) * (den r : Q))⁻¹ := by simp [hdenProd]
-    _ = (rhsInt r i j : Q) / ((den r : Q) * (den r : Q) * (den r : Q)) := by simp [div_eq_mul_inv]
+  grind
 
 theorem Z_eq_LDL (r : Block) :
     Z r = (L r) * Matrix.diagonal (Dvec r) * (Matrix.transpose (L r)) := by
@@ -167,9 +156,7 @@ theorem Z_eq_LDL (r : Block) :
       (ZNum r i j : Q) / (D : Q) =
         (rhsInt r i j : Q) / ((den r : Q) * (den r : Q) * (den r : Q)) := by
     -- Use cross-multiplication for fractions in a field.
-    apply (div_eq_div_iff hDpos hdenpos).2
-    -- Arrange both sides to match `hQ`.
-    simpa [mul_assoc, mul_left_comm, mul_comm] using hQ
+    grind
   -- Compare the `Z` entry and the LDL entry via the explicit entry formulas.
   calc
     Z r i j

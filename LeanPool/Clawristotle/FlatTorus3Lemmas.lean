@@ -51,9 +51,7 @@ lemma hGradChainLog (g : X → ℝ) (hg_diff : IsSpatiallySmooth 1 g) (hg : ∀ 
   have key := hGradChainExp (fun y => Real.log (g y)) (hDiff_log 1 g hg_diff hg) x i
   have hexplog : (fun y => Real.exp (Real.log (g y))) = g := by
     ext y; exact Real.exp_log (hg y)
-  rw [hexplog, Real.exp_log (hg x)] at key
-  have hgx_ne : g x ≠ 0 := ne_of_gt (hg x)
-  field_simp at key ⊢; linarith
+  grind
 
 /-- Integral of a single gradient component vanishes (from IBP with φ=1). -/
 private lemma gradIntZero_component (g : X → ℝ) (hg : IsSpatiallySmooth 1 g) (i : Fin 3) :
@@ -105,18 +103,14 @@ lemma hGradAddConst (f : X → ℝ) (hf : IsSpatiallySmooth 1 f) (c : ℝ) :
   -- h1: exp(c) * (exp(f x) * gradX f x i) = exp(f x) * exp(c) * gradX(f+c) x i
   have hne : Real.exp c * Real.exp (f x) ≠ 0 :=
     ne_of_gt (mul_pos (Real.exp_pos _) (Real.exp_pos _))
-  have h4 : Real.exp c * Real.exp (f x) * gradX f x i =
-      Real.exp c * Real.exp (f x) * gradX (fun y => f y + c) x i := by linarith
-  exact mul_left_cancel₀ hne h4.symm
+  grind
 
 /-- Second derivative test: Laplacian ≥ 0 at a minimum.
     Derived from hLaplacianMaxNonpos applied to -φ, using linearity of grad and div. -/
 lemma hLaplacianMinNonneg (φ : X → ℝ) (hφ : IsSpatiallySmooth 2 φ) (x₀ : X)
     (hmin : ∀ x, φ x₀ ≤ φ x) : 0 ≤ divX (gradX φ) x₀ := by
   have hmax : ∀ x, (fun y => (-1) * φ y) x ≤ (fun y => (-1) * φ y) x₀ := by
-    intro x
-    simp
-    linarith [hmin x]
+    grind
   have h := hLaplacianMaxNonpos (fun y => (-1) * φ y) x₀ (hDiff_smul 2 (-1) φ hφ) hmax
   have h2 : divX (gradX (fun y => (-1) * φ y)) x₀ =
       (-1) * divX (gradX φ) x₀ := by

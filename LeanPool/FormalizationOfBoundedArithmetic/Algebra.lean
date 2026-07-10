@@ -58,8 +58,7 @@ instance instSemiringLeanPool : Semiring M where
     intro a b c
     rw [<- iopen.mul_comm]
     rw [iopen.mul_add]
-    rw [iopen.mul_comm]
-    conv => lhs; rhs; rw [iopen.mul_comm]
+    grind
 
 end IOPEN
 
@@ -94,14 +93,6 @@ instance : IsLeftCancelAdd M where
   add_left_cancel x := by
     unfold IsAddLeftRegular
     unfold Function.Injective
-    intro a1 a2
-    simp only
-    intro h
-    conv at h =>
-      rw [add_comm]
-      rhs
-      rw [add_comm]
-    rw [@IOPENModel.add_cancel_right] at h
-    exact h
+    grind
 
 end IDelta0

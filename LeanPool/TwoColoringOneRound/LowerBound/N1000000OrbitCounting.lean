@@ -74,13 +74,7 @@ private lemma ge_three_of_ne_base (x : SymN)
                 simp [baseVertex, baseTuple, hx2]
               exact h2 this
             | succ m3 =>
-                have hxge : 3 ≤ x.1 := by
-                  -- `x.1 = m3 + 3` in this branch.
-                  have hx : x.1 = m3.succ.succ.succ := by simp [hx0, hm0, hm1]
-                  -- `3 ≤ succ (succ (succ m3))`.
-                  rw [hx]
-                  exact Nat.succ_le_succ (Nat.succ_le_succ (Nat.succ_le_succ (Nat.zero_le m3)))
-                exact (Nat.not_lt_of_ge hxge hlt).elim
+                grind
 
 /-- Free columns for a directed type `k`: coordinates not equal to any base symbol. -/
 def FreeCol (k : DirIdx) : Type :=
@@ -126,17 +120,14 @@ theorem baseOrbit_freeCoord_outside {k : DirIdx} (u : BaseOrbit k) (j : FreeCol 
       exact maskAt_testBit_eq_decide_colMatch (d := k) (i := i) (j := j.1)
     have hmFalse : (maskAt k).testBit (i.1 * 3 + j.1.1) = false := by
       -- `colMatch = none`, so it cannot be `some i`.
-      have : decide (colMatch (maskAt k) j.1 = some i) = false := by simp [hcolNone]
-      simp [hm, this]
+      grind
     have hdFalse : (dirMask baseVertex u.1).testBit (i.1 * 3 + j.1.1) = false := by
       simpa [u.2] using hmFalse
     have hb :
         (dirMask baseVertex u.1).testBit (i.1 * 3 + j.1.1) =
           decide (baseVertex.1 i = u.1.1 j.1) := by
       exact dirMask_testBit (u := baseVertex) (v := u.1) (i := i) (j := j.1)
-    have hDecFalse : decide (baseVertex.1 i = u.1.1 j.1) = false := by simpa [hb] using hdFalse
-    have : ¬ baseVertex.1 i = u.1.1 j.1 := of_decide_eq_false hDecFalse
-    simpa [eq_comm] using this
+    grind
   exact
     ge_three_of_ne_base (x := u.1.1 j.1)
       (h0 := hne ⟨0, by decide⟩) (h1 := hne ⟨1, by decide⟩) (h2 := hne ⟨2, by decide⟩)
@@ -185,8 +176,7 @@ private theorem decodeTuple_injective (k : DirIdx) (g : FreeCol k ↪ AvailFrom3
     have hg : (g ⟨j₁, h₁⟩) = (g ⟨j₂, h₂⟩) := by
       apply Subtype.ext
       exact this
-    have : (⟨j₁, h₁⟩ : FreeCol k) = ⟨j₂, h₂⟩ := g.injective hg
-    simpa using congrArg Subtype.val this
+    grind
   · -- free vs fixed
     rcases (Option.ne_none_iff_exists').1 h₂ with ⟨i₂, hi₂⟩
     have hDec₁ : decodeTuple (k := k) g j₁ = (g ⟨j₁, h₁⟩).1 :=
@@ -239,26 +229,14 @@ private lemma decide_base_eq_decodeVertex_eq_decide_colMatch (k : DirIdx)
         simpa [h0] using h1
       have hge : 3 ≤ ((decodeVertex (k := k) g).1 j).1 := by simpa [hv] using (g ⟨j, hc⟩).2
       have hlt : (baseVertex.1 i).1 < 3 := base_val_lt_three (i := i)
-      have hne : baseVertex.1 i ≠ (decodeVertex (k := k) g).1 j := by
-        intro hEqSym
-        have : (baseVertex.1 i).1 = ((decodeVertex (k := k) g).1 j).1 := by
-          simpa using congrArg Fin.val hEqSym
-        exact (Nat.not_lt_of_ge hge (by simpa [this] using hlt)).elim
-      simp [hne]
+      grind
   | some i0 =>
       have hv : (decodeVertex (k := k) g).1 j = baseVertex.1 i0 := by
         have h0 : (decodeVertex (k := k) g).1 j = decodeTuple (k := k) g j := rfl
         have h1 : decodeTuple (k := k) g j = baseVertex.1 i0 :=
           decodeTuple_of_colMatch_some (k := k) (g := g) (j := j) (i := i0) hc
         simpa [h0] using h1
-      by_cases hEq : i = i0
-      · subst hEq
-        simp [hv]
-      · have hne : baseVertex.1 i ≠ baseVertex.1 i0 := by
-          intro hEqSym
-          exact hEq (baseVertex.2 hEqSym)
-        have hEq' : i0 ≠ i := by simpa [eq_comm] using hEq
-        simp [hv, hne, hEq']
+      grind
 
 theorem decodeVertex_mask (k : DirIdx) (g : FreeCol k ↪ AvailFrom3) :
     dirMask baseVertex (decodeVertex (k := k) g) = maskAt k := by
@@ -271,11 +249,9 @@ theorem decodeVertex_mask (k : DirIdx) (g : FreeCol k ↪ AvailFrom3) :
     let iNat : Nat := t / 3
     let jNat : Nat := t % 3
     have hi : iNat < 3 := by
-      have : t < 3 * 3 := by simpa using ht
-      simpa [iNat] using (Nat.div_lt_of_lt_mul this)
+      grind
     have hj : jNat < 3 := by
-      have : 0 < 3 := by decide
-      simpa [jNat] using (Nat.mod_lt t (y := 3) this)
+      grind
     let i : Fin 3 := ⟨iNat, hi⟩
     let j : Fin 3 := ⟨jNat, hj⟩
     have htDecomp : i.1 * 3 + j.1 = t := by
@@ -316,9 +292,7 @@ theorem base_eq_of_colMatch {k : DirIdx} (u : BaseOrbit k) {j i : Fin 3}
   have hb :
       (dirMask baseVertex u.1).testBit (i.1 * 3 + j.1) = decide (baseVertex.1 i = u.1.1 j) := by
     exact dirMask_testBit (u := baseVertex) (v := u.1) (i := i) (j := j)
-  have : decide (baseVertex.1 i = u.1.1 j) = true := by simpa [hb] using hd'
-  have : baseVertex.1 i = u.1.1 j := of_decide_eq_true this
-  simpa [eq_comm] using this
+  grind
 
 private theorem decode_encode_id (k : DirIdx) :
     ∀ u : BaseOrbit k, decodeBaseOrbit k (encodeBaseOrbit k u) = u := by
@@ -353,9 +327,7 @@ private theorem decode_encode_id (k : DirIdx) :
       have h1 : decodeTuple (k := k) (encodeBaseOrbit k u) j = baseVertex.1 i := by
         simpa using
           (decodeTuple_of_colMatch_some (k := k) (g := encodeBaseOrbit k u) (j := j) (i := i) hi)
-      have hDec : (decodeBaseOrbit k (encodeBaseOrbit k u)).1.1 j = baseVertex.1 i := by
-        simpa [h0] using h1
-      simpa [hUi] using hDec
+      grind
 
 private theorem encode_decode_id (k : DirIdx) :
     ∀ g : FreeCol k ↪ AvailFrom3, encodeBaseOrbit k (decodeBaseOrbit k g) = g := by

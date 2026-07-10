@@ -40,10 +40,7 @@ lemma measurable_normalize (r) : Measurable (normalize (r := r)) := by
 lemma injective_normalize (r) : Function.Injective (normalize (r := r)) := by
   intro i₁ i₂ hi
   simp only [normalize, Subtype.mk.injEq] at hi
-  rw [div_left_inj'] at hi
-  · ext
-    exact hi
-  · grind
+  grind
 
 noncomputable instance instMeasureSpaceElemRealIcoOfNatLeanPool (r : ℝ) :
     MeasureSpace (Set.Ico 0 r) where
@@ -55,8 +52,7 @@ instance : IsEmpty (Set.Ico 0 (0 : ℝ)) := by simp
 lemma volume_zero : (volume : Measure (Set.Ico 0 (0 : ℝ))) = 0 := by
   ext s
   have hs : s = ∅ := by
-    ext a
-    simpa using a.property
+    grind
   simp only [hs, measure_empty]
 
 @[simp]
@@ -69,8 +65,7 @@ lemma measurableEmbedding_normalize (r) : MeasurableEmbedding (normalize (r := r
     simp only [normalize, ← Set.image_comp, Function.comp_apply]
     replace hs := MeasurableSet.subtype_image (by simp) hs
     have : ((fun a ↦ ↑a / r) '' s) = (· / r) '' (Subtype.val '' s) := by
-      simp only [← Set.image_comp]
-      rfl
+      grind
     rw [this]
     generalize ht : Subtype.val '' s = t
     rw [ht] at hs

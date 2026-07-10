@@ -118,9 +118,7 @@ def NeighborhoodSystem.ofNestedOrDisjoint {α : Type*} (mem : Set α → Prop) (
     rcases hnd hX hY with h | h | h
     · rwa [Set.inter_eq_left.mpr h]
     · rwa [Set.inter_eq_right.mpr h]
-    · rw [h]
-      rw [h] at hZsub
-      rwa [← Set.subset_empty_iff.mp hZsub]
+    · grind
 
 /-- **Exercise 1.19 (Scott 1981, PRG-19) — positivity, condition (ii′).** A
 neighbourhood
@@ -201,9 +199,7 @@ theorem interUpTo_subset (X : ℕ → Set α) :
   | succ n ih =>
     intro j h
     rw [interUpTo_succ]
-    rcases Nat.eq_or_lt_of_le (Nat.lt_succ_iff.mp h) with h' | h'
-    · subst h'; exact Set.inter_subset_right
-    · exact Set.inter_subset_left.trans (ih h')
+    grind
 
 /-- A finite sequence `X₀, …, Xₙ₋₁` of neighbourhoods is *consistent in* `𝒟` when
 it has a
@@ -281,8 +277,7 @@ theorem Element.ext {x y : V.Element} (h : ∀ X, x.mem X ↔ y.mem X) : x = y :
   rcases x with ⟨xmem, _, _, _, _⟩
   rcases y with ⟨ymem, _, _, _, _⟩
   have hmem : xmem = ymem := funext fun X => propext (h X)
-  subst hmem
-  rfl
+  grind
 
 /-- A filter (`Element`) is closed under the finite intersection `⋂_{i<n} Xᵢ`: if
 every factor

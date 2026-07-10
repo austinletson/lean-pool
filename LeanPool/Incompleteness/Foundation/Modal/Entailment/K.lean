@@ -590,8 +590,7 @@ lemma provable_iff_boxed : (□''X) *⊢[𝓢]! φ ↔ ∃ Δ :
       simp only [List.eq_prebox_premultibox_one, List.eq_box_multibox_one, Finset.mem_toList,
         Finset.toList_toFinset, Finset.mem_image, Finset.mem_preimage, Function.iterate_one,
         List.mem_toFinset] at hq;
-      obtain ⟨χ, _, rfl⟩ := hq;
-      assumption;
+      grind
     · apply FiniteContext.provable_iff.mpr;
       apply imp_trans''! ?_ (FiniteContext.provable_iff.mp hΓ);
       apply conjconj_subset!;

@@ -94,9 +94,7 @@ def schwartzHasPolynomialDecay (f : SchwartzMap E ℂ) (k : ℕ) :
   have h_rearrange : ‖f x‖ ≤ C / (1 + ‖x‖)^(k : ℝ) := by
     rw [Real.rpow_natCast]
     rw [le_div_iff₀ (pow_pos h1 k)]
-    calc ‖f x‖ * (1 + ‖x‖) ^ k
-        = (1 + ‖x‖) ^ k * ‖f x‖ := by ring
-      _ ≤ C := hx
+    grind
   calc ‖f x‖
       ≤ C / (1 + ‖x‖)^(k : ℝ) := h_rearrange
     _ ≤ (C + 1) / (1 + ‖x‖)^(k : ℝ) := by
@@ -143,8 +141,7 @@ lemma exp_decay_implies_polynomial_decay (m α : ℝ) (hm : m > 0) (hα : α > 0
     --                                = (α/m)^α * exp(m + mx - mx) = (α/m)^α * exp(m)
     have h_exp_combine : Real.exp (m * (1 + x)) * Real.exp (-m * x) = Real.exp m := by
       rw [← Real.exp_add]
-      congr 1
-      ring
+      grind
     have h_one_plus_nonneg : 0 ≤ 1 + x := h_one_plus_pos.le
     have h_rpow_cancel : (1 + x)^α * (1 + x)^(-α) = 1 := by
       rw [← Real.rpow_add h_one_plus_pos]; simp
@@ -195,8 +192,7 @@ def normExpDecayImpliesPolynomialDecay {F : Type*} [NormedAddCommGroup F]
       _ = (C_exp * C_poly) * (1 + ‖z‖)^(-α) := by ring
       _ ≤ C * (1 + ‖z‖)^(-α) := by
           gcongr
-          calc C_exp * C_poly ≤ max (C_exp * C_poly) (M * (1 + R₀)^α) := le_max_left _ _
-            _ ≤ C := by simp only [C]; linarith
+          grind
   · -- Inside R₀: use global bound
     push Not at hz
     have h_one_plus_R₀_pos : 0 < 1 + R₀ := by linarith
@@ -227,8 +223,7 @@ def normExpDecayImpliesPolynomialDecay {F : Type*} [NormedAddCommGroup F]
           gcongr
       _ ≤ C * (1 + ‖z‖)^(-α) := by
           gcongr
-          calc M * (1 + R₀)^α ≤ max (C_exp * C_poly) (M * (1 + R₀)^α) := le_max_right _ _
-            _ ≤ C := by simp only [C]; linarith
+          grind
 
 /-! ## Phase 3: Split Convolution Lemma -/
 
@@ -263,8 +258,7 @@ lemma one_add_half_pow_le (x : ℝ) (hx : x ≥ 0) (N : ℝ) (hN : N > 0) :
   have h2_rpow_pos : 0 < (1 + x) ^ N := Real.rpow_pos_of_pos h2 N
   have h_two_rpow_pos : 0 < (2:ℝ) ^ N := Real.rpow_pos_of_pos h2_pos N
   rw [inv_eq_one_div, inv_eq_one_div, mul_one_div, div_le_div_iff₀ h1_rpow_pos h2_rpow_pos]
-  calc 1 * (1 + x) ^ N = (1 + x) ^ N := by ring
-    _ ≤ (2:ℝ) ^ N * (1 + x / 2) ^ N := h_rpow_le
+  grind
 
 /-- Core lemma: If u, v both have polynomial decay of order N > dim(E),
     then their convolution also has polynomial decay of order N.
@@ -346,8 +340,7 @@ private lemma convolution_polynomial_decay_exists
           -- by one_add_half_pow_le: (1 + x/2)^{-N} ≤ 2^N * (1+x)^{-N}
           -- so C_u * (1 + x/2)^{-N} ≤ C_u * 2^N * (1+x)^{-N}
           have h_half := one_add_half_pow_le ‖x‖ (norm_nonneg x) N (by
-            calc N > Module.finrank ℝ E := hN_dim
-              _ ≥ 0 := Nat.cast_nonneg _)
+            grind)
           have h_half_pos : 0 < 1 + ‖x‖ / 2 := by positivity
           simp only [c_A]
           rw [div_eq_mul_inv, div_eq_mul_inv]
@@ -370,9 +363,7 @@ private lemma convolution_polynomial_decay_exists
           -- ‖x - y‖ ≥ ‖x‖ - ‖y‖ > ‖x‖ - ‖x‖/2 = ‖x‖/2
           have h_xy : ‖x - y‖ ≥ ‖x‖ / 2 := by
             have h1 : ‖x - y‖ ≥ ‖x‖ - ‖y‖ := norm_sub_norm_le x y
-            have h2 : ‖x‖ - ‖y‖ > ‖x‖ - ‖x‖ / 2 := by linarith
-            have h3 : ‖x‖ - ‖x‖ / 2 = ‖x‖ / 2 := by ring
-            linarith
+            grind
           have hN_pos : N > 0 := lt_of_le_of_lt (Nat.cast_nonneg _) hN_dim
           calc ‖v (x - y)‖ ≤ C_v / (1 + ‖x - y‖)^N := hv_bound (x - y)
             _ ≤ c_Ac := by
@@ -388,8 +379,7 @@ private lemma convolution_polynomial_decay_exists
           gcongr
           -- c_Ac = C_v / (1 + ‖x‖/2)^N ≤ C_v * 2^N / (1 + ‖x‖)^N
           have h_half := one_add_half_pow_le ‖x‖ (norm_nonneg x) N (by
-            calc N > Module.finrank ℝ E := hN_dim
-              _ ≥ 0 := Nat.cast_nonneg _)
+            grind)
           have h_half_pos : 0 < 1 + ‖x‖ / 2 := by positivity
           simp only [c_Ac]
           rw [div_eq_mul_inv, div_eq_mul_inv]
@@ -417,8 +407,7 @@ private lemma convolution_polynomial_decay_exists
         ring
     _ ≤ C * (1 + ‖x‖)^(-N) := by
         gcongr
-        simp only [C]
-        linarith
+        grind
     _ = C / (1 + ‖x‖)^N := by
         rw [Real.rpow_neg (le_of_lt h_one_plus_pos)]
         ring
@@ -507,9 +496,7 @@ private lemma convolution_compactSupport_decay_exists (f : SchwartzMap E ℂ) (K
     have h_x_rpow_pos : 0 < (1 + ‖x‖)^(N : ℝ) := Real.rpow_pos_of_pos h_one_plus_x_pos N
     have h_y_rpow_pos : 0 < (1 + ‖y‖)^(N : ℝ) := Real.rpow_pos_of_pos h_one_plus_y_pos N
     rw [div_le_div_iff₀ h_x_rpow_pos h_y_rpow_pos]
-    calc 1 * (1 + ‖y‖) ^ (N : ℝ) = (1 + ‖y‖) ^ (N : ℝ) := by ring
-      _ ≤ (1 + ‖x‖) ^ (N : ℝ) * (1 + R₀) ^ (N : ℝ) := h_pow
-      _ = (1 + R₀) ^ (N : ℝ) * (1 + ‖x‖) ^ (N : ℝ) := by ring
+    grind
   -- Shifted kernel integrability (needed in multiple places)
   have hK_shift_int : Integrable (fun x => |kernelSingular K R₀ (x - y)|) volume :=
     (hK_sing_int.comp_sub_right y).abs
@@ -681,8 +668,7 @@ private lemma convolution_expDecay_polynomial_decay_exists (f : SchwartzMap E �
       intro z
       have hb := hK_refl_bound z
       rw [Real.rpow_neg (by linarith [norm_nonneg z] : 0 ≤ 1 + ‖z‖)]
-      calc ‖K_refl z‖ ≤ C_poly / (1 + ‖z‖)^N := hb
-        _ = C_poly * ((1 + ‖z‖)^N)⁻¹ := by ring
+      grind
     -- Use Integrable.mono with bounding integrable function
     have h_bnd_int := h_base_int.const_mul C_poly
     refine Integrable.mono h_bnd_int ?_ ?_

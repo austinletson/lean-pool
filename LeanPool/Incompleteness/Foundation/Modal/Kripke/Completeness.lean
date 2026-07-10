@@ -79,14 +79,10 @@ lemma multirel_def_multibox : Ω₁ ≺^[n] Ω₂ ↔ ∀ {φ}, □^[n]φ ∈ Ω
         contradiction;
       use Ω;
       constructor;
-      · intro φ hp;
-        apply hΩ;
-        simp_all;
+      · grind
       · apply ih.mpr;
         apply multibox_multidia.mpr;
-        intro φ hp;
-        apply hΩ;
-        simp_all;
+        grind
 
 lemma multirel_def_multibox' : Ω₁ ≺^[n] Ω₂ ↔ ∀ {φ}, φ ∈ (□''⁻¹^[n]Ω₁.1) → φ ∈ Ω₂.1 := by
   constructor;

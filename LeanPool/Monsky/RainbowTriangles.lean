@@ -72,43 +72,17 @@ lemma green_region (X : ℝ²) :
     (coloring v X = Color.Green) → v (X 0) < v (X 1) ∧ v (X 1) ≥ v (1) := by
   intro h
   simp only [coloring, Fin.isValue, map_one, ge_iff_le] at h
-  split_ifs at h with h1 h2
-  rw [v.map_one]
-  exact h2
+  grind
 
 lemma red_region (X : ℝ²) : (coloring v X = Color.Red) → v (X 0) < v 1 ∧ v (X 1) < v 1 := by
   intro h
   simp only [coloring, Fin.isValue, map_one, ge_iff_le] at h
-  split_ifs at h with h1
-  rw [v.map_one]
-  exact h1
+  grind
 
 lemma blue_region (X : ℝ²) : (coloring v X = Color.Blue) → v (X 0) ≥ v (1) ∧ v (X 0) ≥ v (X 1) := by
   intro h
   simp only [coloring, Fin.isValue, map_one, ge_iff_le] at h
-  split_ifs at h with h1 h2
-  rw [v.map_one]
-  -- Apply De Morgan's law
-  rw [Decidable.not_and_iff_or_not] at h1 h2
-  -- Get rid of negations
-  rw [not_lt, not_lt] at h1
-  rw [not_lt, not_le] at h2
-  -- Split h1 into cases
-  rcases h1 with p | q
-  · constructor
-    · apply p
-    · obtain m | n := h2
-      · apply m
-      · have q' : v (X 1) ≤ 1 := le_of_lt n
-        apply le_trans q' p
-  -- Split h2 into cases
-  · rcases h2 with a | b
-    · constructor
-      · apply le_trans q a
-      · exact a
-    -- No more cases left
-    · rw [← not_lt] at q
-      contradiction
+  grind
 
 -- Record our definition of a rainbow triangle
 
@@ -379,8 +353,7 @@ theorem no_Color_lines
     rw [h_det]
     exact bounded_det v x y z hxb hyg hzr
   have h3 : (0 : Γ₀) ≥ 1 := by
-    rw [vdet0] at vdet1
-    exact vdet1
+    grind
   exact not_le_of_gt (zero_lt_one) h3
 
 -- We show next that the coloring of (0,0) is red, (0,1) is green and (1,0) is blue.
@@ -415,14 +388,11 @@ v (det T) ≥ 1 := by
   rcases hb with ⟨x, hx⟩
   rcases hg with ⟨y, hy⟩
   have hxy : x ≠ y := by
-    rintro rfl
-    simp_all only [reduceCtorEq]
+    grind
   have hxz : x ≠ z := by
-    rintro rfl
-    simp_all only [reduceCtorEq]
+    grind
   have hyz : y ≠ z := by
-    rintro rfl
-    simp_all only [reduceCtorEq]
+    grind
   have hT : ∃ b, σ b = (fun | 0 =>  x | 1 =>  y | 2 => z) := fun_in_bijections hxy hxz hyz
   rcases hT with ⟨b, hb⟩
   have h1 : det T = bSign b * det (T ∘ σ b):= by
@@ -432,18 +402,13 @@ v (det T) ≥ 1 := by
         - T x 0 * T z 1 := by
     simp only [Fin.isValue]
     rw [det]
-    simp [hb]
-    ring_nf
+    grind
   have h3 : v (det (T ∘ σ b)) ≥ 1 := by
     rw [h2]
     apply bounded_det v (T x) (T y) (T z) hx hy hz
   have h4 : v (bSign b) = 1 := by
     fin_cases b <;> simp [bSign, v.map_one]
-  have h5 : v (det T) = v (bSign b) * v (det (T ∘ σ b)) := by
-    rw [h1, v.map_mul]
-  rw [h4, one_mul] at h5
-  rw [h5]
-  exact h3
+  grind
 
 theorem no_odd_rainbowTriangle
   (T : Fin 3 → ℝ²)
@@ -467,13 +432,7 @@ theorem no_odd_rainbowTriangle
   have v1 : v (det T) = v (2 / n) := by
     rw [val_inv, h]
   have v2: v (2 / n) = v (1/2)⁻¹ * v (1/ n) := by
-    rw [v.map_div]
-    have v3: v 2 = (v (1/2))⁻¹ := by
-      rw [← v.map_inv, ← (by norm_num : (2:ℝ)⁻¹ = 1/2), inv_inv]
-    rw [v3]
-    simp only [one_div, map_inv₀, inv_inv]
-    rw [← v.map_div, ← v.map_inv, ← v.map_mul]
-    ring_nf
+    grind
   have v4: v (1/ n) = 1 := vodd n hodd
   rw [v4] at v2
   have bound2: v (2 / n) < 1 := by
@@ -483,8 +442,7 @@ theorem no_odd_rainbowTriangle
     · aesop
     · rw [← inv_pos, v.map_inv, inv_inv]
       exact lt_trans (by simp) vhalf
-  have bound3: v (det T) < 1 := v1 ▸ bound2
-  exact bound3.not_ge bound
+  grind
 
 end Monsky
 end LeanPool

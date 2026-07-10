@@ -34,8 +34,7 @@ private lemma log_lower_from_atanh (x z c : ℝ) (n : ℕ)
     (hc : c ≤ 2 * (∑ i ∈ Finset.range n, x ^ (2 * i + 1) / (2 * i + 1))) :
     c ≤ Real.log z := by
   have h := Real.sum_range_le_log_div hx₀ hx₁ n
-  rw [hz] at h
-  nlinarith
+  grind
 
 private lemma log_upper_from_atanh (x z c : ℝ) (n : ℕ)
     (hx₀ : 0 ≤ x) (hx₁ : x < 1)
@@ -44,8 +43,7 @@ private lemma log_upper_from_atanh (x z c : ℝ) (n : ℕ)
         x ^ (2 * n + 1) / (1 - x ^ 2)) ≤ c) :
     Real.log z ≤ c := by
   have h := Real.log_div_le_sum_range_add hx₀ hx₁ n
-  rw [hz] at h
-  nlinarith
+  grind
 
 /-! ## E₂ log bounds: Phi 4 (4/7) (3009/10000) -/
 
@@ -84,8 +82,7 @@ theorem log_upper_4_7 : Real.log (4/7) ≤ (-5596157/10000000 : ℝ) := by
     norm_num [Finset.sum_range_succ]
   have hlog : Real.log (4 / 7 : ℝ) = -Real.log (7 / 4 : ℝ) := by
     rw [show (4 / 7 : ℝ) = (7 / 4 : ℝ)⁻¹ by norm_num, Real.log_inv]
-  rw [hlog]
-  linarith
+  grind
 
 theorem log_lower_6991_10000 : (-715923/2000000 : ℝ) ≤ Real.log (6991/10000) := by
   rw [ Real.le_log_iff_exp_le ] <;> norm_num;
@@ -109,8 +106,7 @@ theorem log_lower_9027_10000 : (-1023651/10000000 : ℝ) ≤ Real.log (9027/1000
     norm_num [Finset.sum_range_succ]
   have hlog : Real.log (9027 / 10000 : ℝ) = -Real.log (10000 / 9027 : ℝ) := by
     rw [show (9027 / 10000 : ℝ) = (10000 / 9027 : ℝ)⁻¹ by norm_num, Real.log_inv]
-  rw [hlog]
-  linarith
+  grind
 
 theorem log_upper_21063_10000 : Real.log (21063/10000) ≤ (7449329/10000000 : ℝ) := by
   refine log_upper_from_atanh (x := 11063 / 31063) (z := 21063 / 10000)
@@ -172,8 +168,7 @@ theorem log_upper_2_7 : Real.log (2/7) ≤ (-12527629/10000000 : ℝ) := by
     norm_num [Finset.sum_range_succ]
   have hlog : Real.log (2 / 7 : ℝ) = -Real.log (7 / 2 : ℝ) := by
     rw [show (2 / 7 : ℝ) = (7 / 2 : ℝ)⁻¹ by norm_num, Real.log_inv]
-  rw [hlog]
-  linarith
+  grind
 
 theorem log_lower_94_125 : (-285019/1000000 : ℝ) ≤ Real.log (94/125) := by
   -- We'll use the exponential function to show that $94/125 > \exp(-0.285019)$.
@@ -194,8 +189,7 @@ theorem log_lower_578_625 : (-390889/5000000 : ℝ) ≤ Real.log (578/625) := by
     norm_num [Finset.sum_range_succ]
   have hlog : Real.log (578 / 625 : ℝ) = -Real.log (625 / 578 : ℝ) := by
     rw [show (578 / 625 : ℝ) = (625 / 578 : ℝ)⁻¹ by norm_num, Real.log_inv]
-  rw [hlog]
-  linarith
+  grind
 
 theorem log_upper_658_625 : Real.log (658/625) ≤ (514533/10000000 : ℝ) := by
   refine log_upper_from_atanh (x := 33 / 1283) (z := 658 / 625)
@@ -219,8 +213,7 @@ theorem log_lower_2631_13750 : (-16536749/10000000 : ℝ) ≤ Real.log (2631/137
     norm_num [Finset.sum_range_succ]
   have hlog : Real.log (2631 / 13750 : ℝ) = -Real.log (13750 / 2631 : ℝ) := by
     rw [show (2631 / 13750 : ℝ) = (13750 / 2631 : ℝ)⁻¹ by norm_num, Real.log_inv]
-  rw [hlog]
-  linarith
+  grind
 
 theorem log_lower_329_1250 : (-13348411/10000000 : ℝ) ≤ Real.log (329/1250) := by
   rw [ Real.le_log_iff_exp_le ] <;> norm_num;
@@ -238,8 +231,7 @@ theorem log_upper_5_11 : Real.log (5/11) ≤ (-7884573/10000000 : ℝ) := by
     norm_num [Finset.sum_range_succ]
   have hlog : Real.log (5 / 11 : ℝ) = -Real.log (11 / 5 : ℝ) := by
     rw [show (5 / 11 : ℝ) = (11 / 5 : ℝ)⁻¹ by norm_num, Real.log_inv]
-  rw [hlog]
-  linarith
+  grind
 
 theorem log_lower_921_1250 : (-763597/2500000 : ℝ) ≤ Real.log (921/1250) := by
   rw [← Real.log_exp (-763597 / 2500000 : ℝ), Real.le_log_iff_exp_le] <;>

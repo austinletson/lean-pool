@@ -82,8 +82,7 @@ theorem leading_coeff_slack (a F U V : ℝ)
       ((1 - a) * F + (1 - a) / 2 * U + (1 - a) / 2 * V)) =
       2 * (1 - a) * (a / 2 * F + a / 4 * U) +
       ((1 - a / 2) * (1 + a) ^ 2 - (1 - a) ^ 2) * V := by
-    field_simp
-    ring
+    grind
   rw [h_clear]
   have h_Vcoeff : (1 - a / 2) * (1 + a) ^ 2 - (1 - a) ^ 2 ≥ 0 := by
     nlinarith [sq_nonneg a]
@@ -267,9 +266,7 @@ theorem tangential_cross_absorption (a sqrtη PVsq PGsq PVG : ℝ)
   -- → PVsq + sqrtη²·PGsq ≥ 2·sqrtη·√PVsq·√PGsq
   have h_amgm : PVsq + sqrtη ^ 2 * PGsq ≥ 2 * sqrtη * Real.sqrt PVsq * Real.sqrt PGsq := by
     have := sq_nonneg (Real.sqrt PVsq - sqrtη * Real.sqrt PGsq)
-    rw [sub_sq] at this
-    simp only [Real.sq_sqrt hPVsq, mul_pow, Real.sq_sqrt hPGsq] at this
-    nlinarith
+    grind
   -- Now: -(1-a)·sqrtη·PVG ≤ (1-a)·sqrtη·|PVG|
   have h_abs : -(1 - a) * sqrtη * PVG ≤ (1 - a) * sqrtη * |PVG| := by
     nlinarith [neg_abs_le PVG, mul_nonneg h1a hsqrtη]
@@ -334,8 +331,7 @@ theorem lyapunov_contraction_arithmetic
     (hbound : Fn1 + Un1_half + Tn1 ≤ (1 - a) * Ln + δ)
     (habsorb : δ ≤ a / 2 * Ln) :
     Ln1 ≤ (1 - a / 2) * Ln := by
-  rw [hLn1_def]
-  linarith
+  grind
 
 -- ════════════════════════════════════════════════════════════════════════════
 -- § 11. Sufficient condition for perturbation absorption

@@ -126,11 +126,8 @@ theorem brunn_minkowski
         Real.mul_rpow
           (Real.rpow_nonneg (by linarith) (D * (1 - θ))) (Real.rpow_nonneg (le_of_lt hθ0) (D * θ)),
         ← Real.rpow_mul (by linarith), ← Real.rpow_mul (le_of_lt hθ0)]
-      congr 3
-      · grind
       grind
-    rw [this] at h_result
-    exact h_result
+    grind
   -- Simplify to get the desired result
   have h_result_simp_2 : ENNReal.ofReal (va + vb) ≤ volume (A + B) ^ D⁻¹ := by
     have h_cancel_D : D⁻¹ * D = 1 := by unfold D; field_simp
@@ -202,8 +199,7 @@ theorem brunn_minkowski
         field_simp
       _ = (va + vb)^(va*(va + vb)⁻¹ + vb*(va + vb)⁻¹) := by rw [Real.rpow_add h_va_plus_vb_pos]
       _ = va + vb := by field_simp; apply Real.rpow_one
-    rw [this] at h_result_simp
-    exact h_result_simp
+    grind
   -- Final manipulation to remove ENNReal.ofReal and .toReal
   rw [ENNReal.ofReal_add (le_of_lt h_va_pos) (le_of_lt h_vb_pos),
     ← ENNReal.ofReal_rpow_of_pos (ENNReal.toReal_pos hvolAzero hvolAinf),

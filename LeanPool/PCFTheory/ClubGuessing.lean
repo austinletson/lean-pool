@@ -206,8 +206,6 @@ theorem exists_isClubGuessing_of_cof_uncountable {Ϟ : Ordinal} {κ : Cardinal} 
     refine h g fun C ↦ ?_
     obtain ⟨δ, hδ⟩ := hf ⟨C.1 ∩ Iio Ϟ, C.2.inter_Iio⟩
     use ⟨δ.1, δ.2.1⟩
-    unfold g
-    rw [dif_pos δ.2.2]
-    exact hδ.trans inter_subset_left
+    grind
 
 end Ordinal

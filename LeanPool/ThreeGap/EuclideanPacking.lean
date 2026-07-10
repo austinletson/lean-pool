@@ -63,9 +63,7 @@ theorem not_six_circle (φ : Fin 6 → Real.Angle)
     intro i j hle hne
     have hsep := h i j hne
     have key := abs_toReal_coe_le (-(a j - a i))
-    rw [abs_neg, abs_of_nonneg (by linarith : (0:ℝ) ≤ a j - a i)] at key
-    rw [hcoe i j, show (a i - a j : ℝ) = -(a j - a i) by ring] at hsep
-    linarith [hsep, key]
+    grind
   -- wrap bound: for `a i ≤ a j`, distinct, `2π − (a j − a i)` exceeds `π/3`
   have wrapBound : ∀ i j : Fin 6, a i ≤ a j → i ≠ j → π / 3 < 2 * π - (a j - a i) := by
     intro i j hle hne
@@ -93,8 +91,7 @@ theorem not_six_circle (φ : Fin 6 → Real.Angle)
   have g4 := gapBound (σ 4) (σ 5) (hmono (by decide)) (hinj.ne (by decide))
   have gw := wrapBound (σ 0) (σ 5) (hmono (by decide)) (hinj.ne (by decide))
   -- the six gaps sum to `2π`, each exceeds `π/3`: `2π > 2π`
-  have hpi := Real.pi_pos
-  linarith
+  grind
 
 /-! ## The vector form -/
 
@@ -111,12 +108,9 @@ theorem not_six_separated (o : Orientation ℝ E (Fin 2)) (v : Fin 6 → E) (hv 
   have hoa : o.oangle (v j) (v i) = φ i - φ j := by
     have hadd := o.oangle_add (hv j) (hv 0) (hv i)
     rw [o.oangle_rev (v 0) (v j)] at hadd
-    simp only [hφ]
-    rw [← hadd]
-    abel
+    grind
   have hangle : InnerProductGeometry.angle (v j) (v i) = |(φ i - φ j).toReal| := by
     rw [o.angle_eq_abs_oangle_toReal (hv j) (hv i), hoa]
-  rw [← hangle, InnerProductGeometry.angle_comm]
-  exact hsep i j hne
+  grind
 
 end ThreeGap.EuclideanPacking

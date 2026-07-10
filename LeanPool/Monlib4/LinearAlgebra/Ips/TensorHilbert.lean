@@ -176,8 +176,7 @@ theorem inner_ext_fourfold_iff' (x y : (E ⊗[𝕜] F) ⊗[𝕜] (G ⊗[𝕜] H)
       inner 𝕜 x ((a ⊗ₜ[𝕜] b) ⊗ₜ[𝕜] (c ⊗ₜ[𝕜] d)) =
         inner 𝕜 y ((a ⊗ₜ[𝕜] b) ⊗ₜ[𝕜] (c ⊗ₜ[𝕜] d)) := by
   constructor
-  · intro h a b c d
-    rw [h]
+  · grind
   · intro h
     rw [TensorProduct.ext_iff_inner_right]
     intro p q

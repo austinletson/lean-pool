@@ -102,9 +102,7 @@ lemma not_dvd_nonDividingShift_of_three_le (hp : 3 ≤ p) :
   split_ifs with p4
   · subst p4
     obtain ⟨dv, dw⟩ := (mem_filter_univ _).mp (min'_mem _ (nonempty_double_not_dvd_four v w))
-    refine ⟨dv, ?_⟩
-    contrapose! dw
-    exact (show 2 ∣ 4 by decide).trans dw
+    grind
   simpa using min'_mem _ (nonempty_double_not_dvd v w p hp)
 
 /-- `crtShift v w m` is a number that can be added to `v, w` such that
@@ -241,8 +239,7 @@ lemma tupReduce_vwTup {c₂ : n + 1 = n + 3 - #{natAdd n 0, natAdd n 1}} :
           cases j using lastCases with
           | last => grind
           | cast j =>
-            rw [lastCases_castSucc]
-            exact (castAddOrderEmb _).strictMono h
+            grind
     simp_rw [lastCases_castSucc, this, vwTup, chainTup]
     cases i using lastCases with
     | last =>

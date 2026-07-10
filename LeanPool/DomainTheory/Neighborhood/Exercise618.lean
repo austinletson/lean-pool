@@ -326,9 +326,7 @@ theorem descMap_fix (k : ApproximableMap (prod V E) E) : descMap k = descOp k (d
     cases n with
     | zero => exact ⟨0, by rw [hstep 0]; exact descSeqEltMono k z 0 _ hn⟩
     | succ m => exact ⟨m, by rw [hstep m]; exact hn⟩
-  · rintro ⟨m, hm⟩
-    rw [hstep m] at hm
-    exact ⟨m + 1, hm⟩
+  · grind
 
 /-! ## Strictness of the descent map -/
 
@@ -410,9 +408,7 @@ theorem rho_apply (n : ℕ) (z : (iterSys V).Element) :
       rw [consSeq_succ, component_ofSeq, component_ofSeq]
       show (if k < n then component z (k + 1) else V.bot)
          = if k + 1 < n + 1 then component z (k + 1) else V.bot
-      by_cases h : k < n
-      · rw [if_pos h, if_pos (Nat.succ_lt_succ h)]
-      · rw [if_neg h, if_neg (fun hc => h (Nat.lt_of_succ_lt_succ hc))]
+      grind
 
 /-- **`⋃ₙ ρₙ = I`.** Every `z` is the directed union of its truncations: the
 cofinite-`Δ` structure

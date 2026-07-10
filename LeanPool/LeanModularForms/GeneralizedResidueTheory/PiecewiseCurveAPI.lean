@@ -183,10 +183,7 @@ theorem sortedPartition_tail_nonempty (γ : PiecewiseC1Curve) :
   intro h
   have hlen2 : γ.sortedPartition.length ≤ 1 := by
     rcases List.exists_cons_of_ne_nil (sortedPartition_nonempty γ) with ⟨hd, tl, heq⟩
-    rw [heq] at h
-    simp only [List.tail_cons] at h
-    rw [heq, h]
-    simp only [List.length_cons, List.length_nil, Nat.zero_add, le_refl]
+    grind
   linarith
 
 /-- The union of `Icc p.1 p.2` over all `p ∈ consecutivePairs γ` covers `[a, b]`. -/
@@ -208,10 +205,7 @@ private theorem pairwise_zip_tail_le {l : List ℝ} (hl : l.Pairwise (· ≤ ·)
     cases xs with
     | nil => simp only [List.tail_cons, List.zip_nil_right, List.not_mem_nil] at hp
     | cons y ys =>
-      simp only [List.zip_cons_cons, List.tail_cons, List.mem_cons] at hp
-      rcases hp with rfl | h
-      · exact (List.pairwise_cons.mp hl).1 y List.mem_cons_self
-      · exact ih ((List.pairwise_cons.mp hl).2) h
+      grind
 
 /-- For each consecutive pair `(p, q)`, we have `p ≤ q`. -/
 theorem consecutivePairs_le (γ : PiecewiseC1Curve) (p : ℝ × ℝ)

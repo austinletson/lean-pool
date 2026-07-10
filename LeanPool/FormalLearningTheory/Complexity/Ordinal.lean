@@ -82,10 +82,7 @@ theorem VCDim_embed_ordinal (X : Type u) (C : ConceptClass X Bool)
         by_contra h_none
         push Not at h_none
         have hcard : ∀ S, Shatters X C S → S.card ≤ n - 1 := by
-          intro S hS
-          have h1 : S.card ≤ n := hle S hS
-          have h2 : S.card ≠ n := h_none S hS
-          omega
+          grind
         have hbound : VCDim X C ≤ ↑(n - 1) :=
           iSup₂_le fun S hS => WithTop.coe_le_coe.mpr (hcard S hS)
         rw [h] at hbound

@@ -59,14 +59,12 @@ noncomputable def _root_.Matrix.IsAlmostHermitian.matrix {n : Type _} {x : Matri
 theorem _root_.Matrix.IsAlmostHermitian.eq_smul_matrix {n : Type _} {x : Matrix n n 𝕜}
     (hx : x.IsAlmostHermitian) : x = hx.scalar • hx.matrix := by
   rw [IsAlmostHermitian.scalar, IsAlmostHermitian.matrix, IsAlmostHermitian.scalarMatrix]
-  generalize_proofs
-  simp_all
+  grind
 
 theorem _root_.Matrix.IsAlmostHermitian.matrix_isHermitian {n : Type _} {x : Matrix n n 𝕜}
     (hx : x.IsAlmostHermitian) : hx.matrix.IsHermitian := by
   rw [IsAlmostHermitian.matrix, IsAlmostHermitian.scalarMatrix]
-  generalize_proofs
-  simp_all
+  grind
 
 /-- Eigenvalues of the Hermitian factor, rescaled by the almost-Hermitian scalar. -/
 noncomputable def _root_.Matrix.IsAlmostHermitian.eigenvalues {x : Matrix n n 𝕜}

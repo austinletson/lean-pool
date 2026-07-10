@@ -148,8 +148,7 @@ lemma entrywiseExp_eq_hadamardSeries (R : Matrix ι ι ℝ) :
     simpa [Complex.ofReal_re] using congrArg Complex.re hpt
   -- Combine: real parts of both sides of h_seriesC give the real series identity
   have hx_sum : ∑' n : ℕ, fR n = Real.exp x := by
-    have := congrArg Complex.re h_seriesC
-    simpa [h_re_tsum, h_re_exp, h_re_terms] using this
+    grind
   -- Massaging coefficients and finishing
   have hx_sum' : Real.exp x = ∑' n : ℕ, (1 / (Nat.factorial n : ℝ)) * x ^ n := by
     simpa [fR, one_div, div_eq_mul_inv, mul_comm] using hx_sum.symm
@@ -215,16 +214,13 @@ lemma quadratic_form_entrywiseExp_hadamardSeries
   have hHas_ij_rewrite (i j : ι) :
       HasSum (fun n => (1 / (Nat.factorial n : ℝ)) * (x i * hadamardPow R n i j * x j))
              (x i * ((entrywiseExpHadamardSeries R) i j) * x j) := by
-    convert hHas_ij_xi_xj i j using 1
-    · funext n; simp only [s_ij]; ring
-    · simp [mul_assoc]
+    grind
   -- Combine over j (finite) with hasSum_sum
   have hHas_sum_j (i : ι) :
       HasSum (fun n => ∑ j, (1 / (Nat.factorial n : ℝ)) * (x i * hadamardPow R n i j * x j))
              (∑ j, x i * ((entrywiseExpHadamardSeries R) i j) * x j) := by
     apply hasSum_sum
-    intro j _
-    exact hHas_ij_rewrite i j
+    grind
   -- Combine over i (finite) similarly
   have hHas_sum_i :
       HasSum (fun n => ∑ i, ∑ j,

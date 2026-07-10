@@ -137,8 +137,7 @@ lemma execList_target_eq_union {c₁ c₂ : Conf es} {t : List es.Event}
     c₂.1 = c₁.1 ∪ {e | e ∈ t} := by
   induction h with
   | nil c =>
-    ext x
-    simp
+    grind
   | cons e h hnext ih =>
     ext x
     simp [nextConf, ih, List.mem_cons, Set.mem_union, Set.mem_setOf_eq]
@@ -177,9 +176,7 @@ noncomputable def execListLift {c_small c_large c_target : Conf es} {t : List es
       have hx' : x = e ∨ x ∈ c.1 := by
         simpa [nextConf, Set.mem_union, Set.mem_singleton_iff] using hx
       have hx'' : x ∈ c_large.1 ∪ {e} := by
-        cases hx' with
-        | inl hxe => exact Or.inr hxe
-        | inr hxc => exact Or.inl (hsub hxc)
+        grind
       simpa [c_large', nextConf, Set.mem_union, Set.mem_singleton_iff] using hx''
     have hfresh_next : ∀ x ∈ t, x ∉ c_large'.1 := by
       intro x hx hxmem

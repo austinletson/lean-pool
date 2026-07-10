@@ -271,13 +271,7 @@ lemma min_defined : Sg0-Function₂ (min : V → V → V) via min := by
       v 0 = min (v 1) (v 2) ↔
         (v 1 ≤ v 2 → v 0 = v 1) ∧ (v 1 ≥ v 2 → v 0 = v 2) by
     simpa [FirstOrder.Arith.min] using h
-  rcases le_total (v 1) (v 2) with h | h
-  · simp only [Fin.isValue, h, inf_of_le_left, forall_const, ge_iff_le, iff_self_and]
-    intro h₀₁ h₂₁
-    exact le_antisymm (by simpa [h₀₁] using h) (by simpa [h₀₁] using h₂₁)
-  · simp only [Fin.isValue, h, inf_of_le_right, forall_const, iff_and_self]
-    intro h₀₂ h₁₂
-    exact le_antisymm (by simpa [h₀₂] using h) (by simpa [h₀₂] using h₁₂)
+  grind
 
 @[simp] lemma eval_minDef (v) :
     Semiformula.Evalbm V v min.val ↔ v 0 = min (v 1) (v 2) := min_defined.df.iff v
@@ -302,13 +296,7 @@ lemma max_defined : Sg0-Function₂ (max : V → V → V) via max := by
       v 0 = max (v 1) (v 2) ↔
         (v 1 ≥ v 2 → v 0 = v 1) ∧ (v 1 ≤ v 2 → v 0 = v 2) by
     simpa [Arith.max] using h
-  rcases le_total (v 1) (v 2) with h | h
-  · simp only [Fin.isValue, h, sup_of_le_right, ge_iff_le, forall_const, iff_and_self]
-    intro h₀₂ h₂₁
-    exact le_antisymm (by simpa [h₀₂] using h₂₁) (by simpa [h₀₂] using h)
-  · simp only [Fin.isValue, h, sup_of_le_left, forall_const, iff_self_and]
-    intro h₀₁ h₁₂
-    exact le_antisymm (by simpa [h₀₁] using h₁₂) (by simpa [h₀₁] using h)
+  grind
 
 @[simp] lemma eval_maxDef (v) :
     Semiformula.Evalbm V v max.val ↔ v 0 = max (v 1) (v 2) := max_defined.df.iff v

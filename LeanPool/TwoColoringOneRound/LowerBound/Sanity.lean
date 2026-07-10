@@ -65,8 +65,7 @@ private lemma not_all_small (e : Edge 5) : ¬ (∀ i : Fin 4, e.1 i < two5) := b
     { toFun := fun i => ⟨e.1 i, hall i⟩
       inj' := by
         intro i j hij
-        apply e.2
-        exact congrArg Subtype.val hij }
+        grind }
   have hle : Fintype.card (Fin 4) ≤ Fintype.card Small5 :=
     Fintype.card_le_of_embedding emb
   -- Turn the card inequality into a numeral contradiction.
@@ -80,8 +79,7 @@ private lemma not_all_big (e : Edge 5) : ¬ (∀ i : Fin 4, two5 ≤ e.1 i) := b
     { toFun := fun i => ⟨e.1 i, hall i⟩
       inj' := by
         intro i j hij
-        apply e.2
-        exact congrArg Subtype.val hij }
+        grind }
   have hle : Fintype.card (Fin 4) ≤ Fintype.card Big5 :=
     Fintype.card_le_of_embedding emb
   simp only [Fintype.card_fin, card_Big5] at hle
@@ -124,9 +122,7 @@ private lemma monochromatic_iff_pat (e : Edge 5) :
       exact False.elim (not_all_big (e := e) hall)
     · exact Or.inl hall2
     · exact Or.inr hall3
-  · rintro (h1001 | h0110)
-    · exact hpatterns.mpr (Or.inr <| Or.inr <| Or.inl h1001)
-    · exact hpatterns.mpr (Or.inr <| Or.inr <| Or.inr h0110)
+  · grind
 private lemma card_pat1001 : Fintype.card {e : Edge 5 // pat1001 e} = 12 := by
   classical
   have h :

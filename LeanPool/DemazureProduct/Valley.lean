@@ -66,8 +66,7 @@ lemma min_spec : ∀ n : ℤ, v.f n ≥ v.min := by
   intro n
   by_cases h : v.f n > v.f 0
   · rcases v.min_mem with ⟨m, hm⟩
-    have := le_trans (hm.1) (le_of_lt h)
-    rwa [hm.2] at this
+    grind
   have mem_floor : n ∈ v.floor (v.f 0) := by
     simpa using le_of_not_gt h
   have mem_image_floor : v.f n ∈ Finset.image v.f (v.floor (v.f 0)) :=
@@ -105,11 +104,7 @@ def shiftDown (k : ℤ) : Valley where
   rises := by
     intro m
     have : {n : ℤ | v.f n - k ≤ m} = {n : ℤ | v.f n ≤ m + k} := by
-      ext n
-      simp only [Set.mem_setOf_eq]
-      constructor
-      · intro h; linarith
-      · intro h; linarith
+      grind
     rw [this]
     apply v.rises
 
@@ -123,25 +118,17 @@ lemma shift_down_M (k : ℤ) : (v.shiftDown k).M = v.M := by
   have f_eq : v.f v.M = v.f v'.M := by
     subst v'
     unfold Valley.shiftDown at le ge ⊢
-    simp only [tsub_le_iff_right, sub_add_cancel] at le
-    omega
+    grind
   have f'_eq : v'.f v.M = v'.f v'.M := by
     subst v'
     unfold Valley.shiftDown at le ge ⊢
-    simp only [tsub_le_iff_right, sub_add_cancel, sub_left_inj] at le ⊢
-    omega
+    grind
   have M_le_M' : v.M ≤ v'.M := by
     have := (v'.M_spec v.M).2
-    contrapose! ge with h
-    have := this h
-    rw [f'_eq] at this
-    exfalso; apply lt_irrefl (v'.f v'.M) this
+    grind
   have M'_le_M : v'.M ≤ v.M := by
     have := (v.M_spec v'.M).2
-    contrapose! le with h
-    have := this h
-    rw [f_eq] at this
-    exfalso; apply lt_irrefl (v.f v'.M) this
+    grind
   exact le_antisymm M_le_M' M'_le_M
 
 /-- Shifting a valley downward subtracts `k` from its minimum value. -/

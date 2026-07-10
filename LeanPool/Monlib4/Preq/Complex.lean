@@ -58,9 +58,7 @@ theorem norm_of_sum_sq_eq_sum_norm_sq_iff {n : Type _} [Fintype n] (α : n → �
             (((α x.snd).im * (α x.fst).re) ^ 2 -
                 2 * ((α x.snd).im * (α x.fst).re) * ((α x.fst).im * (α x.snd).re) +
               ((α x.fst).im * (α x.snd).re) ^ 2) := by
-      intros
-      simp_rw [← pow_two, sub_sub, mul_comm, ← two_mul]
-      ring_nf
+      grind
     simp_rw [← Finset.sum_sub_distrib, ← Finset.sum_product', Finset.univ_product_univ,
       aux_for_ex, ← sub_sq, ← Finset.mul_sum, mul_eq_zero, two_ne_zero, false_or]
     rw [Finset.sum_eq_zero_iff_of_nonneg]
@@ -96,8 +94,7 @@ theorem norm_of_sq_add_sq_norm_sq_add_norm_sq_iff' (α₁ α₂ : ℂ) :
     add_comm (- ((I * _) * _)) _, ← sub_eq_add_neg, mul_assoc, ← mul_sub, mul_right_inj' I_ne_zero,
     ← ofReal_mul, ← ofReal_sub]
   norm_cast
-  simp_rw [sub_eq_sub_iff_add_eq_add, ← two_mul, mul_eq_mul_left_iff, OfNat.ofNat_ne_zero,
-    or_false, mul_comm _ (Complex.re _), eq_comm]
+  grind
 
 /--
 The norm identity for a finite sum of squares is equivalent to saying that

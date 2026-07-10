@@ -100,9 +100,7 @@ noncomputable def equation {𝕏 : Proof} [fin_X : Fintype 𝕏.X] (x : 𝕏.X) 
   | RuleApp.andₗ _ _ _ _ =>
       at (encodeVar ((p 𝕏.α x)[0]'(by
         have := 𝕏.step x
-        simp only [r] at this
-        apply congrArg List.length at this
-        simp_all [List.length_map]))) v
+        grind))) v
         at (encodeVar ((p 𝕏.α x)[1]'(by
           have := 𝕏.step x
           simp only [r] at this
@@ -111,9 +109,7 @@ noncomputable def equation {𝕏 : Proof} [fin_X : Fintype 𝕏.X] (x : 𝕏.X) 
   | RuleApp.andᵣ _ _ _ _ =>
       at (encodeVar ((p 𝕏.α x)[0]'(by
         have := 𝕏.step x
-        simp only [r] at this
-        apply congrArg List.length at this
-        simp_all [List.length_map]))) &
+        grind))) &
         at (encodeVar ((p 𝕏.α x)[1]'(by
           have := 𝕏.step x
           simp only [r] at this
@@ -127,9 +123,7 @@ noncomputable def equation {𝕏 : Proof} [fin_X : Fintype 𝕏.X] (x : 𝕏.X) 
 lemma encodeVar_helper₁ {𝕏 : Proof} [fin_X : Fintype 𝕏.X] {Y : Finset 𝕏.X} {n : ℕ}
     (h : n ∈ Finset.image encodeVar Y) : n - 𝕏.freeVar < Fintype.card 𝕏.X := by
   simp only [Finset.mem_image, encodeVar] at h
-  have ⟨y, y_in, y_eq⟩ := h
-  rw [←y_eq]
-  simp
+  grind
 
 lemma encodeVar_helper₂ {𝕏 : Proof} [fin_X : Fintype 𝕏.X] {Y : Finset 𝕏.X} {n : ℕ}
     (h : n ∈ Finset.image encodeVar Y) : unencodeVar n (encodeVar_helper₁ h) ∈ Y := by
@@ -384,10 +378,7 @@ noncomputable def interpolantStrong {𝕏 : Proof} [fin_X : Fintype 𝕏.X]
       fun n ↦ (single (encodeVar box) ψ) (partial_ τ (at n))
     else
       have y_in_Y : ∃ y, y ∈ Y := by
-        by_contra h
-        apply em_con
-        apply Finset.eq_empty_of_forall_notMem
-        simp_all
+        grind
       have leaf_in_Y :=
         finite_and_no_loop_implies_exists_leaf (fun x ↦ x ∈ Y) y_in_Y.choose
           y_in_Y.choose_spec loop_con
@@ -462,20 +453,7 @@ private theorem interpolant_strong_prop_loop_other {𝕏 : Proof} [fin_X : Finty
           Relation.ReflTransGen (edge 𝕏.α) (unencodeVar n (encodeVar_helper₁ n_in)) y) := by
   have n_in' : n ∈ Finset.image encodeVar (Y \ {box_in_Y.choose}) := by
     simp only [Finset.mem_image, Finset.mem_sdiff, Finset.mem_singleton]
-    refine ⟨unencodeVar n (encodeVar_helper₁ n_in), ⟨encodeVar_helper₂ n_in, ?_⟩, ?_⟩
-    · intro con
-      apply y_ne_box
-      simp [←con, encodeVar, unencodeVar]
-      have := encodeVar_helper₁ n_in
-      simp only [Finset.mem_image] at n_in
-      have ⟨y, y_in, y_eq⟩ := n_in
-      subst y_eq
-      simp [encodeVar]
-    · apply unencodeVar_inv
-      simp only [Finset.mem_image] at n_in
-      have ⟨y, y_in, y_eq⟩ := n_in
-      subst y_eq
-      simp [encodeVar]
+    grind
   have ⟨eq_or_equiv, vocab, path⟩ := τ_prop ⟨n, n_in'⟩
   refine ⟨?_, ?_, ?_⟩
   · rcases eq_or_equiv with eq | equiv
@@ -485,48 +463,9 @@ private theorem interpolant_strong_prop_loop_other {𝕏 : Proof} [fin_X : Finty
       convert @interpolant_strong_helper _ _ (interpolantStrong Z_sub)
         (encodeVar box_in_Y.choose) ψ (equation (unencodeVar n (encodeVar_helper₁ n_in)))
       · simp only [Finset.mem_image, Finset.mem_sdiff, Finset.mem_singleton]
-        constructor
-        · intro ⟨y, y_in, y_eq⟩
-          subst y_eq
-          by_cases y_is_box : y = box_in_Y.choose
-          · subst y_is_box
-            right
-            rfl
-          · left
-            use y
-        · intro mpp
-          rcases mpp with ⟨y, ⟨y_in, y_not_box⟩, y_eq⟩ | x_eq
-          · subst y_eq
-            use y
-          · subst x_eq
-            exact ⟨box_in_Y.choose, box_in_Y.choose_spec.2.1, rfl⟩
+        grind
       · simp only [Finset.mem_image, Finset.mem_sdiff, Finset.mem_singleton]
-        rename_i heq
-        constructor
-        · intro mpp
-          have ⟨y, ⟨y_in, y_not_box⟩, y_eq⟩ := mpp
-          refine ⟨y, ⟨y_in, y_not_box⟩, ?_⟩
-          convert y_eq
-          · simp only [Finset.mem_image, Finset.mem_sdiff, Finset.mem_singleton]
-            constructor
-            · intro mp
-              rcases mp with l | r
-              · exact ⟨l.choose, l.choose_spec.1.1, l.choose_spec.2⟩
-              · exact ⟨box_in_Y.choose, box_in_Y.choose_spec.2.1, Eq.symm r⟩
-            · intro mpp
-              have ⟨y, y_in_Y, y_eq⟩ := mpp
-              subst y_eq
-              by_cases h : y = box_in_Y.choose
-              · right
-                subst h
-                rfl
-              · left
-                use y
-          · exact HEq.symm heq
-        · intro mp
-          have ⟨y, ⟨y_in, y_not_box⟩, y_eq⟩ := mp
-          refine ⟨y, ⟨y_in, y_not_box⟩, ?_⟩
-          convert y_eq
+        grind
     · right
       simp only [partial_, n_in', ↓reduceDIte, Finset.mem_image, Finset.mem_sdiff,
         Finset.mem_singleton]
@@ -536,47 +475,9 @@ private theorem interpolant_strong_prop_loop_other {𝕏 : Proof} [fin_X : Finty
       convert @interpolant_strong_helper _ _ (interpolantStrong Z_sub)
         (encodeVar box_in_Y.choose) ψ (equation (unencodeVar n (encodeVar_helper₁ n_in)))
       · simp only [Finset.mem_image, Finset.mem_sdiff, Finset.mem_singleton]
-        constructor
-        · intro mp
-          have ⟨y, y_in_Y, y_eq⟩ := mp
-          subst y_eq
-          by_cases h : y = box_in_Y.choose
-          · right
-            subst h
-            rfl
-          · left
-            use y
-        · intro mpp
-          rcases mpp with l | r
-          · exact ⟨l.choose, l.choose_spec.1.1, l.choose_spec.2⟩
-          · exact ⟨box_in_Y.choose, box_in_Y.choose_spec.2.1, Eq.symm r⟩
+        grind
       · simp only [Finset.mem_image, Finset.mem_sdiff, Finset.mem_singleton]
-        rename_i heq
-        constructor
-        · intro mpp
-          have ⟨y, ⟨y_in, y_not_box⟩, y_eq⟩ := mpp
-          refine ⟨y, ⟨y_in, y_not_box⟩, ?_⟩
-          convert y_eq
-          · simp only [Finset.mem_image, Finset.mem_sdiff, Finset.mem_singleton]
-            constructor
-            · intro mp
-              rcases mp with l | r
-              · exact ⟨l.choose, l.choose_spec.1.1, l.choose_spec.2⟩
-              · exact ⟨box_in_Y.choose, box_in_Y.choose_spec.2.1, Eq.symm r⟩
-            · intro mpp
-              have ⟨y, y_in_Y, y_eq⟩ := mpp
-              subst y_eq
-              by_cases h : y = box_in_Y.choose
-              · right
-                subst h
-                rfl
-              · left
-                use y
-          · exact HEq.symm heq
-        · intro mp
-          have ⟨y, ⟨y_in, y_not_box⟩, y_eq⟩ := mp
-          refine ⟨y, ⟨y_in, y_not_box⟩, ?_⟩
-          convert y_eq
+        grind
   · intro m m_in
     simp only [Finset.mem_union, Finset.mem_inter, Finset.mem_sdiff,
       Finset.mem_image, not_exists, not_and]
@@ -623,16 +524,7 @@ private theorem interpolant_strong_prop_loop_other {𝕏 : Proof} [fin_X : Finty
       have ih := vocab m m_in_τ
       simp only [Finset.mem_union, Finset.mem_inter, Finset.mem_sdiff,
         Finset.mem_image, Finset.mem_singleton, not_exists, not_and, and_imp] at ih
-      rcases ih with ih1 | ih2
-      · exact Or.inl ih1
-      · refine Or.inr ⟨ih2.1, ?_⟩
-        intro x x_in con
-        apply ih2.2 x x_in ?_ con
-        intro eq
-        subst eq
-        subst con
-        apply m_not_box
-        rfl
+      grind
   · simp only [partial_, n_in, ↓reduceDIte, n_in']
     simp only [partial_, n_in', ↓reduceDIte] at path
     intro y mp
@@ -706,20 +598,7 @@ private theorem interpolant_strong_prop_leaf_other {𝕏 : Proof} [fin_X : Finty
           Relation.ReflTransGen (edge 𝕏.α) (unencodeVar n (encodeVar_helper₁ n_in)) y) := by
   have n_in' : n ∈ Finset.image encodeVar (Y \ {leaf_in_Y.choose}) := by
     simp only [Finset.mem_image, Finset.mem_sdiff, Finset.mem_singleton]
-    refine ⟨unencodeVar n (encodeVar_helper₁ n_in), ⟨encodeVar_helper₂ n_in, ?_⟩, ?_⟩
-    · intro con
-      apply y_ne_box
-      simp [←con, encodeVar, unencodeVar]
-      have := encodeVar_helper₁ n_in
-      simp only [Finset.mem_image] at n_in
-      have ⟨y, y_in, y_eq⟩ := n_in
-      subst y_eq
-      simp [encodeVar]
-    · apply unencodeVar_inv
-      simp only [Finset.mem_image] at n_in
-      have ⟨y, y_in, y_eq⟩ := n_in
-      subst y_eq
-      simp [encodeVar]
+    grind
   have ⟨eq_or_equiv, vocab, path⟩ := τ_prop ⟨n, n_in'⟩
   refine ⟨?_, ?_, ?_⟩
   · rcases eq_or_equiv with eq | equiv
@@ -730,47 +609,9 @@ private theorem interpolant_strong_prop_leaf_other {𝕏 : Proof} [fin_X : Finty
         (encodeVar leaf_in_Y.choose) (equation leaf_in_Y.choose)
         (equation (unencodeVar n (encodeVar_helper₁ n_in)))
       · simp only [Finset.mem_image, Finset.mem_sdiff, Finset.mem_singleton]
-        constructor
-        · intro mp
-          have ⟨y, y_in_Y, y_eq⟩ := mp
-          subst y_eq
-          by_cases h : y = leaf_in_Y.choose
-          · right
-            subst h
-            rfl
-          · left
-            use y
-        · intro mpp
-          rcases mpp with l | r
-          · exact ⟨l.choose, l.choose_spec.1.1, l.choose_spec.2⟩
-          · exact ⟨leaf_in_Y.choose, leaf_in_Y.choose_spec.1, Eq.symm r⟩
+        grind
       · simp only [Finset.mem_image, Finset.mem_sdiff, Finset.mem_singleton]
-        rename_i heq
-        constructor
-        · intro mpp
-          have ⟨y, ⟨y_in, y_not_box⟩, y_eq⟩ := mpp
-          refine ⟨y, ⟨y_in, y_not_box⟩, ?_⟩
-          convert y_eq
-          · simp only [Finset.mem_image, Finset.mem_sdiff, Finset.mem_singleton]
-            constructor
-            · intro mp
-              rcases mp with l | r
-              · exact ⟨l.choose, l.choose_spec.1.1, l.choose_spec.2⟩
-              · exact ⟨leaf_in_Y.choose, leaf_in_Y.choose_spec.1, Eq.symm r⟩
-            · intro mpp
-              have ⟨y, y_in_Y, y_eq⟩ := mpp
-              subst y_eq
-              by_cases h : y = leaf_in_Y.choose
-              · right
-                subst h
-                rfl
-              · left
-                use y
-          · exact HEq.symm heq
-        · intro mp
-          have ⟨y, ⟨y_in, y_not_box⟩, y_eq⟩ := mp
-          refine ⟨y, ⟨y_in, y_not_box⟩, ?_⟩
-          convert y_eq
+        grind
     · right
       simp only [partial_, n_in', ↓reduceDIte, Finset.mem_image, Finset.mem_sdiff,
         Finset.mem_singleton]
@@ -783,47 +624,9 @@ private theorem interpolant_strong_prop_leaf_other {𝕏 : Proof} [fin_X : Finty
         (encodeVar leaf_in_Y.choose) (equation leaf_in_Y.choose)
         (equation (unencodeVar n (encodeVar_helper₁ n_in)))
       · simp only [Finset.mem_image, Finset.mem_sdiff, Finset.mem_singleton]
-        constructor
-        · intro mp
-          have ⟨y, y_in_Y, y_eq⟩ := mp
-          subst y_eq
-          by_cases h : y = leaf_in_Y.choose
-          · right
-            subst h
-            rfl
-          · left
-            use y
-        · intro mpp
-          rcases mpp with l | r
-          · exact ⟨l.choose, l.choose_spec.1.1, l.choose_spec.2⟩
-          · exact ⟨leaf_in_Y.choose, leaf_in_Y.choose_spec.1, Eq.symm r⟩
+        grind
       · simp only [Finset.mem_image, Finset.mem_sdiff, Finset.mem_singleton]
-        rename_i heq
-        constructor
-        · intro mpp
-          have ⟨y, ⟨y_in, y_not_box⟩, y_eq⟩ := mpp
-          refine ⟨y, ⟨y_in, y_not_box⟩, ?_⟩
-          convert y_eq
-          · simp only [Finset.mem_image, Finset.mem_sdiff, Finset.mem_singleton]
-            constructor
-            · intro mp
-              rcases mp with l | r
-              · exact ⟨l.choose, l.choose_spec.1.1, l.choose_spec.2⟩
-              · exact ⟨leaf_in_Y.choose, leaf_in_Y.choose_spec.1, Eq.symm r⟩
-            · intro mpp
-              have ⟨y, y_in_Y, y_eq⟩ := mpp
-              subst y_eq
-              by_cases h : y = leaf_in_Y.choose
-              · right
-                subst h
-                rfl
-              · left
-                use y
-          · exact HEq.symm heq
-        · intro mp
-          have ⟨y, ⟨y_in, y_not_box⟩, y_eq⟩ := mp
-          refine ⟨y, ⟨y_in, y_not_box⟩, ?_⟩
-          convert y_eq
+        grind
   · intro m m_in
     simp only [Finset.mem_union, Finset.mem_inter, Finset.mem_sdiff,
       Finset.mem_image, not_exists, not_and]
@@ -845,16 +648,7 @@ private theorem interpolant_strong_prop_leaf_other {𝕏 : Proof} [fin_X : Finty
       have ih := vocab m m_in_τ
       simp only [Finset.mem_union, Finset.mem_inter, Finset.mem_sdiff,
         Finset.mem_image, Finset.mem_singleton, not_exists, not_and, and_imp] at ih
-      rcases ih with ih1 | ih2
-      · exact Or.inl ih1
-      · refine Or.inr ⟨ih2.1, ?_⟩
-        intro x x_in con
-        apply ih2.2 x x_in ?_ con
-        intro eq
-        subst eq
-        subst con
-        apply m_not_box
-        rfl
+      grind
   · simp only [partial_, n_in, ↓reduceDIte, n_in']
     simp only [partial_, n_in', ↓reduceDIte] at path
     intro y mp
@@ -929,8 +723,7 @@ theorem interpolant_strong_prop {𝕏 : Proof} [fin_X : Fintype 𝕏.X]
   unfold interpolantStrong
   intro ⟨n, n_in⟩
   by_cases em_con : Y = ∅
-  · subst em_con
-    simp at n_in
+  · grind
   · by_cases loop_con : ∃ y, Relation.TransGen (edgeRestr (fun x ↦ x ∈ Y)) y y
     case pos =>
       simp only [em_con, loop_con, ↓reduceDIte, Finset.mem_union, Finset.mem_inter,
@@ -1061,10 +854,7 @@ theorem interpolant_strong_prop {𝕏 : Proof} [fin_X : Fintype 𝕏.X]
       simp only [em_con, loop_con, ↓reduceDIte, Finset.mem_union, Finset.mem_inter,
         Finset.mem_sdiff, Finset.mem_image, not_exists, not_and]
       have y_in_Y : ∃ y, y ∈ Y := by
-        by_contra h
-        apply em_con
-        apply Finset.eq_empty_of_forall_notMem
-        simp_all
+        grind
       have leaf_in_Y :=
         finite_and_no_loop_implies_exists_leaf (fun x ↦ x ∈ Y) y_in_Y.choose
           y_in_Y.choose_spec loop_con

@@ -47,9 +47,7 @@ theorem swapRegisters_apply_tensor (psi phi : PureState n) :
   ext i
   rw [swapRegisters, ofPerm_apply, PureState.tensor_apply,
     PureState.tensor_apply, swapRegistersPerm]
-  simp only [Equiv.trans_apply, Equiv.prodComm_apply, Equiv.symm_apply_apply,
-    Prod.fst_swap, Prod.snd_swap]
-  exact mul_comm _ _
+  grind
 
 /-- The SWAP test circuit: the Hadamard test of the register swap. -/
 def swapTest (n : ℕ) : Gate (1 + (n + n)) :=

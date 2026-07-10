@@ -92,9 +92,7 @@ theorem replaceInitialValues_replaceInitialValues {n m : ℕ} {h : n ≤ m}
     replaceInitialValues s xs2 := by
   funext k
   unfold replaceInitialValues
-  by_cases h_k_le_m : k < m + 1
-  · rw [if_pos h_k_le_m, if_pos h_k_le_m]
-  · rw [if_neg h_k_le_m, if_neg (by omega : ¬ k < n + 1), if_neg h_k_le_m]
+  grind
 
 @[simp]
 theorem realize_is_image [ModelSets V] {n : ℕ} (s : ℕ → V) (xs : Fin n → V)

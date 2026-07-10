@@ -92,8 +92,7 @@ lemma _root_.ProbabilityTheory.IndepFun.cond (hi : IndepFun A B μ) {s : Set α}
   rcases eq_or_ne (μ (A ⁻¹' s ∩ B⁻¹' t)) 0 with h'|h'
   · have I : μ (A ⁻¹' (s ∩ u) ∩ B ⁻¹' (t ∩ v)) = 0 := by
       apply le_antisymm ((measure_mono _).trans h'.le) bot_le
-      exact inter_subset_inter (preimage_mono inter_subset_left)
-        (preimage_mono inter_subset_left)
+      grind
     have J : μ (A ⁻¹' (s ∩ u) ∩ B ⁻¹' t) = 0 := by
       apply le_antisymm ((measure_mono _).trans h'.le) bot_le
       exact inter_subset_inter_left _ (preimage_mono inter_subset_left)
@@ -189,8 +188,7 @@ lemma _root_.ProbabilityTheory.condIndep_copies
   have h4 (y : β) : { ω : (α × α) × β| ω.2 = y } ∈ ae (m y) := by
     rw [mem_ae_iff]
     have : { ω : (α × α) × β | ω.2 = y}ᶜ = Prod.snd⁻¹' {y}ᶜ := by
-      simp only [preimage_compl, compl_inj_iff]
-      rfl
+      grind
     rw [this, ← Measure.map_apply measurable_snd (MeasurableSet.singleton y).compl]
     simp [m]
   have h5 {y : β} (hy : μ (Y ⁻¹' {y}) ≠ 0) : IsProbabilityMeasure (m' y) := by
@@ -260,9 +258,7 @@ lemma _root_.ProbabilityTheory.condIndep_copies
       rw [Finset.sum_eq_single_of_mem y ?_]
       · rw [h3, ← mul_assoc, ENNReal.inv_mul_cancel hy'', one_mul]
         finiteness
-      · intro _ _ hx
-        rw [h3' hx]
-        simp
+      · grind
       · rw [← Finset.mem_coe]
         convert FiniteRange.range Y ▸ Set.preimage_singleton_nonempty.mp
           (nonempty_of_measure_ne_zero hy'')

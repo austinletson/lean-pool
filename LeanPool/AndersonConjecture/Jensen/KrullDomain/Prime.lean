@@ -60,8 +60,7 @@ lemma not_mem_associatedPrime_of_ndvd
       (⊥ : Ideal R.carrier) (Ideal.span {r}) Ideal.isPrime_bot hbot_lt hbot_fin
     rw [Ideal.height_bot] at h0
     rw [show (↑(1 : ℕ) : ℕ∞) = 1 from rfl, Order.lt_one_iff] at hspan_ht
-    rw [hspan_ht] at h0
-    exact lt_irrefl _ h0
+    grind
   have hy_comap : y ∈ P.comap R.carrier.subtype := hy_P
   rw [← hspan_eq] at hy_comap
   exact hry (Ideal.mem_span_singleton.mp hy_comap)
@@ -106,11 +105,7 @@ lemma prime_in_adjoinLocSet
     apply hinj
     simp only [map_mul, aeval_C, show algebraMap R.carrier T = R.carrier.subtype from rfl,
       Subring.coe_subtype, map_pow]
-    rw [← hf₁, ← hf₂, ← hf₃]
-    have lhs_rw : a₁ * (↑y : T) ^ n₁ * (b₁ * (↑y : T) ^ n₂) * (↑y : T) ^ n₃ =
-        a₁ * b₁ * ((↑y : T) ^ n₁ * (↑y : T) ^ n₂ * (↑y : T) ^ n₃) := by ring
-    rw [lhs_rw, heq, pow_add]
-    ring
+    grind
   have hCr : Prime (C r : Polynomial R.carrier) := Polynomial.prime_C_iff.mpr hr
   have hCr_ndvd : ¬ (C r : Polynomial R.carrier) ∣ C (y ^ n₃) := by
     rw [map_pow]
@@ -144,8 +139,7 @@ lemma prime_in_adjoinLocSet
       exact Ideal.mul_mem_right _ _ (Ideal.mem_span_singleton_self _))
   obtain ⟨d, hd⟩ := Ideal.mem_span_singleton.mp ht_mem
   exact ⟨d, ⟨g, n, mul_left_cancel₀ hr_ne (by
-                                             rw [← mul_assoc, hd.symm]
-                                             exact ht_eq)⟩, hd⟩
+                                             grind)⟩, hd⟩
 
 end AdjoinLocPrime
 
@@ -221,8 +215,7 @@ theorem coprime_not_both_in_prime (R : NSubring T)
         (Ideal.span {q}) Ideal.isPrime_bot hbot_lt hbot_fin
     rw [Ideal.height_bot] at h0
     rw [show (↑(1 : ℕ) : ℕ∞) = 1 from rfl, Order.lt_one_iff] at hspan_height
-    rw [hspan_height] at h0
-    exact lt_irrefl _ h0
+    grind
   have hy₁_span : y₁ ∈ Ideal.span {q} := hspan_eq ▸ hy₁_comap
   have hy₂_span : y₂ ∈ Ideal.span {q} := hspan_eq ▸ hy₂_comap
   rw [Ideal.mem_span_singleton] at hy₁_span hy₂_span

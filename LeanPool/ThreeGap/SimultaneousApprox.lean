@@ -80,8 +80,7 @@ theorem rem_sub (α : Fin n → ℝ) (qi qj : ℤ) (pi pj : Fin n → ℤ) :
     rem α qi pi - rem α qj pj = rem α (qi - qj) (pi - pj) := by
   funext k
   simp only [rem, Pi.sub_apply, Pi.smul_apply, smul_eq_mul]
-  push_cast
-  ring
+  grind
 
 /-- **Halving homogeneity.** `r(2q, 2p) = 2 · r(q, p)` — doubling both the denominator and the
 integer translate doubles the remainder vector. Used in the mod-2 pigeonhole growth argument, where
@@ -90,8 +89,7 @@ theorem rem_two_smul (α : Fin n → ℝ) (q : ℤ) (p : Fin n → ℤ) :
     rem α (2 * q) (fun k => 2 * p k) = (2 : ℝ) • rem α q p := by
   funext k
   simp only [rem, Pi.sub_apply, Pi.smul_apply, smul_eq_mul]
-  push_cast
-  ring
+  grind
 
 /-- **The separation core (Ermakov Lemma 2, algebraic part).** The distance between two remainder
 vectors is at least the approximation defect of the difference of their denominators:

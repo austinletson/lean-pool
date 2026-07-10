@@ -134,8 +134,7 @@ theorem graph_succ_right (P : PeanoModel M) (Q : PeanoModel N) {m : M} {k : N}
   | step h' =>
     rename_i m0 n0
     have hm : m = m0 := P.succ_injective hz
-    subst hm
-    exact ⟨n0, h', rfl⟩
+    grind
 
 /-- Each element of the left model is related by `Graph` to exactly one element of
 the right
@@ -176,15 +175,9 @@ theorem peano_models_isomorphic (P : PeanoModel M) (Q : PeanoModel N) :
   refine ⟨⟨fun m => (exists_unique_right P Q m).choose,
           fun n => (exists_unique_left P Q n).choose, ?_, ?_⟩, ?_, ?_⟩
   · -- left inverse `g ∘ f = id`
-    intro m
-    have hf : Graph P Q m (exists_unique_right P Q m).choose :=
-      (exists_unique_right P Q m).choose_spec.1
-    exact ((exists_unique_left P Q _).choose_spec.2 m hf).symm
+    grind
   · -- right inverse `f ∘ g = id`
-    intro n
-    have hg : Graph P Q (exists_unique_left P Q n).choose n :=
-      (exists_unique_left P Q n).choose_spec.1
-    exact ((exists_unique_right P Q _).choose_spec.2 n hg).symm
+    grind
   · -- `f 0 = □`
     exact ((exists_unique_right P Q P.zero).choose_spec.2 Q.zero Graph.base).symm
   · -- `f (n⁺) = (f n)#`

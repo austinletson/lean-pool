@@ -397,11 +397,7 @@ lemma segment_triangle_pairing_int
             (ha _ (lt_min hδa hδb) (min_le_left _ _)) (hb _ (lt_min hδa hδb) (min_le_right _ _))
         have σneq : σ ≠ σ' := fun σeq ↦ hΔneq (rays_eq hΔ' hΔ hδ' hδ hain' (σeq ▸ hain))
         have σ''mem : σ'' = σ ∨ σ'' = σ' := by
-          simp only [mem_insert, mem_singleton] at hσ hσ' hσ''
-          obtain t | t := hσ <;> obtain t' | t' := hσ' <;> obtain t'' | t'' := hσ'' <;> (
-            rw [t,t',t'']
-            rw [t,t'] at σneq
-            tauto)
+          grind
         rcases σ''mem with h | h
         · have hl : Δ'' = Δ := rays_eq hΔ'' hΔ hδ'' hδ (h ▸ hain'') hain
           simp only [hl, mem_insert, mem_singleton, or_true]
@@ -556,9 +552,7 @@ lemma squareBoundaryBig_inter_seg_aux₁ {a b c d : ℝ} (ha : 0 < a) (hb : 0 �
     (hd : 0 ≤ d) (habcd : a * b + c * d = 0) : b = 0 ∧ d = 0 := by
   rw [add_eq_zero_iff_of_nonneg
       ((mul_nonneg_iff_of_pos_left ha).mpr hb) ((mul_nonneg_iff_of_pos_left hc).mpr hd)] at habcd
-  exact ⟨
-    (mul_eq_zero_iff_left (ne_of_lt ha).symm).mp habcd.1,
-    (mul_eq_zero_iff_left (ne_of_lt hc).symm).mp habcd.2⟩
+  grind
 
 
 lemma squareBoundaryBig_inter_seg_aux₂ {a b c d : ℝ} (hac : a + c = 1) (ha : 0 < a) (hb : b ≤ 1)

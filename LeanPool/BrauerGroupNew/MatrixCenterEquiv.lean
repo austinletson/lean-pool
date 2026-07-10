@@ -72,12 +72,10 @@ def Matrix.centerEquivBase (n : ℕ) (hn : 0 < n) (R : Type*) [Ring R] :
     simp only [smul_apply, one_apply_eq]
     have ha_center : a • (1 : R) ∈ Subring.center R := by
       change (a : R) * 1 ∈ Subring.center R
-      rw [mul_one]
-      exact a.2
+      grind
     have hb_center : b • (1 : R) ∈ Subring.center R := by
       change (b : R) * 1 ∈ Subring.center R
-      rw [mul_one]
-      exact b.2
+      grind
     rw [show ((⟨a • 1, hA⟩ * ⟨b • 1, hB⟩ :
         Subring.center (Matrix (Fin n) (Fin n) R)) : Matrix (Fin n) (Fin n) R) =
         (a • 1 : Matrix (Fin n) (Fin n) R) *
@@ -101,12 +99,10 @@ def Matrix.centerEquivBase (n : ℕ) (hn : 0 < n) (R : Type*) [Ring R] :
     simp only [smul_apply, one_apply_eq]
     have ha_center : a • (1 : R) ∈ Subring.center R := by
       change (a : R) * 1 ∈ Subring.center R
-      rw [mul_one]
-      exact a.2
+      grind
     have hb_center : b • (1 : R) ∈ Subring.center R := by
       change (b : R) * 1 ∈ Subring.center R
-      rw [mul_one]
-      exact b.2
+      grind
     rw [show ((⟨a • 1, hA⟩ + ⟨b • 1, hB⟩ :
         Subring.center (Matrix (Fin n) (Fin n) R)) : Matrix (Fin n) (Fin n) R) =
         (a • 1 : Matrix (Fin n) (Fin n) R) +

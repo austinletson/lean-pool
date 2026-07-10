@@ -359,8 +359,7 @@ private lemma inequality_for_transform_differences
           (Y_{n+1}[w, f] ω - Y_{n}[w, f] ω)
           = ((w (n + 1) ω) ^ 2 - 1) *
               ((f (n + 1) ω - f n ω) ^ 2) := by
-            rw [hplus, hminus]
-            ring
+            grind
       _ ≤ 0 := by nlinarith
   · filter_upwards [h.hbound 0] with ω hwω
     have hw_sq : w 0 ω ^ 2 ≤ 1 := by
@@ -403,8 +402,7 @@ private lemma burkholder_plusOne_mul_martingaleDiff_memLp
   filter_upwards [h.hbound n] with ω hwω
   have hcoeff : |plusOne w n ω| ≤ 2 := by
     rw [plusOne, abs_le]
-    have hw := abs_le.mp hwω
-    constructor <;> linarith
+    grind
   rw [Real.norm_eq_abs, abs_mul, Real.norm_eq_abs]
   exact mul_le_mul_of_nonneg_right hcoeff (abs_nonneg (martingaleDiff f n ω))
 
@@ -424,8 +422,7 @@ private lemma burkholder_minusOne_mul_martingaleDiff_memLp
   filter_upwards [h.hbound n] with ω hwω
   have hcoeff : |minusOne w n ω| ≤ 2 := by
     rw [minusOne, abs_le]
-    have hw := abs_le.mp hwω
-    constructor <;> linarith
+    grind
   rw [Real.norm_eq_abs, abs_mul, Real.norm_eq_abs]
   exact mul_le_mul_of_nonneg_right hcoeff (abs_nonneg (martingaleDiff f n ω))
 
@@ -891,8 +888,7 @@ private lemma burkholder_du_dx_Xn_Yn_integrable_mul_diff
     have hplus_fdiff_int :
         Integrable
           (fun ω => plusOne w (n + 1) ω * (f (n + 1) ω - f n ω)) μ := by
-      simpa [plusOne, martingaleDiff] using
-        (burkholder_plusOne_mul_martingaleDiff_memLp h (n + 1)).integrable hp_one_en
+      grind
     have hXdiff_zero :
         μ[(fun ω => X_{n+1}[w, f] ω - X_{n}[w, f] ω) | ℱ n] =ᵐ[μ] 0 := by
       have hpull :
@@ -1082,8 +1078,7 @@ private lemma burkholder_du_dy_Xn_Yn_integrable_mul_diff
     have hminus_fdiff_int :
         Integrable
           (fun ω => minusOne w (n + 1) ω * (f (n + 1) ω - f n ω)) μ := by
-      simpa [minusOne, martingaleDiff] using
-        (burkholder_minusOne_mul_martingaleDiff_memLp h (n + 1)).integrable hp_one_en
+      grind
     have hYdiff_zero :
         μ[(fun ω => Y_{n+1}[w, f] ω - Y_{n}[w, f] ω) | ℱ n] =ᵐ[μ] 0 := by
       have hpull :
@@ -1285,8 +1280,7 @@ private lemma burkholder_u_XY_integral_succ_le
           (X_{n}[w, f] ω) (Y_{n}[w, f] ω)
           (X_{n+1}[w, f] ω - X_{n}[w, f] ω)
           (Y_{n+1}[w, f] ω - Y_{n}[w, f] ω) hcrossω
-    dsimp [linear]
-    linarith
+    grind
   have hright_int : Integrable
       (fun ω =>
         Burkholder.u p.toReal h.hp_one
@@ -1462,12 +1456,10 @@ theorem Lp_Burkholder_inequality_martingaleTransform (p : ℝ≥0∞) (Ω : Type
     simpa [div_eq_mul_inv, mul_comm, mul_left_comm, mul_assoc] using
       ((burkholder_X_memLp h n).add (burkholder_Y_memLp h n)).const_mul (1 / 2 : ℝ)
   have hB_mem : MemLp B p μ := by
-    rw [hB_eq]
-    exact hLp n
+    grind
   have hc_nonneg : 0 ≤ c := by
     dsimp [c, Burkholder.pStar, Majorants.pStar]
-    have hp_le_max : p.toReal ≤ max p.toReal (Majorants.q p.toReal) := le_max_left _ _
-    linarith
+    grind
   have hv_nonpos := burkholder_integral_v_XY_nonpos h n
   have hA_int :
       Integrable (fun ω => Real.rpow |A ω| p.toReal) μ := by

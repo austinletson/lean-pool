@@ -277,8 +277,7 @@ lemma isPositiveDefinite_mul_charFun {φ : V → ℂ} (hpd : IsPositiveDefinite 
         cexp (↑⟪x, t i - t j⟫_ℝ * I) =
         ∑ i, ∑ j, (starRingEnd ℂ) (c i * cexp (-(↑⟪x, t i⟫_ℝ) * I)) *
         (c j * cexp (-(↑⟪x, t j⟫_ℝ) * I)) * φ (t i - t j) := by
-      intro x; congr 1; ext i; congr 1; ext j
-      rw [hexp_split, map_mul]; ring
+      intro x; congr 1; grind
     -- Step C: Combine and take .re inside integral
     rw [hswap]
     simp_rw [halg]
@@ -644,8 +643,7 @@ lemma measure_of_pd_l1 (φ : V → ℂ)
       hψ_int.fourierInv_fourier_eq hψ_ft_int hψ_cont.continuousAt
     -- Step B: ψ(0) = φ(T 0) = φ(0) = 1
     have hψ0 : ψ 0 = 1 := by
-      change φ (T 0) = 1
-      simp [T, smul_zero, hnorm]
+      grind
     -- Step C: ∫ 𝓕ψ = ψ(0) = 1 via Fourier inversion at 0
     have hint_eq : ∫ x, 𝓕 ψ x = 1 := by
       -- Fourier inversion: 𝓕⁻(𝓕ψ) = ψ, evaluate at 0
@@ -1034,10 +1032,8 @@ private lemma charFun_measure_inner_bound (φ : V → ℂ)
         mul_le_mul_of_nonneg_left hnorm_bound (by positivity)
     _ = 2 * C + 8 * ‖y‖ ^ 2 * r⁻¹ ^ 2 := by
         rw [show |2 * r⁻¹ - -(2 * r⁻¹)| = 4 * r⁻¹ from by
-          rw [show 2 * r⁻¹ - -(2 * r⁻¹) = 4 * r⁻¹ from by ring]
-          exact abs_of_nonneg (by positivity)]
-        field_simp
-        ring
+          grind]
+        grind
 
 /-- The family of measures constructed from Gaussian regularization is tight.
     For each ε > 0, μ_ε is the probability measure with charFun(μ_ε) = φ_ε.
@@ -1135,8 +1131,7 @@ theorem gaussianRegularize_measures_tight (φ : V → ℂ)
             gcongr
             -- t ∈ uIoc (-(2*r⁻¹)) (2*r⁻¹) implies |t| ≤ 2*r⁻¹
             have hle : -(2 * r⁻¹) ≤ 2 * r⁻¹ := by linarith [inv_pos.mpr hr_pos]
-            rw [Set.uIoc_of_le hle] at ht
-            exact abs_le.mpr ⟨by linarith [ht.1.le], ht.2⟩
+            grind
         _ = 2 * ‖y‖ * r⁻¹ := by ring
         _ < η := hsmall
     have hreal_bound := charFun_measure_inner_bound φ hpd hnorm hε hε1 hcf hr_pos
@@ -1209,8 +1204,7 @@ private theorem bochner_charFun_eq (φ : V → ℂ) {μ : ProbabilityMeasure V}
     (gaussianRegularize_tendsto φ ξ).comp heps_tendsto
   -- The same sequence also → charFun(μ)(ξ) by weak convergence
   have hgr_conv' : Tendsto (fun n => charFun (μ_seq (f n) : Measure V) ξ) atTop (𝓝 (φ ξ)) := by
-    rwa [show (fun n => charFun (↑(μ_seq (f n))) ξ) =
-      (fun n => gaussianRegularize φ (1 / (↑(f n) + 1)) ξ) from funext hcharfun_vals]
+    grind
   -- By uniqueness of limits: charFun μ ξ = φ ξ
   exact tendsto_nhds_unique hcharfun_conv hgr_conv'
 

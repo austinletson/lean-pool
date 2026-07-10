@@ -43,10 +43,7 @@ lemma exists_exists_and_eq {f : α → β} {p : β → Prop} :
 lemma exists_exists_and_eq' {f : α → β} {p : β → Prop} {r : α → Prop} :
     (∃ b, p b ∧ (∃ a, r a ∧ b = f a)) ↔ ∃ a, r a ∧ p (f a) := by aesop
 lemma Disjoint.subset_iff_empty {s t : Set α} (h : Disjoint s t) : s ⊆ t ↔ s ⊆ ∅ := by
-  rw [Set.disjoint_iff_inter_eq_empty] at h
-  constructor <;> intro h' x hx
-  · exact h.subset ⟨hx, h' hx⟩
-  · cases h' hx
+  grind
 lemma pairwiseDisjoint_iff {α : I → Type*} (f : ∀ i, α i → β) :
   Set.univ.PairwiseDisjoint (fun i ↦ Set.range (f i)) ↔ ∀ ⦃i x j y⦄, f i x = f j y → i = j := by
   constructor

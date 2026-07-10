@@ -179,8 +179,7 @@ lemma MDifferentiable_div {F G : ℍ → ℂ}
     simp [Function.comp, Pi.div_apply, ofComplex_apply_of_im_pos hw]
   exact ((MDifferentiableAt_DifferentiableAt (hF τ)).div
     (MDifferentiableAt_DifferentiableAt (hG τ))
-    (by simp only [Function.comp_apply, ofComplex_apply,
-      ne_eq]; exact hG_ne _)).congr_of_eventuallyEq h_eq.symm
+    (by grind)).congr_of_eventuallyEq h_eq.symm
 
 @[simp]
 theorem D_const (c : ℂ) : D (Function.const ℍ c) = 0 := by
@@ -445,9 +444,7 @@ lemma deriv_moebius (z : ℍ) :
   simp only [denom_apply, num, Matrix.SpecialLinearGroup.coe_GL_coe_matrix,
     Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply, Int.coe_castRingHom,
     Matrix.map_apply, ofReal_intCast] at *
-  have hnum_eq : ((γ 0 0 : ℤ) : ℂ) * ((γ 1 0 : ℤ) * z + (γ 1 1 : ℤ)) -
-      ((γ 0 0 : ℤ) * z + (γ 0 1 : ℤ)) * (γ 1 0 : ℤ) = 1 := by linear_combination hdet
-  simp only [hnum_eq, one_div]
+  grind
 
 /-- Derivative of denom^(-k): d/dz[(cz+d)^(-k)] = -k * c * (cz+d)^(-k-1). -/
 lemma deriv_denom_zpow (k : ℤ) (z : ℍ) :
@@ -540,12 +537,10 @@ lemma D_slash (k : ℤ) (F : ℍ → ℂ) (hF : MDiff F) (γ : SL(2, ℤ)) :
   simp only [ModularForm.SL_slash_apply, hF_mob, hmob_eq]
   have hpow_combine : 1 / (denom γ z) ^ 2 * (denom γ z) ^ (-k) = (denom γ z) ^ (-(k + 2)) := by
     rw [one_div, ← zpow_natCast (denom γ z) 2, ← zpow_neg, ← zpow_add₀ hz_denom_ne]
-    congr 1
-    ring
+    grind
   have hpow_m1 : (denom γ z) ^ (-k - 1) = (denom γ z) ^ (-1 : ℤ) * (denom γ z) ^ (-k) := by
     rw [← zpow_add₀ hz_denom_ne]
-    congr 1
-    ring
+    grind
   conv_lhs =>
     rw [mul_assoc (deriv (F ∘ ofComplex) (num γ z / denom γ z)) (1 / denom γ z ^ 2) _,
       hpow_combine, hpow_m1]

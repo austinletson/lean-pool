@@ -132,8 +132,7 @@ lemma inv_norm_lintegral_bounded (R : ℝ) (hR : 0 < R) (k : ℕ) :
     intro z hz₁ hz₂
     rw [ ← mul_inv ]
     gcongr
-    norm_num [ Real.rpow_sub ] at *
-    linarith
+    grind
   have h_const_bound :
       ∫⁻ (z : Fin 3 → ℝ) in
         Metric.closedBall 0 (2^(-k : ℝ) * R) \
@@ -212,11 +211,7 @@ lemma inv_norm_local_integrable (R : ℝ) (hR : 0 < R) :
             · exact div_pos (norm_pos_iff.mpr hx.2) hR
           exact Set.mem_iUnion.mpr ⟨k, by
             simp only [Set.mem_sdiff, Metric.mem_closedBall, dist_zero_right]
-            constructor
-            · convert hk.2 using 2
-            · intro h_le
-              have : ‖x‖ ≤ 2 ^ (-(↑k : ℝ) - 1) * R := by convert h_le using 2
-              linarith [hk.1]⟩
+            grind⟩
         · exact fun i => MeasurableSet.diff (measurableSet_closedBall) (measurableSet_closedBall)
         · intro k l hkl
           simp_all [ mul_comm, Real.rpow_sub ]
@@ -249,8 +244,7 @@ lemma inv_norm_local_integrable (R : ℝ) (hR : 0 < R) :
               |> ENNReal.toReal))).congr (fun k => ?_)
         have hball : ((2 : ℝ) ^ k)⁻¹ * R = 2 ^ (-(k : ℝ)) * R := by
           rw [Real.rpow_neg (by norm_num), Real.rpow_natCast]
-        rw [hball, h_volume k]
-        ring
+        grind
     refine ⟨ ?_, ?_ ⟩
     · exact Measurable.aestronglyMeasurable (by exact Measurable.inv (measurable_norm))
     · rw [MeasureTheory.hasFiniteIntegral_iff_norm]

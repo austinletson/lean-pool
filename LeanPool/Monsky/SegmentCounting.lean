@@ -432,10 +432,7 @@ lemma symmFunction_reverse_sum {f : Segment → ℕ} (hf : symmFun f) {u v : ℝ
 
 
 lemma mod_two_mul {a b : ℕ} (h : a % 2 = b % 2) : (2 * a) % 4 = (2 * b) % 4 := by
-  rw [←Int.natCast_inj, Int.natCast_mod, Int.natCast_mod, ←ZMod.intCast_eq_intCast_iff',
-      ←sub_eq_zero, ←Int.cast_sub, ZMod.intCast_zmod_eq_zero_iff_dvd] at *
-  have ⟨c, hc⟩ := h
-  exact ⟨c, by simp only [Nat.cast_mul, ←mul_sub, hc]; ring⟩
+  grind
 
 
 lemma sum_two_mod_fun_seg {A : Set ℝ²} {X : Finset ℝ²} {S : Segment}
@@ -507,9 +504,7 @@ lemma isPurple_symmFunction : symmFun (isPurple v) := by
   intro S
   unfold isPurple reverseSegment
   simp only [toSegment]
-  congr 1
-  rw [eq_iff_iff]
-  tauto
+  grind
 
 -- The segment covered by a chain is purple if and only if an odd number of its basic
 -- segments are purple.
@@ -624,8 +619,7 @@ lemma segment_in_interior_aux {Δ : Finset Triangle} (hCover : isTriangulation �
     exact xclosed
   rcases xinTriangle with ⟨P, hP⟩
   have Pnondegen : det P ≠ 0 := by
-    apply non_degen
-    apply hP.1
+    grind
   have xinBT : x ∈ boundary P := by
     unfold triangulationAvoidingSet at b
     simp only [Set.disjoint_iUnion_right] at b
@@ -675,18 +669,12 @@ lemma segment_in_interior_aux {Δ : Finset Triangle} (hCover : isTriangulation �
             simp only [Fin.isValue, Set.mem_insert_iff, Set.mem_singleton_iff] at xboundTside
             tauto
         · have h3 : i = 2 := by
-            fin_cases i
-            · simp only [Fin.zero_eta, Fin.isValue]
-              tauto
-            · simp only [Fin.mk_one, Fin.isValue]
-              tauto
-            · simp
+            grind
           rw [h3] at xboundTside
           rw [Tside] at xboundTside
           simp only [Fin.isValue, Set.mem_insert_iff, Set.mem_singleton_iff] at xboundTside
           tauto
-    apply q at xtriangulationpt
-    contradiction
+    grind
   rcases xinTside with ⟨i, hi⟩
   have dis : openHull P ∩ closedHull L = ∅ := by
     by_contra hcontra
@@ -710,26 +698,9 @@ lemma segment_in_interior_aux {Δ : Finset Triangle} (hCover : isTriangulation �
       constructor
       · exact hP.1
       by_cases iota : i = 0 ∨ i = 1
-      · rcases iota with (hiota| hiota')
-        · rw [hiota] at hi
-          left
-          rw [hiota]
-        · right
-          constructor
-          · rw [hiota']
-      · simp only [not_or] at iota
-        have h3 : i = 2 := by
-          fin_cases i
-          · simp only [Fin.zero_eta, Fin.isValue]
-            tauto
-          · simp only [Fin.mk_one, Fin.isValue]
-            tauto
-          · simp
-        right
-        right
-        rw [h3]
-    apply q at hP'
-    contradiction
+      · grind
+      · grind
+    grind
   have fin : closedHull L ⊆ closedHull (Tside P i) := by
     exact seg_sub_side (non_degen P hP.1) hx hi dis this
   rcases hP with ⟨T, hT, hT'⟩
@@ -1171,8 +1142,7 @@ theorem segment_sum_odd (Δ : Finset Triangle) (hCovering : isTriangulation Δ)
           obtain ⟨left, right_5⟩ := left
           subst right_3
           exact right_4
-    · intro _ _
-      rfl
+    · grind
   rw [h]
   have h1 : squareBoundaryBigSet ⊆
       avoidingSegmentSet (triangulationPoints Δ) (triangulationAvoidingSet Δ) := by
@@ -1213,9 +1183,7 @@ theorem segment_sum_odd (Δ : Finset Triangle) (hCovering : isTriangulation Δ)
     obtain ⟨j, hj⟩ := hL
     rw [hi, hj]
     have hij : i ≠ j := by
-      by_contra h_contra
-      rw [hi, hj, h_contra] at hSL
-      tauto
+      grind
     exact unitSquare_boundary_intersections i j hij
   rw [segment_sum_splitting squareBoundaryBigSet (triangulationAvoidingSet Δ)
     (triangulationPoints Δ) h1 h2 (isPurple v) (isPurple_twoModFunction v)
@@ -1311,23 +1279,9 @@ lemma triangleBoundary_decomposition {Δ : Finset Triangle} {T : Triangle} (hdet
               constructor
               · exact h
               · by_cases hfin : i = 0 ∨ i = 1
-                · rcases hfin with (hfin | hfin)
-                  · left
-                    rw [hfin]
-                  · right
-                    left
-                    rw [hfin]
-                · have i2: i = 2 := by
-                    fin_cases i
-                    · simp at hfin
-                    · simp at hfin
-                    · simp at hfin
-                      simp
-                  right
-                  right
-                  rw [i2]
-            apply hδ at hcontra'
-            contradiction
+                · grind
+                · grind
+            grind
         rcases xinTsideopen with ⟨i, hi⟩
         use i
         apply seg_sub_side
@@ -1353,23 +1307,9 @@ lemma triangleBoundary_decomposition {Δ : Finset Triangle} {T : Triangle} (hdet
             constructor
             · exact h
             · by_cases hfin : j = 0 ∨ j = 1
-              · rcases hfin with (hfin | hfin)
-                · left
-                  rw [hfin]
-                · right
-                  left
-                  rw [hfin]
-              · have j2: j = 2 := by
-                  fin_cases j
-                  · simp at hfin
-                  · simp at hfin
-                  · simp at hfin
-                    simp
-                right
-                right
-                rw [j2]
-          apply hδ at tj
-          contradiction
+              · grind
+              · grind
+          grind
       rcases TsideS with ⟨i, hi ⟩
       simp_all only [ne_eq, top_eq_univ, mem_biUnion, mem_univ, true_and]
       use i
@@ -1419,24 +1359,21 @@ lemma different_points (T : Triangle) (h_det : det T ≠ 0) (i j : Fin 3) (hneq 
         use 2
         simp only [Fin.isValue, Fin.reduceEq, not_false_eq_true, and_self]
       · use 1
-        simp only [Fin.isValue, zero_ne_one, not_false_eq_true, true_and]
-        use hj
+        grind
     · simp only [Fin.mk_one, Fin.isValue, ne_eq]
       by_cases hj : j = 0
       · subst hj
         use 2
         simp only [Fin.isValue, Fin.reduceEq, not_false_eq_true, and_self]
       · use 0
-        simp only [Fin.isValue, one_ne_zero, not_false_eq_true, true_and]
-        use hj
+        grind
     · simp only [Fin.reduceFinMk, ne_eq, Fin.isValue]
       by_cases hj : j = 0
       · subst hj
         use 1
         simp only [Fin.isValue, Fin.reduceEq, not_false_eq_true, and_self]
       · use 0
-        simp only [Fin.isValue, Fin.reduceEq, not_false_eq_true, true_and]
-        use hj
+        grind
   rcases hk with ⟨k, hik, hjk⟩
   have hT : ∃ b, σ b = (fun | 0 =>  i | 1 =>  j | 2 => k) := by
     exact fun_in_bijections hneq hik hjk
@@ -1500,15 +1437,9 @@ lemma isRainbow_eq_colors (T : Triangle) :
   by_cases hs : Function.Surjective (![coloring v (T 0), coloring v (T 1), coloring v (T 2)])
   · rw [if_pos hs]
     obtain ⟨h01, h12, h02⟩ := (surj_iff_distinct _ _ _).mp hs
-    unfold rainbowB; revert h01 h12 h02
-    generalize coloring v (T 0) = a; generalize coloring v (T 1) = b
-    generalize coloring v (T 2) = c
-    revert a b c; decide
+    unfold rainbowB; grind
   · rw [if_neg hs, surj_iff_distinct] at *
-    unfold rainbowB; revert hs
-    generalize coloring v (T 0) = a; generalize coloring v (T 1) = b
-    generalize coloring v (T 2) = c
-    revert a b c; decide
+    unfold rainbowB; grind
 
 -- The core counting identity, stated purely on the three vertex colours. It is a
 -- finite check over the 27 colourings, cheap under the default heartbeat budget.
@@ -1600,13 +1531,11 @@ lemma rainbowTriangle_purpleSum {Δ : Finset Triangle}
         · use T
           refine ⟨hT, ?_⟩
           unfold Tside
-          fin_cases i
-          all_goals try (simp only [Fin.isValue, true_or, or_true])
+          grind
         · use T
           refine ⟨hT, ?_⟩
           unfold Tside
-          fin_cases i
-          all_goals try (simp only [Fin.isValue, true_or, or_true])
+          grind
       · exact (nondegen_triangle_imp_nondegen_side i (non_degen T hT))
     · unfold triangulationAvoidingSet
       simp only [Set.disjoint_iUnion_right]
@@ -1627,9 +1556,7 @@ lemma rainbowTriangle_purpleSum {Δ : Finset Triangle}
     obtain ⟨i, hi⟩ := hS
     obtain ⟨j, hj⟩ := hL
     have hij : i ≠ j := by
-      by_contra hij
-      apply hSL
-      rw [hi, hj, hij]
+      grind
     rw [← Set.disjoint_iff_inter_eq_empty, hi, hj]
     exact (triangle_edges_disjoint T i j hij (non_degen T hT))
   rw [h]
@@ -1673,16 +1600,7 @@ lemma boundary_filter_union (Δ : Finset Triangle) (T : Triangle) : T ∈ Δ →
         triangulationInteriorBasicSegments Δ) =
     filter (fun S ↦ closedHull S ⊆ boundary T) (triangulationBoundaryBasicSegments Δ) ∪
         filter (fun S ↦ closedHull S ⊆ boundary T) (triangulationInteriorBasicSegments Δ) := by
-  intro a
-  ext a_1 : 1
-  simp_all only [mem_filter, mem_union]
-  apply Iff.intro
-  · intro a_2
-    simp_all only [and_true]
-  · intro a_2
-    cases a_2 with
-    | inl h => simp_all only [true_or, and_self]
-    | inr h_1 => simp_all only [or_true, and_self]
+  grind
 
 
 lemma boundary_filter_intersection (Δ : Finset Triangle) (T : Δ) :
@@ -1864,9 +1782,7 @@ theorem monsky_rainbow (Δ : Finset Triangle)
   have this := rainbowSum_is_purpleSum v _ hDisjointCover non_degen
   rw [segment_sum_odd v _ hDisjointCover.1 non_degen] at this
   have hf : rainbowSum v Δ ≠ 0 := by
-    intro hc
-    rw [hc] at this
-    simp only [mul_zero, Nat.zero_mod, OfNat.zero_ne_ofNat] at this
+    grind
   simp_rw [rainbowSum, isRainbow, ←Finset.card_filter, card_ne_zero] at hf
   have ⟨T, hT⟩ := hf
   simp only [mem_filter] at hT

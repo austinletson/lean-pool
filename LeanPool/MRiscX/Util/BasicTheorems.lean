@@ -20,8 +20,7 @@ theorem excluded_middle_implication : ∀ (P Q C : Prop),
   P →
   C
   := by
-  intros P Q C
-  tauto
+  grind
 
 
 theorem Nat.mod_succ_eq {a b m : ℕ} : a % m = b % m ↔ (a + 1) % m = (b + 1) % m := by
@@ -33,34 +32,29 @@ theorem Nat.mod_succ_eq {a b m : ℕ} : a % m = b % m ↔ (a + 1) % m = (b + 1) 
 
 
 theorem Nat.le_sub_one_le : ∀ (n m : Nat), n ≤ m → n - 1 ≤ m := by
-  intros n m h
-  omega
+  grind
 
 theorem Nat.gt_zero_le_one : ∀ (n : ℕ),
   (0 < n) ↔ 1 ≤ n := by
-  intros n
-  omega
+  grind
 
 
 theorem Nat.add_gt_zero_gt_zero : ∀ (n m: ℕ) ,
   0 < n →
   0 < n + m
   := by
-  intros n m h
-  omega
+  grind
 
 
 
 theorem Nat.add_gt_zero : ∀ (n m : Nat),
   n > 0 →
   n + m > 0 := by
-  intros n m h
-  omega
+  grind
 
 
 
 theorem Nat.gt_and_neq_succ_gt_succ : ∀ (n m : ℕ), n < m → m ≠ n + 1 → n + 1 < m := by
-  intros n m h₁ h₂
   grind
 
 theorem Nat.lt_add_cancel_right : ∀ (n m k: ℕ),
@@ -73,8 +67,7 @@ theorem Nat.lt_sub_left : ∀ (a b c : ℕ),
   b < a →
   a < b + c →
   a - b < c := by
-  intros a b c BLtA ALtBC
-  omega
+  grind
 
 
 theorem Nat.size_sub_lt_size : ∀ (x l s: Nat),
@@ -82,15 +75,12 @@ theorem Nat.size_sub_lt_size : ∀ (x l s: Nat),
   x ≤ l →
   x ≥ 1 →
   l - x + 1 < s := by
-  intros x l s hl hx h1
-  omega
+  grind
 
 
 theorem UInt64.gt_zero_neq_zero : ∀ (u:UInt64),
   u > 0 → u ≠ 0 := by
-  intro u h neq
-  rw [neq] at h
-  contradiction
+  grind
 
 theorem UInt64.lt_zero : ∀ (u:UInt64), u < 0 ↔ False := by
   simp
@@ -119,40 +109,24 @@ theorem UInt64.add_lt_add : ∀ (n m k c : UInt64),
 
 theorem UInt64.add_cancel_right_iff : ∀ (u i k : UInt64),
   u + k = i + k ↔ u = i := by
-  intros u i k
-  constructor
-  · intro h
-    simpa using h
-  · rintro rfl
-    rfl
+  grind
 
 theorem UInt64.add_cancel_left_iff : ∀ (u i k: UInt64),
   k + u = k + i ↔ u = i := by
-  intros u i k
-  constructor
-  · intro h
-    rw [←UInt64.add_cancel_right_iff (k := k), UInt64.add_comm]
-    nth_rewrite 2 [UInt64.add_comm]
-    exact h
-  · rintro rfl
-    rfl
+  grind
 
 
 theorem UInt64.add_sub_assoc : ∀ (p l x : UInt64),
   x ≤ l →
   x > 0 →
   p + (l - x) + 1 = p + (l - (x - 1)) := by
-  intros p l x h_xLeL h_xGtZ
-  grind only
+  grind
 
 
 theorem UInt64.add_right_ne_of_lt : ∀ (n i l : UInt64),
   i < l →
   n + l ≠ n + i := by
-  intro n i l h_iLtl neq
-  rw [UInt64.add_cancel_left_iff] at neq
-  rw [neq] at h_iLtl
-  exact UInt64.lt_irrefl i h_iLtl
+  grind
 
 
 
@@ -162,11 +136,7 @@ instance instPreorderUInt64LeanPool : Preorder UInt64 where
   le_refl := by simp
   le_trans := by apply UInt64.le_trans
   lt_iff_le_not_ge := by
-    intros a b
-    constructor
-    · intro h
-      simpa only [UInt64.not_le] using ⟨UInt64.le_of_lt h, h⟩
-    · simp
+    grind
 
 
 instance : WellFoundedLT UInt64 where

@@ -363,8 +363,7 @@ private lemma hasDerivAt_segmentIntegral {f : ℂ → ℂ}
     intro w
     simpa only [H] using intervalIntegral.integral_mul_const (𝕜 := ℂ) _ _
   suffices HasDerivAt (fun w => H w * (w - c)) (f z) z by
-    convert this using 1
-    ext w; exact hF_eq w
+    grind
   have h1 : HasDerivAt (fun w => w - c) 1 z :=
     ((hasDerivAt_id z).sub (hasDerivAt_const z c)).congr_deriv (by ring)
   let H' : ℂ → ℂ := fun w =>
@@ -376,14 +375,11 @@ private lemma hasDerivAt_segmentIntegral {f : ℂ → ℂ}
     rw [show (∫ (t : ℝ) in (0 : ℝ)..1, ↑t * deriv f (c + t • (z - c))) * (z - c) =
       ∫ (t : ℝ) in (0 : ℝ)..1, ↑t * deriv f (c + t • (z - c)) * (z - c) from
       (intervalIntegral.integral_mul_const (𝕜 := ℂ) _ _).symm]
-    convert h_ibp using 2
-    ext t; ring
+    grind
   suffices hH : HasDerivAt H (H' z) z by
     have h_prod := hH.mul h1
     refine h_prod.congr_deriv ?_
-    calc H' z * (z - c) + H z * 1 = H' z * (z - c) + H z := by ring
-      _ = (f z - H z) + H z := by rw [h_key]
-      _ = f z := by ring
+    grind
   exact hasDerivAt_segmentIntegral_aux hε_pos hS_convex
     hS_open hc hz hf hε_ball
 

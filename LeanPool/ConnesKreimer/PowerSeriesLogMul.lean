@@ -30,8 +30,7 @@ theorem one_add_X_mul_deriv_log : (1 + X : A⟦X⟧) * d⁄dX A (log A) = 1 := b
     simp [coeff_zero_X_mul, coeff_mk]
   · obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : n ≠ 0)
     rw [coeff_succ_X_mul, coeff_mk, coeff_mk, if_neg (Nat.succ_ne_zero m), ← map_add]
-    simp only [Nat.succ_eq_add_one]
-    rw [show ((-1 : ℚ) ^ (m + 1) + (-1) ^ m) = 0 by ring, map_zero]
+    grind
 
 /-- The derivative `(log(1+X))'` substituted at `h-1` is the inverse of `h`
 (for `h` with constant term `1`): `(log A)'.subst (h-1) * h = 1`. -/
@@ -90,10 +89,7 @@ theorem logOf_mul [IsAddTorsionFree A] {f g : A⟦X⟧}
 @[simp]
 theorem logOf_one [IsAddTorsionFree A] : logOf (1 : A⟦X⟧) = 0 := by
   have h := logOf_mul (A := A) (f := 1) (g := 1) (by simp) (by simp)
-  rw [mul_one] at h
-  have : logOf (1 : A⟦X⟧) + 0 = logOf (1 : A⟦X⟧) + logOf (1 : A⟦X⟧) := by
-    rw [add_zero]; exact h
-  exact (add_left_cancel this).symm
+  grind
 
 /-- **Logarithm of a power**: `logOf (f ^ n) = n • logOf f` for `f` with constant term `1`.
 This is the eigen-relation engine: at `f = id` in the convolution algebra,
